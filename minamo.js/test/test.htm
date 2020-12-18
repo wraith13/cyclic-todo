@@ -1,0 +1,117 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+    <meta name="theme-color" content="#000022">
+    <title>💦 minamo.js test</title>
+
+    <script type="text/javascript" src="https://wraith13.github.io/evil-commonjs/index.js"></script>
+    <script>
+    //  see https://github.com/wraith13/evil-commonjs
+    module.readyToCapture();
+    </script>
+    <script type="text/javascript" src="../index.js"></script>
+    <script>
+    module.capture("../index.js", [".."]);
+    module.readyToCapture();
+    </script>
+    <script type="text/javascript" src="test.js"></script>
+    <script>
+    module.capture("test.js");
+    </script>
+
+    <style>
+    *
+    {
+        font-family: "MS Gothic";
+        color: #000022;
+    }
+    body
+    {
+        margin: 1rem;
+    }
+    h1
+    {
+        margin: -1rem;
+        margin-bottom: 0em;
+        padding: 1rem;
+        color: #FFFFFF;
+        background-color: #000022;
+    }
+    a.github
+    {
+        color: #FFFFFF;
+        background-color: #000000;
+        font-weight: bold;
+        margin: 0.1em;
+        padding: 0.7em 1.0em 0.5em 1.0em;
+        border-radius: 0.5em;
+        float: right;
+        text-decoration: none;
+        line-height: 100%;
+    }
+    a.github:hover
+    {
+        text-decoration: underline;
+    }
+    table
+    {
+        background-color: lightgray;
+        border-spacing: 2px;
+    }
+    table th
+    {
+        padding: 4px;
+        background-color: #DDDDFF;
+    }
+    table td
+    {
+        padding: 4px;
+    }
+    table tr:not(.error) td
+    {
+        background-color: white;
+    }
+    table tr.error td
+    {
+        background-color: #FFCCCC;
+    }
+    table tr:nth-child(2n+1):not(.error) td
+    {
+        background-color: #EEEEEE;
+    }
+    table.summary
+    {
+        font-size : 1.2em;
+    }
+    table.summary td
+    {
+        width: 4.5em;
+        text-align: right;
+    }
+    table.details th:nth-child(1),
+    table.details td:nth-child(1)
+    {
+        width: 3em;
+    }
+    table.details th:nth-child(2),
+    table.details td:nth-child(2)
+    {
+        width: 3em;
+    }
+    table.details th:nth-child(3),
+    table.details td:nth-child(3)
+    {
+        width: 45%;
+        word-break: break-all;
+    }
+    table.details th:nth-child(4),
+    table.details td:nth-child(4)
+    {
+        width: 55%;
+        word-break: break-all;
+    }
+    </style>
+</head>
+<body onload="test.start()"></body>
+</html>

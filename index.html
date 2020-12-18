@@ -1,0 +1,21 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+    <meta name="theme-color" content="#000022">
+    <title>Cyclic ToDo</title>
+    <link rel="stylesheet" type="text/css" href="index.css" media="screen,projection,tv,print" />
+
+    <script type="text/javascript" src="https://wraith13.github.io/evil-commonjs/index.js"></script>
+    <script>
+    //  see https://github.com/wraith13/evil-commonjs
+    window.module.sequentialLoad
+    ([
+        { path: "./minamo.js/index.js", mapping: ["./minamo.js"], },
+        { path: "./index.js", mapping: ["CyclicToDo"], },
+    ])
+    .then(() => require("CyclicToDo").CyclicToDo.start());
+    </script>
+</head>
+<body></body>
+</html>
