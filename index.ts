@@ -1,6 +1,60 @@
 import { minamo } from "./minamo.js";
 export module CyclicToDo
 {
+    interface TaskEntry
+    {
+        task: string;
+        tick: number;
+    }
+    export const makeTaskEntryComparer = (todo: string[]) => (a: TaskEntry, b: TaskEntry) =>
+    {
+        if (a.tick < b.tick)
+        {
+            return 1;
+        }
+        if (b.tick < a.tick)
+        {
+            return -1;
+        }
+        const aTaskIndex = todo.indexOf(a.task);
+        const bTaskIndex = todo.indexOf(a.task);
+        if (aTaskIndex < 0 && bTaskIndex < 0)
+        {
+            if (a.task < b.task)
+            {
+                return -1;
+            }
+            if (b.task < a.task)
+            {
+                return 1;
+            }
+        }
+        else
+        {
+            if (aTaskIndex < bTaskIndex)
+            {
+                return -1;
+            }
+            if (bTaskIndex < aTaskIndex)
+            {
+                return 1;
+            }
+        }
+        return 0;
+    };
+    export const simpleComparer = <T>(a: T, b: T) =>
+    {
+        if (a < b)
+        {
+            return -1;
+        }
+        if (b < a)
+        {
+            return 1;
+        }
+        return 0;
+    };
+    export const simpleReverseComparer = <T>(a: T, b: T) => -simpleComparer(a, b);
     export const TimeAccuracy = 100000;
     export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / TimeAccuracy);
     export const DateFromTick = (tick: number) => new Date(tick *TimeAccuracy);
@@ -9,50 +63,17 @@ export module CyclicToDo
     export const addHistory = (task: string, tick: number | number[]) =>
     {
         const list = getHistory(task).concat(tick).filter((i, index, array) => index === array.indexOf(i));
-        list.sort
-        (
-            (a, b) =>
-            {
-                if (a < b)
-                {
-                    return 1;
-                }
-                if (b < a)
-                {
-                    return -1;
-                }
-                return 0;
-            }
-        );
+        list.sort(simpleReverseComparer);
         setHistory(task, list);
     };
     export const getLastTick = (task: string) => getHistory(task)[0];
-    export const getToDoHistory = (todo: string[]) => todo
+    export const getToDoHistory = (todo: string[]): TaskEntry[] => todo
         .map(task => getHistory(task).map(tick => ({ task, tick})))
         .reduce((a, b) => a.concat(b), [])
-        .sort
-        (
-            (a, b) =>
-            {
-                if (a.tick < b.tick)
-                {
-                    return 1;
-                }
-                if (b.tick < a.tick)
-                {
-                    return -1;
-                }
-                if (a.task < b.task)
-                {
-                    return 1;
-                }
-                if (b.task < a.task)
-                {
-                    return -1;
-                }
-                return 0;
-            }
-        );
+        .sort(makeTaskEntryComparer(todo));
+    export const getToDoEntries = (todo: string[]) => todo
+        .map(task => ({ task, tick: getLastTick(task)}))
+        .sort(makeTaskEntryComparer(todo));
     export const done = async (task: string) => addHistory(task, getTicks());
     export module dom
     {
@@ -61,79 +82,24 @@ export module CyclicToDo
             tag,
             children: text,
         });
-        const renderUser = (user: Slack.User) =>
+        const renderDoneButton = (task: string, isDefault: boolean) =>
         ({
-            tag: "div",
-            className: "user",
+            tag: "button",
+            className: isDefault ? "default-button": undefined,
             children:
             [
-                renderIcon(user.profile),
                 {
-                    tag: "span",
-                    className: "real_name",
-                    children: user.real_name
+                    tag: "div",
+                    className: "task-title",
+                    children: task,
                 },
-                {
-                    tag: "span",
-                    className: "name",
-                    children: user.name
-                },
-            ],
-        });
-        const renderTeam = (team: Slack.Team) =>
-        ({
-            tag: "div",
-            className: "team",
-            children:
-            [
-                renderIcon(team.icon),
-                {
-                    tag: "span",
-                    className: "name",
-                    children: team.name,
-                },
-                {
-                    tag: "span",
-                    className: "domain",
-                    children: team.domain,
-                },
-            ],
-        });
-        const renderIdentity = (identity: Identity) =>
-        ({
-            tag: "div",
-            className: "identity",
-            children:
-            [
-                renderTeam(identity.team),
-                renderUser(identity.user),
-            ]
-        });
-        const renderItemCore = (item: HistoryItem) =>
-        {
-            switch(item.api)
-            {
-            case "chatPostMessage":
-                return JSON.stringify(item);
-            case "usersProfileSet":
-                return JSON.stringify(item);
-            }
-            return JSON.stringify(item);
-        };
-        const renderItem = (item: HistoryItem) =>
-        ({
-            tag: "div",
-            className: "item",
-            children:
-            [
-                renderIdentity(getIdentity(item.user)),
-                renderItemCore(item),
+                renderLastInformation(task),
             ],
             onclick: async () =>
             {
-                await execute(item);
-                updateIdentityList();
-            },
+                done(task);
+                updateTodoScreen();
+            }
         });
         const renderPostMessageForm = (identity: Identity) =>
         {
@@ -192,233 +158,7 @@ export module CyclicToDo
                 ]
             });
         };
-        const renderSetStatusForm = (identity: Identity) =>
-        {
-            const status_emoji = minamo.dom.make(HTMLInputElement)
-            ({
-                tag: "input",
-                className: "application-name",
-            });
-            const status_text = minamo.dom.make(HTMLInputElement)
-            ({
-                tag: "input",
-                className: "application-client-id",
-            });
-            const status_expiration = minamo.dom.make(HTMLInputElement)
-            ({
-                tag: "input",
-                className: "application-client-secret",
-            });
-            return minamo.dom.make(HTMLDivElement)
-            ({
-                tag: "div",
-                className: "application-form",
-                children:
-                [
-                    {
-                        tag: "label",
-                        children:
-                        [
-                            {
-                                tag: "span",
-                                children: "emoji",
-                            },
-                            status_emoji,
-                        ],
-                    },
-                    {
-                        tag: "label",
-                        children:
-                        [
-                            {
-                                tag: "span",
-                                children: "text",
-                            },
-                            status_text,
-                        ],
-                    },
-                    {
-                        tag: "label",
-                        children:
-                        [
-                            {
-                                tag: "span",
-                                children: "expiration",
-                            },
-                            status_expiration,
-                        ],
-                    },
-                    {
-                        tag: "button",
-                        children: "Apply",
-                        onclick: async () =>
-                        {
-                            await execute
-                            ({
-                                user: identity.user.id,
-                                api: "usersProfileSet",
-                                data:
-                                {
-                                    status_emoji: status_emoji.value,
-                                    status_text: status_text.value,
-                                    status_expiration: parseInt(status_expiration.value),
-                                },
-                            });
-                            updateIdentityList();
-                        }
-                    },
-                ]
-            });
-        };
-        const identityList = minamo.dom.make(HTMLDivElement)({ });
-        export const updateIdentityList = () => minamo.dom.replaceChildren
-        (
-            identityList,
-            getIdentityList().map
-            (
-                i =>
-                [
-                    renderHeading
-                    (
-                        "h2",
-                        [
-                            renderIdentity(i),
-                            {
-                                tag: "button",
-                                className: "sub",
-                                children: `…`,
-                                onclick: () =>
-                                {
-                                    if (window.confirm("🗑 Remove this user?"))
-                                    {
-                                        removeIdentity(i);
-                                        updateIdentityList();
-                                    }
-                                },
-                            }
-                        ]
-                    ),
-                    renderHeading ( "h3", "Post Message" ),
-                    renderPostMessageForm(i),
-                    renderHeading ( "h3", "Set Status" ),
-                    renderSetStatusForm(i),
-                    renderHeading ( "h3", "History" ),
-                    getHistory(i.user.id).map(renderItem),
-                ],
-            )
-        );
-        const applicationList = minamo.dom.make(HTMLDivElement)({ });
-        export const updateApplicationList = () => minamo.dom.replaceChildren
-        (
-            applicationList,
-            getApplicationList().map
-            (
-                i =>
-                [
-                    {
-                        tag: "div",
-                        children:
-                        [
-                            {
-                                tag: "button",
-                                children: `OAuth by ${i.name} API Key`,
-                                onclick: () =>
-                                {
-                                    setCurrentApplication(i);
-                                    Slack.authorize(i, user_scope, redirect_uri);
-                                },
-                            },
-                            {
-                                tag: "button",
-                                className: "sub",
-                                children: `…`,
-                                onclick: () =>
-                                {
-                                    if (window.confirm("🗑 Remove this application?"))
-                                    {
-                                        removeApplication(i);
-                                        updateApplicationList();
-                                    }
-                                },
-                            },
-                        ]
-                    }
-                ],
-            )
-        );
-        const applicationName = minamo.dom.make(HTMLInputElement)
-        ({
-            tag: "input",
-            className: "application-name",
-        });
-        const applicationClientId = minamo.dom.make(HTMLInputElement)
-        ({
-            tag: "input",
-            className: "application-client-id",
-        });
-        const applicationClientSecret = minamo.dom.make(HTMLInputElement)
-        ({
-            tag: "input",
-            className: "application-client-secret",
-        });
-        const applicationForm = minamo.dom.make(HTMLDivElement)
-        ({
-            tag: "div",
-            className: "application-form",
-            children:
-            [
-                {
-                    tag: "label",
-                    children:
-                    [
-                        {
-                            tag: "span",
-                            children: "name",
-                        },
-                        applicationName,
-                    ],
-                },
-                {
-                    tag: "label",
-                    children:
-                    [
-                        {
-                            tag: "span",
-                            children: "client_id",
-                        },
-                        applicationClientId,
-                    ],
-                },
-                {
-                    tag: "label",
-                    children:
-                    [
-                        {
-                            tag: "span",
-                            children: "client_secret",
-                        },
-                        applicationClientSecret,
-                    ],
-                },
-                {
-                    tag: "button",
-                    children: "Add",
-                    onclick: () =>
-                    {
-                        addApplication
-                        ({
-                            name: applicationName.value,
-                            client_id: applicationClientId.value,
-                            client_secret: applicationClientSecret.value,
-                        });
-                        updateApplicationList();
-                        applicationName.value = "";
-                        applicationClientId.value = "";
-                        applicationClientSecret.value = "";
-                    }
-                },
-            ]
-        });
+
         const screen =
         [
             renderHeading ( "h1", document.title ),
@@ -428,45 +168,6 @@ export module CyclicToDo
                 children: "GitHub",
                 href: "https://github.com/wraith13/slac-fixed-phrase"
             },
-            updateIdentityList(),
-            renderHeading ( "h2", `Register User` ),
-            updateApplicationList(),
-            renderHeading ( "h2", `Register API Key` ),
-            renderHeading ( "h3", `Requirement` ),
-            {
-                tag: "dl",
-                children:
-                [
-                    {
-                        tag: "dt",
-                        children: "Redirect URLs",
-                    },
-                    {
-                        tag: "dd",
-                        children: redirect_uri,
-                    },
-                    {
-                        tag: "dt",
-                        children: "User Token Scopes",
-                    },
-                    {
-                        tag: "dd",
-                        children:
-                        {
-                            tag: "ul",
-                            children: user_scope.map
-                            (
-                                i =>
-                                ({
-                                    tag: "li",
-                                    children: i
-                                })
-                            )
-                        }
-                    },
-                ],
-            },
-            applicationForm,
         ];
         export const showWindow = async ( ) => minamo.dom.appendChildren
         (
