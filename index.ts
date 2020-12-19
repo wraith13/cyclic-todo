@@ -1,281 +1,61 @@
 import { minamo } from "./minamo.js";
-export module Slack
-{
-    export interface Application
-    {
-        client_id: string;
-        client_secret: string;
-    }
-    export type AppId = string;
-    export type UserId = string;
-    export type TeamId = string;
-    export type ChannelId = string;
-    export type BotId = string;
-    export type AccessToken = string;
-    export type UnixTime = number;
-    export interface AuthedUser
-    {
-        id: UserId;
-        scope: string;
-        access_token: string;
-        token_type: string;
-    }
-    export interface Icon
-    {
-        image_24?: string;
-        image_32?: string;
-        image_34?: string;
-        image_44?: string;
-        image_48?: string;
-        image_68?: string;
-        image_72?: string;
-        image_88?: string;
-        image_102?: string;
-        image_132?: string;
-        image_192?: string;
-        image_230?: string;
-        image_512?: string;
-        image_original?: string;
-    }
-    export interface Team
-    {
-        id: TeamId;
-        name: string;
-        domain: string;
-        email_domain: string;
-        icon: Icon;
-    }
-    export interface Label
-    {
-        value: string;
-        creator: UserId;
-        last_set: UnixTime;
-    }
-    export interface Channel
-    {
-        id: ChannelId;
-        name: string;
-        is_channel: true;
-        created: UnixTime;
-        is_archived: boolean;
-        is_general: boolean;
-        unlinked: number;
-        creator: UserId;
-        name_normalized: string;
-        is_shared: boolean;
-        is_org_shared: boolean;
-        is_member: boolean;
-        is_private: boolean;
-        is_mpim: boolean;
-        members: UserId[];
-        topic: Label;
-        purpose: Label;
-        previous_names: string[];
-        num_members: number;
-    }
-    export interface Status
-    {
-        status_text: string;
-        status_emoji: string;
-        status_expiration: UnixTime;
-    }
-    export interface Profile extends Status, Icon
-    {
-        avatar_hash: string;
-        real_name: string;
-        display_name: string;
-        real_name_normalized: string;
-        display_name_normalized: string;
-        email: string;
-        team: TeamId;
-    }
-    export interface User
-    {
-        id: UserId;
-        team_id: TeamId;
-        name: string;
-        deleted: boolean;
-        color: string;
-        real_name: string;
-        tz: string;
-        tz_label: string;
-        tz_offset: number;
-        profile: Profile;
-        is_admin: boolean;
-        is_owner: boolean;
-        is_primary_owner: boolean;
-        is_restricted: boolean;
-        is_ultra_restricted: boolean;
-        is_bot: boolean;
-        is_app_user: boolean;
-        updated: UnixTime;
-        has_2fa: boolean;
-    }
-    export const authorize =
-    (
-        application: Application,
-        user_scope: string[],
-        redirect_uri: string
-    ) =>
-        location.href = `https://slack.com/oauth/v2/authorize?client_id=${ application.client_id }&user_scope=${ user_scope.join ( "," ) }&redirect_uri=${ redirect_uri }`;
-    export const oauthV2Access =
-        async (
-            application: Application,
-            code: string,
-            redirect_uri: string
-        ):
-        Promise<{
-            ok: boolean,
-            app_id: AppId,
-            authed_user: AuthedUser,
-            team:
-            {
-                id: TeamId,
-                name: string,
-            },
-            enterprise: unknown,
-        }> =>
-        minamo.http.getJson ( `https://slack.com/api/oauth.v2.access?client_id=${ application.client_id }&client_secret=${ application.client_secret }&code=${ code }&redirect_uri=${ redirect_uri }` );
-    export const usersInfo = async ( token: AccessToken, user: UserId ): Promise<{ ok: boolean, user: User }> =>
-    minamo.http.getJson ( `https://slack.com/api/users.info?token=${ token }&user=${ user }` );
-    export const teamInfo = async ( token: AccessToken ): Promise<{ ok: boolean, team: Team }> =>
-        minamo.http.getJson ( `https://slack.com/api/team.info?token=${ token }` );
-    export const channelsList = async ( token: AccessToken ): Promise<{ ok: boolean, channels: Channel[] }> =>
-        minamo.http.getJson ( `https://slack.com/api/channels.list?token=${ token }`);
-    export const emojiList = async ( token: AccessToken, limit: string ): Promise<{ ok: boolean, emoji: { [name: string]: string } }> =>
-        minamo.http.getJson ( `https://slack.com/api/emoji.list?token=${ token }&limit=${ limit }` );
-    export const chatPostMessage = async (
-            token: AccessToken,
-            data:
-            {
-                channel: ChannelId,
-                text: string,
-            }
-        ):
-        Promise<{
-            ok: boolean,
-            channel: ChannelId,
-            ts: string,
-            message:
-            {
-                bot_id: BotId,
-                type: string,
-                text: string,
-                user: UserId,
-                ts: string,
-                team: TeamId,
-                bot_profile:
-                {
-                    id: BotId,
-                    deleted: boolean,
-                    name: string,
-                    updated: UnixTime,
-                    app_id: AppId,
-                    icons: Icon,
-                    team_id: TeamId,
-                }
-            },
-        }> =>
-        minamo.http.postJson
-        (
-            `https://slack.com/api/chat.postMessage`,
-            JSON.stringify ( data ),
-            { Authorization: `Bearer ${token}` }
-        );
-    export const usersProfileSet = async (
-            token: AccessToken,
-            data: { profile: Status, }
-        ):
-        Promise<{
-            ok: boolean,
-            username: string,
-            profile: Profile,
-        }> =>
-        minamo.http.postJson
-        (
-            `https://slack.com/api/users.profile.set`,
-            JSON.stringify ( data ),
-            { Authorization: `Bearer ${token}` }
-        );
-}
 export module CyclicToDo
 {
-    export const user_scope =
-    [
-        "users.profile:write",
-        "chat:write",
-        "channels:read",
-        "team:read",
-        "emoji:read",
-        "users:read",
-    ];
-    export const redirect_uri = location.href.replace(/\?.*/, "");
-    export interface Application extends Slack.Application
+    export const TimeAccuracy = 100000;
+    export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / TimeAccuracy);
+    export const DateFromTick = (tick: number) => new Date(tick *TimeAccuracy);
+    export const getHistory = (task: string): number[] => minamo.localStorage.getOrNull<number[]>(`task:${task}.history`) ?? [];
+    export const setHistory = (task: string, list: number[]) => minamo.localStorage.set(`task:${task}.history`, list);
+    export const addHistory = (task: string, tick: number | number[]) =>
     {
-        name: string;
-    }
-    export interface Identity
-    {
-        user: Slack.User;
-        team: Slack.Team;
-        token: Slack.AccessToken;
-    }
-    export interface HistoryItem
-    {
-        user: Slack.UserId;
-        api: string;
-        data: unknown;
-    }
-    const getCurrentApplication = (): Application => minamo.localStorage.getOrNull<Application>("current-application");
-    const setCurrentApplication = (application: Application) => minamo.localStorage.set("current-application", application);
-    const getApplicationList = (): Application[] => minamo.localStorage.getOrNull<Application[]>("application-list") ?? [];
-    const setApplicationList = (list: Application[]) => minamo.localStorage.set("application-list", list);
-    const addApplication = (item: Application) => setApplicationList([item].concat(removeApplication(item)));
-    const removeApplication = (item: Application) => setApplicationList(getApplicationList().filter(i => i.name !== item.name || i.client_id !== item.client_id || i.client_secret !== item.client_secret));
-    const getIdentityList = (): Identity[] => minamo.localStorage.getOrNull<Identity[]>("identities") ?? [];
-    const setIdentityList = (list: Identity[]) => minamo.localStorage.set("identities", list);
-    const addIdentity = (item: Identity) => setIdentityList([item].concat(removeIdentity(item)));
-    const removeIdentity = (item: Identity) => setIdentityList(getIdentityList().filter(i => i.user.id !== item.user.id || i.team.id !== item.team.id));
-    const getHistory = (user: Slack.UserId): HistoryItem[] => minamo.localStorage.getOrNull<HistoryItem[]>(`user:${user}.history`) ?? [];
-    const setHistory = (user: Slack.UserId, list: HistoryItem[]) => minamo.localStorage.set(`user:${user}.history`, list);
-    const addHistory = (item: HistoryItem) => setHistory
-    (
-        item.user,
-        [item].concat
+        const list = getHistory(task).concat(tick).filter((i, index, array) => index === array.indexOf(i));
+        list.sort
         (
-            getHistory(item.user)
-                .filter(i => JSON.stringify(i) !== JSON.stringify(item))
-        )
-    );
-    const getIdentity = (id: Slack.UserId): Identity => getIdentityList().filter(i => i.user.id === id)[0];
-    const execute = async (item: HistoryItem) =>
-    {
-        const token = getIdentity(item.user).token;
-        switch(item.api)
-        {
-        case "chatPostMessage":
-            return await Slack.chatPostMessage(token, <any>item.data);
-        case "usersProfileSet":
-            return await Slack.usersProfileSet(token, <any>item.data);
-        }
-        addHistory(item);
-        return null;
+            (a, b) =>
+            {
+                if (a < b)
+                {
+                    return 1;
+                }
+                if (b < a)
+                {
+                    return -1;
+                }
+                return 0;
+            }
+        );
+        setHistory(task, list);
     };
+    export const getLastTick = (task: string) => getHistory(task)[0];
+    export const getToDoHistory = (todo: string[]) => todo
+        .map(task => getHistory(task).map(tick => ({ task, tick})))
+        .reduce((a, b) => a.concat(b), [])
+        .sort
+        (
+            (a, b) =>
+            {
+                if (a.tick < b.tick)
+                {
+                    return 1;
+                }
+                if (b.tick < a.tick)
+                {
+                    return -1;
+                }
+                if (a.task < b.task)
+                {
+                    return 1;
+                }
+                if (b.task < a.task)
+                {
+                    return -1;
+                }
+                return 0;
+            }
+        );
+    export const done = async (task: string) => addHistory(task, getTicks());
     export module dom
     {
-        const renderIcon = (icon: Slack.Icon) =>
-        ({
-            tag: "img",
-            src:
-                icon.image_original ||
-                icon
-                [
-                    "image_" +Object.keys(icon)
-                        .filter(i => /image_\d+/.test(i))
-                        .map(i => parseInt(i.replace(/^image_/, "")))
-                        .reduce((a, b) => a < b ? b: a, 0)
-                ],
-        });
         const renderHeading = ( tag: string, text: minamo.dom.Source ) =>
         ({
             tag,
@@ -688,29 +468,42 @@ export module CyclicToDo
             },
             applicationForm,
         ];
-        export const showScreen = async ( ) => minamo.dom.appendChildren
+        export const showWindow = async ( ) => minamo.dom.appendChildren
         (
             document.body,
             screen
         );
     }
+    export const getUrlParams = (key: string) =>
+    {
+        const raw = location.href
+            .replace(/.*\?/, "")
+            .replace(/#.*/, "")
+            .split("&").
+            find(i => new RegExp(`^${key}=`).test(i))
+            ?.replace(new RegExp(`^${key}=`), "");
+        if (null !== raw && undefined !== raw)
+        {
+            return decodeURIComponent(raw);
+        }
+        return null;
+    };
+    export const makeUrl =
+    (
+        args: {[key: string]: string},
+        hash: string = location.href.replace(/[^#]*#?/, ""),
+        href: string = location.href
+    ) =>
+        href
+            .replace(/\?.*/, "")
+            .replace(/#.*/, "")
+            +"?"
+            +Object.keys(args).map(i => `${i}=${encodeURIComponent(args[i])}`).join("&")
+            +`#${hash}`;
     export const start = async ( ) =>
     {
-        const code = location.href.replace(/.*\?/, "").split("&").find(i => /^code=/.test(i))?.replace(/^code=/, "");
-        const application = getCurrentApplication();
-        if (application && code)
-        {
-            const result = await Slack.oauthV2Access(application, code, redirect_uri);
-            const token = result.authed_user.access_token;
-            addIdentity
-            ({
-                user: (await Slack.usersInfo(token, result.authed_user.id)).user,
-                team: (await Slack.teamInfo(token)).team,
-                token,
-            });
-            dom.updateIdentityList();
-            history.replaceState(null, document.title, redirect_uri);
-        }
-        await dom.showScreen();
+        const todo = getUrlParams("todo");
+        const history = getUrlParams("history");
+        await dom.showWindow();
     };
 }
