@@ -36,196 +36,187 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CyclicToDo = exports.Slack = void 0;
+exports.CyclicToDo = void 0;
 var minamo_js_1 = require("./minamo.js");
-var Slack;
-(function (Slack) {
-    var _this = this;
-    Slack.authorize = function (application, user_scope, redirect_uri) {
-        return location.href = "https://slack.com/oauth/v2/authorize?client_id=" + application.client_id + "&user_scope=" + user_scope.join(",") + "&redirect_uri=" + redirect_uri;
-    };
-    Slack.oauthV2Access = function (application, code, redirect_uri) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2 /*return*/, minamo_js_1.minamo.http.getJson("https://slack.com/api/oauth.v2.access?client_id=" + application.client_id + "&client_secret=" + application.client_secret + "&code=" + code + "&redirect_uri=" + redirect_uri)];
-    }); }); };
-    Slack.usersInfo = function (token, user) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2 /*return*/, minamo_js_1.minamo.http.getJson("https://slack.com/api/users.info?token=" + token + "&user=" + user)];
-    }); }); };
-    Slack.teamInfo = function (token) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2 /*return*/, minamo_js_1.minamo.http.getJson("https://slack.com/api/team.info?token=" + token)];
-    }); }); };
-    Slack.channelsList = function (token) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2 /*return*/, minamo_js_1.minamo.http.getJson("https://slack.com/api/channels.list?token=" + token)];
-    }); }); };
-    Slack.emojiList = function (token, limit) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2 /*return*/, minamo_js_1.minamo.http.getJson("https://slack.com/api/emoji.list?token=" + token + "&limit=" + limit)];
-    }); }); };
-    Slack.chatPostMessage = function (token, data) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, minamo_js_1.minamo.http.postJson("https://slack.com/api/chat.postMessage", JSON.stringify(data), { Authorization: "Bearer " + token })];
-        });
-    }); };
-    Slack.usersProfileSet = function (token, data) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, minamo_js_1.minamo.http.postJson("https://slack.com/api/users.profile.set", JSON.stringify(data), { Authorization: "Bearer " + token })];
-        });
-    }); };
-})(Slack = exports.Slack || (exports.Slack = {}));
 var CyclicToDo;
 (function (CyclicToDo) {
     var _this = this;
-    CyclicToDo.user_scope = [
-        "users.profile:write",
-        "chat:write",
-        "channels:read",
-        "team:read",
-        "emoji:read",
-        "users:read",
-    ];
-    CyclicToDo.redirect_uri = location.href.replace(/\?.*/, "");
-    var getCurrentApplication = function () { return minamo_js_1.minamo.localStorage.getOrNull("current-application"); };
-    var setCurrentApplication = function (application) { return minamo_js_1.minamo.localStorage.set("current-application", application); };
-    var getApplicationList = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull("application-list")) !== null && _a !== void 0 ? _a : []; };
-    var setApplicationList = function (list) { return minamo_js_1.minamo.localStorage.set("application-list", list); };
-    var addApplication = function (item) { return setApplicationList([item].concat(removeApplication(item))); };
-    var removeApplication = function (item) { return setApplicationList(getApplicationList().filter(function (i) { return i.name !== item.name || i.client_id !== item.client_id || i.client_secret !== item.client_secret; })); };
-    var getIdentityList = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull("identities")) !== null && _a !== void 0 ? _a : []; };
-    var setIdentityList = function (list) { return minamo_js_1.minamo.localStorage.set("identities", list); };
-    var addIdentity = function (item) { return setIdentityList([item].concat(removeIdentity(item))); };
-    var removeIdentity = function (item) { return setIdentityList(getIdentityList().filter(function (i) { return i.user.id !== item.user.id || i.team.id !== item.team.id; })); };
-    var getHistory = function (user) { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull("user:" + user + ".history")) !== null && _a !== void 0 ? _a : []; };
-    var setHistory = function (user, list) { return minamo_js_1.minamo.localStorage.set("user:" + user + ".history", list); };
-    var addHistory = function (item) { return setHistory(item.user, [item].concat(getHistory(item.user)
-        .filter(function (i) { return JSON.stringify(i) !== JSON.stringify(item); }))); };
-    var getIdentity = function (id) { return getIdentityList().filter(function (i) { return i.user.id === id; })[0]; };
-    var execute = function (item) { return __awaiter(_this, void 0, void 0, function () {
-        var token, _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    token = getIdentity(item.user).token;
-                    _a = item.api;
-                    switch (_a) {
-                        case "chatPostMessage": return [3 /*break*/, 1];
-                        case "usersProfileSet": return [3 /*break*/, 3];
-                    }
-                    return [3 /*break*/, 5];
-                case 1: return [4 /*yield*/, Slack.chatPostMessage(token, item.data)];
-                case 2: return [2 /*return*/, _b.sent()];
-                case 3: return [4 /*yield*/, Slack.usersProfileSet(token, item.data)];
-                case 4: return [2 /*return*/, _b.sent()];
-                case 5:
-                    addHistory(item);
-                    return [2 /*return*/, null];
+    CyclicToDo.makeTaskEntryComparer = function (todo) { return function (a, b) {
+        if (a.tick < b.tick) {
+            return -1;
+        }
+        if (b.tick < a.tick) {
+            return 1;
+        }
+        var aTaskIndex = todo.indexOf(a.task);
+        var bTaskIndex = todo.indexOf(a.task);
+        if (aTaskIndex < 0 && bTaskIndex < 0) {
+            if (a.task < b.task) {
+                return 1;
+            }
+            if (b.task < a.task) {
+                return -1;
+            }
+        }
+        else {
+            if (aTaskIndex < bTaskIndex) {
+                return 1;
+            }
+            if (bTaskIndex < aTaskIndex) {
+                return -1;
+            }
+        }
+        return 0;
+    }; };
+    CyclicToDo.simpleComparer = function (a, b) {
+        if (a < b) {
+            return -1;
+        }
+        if (b < a) {
+            return 1;
+        }
+        return 0;
+    };
+    CyclicToDo.simpleReverseComparer = function (a, b) { return -CyclicToDo.simpleComparer(a, b); };
+    CyclicToDo.TimeAccuracy = 100000;
+    CyclicToDo.getTotalMinutes = function (tick) { return (tick * CyclicToDo.TimeAccuracy) / (60 * 1000); };
+    CyclicToDo.getTicks = function (date) {
+        if (date === void 0) { date = new Date(); }
+        return Math.floor(date.getTime() / CyclicToDo.TimeAccuracy);
+    };
+    CyclicToDo.DateFromTick = function (tick) { return new Date(tick * CyclicToDo.TimeAccuracy); };
+    CyclicToDo.makeElapsedTime = function (tick) {
+        var totalMinutes = Math.floor(CyclicToDo.getTotalMinutes(CyclicToDo.getTicks() - tick));
+        var days = Math.floor(totalMinutes / (24 * 60));
+        var time = totalMinutes % (24 * 60);
+        var hour = Math.floor(time / 60);
+        var minute = time % 60;
+        var timePart = ("00" + hour).slice(-2) + ":" + ("00" + minute).slice(-2);
+        return 0 < days ? days.toLocaleString() + " days " + timePart : timePart;
+    };
+    CyclicToDo.sessionPassPrefix = "@Session";
+    CyclicToDo.generatePass = function (seed) {
+        if (seed === void 0) { seed = new Date().getTime(); }
+        return ("" + ((seed * 13738217) ^ ((seed % 387960371999) >> 5))).slice(-8);
+    };
+    CyclicToDo.isSessionPass = function (pass) { return pass.startsWith(CyclicToDo.sessionPassPrefix); };
+    CyclicToDo.getStorage = function (pass) { return CyclicToDo.isSessionPass(pass) ? minamo_js_1.minamo.sessionStorage : minamo_js_1.minamo.localStorage; };
+    CyclicToDo.makeHistoryKey = function (pass, task) { return "pass:(" + pass + ").task:" + task + ".history"; };
+    CyclicToDo.getHistory = function (pass, task) { var _a; return (_a = CyclicToDo.getStorage(pass).getOrNull(CyclicToDo.makeHistoryKey(pass, task))) !== null && _a !== void 0 ? _a : []; };
+    CyclicToDo.setHistory = function (pass, task, list) {
+        return CyclicToDo.getStorage(pass).set(CyclicToDo.makeHistoryKey(pass, task), list);
+    };
+    CyclicToDo.addHistory = function (pass, task, tick) {
+        var list = CyclicToDo.getHistory(pass, task).concat(tick).filter(function (i, index, array) { return index === array.indexOf(i); });
+        list.sort(CyclicToDo.simpleReverseComparer);
+        CyclicToDo.setHistory(pass, task, list);
+    };
+    CyclicToDo.mergeHistory = function (pass, todo, ticks) {
+        var temp = {};
+        todo.forEach(function (task) { return temp[task] = []; });
+        ticks.forEach(function (tick, index) {
+            if (null !== tick) {
+                temp[todo[index % todo.length]].push(tick);
             }
         });
-    }); };
+        todo.forEach(function (task) { return CyclicToDo.addHistory(pass, task, temp[task]); });
+    };
+    CyclicToDo.getLastTick = function (pass, task) { var _a; return (_a = CyclicToDo.getHistory(pass, task)[0]) !== null && _a !== void 0 ? _a : 0; };
+    CyclicToDo.getToDoHistory = function (pass, todo) { return todo
+        .map(function (task) { return CyclicToDo.getHistory(pass, task).map(function (tick) { return ({ task: task, tick: tick }); }); })
+        .reduce(function (a, b) { return a.concat(b); }, [])
+        .sort(CyclicToDo.makeTaskEntryComparer(todo)); };
+    CyclicToDo.getToDoEntries = function (pass, todo) { return todo
+        .map(function (task) { return ({ task: task, tick: CyclicToDo.getLastTick(pass, task) }); })
+        .sort(CyclicToDo.makeTaskEntryComparer(todo)); };
+    CyclicToDo.done = function (pass, task) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+        return [2 /*return*/, CyclicToDo.addHistory(pass, task, CyclicToDo.getTicks())];
+    }); }); };
     var dom;
     (function (dom) {
         var _this = this;
-        var renderIcon = function (icon) {
-            return ({
-                tag: "img",
-                src: icon.image_original ||
-                    icon["image_" + Object.keys(icon)
-                        .filter(function (i) { return /image_\d+/.test(i); })
-                        .map(function (i) { return parseInt(i.replace(/^image_/, "")); })
-                        .reduce(function (a, b) { return a < b ? b : a; }, 0)],
-            });
-        };
-        var renderHeading = function (tag, text) {
+        dom.renderHeading = function (tag, text) {
             return ({
                 tag: tag,
                 children: text,
             });
         };
-        var renderUser = function (user) {
+        dom.renderLastInformation = function (entry) {
             return ({
                 tag: "div",
-                className: "user",
-                children: [
-                    renderIcon(user.profile),
-                    {
-                        tag: "span",
-                        className: "real_name",
-                        children: user.real_name
-                    },
-                    {
-                        tag: "span",
-                        className: "name",
-                        children: user.name
-                    },
-                ],
+                className: "task-last-information",
+                children: entry.tick <= 0 ? [] :
+                    [
+                        {
+                            tag: "div",
+                            className: "task-last-timestamp",
+                            children: "previous (\u524D\u56DE): " + CyclicToDo.DateFromTick(entry.tick).toLocaleString()
+                        },
+                        {
+                            tag: "div",
+                            className: "task-last-elapsed-time",
+                            children: "elapsed time (\u7D4C\u904E\u6642\u9593): " + CyclicToDo.makeElapsedTime(entry.tick),
+                        },
+                    ],
             });
         };
-        var renderTeam = function (team) {
+        dom.renderDoneButton = function (title, pass, list, entry, isDefault) {
             return ({
-                tag: "div",
-                className: "team",
+                tag: "button",
+                className: isDefault ? "default-button" : undefined,
                 children: [
-                    renderIcon(team.icon),
                     {
-                        tag: "span",
-                        className: "name",
-                        children: team.name,
+                        tag: "div",
+                        className: "button-title",
+                        children: entry.task,
                     },
-                    {
-                        tag: "span",
-                        className: "domain",
-                        children: team.domain,
-                    },
-                ],
-            });
-        };
-        var renderIdentity = function (identity) {
-            return ({
-                tag: "div",
-                className: "identity",
-                children: [
-                    renderTeam(identity.team),
-                    renderUser(identity.user),
-                ]
-            });
-        };
-        var renderItemCore = function (item) {
-            switch (item.api) {
-                case "chatPostMessage":
-                    return JSON.stringify(item);
-                case "usersProfileSet":
-                    return JSON.stringify(item);
-            }
-            return JSON.stringify(item);
-        };
-        var renderItem = function (item) {
-            return ({
-                tag: "div",
-                className: "item",
-                children: [
-                    renderIdentity(getIdentity(item.user)),
-                    renderItemCore(item),
+                    dom.renderLastInformation(entry),
                 ],
                 onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, execute(item)];
-                            case 1:
-                                _a.sent();
-                                dom.updateIdentityList();
-                                return [2 /*return*/];
+                        if (CyclicToDo.isSessionPass(pass)) {
+                            window.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                                + "\n"
+                                + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。");
                         }
+                        else {
+                            CyclicToDo.done(pass, entry.task);
+                            dom.updateTodoScreen(title, pass, CyclicToDo.getToDoEntries(pass, list.map(function (i) { return i.task; })));
+                        }
+                        return [2 /*return*/];
                     });
-                }); },
+                }); }
             });
         };
-        var renderPostMessageForm = function (identity) {
-            var channel = minamo_js_1.minamo.dom.make(HTMLInputElement)({
-                tag: "input",
-                className: "post-message-channel",
+        dom.renderTodoScreen = function (title, pass, list) {
+            return ({
+                tag: "div",
+                className: "todo-screen screen",
+                children: [
+                    dom.renderHeading("h2", title),
+                ].concat(list.map(function (entry, index) { return dom.renderDoneButton(title, pass, list, entry, 0 === index); })),
             });
-            var text = minamo_js_1.minamo.dom.make(HTMLInputElement)({
+        };
+        dom.updateTodoScreen = function (title, pass, list) { return minamo_js_1.minamo.dom.replaceChildren(
+        //document.getElementById("screen"),
+        document.body, dom.renderTodoScreen(title, pass, list)); };
+        dom.renderEditScreen = function (title, pass, todo) {
+            var titleDiv = minamo_js_1.minamo.dom.make(HTMLInputElement)({
                 tag: "input",
-                className: "post-message-text",
+                className: "edit-title-input",
+                value: title,
             });
-            return minamo_js_1.minamo.dom.make(HTMLDivElement)({
+            var passDiv = minamo_js_1.minamo.dom.make(HTMLInputElement)({
+                tag: "input",
+                className: "edit-pass-input",
+                children: CyclicToDo.isSessionPass(pass) ? CyclicToDo.generatePass() : pass,
+            });
+            var todoDom = minamo_js_1.minamo.dom.make(HTMLTextAreaElement)({
+                tag: "textarea",
+                className: "edit-todo-input",
+                children: todo.join("\n"),
+            });
+            var result = {
                 tag: "div",
                 className: "application-form",
                 children: [
@@ -236,7 +227,17 @@ var CyclicToDo;
                                 tag: "span",
                                 children: "channel",
                             },
-                            channel,
+                            titleDiv,
+                        ],
+                    },
+                    {
+                        tag: "label",
+                        children: [
+                            {
+                                tag: "span",
+                                children: "channel",
+                            },
+                            passDiv,
                         ],
                     },
                     {
@@ -246,300 +247,143 @@ var CyclicToDo;
                                 tag: "span",
                                 children: "text",
                             },
-                            text,
+                            todoDom,
                         ],
                     },
                     {
                         tag: "button",
-                        children: "Post",
-                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4 /*yield*/, execute({
-                                            user: identity.user.id,
-                                            api: "chatPostMessage",
-                                            data: { channel: channel.value, text: text.value },
-                                        })];
-                                    case 1:
-                                        _a.sent();
-                                        dom.updateIdentityList();
-                                        return [2 /*return*/];
-                                }
-                            });
-                        }); }
-                    },
-                ]
-            });
-        };
-        var renderSetStatusForm = function (identity) {
-            var status_emoji = minamo_js_1.minamo.dom.make(HTMLInputElement)({
-                tag: "input",
-                className: "application-name",
-            });
-            var status_text = minamo_js_1.minamo.dom.make(HTMLInputElement)({
-                tag: "input",
-                className: "application-client-id",
-            });
-            var status_expiration = minamo_js_1.minamo.dom.make(HTMLInputElement)({
-                tag: "input",
-                className: "application-client-secret",
-            });
-            return minamo_js_1.minamo.dom.make(HTMLDivElement)({
-                tag: "div",
-                className: "application-form",
-                children: [
-                    {
-                        tag: "label",
-                        children: [
-                            {
-                                tag: "span",
-                                children: "emoji",
-                            },
-                            status_emoji,
-                        ],
-                    },
-                    {
-                        tag: "label",
-                        children: [
-                            {
-                                tag: "span",
-                                children: "text",
-                            },
-                            status_text,
-                        ],
-                    },
-                    {
-                        tag: "label",
-                        children: [
-                            {
-                                tag: "span",
-                                children: "expiration",
-                            },
-                            status_expiration,
-                        ],
-                    },
-                    {
-                        tag: "button",
-                        children: "Apply",
-                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4 /*yield*/, execute({
-                                            user: identity.user.id,
-                                            api: "usersProfileSet",
-                                            data: {
-                                                status_emoji: status_emoji.value,
-                                                status_text: status_text.value,
-                                                status_expiration: parseInt(status_expiration.value),
-                                            },
-                                        })];
-                                    case 1:
-                                        _a.sent();
-                                        dom.updateIdentityList();
-                                        return [2 /*return*/];
-                                }
-                            });
-                        }); }
-                    },
-                ]
-            });
-        };
-        var identityList = minamo_js_1.minamo.dom.make(HTMLDivElement)({});
-        dom.updateIdentityList = function () { return minamo_js_1.minamo.dom.replaceChildren(identityList, getIdentityList().map(function (i) {
-            return [
-                renderHeading("h2", [
-                    renderIdentity(i),
-                    {
-                        tag: "button",
-                        className: "sub",
-                        children: "\u2026",
+                        children: "default-button",
                         onclick: function () {
-                            if (window.confirm("🗑 Remove this user?")) {
-                                removeIdentity(i);
-                                dom.updateIdentityList();
-                            }
-                        },
-                    }
-                ]),
-                renderHeading("h3", "Post Message"),
-                renderPostMessageForm(i),
-                renderHeading("h3", "Set Status"),
-                renderSetStatusForm(i),
-                renderHeading("h3", "History"),
-                getHistory(i.user.id).map(renderItem),
-            ];
-        })); };
-        var applicationList = minamo_js_1.minamo.dom.make(HTMLDivElement)({});
-        dom.updateApplicationList = function () { return minamo_js_1.minamo.dom.replaceChildren(applicationList, getApplicationList().map(function (i) {
-            return [
-                {
-                    tag: "div",
-                    children: [
-                        {
-                            tag: "button",
-                            children: "OAuth by " + i.name + " API Key",
-                            onclick: function () {
-                                setCurrentApplication(i);
-                                Slack.authorize(i, CyclicToDo.user_scope, CyclicToDo.redirect_uri);
-                            },
-                        },
-                        {
-                            tag: "button",
-                            className: "sub",
-                            children: "\u2026",
-                            onclick: function () {
-                                if (window.confirm("🗑 Remove this application?")) {
-                                    removeApplication(i);
-                                    dom.updateApplicationList();
-                                }
-                            },
-                        },
-                    ]
-                }
-            ];
-        })); };
-        var applicationName = minamo_js_1.minamo.dom.make(HTMLInputElement)({
-            tag: "input",
-            className: "application-name",
-        });
-        var applicationClientId = minamo_js_1.minamo.dom.make(HTMLInputElement)({
-            tag: "input",
-            className: "application-client-id",
-        });
-        var applicationClientSecret = minamo_js_1.minamo.dom.make(HTMLInputElement)({
-            tag: "input",
-            className: "application-client-secret",
-        });
-        var applicationForm = minamo_js_1.minamo.dom.make(HTMLDivElement)({
-            tag: "div",
-            className: "application-form",
-            children: [
-                {
-                    tag: "label",
-                    children: [
-                        {
-                            tag: "span",
-                            children: "name",
-                        },
-                        applicationName,
-                    ],
-                },
-                {
-                    tag: "label",
-                    children: [
-                        {
-                            tag: "span",
-                            children: "client_id",
-                        },
-                        applicationClientId,
-                    ],
-                },
-                {
-                    tag: "label",
-                    children: [
-                        {
-                            tag: "span",
-                            children: "client_secret",
-                        },
-                        applicationClientSecret,
-                    ],
-                },
-                {
-                    tag: "button",
-                    children: "Add",
-                    onclick: function () {
-                        addApplication({
-                            name: applicationName.value,
-                            client_id: applicationClientId.value,
-                            client_secret: applicationClientSecret.value,
-                        });
-                        dom.updateApplicationList();
-                        applicationName.value = "";
-                        applicationClientId.value = "";
-                        applicationClientSecret.value = "";
-                    }
-                },
-            ]
-        });
+                            dom.updateTodoScreen(titleDiv.value, passDiv.value, CyclicToDo.getToDoEntries(passDiv.value, todoDom.value.split("\n").map(function (i) { return i.trim(); })));
+                        }
+                    },
+                ]
+            };
+            return result;
+        };
+        dom.updateEditScreen = function (title, pass, todo) { return minamo_js_1.minamo.dom.replaceChildren(
+        //document.getElementById("screen"),
+        document.body, dom.renderEditScreen(title, pass, todo)); };
+        dom.renderWelcomeScreen = function (_pass) {
+            return ({
+                tag: "div",
+                className: "welcome-screen screen",
+                children: [
+                    dom.renderHeading("h2", "title"),
+                ],
+            });
+        };
+        dom.updateWelcomeScreen = function (pass) { return minamo_js_1.minamo.dom.replaceChildren(
+        //document.getElementById("screen"),
+        document.body, dom.renderWelcomeScreen(pass)); };
         var screen = [
-            renderHeading("h1", document.title),
+            dom.renderHeading("h1", document.title),
             {
                 tag: "a",
                 className: "github",
                 children: "GitHub",
-                href: "https://github.com/wraith13/slac-fixed-phrase"
+                href: "https://github.com/wraith13/cyclic-todo"
             },
-            dom.updateIdentityList(),
-            renderHeading("h2", "Register User"),
-            dom.updateApplicationList(),
-            renderHeading("h2", "Register API Key"),
-            renderHeading("h3", "Requirement"),
-            {
-                tag: "dl",
-                children: [
-                    {
-                        tag: "dt",
-                        children: "Redirect URLs",
-                    },
-                    {
-                        tag: "dd",
-                        children: CyclicToDo.redirect_uri,
-                    },
-                    {
-                        tag: "dt",
-                        children: "User Token Scopes",
-                    },
-                    {
-                        tag: "dd",
-                        children: {
-                            tag: "ul",
-                            children: CyclicToDo.user_scope.map(function (i) {
-                                return ({
-                                    tag: "li",
-                                    children: i
-                                });
-                            })
-                        }
-                    },
-                ],
-            },
-            applicationForm,
         ];
-        dom.showScreen = function () { return __awaiter(_this, void 0, void 0, function () {
+        dom.showWindow = function () { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, minamo_js_1.minamo.dom.appendChildren(document.body, screen)];
             });
         }); };
     })(dom = CyclicToDo.dom || (CyclicToDo.dom = {}));
+    CyclicToDo.getUrlParams = function (url) {
+        if (url === void 0) { url = location.href; }
+        var result = {};
+        url
+            .replace(/.*\?/, "")
+            .replace(/#.*/, "")
+            .split("&")
+            .map(function (kvp) { return kvp.split("="); })
+            .filter(function (kvp) { return 2 <= kvp.length; })
+            .forEach(function (kvp) { return result[kvp[0]] = decodeURIComponent(kvp[1]); });
+        return result;
+    };
+    CyclicToDo.getUrlHash = function (url) {
+        if (url === void 0) { url = location.href; }
+        return url.replace(/[^#]*#?/, "");
+    };
+    CyclicToDo.makeUrl = function (args, hash, href) {
+        if (hash === void 0) { hash = CyclicToDo.getUrlHash(); }
+        if (href === void 0) { href = location.href; }
+        return href
+            .replace(/\?.*/, "")
+            .replace(/#.*/, "")
+            + "?"
+            + Object.keys(args).map(function (i) { return i + "=" + encodeURIComponent(args[i]); }).join("&")
+            + ("#" + hash);
+    };
+    CyclicToDo.makeSharingUrl = function (url) {
+        if (url === void 0) { url = location.href; }
+        var urlParams = CyclicToDo.getUrlParams(url);
+        if (undefined !== urlParams["pass"]) {
+            delete urlParams["pass"];
+        }
+        return CyclicToDo.makeUrl(urlParams, CyclicToDo.getUrlHash(url), url);
+    };
     CyclicToDo.start = function () { return __awaiter(_this, void 0, void 0, function () {
-        var code, application, result, token, _a, _b;
-        var _c;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
+        var urlParams, hash, title, pass, todo, history;
+        var _a, _b, _c, _d, _e, _f;
+        return __generator(this, function (_g) {
+            switch (_g.label) {
                 case 0:
-                    code = (_c = location.href.replace(/.*\?/, "").split("&").find(function (i) { return /^code=/.test(i); })) === null || _c === void 0 ? void 0 : _c.replace(/^code=/, "");
-                    application = getCurrentApplication();
-                    if (!(application && code)) return [3 /*break*/, 4];
-                    return [4 /*yield*/, Slack.oauthV2Access(application, code, CyclicToDo.redirect_uri)];
+                    console.log("start!!!");
+                    urlParams = CyclicToDo.getUrlParams();
+                    hash = CyclicToDo.getUrlHash();
+                    title = (_a = urlParams["title"]) !== null && _a !== void 0 ? _a : "untitled";
+                    pass = (_b = urlParams["pass"]) !== null && _b !== void 0 ? _b : CyclicToDo.sessionPassPrefix + ":" + new Date().getTime();
+                    todo = JSON.parse((_c = urlParams["todo"]) !== null && _c !== void 0 ? _c : "null");
+                    history = JSON.parse((_d = urlParams["history"]) !== null && _d !== void 0 ? _d : "null");
+                    return [4 /*yield*/, dom.showWindow()];
                 case 1:
-                    result = _d.sent();
-                    token = result.authed_user.access_token;
-                    _a = addIdentity;
-                    _b = {};
-                    return [4 /*yield*/, Slack.usersInfo(token, result.authed_user.id)];
-                case 2:
-                    _b.user = (_d.sent()).user;
-                    return [4 /*yield*/, Slack.teamInfo(token)];
-                case 3:
-                    _a.apply(void 0, [(_b.team = (_d.sent()).team,
-                            _b.token = token,
-                            _b)]);
-                    dom.updateIdentityList();
-                    history.replaceState(null, document.title, CyclicToDo.redirect_uri);
-                    _d.label = 4;
-                case 4: return [4 /*yield*/, dom.showScreen()];
-                case 5:
-                    _d.sent();
+                    _g.sent();
+                    document.title = "\u267B\uFE0F " + title + " - Cyclic ToDo";
+                    if (((_e = todo === null || todo === void 0 ? void 0 : todo.length) !== null && _e !== void 0 ? _e : 0) <= 0) {
+                        switch (hash) {
+                            // case "import":
+                            //     dom.updateImportScreen(pass);
+                            //     break;
+                            case "edit":
+                                console.log("show edit screen");
+                                dom.updateEditScreen(title, pass, []);
+                                break;
+                            default:
+                                console.log("show welcome screen");
+                                dom.updateWelcomeScreen(pass);
+                                break;
+                        }
+                    }
+                    else {
+                        if (0 < ((_f = history === null || history === void 0 ? void 0 : history.length) !== null && _f !== void 0 ? _f : 0)) {
+                            CyclicToDo.mergeHistory(pass, todo, history);
+                        }
+                        switch (hash) {
+                            case "edit":
+                                console.log("show edit screen");
+                                dom.updateEditScreen(title, pass, todo);
+                                break;
+                            // case "history":
+                            //     dom.updateHistoryScreen(pass, getToDoHistory(pass, todo));
+                            //     break;
+                            // case "statistics":
+                            //     dom.updateStatisticsScreen(title, pass, todo);
+                            //     break;
+                            // case "import":
+                            //     dom.updateImportScreen(pass);
+                            //     break;
+                            // case "export":
+                            //     dom.updateExportScreen(title, pass, getToDoHistory(pass, todo));
+                            //     break;
+                            default:
+                                console.log("show todo screen");
+                                dom.updateTodoScreen(title, pass, CyclicToDo.getToDoEntries(pass, todo));
+                                break;
+                        }
+                    }
                     return [2 /*return*/];
             }
         });

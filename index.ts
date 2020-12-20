@@ -10,11 +10,11 @@ export module CyclicToDo
     {
         if (a.tick < b.tick)
         {
-            return 1;
+            return -1;
         }
         if (b.tick < a.tick)
         {
-            return -1;
+            return 1;
         }
         const aTaskIndex = todo.indexOf(a.task);
         const bTaskIndex = todo.indexOf(a.task);
@@ -22,22 +22,22 @@ export module CyclicToDo
         {
             if (a.task < b.task)
             {
-                return -1;
+                return 1;
             }
             if (b.task < a.task)
             {
-                return 1;
+                return -1;
             }
         }
         else
         {
             if (aTaskIndex < bTaskIndex)
             {
-                return -1;
+                return 1;
             }
             if (bTaskIndex < aTaskIndex)
             {
-                return 1;
+                return -1;
             }
         }
         return 0;
@@ -61,15 +61,16 @@ export module CyclicToDo
     export const DateFromTick = (tick: number) => new Date(tick *TimeAccuracy);
     export const makeElapsedTime = (tick: number) =>
     {
-        const totalMinutes = getTotalMinutes(tick);
+        const totalMinutes = Math.floor(getTotalMinutes(getTicks() -tick));
         const days = Math.floor(totalMinutes / (24 *60));
-        const time = tick % (24 *60);
+        const time = totalMinutes % (24 *60);
         const hour = Math.floor(time /60);
         const minute = time % 60;
         const timePart = `${("00" +hour).slice(-2)}:${("00" +minute).slice(-2)}`;
         return 0 < days ? `${days.toLocaleString()} days ${timePart}`: timePart;
     };
     export const sessionPassPrefix = "@Session";
+    export const generatePass = (seed: number = new Date().getTime()) => ("" +((seed *13738217) ^ ((seed %387960371999) >> 5 ))).slice(-8);
     export const isSessionPass = (pass: string) => pass.startsWith(sessionPassPrefix);
     export const getStorage = (pass: string) => isSessionPass(pass) ? minamo.sessionStorage: minamo.localStorage;
     export const makeHistoryKey = (pass: string, task: string) => `pass:(${pass}).task:${task}.history`;
@@ -122,18 +123,18 @@ export module CyclicToDo
             children: entry.tick <= 0 ? [ ]:
             [
                 {
-                    tag: "span",
+                    tag: "div",
                     className: "task-last-timestamp",
-                    children: DateFromTick(entry.tick).toLocaleString()
+                    children: `previous (前回): ${DateFromTick(entry.tick).toLocaleString()}`
                 },
                 {
-                    tag: "span",
+                    tag: "div",
                     className: "task-last-elapsed-time",
-                    children: makeElapsedTime(entry.tick),
+                    children: `elapsed time (経過時間): ${makeElapsedTime(entry.tick)}`,
                 },
             ],
         });
-        export const renderDoneButton = (pass: string, list: TaskEntry[], entry: TaskEntry, isDefault: boolean) =>
+        export const renderDoneButton = (title: string, pass: string, list: TaskEntry[], entry: TaskEntry, isDefault: boolean) =>
         ({
             tag: "button",
             className: isDefault ? "default-button": undefined,
@@ -141,7 +142,7 @@ export module CyclicToDo
             [
                 {
                     tag: "div",
-                    className: "task-title",
+                    className: "button-title",
                     children: entry.task,
                 },
                 renderLastInformation(entry),
@@ -160,36 +161,47 @@ export module CyclicToDo
                 else
                 {
                     done(pass, entry.task);
-                    updateTodoScreen(pass, getToDoEntries(pass, list.map(i => i.task)));
+                    updateTodoScreen(title, pass, getToDoEntries(pass, list.map(i => i.task)));
                 }
             }
         });
-        export const renderTodoScreen = (pass, list: TaskEntry[]) => list.map((entry, index) => renderDoneButton(pass, list, entry, 0 === index));
-        export const updateTodoScreen = (pass, list: TaskEntry[]) => minamo.dom.replaceChildren
+        export const renderTodoScreen = (title: string, pass: string, list: TaskEntry[]) =>
+        ({
+            tag: "div",
+            className: "todo-screen screen",
+            children:
+            [
+                renderHeading("h2", title),
+            ].concat(list.map((entry, index) => renderDoneButton(title, pass, list, entry, 0 === index)) as any),
+        });
+        export const updateTodoScreen = (title: string, pass: string, list: TaskEntry[]) => minamo.dom.replaceChildren
         (
-            document.getElementById("screen"),
-            renderTodoScreen(pass, list)
+            //document.getElementById("screen"),
+            document.body,
+            renderTodoScreen(title, pass, list)
         );
-        export const renderEditScreen = (pass: string, todo: string[]) => todo.map((entry, index) => renderDoneButton(pass, list, entry, 0 === index));
-        export const updateEditScreen = (pass, todo: string[]) => minamo.dom.replaceChildren
-        (
-            document.getElementById("screen"),
-            renderEditScreen(pass, todo)
-        );
-        export const renderPostMessageForm = (identity: Identity) =>
+        export const renderEditScreen = (title: string, pass: string, todo: string[]) =>
         {
-            const channel = minamo.dom.make(HTMLInputElement)
+            const titleDiv = minamo.dom.make(HTMLInputElement)
             ({
                 tag: "input",
-                className: "post-message-channel",
+                className: "edit-title-input",
+                value: title,
             });
-            const text = minamo.dom.make(HTMLInputElement)
+            const passDiv = minamo.dom.make(HTMLInputElement)
             ({
                 tag: "input",
-                className: "post-message-text",
+                className: "edit-pass-input",
+                children: isSessionPass(pass) ? generatePass(): pass,
             });
-            return minamo.dom.make(HTMLDivElement)
+            const todoDom = minamo.dom.make(HTMLTextAreaElement)
             ({
+                tag: "textarea",
+                className: "edit-todo-input",
+                children: todo.join("\n"),
+            });
+            const result =
+            {
                 tag: "div",
                 className: "application-form",
                 children:
@@ -202,7 +214,18 @@ export module CyclicToDo
                                 tag: "span",
                                 children: "channel",
                             },
-                            channel,
+                            titleDiv,
+                        ],
+                    },
+                    {
+                        tag: "label",
+                        children:
+                        [
+                            {
+                                tag: "span",
+                                children: "channel",
+                            },
+                            passDiv,
                         ],
                     },
                     {
@@ -213,30 +236,54 @@ export module CyclicToDo
                                 tag: "span",
                                 children: "text",
                             },
-                            text,
+                            todoDom,
                         ],
                     },
                     {
                         tag: "button",
-                        children: "Post",
-                        onclick: async () =>
+                        children: "default-button",
+                        onclick: () =>
                         {
-                            await execute
-                            ({
-                                user: identity.user.id,
-                                api: "chatPostMessage",
-                                data: { channel: channel.value, text: text.value},
-                            });
-                            updateIdentityList();
+                            updateTodoScreen
+                            (
+                                titleDiv.value,
+                                passDiv.value,
+                                getToDoEntries
+                                (
+                                    passDiv.value,
+                                    todoDom.value.split("\n").map(i => i.trim())
+                                )
+                            );
                         }
                     },
                 ]
-            });
+            };
+            return result;
         };
-
+        export const updateEditScreen = (title: string, pass: string, todo: string[]) => minamo.dom.replaceChildren
+        (
+            //document.getElementById("screen"),
+            document.body,
+            renderEditScreen(title, pass, todo)
+        );
+        export const renderWelcomeScreen = (_pass: string) =>
+        ({
+            tag: "div",
+            className: "welcome-screen screen",
+            children:
+            [
+                renderHeading("h2", "title"),
+            ],
+        });
+        export const updateWelcomeScreen = (pass: string) => minamo.dom.replaceChildren
+        (
+            //document.getElementById("screen"),
+            document.body,
+            renderWelcomeScreen(pass)
+        );
         const screen =
         [
-            renderHeading ( "h1", document.title ),
+            renderHeading("h1", document.title),
             {
                 tag: "a",
                 className: "github",
@@ -291,52 +338,59 @@ export module CyclicToDo
     };
     export const start = async () =>
     {
+        console.log("start!!!");
         const urlParams = getUrlParams();
         const hash = getUrlHash();
+        const title = urlParams["title"] ?? "untitled";
         const pass = urlParams["pass"] ?? `${sessionPassPrefix}:${new Date().getTime()}`;
         const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
         const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
         await dom.showWindow();
+        document.title = `♻️ ${title} - Cyclic ToDo`;
         if ((todo?.length ?? 0) <= 0)
         {
             switch(hash)
             {
             // case "import":
-            //     dom.updateImportScreen();
+            //     dom.updateImportScreen(pass);
             //     break;
             case "edit":
-                dom.updateEditScreen([]);
+                console.log("show edit screen");
+                dom.updateEditScreen(title, pass, []);
                 break;
             default:
-                dom.updateWelcomeScreen();
+                console.log("show welcome screen");
+                dom.updateWelcomeScreen(pass);
                 break;
             }
         }
         else
         {
-            if ((history?.length ?? 0) <= 0)
+            if (0 < (history?.length ?? 0))
             {
                 mergeHistory(pass, todo, history);
             }
             switch(hash)
             {
             case "edit":
-                dom.updateEditScreen(pass, todo);
+                console.log("show edit screen");
+                dom.updateEditScreen(title, pass, todo);
                 break;
             // case "history":
             //     dom.updateHistoryScreen(pass, getToDoHistory(pass, todo));
             //     break;
             // case "statistics":
-            //     dom.updateStatisticsScreen();
+            //     dom.updateStatisticsScreen(title, pass, todo);
             //     break;
             // case "import":
-            //     dom.updateImportScreen();
+            //     dom.updateImportScreen(pass);
             //     break;
             // case "export":
-            //     dom.updateExportScreen(pass, getToDoHistory(pass, todo));
+            //     dom.updateExportScreen(title, pass, getToDoHistory(pass, todo));
             //     break;
             default:
-                dom.updateTodoScreen(pass, getToDoEntries(pass, todo));
+                console.log("show todo screen");
+                dom.updateTodoScreen(title, pass, getToDoEntries(pass, todo));
                 break;
             }
         }

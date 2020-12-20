@@ -1,6 +1,6 @@
 *
 {
-    font-family: "MS Gothic";
+    font-family: ui-rounded, "ヒラギノ丸ゴ Pro w4", Roboto, Meiryo;
     color: #000022;
 }
 body
@@ -86,23 +86,50 @@ input
 button
 {
     margin: 4px;
-    color: #FFFFFF;
-    background-color: #228844;
+    color: #228844;
+    background-color: #FFFFFF;
+    border-color: #228844;
     padding: 4px 16px;
     border-radius: 32px;
     border-style: solid;
     border-width: 1px;
-    border-color: transparent;
     font-weight: bold;
     font-size: 1.0rem;
     cursor: pointer;
 
-    &.sub
+    .button-title
     {
+        font-size: 1.6em;
         color: #228844;
-        background-color: #FFFFFF;
-        border-color: #228844;
-        padding: 4px 8px;
+    }
+    .task-last-information
+    {
+        text-align: left;
+        *
+        {
+            color: #888;
+            font-size: 0.9em;
+            font-weight: normal;
+        }
+    }
+}
+button.default-button
+{
+    color: #FFFFFF;
+    background-color: #228844;
+    border-color: #228844;
+
+    .button-title
+    {
+        color: #FFFFFF;
+    }
+
+    .task-last-information
+    {
+        *
+        {
+            color: #CCC;
+        }
     }
 }
 .application-form
