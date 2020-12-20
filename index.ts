@@ -56,33 +56,84 @@ export module CyclicToDo
     };
     export const simpleReverseComparer = <T>(a: T, b: T) => -simpleComparer(a, b);
     export const TimeAccuracy = 100000;
+    export const getTotalMinutes = (tick: number) => (tick *TimeAccuracy) / (60 *1000);
     export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / TimeAccuracy);
     export const DateFromTick = (tick: number) => new Date(tick *TimeAccuracy);
-    export const getHistory = (task: string): number[] => minamo.localStorage.getOrNull<number[]>(`task:${task}.history`) ?? [];
-    export const setHistory = (task: string, list: number[]) => minamo.localStorage.set(`task:${task}.history`, list);
-    export const addHistory = (task: string, tick: number | number[]) =>
+    export const makeElapsedTime = (tick: number) =>
     {
-        const list = getHistory(task).concat(tick).filter((i, index, array) => index === array.indexOf(i));
-        list.sort(simpleReverseComparer);
-        setHistory(task, list);
+        const totalMinutes = getTotalMinutes(tick);
+        const days = Math.floor(totalMinutes / (24 *60));
+        const time = tick % (24 *60);
+        const hour = Math.floor(time /60);
+        const minute = time % 60;
+        const timePart = `${("00" +hour).slice(-2)}:${("00" +minute).slice(-2)}`;
+        return 0 < days ? `${days.toLocaleString()} days ${timePart}`: timePart;
     };
-    export const getLastTick = (task: string) => getHistory(task)[0];
-    export const getToDoHistory = (todo: string[]): TaskEntry[] => todo
-        .map(task => getHistory(task).map(tick => ({ task, tick})))
+    export const sessionPassPrefix = "@Session";
+    export const isSessionPass = (pass: string) => pass.startsWith(sessionPassPrefix);
+    export const getStorage = (pass: string) => isSessionPass(pass) ? minamo.sessionStorage: minamo.localStorage;
+    export const makeHistoryKey = (pass: string, task: string) => `pass:(${pass}).task:${task}.history`;
+    export const getHistory = (pass: string, task: string): number[] =>
+        getStorage(pass).getOrNull<number[]>(makeHistoryKey(pass, task)) ?? [];
+    export const setHistory = (pass: string, task: string, list: number[]) =>
+        getStorage(pass).set(makeHistoryKey(pass, task), list);
+    export const addHistory = (pass: string, task: string, tick: number | number[]) =>
+    {
+        const list = getHistory(pass, task).concat(tick).filter((i, index, array) => index === array.indexOf(i));
+        list.sort(simpleReverseComparer);
+        setHistory(pass, task, list);
+    };
+    export const mergeHistory = (pass: string, todo: string[], ticks: (number | null)[]) =>
+    {
+        const temp:{ [task:string]: number[]} = { };
+        todo.forEach(task => temp[task] = []);
+        ticks.forEach
+        (
+            (tick, index) =>
+            {
+                if (null !== tick)
+                {
+                    temp[todo[index % todo.length]].push(tick);
+                }
+            }
+        );
+        todo.forEach(task => addHistory(pass, task, temp[task]));
+    };
+    export const getLastTick = (pass: string, task: string) => getHistory(pass, task)[0] ?? 0;
+    export const getToDoHistory = (pass: string, todo: string[]): TaskEntry[] => todo
+        .map(task => getHistory(pass, task).map(tick => ({ task, tick})))
         .reduce((a, b) => a.concat(b), [])
         .sort(makeTaskEntryComparer(todo));
-    export const getToDoEntries = (todo: string[]) => todo
-        .map(task => ({ task, tick: getLastTick(task)}))
+    export const getToDoEntries = (pass: string, todo: string[]) => todo
+        .map(task => ({ task, tick: getLastTick(pass, task)}))
         .sort(makeTaskEntryComparer(todo));
-    export const done = async (task: string) => addHistory(task, getTicks());
+    export const done = async (pass: string, task: string) => addHistory(pass, task, getTicks());
     export module dom
     {
-        const renderHeading = ( tag: string, text: minamo.dom.Source ) =>
+        export const renderHeading = (tag: string, text: minamo.dom.Source) =>
         ({
             tag,
             children: text,
         });
-        const renderDoneButton = (task: string, isDefault: boolean) =>
+        export const renderLastInformation = (entry: TaskEntry) =>
+        ({
+            tag: "div",
+            className: "task-last-information",
+            children: entry.tick <= 0 ? [ ]:
+            [
+                {
+                    tag: "span",
+                    className: "task-last-timestamp",
+                    children: DateFromTick(entry.tick).toLocaleString()
+                },
+                {
+                    tag: "span",
+                    className: "task-last-elapsed-time",
+                    children: makeElapsedTime(entry.tick),
+                },
+            ],
+        });
+        export const renderDoneButton = (pass: string, list: TaskEntry[], entry: TaskEntry, isDefault: boolean) =>
         ({
             tag: "button",
             className: isDefault ? "default-button": undefined,
@@ -91,17 +142,24 @@ export module CyclicToDo
                 {
                     tag: "div",
                     className: "task-title",
-                    children: task,
+                    children: entry.task,
                 },
-                renderLastInformation(task),
+                renderLastInformation(entry),
             ],
             onclick: async () =>
             {
-                done(task);
-                updateTodoScreen();
+                done(pass, entry.task);
+                updateTodoScreen(pass, getToDoEntries(pass, list.map(i => i.task)));
             }
         });
-        const renderPostMessageForm = (identity: Identity) =>
+        export const renderTodoScreen = (pass, list: TaskEntry[]) => list.map((entry, index) => renderDoneButton(pass, list, entry, 0 === index));
+        export const updateTodoScreen = (pass, list: TaskEntry[]) => minamo.dom.replaceChildren
+        (
+            document.getElementById("screen"),
+            renderTodoScreen(pass, list)
+        );
+        export const renderEditScreen = (pass: string, list: TaskEntry[]) => list.map((entry, index) => renderDoneButton(pass, list, entry, 0 === index));
+        export const renderPostMessageForm = (identity: Identity) =>
         {
             const channel = minamo.dom.make(HTMLInputElement)
             ({
@@ -189,10 +247,11 @@ export module CyclicToDo
         }
         return null;
     };
+    export const getUrlHash = (url: string = location.href) => url.replace(/[^#]*#?/, "");
     export const makeUrl =
     (
         args: {[key: string]: string},
-        hash: string = location.href.replace(/[^#]*#?/, ""),
+        hash: string = getUrlHash(),
         href: string = location.href
     ) =>
         href
@@ -203,8 +262,50 @@ export module CyclicToDo
             +`#${hash}`;
     export const start = async ( ) =>
     {
-        const todo = getUrlParams("todo");
-        const history = getUrlParams("history");
+        const hash = getUrlHash();
+        const pass = getUrlParams("pass") ?? `${sessionPassPrefix}:${new Date().getTime()}`;
+        const todo = JSON.parse(getUrlParams("todo") ?? "null") as string[] | null;
+        const history = JSON.parse(getUrlParams("history") ?? "null") as (number | null)[] | null;
         await dom.showWindow();
+        if ((todo?.length ?? 0) <= 0)
+        {
+            switch(hash)
+            {
+            case "import":
+                dom.updateImportScreen();
+                break;
+            case "edit":
+                dom.updateEditScreen([]);
+                break;
+            }
+        }
+        else
+        {
+            if ((history?.length ?? 0) <= 0)
+            {
+                mergeHistory(pass, todo, history);
+            }
+            switch(hash)
+            {
+            case "edit":
+                dom.updateEditScreen(pass, todo);
+                break;
+            case "history":
+                dom.updateHistoryScreen(pass, getToDoHistory(pass, todo));
+                break;
+            case "statistics":
+                dom.updateStatisticsScreen();
+                break;
+            case "import":
+                dom.updateImportScreen();
+                break;
+            case "export":
+                dom.updateExportScreen(pass, getToDoHistory(pass, todo));
+                break;
+            default:
+                dom.updateTodoScreen(pass, getToDoEntries(pass, todo));
+                break;
+            }
+        }
     };
 }
