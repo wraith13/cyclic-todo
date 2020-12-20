@@ -148,8 +148,20 @@ export module CyclicToDo
             ],
             onclick: async () =>
             {
-                done(pass, entry.task);
-                updateTodoScreen(pass, getToDoEntries(pass, list.map(i => i.task)));
+                if (isSessionPass(pass))
+                {
+                    window.alert
+                    (
+                        "This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                        +"\n"
+                        +"これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。"
+                    );
+                }
+                else
+                {
+                    done(pass, entry.task);
+                    updateTodoScreen(pass, getToDoEntries(pass, list.map(i => i.task)));
+                }
             }
         });
         export const renderTodoScreen = (pass, list: TaskEntry[]) => list.map((entry, index) => renderDoneButton(pass, list, entry, 0 === index));
@@ -158,7 +170,12 @@ export module CyclicToDo
             document.getElementById("screen"),
             renderTodoScreen(pass, list)
         );
-        export const renderEditScreen = (pass: string, list: TaskEntry[]) => list.map((entry, index) => renderDoneButton(pass, list, entry, 0 === index));
+        export const renderEditScreen = (pass: string, todo: string[]) => todo.map((entry, index) => renderDoneButton(pass, list, entry, 0 === index));
+        export const updateEditScreen = (pass, todo: string[]) => minamo.dom.replaceChildren
+        (
+            document.getElementById("screen"),
+            renderEditScreen(pass, todo)
+        );
         export const renderPostMessageForm = (identity: Identity) =>
         {
             const channel = minamo.dom.make(HTMLInputElement)
@@ -224,7 +241,7 @@ export module CyclicToDo
                 tag: "a",
                 className: "github",
                 children: "GitHub",
-                href: "https://github.com/wraith13/slac-fixed-phrase"
+                href: "https://github.com/wraith13/cyclic-todo"
             },
         ];
         export const showWindow = async ( ) => minamo.dom.appendChildren
@@ -233,19 +250,17 @@ export module CyclicToDo
             screen
         );
     }
-    export const getUrlParams = (key: string) =>
+    export const getUrlParams = (url: string = location.href) =>
     {
-        const raw = location.href
+        const result: { [key: string]: string } = { };
+        url
             .replace(/.*\?/, "")
             .replace(/#.*/, "")
-            .split("&").
-            find(i => new RegExp(`^${key}=`).test(i))
-            ?.replace(new RegExp(`^${key}=`), "");
-        if (null !== raw && undefined !== raw)
-        {
-            return decodeURIComponent(raw);
-        }
-        return null;
+            .split("&")
+            .map(kvp => kvp.split("="))
+            .filter(kvp => 2 <= kvp.length)
+            .forEach(kvp => result[kvp[0]] = decodeURIComponent(kvp[1]));
+        return result;
     };
     export const getUrlHash = (url: string = location.href) => url.replace(/[^#]*#?/, "");
     export const makeUrl =
@@ -260,22 +275,40 @@ export module CyclicToDo
             +"?"
             +Object.keys(args).map(i => `${i}=${encodeURIComponent(args[i])}`).join("&")
             +`#${hash}`;
-    export const start = async ( ) =>
+    export const makeSharingUrl = (url: string = location.href) =>
     {
+        const urlParams = getUrlParams(url);
+        if (undefined !== urlParams["pass"])
+        {
+            delete urlParams["pass"];
+        }
+        return makeUrl
+        (
+            urlParams,
+            getUrlHash(url),
+            url
+        );
+    };
+    export const start = async () =>
+    {
+        const urlParams = getUrlParams();
         const hash = getUrlHash();
-        const pass = getUrlParams("pass") ?? `${sessionPassPrefix}:${new Date().getTime()}`;
-        const todo = JSON.parse(getUrlParams("todo") ?? "null") as string[] | null;
-        const history = JSON.parse(getUrlParams("history") ?? "null") as (number | null)[] | null;
+        const pass = urlParams["pass"] ?? `${sessionPassPrefix}:${new Date().getTime()}`;
+        const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
+        const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
         await dom.showWindow();
         if ((todo?.length ?? 0) <= 0)
         {
             switch(hash)
             {
-            case "import":
-                dom.updateImportScreen();
-                break;
+            // case "import":
+            //     dom.updateImportScreen();
+            //     break;
             case "edit":
                 dom.updateEditScreen([]);
+                break;
+            default:
+                dom.updateWelcomeScreen();
                 break;
             }
         }
@@ -290,18 +323,18 @@ export module CyclicToDo
             case "edit":
                 dom.updateEditScreen(pass, todo);
                 break;
-            case "history":
-                dom.updateHistoryScreen(pass, getToDoHistory(pass, todo));
-                break;
-            case "statistics":
-                dom.updateStatisticsScreen();
-                break;
-            case "import":
-                dom.updateImportScreen();
-                break;
-            case "export":
-                dom.updateExportScreen(pass, getToDoHistory(pass, todo));
-                break;
+            // case "history":
+            //     dom.updateHistoryScreen(pass, getToDoHistory(pass, todo));
+            //     break;
+            // case "statistics":
+            //     dom.updateStatisticsScreen();
+            //     break;
+            // case "import":
+            //     dom.updateImportScreen();
+            //     break;
+            // case "export":
+            //     dom.updateExportScreen(pass, getToDoHistory(pass, todo));
+            //     break;
             default:
                 dom.updateTodoScreen(pass, getToDoEntries(pass, todo));
                 break;
