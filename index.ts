@@ -346,7 +346,7 @@ export module CyclicToDo
         const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
         const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
         await dom.showWindow();
-        document.title = `♻️ ${title} - Cyclic ToDo`;
+        document.title = `${title} Cyclic ToDo`;
         if ((todo?.length ?? 0) <= 0)
         {
             switch(hash)

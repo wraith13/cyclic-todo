@@ -341,7 +341,7 @@ var CyclicToDo;
                     return [4 /*yield*/, dom.showWindow()];
                 case 1:
                     _g.sent();
-                    document.title = "\u267B\uFE0F " + title + " - Cyclic ToDo";
+                    document.title = title + " Cyclic ToDo";
                     if (((_e = todo === null || todo === void 0 ? void 0 : todo.length) !== null && _e !== void 0 ? _e : 0) <= 0) {
                         switch (hash) {
                             // case "import":
