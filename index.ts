@@ -115,21 +115,59 @@ export module CyclicToDo
             tag,
             children: text,
         });
-        export const renderLastInformation = (entry: TaskEntry) =>
+        export const renderProgressStyle = (list: TaskEntry[], entry: TaskEntry) =>
+        {
+            const now = getTicks();
+            const current = now -entry.tick;
+            const ticks = list.map(i => i.tick).filter(i => 0 < i).map(i => now -i);
+            const max = ticks.reduce((a, b) => a < b ? b: a, current);
+            const progress = (current /max).toLocaleString("en", { style: "percent" });
+            //console.log({ min, max, progress, tick: entry.tick});
+            return `background: linear-gradient(to right, #22884455 ${progress}, rgba(128,128,128,0.2) ${progress});`;
+        };
+        export const renderLastInformation = (list: TaskEntry[], entry: TaskEntry) =>
         ({
             tag: "div",
-            className: "task-last-information",
+            className: entry.tick <= 0 ? "task-last-information no-progress": "task-last-information",
+            attributes:
+            {
+                style: entry.tick <= 0 ? undefined: renderProgressStyle(list, entry),
+            },
             children:
             [
                 {
                     tag: "div",
                     className: "task-last-timestamp",
-                    children: `previous (前回): ${entry.tick <= 0 ? "N/A": DateFromTick(entry.tick).toLocaleString()}`
+                    children:
+                    [
+                        {
+                            tag: "span",
+                            className: "label",
+                            children: "previous (前回):",
+                        },
+                        {
+                            tag: "span",
+                            className: "value",
+                            children: entry.tick <= 0 ? "N/A": DateFromTick(entry.tick).toLocaleString(),
+                        }
+                    ],
                 },
                 {
                     tag: "div",
                     className: "task-last-elapsed-time",
-                    children: `elapsed time (経過時間): ${entry.tick <= 0 ? "N/A": makeElapsedTime(entry.tick)}`,
+                    children:
+                    [
+                        {
+                            tag: "span",
+                            className: "label",
+                            children: "elapsed time (経過時間):",
+                        },
+                        {
+                            tag: "span",
+                            className: "value",
+                            children: entry.tick <= 0 ? "N/A": makeElapsedTime(entry.tick),
+                        }
+                    ],
                 },
             ],
         });
@@ -175,7 +213,7 @@ export module CyclicToDo
                         },
                     ],
                 },
-                renderLastInformation(entry),
+                renderLastInformation(list, entry),
             ],
         });
         let updateTodoScreenTimer = undefined;

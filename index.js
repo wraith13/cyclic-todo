@@ -140,20 +140,54 @@ var CyclicToDo;
                 children: text,
             });
         };
-        dom.renderLastInformation = function (entry) {
+        dom.renderProgressStyle = function (list, entry) {
+            var now = CyclicToDo.getTicks();
+            var current = now - entry.tick;
+            var ticks = list.map(function (i) { return i.tick; }).filter(function (i) { return 0 < i; }).map(function (i) { return now - i; });
+            var max = ticks.reduce(function (a, b) { return a < b ? b : a; }, current);
+            var progress = (current / max).toLocaleString("en", { style: "percent" });
+            //console.log({ min, max, progress, tick: entry.tick});
+            return "background: linear-gradient(to right, #22884455 " + progress + ", rgba(128,128,128,0.2) " + progress + ");";
+        };
+        dom.renderLastInformation = function (list, entry) {
             return ({
                 tag: "div",
-                className: "task-last-information",
+                className: entry.tick <= 0 ? "task-last-information no-progress" : "task-last-information",
+                attributes: {
+                    style: entry.tick <= 0 ? undefined : dom.renderProgressStyle(list, entry),
+                },
                 children: [
                     {
                         tag: "div",
                         className: "task-last-timestamp",
-                        children: "previous (\u524D\u56DE): " + (entry.tick <= 0 ? "N/A" : CyclicToDo.DateFromTick(entry.tick).toLocaleString())
+                        children: [
+                            {
+                                tag: "span",
+                                className: "label",
+                                children: "previous (前回):",
+                            },
+                            {
+                                tag: "span",
+                                className: "value",
+                                children: entry.tick <= 0 ? "N/A" : CyclicToDo.DateFromTick(entry.tick).toLocaleString(),
+                            }
+                        ],
                     },
                     {
                         tag: "div",
                         className: "task-last-elapsed-time",
-                        children: "elapsed time (\u7D4C\u904E\u6642\u9593): " + (entry.tick <= 0 ? "N/A" : CyclicToDo.makeElapsedTime(entry.tick)),
+                        children: [
+                            {
+                                tag: "span",
+                                className: "label",
+                                children: "elapsed time (経過時間):",
+                            },
+                            {
+                                tag: "span",
+                                className: "value",
+                                children: entry.tick <= 0 ? "N/A" : CyclicToDo.makeElapsedTime(entry.tick),
+                            }
+                        ],
                     },
                 ],
             });
@@ -195,7 +229,7 @@ var CyclicToDo;
                             },
                         ],
                     },
-                    dom.renderLastInformation(entry),
+                    dom.renderLastInformation(list, entry),
                 ],
             });
         };

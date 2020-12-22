@@ -1,5 +1,5 @@
 * {
-  font-family: ui-rounded, "ヒラギノ丸ゴ Pro w4", Roboto, Meiryo;
+  font-family: ui-sans-serif, "ヒラギノ角ゴ Pro w4", Roboto, Meiryo;
   color: #000022;
 }
 body {
@@ -9,6 +9,7 @@ body {
 h1 {
   margin: 0rem;
   padding: 1rem;
+  padding-left: 0.5rem;
   color: #FFFFFF;
   background-color: #228844;
 }
@@ -100,14 +101,15 @@ button.default-button .task-last-information * {
 .task-item {
   display: inline-block;
   box-sizing: border-box;
-  padding: 1rem;
-  min-width: 20%;
+  padding: 0.5rem;
+  min-width: calc((100vw / 8) + 1px);
   width: 480px;
   max-width: 100vw;
-  border-width: 0.5px;
+  border-width: 1px;
   border-color: #CCC;
   border-style: solid;
   min-height: 5em;
+  margin: -0.5px;
 }
 .task-item button {
   margin: 0px;
@@ -116,12 +118,26 @@ button.default-button .task-last-information * {
   font-size: 1.6em;
   line-height: 1em;
   box-sizing: border-box;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .task-item button {
   float: right;
 }
+.task-item .task-last-information {
+  padding: 0.5rem;
+  margin: -0.5rem;
+}
 .task-item .task-last-information * {
   color: #888;
+}
+.task-item .task-last-information .value {
+  float: right;
+}
+.task-item .task-last-information.no-progress {
+  background-color: rgba(128, 128, 128, 0.2);
 }
 .application-form button {
   margin-left: calc(8em + 4px);
