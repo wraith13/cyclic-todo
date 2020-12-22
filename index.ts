@@ -55,13 +55,12 @@ export module CyclicToDo
         return 0;
     };
     export const simpleReverseComparer = <T>(a: T, b: T) => -simpleComparer(a, b);
-    export const TimeAccuracy = 100000;
-    export const getTotalMinutes = (tick: number) => (tick *TimeAccuracy) / (60 *1000);
+    export const TimeAccuracy = 60 *1000;
     export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / TimeAccuracy);
     export const DateFromTick = (tick: number) => new Date(tick *TimeAccuracy);
     export const makeElapsedTime = (tick: number) =>
     {
-        const totalMinutes = Math.floor(getTotalMinutes(getTicks() -tick));
+        const totalMinutes = Math.floor(getTicks() -tick);
         const days = Math.floor(totalMinutes / (24 *60));
         const time = totalMinutes % (24 *60);
         const hour = Math.floor(time /60);
@@ -120,66 +119,97 @@ export module CyclicToDo
         ({
             tag: "div",
             className: "task-last-information",
-            children: entry.tick <= 0 ? [ ]:
+            children:
             [
                 {
                     tag: "div",
                     className: "task-last-timestamp",
-                    children: `previous (前回): ${DateFromTick(entry.tick).toLocaleString()}`
+                    children: `previous (前回): ${entry.tick <= 0 ? "N/A": DateFromTick(entry.tick).toLocaleString()}`
                 },
                 {
                     tag: "div",
                     className: "task-last-elapsed-time",
-                    children: `elapsed time (経過時間): ${makeElapsedTime(entry.tick)}`,
+                    children: `elapsed time (経過時間): ${entry.tick <= 0 ? "N/A": makeElapsedTime(entry.tick)}`,
                 },
             ],
         });
         export const renderDoneButton = (title: string, pass: string, list: TaskEntry[], entry: TaskEntry, isDefault: boolean) =>
         ({
-            tag: "button",
-            className: isDefault ? "default-button": undefined,
+            tag: "div",
+            className: isDefault ? "task-item default-task": "task-item",
             children:
             [
                 {
                     tag: "div",
-                    className: "button-title",
-                    children: entry.task,
+                    className: "task-header",
+                    children:
+                    [
+                        {
+                            tag: "button",
+                            className: isDefault ? "default-button": undefined,
+                            children: "Done (完了)",
+                            onclick: async () =>
+                            {
+                                //if (isSessionPass(pass))
+                                const fxxkingTypeScriptCompiler = isSessionPass(pass);
+                                if (fxxkingTypeScriptCompiler)
+                                {
+                                    window.alert
+                                    (
+                                        "This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                                        +"\n"
+                                        +"これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。"
+                                    );
+                                }
+                                else
+                                {
+                                    done(pass, entry.task);
+                                    updateTodoScreen(title, pass, getToDoEntries(pass, list.map(i => i.task)));
+                                }
+                            }
+                        },
+                        {
+                            tag: "div",
+                            className: "task-title",
+                            children: entry.task,
+                        },
+                    ],
                 },
                 renderLastInformation(entry),
             ],
-            onclick: async () =>
+        });
+        let updateTodoScreenTimer = undefined;
+        export const updateTodoScreen = (title: string, pass: string, list: TaskEntry[]) =>
+        {
+            minamo.dom.replaceChildren
+            (
+                //document.getElementById("screen"),
+                document.body,
+                {
+                    tag: "div",
+                    className: "todo-screen screen",
+                    children:
+                    [
+                        renderHeading("h1", `${title} Cyclic Todo`),
+                    ].concat(list.map((entry, index) => renderDoneButton(title, pass, list, entry, 0 === index)) as any),
+                }
+            );
+            if (undefined !== updateTodoScreenTimer)
             {
-                if (isSessionPass(pass))
-                {
-                    window.alert
-                    (
-                        "This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
-                        +"\n"
-                        +"これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。"
-                    );
-                }
-                else
-                {
-                    done(pass, entry.task);
-                    updateTodoScreen(title, pass, getToDoEntries(pass, list.map(i => i.task)));
-                }
+                clearTimeout(updateTodoScreenTimer);
             }
-        });
-        export const renderTodoScreen = (title: string, pass: string, list: TaskEntry[]) =>
-        ({
-            tag: "div",
-            className: "todo-screen screen",
-            children:
-            [
-                renderHeading("h2", title),
-            ].concat(list.map((entry, index) => renderDoneButton(title, pass, list, entry, 0 === index)) as any),
-        });
-        export const updateTodoScreen = (title: string, pass: string, list: TaskEntry[]) => minamo.dom.replaceChildren
-        (
-            //document.getElementById("screen"),
-            document.body,
-            renderTodoScreen(title, pass, list)
-        );
+            updateTodoScreenTimer = setTimeout
+            (
+                () =>
+                {
+                    if (0 < document.getElementsByClassName("todo-screen").length)
+                    {
+                        updateTodoScreen(title, pass, list);
+                    }
+                },
+                TimeAccuracy
+            );
+        };
         export const renderEditScreen = (title: string, pass: string, todo: string[]) =>
         {
             const titleDiv = minamo.dom.make(HTMLInputElement)

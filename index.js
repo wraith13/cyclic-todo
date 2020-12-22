@@ -78,15 +78,14 @@ var CyclicToDo;
         return 0;
     };
     CyclicToDo.simpleReverseComparer = function (a, b) { return -CyclicToDo.simpleComparer(a, b); };
-    CyclicToDo.TimeAccuracy = 100000;
-    CyclicToDo.getTotalMinutes = function (tick) { return (tick * CyclicToDo.TimeAccuracy) / (60 * 1000); };
+    CyclicToDo.TimeAccuracy = 60 * 1000;
     CyclicToDo.getTicks = function (date) {
         if (date === void 0) { date = new Date(); }
         return Math.floor(date.getTime() / CyclicToDo.TimeAccuracy);
     };
     CyclicToDo.DateFromTick = function (tick) { return new Date(tick * CyclicToDo.TimeAccuracy); };
     CyclicToDo.makeElapsedTime = function (tick) {
-        var totalMinutes = Math.floor(CyclicToDo.getTotalMinutes(CyclicToDo.getTicks() - tick));
+        var totalMinutes = Math.floor(CyclicToDo.getTicks() - tick);
         var days = Math.floor(totalMinutes / (24 * 60));
         var time = totalMinutes % (24 * 60);
         var hour = Math.floor(time / 60);
@@ -145,61 +144,81 @@ var CyclicToDo;
             return ({
                 tag: "div",
                 className: "task-last-information",
-                children: entry.tick <= 0 ? [] :
-                    [
-                        {
-                            tag: "div",
-                            className: "task-last-timestamp",
-                            children: "previous (\u524D\u56DE): " + CyclicToDo.DateFromTick(entry.tick).toLocaleString()
-                        },
-                        {
-                            tag: "div",
-                            className: "task-last-elapsed-time",
-                            children: "elapsed time (\u7D4C\u904E\u6642\u9593): " + CyclicToDo.makeElapsedTime(entry.tick),
-                        },
-                    ],
+                children: [
+                    {
+                        tag: "div",
+                        className: "task-last-timestamp",
+                        children: "previous (\u524D\u56DE): " + (entry.tick <= 0 ? "N/A" : CyclicToDo.DateFromTick(entry.tick).toLocaleString())
+                    },
+                    {
+                        tag: "div",
+                        className: "task-last-elapsed-time",
+                        children: "elapsed time (\u7D4C\u904E\u6642\u9593): " + (entry.tick <= 0 ? "N/A" : CyclicToDo.makeElapsedTime(entry.tick)),
+                    },
+                ],
             });
         };
         dom.renderDoneButton = function (title, pass, list, entry, isDefault) {
             return ({
-                tag: "button",
-                className: isDefault ? "default-button" : undefined,
+                tag: "div",
+                className: isDefault ? "task-item default-task" : "task-item",
                 children: [
                     {
                         tag: "div",
-                        className: "button-title",
-                        children: entry.task,
+                        className: "task-header",
+                        children: [
+                            {
+                                tag: "button",
+                                className: isDefault ? "default-button" : undefined,
+                                children: "Done (完了)",
+                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                    var fxxkingTypeScriptCompiler;
+                                    return __generator(this, function (_a) {
+                                        fxxkingTypeScriptCompiler = CyclicToDo.isSessionPass(pass);
+                                        if (fxxkingTypeScriptCompiler) {
+                                            window.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                                                + "\n"
+                                                + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。");
+                                        }
+                                        else {
+                                            CyclicToDo.done(pass, entry.task);
+                                            dom.updateTodoScreen(title, pass, CyclicToDo.getToDoEntries(pass, list.map(function (i) { return i.task; })));
+                                        }
+                                        return [2 /*return*/];
+                                    });
+                                }); }
+                            },
+                            {
+                                tag: "div",
+                                className: "task-title",
+                                children: entry.task,
+                            },
+                        ],
                     },
                     dom.renderLastInformation(entry),
                 ],
-                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        if (CyclicToDo.isSessionPass(pass)) {
-                            window.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
-                                + "\n"
-                                + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。");
-                        }
-                        else {
-                            CyclicToDo.done(pass, entry.task);
-                            dom.updateTodoScreen(title, pass, CyclicToDo.getToDoEntries(pass, list.map(function (i) { return i.task; })));
-                        }
-                        return [2 /*return*/];
-                    });
-                }); }
             });
         };
-        dom.renderTodoScreen = function (title, pass, list) {
-            return ({
+        var updateTodoScreenTimer = undefined;
+        dom.updateTodoScreen = function (title, pass, list) {
+            minamo_js_1.minamo.dom.replaceChildren(
+            //document.getElementById("screen"),
+            document.body, {
                 tag: "div",
                 className: "todo-screen screen",
                 children: [
-                    dom.renderHeading("h2", title),
+                    dom.renderHeading("h1", title + " Cyclic Todo"),
                 ].concat(list.map(function (entry, index) { return dom.renderDoneButton(title, pass, list, entry, 0 === index); })),
             });
+            if (undefined !== updateTodoScreenTimer) {
+                clearTimeout(updateTodoScreenTimer);
+            }
+            updateTodoScreenTimer = setTimeout(function () {
+                if (0 < document.getElementsByClassName("todo-screen").length) {
+                    dom.updateTodoScreen(title, pass, list);
+                }
+            }, CyclicToDo.TimeAccuracy);
         };
-        dom.updateTodoScreen = function (title, pass, list) { return minamo_js_1.minamo.dom.replaceChildren(
-        //document.getElementById("screen"),
-        document.body, dom.renderTodoScreen(title, pass, list)); };
         dom.renderEditScreen = function (title, pass, todo) {
             var titleDiv = minamo_js_1.minamo.dom.make(HTMLInputElement)({
                 tag: "input",

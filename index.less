@@ -5,16 +5,15 @@
 }
 body
 {
-    margin: 1rem;
+    margin: 0px;
     line-height: 100%;
 }
 h1
 {
-    margin: -1rem;
-    margin-bottom: 0em;
+    margin: 0rem;
     padding: 1rem;
     color: #FFFFFF;
-    background-color: #000022;
+    background-color: #228844;
 }
 h2
 {
@@ -129,6 +128,42 @@ button.default-button
         *
         {
             color: #CCC;
+        }
+    }
+}
+.task-item
+{
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 1rem;
+    min-width: 20%;
+    width: 480px;
+    max-width: 100vw;
+    border-width: 0.5px;
+    border-color: #CCC;
+    border-style: solid;
+    min-height: 5em;
+
+    button
+    {
+        margin: 0px;
+    }
+
+    .task-title
+    {
+        font-size: 1.6em;
+        line-height: 1.0em;
+        box-sizing: border-box;
+    }
+    button
+    {
+        float: right;
+    }
+    .task-last-information
+    {
+        *
+        {
+            color: #888;
         }
     }
 }
