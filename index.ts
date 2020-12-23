@@ -69,7 +69,7 @@ export module CyclicToDo
     export const renderTime = (tick: number) =>
     {
         const days = Math.floor(tick / (24 *60));
-        const time = tick % (24 *60);
+        const time = Math.floor(tick) % (24 *60);
         const hour = Math.floor(time /60);
         const minute = time % 60;
         const timePart = `${("00" +hour).slice(-2)}:${("00" +minute).slice(-2)}`;
@@ -137,10 +137,10 @@ export module CyclicToDo
         export const renderInformation = (list: TaskEntry[], entry: TaskEntry, history: number[]) =>
         ({
             tag: "div",
-            className: entry.tick <= 0 ? "task-information no-progress": "task-information",
+            className: entry.tick <= 0 || (history.length <= 1 && list.length <= 1) ? "task-information no-progress": "task-information",
             attributes:
             {
-                style: entry.tick <= 0 ? undefined: renderProgressStyle(list, entry, history),
+                style: entry.tick <= 0 || (history.length <= 1 && list.length <= 1) ? undefined: renderProgressStyle(list, entry, history),
             },
             children:
             [

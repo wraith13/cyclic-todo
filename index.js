@@ -93,7 +93,7 @@ var CyclicToDo;
     };
     CyclicToDo.renderTime = function (tick) {
         var days = Math.floor(tick / (24 * 60));
-        var time = tick % (24 * 60);
+        var time = Math.floor(tick) % (24 * 60);
         var hour = Math.floor(time / 60);
         var minute = time % 60;
         var timePart = ("00" + hour).slice(-2) + ":" + ("00" + minute).slice(-2);
@@ -160,9 +160,9 @@ var CyclicToDo;
         dom.renderInformation = function (list, entry, history) {
             return ({
                 tag: "div",
-                className: entry.tick <= 0 ? "task-information no-progress" : "task-information",
+                className: entry.tick <= 0 || (history.length <= 1 && list.length <= 1) ? "task-information no-progress" : "task-information",
                 attributes: {
-                    style: entry.tick <= 0 ? undefined : dom.renderProgressStyle(list, entry, history),
+                    style: entry.tick <= 0 || (history.length <= 1 && list.length <= 1) ? undefined : dom.renderProgressStyle(list, entry, history),
                 },
                 children: [
                     {

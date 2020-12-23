@@ -1,12 +1,20 @@
 *
 {
     font-family: ui-sans-serif, "ヒラギノ角ゴ Pro w4", Roboto, Meiryo;
-    color: #000022;
 }
 body
 {
     margin: 0px;
     line-height: 100%;
+    color: #000022;
+}
+@media (prefers-color-scheme: dark)
+{
+    body
+    {
+        color: #FFFFFF;
+        background-color: #000022;
+    }
 }
 h1
 {
@@ -15,6 +23,13 @@ h1
     padding-left: 0.5rem;
     color: #FFFFFF;
     background-color: #228844;
+}
+@media (prefers-color-scheme: dark)
+{
+    h1
+    {
+        color: #000022;
+    }
 }
 h2
 {
@@ -96,21 +111,12 @@ button
     font-weight: bold;
     font-size: 1.0rem;
     cursor: pointer;
-
-    .button-title
+}
+@media (prefers-color-scheme: dark)
+{
+    button
     {
-        font-size: 1.6em;
-        color: #228844;
-    }
-    .task-last-information
-    {
-        text-align: left;
-        *
-        {
-            color: #888;
-            font-size: 0.9em;
-            font-weight: normal;
-        }
+        background-color: #000022;
     }
 }
 button.default-button
@@ -118,18 +124,12 @@ button.default-button
     color: #FFFFFF;
     background-color: #228844;
     border-color: #228844;
-
-    .button-title
+}
+@media (prefers-color-scheme: dark)
+{
+    button.default-button
     {
-        color: #FFFFFF;
-    }
-
-    .task-last-information
-    {
-        *
-        {
-            color: #CCC;
-        }
+        color: #000022;
     }
 }
 .task-item
@@ -141,7 +141,7 @@ button.default-button
     width: 480px;
     max-width: 100vw;
     border-width: 1px;
-    border-color: #CCC;
+    border-color: rgba(128,128,128,0.5);
     border-style: solid;
     margin: -0.5px;
 
@@ -172,7 +172,7 @@ button.default-button
         *
         {
             line-height: 1.4em;
-            color: rgba(0,0,34,0.6);
+            opacity: 0.6;
         }
         .value
         {

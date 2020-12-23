@@ -5,15 +5,24 @@
     <meta name="theme-color" content="#000022">
     <title>Cyclic ToDo</title>
     <link id="favicon" rel="shortcut icon" href="./cyclictodohex.1024.png">
-    <link rel="stylesheet" type="text/css" href="index.css" media="screen,projection,tv,print" />
-
+    <script>
+        //<link rel="stylesheet" type="text/css" href="index.css" media="screen,projection,tv,print" />
+        const stylesheet = document.createElement("link");
+        stylesheet.rel = "stylesheet";
+        stylesheet.type = "text/css";
+        stylesheet.href = "index.css?tick=" +new Date().getTime();
+        stylesheet.media = "screen,projection,tv,print";
+        document.head.append(stylesheet);
+    </script>
+    
     <script type="text/javascript" src="https://wraith13.github.io/evil-commonjs/index.js"></script>
     <script>
     //  see https://github.com/wraith13/evil-commonjs
+    const tick = "?tick=" +new Date().getTime();
     window.module.sequentialLoad
     ([
-        { path: "./minamo.js/index.js", mapping: ["./minamo.js"], },
-        { path: "./index.js", mapping: ["CyclicToDo"], },
+        { path: "./minamo.js/index.js" +tick, mapping: ["./minamo.js"], },
+        { path: "./index.js" +tick, mapping: ["CyclicToDo"], },
     ])
     .then(() => require("CyclicToDo").CyclicToDo.start());
     </script>
