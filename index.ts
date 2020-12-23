@@ -57,12 +57,19 @@ export module CyclicToDo
     export const simpleReverseComparer = <T>(a: T, b: T) => -simpleComparer(a, b);
     export const TimeAccuracy = 60 *1000;
     export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / TimeAccuracy);
-    export const DateFromTick = (tick: number) => new Date(tick *TimeAccuracy);
-    export const makeElapsedTime = (tick: number) =>
+    export const DateStringFromTick = (tick: number) =>
     {
-        const totalMinutes = Math.floor(getTicks() -tick);
-        const days = Math.floor(totalMinutes / (24 *60));
-        const time = totalMinutes % (24 *60);
+        const date = new Date(tick *TimeAccuracy);
+        date.setHours(0);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        date.setMilliseconds(0);
+        return `${date.toLocaleDateString()} ${renderTime(tick -getTicks(date))}`;
+    };
+    export const renderTime = (tick: number) =>
+    {
+        const days = Math.floor(tick / (24 *60));
+        const time = tick % (24 *60);
         const hour = Math.floor(time /60);
         const minute = time % 60;
         const timePart = `${("00" +hour).slice(-2)}:${("00" +minute).slice(-2)}`;
@@ -115,23 +122,25 @@ export module CyclicToDo
             tag,
             children: text,
         });
-        export const renderProgressStyle = (list: TaskEntry[], entry: TaskEntry) =>
+        export const renderProgressStyle = (list: TaskEntry[], entry: TaskEntry, history: number[]) =>
         {
             const now = getTicks();
             const current = now -entry.tick;
             const ticks = list.map(i => i.tick).filter(i => 0 < i).map(i => now -i);
-            const max = ticks.reduce((a, b) => a < b ? b: a, current);
+            const max = 2 < history.length ?
+                (history[0] -history[history.length -1]) /(history.length):
+                ticks.reduce((a, b) => a < b ? b: a, current) *(list.length / list.map(i => i.tick).filter(i => 0 < i).length);
             const progress = (current /max).toLocaleString("en", { style: "percent" });
             //console.log({ min, max, progress, tick: entry.tick});
             return `background: linear-gradient(to right, #22884455 ${progress}, rgba(128,128,128,0.2) ${progress});`;
         };
-        export const renderLastInformation = (list: TaskEntry[], entry: TaskEntry) =>
+        export const renderInformation = (list: TaskEntry[], entry: TaskEntry, history: number[]) =>
         ({
             tag: "div",
-            className: entry.tick <= 0 ? "task-last-information no-progress": "task-last-information",
+            className: entry.tick <= 0 ? "task-information no-progress": "task-information",
             attributes:
             {
-                style: entry.tick <= 0 ? undefined: renderProgressStyle(list, entry),
+                style: entry.tick <= 0 ? undefined: renderProgressStyle(list, entry, history),
             },
             children:
             [
@@ -148,13 +157,13 @@ export module CyclicToDo
                         {
                             tag: "span",
                             className: "value",
-                            children: entry.tick <= 0 ? "N/A": DateFromTick(entry.tick).toLocaleString(),
+                            children: entry.tick <= 0 ? "N/A": DateStringFromTick(entry.tick),
                         }
                     ],
                 },
                 {
                     tag: "div",
-                    className: "task-last-elapsed-time",
+                    className: "task-elapsed-time",
                     children:
                     [
                         {
@@ -165,7 +174,41 @@ export module CyclicToDo
                         {
                             tag: "span",
                             className: "value",
-                            children: entry.tick <= 0 ? "N/A": makeElapsedTime(entry.tick),
+                            children: entry.tick <= 0 ? "N/A": renderTime(getTicks() -entry.tick),
+                        }
+                    ],
+                },
+                {
+                    tag: "div",
+                    className: "task-interval-average",
+                    children:
+                    [
+                        {
+                            tag: "span",
+                            className: "label",
+                            children: "interval average (間隔平均):",
+                        },
+                        {
+                            tag: "span",
+                            className: "value",
+                            children: history.length <= 1 ? "N/A": renderTime((history[0] -history[history.length -1]) /(history.length)),
+                        }
+                    ],
+                },
+                {
+                    tag: "div",
+                    className: "task-count",
+                    children:
+                    [
+                        {
+                            tag: "span",
+                            className: "label",
+                            children: "count (回数):",
+                        },
+                        {
+                            tag: "span",
+                            className: "value",
+                            children: history.length.toLocaleString(),
                         }
                     ],
                 },
@@ -213,7 +256,7 @@ export module CyclicToDo
                         },
                     ],
                 },
-                renderLastInformation(list, entry),
+                renderInformation(list, entry, getHistory(pass, entry.task)),
             ],
         });
         let updateTodoScreenTimer = undefined;

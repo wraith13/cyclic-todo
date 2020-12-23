@@ -143,7 +143,6 @@ button.default-button
     border-width: 1px;
     border-color: #CCC;
     border-style: solid;
-    min-height: 5em;
     margin: -0.5px;
 
     button
@@ -160,18 +159,20 @@ button.default-button
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        height: 1em;
     }
     button
     {
         float: right;
     }
-    .task-last-information
+    .task-information
     {
         padding: 0.5rem;
         margin: -0.5rem;
         *
         {
-            color: #888;
+            line-height: 1.4em;
+            color: rgba(0,0,34,0.6);
         }
         .value
         {
@@ -180,7 +181,7 @@ button.default-button
 
         &.no-progress
         {
-            background-color: rgba(128,128,128,0.2);
+            background-color: rgba(128,128,128,0.4);
         }
     }
 }

@@ -108,7 +108,6 @@ button.default-button .task-last-information * {
   border-width: 1px;
   border-color: #CCC;
   border-style: solid;
-  min-height: 5em;
   margin: -0.5px;
 }
 .task-item button {
@@ -122,22 +121,24 @@ button.default-button .task-last-information * {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  height: 1em;
 }
 .task-item button {
   float: right;
 }
-.task-item .task-last-information {
+.task-item .task-information {
   padding: 0.5rem;
   margin: -0.5rem;
 }
-.task-item .task-last-information * {
-  color: #888;
+.task-item .task-information * {
+  line-height: 1.4em;
+  color: rgba(0, 0, 34, 0.6);
 }
-.task-item .task-last-information .value {
+.task-item .task-information .value {
   float: right;
 }
-.task-item .task-last-information.no-progress {
-  background-color: rgba(128, 128, 128, 0.2);
+.task-item .task-information.no-progress {
+  background-color: rgba(128, 128, 128, 0.4);
 }
 .application-form button {
   margin-left: calc(8em + 4px);

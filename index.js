@@ -83,11 +83,17 @@ var CyclicToDo;
         if (date === void 0) { date = new Date(); }
         return Math.floor(date.getTime() / CyclicToDo.TimeAccuracy);
     };
-    CyclicToDo.DateFromTick = function (tick) { return new Date(tick * CyclicToDo.TimeAccuracy); };
-    CyclicToDo.makeElapsedTime = function (tick) {
-        var totalMinutes = Math.floor(CyclicToDo.getTicks() - tick);
-        var days = Math.floor(totalMinutes / (24 * 60));
-        var time = totalMinutes % (24 * 60);
+    CyclicToDo.DateStringFromTick = function (tick) {
+        var date = new Date(tick * CyclicToDo.TimeAccuracy);
+        date.setHours(0);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        date.setMilliseconds(0);
+        return date.toLocaleDateString() + " " + CyclicToDo.renderTime(tick - CyclicToDo.getTicks(date));
+    };
+    CyclicToDo.renderTime = function (tick) {
+        var days = Math.floor(tick / (24 * 60));
+        var time = tick % (24 * 60);
         var hour = Math.floor(time / 60);
         var minute = time % 60;
         var timePart = ("00" + hour).slice(-2) + ":" + ("00" + minute).slice(-2);
@@ -140,21 +146,23 @@ var CyclicToDo;
                 children: text,
             });
         };
-        dom.renderProgressStyle = function (list, entry) {
+        dom.renderProgressStyle = function (list, entry, history) {
             var now = CyclicToDo.getTicks();
             var current = now - entry.tick;
             var ticks = list.map(function (i) { return i.tick; }).filter(function (i) { return 0 < i; }).map(function (i) { return now - i; });
-            var max = ticks.reduce(function (a, b) { return a < b ? b : a; }, current);
+            var max = 2 < history.length ?
+                (history[0] - history[history.length - 1]) / (history.length) :
+                ticks.reduce(function (a, b) { return a < b ? b : a; }, current) * (list.length / list.map(function (i) { return i.tick; }).filter(function (i) { return 0 < i; }).length);
             var progress = (current / max).toLocaleString("en", { style: "percent" });
             //console.log({ min, max, progress, tick: entry.tick});
             return "background: linear-gradient(to right, #22884455 " + progress + ", rgba(128,128,128,0.2) " + progress + ");";
         };
-        dom.renderLastInformation = function (list, entry) {
+        dom.renderInformation = function (list, entry, history) {
             return ({
                 tag: "div",
-                className: entry.tick <= 0 ? "task-last-information no-progress" : "task-last-information",
+                className: entry.tick <= 0 ? "task-information no-progress" : "task-information",
                 attributes: {
-                    style: entry.tick <= 0 ? undefined : dom.renderProgressStyle(list, entry),
+                    style: entry.tick <= 0 ? undefined : dom.renderProgressStyle(list, entry, history),
                 },
                 children: [
                     {
@@ -169,13 +177,13 @@ var CyclicToDo;
                             {
                                 tag: "span",
                                 className: "value",
-                                children: entry.tick <= 0 ? "N/A" : CyclicToDo.DateFromTick(entry.tick).toLocaleString(),
+                                children: entry.tick <= 0 ? "N/A" : CyclicToDo.DateStringFromTick(entry.tick),
                             }
                         ],
                     },
                     {
                         tag: "div",
-                        className: "task-last-elapsed-time",
+                        className: "task-elapsed-time",
                         children: [
                             {
                                 tag: "span",
@@ -185,7 +193,39 @@ var CyclicToDo;
                             {
                                 tag: "span",
                                 className: "value",
-                                children: entry.tick <= 0 ? "N/A" : CyclicToDo.makeElapsedTime(entry.tick),
+                                children: entry.tick <= 0 ? "N/A" : CyclicToDo.renderTime(CyclicToDo.getTicks() - entry.tick),
+                            }
+                        ],
+                    },
+                    {
+                        tag: "div",
+                        className: "task-interval-average",
+                        children: [
+                            {
+                                tag: "span",
+                                className: "label",
+                                children: "interval average (間隔平均):",
+                            },
+                            {
+                                tag: "span",
+                                className: "value",
+                                children: history.length <= 1 ? "N/A" : CyclicToDo.renderTime((history[0] - history[history.length - 1]) / (history.length)),
+                            }
+                        ],
+                    },
+                    {
+                        tag: "div",
+                        className: "task-count",
+                        children: [
+                            {
+                                tag: "span",
+                                className: "label",
+                                children: "count (回数):",
+                            },
+                            {
+                                tag: "span",
+                                className: "value",
+                                children: history.length.toLocaleString(),
                             }
                         ],
                     },
@@ -229,7 +269,7 @@ var CyclicToDo;
                             },
                         ],
                     },
-                    dom.renderLastInformation(list, entry),
+                    dom.renderInformation(list, entry, CyclicToDo.getHistory(pass, entry.task)),
                 ],
             });
         };
