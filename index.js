@@ -150,8 +150,9 @@ var CyclicToDo;
             var now = CyclicToDo.getTicks();
             var current = now - entry.tick;
             var ticks = list.map(function (i) { return i.tick; }).filter(function (i) { return 0 < i; }).map(function (i) { return now - i; });
-            var max = 2 < history.length ?
-                (history[0] - history[history.length - 1]) / (history.length) :
+            var max = 2 <= history.length ?
+                (((history[0] - history[Math.min(5, history.length) - 1]) / Math.min(5, history.length))
+                    + ((history[0] - history[Math.min(25, history.length) - 1]) / Math.min(25, history.length))) / 2 :
                 ticks.reduce(function (a, b) { return a < b ? b : a; }, current) * (list.length / list.map(function (i) { return i.tick; }).filter(function (i) { return 0 < i; }).length);
             var progress = (current / max).toLocaleString("en", { style: "percent" });
             //console.log({ min, max, progress, tick: entry.tick});
