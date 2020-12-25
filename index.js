@@ -100,14 +100,29 @@ var CyclicToDo;
         if (null === tick) {
             return "N/A";
         }
+        else if (tick < 0) {
+            return "-" + CyclicToDo.renderTime(-tick);
+        }
         else {
             var days = Math.floor(tick / (24 * 60));
             var time = Math.floor(tick) % (24 * 60);
             var hour = Math.floor(time / 60);
             var minute = time % 60;
             var timePart = ("00" + hour).slice(-2) + ":" + ("00" + minute).slice(-2);
-            return 0 < days ? days.toLocaleString() + " days " + timePart : timePart;
+            return 10 <= days ?
+                days.toLocaleString() + " days" :
+                0 < days ?
+                    days.toLocaleString() + " days " + timePart :
+                    timePart;
         }
+    };
+    CyclicToDo.calulateAverage = function (ticks) { return ticks.reduce(function (a, b) { return a + b; }, 0) / ticks.length; };
+    CyclicToDo.calculateStandardDeviation = function (ticks, average) {
+        if (average === void 0) { average = CyclicToDo.calulateAverage(ticks); }
+        return Math.sqrt(CyclicToDo.calulateAverage(ticks.map(function (i) { return Math.pow((i - average), 2); })));
+    };
+    CyclicToDo.calculateStandardScore = function (average, standardDeviation, target) {
+        return (10 * (target - average) / standardDeviation) + 50;
     };
     CyclicToDo.sessionPassPrefix = "@Session";
     CyclicToDo.generatePass = function (seed) {
@@ -160,7 +175,7 @@ var CyclicToDo;
             undefined :
             1 <= item.progress ?
                 "background: #22884455" :
-                "background: linear-gradient(to right, #22884455 " + item.progress.toLocaleString("en", { style: "percent" }) + ", rgba(128,128,128,0.2) " + item.progress.toLocaleString("en", { style: "percent" }) + ");"; };
+                "background: linear-gradient(to right, #22884466 " + item.progress.toLocaleString("en", { style: "percent" }) + ", rgba(128,128,128,0.2) " + item.progress.toLocaleString("en", { style: "percent" }) + ");"; };
         dom.renderInformation = function (item) {
             return ({
                 tag: "div",
@@ -187,6 +202,24 @@ var CyclicToDo;
                     },
                     {
                         tag: "div",
+                        className: "task-interval-average",
+                        children: [
+                            {
+                                tag: "span",
+                                className: "label",
+                                children: "expected interval (予想間隔):",
+                            },
+                            {
+                                tag: "span",
+                                className: "value",
+                                children: null === item.standardDeviation ?
+                                    CyclicToDo.renderTime(item.smartAverage) :
+                                    CyclicToDo.renderTime(Math.max(item.smartAverage / 10, item.smartAverage - item.standardDeviation)) + " \u301C " + CyclicToDo.renderTime(item.smartAverage + item.standardDeviation),
+                            }
+                        ],
+                    },
+                    {
+                        tag: "div",
                         className: "task-elapsed-time",
                         children: [
                             {
@@ -201,22 +234,42 @@ var CyclicToDo;
                             }
                         ],
                     },
+                    /*
                     {
                         tag: "div",
                         className: "task-interval-average",
-                        children: [
+                        children:
+                        [
                             {
                                 tag: "span",
                                 className: "label",
-                                children: "interval average (間隔平均):",
+                                children: "expected interval average (予想間隔平均):",
                             },
                             {
                                 tag: "span",
                                 className: "value",
-                                children: CyclicToDo.renderTime(item.average),
+                                children: renderTime(item.smartAverage),
                             }
                         ],
                     },
+                    {
+                        tag: "div",
+                        className: "task-interval-average",
+                        children:
+                        [
+                            {
+                                tag: "span",
+                                className: "label",
+                                children: "recentrly interval average (直近間隔平均):",
+                            },
+                            {
+                                tag: "span",
+                                className: "value",
+                                children: renderTime(item.average),
+                            }
+                        ],
+                    },
+                    */
                     {
                         tag: "div",
                         className: "task-count",
@@ -289,7 +342,7 @@ var CyclicToDo;
         };
         var updateTodoScreenTimer = undefined;
         dom.updateTodoScreen = function (entry) {
-            if (undefined === updateTodoScreenTimer) {
+            if (undefined !== updateTodoScreenTimer) {
                 clearInterval(updateTodoScreenTimer);
             }
             var histories = {};
@@ -299,26 +352,23 @@ var CyclicToDo;
                     {
                         recentries: full.filter(function (_, index) { return index < 25; }),
                         previous: full.length <= 0 ? null : full[0],
-                        average: full.length <= 1 ? null : (full[0] - full[full.length - 1]) / (full.length - 1),
+                        //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
                         count: full.length,
                     };
             });
-            console.log(histories);
             var firstStageRecentries = entry.todo.map(function (todo) { return histories[todo]; }).filter(function (history) { return 1 === history.count; }).map(function (history) { return history.recentries[0]; }).sort(CyclicToDo.simpleReverseComparer);
-            console.log(firstStageRecentries);
             var firstStage = {
                 nones: entry.todo.map(function (todo) { return histories[todo]; }).filter(function (history) { return 0 === history.count; }).length,
                 singles: firstStageRecentries.length,
                 average: firstStageRecentries.length <= 1 ? null : (firstStageRecentries[0] - firstStageRecentries[firstStageRecentries.length - 1]) / (firstStageRecentries.length - 1),
+                standardDeviation: firstStageRecentries.length <= 1 ? null : CyclicToDo.calculateStandardDeviation(firstStageRecentries),
             };
-            console.log(firstStage);
             var secondStageTarget = entry.todo.map(function (todo) { return histories[todo]; }).filter(function (history) { return 2 <= history.count && history.count <= 5; });
             var secondStageRecentries = secondStageTarget.map(function (history) { return history.recentries; }).reduce(function (a, b) { return a.concat(b); }, []).sort(CyclicToDo.simpleReverseComparer);
-            console.log(secondStageRecentries);
             var secondStage = {
                 average: secondStageRecentries.length <= 1 ? null : (secondStageRecentries[0] - secondStageRecentries[secondStageRecentries.length - 1]) / (secondStageRecentries.length - 1) * secondStageTarget.length,
+                standardDeviation: secondStageRecentries.length <= 1 ? null : CyclicToDo.calculateStandardDeviation(secondStageRecentries),
             };
-            console.log(secondStage);
             var list = entry.todo.map(function (todo) {
                 var history = histories[todo];
                 var result = {
@@ -327,52 +377,39 @@ var CyclicToDo;
                     progress: null,
                     previous: history.previous,
                     elapsed: null,
-                    average: history.average,
+                    average: history.recentries.length <= 1 ? null : (history.recentries[0] - history.recentries[history.recentries.length - 1]) / (history.recentries.length - 1),
+                    standardDeviation: history.recentries.length <= 1 ?
+                        null :
+                        (5 < history.recentries.length || null === secondStage.standardDeviation) ?
+                            CyclicToDo.calculateStandardDeviation(history.recentries) :
+                            (CyclicToDo.calculateStandardDeviation(history.recentries) + secondStage.standardDeviation),
                     count: history.count,
+                    smartAverage: null,
                 };
                 return result;
             });
-            var updateProgress = function () {
-                var now = CyclicToDo.getTicks();
-                list.forEach(function (item) {
-                    var history = histories[item.todo];
-                    if (0 < history.count) {
-                        item.elapsed = now - history.previous;
-                        if (5 < history.count) {
-                            var smartAverage = (((history.recentries[0] - history.recentries[Math.min(5, history.recentries.length) - 1]) / (Math.min(5, history.recentries.length) - 1))
-                                + ((history.recentries[0] - history.recentries[Math.min(25, history.recentries.length) - 1]) / (Math.min(25, history.recentries.length) - 1))) / 2;
-                            item.progress = item.elapsed / smartAverage;
-                            console.log("3s", item, smartAverage);
-                        }
-                        else if (2 <= history.count) {
-                            var smartAverage = (((history.recentries[0] - history.recentries[Math.min(5, history.recentries.length) - 1]) / (Math.min(5, history.recentries.length) - 1))
-                                + secondStage.average) / 2;
-                            item.progress = item.elapsed / smartAverage;
-                            console.log("2s", item, smartAverage);
-                        }
-                        else if (null !== firstStage.average) {
-                            var smartAverage = firstStage.average * (firstStage.nones + firstStage.singles);
-                            item.progress = item.elapsed / smartAverage;
-                            console.log("1s", item, smartAverage);
-                        }
-                    }
-                });
-                var defaultTodo = JSON.parse(JSON.stringify(list)).sort(todoSorter)[0].todo;
-                list.forEach(function (item) { return item.isDefault = defaultTodo === item.todo; });
-            };
-            updateProgress();
             var phi = 1.6180339887;
             var todoSorter = function (a, b) {
                 if (1 < a.count) {
-                    var b_progress = 1 < b.count ? b.progress : phi;
-                    if (a.progress < b_progress) {
-                        return 1;
-                    }
-                    if (b_progress < a.progress) {
-                        return -1;
+                    if (null !== a.smartAverage && null !== b.smartAverage) {
+                        var rate = Math.min(a.count, b.count) < 5 ? 1.5 : 1.2;
+                        if (a.smartAverage < b.smartAverage * rate && b.smartAverage < a.smartAverage * rate) {
+                            if (a.elapsed < b.elapsed) {
+                                return 1;
+                            }
+                            if (b.elapsed < a.elapsed) {
+                                return -1;
+                            }
+                        }
                     }
                     else {
-                        return 0;
+                        var b_progress = 1 < b.count ? b.progress : (1 / phi);
+                        if (a.progress < b_progress) {
+                            return 1;
+                        }
+                        if (b_progress < a.progress) {
+                            return -1;
+                        }
                     }
                 }
                 else if (1 < b.count) {
@@ -404,6 +441,44 @@ var CyclicToDo;
                 }
                 return 0;
             };
+            var updateProgress = function () {
+                var now = CyclicToDo.getTicks();
+                list.forEach(function (item) {
+                    var history = histories[item.todo];
+                    if (0 < history.count) {
+                        item.elapsed = now - history.previous;
+                        if (5 < history.count) {
+                            item.smartAverage =
+                                (((history.recentries[0] - history.recentries[Math.min(5, history.recentries.length) - 1]) / (Math.min(5, history.recentries.length) - 1))
+                                    + ((history.recentries[0] - history.recentries[Math.min(25, history.recentries.length) - 1]) / (Math.min(25, history.recentries.length) - 1))) / 2;
+                        }
+                        else if (2 <= history.count) {
+                            item.smartAverage =
+                                (((history.recentries[0] - history.recentries[Math.min(5, history.recentries.length) - 1]) / (Math.min(5, history.recentries.length) - 1))
+                                    + secondStage.average) / 2;
+                        }
+                        else if (null !== firstStage.average) {
+                            item.smartAverage = firstStage.average * (firstStage.nones + firstStage.singles);
+                            item.standardDeviation = firstStage.standardDeviation;
+                        }
+                        else if (null !== secondStage.average) {
+                            item.smartAverage = secondStage.average;
+                            item.standardDeviation = secondStage.standardDeviation;
+                        }
+                        if (null !== item.smartAverage) {
+                            if (null === item.standardDeviation) {
+                                item.progress = item.elapsed / item.smartAverage;
+                            }
+                            else {
+                                item.progress = item.elapsed / (item.smartAverage + item.standardDeviation);
+                            }
+                        }
+                    }
+                });
+                var defaultTodo = JSON.parse(JSON.stringify(list)).sort(todoSorter)[0].todo;
+                list.forEach(function (item) { return item.isDefault = defaultTodo === item.todo; });
+            };
+            updateProgress();
             list.sort(todoSorter);
             minamo_js_1.minamo.dom.replaceChildren(
             //document.getElementById("screen"),

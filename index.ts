@@ -20,7 +20,9 @@ export module CyclicToDo
         previous: null | number;
         elapsed: null | number;
         average: null | number;
+        standardDeviation: null | number;
         count: number;
+        smartAverage: null | number;
     }
     export const makeTaskEntryComparer = (todo: string[]) => (a: TaskEntry, b: TaskEntry) =>
     {
@@ -96,15 +98,29 @@ export module CyclicToDo
             return "N/A";
         }
         else
+        if (tick < 0)
+        {
+            return `-${renderTime(-tick)}`;
+        }
+        else
         {
             const days = Math.floor(tick / (24 *60));
             const time = Math.floor(tick) % (24 *60);
             const hour = Math.floor(time /60);
             const minute = time % 60;
             const timePart = `${("00" +hour).slice(-2)}:${("00" +minute).slice(-2)}`;
-            return 0 < days ? `${days.toLocaleString()} days ${timePart}`: timePart;
+            return 10 <= days ?
+                `${days.toLocaleString()} days`:
+                0 < days ?
+                    `${days.toLocaleString()} days ${timePart}`:
+                    timePart;
         }
     };
+    export const calulateAverage = (ticks: number[]) => ticks.reduce((a, b) => a +b, 0) /ticks.length;
+    export const calculateStandardDeviation = (ticks: number[], average: number = calulateAverage(ticks)) =>
+        Math.sqrt(calulateAverage(ticks.map(i => (i -average) ** 2)));
+    export const calculateStandardScore = (average: number, standardDeviation: number, target: number) =>
+        (10 * (target -average) /standardDeviation) +50;
     export const sessionPassPrefix = "@Session";
     export const generatePass = (seed: number = new Date().getTime()) => ("" +((seed *13738217) ^ ((seed %387960371999) >> 5 ))).slice(-8);
     export const isSessionPass = (pass: string) => pass.startsWith(sessionPassPrefix);
@@ -156,7 +172,7 @@ export module CyclicToDo
             undefined:
             1 <= item.progress ?
                 `background: #22884455`:
-                `background: linear-gradient(to right, #22884455 ${item.progress.toLocaleString("en", { style: "percent" })}, rgba(128,128,128,0.2) ${item.progress.toLocaleString("en", { style: "percent" })});`;
+                `background: linear-gradient(to right, #22884466 ${item.progress.toLocaleString("en", { style: "percent" })}, rgba(128,128,128,0.2) ${item.progress.toLocaleString("en", { style: "percent" })});`;
         export const renderInformation = (item: ToDoEntry) =>
         ({
             tag: "div",
@@ -186,6 +202,25 @@ export module CyclicToDo
                 },
                 {
                     tag: "div",
+                    className: "task-interval-average",
+                    children:
+                    [
+                        {
+                            tag: "span",
+                            className: "label",
+                            children: "expected interval (予想間隔):",
+                        },
+                        {
+                            tag: "span",
+                            className: "value",
+                            children: null === item.standardDeviation ?
+                                renderTime(item.smartAverage):
+                                `${renderTime(Math.max(item.smartAverage /10, item.smartAverage -item.standardDeviation))} 〜 ${renderTime(item.smartAverage +item.standardDeviation)}`,
+                        }
+                    ],
+                },
+                {
+                    tag: "div",
                     className: "task-elapsed-time",
                     children:
                     [
@@ -201,6 +236,7 @@ export module CyclicToDo
                         }
                     ],
                 },
+                /*
                 {
                     tag: "div",
                     className: "task-interval-average",
@@ -209,7 +245,24 @@ export module CyclicToDo
                         {
                             tag: "span",
                             className: "label",
-                            children: "interval average (間隔平均):",
+                            children: "expected interval average (予想間隔平均):",
+                        },
+                        {
+                            tag: "span",
+                            className: "value",
+                            children: renderTime(item.smartAverage),
+                        }
+                    ],
+                },
+                {
+                    tag: "div",
+                    className: "task-interval-average",
+                    children:
+                    [
+                        {
+                            tag: "span",
+                            className: "label",
+                            children: "recentrly interval average (直近間隔平均):",
                         },
                         {
                             tag: "span",
@@ -218,6 +271,7 @@ export module CyclicToDo
                         }
                     ],
                 },
+                */
                 {
                     tag: "div",
                     className: "task-count",
@@ -295,11 +349,11 @@ export module CyclicToDo
         let updateTodoScreenTimer = undefined;
         export const updateTodoScreen = (entry: ToDoTitleEntry) =>
         {
-            if (undefined === updateTodoScreenTimer)
+            if (undefined !== updateTodoScreenTimer)
             {
                 clearInterval(updateTodoScreenTimer);
             }
-            const histories: { [todo: string]: { recentries: number[], previous: null | number, average: null | number, count: number, } } = { };
+            const histories: { [todo: string]: { recentries: number[], previous: null | number, count: number, } } = { };
             entry.todo.forEach
             (
                 todo =>
@@ -309,30 +363,27 @@ export module CyclicToDo
                     {
                         recentries: full.filter((_, index) => index < 25),
                         previous: full.length <= 0 ? null: full[0],
-                        average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
+                        //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
                         count: full.length,
                     };
                 }
             );
-            console.log(histories);
             const firstStageRecentries = entry.todo.map(todo => histories[todo]).filter(history => 1 === history.count).map(history => history.recentries[0]).sort(simpleReverseComparer);
-            console.log(firstStageRecentries);
             const firstStage =
             {
                 nones: entry.todo.map(todo => histories[todo]).filter(history => 0 === history.count).length,
                 singles: firstStageRecentries.length,
                 average: firstStageRecentries.length <= 1 ? null: (firstStageRecentries[0] -firstStageRecentries[firstStageRecentries.length -1]) / (firstStageRecentries.length -1),
+                standardDeviation: firstStageRecentries.length <= 1 ? null: calculateStandardDeviation(firstStageRecentries),
             };
-            console.log(firstStage);
             const secondStageTarget = entry.todo.map(todo => histories[todo]).filter(history => 2 <= history.count && history.count <= 5);
             const secondStageRecentries = secondStageTarget.map(history => history.recentries).reduce((a, b) => a.concat(b), []).sort(simpleReverseComparer);
-            console.log(secondStageRecentries);
             const secondStage =
             {
                 average: secondStageRecentries.length <= 1 ? null: (secondStageRecentries[0] -secondStageRecentries[secondStageRecentries.length -1]) / (secondStageRecentries.length -1) *secondStageTarget.length,
+                standardDeviation: secondStageRecentries.length <= 1 ? null: calculateStandardDeviation(secondStageRecentries),
                 //count: secondStageRecentries.length,
             };
-            console.log(secondStage);
             const list: ToDoEntry[] = entry.todo.map
             (
                 todo =>
@@ -345,75 +396,49 @@ export module CyclicToDo
                         progress: null,
                         previous: history.previous,
                         elapsed: null,
-                        average: history.average,
+                        average: history.recentries.length <= 1 ? null: (history.recentries[0] -history.recentries[history.recentries.length -1]) / (history.recentries.length -1),
+                        standardDeviation: history.recentries.length <= 1 ?
+                            null:
+                            (5 < history.recentries.length || null === secondStage.standardDeviation) ?
+                                calculateStandardDeviation(history.recentries):
+                                (calculateStandardDeviation(history.recentries) +secondStage.standardDeviation),
                         count: history.count,
+                        smartAverage: null,
                     };
                     return result;
                 }
             );
-            const updateProgress = () =>
-            {
-                const now = getTicks();
-                list.forEach
-                (
-                    item =>
-                    {
-                        const history = histories[item.todo];
-                        if (0 < history.count)
-                        {
-                            item.elapsed = now -history.previous;
-                            if (5 < history.count)
-                            {
-                                const smartAverage =
-                                (
-                                    ((history.recentries[0] -history.recentries[Math.min(5, history.recentries.length) -1]) /(Math.min(5, history.recentries.length) -1))
-                                    +((history.recentries[0] -history.recentries[Math.min(25, history.recentries.length) -1]) /(Math.min(25, history.recentries.length) -1))
-                                ) /2;
-                                item.progress = item.elapsed /smartAverage;
-console.log("3s", item, smartAverage);
-                            }
-                            else
-                            if (2 <= history.count)
-                            {
-                                const smartAverage =
-                                (
-                                    ((history.recentries[0] -history.recentries[Math.min(5, history.recentries.length) -1]) /(Math.min(5, history.recentries.length) -1))
-                                    +secondStage.average
-                                ) /2;
-                                item.progress = item.elapsed /smartAverage;
-console.log("2s", item, smartAverage);
-                            }
-                            else
-                            if (null !== firstStage.average)
-                            {
-                                const smartAverage = firstStage.average *(firstStage.nones +firstStage.singles);
-                                item.progress = item.elapsed /smartAverage;
-console.log("1s", item, smartAverage);
-                            }
-                        }
-                    }
-                );
-                const defaultTodo = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoSorter)[0].todo;
-                list.forEach(item => item.isDefault = defaultTodo === item.todo);
-            };
-            updateProgress();
             const phi = 1.6180339887;
             const todoSorter = (a: ToDoEntry, b: ToDoEntry) =>
             {
                 if (1 < a.count)
                 {
-                    const b_progress = 1 < b.count ? b.progress: phi;
-                    if (a.progress < b_progress)
+                    if (null !== a.smartAverage && null !== b.smartAverage)
                     {
-                        return 1;
-                    }
-                    if (b_progress < a.progress)
-                    {
-                        return -1;
+                        const rate = Math.min(a.count, b.count) < 5 ? 1.5: 1.2;
+                        if (a.smartAverage < b.smartAverage *rate && b.smartAverage < a.smartAverage *rate)
+                        {
+                            if (a.elapsed < b.elapsed)
+                            {
+                                return 1;
+                            }
+                            if (b.elapsed < a.elapsed)
+                            {
+                                return -1;
+                            }
+                        }
                     }
                     else
                     {
-                        return 0;
+                        const b_progress = 1 < b.count ? b.progress: (1 / phi);
+                        if (a.progress < b_progress)
+                        {
+                            return 1;
+                        }
+                        if (b_progress < a.progress)
+                        {
+                            return -1;
+                        }
                     }
                 }
                 else
@@ -455,6 +480,64 @@ console.log("1s", item, smartAverage);
                 }
                 return 0;
             };
+            const updateProgress = () =>
+            {
+                const now = getTicks();
+                list.forEach
+                (
+                    item =>
+                    {
+                        const history = histories[item.todo];
+                        if (0 < history.count)
+                        {
+                            item.elapsed = now -history.previous;
+                            if (5 < history.count)
+                            {
+                                item.smartAverage =
+                                (
+                                    ((history.recentries[0] -history.recentries[Math.min(5, history.recentries.length) -1]) /(Math.min(5, history.recentries.length) -1))
+                                    +((history.recentries[0] -history.recentries[Math.min(25, history.recentries.length) -1]) /(Math.min(25, history.recentries.length) -1))
+                                ) /2;
+                            }
+                            else
+                            if (2 <= history.count)
+                            {
+                                item.smartAverage =
+                                (
+                                    ((history.recentries[0] -history.recentries[Math.min(5, history.recentries.length) -1]) /(Math.min(5, history.recentries.length) -1))
+                                    +secondStage.average
+                                ) /2;
+                            }
+                            else
+                            if (null !== firstStage.average)
+                            {
+                                item.smartAverage = firstStage.average *(firstStage.nones +firstStage.singles);
+                                item.standardDeviation = firstStage.standardDeviation;
+                            }
+                            else
+                            if (null !== secondStage.average)
+                            {
+                                item.smartAverage = secondStage.average;
+                                item.standardDeviation = secondStage.standardDeviation;
+                            }
+                            if (null !== item.smartAverage)
+                            {
+                                if (null === item.standardDeviation)
+                                {
+                                    item.progress = item.elapsed /item.smartAverage;
+                                }
+                                else
+                                {
+                                    item.progress = item.elapsed /(item.smartAverage +item.standardDeviation);
+                                }
+                            }
+                        }
+                    }
+                );
+                const defaultTodo = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoSorter)[0].todo;
+                list.forEach(item => item.isDefault = defaultTodo === item.todo);
+            };
+            updateProgress();
             list.sort(todoSorter);
             minamo.dom.replaceChildren
             (
