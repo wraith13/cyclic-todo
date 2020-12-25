@@ -84,20 +84,30 @@ var CyclicToDo;
         return Math.floor(date.getTime() / CyclicToDo.TimeAccuracy);
     };
     CyclicToDo.DateStringFromTick = function (tick) {
-        var date = new Date(tick * CyclicToDo.TimeAccuracy);
-        date.setHours(0);
-        date.setMinutes(0);
-        date.setSeconds(0);
-        date.setMilliseconds(0);
-        return date.toLocaleDateString() + " " + CyclicToDo.renderTime(tick - CyclicToDo.getTicks(date));
+        if (null === tick) {
+            return "N/A";
+        }
+        else {
+            var date = new Date(tick * CyclicToDo.TimeAccuracy);
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+            date.setMilliseconds(0);
+            return date.toLocaleDateString() + " " + CyclicToDo.renderTime(tick - CyclicToDo.getTicks(date));
+        }
     };
     CyclicToDo.renderTime = function (tick) {
-        var days = Math.floor(tick / (24 * 60));
-        var time = Math.floor(tick) % (24 * 60);
-        var hour = Math.floor(time / 60);
-        var minute = time % 60;
-        var timePart = ("00" + hour).slice(-2) + ":" + ("00" + minute).slice(-2);
-        return 0 < days ? days.toLocaleString() + " days " + timePart : timePart;
+        if (null === tick) {
+            return "N/A";
+        }
+        else {
+            var days = Math.floor(tick / (24 * 60));
+            var time = Math.floor(tick) % (24 * 60);
+            var hour = Math.floor(time / 60);
+            var minute = time % 60;
+            var timePart = ("00" + hour).slice(-2) + ":" + ("00" + minute).slice(-2);
+            return 0 < days ? days.toLocaleString() + " days " + timePart : timePart;
+        }
     };
     CyclicToDo.sessionPassPrefix = "@Session";
     CyclicToDo.generatePass = function (seed) {
@@ -146,24 +156,17 @@ var CyclicToDo;
                 children: text,
             });
         };
-        dom.renderProgressStyle = function (list, entry, history) {
-            var now = CyclicToDo.getTicks();
-            var current = now - entry.tick;
-            var ticks = list.map(function (i) { return i.tick; }).filter(function (i) { return 0 < i; }).map(function (i) { return now - i; });
-            var max = 2 <= history.length ?
-                (((history[0] - history[Math.min(5, history.length) - 1]) / Math.min(5, history.length))
-                    + ((history[0] - history[Math.min(25, history.length) - 1]) / Math.min(25, history.length))) / 2 :
-                ticks.reduce(function (a, b) { return a < b ? b : a; }, current) * (list.length / list.map(function (i) { return i.tick; }).filter(function (i) { return 0 < i; }).length);
-            var progress = (current / max).toLocaleString("en", { style: "percent" });
-            //console.log({ min, max, progress, tick: entry.tick});
-            return "background: linear-gradient(to right, #22884455 " + progress + ", rgba(128,128,128,0.2) " + progress + ");";
-        };
-        dom.renderInformation = function (list, entry, history) {
+        dom.renderProgressStyle = function (item) { return null === item.progress ?
+            undefined :
+            1 <= item.progress ?
+                "background: #22884455" :
+                "background: linear-gradient(to right, #22884455 " + item.progress.toLocaleString("en", { style: "percent" }) + ", rgba(128,128,128,0.2) " + item.progress.toLocaleString("en", { style: "percent" }) + ");"; };
+        dom.renderInformation = function (item) {
             return ({
                 tag: "div",
-                className: entry.tick <= 0 || (history.length <= 1 && list.length <= 1) ? "task-information no-progress" : "task-information",
+                className: null === item.progress ? "task-information no-progress" : "task-information",
                 attributes: {
-                    style: entry.tick <= 0 || (history.length <= 1 && list.length <= 1) ? undefined : dom.renderProgressStyle(list, entry, history),
+                    style: dom.renderProgressStyle(item),
                 },
                 children: [
                     {
@@ -178,7 +181,7 @@ var CyclicToDo;
                             {
                                 tag: "span",
                                 className: "value",
-                                children: entry.tick <= 0 ? "N/A" : CyclicToDo.DateStringFromTick(entry.tick),
+                                children: CyclicToDo.DateStringFromTick(item.previous),
                             }
                         ],
                     },
@@ -194,7 +197,7 @@ var CyclicToDo;
                             {
                                 tag: "span",
                                 className: "value",
-                                children: entry.tick <= 0 ? "N/A" : CyclicToDo.renderTime(CyclicToDo.getTicks() - entry.tick),
+                                children: CyclicToDo.renderTime(item.elapsed),
                             }
                         ],
                     },
@@ -210,7 +213,7 @@ var CyclicToDo;
                             {
                                 tag: "span",
                                 className: "value",
-                                children: history.length <= 1 ? "N/A" : CyclicToDo.renderTime((history[0] - history[history.length - 1]) / (history.length)),
+                                children: CyclicToDo.renderTime(item.average),
                             }
                         ],
                     },
@@ -226,17 +229,17 @@ var CyclicToDo;
                             {
                                 tag: "span",
                                 className: "value",
-                                children: history.length.toLocaleString(),
+                                children: item.count.toLocaleString(),
                             }
                         ],
                     },
                 ],
             });
         };
-        dom.renderDoneButton = function (title, pass, list, entry, isDefault) {
+        dom.renderTodoItem = function (entry, item) {
             return ({
                 tag: "div",
-                className: isDefault ? "task-item default-task" : "task-item",
+                className: "task-item",
                 children: [
                     {
                         tag: "div",
@@ -244,20 +247,20 @@ var CyclicToDo;
                         children: [
                             {
                                 tag: "button",
-                                className: isDefault ? "default-button" : undefined,
+                                className: item.isDefault ? "default-button" : undefined,
                                 children: "Done (完了)",
                                 onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                     var fxxkingTypeScriptCompiler;
                                     return __generator(this, function (_a) {
-                                        fxxkingTypeScriptCompiler = CyclicToDo.isSessionPass(pass);
+                                        fxxkingTypeScriptCompiler = CyclicToDo.isSessionPass(entry.pass);
                                         if (fxxkingTypeScriptCompiler) {
                                             window.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
                                                 + "\n"
                                                 + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。");
                                         }
                                         else {
-                                            CyclicToDo.done(pass, entry.task);
-                                            dom.updateTodoScreen(title, pass, CyclicToDo.getToDoEntries(pass, list.map(function (i) { return i.task; })));
+                                            CyclicToDo.done(entry.pass, item.todo);
+                                            dom.updateTodoScreen(entry);
                                         }
                                         return [2 /*return*/];
                                     });
@@ -266,31 +269,155 @@ var CyclicToDo;
                             {
                                 tag: "div",
                                 className: "task-title",
-                                children: entry.task,
+                                children: item.todo,
                             },
                         ],
                     },
-                    dom.renderInformation(list, entry, CyclicToDo.getHistory(pass, entry.task)),
+                    // DELETE_ME renderInformation(list, item, getHistory(pass, item.task)),
+                    dom.renderInformation(item),
                 ],
             });
         };
-        var updateTodoScreenTimer = undefined;
-        dom.updateTodoScreen = function (title, pass, list) {
-            minamo_js_1.minamo.dom.replaceChildren(
-            //document.getElementById("screen"),
-            document.body, {
+        dom.renderTodoScreen = function (entry, list) {
+            return ({
                 tag: "div",
                 className: "todo-screen screen",
                 children: [
-                    dom.renderHeading("h1", title + " Cyclic Todo"),
-                ].concat(list.map(function (entry, index) { return dom.renderDoneButton(title, pass, list, entry, 0 === index); })),
+                    dom.renderHeading("h1", entry.title + " Cyclic Todo"),
+                ].concat(list.map(function (item) { return dom.renderTodoItem(entry, item); })),
             });
-            if (undefined !== updateTodoScreenTimer) {
-                clearTimeout(updateTodoScreenTimer);
+        };
+        var updateTodoScreenTimer = undefined;
+        dom.updateTodoScreen = function (entry) {
+            if (undefined === updateTodoScreenTimer) {
+                clearInterval(updateTodoScreenTimer);
             }
-            updateTodoScreenTimer = setTimeout(function () {
+            var histories = {};
+            entry.todo.forEach(function (todo) {
+                var full = CyclicToDo.getHistory(entry.pass, todo);
+                histories[todo] =
+                    {
+                        recentries: full.filter(function (_, index) { return index < 25; }),
+                        previous: full.length <= 0 ? null : full[0],
+                        average: full.length <= 1 ? null : (full[0] - full[full.length - 1]) / (full.length - 1),
+                        count: full.length,
+                    };
+            });
+            console.log(histories);
+            var firstStageRecentries = entry.todo.map(function (todo) { return histories[todo]; }).filter(function (history) { return 1 === history.count; }).map(function (history) { return history.recentries[0]; }).sort(CyclicToDo.simpleReverseComparer);
+            console.log(firstStageRecentries);
+            var firstStage = {
+                nones: entry.todo.map(function (todo) { return histories[todo]; }).filter(function (history) { return 0 === history.count; }).length,
+                singles: firstStageRecentries.length,
+                average: firstStageRecentries.length <= 1 ? null : (firstStageRecentries[0] - firstStageRecentries[firstStageRecentries.length - 1]) / (firstStageRecentries.length - 1),
+            };
+            console.log(firstStage);
+            var secondStageTarget = entry.todo.map(function (todo) { return histories[todo]; }).filter(function (history) { return 2 <= history.count && history.count <= 5; });
+            var secondStageRecentries = secondStageTarget.map(function (history) { return history.recentries; }).reduce(function (a, b) { return a.concat(b); }, []).sort(CyclicToDo.simpleReverseComparer);
+            console.log(secondStageRecentries);
+            var secondStage = {
+                average: secondStageRecentries.length <= 1 ? null : (secondStageRecentries[0] - secondStageRecentries[secondStageRecentries.length - 1]) / (secondStageRecentries.length - 1) * secondStageTarget.length,
+            };
+            console.log(secondStage);
+            var list = entry.todo.map(function (todo) {
+                var history = histories[todo];
+                var result = {
+                    todo: todo,
+                    isDefault: false,
+                    progress: null,
+                    previous: history.previous,
+                    elapsed: null,
+                    average: history.average,
+                    count: history.count,
+                };
+                return result;
+            });
+            var updateProgress = function () {
+                var now = CyclicToDo.getTicks();
+                list.forEach(function (item) {
+                    var history = histories[item.todo];
+                    if (0 < history.count) {
+                        item.elapsed = now - history.previous;
+                        if (5 < history.count) {
+                            var smartAverage = (((history.recentries[0] - history.recentries[Math.min(5, history.recentries.length) - 1]) / (Math.min(5, history.recentries.length) - 1))
+                                + ((history.recentries[0] - history.recentries[Math.min(25, history.recentries.length) - 1]) / (Math.min(25, history.recentries.length) - 1))) / 2;
+                            item.progress = item.elapsed / smartAverage;
+                            console.log("3s", item, smartAverage);
+                        }
+                        else if (2 <= history.count) {
+                            var smartAverage = (((history.recentries[0] - history.recentries[Math.min(5, history.recentries.length) - 1]) / (Math.min(5, history.recentries.length) - 1))
+                                + secondStage.average) / 2;
+                            item.progress = item.elapsed / smartAverage;
+                            console.log("2s", item, smartAverage);
+                        }
+                        else if (null !== firstStage.average) {
+                            var smartAverage = firstStage.average * (firstStage.nones + firstStage.singles);
+                            item.progress = item.elapsed / smartAverage;
+                            console.log("1s", item, smartAverage);
+                        }
+                    }
+                });
+                var defaultTodo = JSON.parse(JSON.stringify(list)).sort(todoSorter)[0].todo;
+                list.forEach(function (item) { return item.isDefault = defaultTodo === item.todo; });
+            };
+            updateProgress();
+            var phi = 1.6180339887;
+            var todoSorter = function (a, b) {
+                if (1 < a.count) {
+                    var b_progress = 1 < b.count ? b.progress : phi;
+                    if (a.progress < b_progress) {
+                        return 1;
+                    }
+                    if (b_progress < a.progress) {
+                        return -1;
+                    }
+                    else {
+                        return 0;
+                    }
+                }
+                else if (1 < b.count) {
+                    return -todoSorter(b, a);
+                }
+                if (a.count < b.count) {
+                    return -1;
+                }
+                if (b.count < a.count) {
+                    return 1;
+                }
+                var aTodoIndex = entry.todo.indexOf(a.todo);
+                var bTodoIndex = entry.todo.indexOf(a.todo);
+                if (aTodoIndex < 0 && bTodoIndex < 0) {
+                    if (a.todo < b.todo) {
+                        return 1;
+                    }
+                    if (b.todo < a.todo) {
+                        return -1;
+                    }
+                }
+                else {
+                    if (aTodoIndex < bTodoIndex) {
+                        return 1;
+                    }
+                    if (bTodoIndex < aTodoIndex) {
+                        return -1;
+                    }
+                }
+                return 0;
+            };
+            list.sort(todoSorter);
+            minamo_js_1.minamo.dom.replaceChildren(
+            //document.getElementById("screen"),
+            document.body, dom.renderTodoScreen(entry, list));
+            updateTodoScreenTimer = setInterval(function () {
                 if (0 < document.getElementsByClassName("todo-screen").length) {
-                    dom.updateTodoScreen(title, pass, list);
+                    updateProgress();
+                    minamo_js_1.minamo.dom.replaceChildren(
+                    //document.getElementById("screen"),
+                    document.body, dom.renderTodoScreen(entry, list));
+                }
+                else {
+                    clearInterval(updateTodoScreenTimer);
+                    updateTodoScreenTimer = undefined;
                 }
             }, CyclicToDo.TimeAccuracy);
         };
@@ -348,7 +475,11 @@ var CyclicToDo;
                         tag: "button",
                         children: "default-button",
                         onclick: function () {
-                            dom.updateTodoScreen(titleDiv.value, passDiv.value, CyclicToDo.getToDoEntries(passDiv.value, todoDom.value.split("\n").map(function (i) { return i.trim(); })));
+                            dom.updateTodoScreen({
+                                title: titleDiv.value,
+                                pass: passDiv.value,
+                                todo: todoDom.value.split("\n").map(function (i) { return i.trim(); })
+                            });
                         }
                     },
                 ]
@@ -474,7 +605,7 @@ var CyclicToDo;
                             //     break;
                             default:
                                 console.log("show todo screen");
-                                dom.updateTodoScreen(title, pass, CyclicToDo.getToDoEntries(pass, todo));
+                                dom.updateTodoScreen({ title: title, pass: pass, todo: todo });
                                 break;
                         }
                     }

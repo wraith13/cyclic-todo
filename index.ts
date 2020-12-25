@@ -1,10 +1,26 @@
 import { minamo } from "./minamo.js";
 export module CyclicToDo
 {
+    interface ToDoTitleEntry
+    {
+        title: string;
+        pass: string;
+        todo: string[];
+    }
     interface TaskEntry
     {
         task: string;
         tick: number;
+    }
+    interface ToDoEntry
+    {
+        todo: string;
+        isDefault: boolean;
+        progress: null | number;
+        previous: null | number;
+        elapsed: null | number;
+        average: null | number;
+        count: number;
     }
     export const makeTaskEntryComparer = (todo: string[]) => (a: TaskEntry, b: TaskEntry) =>
     {
@@ -57,23 +73,37 @@ export module CyclicToDo
     export const simpleReverseComparer = <T>(a: T, b: T) => -simpleComparer(a, b);
     export const TimeAccuracy = 60 *1000;
     export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / TimeAccuracy);
-    export const DateStringFromTick = (tick: number) =>
+    export const DateStringFromTick = (tick: null | number) =>
     {
-        const date = new Date(tick *TimeAccuracy);
-        date.setHours(0);
-        date.setMinutes(0);
-        date.setSeconds(0);
-        date.setMilliseconds(0);
-        return `${date.toLocaleDateString()} ${renderTime(tick -getTicks(date))}`;
+        if (null === tick)
+        {
+            return "N/A";
+        }
+        else
+        {
+            const date = new Date(tick *TimeAccuracy);
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+            date.setMilliseconds(0);
+            return `${date.toLocaleDateString()} ${renderTime(tick -getTicks(date))}`;
+        }
     };
-    export const renderTime = (tick: number) =>
+    export const renderTime = (tick: null | number) =>
     {
-        const days = Math.floor(tick / (24 *60));
-        const time = Math.floor(tick) % (24 *60);
-        const hour = Math.floor(time /60);
-        const minute = time % 60;
-        const timePart = `${("00" +hour).slice(-2)}:${("00" +minute).slice(-2)}`;
-        return 0 < days ? `${days.toLocaleString()} days ${timePart}`: timePart;
+        if (null === tick)
+        {
+            return "N/A";
+        }
+        else
+        {
+            const days = Math.floor(tick / (24 *60));
+            const time = Math.floor(tick) % (24 *60);
+            const hour = Math.floor(time /60);
+            const minute = time % 60;
+            const timePart = `${("00" +hour).slice(-2)}:${("00" +minute).slice(-2)}`;
+            return 0 < days ? `${days.toLocaleString()} days ${timePart}`: timePart;
+        }
     };
     export const sessionPassPrefix = "@Session";
     export const generatePass = (seed: number = new Date().getTime()) => ("" +((seed *13738217) ^ ((seed %387960371999) >> 5 ))).slice(-8);
@@ -122,28 +152,18 @@ export module CyclicToDo
             tag,
             children: text,
         });
-        export const renderProgressStyle = (list: TaskEntry[], entry: TaskEntry, history: number[]) =>
-        {
-            const now = getTicks();
-            const current = now -entry.tick;
-            const ticks = list.map(i => i.tick).filter(i => 0 < i).map(i => now -i);
-            const max = 2 <= history.length ?
-                (
-                    ((history[0] -history[Math.min(5, history.length) -1]) /Math.min(5, history.length))
-                    +((history[0] -history[Math.min(25, history.length) -1]) /Math.min(25, history.length))
-                ) /2:
-                ticks.reduce((a, b) => a < b ? b: a, current) *(list.length / list.map(i => i.tick).filter(i => 0 < i).length);
-            const progress = (current /max).toLocaleString("en", { style: "percent" });
-            //console.log({ min, max, progress, tick: entry.tick});
-            return `background: linear-gradient(to right, #22884455 ${progress}, rgba(128,128,128,0.2) ${progress});`;
-        };
-        export const renderInformation = (list: TaskEntry[], entry: TaskEntry, history: number[]) =>
+        export const renderProgressStyle = (item: ToDoEntry) => null === item.progress ?
+            undefined:
+            1 <= item.progress ?
+                `background: #22884455`:
+                `background: linear-gradient(to right, #22884455 ${item.progress.toLocaleString("en", { style: "percent" })}, rgba(128,128,128,0.2) ${item.progress.toLocaleString("en", { style: "percent" })});`;
+        export const renderInformation = (item: ToDoEntry) =>
         ({
             tag: "div",
-            className: entry.tick <= 0 || (history.length <= 1 && list.length <= 1) ? "task-information no-progress": "task-information",
+            className: null === item.progress ? "task-information no-progress": "task-information",
             attributes:
             {
-                style: entry.tick <= 0 || (history.length <= 1 && list.length <= 1) ? undefined: renderProgressStyle(list, entry, history),
+                style: renderProgressStyle(item),
             },
             children:
             [
@@ -160,7 +180,7 @@ export module CyclicToDo
                         {
                             tag: "span",
                             className: "value",
-                            children: entry.tick <= 0 ? "N/A": DateStringFromTick(entry.tick),
+                            children: DateStringFromTick(item.previous),
                         }
                     ],
                 },
@@ -177,7 +197,7 @@ export module CyclicToDo
                         {
                             tag: "span",
                             className: "value",
-                            children: entry.tick <= 0 ? "N/A": renderTime(getTicks() -entry.tick),
+                            children: renderTime(item.elapsed),
                         }
                     ],
                 },
@@ -194,7 +214,7 @@ export module CyclicToDo
                         {
                             tag: "span",
                             className: "value",
-                            children: history.length <= 1 ? "N/A": renderTime((history[0] -history[history.length -1]) /(history.length)),
+                            children: renderTime(item.average),
                         }
                     ],
                 },
@@ -211,16 +231,16 @@ export module CyclicToDo
                         {
                             tag: "span",
                             className: "value",
-                            children: history.length.toLocaleString(),
+                            children: item.count.toLocaleString(),
                         }
                     ],
                 },
             ],
         });
-        export const renderDoneButton = (title: string, pass: string, list: TaskEntry[], entry: TaskEntry, isDefault: boolean) =>
+        export const renderTodoItem = (entry: ToDoTitleEntry, item: ToDoEntry) =>
         ({
             tag: "div",
-            className: isDefault ? "task-item default-task": "task-item",
+            className: "task-item",
             children:
             [
                 {
@@ -230,12 +250,12 @@ export module CyclicToDo
                     [
                         {
                             tag: "button",
-                            className: isDefault ? "default-button": undefined,
+                            className: item.isDefault ? "default-button": undefined,
                             children: "Done (完了)",
                             onclick: async () =>
                             {
                                 //if (isSessionPass(pass))
-                                const fxxkingTypeScriptCompiler = isSessionPass(pass);
+                                const fxxkingTypeScriptCompiler = isSessionPass(entry.pass);
                                 if (fxxkingTypeScriptCompiler)
                                 {
                                     window.alert
@@ -247,48 +267,219 @@ export module CyclicToDo
                                 }
                                 else
                                 {
-                                    done(pass, entry.task);
-                                    updateTodoScreen(title, pass, getToDoEntries(pass, list.map(i => i.task)));
+                                    done(entry.pass, item.todo);
+                                    updateTodoScreen(entry);
                                 }
                             }
                         },
                         {
                             tag: "div",
                             className: "task-title",
-                            children: entry.task,
+                            children: item.todo,
                         },
                     ],
                 },
-                renderInformation(list, entry, getHistory(pass, entry.task)),
+                // DELETE_ME renderInformation(list, item, getHistory(pass, item.task)),
+                renderInformation(item),
             ],
         });
+        export const renderTodoScreen = (entry: ToDoTitleEntry, list: ToDoEntry[]) =>
+        ({
+            tag: "div",
+            className: "todo-screen screen",
+            children:
+            [
+                renderHeading("h1", `${entry.title} Cyclic Todo`),
+            ].concat(list.map(item => renderTodoItem(entry, item)) as any),
+        });
         let updateTodoScreenTimer = undefined;
-        export const updateTodoScreen = (title: string, pass: string, list: TaskEntry[]) =>
+        export const updateTodoScreen = (entry: ToDoTitleEntry) =>
         {
+            if (undefined === updateTodoScreenTimer)
+            {
+                clearInterval(updateTodoScreenTimer);
+            }
+            const histories: { [todo: string]: { recentries: number[], previous: null | number, average: null | number, count: number, } } = { };
+            entry.todo.forEach
+            (
+                todo =>
+                {
+                    const full = getHistory(entry.pass, todo);
+                    histories[todo] =
+                    {
+                        recentries: full.filter((_, index) => index < 25),
+                        previous: full.length <= 0 ? null: full[0],
+                        average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
+                        count: full.length,
+                    };
+                }
+            );
+            console.log(histories);
+            const firstStageRecentries = entry.todo.map(todo => histories[todo]).filter(history => 1 === history.count).map(history => history.recentries[0]).sort(simpleReverseComparer);
+            console.log(firstStageRecentries);
+            const firstStage =
+            {
+                nones: entry.todo.map(todo => histories[todo]).filter(history => 0 === history.count).length,
+                singles: firstStageRecentries.length,
+                average: firstStageRecentries.length <= 1 ? null: (firstStageRecentries[0] -firstStageRecentries[firstStageRecentries.length -1]) / (firstStageRecentries.length -1),
+            };
+            console.log(firstStage);
+            const secondStageTarget = entry.todo.map(todo => histories[todo]).filter(history => 2 <= history.count && history.count <= 5);
+            const secondStageRecentries = secondStageTarget.map(history => history.recentries).reduce((a, b) => a.concat(b), []).sort(simpleReverseComparer);
+            console.log(secondStageRecentries);
+            const secondStage =
+            {
+                average: secondStageRecentries.length <= 1 ? null: (secondStageRecentries[0] -secondStageRecentries[secondStageRecentries.length -1]) / (secondStageRecentries.length -1) *secondStageTarget.length,
+                //count: secondStageRecentries.length,
+            };
+            console.log(secondStage);
+            const list: ToDoEntry[] = entry.todo.map
+            (
+                todo =>
+                {
+                    const history = histories[todo];
+                    const result: ToDoEntry =
+                    {
+                        todo,
+                        isDefault: false,
+                        progress: null,
+                        previous: history.previous,
+                        elapsed: null,
+                        average: history.average,
+                        count: history.count,
+                    };
+                    return result;
+                }
+            );
+            const updateProgress = () =>
+            {
+                const now = getTicks();
+                list.forEach
+                (
+                    item =>
+                    {
+                        const history = histories[item.todo];
+                        if (0 < history.count)
+                        {
+                            item.elapsed = now -history.previous;
+                            if (5 < history.count)
+                            {
+                                const smartAverage =
+                                (
+                                    ((history.recentries[0] -history.recentries[Math.min(5, history.recentries.length) -1]) /(Math.min(5, history.recentries.length) -1))
+                                    +((history.recentries[0] -history.recentries[Math.min(25, history.recentries.length) -1]) /(Math.min(25, history.recentries.length) -1))
+                                ) /2;
+                                item.progress = item.elapsed /smartAverage;
+console.log("3s", item, smartAverage);
+                            }
+                            else
+                            if (2 <= history.count)
+                            {
+                                const smartAverage =
+                                (
+                                    ((history.recentries[0] -history.recentries[Math.min(5, history.recentries.length) -1]) /(Math.min(5, history.recentries.length) -1))
+                                    +secondStage.average
+                                ) /2;
+                                item.progress = item.elapsed /smartAverage;
+console.log("2s", item, smartAverage);
+                            }
+                            else
+                            if (null !== firstStage.average)
+                            {
+                                const smartAverage = firstStage.average *(firstStage.nones +firstStage.singles);
+                                item.progress = item.elapsed /smartAverage;
+console.log("1s", item, smartAverage);
+                            }
+                        }
+                    }
+                );
+                const defaultTodo = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoSorter)[0].todo;
+                list.forEach(item => item.isDefault = defaultTodo === item.todo);
+            };
+            updateProgress();
+            const phi = 1.6180339887;
+            const todoSorter = (a: ToDoEntry, b: ToDoEntry) =>
+            {
+                if (1 < a.count)
+                {
+                    const b_progress = 1 < b.count ? b.progress: phi;
+                    if (a.progress < b_progress)
+                    {
+                        return 1;
+                    }
+                    if (b_progress < a.progress)
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+                else
+                if (1 < b.count)
+                {
+                    return -todoSorter(b, a);
+                }
+                if (a.count < b.count)
+                {
+                    return -1;
+                }
+                if (b.count < a.count)
+                {
+                    return 1;
+                }
+                const aTodoIndex = entry.todo.indexOf(a.todo);
+                const bTodoIndex = entry.todo.indexOf(a.todo);
+                if (aTodoIndex < 0 && bTodoIndex < 0)
+                {
+                    if (a.todo < b.todo)
+                    {
+                        return 1;
+                    }
+                    if (b.todo < a.todo)
+                    {
+                        return -1;
+                    }
+                }
+                else
+                {
+                    if (aTodoIndex < bTodoIndex)
+                    {
+                        return 1;
+                    }
+                    if (bTodoIndex < aTodoIndex)
+                    {
+                        return -1;
+                    }
+                }
+                return 0;
+            };
+            list.sort(todoSorter);
             minamo.dom.replaceChildren
             (
                 //document.getElementById("screen"),
                 document.body,
-                {
-                    tag: "div",
-                    className: "todo-screen screen",
-                    children:
-                    [
-                        renderHeading("h1", `${title} Cyclic Todo`),
-                    ].concat(list.map((entry, index) => renderDoneButton(title, pass, list, entry, 0 === index)) as any),
-                }
+                renderTodoScreen(entry, list),
             );
-            if (undefined !== updateTodoScreenTimer)
-            {
-                clearTimeout(updateTodoScreenTimer);
-            }
-            updateTodoScreenTimer = setTimeout
+            updateTodoScreenTimer = setInterval
             (
                 () =>
                 {
                     if (0 < document.getElementsByClassName("todo-screen").length)
                     {
-                        updateTodoScreen(title, pass, list);
+                        updateProgress();
+                        minamo.dom.replaceChildren
+                        (
+                            //document.getElementById("screen"),
+                            document.body,
+                            renderTodoScreen(entry, list),
+                        );
+                    }
+                    else
+                    {
+                        clearInterval(updateTodoScreenTimer);
+                        updateTodoScreenTimer = undefined;
                     }
                 },
                 TimeAccuracy
@@ -359,15 +550,11 @@ export module CyclicToDo
                         onclick: () =>
                         {
                             updateTodoScreen
-                            (
-                                titleDiv.value,
-                                passDiv.value,
-                                getToDoEntries
-                                (
-                                    passDiv.value,
-                                    todoDom.value.split("\n").map(i => i.trim())
-                                )
-                            );
+                            ({
+                                title: titleDiv.value,
+                                pass: passDiv.value,
+                                todo: todoDom.value.split("\n").map(i => i.trim())
+                            });
                         }
                     },
                 ]
@@ -504,7 +691,7 @@ export module CyclicToDo
             //     break;
             default:
                 console.log("show todo screen");
-                dom.updateTodoScreen(title, pass, getToDoEntries(pass, todo));
+                dom.updateTodoScreen({ title, pass, todo });
                 break;
             }
         }
