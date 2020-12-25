@@ -369,6 +369,8 @@ var CyclicToDo;
                 average: secondStageRecentries.length <= 1 ? null : (secondStageRecentries[0] - secondStageRecentries[secondStageRecentries.length - 1]) / (secondStageRecentries.length - 1) * secondStageTarget.length,
                 standardDeviation: secondStageRecentries.length <= 1 ? null : CyclicToDo.calculateStandardDeviation(secondStageRecentries),
             };
+            var titleRecentrly = entry.todo.map(function (todo) { return histories[todo].recentries; }).reduce(function (a, b) { return a.concat(b); }, []).sort(CyclicToDo.simpleReverseComparer);
+            var titleRecentrlyAverage = titleRecentrly.length <= 1 ? null : (titleRecentrly[0] - titleRecentrly[titleRecentrly.length - 1]) / (titleRecentrly.length - 1);
             var list = entry.todo.map(function (todo) {
                 var history = histories[todo];
                 var result = {
@@ -389,6 +391,21 @@ var CyclicToDo;
                 return result;
             });
             var phi = 1.6180339887;
+            var calcDecayedProgress = function (item) {
+                var _a, _b;
+                if (((_a = item.progress) !== null && _a !== void 0 ? _a : 0) <= 1.0 || null === titleRecentrlyAverage) {
+                    return item.progress;
+                }
+                else {
+                    var overrate = (item.elapsed - (item.smartAverage + ((_b = item.standardDeviation) !== null && _b !== void 0 ? _b : 0))) / titleRecentrlyAverage;
+                    if (overrate <= 1.0) {
+                        return item.progress;
+                    }
+                    else {
+                        return 1.0 / Math.log2(Math.sqrt(overrate * 4.0));
+                    }
+                }
+            };
             var todoSorter = function (a, b) {
                 if (1 < a.count) {
                     if (null !== a.smartAverage && null !== b.smartAverage) {
@@ -403,11 +420,12 @@ var CyclicToDo;
                         }
                     }
                     else {
-                        var b_progress = 1 < b.count ? b.progress : (1 / phi);
-                        if (a.progress < b_progress) {
+                        var a_progress = calcDecayedProgress(a);
+                        var b_progress = 1 < b.count ? calcDecayedProgress(b) : (1 / phi);
+                        if (a_progress < b_progress) {
                             return 1;
                         }
-                        if (b_progress < a.progress) {
+                        if (b_progress < a_progress) {
                             return -1;
                         }
                     }
@@ -444,6 +462,7 @@ var CyclicToDo;
             var updateProgress = function () {
                 var now = CyclicToDo.getTicks();
                 list.forEach(function (item) {
+                    var _a;
                     var history = histories[item.todo];
                     if (0 < history.count) {
                         item.elapsed = now - history.previous;
@@ -466,12 +485,7 @@ var CyclicToDo;
                             item.standardDeviation = secondStage.standardDeviation;
                         }
                         if (null !== item.smartAverage) {
-                            if (null === item.standardDeviation) {
-                                item.progress = item.elapsed / item.smartAverage;
-                            }
-                            else {
-                                item.progress = item.elapsed / (item.smartAverage + item.standardDeviation);
-                            }
+                            item.progress = item.elapsed / (item.smartAverage + ((_a = item.standardDeviation) !== null && _a !== void 0 ? _a : 0));
                         }
                     }
                 });

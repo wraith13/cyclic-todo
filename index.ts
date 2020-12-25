@@ -384,6 +384,8 @@ export module CyclicToDo
                 standardDeviation: secondStageRecentries.length <= 1 ? null: calculateStandardDeviation(secondStageRecentries),
                 //count: secondStageRecentries.length,
             };
+            const titleRecentrly = entry.todo.map(todo => histories[todo].recentries).reduce((a, b) => a.concat(b), []).sort(simpleReverseComparer);
+            const titleRecentrlyAverage = titleRecentrly.length <= 1 ? null: (titleRecentrly[0] -titleRecentrly[titleRecentrly.length -1]) / (titleRecentrly.length -1);
             const list: ToDoEntry[] = entry.todo.map
             (
                 todo =>
@@ -409,6 +411,25 @@ export module CyclicToDo
                 }
             );
             const phi = 1.6180339887;
+            const calcDecayedProgress = (item: ToDoEntry) =>
+            {
+                if ((item.progress ?? 0) <= 1.0 || null === titleRecentrlyAverage)
+                {
+                    return item.progress;
+                }
+                else
+                {
+                    const overrate = (item.elapsed -(item.smartAverage +(item.standardDeviation ?? 0))) / titleRecentrlyAverage;
+                    if (overrate <= 1.0)
+                    {
+                        return item.progress;
+                    }
+                    else
+                    {
+                        return 1.0 /Math.log2(Math.sqrt(overrate *4.0));
+                    }
+                }
+            };
             const todoSorter = (a: ToDoEntry, b: ToDoEntry) =>
             {
                 if (1 < a.count)
@@ -430,12 +451,13 @@ export module CyclicToDo
                     }
                     else
                     {
-                        const b_progress = 1 < b.count ? b.progress: (1 / phi);
-                        if (a.progress < b_progress)
+                        const a_progress = calcDecayedProgress(a);
+                        const b_progress = 1 < b.count ? calcDecayedProgress(b): (1 / phi);
+                        if (a_progress < b_progress)
                         {
                             return 1;
                         }
-                        if (b_progress < a.progress)
+                        if (b_progress < a_progress)
                         {
                             return -1;
                         }
@@ -522,14 +544,7 @@ export module CyclicToDo
                             }
                             if (null !== item.smartAverage)
                             {
-                                if (null === item.standardDeviation)
-                                {
-                                    item.progress = item.elapsed /item.smartAverage;
-                                }
-                                else
-                                {
-                                    item.progress = item.elapsed /(item.smartAverage +item.standardDeviation);
-                                }
+                                item.progress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0));
                             }
                         }
                     }
