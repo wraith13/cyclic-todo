@@ -1,32 +1,42 @@
 import { minamo } from "./minamo.js";
 import localeEn from "./lang.en.json";
 import localeJa from "./lang.ja.json";
-// export module localeSingle
-// {
-//     export type LocaleKeyType = keyof typeof localeEn;
-//     interface LocaleEntry
-//     {
-//         [key : string] : string;
-//     }
-//     const localeTableKey = navigator.language;
-//     const localeTable = Object.assign(JSON.parse(JSON.stringify(localeEn)), ((<{[key : string] : LocaleEntry}>{
-//         ja : localeJa
-//     })[localeTableKey] || { }));
-//     export const string = (key : string) : string => localeTable[key] || key;
-//     export const map = (key : LocaleKeyType) : string => string(key);
-// }
-export module locale // localeParallel
+const phi = 1.6180339887;
+export module localeSingle
+{
+    export type LocaleKeyType = keyof typeof localeEn;
+    interface LocaleEntry
+    {
+        [key : string] : string;
+    }
+    const localeTableKey = navigator.language;
+    const localeTable = Object.assign(JSON.parse(JSON.stringify(localeEn)), ((<{[key : string] : LocaleEntry}>{
+        ja : localeJa
+    })[localeTableKey] || { }));
+    export const string = (key : string) : string => localeTable[key] || key;
+    export const map = (key : LocaleKeyType) : string => string(key);
+}
+export module localeParallel
 {
     export type LocaleKeyType = keyof typeof localeEn & keyof typeof localeJa;
-    const localeMaster =
+    const firstLocale = localeEn;
+    const secondLocale =
     {
-        en : localeEn,
-        ja : localeJa
-    };
-    export const map = (key : LocaleKeyType) : string => `${localeMaster.en[key]} / ${localeMaster.ja[key]}`;
+        //en : localeEn,
+        ja: localeJa,
+    }[navigator.language] ?? localeJa;
+    export const map = (key : LocaleKeyType) : string => `${firstLocale[key]} / ${secondLocale[key]}`;
+}
+export module locale
+{
+    export type LocaleKeyType = localeParallel.LocaleKeyType;
+    export const map = localeSingle.map;
+    export const parallel = localeParallel.map;
 }
 export module CyclicToDo
 {
+    const applicationTitle = "Cyclic ToDo";
+
     interface ToDoTitleEntry
     {
         title: string;
@@ -195,16 +205,18 @@ export module CyclicToDo
             tag,
             children: text,
         });
+        export const renderBackgroundLinerGradient = (leftPercent: string, leftColor: string, rightColor: string) =>
+            `background: linear-gradient(to right, ${leftColor} ${leftPercent}, ${rightColor} ${leftPercent});`;
         export const renderProgressStyle = (item: ToDoEntry) => null === item.progress ?
             undefined:
             1 <= item.progress ?
                 `background: #22884455`:
-                `background: linear-gradient(to right, #22884466 ${item.progress.toLocaleString("en", { style: "percent" })}, rgba(128,128,128,0.2) ${item.progress.toLocaleString("en", { style: "percent" })});`;
+                renderBackgroundLinerGradient(Math.pow(item.progress, 0.8).toLocaleString("en", { style: "percent" }), "#22884466", "rgba(128,128,128,0.2)");
         export const renderLabel = (label: locale.LocaleKeyType) =>
         ({
             tag: "span",
             className: "label",
-            children: locale.map(label),
+            children: locale.parallel(label),
         });
         export const renderInformation = (item: ToDoEntry) =>
         ({
@@ -322,7 +334,7 @@ export module CyclicToDo
                         {
                             tag: "button",
                             className: item.isDefault ? "default-button": undefined,
-                            children: locale.map("Done"),
+                            children: locale.parallel("Done"),
                             onclick: async () =>
                             {
                                 //if (isSessionPass(pass))
@@ -360,12 +372,13 @@ export module CyclicToDo
             className: "todo-screen screen",
             children:
             [
-                renderHeading("h1", `${entry.title} Cyclic Todo`),
+                renderHeading("h1", `${document.title}`),
             ].concat(list.map(item => renderTodoItem(entry, item)) as any),
         });
         let updateTodoScreenTimer = undefined;
         export const updateTodoScreen = (entry: ToDoTitleEntry) =>
         {
+            document.title = `${entry.title} ${applicationTitle}`;
             if (undefined !== updateTodoScreenTimer)
             {
                 clearInterval(updateTodoScreenTimer);
@@ -428,7 +441,6 @@ export module CyclicToDo
                     return result;
                 }
             );
-            const phi = 1.6180339887;
             const todoSorter = (a: ToDoEntry, b: ToDoEntry) =>
             {
                 if (1 < a.count)
@@ -674,21 +686,32 @@ export module CyclicToDo
             document.body,
             renderEditScreen(title, pass, todo)
         );
+        export const renderApplicationIcon = () =>
+        ({
+            tag: "img",
+            className: "application-icon icon",
+            src: "./cyclictodohex.1024.png"
+        });
         export const renderWelcomeScreen = (_pass: string) =>
         ({
             tag: "div",
             className: "welcome-screen screen",
             children:
             [
-                renderHeading("h2", "title"),
+                renderHeading("h1", `${document.title}`),
+                renderApplicationIcon(),
             ],
         });
-        export const updateWelcomeScreen = (pass: string) => minamo.dom.replaceChildren
-        (
-            //document.getElementById("screen"),
-            document.body,
-            renderWelcomeScreen(pass)
-        );
+        export const updateWelcomeScreen = (pass: string) =>
+        {
+            document.title = applicationTitle;
+            minamo.dom.replaceChildren
+            (
+                //document.getElementById("screen"),
+                document.body,
+                renderWelcomeScreen(pass)
+            );
+        };
         const screen =
         [
             renderHeading("h1", document.title),
@@ -754,7 +777,6 @@ export module CyclicToDo
         const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
         const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
         await dom.showWindow();
-        document.title = `${title} Cyclic ToDo`;
         if ((todo?.length ?? 0) <= 0)
         {
             switch(hash)

@@ -811,36 +811,38 @@ define("lang.ja", [], {
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.CyclicToDo = exports.locale = void 0;
+    exports.CyclicToDo = exports.locale = exports.localeParallel = exports.localeSingle = void 0;
     lang_en_json_1 = __importDefault(lang_en_json_1);
     lang_ja_json_1 = __importDefault(lang_ja_json_1);
-    // export module localeSingle
-    // {
-    //     export type LocaleKeyType = keyof typeof localeEn;
-    //     interface LocaleEntry
-    //     {
-    //         [key : string] : string;
-    //     }
-    //     const localeTableKey = navigator.language;
-    //     const localeTable = Object.assign(JSON.parse(JSON.stringify(localeEn)), ((<{[key : string] : LocaleEntry}>{
-    //         ja : localeJa
-    //     })[localeTableKey] || { }));
-    //     export const string = (key : string) : string => localeTable[key] || key;
-    //     export const map = (key : LocaleKeyType) : string => string(key);
-    // }
+    var phi = 1.6180339887;
+    var localeSingle;
+    (function (localeSingle) {
+        var localeTableKey = navigator.language;
+        var localeTable = Object.assign(JSON.parse(JSON.stringify(lang_en_json_1.default)), ({
+            ja: lang_ja_json_1.default
+        }[localeTableKey] || {}));
+        localeSingle.string = function (key) { return localeTable[key] || key; };
+        localeSingle.map = function (key) { return localeSingle.string(key); };
+    })(localeSingle = exports.localeSingle || (exports.localeSingle = {}));
+    var localeParallel;
+    (function (localeParallel) {
+        var _a;
+        var firstLocale = lang_en_json_1.default;
+        var secondLocale = (_a = {
+            //en : localeEn,
+            ja: lang_ja_json_1.default,
+        }[navigator.language]) !== null && _a !== void 0 ? _a : lang_ja_json_1.default;
+        localeParallel.map = function (key) { return firstLocale[key] + " / " + secondLocale[key]; };
+    })(localeParallel = exports.localeParallel || (exports.localeParallel = {}));
     var locale;
     (function (locale) {
-        var localeMaster = {
-            en: lang_en_json_1.default,
-            ja: lang_ja_json_1.default
-        };
-        locale.map = function (key) { return localeMaster.en[key] + " / " + localeMaster.ja[key]; };
-    })(locale = exports.locale // localeParallel
-     || (exports.locale // localeParallel
-     = {}));
+        locale.map = localeSingle.map;
+        locale.parallel = localeParallel.map;
+    })(locale = exports.locale || (exports.locale = {}));
     var CyclicToDo;
     (function (CyclicToDo) {
         var _this = this;
+        var applicationTitle = "Cyclic ToDo";
         CyclicToDo.makeTaskEntryComparer = function (todo) { return function (a, b) {
             if (a.tick < b.tick) {
                 return -1;
@@ -971,16 +973,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     children: text,
                 });
             };
+            dom.renderBackgroundLinerGradient = function (leftPercent, leftColor, rightColor) {
+                return "background: linear-gradient(to right, " + leftColor + " " + leftPercent + ", " + rightColor + " " + leftPercent + ");";
+            };
             dom.renderProgressStyle = function (item) { return null === item.progress ?
                 undefined :
                 1 <= item.progress ?
                     "background: #22884455" :
-                    "background: linear-gradient(to right, #22884466 " + item.progress.toLocaleString("en", { style: "percent" }) + ", rgba(128,128,128,0.2) " + item.progress.toLocaleString("en", { style: "percent" }) + ");"; };
+                    dom.renderBackgroundLinerGradient(Math.pow(item.progress, 0.8).toLocaleString("en", { style: "percent" }), "#22884466", "rgba(128,128,128,0.2)"); };
             dom.renderLabel = function (label) {
                 return ({
                     tag: "span",
                     className: "label",
-                    children: locale.map(label),
+                    children: locale.parallel(label),
                 });
             };
             dom.renderInformation = function (item) {
@@ -1092,7 +1097,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 {
                                     tag: "button",
                                     className: item.isDefault ? "default-button" : undefined,
-                                    children: locale.map("Done"),
+                                    children: locale.parallel("Done"),
                                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                         var fxxkingTypeScriptCompiler;
                                         return __generator(this, function (_a) {
@@ -1127,12 +1132,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     tag: "div",
                     className: "todo-screen screen",
                     children: [
-                        dom.renderHeading("h1", entry.title + " Cyclic Todo"),
+                        dom.renderHeading("h1", "" + document.title),
                     ].concat(list.map(function (item) { return dom.renderTodoItem(entry, item); })),
                 });
             };
             var updateTodoScreenTimer = undefined;
             dom.updateTodoScreen = function (entry) {
+                document.title = entry.title + " " + applicationTitle;
                 if (undefined !== updateTodoScreenTimer) {
                     clearInterval(updateTodoScreenTimer);
                 }
@@ -1182,7 +1188,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     };
                     return result;
                 });
-                var phi = 1.6180339887;
                 var todoSorter = function (a, b) {
                     if (1 < a.count) {
                         if (null !== a.smartAverage && null !== b.smartAverage) {
@@ -1364,18 +1369,29 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             dom.updateEditScreen = function (title, pass, todo) { return minamo_js_1.minamo.dom.replaceChildren(
             //document.getElementById("screen"),
             document.body, dom.renderEditScreen(title, pass, todo)); };
+            dom.renderApplicationIcon = function () {
+                return ({
+                    tag: "img",
+                    className: "application-icon icon",
+                    src: "./cyclictodohex.1024.png"
+                });
+            };
             dom.renderWelcomeScreen = function (_pass) {
                 return ({
                     tag: "div",
                     className: "welcome-screen screen",
                     children: [
-                        dom.renderHeading("h2", "title"),
+                        dom.renderHeading("h1", "" + document.title),
+                        dom.renderApplicationIcon(),
                     ],
                 });
             };
-            dom.updateWelcomeScreen = function (pass) { return minamo_js_1.minamo.dom.replaceChildren(
-            //document.getElementById("screen"),
-            document.body, dom.renderWelcomeScreen(pass)); };
+            dom.updateWelcomeScreen = function (pass) {
+                document.title = applicationTitle;
+                minamo_js_1.minamo.dom.replaceChildren(
+                //document.getElementById("screen"),
+                document.body, dom.renderWelcomeScreen(pass));
+            };
             var screen = [
                 dom.renderHeading("h1", document.title),
                 {
@@ -1441,7 +1457,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         return [4 /*yield*/, dom.showWindow()];
                     case 1:
                         _g.sent();
-                        document.title = title + " Cyclic ToDo";
                         if (((_e = todo === null || todo === void 0 ? void 0 : todo.length) !== null && _e !== void 0 ? _e : 0) <= 0) {
                             switch (hash) {
                                 // case "import":

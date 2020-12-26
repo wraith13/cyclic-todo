@@ -149,6 +149,19 @@ button.default-button {
 .task-item .task-information.no-progress {
   background-color: rgba(128, 128, 128, 0.4);
 }
+.welcome-screen h1 {
+  margin-bottom: 1em;
+  text-align: center;
+}
+.welcome-screen .application-icon {
+  margin-left: auto;
+  margin-right: auto;
+  width: 400px;
+  height: 400px;
+  max-width: 90vw;
+  max-height: 80vh;
+  display: block;
+}
 .application-form button {
   margin-left: calc(8em + 4px);
   width: 16em;
