@@ -1,4 +1,30 @@
 import { minamo } from "./minamo.js";
+import localeEn from "./lang.en.json";
+import localeJa from "./lang.ja.json";
+// export module localeSingle
+// {
+//     export type LocaleKeyType = keyof typeof localeEn;
+//     interface LocaleEntry
+//     {
+//         [key : string] : string;
+//     }
+//     const localeTableKey = navigator.language;
+//     const localeTable = Object.assign(JSON.parse(JSON.stringify(localeEn)), ((<{[key : string] : LocaleEntry}>{
+//         ja : localeJa
+//     })[localeTableKey] || { }));
+//     export const string = (key : string) : string => localeTable[key] || key;
+//     export const map = (key : LocaleKeyType) : string => string(key);
+// }
+export module locale // localeParallel
+{
+    export type LocaleKeyType = keyof typeof localeEn & keyof typeof localeJa;
+    const localeMaster =
+    {
+        en : localeEn,
+        ja : localeJa
+    };
+    export const map = (key : LocaleKeyType) : string => `${localeMaster.en[key]} / ${localeMaster.ja[key]}`;
+}
 export module CyclicToDo
 {
     interface ToDoTitleEntry
@@ -17,6 +43,7 @@ export module CyclicToDo
         todo: string;
         isDefault: boolean;
         progress: null | number;
+        decayedProgress: null | number;
         previous: null | number;
         elapsed: null | number;
         average: null | number;
@@ -109,16 +136,16 @@ export module CyclicToDo
             const hour = Math.floor(time /60);
             const minute = time % 60;
             const timePart = `${("00" +hour).slice(-2)}:${("00" +minute).slice(-2)}`;
-            return 10 <= days ?
-                `${days.toLocaleString()} days`:
+            return 1000 <= days ?
+                `${days.toLocaleString()}`:
                 0 < days ?
-                    `${days.toLocaleString()} days ${timePart}`:
+                    `${days.toLocaleString()} ${timePart}`:
                     timePart;
         }
     };
-    export const calulateAverage = (ticks: number[]) => ticks.reduce((a, b) => a +b, 0) /ticks.length;
-    export const calculateStandardDeviation = (ticks: number[], average: number = calulateAverage(ticks)) =>
-        Math.sqrt(calulateAverage(ticks.map(i => (i -average) ** 2)));
+    export const calculateAverage = (ticks: number[]) => ticks.reduce((a, b) => a +b, 0) /ticks.length;
+    export const calculateStandardDeviation = (ticks: number[], average: number = calculateAverage(ticks)) =>
+        Math.sqrt(calculateAverage(ticks.map(i => (i -average) ** 2)));
     export const calculateStandardScore = (average: number, standardDeviation: number, target: number) =>
         (10 * (target -average) /standardDeviation) +50;
     export const sessionPassPrefix = "@Session";
@@ -173,6 +200,12 @@ export module CyclicToDo
             1 <= item.progress ?
                 `background: #22884455`:
                 `background: linear-gradient(to right, #22884466 ${item.progress.toLocaleString("en", { style: "percent" })}, rgba(128,128,128,0.2) ${item.progress.toLocaleString("en", { style: "percent" })});`;
+        export const renderLabel = (label: locale.LocaleKeyType) =>
+        ({
+            tag: "span",
+            className: "label",
+            children: locale.map(label),
+        });
         export const renderInformation = (item: ToDoEntry) =>
         ({
             tag: "div",
@@ -188,11 +221,7 @@ export module CyclicToDo
                     className: "task-last-timestamp",
                     children:
                     [
-                        {
-                            tag: "span",
-                            className: "label",
-                            children: "previous (前回):",
-                        },
+                        renderLabel("previous"),
                         {
                             tag: "span",
                             className: "value",
@@ -205,11 +234,7 @@ export module CyclicToDo
                     className: "task-interval-average",
                     children:
                     [
-                        {
-                            tag: "span",
-                            className: "label",
-                            children: "expected interval (予想間隔):",
-                        },
+                        renderLabel("expected interval"),
                         {
                             tag: "span",
                             className: "value",
@@ -224,11 +249,7 @@ export module CyclicToDo
                     className: "task-elapsed-time",
                     children:
                     [
-                        {
-                            tag: "span",
-                            className: "label",
-                            children: "elapsed time (経過時間):",
-                        },
+                        renderLabel("elapsed time"),
                         {
                             tag: "span",
                             className: "value",
@@ -277,11 +298,7 @@ export module CyclicToDo
                     className: "task-count",
                     children:
                     [
-                        {
-                            tag: "span",
-                            className: "label",
-                            children: "count (回数):",
-                        },
+                        renderLabel("count"),
                         {
                             tag: "span",
                             className: "value",
@@ -305,7 +322,7 @@ export module CyclicToDo
                         {
                             tag: "button",
                             className: item.isDefault ? "default-button": undefined,
-                            children: "Done (完了)",
+                            children: locale.map("Done"),
                             onclick: async () =>
                             {
                                 //if (isSessionPass(pass))
@@ -396,6 +413,7 @@ export module CyclicToDo
                         todo,
                         isDefault: false,
                         progress: null,
+                        decayedProgress: null,
                         previous: history.previous,
                         elapsed: null,
                         average: history.recentries.length <= 1 ? null: (history.recentries[0] -history.recentries[history.recentries.length -1]) / (history.recentries.length -1),
@@ -403,7 +421,7 @@ export module CyclicToDo
                             null:
                             (5 < history.recentries.length || null === secondStage.standardDeviation) ?
                                 calculateStandardDeviation(history.recentries):
-                                (calculateStandardDeviation(history.recentries) +secondStage.standardDeviation),
+                                calculateAverage([calculateStandardDeviation(history.recentries), secondStage.standardDeviation]),
                         count: history.count,
                         smartAverage: null,
                     };
@@ -411,25 +429,6 @@ export module CyclicToDo
                 }
             );
             const phi = 1.6180339887;
-            const calcDecayedProgress = (item: ToDoEntry) =>
-            {
-                if ((item.progress ?? 0) <= 1.0 || null === titleRecentrlyAverage)
-                {
-                    return item.progress;
-                }
-                else
-                {
-                    const overrate = (item.elapsed -(item.smartAverage +(item.standardDeviation ?? 0))) / titleRecentrlyAverage;
-                    if (overrate <= 1.0)
-                    {
-                        return item.progress;
-                    }
-                    else
-                    {
-                        return 1.0 /Math.log2(Math.sqrt(overrate *4.0));
-                    }
-                }
-            };
             const todoSorter = (a: ToDoEntry, b: ToDoEntry) =>
             {
                 if (1 < a.count)
@@ -449,18 +448,15 @@ export module CyclicToDo
                             }
                         }
                     }
-                    else
+                    const a_progress = a.decayedProgress;
+                    const b_progress = 1 < b.count ? b.decayedProgress: (1 / phi);
+                    if (a_progress < b_progress)
                     {
-                        const a_progress = calcDecayedProgress(a);
-                        const b_progress = 1 < b.count ? calcDecayedProgress(b): (1 / phi);
-                        if (a_progress < b_progress)
-                        {
-                            return 1;
-                        }
-                        if (b_progress < a_progress)
-                        {
-                            return -1;
-                        }
+                        return 1;
+                    }
+                    if (b_progress < a_progress)
+                    {
+                        return -1;
                     }
                 }
                 else
@@ -545,6 +541,18 @@ export module CyclicToDo
                             if (null !== item.smartAverage)
                             {
                                 item.progress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0));
+                                item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0));
+                                if (null !== titleRecentrlyAverage)
+                                {
+                                    const overrate = (item.elapsed -(item.smartAverage +(item.standardDeviation ?? 0))) / titleRecentrlyAverage;
+                                    if (0.0 < overrate)
+                                    {
+                                        item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
+                                        item.progress = null;
+                                        item.smartAverage = null;
+                                        item.standardDeviation = null;
+                                    }
+                                }
                             }
                         }
                     }
@@ -554,6 +562,7 @@ export module CyclicToDo
             };
             updateProgress();
             list.sort(todoSorter);
+            console.log(list); // これは消さない！！！
             minamo.dom.replaceChildren
             (
                 //document.getElementById("screen"),

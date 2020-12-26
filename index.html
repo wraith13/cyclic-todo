@@ -14,18 +14,8 @@
         stylesheet.media = "screen,projection,tv,print";
         document.head.append(stylesheet);
     </script>
-    
     <script type="text/javascript" src="https://wraith13.github.io/evil-commonjs/index.js"></script>
-    <script>
-    //  see https://github.com/wraith13/evil-commonjs
-    const tick = "?tick=" +new Date().getTime();
-    window.module.sequentialLoad
-    ([
-        { path: "./minamo.js/index.js" +tick, mapping: ["./minamo.js"], },
-        { path: "./index.js" +tick, mapping: ["CyclicToDo"], },
-    ])
-    .then(() => require("CyclicToDo").CyclicToDo.start());
-    </script>
+    <script type="text/javascript" src="index.js?tick=2"></script>
 </head>
-<body></body>
+<body onload="require('index').CyclicToDo.start()"></body>
 </html>

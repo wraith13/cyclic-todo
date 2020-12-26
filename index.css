@@ -137,6 +137,12 @@ button.default-button {
   line-height: 1.4em;
   opacity: 0.6;
 }
+.task-item .task-information .label {
+  margin-right: -50%;
+}
+.task-item .task-information .label::after {
+  content: ":";
+}
 .task-item .task-information .value {
   float: right;
 }
