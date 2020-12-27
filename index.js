@@ -961,8 +961,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
         CyclicToDo.getToDoEntries = function (pass, todo) { return todo
             .map(function (task) { return ({ task: task, tick: CyclicToDo.getLastTick(pass, task) }); })
             .sort(CyclicToDo.makeTaskEntryComparer(todo)); };
+        CyclicToDo.getDoneTicks = function (pass, key) {
+            var _a;
+            if (key === void 0) { key = "pass:(" + pass + ").last.done.ticks"; }
+            return minamo_js_1.minamo.localStorage.set(key, Math.max((_a = minamo_js_1.minamo.localStorage.getOrNull(key)) !== null && _a !== void 0 ? _a : 0, CyclicToDo.getTicks() - 1) + 1);
+        };
         CyclicToDo.done = function (pass, task) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-            return [2 /*return*/, CyclicToDo.addHistory(pass, task, CyclicToDo.getTicks())];
+            return [2 /*return*/, CyclicToDo.addHistory(pass, task, CyclicToDo.getDoneTicks(pass))];
         }); }); };
         var dom;
         (function (dom) {
@@ -1145,8 +1150,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             _c = ["h1"];
                             return [4 /*yield*/, dom.renderApplicationIcon()];
                         case 1: return [2 /*return*/, (_a.children = [
-                                _b.apply(void 0, _c.concat([[_d.sent(), "" + document.title]]))
-                            ].concat(list.map(function (item) { return dom.renderTodoItem(entry, item); })),
+                                _b.apply(void 0, _c.concat([[_d.sent(), "" + document.title]])),
+                                {
+                                    tag: "div",
+                                    className: "list",
+                                    children: list.map(function (item) { return dom.renderTodoItem(entry, item); }),
+                                }
+                            ],
                                 _a)];
                     }
                 });
@@ -1265,7 +1275,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     var _a, _b, _c;
                                     var history = histories[item.todo];
                                     if (0 < history.count) {
-                                        item.elapsed = now - history.previous;
+                                        // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
+                                        item.elapsed = Math.max(0.0, now - history.previous);
                                         if (5 < history.count) {
                                             item.smartAverage =
                                                 (((history.recentries[0] - history.recentries[Math.min(5, history.recentries.length) - 1]) / (Math.min(5, history.recentries.length) - 1))

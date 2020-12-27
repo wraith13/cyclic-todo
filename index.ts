@@ -197,7 +197,18 @@ export module CyclicToDo
     export const getToDoEntries = (pass: string, todo: string[]) => todo
         .map(task => ({ task, tick: getLastTick(pass, task)}))
         .sort(makeTaskEntryComparer(todo));
-    export const done = async (pass: string, task: string) => addHistory(pass, task, getTicks());
+    export const getDoneTicks = (pass: string, key: string = `pass:(${pass}).last.done.ticks`) =>
+        minamo.localStorage.set
+        (
+            key,
+            Math.max
+            (
+                minamo.localStorage.getOrNull<number>(key) ?? 0,
+                getTicks() -1
+            ) +1
+        );
+    export const done = async (pass: string, task: string) =>
+        addHistory(pass, task, getDoneTicks(pass));
     export module dom
     {
         export const renderHeading = (tag: string, text: minamo.dom.Source) =>
@@ -373,7 +384,12 @@ export module CyclicToDo
             children:
             [
                 renderHeading("h1", [await renderApplicationIcon(), `${document.title}`]),
-            ].concat(list.map(item => renderTodoItem(entry, item)) as any),
+                {
+                    tag: "div",
+                    className: "list",
+                    children: list.map(item => renderTodoItem(entry, item)),
+                }
+            ]
         });
         let updateTodoScreenTimer = undefined;
         export const updateTodoScreen = async (entry: ToDoTitleEntry) =>
@@ -520,7 +536,8 @@ export module CyclicToDo
                         const history = histories[item.todo];
                         if (0 < history.count)
                         {
-                            item.elapsed = now -history.previous;
+                            // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
+                            item.elapsed = Math.max(0.0, now -history.previous);
                             if (5 < history.count)
                             {
                                 item.smartAverage =
