@@ -351,7 +351,7 @@ export module CyclicToDo
                                 else
                                 {
                                     done(entry.pass, item.todo);
-                                    updateTodoScreen(entry);
+                                    await updateTodoScreen(entry);
                                 }
                             }
                         },
@@ -366,17 +366,17 @@ export module CyclicToDo
                 renderInformation(item),
             ],
         });
-        export const renderTodoScreen = (entry: ToDoTitleEntry, list: ToDoEntry[]) =>
+        export const renderTodoScreen = async (entry: ToDoTitleEntry, list: ToDoEntry[]) =>
         ({
             tag: "div",
             className: "todo-screen screen",
             children:
             [
-                renderHeading("h1", `${document.title}`),
+                renderHeading("h1", [await renderApplicationIcon(), `${document.title}`]),
             ].concat(list.map(item => renderTodoItem(entry, item)) as any),
         });
         let updateTodoScreenTimer = undefined;
-        export const updateTodoScreen = (entry: ToDoTitleEntry) =>
+        export const updateTodoScreen = async (entry: ToDoTitleEntry) =>
         {
             document.title = `${entry.title} ${applicationTitle}`;
             if (undefined !== updateTodoScreenTimer)
@@ -461,7 +461,7 @@ export module CyclicToDo
                         }
                     }
                     const a_progress = a.decayedProgress;
-                    const b_progress = 1 < b.count ? b.decayedProgress: (1 / phi);
+                    const b_progress = 1 < b.count ? b.decayedProgress: 1.0 -(1.0 / phi);
                     if (a_progress < b_progress)
                     {
                         return 1;
@@ -579,11 +579,11 @@ export module CyclicToDo
             (
                 //document.getElementById("screen"),
                 document.body,
-                renderTodoScreen(entry, list),
+                await renderTodoScreen(entry, list),
             );
             updateTodoScreenTimer = setInterval
             (
-                () =>
+                async () =>
                 {
                     if (0 < document.getElementsByClassName("todo-screen").length)
                     {
@@ -592,7 +592,7 @@ export module CyclicToDo
                         (
                             //document.getElementById("screen"),
                             document.body,
-                            renderTodoScreen(entry, list),
+                            await renderTodoScreen(entry, list),
                         );
                     }
                     else
@@ -686,30 +686,60 @@ export module CyclicToDo
             document.body,
             renderEditScreen(title, pass, todo)
         );
-        export const renderApplicationIcon = () =>
+        const loadSvg = async (path : string) : Promise<SVGElement> => new Promise<SVGElement>
+        (
+            (resolve, reject) =>
+            {
+                const request = new XMLHttpRequest();
+                request.open('GET', path, true);
+                request.onreadystatechange = function()
+                {
+                    if (4 === request.readyState)
+                    {
+                        if (200 <= request.status && request.status < 300)
+                        {
+                            try
+                            {
+                                resolve(new DOMParser().parseFromString(request.responseText, "image/svg+xml").documentElement as any);
+                            }
+                            catch(err)
+                            {
+                                reject(err);
+                            }
+                        }
+                        else
+                        {
+                            reject(request);
+                        }
+                    }
+                };
+                request.send(null);
+            }
+        );
+        export const renderApplicationIcon = async () =>
         ({
-            tag: "img",
+            tag: "div",
             className: "application-icon icon",
-            src: "./cyclictodohex.1024.png"
+            children: await loadSvg("./cyclictodohex.1024.svg"),
         });
-        export const renderWelcomeScreen = (_pass: string) =>
+        export const renderWelcomeScreen = async (_pass: string) =>
         ({
             tag: "div",
             className: "welcome-screen screen",
             children:
             [
-                renderHeading("h1", `${document.title}`),
-                renderApplicationIcon(),
+                renderHeading("h1", [await renderApplicationIcon(), `${document.title}`]),
+                await renderApplicationIcon(),
             ],
         });
-        export const updateWelcomeScreen = (pass: string) =>
+        export const updateWelcomeScreen = async (pass: string) =>
         {
             document.title = applicationTitle;
             minamo.dom.replaceChildren
             (
                 //document.getElementById("screen"),
                 document.body,
-                renderWelcomeScreen(pass)
+                await renderWelcomeScreen(pass)
             );
         };
         const screen =
@@ -790,7 +820,7 @@ export module CyclicToDo
                 break;
             default:
                 console.log("show welcome screen");
-                dom.updateWelcomeScreen(pass);
+                await dom.updateWelcomeScreen(pass);
                 break;
             }
         }

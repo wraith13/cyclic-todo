@@ -8,6 +8,10 @@ body
     line-height: 100%;
     color: #000022;
 }
+.icon svg
+{
+    fill: #000022;
+}
 @media (prefers-color-scheme: dark)
 {
     body
@@ -15,51 +19,44 @@ body
         color: #FFFFFF;
         background-color: #000022;
     }
+    .icon svg
+    {
+        fill: #FFFFFF;
+    }
 }
 h1
 {
     margin: 0rem;
-    padding: 1rem;
-    padding-left: 0.5rem;
+    padding: 0.25rem;
     color: #FFFFFF;
     background-color: #228844;
+    font-size: 1.5rem;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+
+    .icon
+    {
+        display: inline-block;
+        svg
+        {
+            width: 2.5rem;
+            height: 2.5rem;
+            fill: #FFFFFF;
+        }
+        margin-right: 0.25rem;
+    }
 }
 @media (prefers-color-scheme: dark)
 {
     h1
     {
         color: #000022;
-    }
-}
-h2
-{
-    display: inline-flex;
-    align-items: center;
-
-    div.identity
-    {
-        div
+        .icon svg
         {
-            display: inline-flex;
-            align-items: center;
-            margin-right: 8px;
-
-            *
-            {
-                margin-right: 8px;
-            }
-
-            img
-            {
-                height: 32px;
-                width: 32px;
-                border-radius: 4px;
-            }
-
-            span + span
-            {
-                color: #888;
-            }
+            fill: #000022;
         }
     }
 }
@@ -152,7 +149,7 @@ button.default-button
 
     .task-title
     {
-        font-size: 1.6em;
+        font-size: 1.5em;
         line-height: 1.0em;
         box-sizing: border-box;
         margin-bottom: 1.5rem;
@@ -200,7 +197,7 @@ button.default-button
         margin-bottom: 1em;
         text-align: center;
     }
-    .application-icon
+    & > .application-icon
     {
         margin-left: auto;
         margin-right: auto;

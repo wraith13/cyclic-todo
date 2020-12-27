@@ -1101,17 +1101,22 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                         var fxxkingTypeScriptCompiler;
                                         return __generator(this, function (_a) {
-                                            fxxkingTypeScriptCompiler = CyclicToDo.isSessionPass(entry.pass);
-                                            if (fxxkingTypeScriptCompiler) {
-                                                window.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
-                                                    + "\n"
-                                                    + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。");
+                                            switch (_a.label) {
+                                                case 0:
+                                                    fxxkingTypeScriptCompiler = CyclicToDo.isSessionPass(entry.pass);
+                                                    if (!fxxkingTypeScriptCompiler) return [3 /*break*/, 1];
+                                                    window.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                                                        + "\n"
+                                                        + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。");
+                                                    return [3 /*break*/, 3];
+                                                case 1:
+                                                    CyclicToDo.done(entry.pass, item.todo);
+                                                    return [4 /*yield*/, dom.updateTodoScreen(entry)];
+                                                case 2:
+                                                    _a.sent();
+                                                    _a.label = 3;
+                                                case 3: return [2 /*return*/];
                                             }
-                                            else {
-                                                CyclicToDo.done(entry.pass, item.todo);
-                                                dom.updateTodoScreen(entry);
-                                            }
-                                            return [2 /*return*/];
                                         });
                                     }); }
                                 },
@@ -1127,180 +1132,213 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     ],
                 });
             };
-            dom.renderTodoScreen = function (entry, list) {
-                return ({
-                    tag: "div",
-                    className: "todo-screen screen",
-                    children: [
-                        dom.renderHeading("h1", "" + document.title),
-                    ].concat(list.map(function (item) { return dom.renderTodoItem(entry, item); })),
+            dom.renderTodoScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "todo-screen screen"
+                            };
+                            _b = dom.renderHeading;
+                            _c = ["h1"];
+                            return [4 /*yield*/, dom.renderApplicationIcon()];
+                        case 1: return [2 /*return*/, (_a.children = [
+                                _b.apply(void 0, _c.concat([[_d.sent(), "" + document.title]]))
+                            ].concat(list.map(function (item) { return dom.renderTodoItem(entry, item); })),
+                                _a)];
+                    }
                 });
-            };
+            }); };
             var updateTodoScreenTimer = undefined;
-            dom.updateTodoScreen = function (entry) {
-                document.title = entry.title + " " + applicationTitle;
-                if (undefined !== updateTodoScreenTimer) {
-                    clearInterval(updateTodoScreenTimer);
-                }
-                var histories = {};
-                entry.todo.forEach(function (todo) {
-                    var full = CyclicToDo.getHistory(entry.pass, todo);
-                    histories[todo] =
-                        {
-                            recentries: full.filter(function (_, index) { return index < 25; }),
-                            previous: full.length <= 0 ? null : full[0],
-                            //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
-                            count: full.length,
-                        };
-                });
-                var firstStageRecentries = entry.todo.map(function (todo) { return histories[todo]; }).filter(function (history) { return 1 === history.count; }).map(function (history) { return history.recentries[0]; }).sort(CyclicToDo.simpleReverseComparer);
-                var firstStage = {
-                    nones: entry.todo.map(function (todo) { return histories[todo]; }).filter(function (history) { return 0 === history.count; }).length,
-                    singles: firstStageRecentries.length,
-                    average: firstStageRecentries.length <= 1 ? null : (firstStageRecentries[0] - firstStageRecentries[firstStageRecentries.length - 1]) / (firstStageRecentries.length - 1),
-                    standardDeviation: firstStageRecentries.length <= 1 ? null : CyclicToDo.calculateStandardDeviation(firstStageRecentries),
-                };
-                var secondStageTarget = entry.todo.map(function (todo) { return histories[todo]; }).filter(function (history) { return 2 <= history.count && history.count <= 5; });
-                var secondStageRecentries = secondStageTarget.map(function (history) { return history.recentries; }).reduce(function (a, b) { return a.concat(b); }, []).sort(CyclicToDo.simpleReverseComparer);
-                var secondStage = {
-                    average: secondStageRecentries.length <= 1 ? null : (secondStageRecentries[0] - secondStageRecentries[secondStageRecentries.length - 1]) / (secondStageRecentries.length - 1) * secondStageTarget.length,
-                    standardDeviation: secondStageRecentries.length <= 1 ? null : CyclicToDo.calculateStandardDeviation(secondStageRecentries),
-                };
-                var titleRecentrly = entry.todo.map(function (todo) { return histories[todo].recentries; }).reduce(function (a, b) { return a.concat(b); }, []).sort(CyclicToDo.simpleReverseComparer);
-                var titleRecentrlyAverage = titleRecentrly.length <= 1 ? null : (titleRecentrly[0] - titleRecentrly[titleRecentrly.length - 1]) / (titleRecentrly.length - 1);
-                var list = entry.todo.map(function (todo) {
-                    var history = histories[todo];
-                    var result = {
-                        todo: todo,
-                        isDefault: false,
-                        progress: null,
-                        decayedProgress: null,
-                        previous: history.previous,
-                        elapsed: null,
-                        average: history.recentries.length <= 1 ? null : (history.recentries[0] - history.recentries[history.recentries.length - 1]) / (history.recentries.length - 1),
-                        standardDeviation: history.recentries.length <= 1 ?
-                            null :
-                            (5 < history.recentries.length || null === secondStage.standardDeviation) ?
-                                CyclicToDo.calculateStandardDeviation(history.recentries) :
-                                CyclicToDo.calculateAverage([CyclicToDo.calculateStandardDeviation(history.recentries), secondStage.standardDeviation]),
-                        count: history.count,
-                        smartAverage: null,
-                    };
-                    return result;
-                });
-                var todoSorter = function (a, b) {
-                    if (1 < a.count) {
-                        if (null !== a.smartAverage && null !== b.smartAverage) {
-                            var rate = Math.min(a.count, b.count) < 5 ? 1.5 : 1.2;
-                            if (a.smartAverage < b.smartAverage * rate && b.smartAverage < a.smartAverage * rate) {
-                                if (a.elapsed < b.elapsed) {
-                                    return 1;
-                                }
-                                if (b.elapsed < a.elapsed) {
-                                    return -1;
-                                }
+            dom.updateTodoScreen = function (entry) { return __awaiter(_this, void 0, void 0, function () {
+                var histories, firstStageRecentries, firstStage, secondStageTarget, secondStageRecentries, secondStage, titleRecentrly, titleRecentrlyAverage, list, todoSorter, updateProgress, _a, _b, _c;
+                var _this = this;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            document.title = entry.title + " " + applicationTitle;
+                            if (undefined !== updateTodoScreenTimer) {
+                                clearInterval(updateTodoScreenTimer);
                             }
-                        }
-                        var a_progress = a.decayedProgress;
-                        var b_progress = 1 < b.count ? b.decayedProgress : (1 / phi);
-                        if (a_progress < b_progress) {
-                            return 1;
-                        }
-                        if (b_progress < a_progress) {
-                            return -1;
-                        }
-                    }
-                    else if (1 < b.count) {
-                        return -todoSorter(b, a);
-                    }
-                    if (a.count < b.count) {
-                        return -1;
-                    }
-                    if (b.count < a.count) {
-                        return 1;
-                    }
-                    var aTodoIndex = entry.todo.indexOf(a.todo);
-                    var bTodoIndex = entry.todo.indexOf(a.todo);
-                    if (aTodoIndex < 0 && bTodoIndex < 0) {
-                        if (a.todo < b.todo) {
-                            return 1;
-                        }
-                        if (b.todo < a.todo) {
-                            return -1;
-                        }
-                    }
-                    else {
-                        if (aTodoIndex < bTodoIndex) {
-                            return 1;
-                        }
-                        if (bTodoIndex < aTodoIndex) {
-                            return -1;
-                        }
-                    }
-                    return 0;
-                };
-                var updateProgress = function () {
-                    var now = CyclicToDo.getTicks();
-                    list.forEach(function (item) {
-                        var _a, _b, _c;
-                        var history = histories[item.todo];
-                        if (0 < history.count) {
-                            item.elapsed = now - history.previous;
-                            if (5 < history.count) {
-                                item.smartAverage =
-                                    (((history.recentries[0] - history.recentries[Math.min(5, history.recentries.length) - 1]) / (Math.min(5, history.recentries.length) - 1))
-                                        + ((history.recentries[0] - history.recentries[Math.min(25, history.recentries.length) - 1]) / (Math.min(25, history.recentries.length) - 1))) / 2;
-                            }
-                            else if (2 <= history.count) {
-                                item.smartAverage =
-                                    (((history.recentries[0] - history.recentries[Math.min(5, history.recentries.length) - 1]) / (Math.min(5, history.recentries.length) - 1))
-                                        + secondStage.average) / 2;
-                            }
-                            else if (null !== firstStage.average) {
-                                item.smartAverage = firstStage.average * (firstStage.nones + firstStage.singles);
-                                item.standardDeviation = firstStage.standardDeviation;
-                            }
-                            else if (null !== secondStage.average) {
-                                item.smartAverage = secondStage.average;
-                                item.standardDeviation = secondStage.standardDeviation;
-                            }
-                            if (null !== item.smartAverage) {
-                                item.progress = item.elapsed / (item.smartAverage + ((_a = item.standardDeviation) !== null && _a !== void 0 ? _a : 0));
-                                item.decayedProgress = item.elapsed / (item.smartAverage + ((_b = item.standardDeviation) !== null && _b !== void 0 ? _b : 0));
-                                if (null !== titleRecentrlyAverage) {
-                                    var overrate = (item.elapsed - (item.smartAverage + ((_c = item.standardDeviation) !== null && _c !== void 0 ? _c : 0))) / titleRecentrlyAverage;
-                                    if (0.0 < overrate) {
-                                        item.decayedProgress = 1.0 / (1.0 + Math.log2(1.0 + overrate));
-                                        item.progress = null;
-                                        item.smartAverage = null;
-                                        item.standardDeviation = null;
+                            histories = {};
+                            entry.todo.forEach(function (todo) {
+                                var full = CyclicToDo.getHistory(entry.pass, todo);
+                                histories[todo] =
+                                    {
+                                        recentries: full.filter(function (_, index) { return index < 25; }),
+                                        previous: full.length <= 0 ? null : full[0],
+                                        //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
+                                        count: full.length,
+                                    };
+                            });
+                            firstStageRecentries = entry.todo.map(function (todo) { return histories[todo]; }).filter(function (history) { return 1 === history.count; }).map(function (history) { return history.recentries[0]; }).sort(CyclicToDo.simpleReverseComparer);
+                            firstStage = {
+                                nones: entry.todo.map(function (todo) { return histories[todo]; }).filter(function (history) { return 0 === history.count; }).length,
+                                singles: firstStageRecentries.length,
+                                average: firstStageRecentries.length <= 1 ? null : (firstStageRecentries[0] - firstStageRecentries[firstStageRecentries.length - 1]) / (firstStageRecentries.length - 1),
+                                standardDeviation: firstStageRecentries.length <= 1 ? null : CyclicToDo.calculateStandardDeviation(firstStageRecentries),
+                            };
+                            secondStageTarget = entry.todo.map(function (todo) { return histories[todo]; }).filter(function (history) { return 2 <= history.count && history.count <= 5; });
+                            secondStageRecentries = secondStageTarget.map(function (history) { return history.recentries; }).reduce(function (a, b) { return a.concat(b); }, []).sort(CyclicToDo.simpleReverseComparer);
+                            secondStage = {
+                                average: secondStageRecentries.length <= 1 ? null : (secondStageRecentries[0] - secondStageRecentries[secondStageRecentries.length - 1]) / (secondStageRecentries.length - 1) * secondStageTarget.length,
+                                standardDeviation: secondStageRecentries.length <= 1 ? null : CyclicToDo.calculateStandardDeviation(secondStageRecentries),
+                            };
+                            titleRecentrly = entry.todo.map(function (todo) { return histories[todo].recentries; }).reduce(function (a, b) { return a.concat(b); }, []).sort(CyclicToDo.simpleReverseComparer);
+                            titleRecentrlyAverage = titleRecentrly.length <= 1 ? null : (titleRecentrly[0] - titleRecentrly[titleRecentrly.length - 1]) / (titleRecentrly.length - 1);
+                            list = entry.todo.map(function (todo) {
+                                var history = histories[todo];
+                                var result = {
+                                    todo: todo,
+                                    isDefault: false,
+                                    progress: null,
+                                    decayedProgress: null,
+                                    previous: history.previous,
+                                    elapsed: null,
+                                    average: history.recentries.length <= 1 ? null : (history.recentries[0] - history.recentries[history.recentries.length - 1]) / (history.recentries.length - 1),
+                                    standardDeviation: history.recentries.length <= 1 ?
+                                        null :
+                                        (5 < history.recentries.length || null === secondStage.standardDeviation) ?
+                                            CyclicToDo.calculateStandardDeviation(history.recentries) :
+                                            CyclicToDo.calculateAverage([CyclicToDo.calculateStandardDeviation(history.recentries), secondStage.standardDeviation]),
+                                    count: history.count,
+                                    smartAverage: null,
+                                };
+                                return result;
+                            });
+                            todoSorter = function (a, b) {
+                                if (1 < a.count) {
+                                    if (null !== a.smartAverage && null !== b.smartAverage) {
+                                        var rate = Math.min(a.count, b.count) < 5 ? 1.5 : 1.2;
+                                        if (a.smartAverage < b.smartAverage * rate && b.smartAverage < a.smartAverage * rate) {
+                                            if (a.elapsed < b.elapsed) {
+                                                return 1;
+                                            }
+                                            if (b.elapsed < a.elapsed) {
+                                                return -1;
+                                            }
+                                        }
+                                    }
+                                    var a_progress = a.decayedProgress;
+                                    var b_progress = 1 < b.count ? b.decayedProgress : 1.0 - (1.0 / phi);
+                                    if (a_progress < b_progress) {
+                                        return 1;
+                                    }
+                                    if (b_progress < a_progress) {
+                                        return -1;
                                     }
                                 }
-                            }
-                        }
-                    });
-                    var defaultTodo = JSON.parse(JSON.stringify(list)).sort(todoSorter)[0].todo;
-                    list.forEach(function (item) { return item.isDefault = defaultTodo === item.todo; });
-                };
-                updateProgress();
-                list.sort(todoSorter);
-                console.log(list); // これは消さない！！！
-                minamo_js_1.minamo.dom.replaceChildren(
-                //document.getElementById("screen"),
-                document.body, dom.renderTodoScreen(entry, list));
-                updateTodoScreenTimer = setInterval(function () {
-                    if (0 < document.getElementsByClassName("todo-screen").length) {
-                        updateProgress();
-                        minamo_js_1.minamo.dom.replaceChildren(
-                        //document.getElementById("screen"),
-                        document.body, dom.renderTodoScreen(entry, list));
+                                else if (1 < b.count) {
+                                    return -todoSorter(b, a);
+                                }
+                                if (a.count < b.count) {
+                                    return -1;
+                                }
+                                if (b.count < a.count) {
+                                    return 1;
+                                }
+                                var aTodoIndex = entry.todo.indexOf(a.todo);
+                                var bTodoIndex = entry.todo.indexOf(a.todo);
+                                if (aTodoIndex < 0 && bTodoIndex < 0) {
+                                    if (a.todo < b.todo) {
+                                        return 1;
+                                    }
+                                    if (b.todo < a.todo) {
+                                        return -1;
+                                    }
+                                }
+                                else {
+                                    if (aTodoIndex < bTodoIndex) {
+                                        return 1;
+                                    }
+                                    if (bTodoIndex < aTodoIndex) {
+                                        return -1;
+                                    }
+                                }
+                                return 0;
+                            };
+                            updateProgress = function () {
+                                var now = CyclicToDo.getTicks();
+                                list.forEach(function (item) {
+                                    var _a, _b, _c;
+                                    var history = histories[item.todo];
+                                    if (0 < history.count) {
+                                        item.elapsed = now - history.previous;
+                                        if (5 < history.count) {
+                                            item.smartAverage =
+                                                (((history.recentries[0] - history.recentries[Math.min(5, history.recentries.length) - 1]) / (Math.min(5, history.recentries.length) - 1))
+                                                    + ((history.recentries[0] - history.recentries[Math.min(25, history.recentries.length) - 1]) / (Math.min(25, history.recentries.length) - 1))) / 2;
+                                        }
+                                        else if (2 <= history.count) {
+                                            item.smartAverage =
+                                                (((history.recentries[0] - history.recentries[Math.min(5, history.recentries.length) - 1]) / (Math.min(5, history.recentries.length) - 1))
+                                                    + secondStage.average) / 2;
+                                        }
+                                        else if (null !== firstStage.average) {
+                                            item.smartAverage = firstStage.average * (firstStage.nones + firstStage.singles);
+                                            item.standardDeviation = firstStage.standardDeviation;
+                                        }
+                                        else if (null !== secondStage.average) {
+                                            item.smartAverage = secondStage.average;
+                                            item.standardDeviation = secondStage.standardDeviation;
+                                        }
+                                        if (null !== item.smartAverage) {
+                                            item.progress = item.elapsed / (item.smartAverage + ((_a = item.standardDeviation) !== null && _a !== void 0 ? _a : 0));
+                                            item.decayedProgress = item.elapsed / (item.smartAverage + ((_b = item.standardDeviation) !== null && _b !== void 0 ? _b : 0));
+                                            if (null !== titleRecentrlyAverage) {
+                                                var overrate = (item.elapsed - (item.smartAverage + ((_c = item.standardDeviation) !== null && _c !== void 0 ? _c : 0))) / titleRecentrlyAverage;
+                                                if (0.0 < overrate) {
+                                                    item.decayedProgress = 1.0 / (1.0 + Math.log2(1.0 + overrate));
+                                                    item.progress = null;
+                                                    item.smartAverage = null;
+                                                    item.standardDeviation = null;
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+                                var defaultTodo = JSON.parse(JSON.stringify(list)).sort(todoSorter)[0].todo;
+                                list.forEach(function (item) { return item.isDefault = defaultTodo === item.todo; });
+                            };
+                            updateProgress();
+                            list.sort(todoSorter);
+                            console.log(list); // これは消さない！！！
+                            _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                            _c = [
+                                //document.getElementById("screen"),
+                                document.body];
+                            return [4 /*yield*/, dom.renderTodoScreen(entry, list)];
+                        case 1:
+                            _b.apply(_a, _c.concat([_d.sent()]));
+                            updateTodoScreenTimer = setInterval(function () { return __awaiter(_this, void 0, void 0, function () {
+                                var _a, _b, _c;
+                                return __generator(this, function (_d) {
+                                    switch (_d.label) {
+                                        case 0:
+                                            if (!(0 < document.getElementsByClassName("todo-screen").length)) return [3 /*break*/, 2];
+                                            updateProgress();
+                                            _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                            _c = [
+                                                //document.getElementById("screen"),
+                                                document.body];
+                                            return [4 /*yield*/, dom.renderTodoScreen(entry, list)];
+                                        case 1:
+                                            _b.apply(_a, _c.concat([_d.sent()]));
+                                            return [3 /*break*/, 3];
+                                        case 2:
+                                            clearInterval(updateTodoScreenTimer);
+                                            updateTodoScreenTimer = undefined;
+                                            _d.label = 3;
+                                        case 3: return [2 /*return*/];
+                                    }
+                                });
+                            }); }, CyclicToDo.TimeAccuracy);
+                            return [2 /*return*/];
                     }
-                    else {
-                        clearInterval(updateTodoScreenTimer);
-                        updateTodoScreenTimer = undefined;
-                    }
-                }, CyclicToDo.TimeAccuracy);
-            };
+                });
+            }); };
             dom.renderEditScreen = function (title, pass, todo) {
                 var titleDiv = minamo_js_1.minamo.dom.make(HTMLInputElement)({
                     tag: "input",
@@ -1369,29 +1407,86 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             dom.updateEditScreen = function (title, pass, todo) { return minamo_js_1.minamo.dom.replaceChildren(
             //document.getElementById("screen"),
             document.body, dom.renderEditScreen(title, pass, todo)); };
-            dom.renderApplicationIcon = function () {
-                return ({
-                    tag: "img",
-                    className: "application-icon icon",
-                    src: "./cyclictodohex.1024.png"
+            var loadSvg = function (path) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, new Promise(function (resolve, reject) {
+                            var request = new XMLHttpRequest();
+                            request.open('GET', path, true);
+                            request.onreadystatechange = function () {
+                                if (4 === request.readyState) {
+                                    if (200 <= request.status && request.status < 300) {
+                                        try {
+                                            resolve(new DOMParser().parseFromString(request.responseText, "image/svg+xml").documentElement);
+                                        }
+                                        catch (err) {
+                                            reject(err);
+                                        }
+                                    }
+                                    else {
+                                        reject(request);
+                                    }
+                                }
+                            };
+                            request.send(null);
+                        })];
                 });
-            };
-            dom.renderWelcomeScreen = function (_pass) {
-                return ({
-                    tag: "div",
-                    className: "welcome-screen screen",
-                    children: [
-                        dom.renderHeading("h1", "" + document.title),
-                        dom.renderApplicationIcon(),
-                    ],
+            }); };
+            dom.renderApplicationIcon = function () { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "application-icon icon"
+                            };
+                            return [4 /*yield*/, loadSvg("./cyclictodohex.1024.svg")];
+                        case 1: return [2 /*return*/, (_a.children = _b.sent(),
+                                _a)];
+                    }
                 });
-            };
-            dom.updateWelcomeScreen = function (pass) {
-                document.title = applicationTitle;
-                minamo_js_1.minamo.dom.replaceChildren(
-                //document.getElementById("screen"),
-                document.body, dom.renderWelcomeScreen(pass));
-            };
+            }); };
+            dom.renderWelcomeScreen = function (_pass) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c, _d;
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "welcome-screen screen"
+                            };
+                            _b = dom.renderHeading;
+                            _c = ["h1"];
+                            return [4 /*yield*/, dom.renderApplicationIcon()];
+                        case 1:
+                            _d = [
+                                _b.apply(void 0, _c.concat([[_e.sent(), "" + document.title]]))
+                            ];
+                            return [4 /*yield*/, dom.renderApplicationIcon()];
+                        case 2: return [2 /*return*/, (_a.children = _d.concat([
+                                _e.sent()
+                            ]),
+                                _a)];
+                    }
+                });
+            }); };
+            dom.updateWelcomeScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            document.title = applicationTitle;
+                            _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                            _c = [
+                                //document.getElementById("screen"),
+                                document.body];
+                            return [4 /*yield*/, dom.renderWelcomeScreen(pass)];
+                        case 1:
+                            _b.apply(_a, _c.concat([_d.sent()]));
+                            return [2 /*return*/];
+                    }
+                });
+            }); };
             var screen = [
                 dom.renderHeading("h1", document.title),
                 {
@@ -1442,64 +1537,66 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             return CyclicToDo.makeUrl(urlParams, CyclicToDo.getUrlHash(url), url);
         };
         CyclicToDo.start = function () { return __awaiter(_this, void 0, void 0, function () {
-            var urlParams, hash, title, pass, todo, history;
-            var _a, _b, _c, _d, _e, _f;
-            return __generator(this, function (_g) {
-                switch (_g.label) {
+            var urlParams, hash, title, pass, todo, history, _a;
+            var _b, _c, _d, _e, _f, _g;
+            return __generator(this, function (_h) {
+                switch (_h.label) {
                     case 0:
                         console.log("start!!!");
                         urlParams = CyclicToDo.getUrlParams();
                         hash = CyclicToDo.getUrlHash();
-                        title = (_a = urlParams["title"]) !== null && _a !== void 0 ? _a : "untitled";
-                        pass = (_b = urlParams["pass"]) !== null && _b !== void 0 ? _b : CyclicToDo.sessionPassPrefix + ":" + new Date().getTime();
-                        todo = JSON.parse((_c = urlParams["todo"]) !== null && _c !== void 0 ? _c : "null");
-                        history = JSON.parse((_d = urlParams["history"]) !== null && _d !== void 0 ? _d : "null");
+                        title = (_b = urlParams["title"]) !== null && _b !== void 0 ? _b : "untitled";
+                        pass = (_c = urlParams["pass"]) !== null && _c !== void 0 ? _c : CyclicToDo.sessionPassPrefix + ":" + new Date().getTime();
+                        todo = JSON.parse((_d = urlParams["todo"]) !== null && _d !== void 0 ? _d : "null");
+                        history = JSON.parse((_e = urlParams["history"]) !== null && _e !== void 0 ? _e : "null");
                         return [4 /*yield*/, dom.showWindow()];
                     case 1:
-                        _g.sent();
-                        if (((_e = todo === null || todo === void 0 ? void 0 : todo.length) !== null && _e !== void 0 ? _e : 0) <= 0) {
-                            switch (hash) {
-                                // case "import":
-                                //     dom.updateImportScreen(pass);
-                                //     break;
-                                case "edit":
-                                    console.log("show edit screen");
-                                    dom.updateEditScreen(title, pass, []);
-                                    break;
-                                default:
-                                    console.log("show welcome screen");
-                                    dom.updateWelcomeScreen(pass);
-                                    break;
-                            }
+                        _h.sent();
+                        if (!(((_f = todo === null || todo === void 0 ? void 0 : todo.length) !== null && _f !== void 0 ? _f : 0) <= 0)) return [3 /*break*/, 6];
+                        _a = hash;
+                        switch (_a) {
+                            case "edit": return [3 /*break*/, 2];
                         }
-                        else {
-                            if (0 < ((_f = history === null || history === void 0 ? void 0 : history.length) !== null && _f !== void 0 ? _f : 0)) {
-                                CyclicToDo.mergeHistory(pass, todo, history);
-                            }
-                            switch (hash) {
-                                case "edit":
-                                    console.log("show edit screen");
-                                    dom.updateEditScreen(title, pass, todo);
-                                    break;
-                                // case "history":
-                                //     dom.updateHistoryScreen(pass, getToDoHistory(pass, todo));
-                                //     break;
-                                // case "statistics":
-                                //     dom.updateStatisticsScreen(title, pass, todo);
-                                //     break;
-                                // case "import":
-                                //     dom.updateImportScreen(pass);
-                                //     break;
-                                // case "export":
-                                //     dom.updateExportScreen(title, pass, getToDoHistory(pass, todo));
-                                //     break;
-                                default:
-                                    console.log("show todo screen");
-                                    dom.updateTodoScreen({ title: title, pass: pass, todo: todo });
-                                    break;
-                            }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        console.log("show edit screen");
+                        dom.updateEditScreen(title, pass, []);
+                        return [3 /*break*/, 5];
+                    case 3:
+                        console.log("show welcome screen");
+                        return [4 /*yield*/, dom.updateWelcomeScreen(pass)];
+                    case 4:
+                        _h.sent();
+                        return [3 /*break*/, 5];
+                    case 5: return [3 /*break*/, 7];
+                    case 6:
+                        if (0 < ((_g = history === null || history === void 0 ? void 0 : history.length) !== null && _g !== void 0 ? _g : 0)) {
+                            CyclicToDo.mergeHistory(pass, todo, history);
                         }
-                        return [2 /*return*/];
+                        switch (hash) {
+                            case "edit":
+                                console.log("show edit screen");
+                                dom.updateEditScreen(title, pass, todo);
+                                break;
+                            // case "history":
+                            //     dom.updateHistoryScreen(pass, getToDoHistory(pass, todo));
+                            //     break;
+                            // case "statistics":
+                            //     dom.updateStatisticsScreen(title, pass, todo);
+                            //     break;
+                            // case "import":
+                            //     dom.updateImportScreen(pass);
+                            //     break;
+                            // case "export":
+                            //     dom.updateExportScreen(title, pass, getToDoHistory(pass, todo));
+                            //     break;
+                            default:
+                                console.log("show todo screen");
+                                dom.updateTodoScreen({ title: title, pass: pass, todo: todo });
+                                break;
+                        }
+                        _h.label = 7;
+                    case 7: return [2 /*return*/];
                 }
             });
         }); };

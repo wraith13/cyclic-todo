@@ -6,43 +6,45 @@ body {
   line-height: 100%;
   color: #000022;
 }
+.icon svg {
+  fill: #000022;
+}
 @media (prefers-color-scheme: dark) {
   body {
     color: #FFFFFF;
     background-color: #000022;
   }
+  .icon svg {
+    fill: #FFFFFF;
+  }
 }
 h1 {
   margin: 0rem;
-  padding: 1rem;
-  padding-left: 0.5rem;
+  padding: 0.25rem;
   color: #FFFFFF;
   background-color: #228844;
+  font-size: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+}
+h1 .icon {
+  display: inline-block;
+  margin-right: 0.25rem;
+}
+h1 .icon svg {
+  width: 2.5rem;
+  height: 2.5rem;
+  fill: #FFFFFF;
 }
 @media (prefers-color-scheme: dark) {
   h1 {
     color: #000022;
   }
-}
-h2 {
-  display: inline-flex;
-  align-items: center;
-}
-h2 div.identity div {
-  display: inline-flex;
-  align-items: center;
-  margin-right: 8px;
-}
-h2 div.identity div * {
-  margin-right: 8px;
-}
-h2 div.identity div img {
-  height: 32px;
-  width: 32px;
-  border-radius: 4px;
-}
-h2 div.identity div span + span {
-  color: #888;
+  h1 .icon svg {
+    fill: #000022;
+  }
 }
 .github {
   float: right;
@@ -117,7 +119,7 @@ button.default-button {
   margin: 0px;
 }
 .task-item .task-title {
-  font-size: 1.6em;
+  font-size: 1.5em;
   line-height: 1em;
   box-sizing: border-box;
   margin-bottom: 1.5rem;
@@ -153,7 +155,7 @@ button.default-button {
   margin-bottom: 1em;
   text-align: center;
 }
-.welcome-screen .application-icon {
+.welcome-screen > .application-icon {
   margin-left: auto;
   margin-right: auto;
   width: 400px;
