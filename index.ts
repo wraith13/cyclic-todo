@@ -51,11 +51,6 @@ export module CyclicToDo
         pass: string;
         todo: string[];
     }
-    interface TaskEntry
-    {
-        task: string;
-        tick: number;
-    }
     interface ToDoEntry
     {
         todo: string;
@@ -75,72 +70,67 @@ export module CyclicToDo
         export const generatePass = (seed: number = new Date().getTime()) => ("" +((seed *13738217) ^ ((seed %387960371999) >> 5 ))).slice(-8);
         export const isSessionPass = (pass: string) => pass.startsWith(sessionPassPrefix);
         export const getStorage = (pass: string) => isSessionPass(pass) ? minamo.sessionStorage: minamo.localStorage;
-        export const makeHistoryKey = (pass: string, task: string) => `pass:(${pass}).task:${task}.history`;
-        export const getHistory = (pass: string, task: string): number[] =>
-            getStorage(pass).getOrNull<number[]>(makeHistoryKey(pass, task)) ?? [];
-        export const setHistory = (pass: string, task: string, list: number[]) =>
-            getStorage(pass).set(makeHistoryKey(pass, task), list);
-        export const addHistory = (pass: string, task: string, tick: number | number[]) =>
+        export module Pass
         {
-            const list = getHistory(pass, task).concat(tick).filter((i, index, array) => index === array.indexOf(i));
-            list.sort(Domain.simpleReverseComparer);
-            setHistory(pass, task, list);
-        };
-        export const mergeHistory = (pass: string, todo: string[], ticks: (number | null)[]) =>
+            export const key = `pass.list`;
+            export const get = () => minamo.localStorage.getOrNull<string[]>(key) ?? [];
+            export const set = (passList: string[]) => minamo.localStorage.set(key, passList);
+            export const add = (pass: string) => set(get().concat([ pass ]));
+            export const remove = (pass: string) => set(get().filter(i => pass !== i));
+        }
+        export module Tag
         {
-            const temp:{ [task:string]: number[]} = { };
-            todo.forEach(task => temp[task] = []);
-            ticks.forEach
-            (
-                (tick, index) =>
-                {
-                    if (null !== tick)
+            export const makeKey = (pass: string) => `pass:(${pass}).tag.list`;
+            export const get = (pass: string) =>
+                getStorage(pass).getOrNull<string[]>(makeKey(pass)) ?? [];
+            export const set = (pass: string, list: string[]) =>
+                getStorage(pass).set(makeKey(pass), list);
+            export const add = (pass: string, tag: string) => set(pass, get(pass).concat([ tag ]));
+            export const remove = (pass: string, tag: string) => set(pass, get(pass).filter(i => tag !== i));
+        }
+        export module TagMember
+        {
+            export const makeKey = (pass: string, tag: string) => `pass:(${pass}).tag:(${tag})`;
+            export const get = (pass: string, tag: string) =>
+                getStorage(pass).getOrNull<string[]>(makeKey(pass, tag)) ?? [];
+            export const set = (pass: string, tag: string, list: string[]) =>
+                getStorage(pass).set(makeKey(pass, tag), list);
+            export const add = (pass: string, tag: string, todo: string) => set(pass, tag, get(pass, tag).concat([ todo ]));
+            export const remove = (pass: string, tag: string, todo: string) => set(pass, tag, get(pass, tag).filter(i => todo !== i));
+        }
+        export module History
+        {
+            export const makeKey = (pass: string, task: string) => `pass:(${pass}).task:${task}.history`;
+            export const get = (pass: string, task: string): number[] =>
+                getStorage(pass).getOrNull<number[]>(makeKey(pass, task)) ?? [];
+            export const set = (pass: string, task: string, list: number[]) =>
+                getStorage(pass).set(makeKey(pass, task), list);
+            export const add = (pass: string, task: string, tick: number | number[]) =>
+            {
+                const list = get(pass, task).concat(tick).filter((i, index, array) => index === array.indexOf(i));
+                list.sort(Domain.simpleReverseComparer);
+                set(pass, task, list);
+            };
+            export const merge = (pass: string, todo: string[], ticks: (number | null)[]) =>
+            {
+                const temp:{ [task:string]: number[]} = { };
+                todo.forEach(task => temp[task] = []);
+                ticks.forEach
+                (
+                    (tick, index) =>
                     {
-                        temp[todo[index % todo.length]].push(tick);
+                        if (null !== tick)
+                        {
+                            temp[todo[index % todo.length]].push(tick);
+                        }
                     }
-                }
-            );
-            todo.forEach(task => addHistory(pass, task, temp[task]));
-        };
+                );
+                todo.forEach(task => add(pass, task, temp[task]));
+            };
+        }
     }
     export module Domain
     {
-        export const makeTaskEntryComparer = (todo: string[]) => (a: TaskEntry, b: TaskEntry) =>
-        {
-            if (a.tick < b.tick)
-            {
-                return -1;
-            }
-            if (b.tick < a.tick)
-            {
-                return 1;
-            }
-            const aTaskIndex = todo.indexOf(a.task);
-            const bTaskIndex = todo.indexOf(a.task);
-            if (aTaskIndex < 0 && bTaskIndex < 0)
-            {
-                if (a.task < b.task)
-                {
-                    return 1;
-                }
-                if (b.task < a.task)
-                {
-                    return -1;
-                }
-            }
-            else
-            {
-                if (aTaskIndex < bTaskIndex)
-                {
-                    return 1;
-                }
-                if (bTaskIndex < aTaskIndex)
-                {
-                    return -1;
-                }
-            }
-            return 0;
-        };
         export const simpleComparer = <T>(a: T, b: T) =>
         {
             if (a < b)
@@ -197,14 +187,7 @@ export module CyclicToDo
                         timePart;
             }
         };
-        export const getLastTick = (pass: string, task: string) => Storage.getHistory(pass, task)[0] ?? 0;
-        export const getToDoHistory = (pass: string, todo: string[]): TaskEntry[] => todo
-            .map(task => Storage.getHistory(pass, task).map(tick => ({ task, tick})))
-            .reduce((a, b) => a.concat(b), [])
-            .sort(makeTaskEntryComparer(todo));
-        // export const getToDoEntries = (pass: string, todo: string[]) => todo
-        //     .map(task => ({ task, tick: getLastTick(pass, task)}))
-        //     .sort(makeTaskEntryComparer(todo));
+        export const getLastTick = (pass: string, task: string) => Storage.History.get(pass, task)[0] ?? 0;
         export const getDoneTicks = (pass: string, key: string = `pass:(${pass}).last.done.ticks`) =>
             minamo.localStorage.set
             (
@@ -216,7 +199,7 @@ export module CyclicToDo
                 ) +1
             );
         export const done = async (pass: string, task: string) =>
-            Storage.addHistory(pass, task, getDoneTicks(pass));
+            Storage.History.add(pass, task, getDoneTicks(pass));
         const todoSorter = (entry: ToDoTitleEntry) => (a: ToDoEntry, b: ToDoEntry) =>
         {
             if (1 < a.count)
@@ -304,7 +287,7 @@ export module CyclicToDo
             (
                 todo =>
                 {
-                    const full = Storage.getHistory(entry.pass, todo);
+                    const full = Storage.History.get(entry.pass, todo);
                     histories[todo] =
                     {
                         recentries: full.filter((_, index) => index < 25),
@@ -462,6 +445,13 @@ export module CyclicToDo
             className: "label",
             children: locale.parallel(label),
         });
+        export const menuButton = (onclick: () => unknown) =>
+        ({
+            tag: "button",
+            className: "menu-button",
+            children: "･･･",
+            onclick,
+        })
         export const information = (item: ToDoEntry) =>
         ({
             tag: "div",
@@ -567,7 +557,7 @@ export module CyclicToDo
         export const todoItem = (entry: ToDoTitleEntry, item: ToDoEntry) =>
         ({
             tag: "div",
-            className: "task-item",
+            className: "task-item flex-item",
             children:
             [
                 {
@@ -576,33 +566,41 @@ export module CyclicToDo
                     children:
                     [
                         {
-                            tag: "button",
-                            className: item.isDefault ? "default-button": undefined,
-                            children: locale.parallel("Done"),
-                            onclick: async () =>
-                            {
-                                //if (isSessionPass(pass))
-                                const fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
-                                if (fxxkingTypeScriptCompiler)
-                                {
-                                    window.alert
-                                    (
-                                        "This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
-                                        +"\n"
-                                        +"これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。"
-                                    );
-                                }
-                                else
-                                {
-                                    Domain.done(entry.pass, item.todo);
-                                    await updateTodoScreen(entry);
-                                }
-                            }
-                        },
-                        {
                             tag: "div",
                             className: "task-title",
                             children: item.todo,
+                        },
+                        {
+                            tag: "div",
+                            className: "task-operator",
+                            children:
+                            [
+                                {
+                                    tag: "button",
+                                    className: item.isDefault ? "default-button": undefined,
+                                    children: locale.parallel("Done"),
+                                    onclick: async () =>
+                                    {
+                                        //if (isSessionPass(pass))
+                                        const fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
+                                        if (fxxkingTypeScriptCompiler)
+                                        {
+                                            window.alert
+                                            (
+                                                "This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                                                +"\n"
+                                                +"これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。"
+                                            );
+                                        }
+                                        else
+                                        {
+                                            Domain.done(entry.pass, item.todo);
+                                            await updateTodoScreen(entry);
+                                        }
+                                    }
+                                },
+                                menuButton(() => {}),
+                            ],
                         },
                     ],
                 },
@@ -616,11 +614,65 @@ export module CyclicToDo
             className: "todo-screen screen",
             children:
             [
-                heading("h1", [await applicationIcon(), `${document.title}`]),
+                heading
+                (
+                    "h1",
+                    [
+                        await applicationIcon(),
+                        `${document.title}`,
+                        menuButton(() => {}),
+                    ]
+                ),
                 {
                     tag: "div",
-                    className: "flex-list",
+                    className: "column-flex-list",
                     children: list.map(item => todoItem(entry, item)),
+                },
+                {
+                    tag: "div",
+                    className: "row-flex-list",
+                    children:
+                    [
+                        {
+                            tag: "div",
+                            className: "flex-item",
+                            children:
+                            {
+                                tag: "button",
+                                className: "long-button",
+                                children: "Undo",
+                                onclick: () =>
+                                {
+                                }
+                            },
+                        },
+                        {
+                            tag: "div",
+                            className: "flex-item",
+                            children:
+                            {
+                                tag: "button",
+                                className: "long-button",
+                                children: "Add",
+                                onclick: () =>
+                                {
+                                }
+                            },
+                        },
+                        {
+                            tag: "div",
+                            className: "flex-item",
+                            children:
+                            {
+                                tag: "button",
+                                className: "long-button",
+                                children: "Edit",
+                                onclick: () =>
+                                {
+                                }
+                            },
+                        },
+                    ],
                 }
             ]
         });
@@ -727,7 +779,8 @@ export module CyclicToDo
                     },
                     {
                         tag: "button",
-                        children: "default-button",
+                        className: "default-button",
+                        children: "save",
                         onclick: () =>
                         {
                             updateTodoScreen
@@ -823,7 +876,7 @@ export module CyclicToDo
         {
             let minColumns = 1 +Math.floor(window.innerWidth / 780);
             let maxColumns = Math.max(minColumns, Math.floor(window.innerWidth / 390));
-            (Array.from(document.getElementsByClassName("flex-list")) as HTMLDivElement[]).forEach
+            (Array.from(document.getElementsByClassName("column-flex-list")) as HTMLDivElement[]).forEach
             (
                 list =>
                 {
@@ -918,7 +971,7 @@ export module CyclicToDo
         {
             if (0 < (history?.length ?? 0))
             {
-                Storage.mergeHistory(pass, todo, history);
+                Storage.History.merge(pass, todo, history);
             }
             switch(hash)
             {

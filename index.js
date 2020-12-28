@@ -863,57 +863,61 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             };
             Storage.isSessionPass = function (pass) { return pass.startsWith(Storage.sessionPassPrefix); };
             Storage.getStorage = function (pass) { return Storage.isSessionPass(pass) ? minamo_js_1.minamo.sessionStorage : minamo_js_1.minamo.localStorage; };
-            Storage.makeHistoryKey = function (pass, task) { return "pass:(" + pass + ").task:" + task + ".history"; };
-            Storage.getHistory = function (pass, task) { var _a; return (_a = Storage.getStorage(pass).getOrNull(Storage.makeHistoryKey(pass, task))) !== null && _a !== void 0 ? _a : []; };
-            Storage.setHistory = function (pass, task, list) {
-                return Storage.getStorage(pass).set(Storage.makeHistoryKey(pass, task), list);
-            };
-            Storage.addHistory = function (pass, task, tick) {
-                var list = Storage.getHistory(pass, task).concat(tick).filter(function (i, index, array) { return index === array.indexOf(i); });
-                list.sort(Domain.simpleReverseComparer);
-                Storage.setHistory(pass, task, list);
-            };
-            Storage.mergeHistory = function (pass, todo, ticks) {
-                var temp = {};
-                todo.forEach(function (task) { return temp[task] = []; });
-                ticks.forEach(function (tick, index) {
-                    if (null !== tick) {
-                        temp[todo[index % todo.length]].push(tick);
-                    }
-                });
-                todo.forEach(function (task) { return Storage.addHistory(pass, task, temp[task]); });
-            };
+            var Pass;
+            (function (Pass) {
+                Pass.key = "pass.list";
+                Pass.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Pass.key)) !== null && _a !== void 0 ? _a : []; };
+                Pass.set = function (passList) { return minamo_js_1.minamo.localStorage.set(Pass.key, passList); };
+                Pass.add = function (pass) { return Pass.set(Pass.get().concat([pass])); };
+                Pass.remove = function (pass) { return Pass.set(Pass.get().filter(function (i) { return pass !== i; })); };
+            })(Pass = Storage.Pass || (Storage.Pass = {}));
+            var Tag;
+            (function (Tag) {
+                Tag.makeKey = function (pass) { return "pass:(" + pass + ").tag.list"; };
+                Tag.get = function (pass) { var _a; return (_a = Storage.getStorage(pass).getOrNull(Tag.makeKey(pass))) !== null && _a !== void 0 ? _a : []; };
+                Tag.set = function (pass, list) {
+                    return Storage.getStorage(pass).set(Tag.makeKey(pass), list);
+                };
+                Tag.add = function (pass, tag) { return Tag.set(pass, Tag.get(pass).concat([tag])); };
+                Tag.remove = function (pass, tag) { return Tag.set(pass, Tag.get(pass).filter(function (i) { return tag !== i; })); };
+            })(Tag = Storage.Tag || (Storage.Tag = {}));
+            var TagMember;
+            (function (TagMember) {
+                TagMember.makeKey = function (pass, tag) { return "pass:(" + pass + ").tag:(" + tag + ")"; };
+                TagMember.get = function (pass, tag) { var _a; return (_a = Storage.getStorage(pass).getOrNull(TagMember.makeKey(pass, tag))) !== null && _a !== void 0 ? _a : []; };
+                TagMember.set = function (pass, tag, list) {
+                    return Storage.getStorage(pass).set(TagMember.makeKey(pass, tag), list);
+                };
+                TagMember.add = function (pass, tag, todo) { return TagMember.set(pass, tag, TagMember.get(pass, tag).concat([todo])); };
+                TagMember.remove = function (pass, tag, todo) { return TagMember.set(pass, tag, TagMember.get(pass, tag).filter(function (i) { return todo !== i; })); };
+            })(TagMember = Storage.TagMember || (Storage.TagMember = {}));
+            var History;
+            (function (History) {
+                History.makeKey = function (pass, task) { return "pass:(" + pass + ").task:" + task + ".history"; };
+                History.get = function (pass, task) { var _a; return (_a = Storage.getStorage(pass).getOrNull(History.makeKey(pass, task))) !== null && _a !== void 0 ? _a : []; };
+                History.set = function (pass, task, list) {
+                    return Storage.getStorage(pass).set(History.makeKey(pass, task), list);
+                };
+                History.add = function (pass, task, tick) {
+                    var list = History.get(pass, task).concat(tick).filter(function (i, index, array) { return index === array.indexOf(i); });
+                    list.sort(Domain.simpleReverseComparer);
+                    History.set(pass, task, list);
+                };
+                History.merge = function (pass, todo, ticks) {
+                    var temp = {};
+                    todo.forEach(function (task) { return temp[task] = []; });
+                    ticks.forEach(function (tick, index) {
+                        if (null !== tick) {
+                            temp[todo[index % todo.length]].push(tick);
+                        }
+                    });
+                    todo.forEach(function (task) { return History.add(pass, task, temp[task]); });
+                };
+            })(History = Storage.History || (Storage.History = {}));
         })(Storage = CyclicToDo.Storage || (CyclicToDo.Storage = {}));
         var Domain;
         (function (Domain) {
             var _this = this;
-            Domain.makeTaskEntryComparer = function (todo) { return function (a, b) {
-                if (a.tick < b.tick) {
-                    return -1;
-                }
-                if (b.tick < a.tick) {
-                    return 1;
-                }
-                var aTaskIndex = todo.indexOf(a.task);
-                var bTaskIndex = todo.indexOf(a.task);
-                if (aTaskIndex < 0 && bTaskIndex < 0) {
-                    if (a.task < b.task) {
-                        return 1;
-                    }
-                    if (b.task < a.task) {
-                        return -1;
-                    }
-                }
-                else {
-                    if (aTaskIndex < bTaskIndex) {
-                        return 1;
-                    }
-                    if (bTaskIndex < aTaskIndex) {
-                        return -1;
-                    }
-                }
-                return 0;
-            }; };
             Domain.simpleComparer = function (a, b) {
                 if (a < b) {
                     return -1;
@@ -962,21 +966,14 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             timePart;
                 }
             };
-            Domain.getLastTick = function (pass, task) { var _a; return (_a = Storage.getHistory(pass, task)[0]) !== null && _a !== void 0 ? _a : 0; };
-            Domain.getToDoHistory = function (pass, todo) { return todo
-                .map(function (task) { return Storage.getHistory(pass, task).map(function (tick) { return ({ task: task, tick: tick }); }); })
-                .reduce(function (a, b) { return a.concat(b); }, [])
-                .sort(Domain.makeTaskEntryComparer(todo)); };
-            // export const getToDoEntries = (pass: string, todo: string[]) => todo
-            //     .map(task => ({ task, tick: getLastTick(pass, task)}))
-            //     .sort(makeTaskEntryComparer(todo));
+            Domain.getLastTick = function (pass, task) { var _a; return (_a = Storage.History.get(pass, task)[0]) !== null && _a !== void 0 ? _a : 0; };
             Domain.getDoneTicks = function (pass, key) {
                 var _a;
                 if (key === void 0) { key = "pass:(" + pass + ").last.done.ticks"; }
                 return minamo_js_1.minamo.localStorage.set(key, Math.max((_a = minamo_js_1.minamo.localStorage.getOrNull(key)) !== null && _a !== void 0 ? _a : 0, Domain.getTicks() - 1) + 1);
             };
             Domain.done = function (pass, task) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                return [2 /*return*/, Storage.addHistory(pass, task, Domain.getDoneTicks(pass))];
+                return [2 /*return*/, Storage.History.add(pass, task, Domain.getDoneTicks(pass))];
             }); }); };
             var todoSorter = function (entry) { return function (a, b) {
                 if (1 < a.count) {
@@ -1040,7 +1037,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Domain.getRecentlyHistories = function (entry) {
                 var histories = {};
                 entry.todo.forEach(function (todo) {
-                    var full = Storage.getHistory(entry.pass, todo);
+                    var full = Storage.History.get(entry.pass, todo);
                     histories[todo] =
                         {
                             recentries: full.filter(function (_, index) { return index < 25; }),
@@ -1169,6 +1166,14 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     children: locale.parallel(label),
                 });
             };
+            Render.menuButton = function (onclick) {
+                return ({
+                    tag: "button",
+                    className: "menu-button",
+                    children: "･･･",
+                    onclick: onclick,
+                });
+            };
             Render.information = function (item) {
                 return ({
                     tag: "div",
@@ -1269,42 +1274,49 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Render.todoItem = function (entry, item) {
                 return ({
                     tag: "div",
-                    className: "task-item",
+                    className: "task-item flex-item",
                     children: [
                         {
                             tag: "div",
                             className: "task-header",
                             children: [
                                 {
-                                    tag: "button",
-                                    className: item.isDefault ? "default-button" : undefined,
-                                    children: locale.parallel("Done"),
-                                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                        var fxxkingTypeScriptCompiler;
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0:
-                                                    fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
-                                                    if (!fxxkingTypeScriptCompiler) return [3 /*break*/, 1];
-                                                    window.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
-                                                        + "\n"
-                                                        + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。");
-                                                    return [3 /*break*/, 3];
-                                                case 1:
-                                                    Domain.done(entry.pass, item.todo);
-                                                    return [4 /*yield*/, Render.updateTodoScreen(entry)];
-                                                case 2:
-                                                    _a.sent();
-                                                    _a.label = 3;
-                                                case 3: return [2 /*return*/];
-                                            }
-                                        });
-                                    }); }
-                                },
-                                {
                                     tag: "div",
                                     className: "task-title",
                                     children: item.todo,
+                                },
+                                {
+                                    tag: "div",
+                                    className: "task-operator",
+                                    children: [
+                                        {
+                                            tag: "button",
+                                            className: item.isDefault ? "default-button" : undefined,
+                                            children: locale.parallel("Done"),
+                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                var fxxkingTypeScriptCompiler;
+                                                return __generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0:
+                                                            fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
+                                                            if (!fxxkingTypeScriptCompiler) return [3 /*break*/, 1];
+                                                            window.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                                                                + "\n"
+                                                                + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。");
+                                                            return [3 /*break*/, 3];
+                                                        case 1:
+                                                            Domain.done(entry.pass, item.todo);
+                                                            return [4 /*yield*/, Render.updateTodoScreen(entry)];
+                                                        case 2:
+                                                            _a.sent();
+                                                            _a.label = 3;
+                                                        case 3: return [2 /*return*/];
+                                                    }
+                                                });
+                                            }); }
+                                        },
+                                        Render.menuButton(function () { }),
+                                    ],
                                 },
                             ],
                         },
@@ -1326,11 +1338,54 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             _c = ["h1"];
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1: return [2 /*return*/, (_a.children = [
-                                _b.apply(void 0, _c.concat([[_d.sent(), "" + document.title]])),
+                                _b.apply(void 0, _c.concat([[
+                                        _d.sent(),
+                                        "" + document.title,
+                                        Render.menuButton(function () { })
+                                    ]])),
                                 {
                                     tag: "div",
-                                    className: "flex-list",
+                                    className: "column-flex-list",
                                     children: list.map(function (item) { return Render.todoItem(entry, item); }),
+                                },
+                                {
+                                    tag: "div",
+                                    className: "row-flex-list",
+                                    children: [
+                                        {
+                                            tag: "div",
+                                            className: "flex-item",
+                                            children: {
+                                                tag: "button",
+                                                className: "long-button",
+                                                children: "Undo",
+                                                onclick: function () {
+                                                }
+                                            },
+                                        },
+                                        {
+                                            tag: "div",
+                                            className: "flex-item",
+                                            children: {
+                                                tag: "button",
+                                                className: "long-button",
+                                                children: "Add",
+                                                onclick: function () {
+                                                }
+                                            },
+                                        },
+                                        {
+                                            tag: "div",
+                                            className: "flex-item",
+                                            children: {
+                                                tag: "button",
+                                                className: "long-button",
+                                                children: "Edit",
+                                                onclick: function () {
+                                                }
+                                            },
+                                        },
+                                    ],
                                 }
                             ],
                                 _a)];
@@ -1439,7 +1494,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         },
                         {
                             tag: "button",
-                            children: "default-button",
+                            className: "default-button",
+                            children: "save",
                             onclick: function () {
                                 Render.updateTodoScreen({
                                     title: titleDiv.value,
@@ -1552,7 +1608,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Render.onWindowResize = function () {
                 var minColumns = 1 + Math.floor(window.innerWidth / 780);
                 var maxColumns = Math.max(minColumns, Math.floor(window.innerWidth / 390));
-                Array.from(document.getElementsByClassName("flex-list")).forEach(function (list) {
+                Array.from(document.getElementsByClassName("column-flex-list")).forEach(function (list) {
                     var length = list.childNodes.length;
                     if (length <= 1 || maxColumns <= 1) {
                         list.style.height = undefined;
@@ -1639,7 +1695,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     case 5: return [3 /*break*/, 7];
                     case 6:
                         if (0 < ((_g = history === null || history === void 0 ? void 0 : history.length) !== null && _g !== void 0 ? _g : 0)) {
-                            Storage.mergeHistory(pass, todo, history);
+                            Storage.History.merge(pass, todo, history);
                         }
                         switch (hash) {
                             case "edit":

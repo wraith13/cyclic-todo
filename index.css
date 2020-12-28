@@ -5,6 +5,7 @@ body {
   margin: 0px;
   line-height: 100%;
   color: #000022;
+  background-color: #FFFFFF;
 }
 .icon svg {
   fill: #000022;
@@ -24,9 +25,10 @@ h1 {
   color: #FFFFFF;
   background-color: #228844;
   font-size: 1.5rem;
+  position: relative;
   display: flex;
   flex-direction: row;
-  justify-content: start;
+  justify-content: space-between;
   align-items: center;
 }
 h1 .icon {
@@ -38,12 +40,19 @@ h1 .icon svg {
   height: 2.5rem;
   fill: #FFFFFF;
 }
+h1 button.menu-button {
+  color: #FFFFFF;
+}
 @media (prefers-color-scheme: dark) {
   h1 {
     color: #000022;
   }
   h1 .icon svg {
     fill: #000022;
+  }
+  h1 button.menu-button {
+    float: right;
+    color: #000022;
   }
 }
 .github {
@@ -77,8 +86,8 @@ input {
 }
 button {
   margin: 4px;
-  color: #228844;
   background-color: #FFFFFF;
+  color: #228844;
   border-color: #228844;
   padding: 4px 16px;
   border-radius: 32px;
@@ -88,112 +97,165 @@ button {
   font-size: 1rem;
   cursor: pointer;
 }
+button.menu-button {
+  background-color: transparent;
+  border-color: transparent;
+  padding: 4px 4px;
+}
+button:hover {
+  color: #FFFFFF;
+  background-color: #56187F;
+  border-color: #56187F;
+}
 @media (prefers-color-scheme: dark) {
   button {
     background-color: #000022;
   }
+  button:hover {
+    color: #000022;
+  }
+}
+.long-button {
+  position: relative;
+  margin: 0.5rem 1rem;
+  width: calc(100% - (2rem + 2px));
+  max-width: 640px;
+  float: center;
 }
 button.default-button {
   color: #FFFFFF;
   background-color: #228844;
   border-color: #228844;
 }
+button.default-button:hover {
+  background-color: #56187F;
+  border-color: #56187F;
+}
 @media (prefers-color-scheme: dark) {
   button.default-button {
     color: #000022;
   }
+  button.default-button:hover {
+    background-color: #56187F;
+    border-color: #56187F;
+  }
 }
-.flex-list {
+.row-flex-list,
+.column-flex-list {
+  position: relative;
   display: flex;
-  flex-direction: column;
   flex-wrap: wrap;
   align-items: stretch;
   justify-content: stretch;
 }
-.task-item {
+.row-flex-list {
+  flex-direction: row;
+}
+.column-flex-list {
+  flex-direction: column;
+}
+.flex-item {
+  position: relative;
   display: inline-block;
   box-sizing: border-box;
-  padding: 0.5rem;
   min-width: calc(100% / 1);
   border-width: 1px;
-  border-color: rgba(128, 128, 128, 0.5);
-  border-style: solid;
   margin: -0.5px;
 }
 @media (min-width: 780px) {
-  .task-item {
+  .flex-item {
     min-width: calc(100% / 2);
   }
 }
 @media (min-width: 1170px) {
-  .task-item {
+  .flex-item {
     min-width: calc(100% / 3);
   }
 }
 @media (min-width: 1560px) {
-  .task-item {
+  .flex-item {
     min-width: calc(100% / 4);
   }
 }
 @media (min-width: 1950px) {
-  .task-item {
+  .flex-item {
     min-width: calc(100% / 5);
   }
 }
 @media (min-width: 2340px) {
-  .task-item {
+  .flex-item {
     min-width: calc(100% / 6);
   }
 }
 @media (min-width: 2730px) {
-  .task-item {
+  .flex-item {
     min-width: calc(100% / 7);
   }
 }
 @media (min-width: 3120px) {
-  .task-item {
+  .flex-item {
     min-width: calc(100% / 8);
   }
 }
 @media (min-width: 3510px) {
-  .task-item {
+  .flex-item {
     min-width: calc(100% / 9);
   }
 }
 @media (min-width: 3900px) {
-  .task-item {
+  .flex-item {
     min-width: calc(100% / 10);
   }
 }
 @media (min-width: 4290px) {
-  .task-item {
+  .flex-item {
     min-width: calc(100% / 11);
   }
 }
 @media (min-width: 4680px) {
-  .task-item {
+  .flex-item {
     min-width: calc(100% / 12);
   }
 }
-.task-item button {
-  margin: 0px;
+.task-item {
+  padding: 0.5rem;
+  border-color: rgba(128, 128, 128, 0.5);
+  border-style: solid;
 }
-.task-item .task-title {
+.task-item .task-header {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.5rem;
+}
+.task-item .task-header .task-title {
+  display: inline-block;
   font-size: 1.5em;
   line-height: 1em;
   box-sizing: border-box;
-  margin-bottom: 1.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   height: 1em;
+  max-width: calc(100% - 180px);
+  margin-right: -120px;
 }
-.task-item button {
-  float: right;
+.task-item .task-header .task-operator {
+  white-space: nowrap;
+}
+.task-item .task-header .task-operator button {
+  display: inline-block;
+  margin: 0px;
+}
+.task-item .task-header .task-operator button + button {
+  margin-left: 4px;
 }
 .task-item .task-information {
   padding: 0.5rem;
   margin: -0.5rem;
+  margin-top: 0px;
 }
 .task-item .task-information * {
   line-height: 1.4em;
