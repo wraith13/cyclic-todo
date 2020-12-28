@@ -103,9 +103,9 @@ button.default-button {
     color: #000022;
   }
 }
-.list {
+.flex-list {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: wrap;
   align-items: stretch;
   justify-content: stretch;

@@ -619,7 +619,7 @@ export module CyclicToDo
                 heading("h1", [await applicationIcon(), `${document.title}`]),
                 {
                     tag: "div",
-                    className: "list",
+                    className: "flex-list",
                     children: list.map(item => todoItem(entry, item)),
                 }
             ]
@@ -641,6 +641,7 @@ export module CyclicToDo
                 document.body,
                 await todoScreen(entry, list),
             );
+            onWindowResize();
             updateTodoScreenTimer = setInterval
             (
                 async () =>
@@ -654,6 +655,7 @@ export module CyclicToDo
                             document.body,
                             await todoScreen(entry, list),
                         );
+                        onWindowResize();
                     }
                     else
                     {
@@ -817,6 +819,33 @@ export module CyclicToDo
             document.body,
             screen
         );
+        export const onWindowResize = () =>
+        {
+            let minColumns = 1 +Math.floor(window.innerWidth / 780);
+            let maxColumns = Math.max(minColumns, Math.floor(window.innerWidth / 390));
+            (Array.from(document.getElementsByClassName("flex-list")) as HTMLDivElement[]).forEach
+            (
+                list =>
+                {
+                    const length = list.childNodes.length;
+                    if (length <= 1 || maxColumns <= 1)
+                    {
+                        list.style.height = undefined;
+                    }
+                    else
+                    {
+                        const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight;
+                        let row = 1;
+                        if (minColumns < length)
+                        {
+                            const colums = Math.min(maxColumns, Math.max(minColumns, Math.ceil(length / Math.max(1.0, (window.innerHeight -100) / itemHeight))));
+                            row = Math.ceil(length /colums);
+                        }
+                        list.style.height = `${row *(itemHeight -1)}px`;
+                    }
+                }
+            );
+        };
     }
     export const getUrlParams = (url: string = location.href) =>
     {
@@ -866,6 +895,7 @@ export module CyclicToDo
         const pass = urlParams["pass"] ?? `${Storage.sessionPassPrefix}:${new Date().getTime()}`;
         const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
         const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
+        window.addEventListener('resize', Render.onWindowResize);
         await Render.showWindow();
         if ((todo?.length ?? 0) <= 0)
         {

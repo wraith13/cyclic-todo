@@ -1329,7 +1329,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 _b.apply(void 0, _c.concat([[_d.sent(), "" + document.title]])),
                                 {
                                     tag: "div",
-                                    className: "list",
+                                    className: "flex-list",
                                     children: list.map(function (item) { return Render.todoItem(entry, item); }),
                                 }
                             ],
@@ -1358,6 +1358,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return [4 /*yield*/, Render.todoScreen(entry, list)];
                         case 1:
                             _b.apply(_a, _c.concat([_d.sent()]));
+                            Render.onWindowResize();
                             updateTodoScreenTimer = setInterval(function () { return __awaiter(_this, void 0, void 0, function () {
                                 var _a, _b, _c;
                                 return __generator(this, function (_d) {
@@ -1372,6 +1373,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             return [4 /*yield*/, Render.todoScreen(entry, list)];
                                         case 1:
                                             _b.apply(_a, _c.concat([_d.sent()]));
+                                            Render.onWindowResize();
                                             return [3 /*break*/, 3];
                                         case 2:
                                             clearInterval(updateTodoScreenTimer);
@@ -1547,6 +1549,25 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     return [2 /*return*/, minamo_js_1.minamo.dom.appendChildren(document.body, screen)];
                 });
             }); };
+            Render.onWindowResize = function () {
+                var minColumns = 1 + Math.floor(window.innerWidth / 780);
+                var maxColumns = Math.max(minColumns, Math.floor(window.innerWidth / 390));
+                Array.from(document.getElementsByClassName("flex-list")).forEach(function (list) {
+                    var length = list.childNodes.length;
+                    if (length <= 1 || maxColumns <= 1) {
+                        list.style.height = undefined;
+                    }
+                    else {
+                        var itemHeight = list.childNodes[0].offsetHeight;
+                        var row = 1;
+                        if (minColumns < length) {
+                            var colums = Math.min(maxColumns, Math.max(minColumns, Math.ceil(length / Math.max(1.0, (window.innerHeight - 100) / itemHeight))));
+                            row = Math.ceil(length / colums);
+                        }
+                        list.style.height = row * (itemHeight - 1) + "px";
+                    }
+                });
+            };
         })(Render = CyclicToDo.Render || (CyclicToDo.Render = {}));
         CyclicToDo.getUrlParams = function (url) {
             if (url === void 0) { url = location.href; }
@@ -1595,6 +1616,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         pass = (_c = urlParams["pass"]) !== null && _c !== void 0 ? _c : Storage.sessionPassPrefix + ":" + new Date().getTime();
                         todo = JSON.parse((_d = urlParams["todo"]) !== null && _d !== void 0 ? _d : "null");
                         history = JSON.parse((_e = urlParams["history"]) !== null && _e !== void 0 ? _e : "null");
+                        window.addEventListener('resize', Render.onWindowResize);
                         return [4 /*yield*/, Render.showWindow()];
                     case 1:
                         _h.sent();
