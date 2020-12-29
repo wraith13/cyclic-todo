@@ -836,6 +836,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
     var Calculate;
     (function (Calculate) {
         Calculate.phi = 1.618033988749894;
+        Calculate.intervals = function (ticks) {
+            var result = [];
+            ticks.forEach(function (value, index, list) {
+                if (0 < index) {
+                    result.push(list[index - 1] - value);
+                }
+            });
+            return result;
+        };
         Calculate.average = function (ticks) { return ticks.reduce(function (a, b) { return a + b; }, 0) / ticks.length; };
         Calculate.standardDeviation = function (ticks, average) {
             if (average === void 0) { average = Calculate.average(ticks); }
@@ -959,10 +968,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     var hour = Math.floor(time / 60);
                     var minute = time % 60;
                     var timePart = ("00" + hour).slice(-2) + ":" + ("00" + minute).slice(-2);
-                    return 1000 <= days ?
-                        "" + days.toLocaleString() :
+                    return 10 <= days ?
+                        days.toLocaleString() + " d" :
                         0 < days ?
-                            days.toLocaleString() + " " + timePart :
+                            days.toLocaleString() + " d " + timePart :
                             timePart;
                 }
             };
@@ -975,7 +984,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Domain.done = function (pass, task) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                 return [2 /*return*/, Storage.History.add(pass, task, Domain.getDoneTicks(pass))];
             }); }); };
-            var todoSorter = function (entry) { return function (a, b) {
+            Domain.todoSorter = function (entry) { return function (a, b) {
                 if (1 < a.count) {
                     if (null !== a.smartAverage && null !== b.smartAverage) {
                         var rate = Math.min(a.count, b.count) < 5 ? 1.5 : 1.2;
@@ -998,7 +1007,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 }
                 else if (1 < b.count) {
-                    return -todoSorter(entry)(b, a);
+                    return -Domain.todoSorter(entry)(b, a);
                 }
                 if (1 === a.count && b.count) {
                     if (a.elapsed < b.elapsed) {
@@ -1048,75 +1057,28 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
                 return histories;
             };
-            Domain.calculateTitleRecentrlyAverage = function (entry, histories) {
-                var titleRecentrly = entry.todo.map(function (todo) { return histories[todo].recentries; }).reduce(function (a, b) { return a.concat(b); }, []).sort(Domain.simpleReverseComparer);
-                return titleRecentrly.length <= 1 ? null : (titleRecentrly[0] - titleRecentrly[titleRecentrly.length - 1]) / (titleRecentrly.length - 1);
-            };
-            Domain.getToDoEntries = function (entry, histories, titleRecentrlyAverage, now) {
-                if (now === void 0) { now = Domain.getTicks(); }
-                var firstStageRecentries = entry.todo.map(function (todo) { return histories[todo]; }).filter(function (history) { return 1 === history.count; }).map(function (history) { return history.recentries[0]; }).sort(Domain.simpleReverseComparer);
-                var firstStage = {
-                    nones: entry.todo.map(function (todo) { return histories[todo]; }).filter(function (history) { return 0 === history.count; }).length,
-                    singles: firstStageRecentries.length,
-                    average: firstStageRecentries.length <= 1 ? null : (firstStageRecentries[0] - firstStageRecentries[firstStageRecentries.length - 1]) / (firstStageRecentries.length - 1),
-                    standardDeviation: firstStageRecentries.length <= 1 ? null : Calculate.standardDeviation(firstStageRecentries),
+            Domain.getToDoEntries = function (entry, histories) { return entry.todo.map(function (todo) {
+                var history = histories[todo];
+                var result = {
+                    todo: todo,
+                    isDefault: false,
+                    progress: null,
+                    decayedProgress: null,
+                    previous: history.previous,
+                    elapsed: null,
+                    average: history.recentries.length <= 1 ? null : (history.recentries[0] - history.recentries[history.recentries.length - 1]) / (history.recentries.length - 1),
+                    standardDeviation: history.recentries.length <= 2 ?
+                        null :
+                        Calculate.standardDeviation(Calculate.intervals(history.recentries)),
+                    count: history.count,
+                    smartAverage: history.recentries.length <= 1 ?
+                        null :
+                        (((history.recentries[0] - history.recentries[Math.min(5, history.recentries.length) - 1]) / (Math.min(5, history.recentries.length) - 1))
+                            + ((history.recentries[0] - history.recentries[Math.min(25, history.recentries.length) - 1]) / (Math.min(25, history.recentries.length) - 1))) / 2,
                 };
-                var secondStageTarget = entry.todo.map(function (todo) { return histories[todo]; }).filter(function (history) { return 2 <= history.count && history.count <= 5; });
-                var secondStageRecentries = secondStageTarget.map(function (history) { return history.recentries; }).reduce(function (a, b) { return a.concat(b); }, []).sort(Domain.simpleReverseComparer);
-                var secondStage = {
-                    average: secondStageRecentries.length <= 1 ? null : (secondStageRecentries[0] - secondStageRecentries[secondStageRecentries.length - 1]) / (secondStageRecentries.length - 1) * secondStageTarget.length,
-                    standardDeviation: secondStageRecentries.length <= 1 ? null : Calculate.standardDeviation(secondStageRecentries),
-                };
-                var list = entry.todo.map(function (todo) {
-                    var history = histories[todo];
-                    var result = {
-                        todo: todo,
-                        isDefault: false,
-                        progress: null,
-                        decayedProgress: null,
-                        previous: history.previous,
-                        elapsed: null,
-                        average: history.recentries.length <= 1 ? null : (history.recentries[0] - history.recentries[history.recentries.length - 1]) / (history.recentries.length - 1),
-                        standardDeviation: history.recentries.length <= 1 ?
-                            null :
-                            (5 < history.recentries.length || null === secondStage.standardDeviation) ?
-                                Calculate.standardDeviation(history.recentries) :
-                                Calculate.average([Calculate.standardDeviation(history.recentries), secondStage.standardDeviation]),
-                        count: history.count,
-                        smartAverage: null,
-                    };
-                    return result;
-                });
-                list.forEach(function (item) {
-                    var history = histories[item.todo];
-                    if (0 < history.count) {
-                        // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
-                        if (5 < history.count) {
-                            item.smartAverage =
-                                (((history.recentries[0] - history.recentries[Math.min(5, history.recentries.length) - 1]) / (Math.min(5, history.recentries.length) - 1))
-                                    + ((history.recentries[0] - history.recentries[Math.min(25, history.recentries.length) - 1]) / (Math.min(25, history.recentries.length) - 1))) / 2;
-                        }
-                        else if (2 <= history.count) {
-                            item.smartAverage =
-                                (((history.recentries[0] - history.recentries[Math.min(5, history.recentries.length) - 1]) / (Math.min(5, history.recentries.length) - 1))
-                                    + secondStage.average) / 2;
-                        }
-                        else if (null !== firstStage.average) {
-                            item.smartAverage = firstStage.average * (firstStage.nones + firstStage.singles);
-                            item.standardDeviation = firstStage.standardDeviation;
-                        }
-                        else if (null !== secondStage.average) {
-                            item.smartAverage = secondStage.average;
-                            item.standardDeviation = secondStage.standardDeviation;
-                        }
-                    }
-                });
-                Domain.updateProgress(entry, list, titleRecentrlyAverage, now);
-                list.sort(todoSorter(entry));
-                console.log(list); // これは消さない！！！
-                return list;
-            };
-            Domain.updateProgress = function (entry, list, titleRecentrlyAverage, now) {
+                return result;
+            }); };
+            Domain.updateProgress = function (entry, list, now) {
                 if (now === void 0) { now = Domain.getTicks(); }
                 list.forEach(function (item) {
                     var _a, _b, _c;
@@ -1124,21 +1086,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
                         item.elapsed = Math.max(0.0, now - item.previous);
                         if (null !== item.smartAverage) {
-                            item.progress = item.elapsed / (item.smartAverage + ((_a = item.standardDeviation) !== null && _a !== void 0 ? _a : 0));
-                            item.decayedProgress = item.elapsed / (item.smartAverage + ((_b = item.standardDeviation) !== null && _b !== void 0 ? _b : 0));
-                            if (null !== titleRecentrlyAverage) {
-                                var overrate = (item.elapsed - (item.smartAverage + ((_c = item.standardDeviation) !== null && _c !== void 0 ? _c : 0))) / titleRecentrlyAverage;
-                                if (0.0 < overrate) {
-                                    item.decayedProgress = 1.0 / (1.0 + Math.log2(1.0 + overrate));
-                                    item.progress = null;
-                                    item.smartAverage = null;
-                                    item.standardDeviation = null;
-                                }
+                            item.progress = item.elapsed / (item.smartAverage + ((_a = item.standardDeviation) !== null && _a !== void 0 ? _a : 0) * 2.0);
+                            item.decayedProgress = item.elapsed / (item.smartAverage + ((_b = item.standardDeviation) !== null && _b !== void 0 ? _b : 0) * 2.0);
+                            var overrate = (item.elapsed - (item.smartAverage + ((_c = item.standardDeviation) !== null && _c !== void 0 ? _c : 0) * 3.0)) / item.smartAverage;
+                            if (0.0 < overrate) {
+                                item.decayedProgress = 1.0 / (1.0 + Math.log2(1.0 + overrate));
+                                item.progress = null;
+                                item.smartAverage = null;
+                                item.standardDeviation = null;
                             }
                         }
                     }
                 });
-                var defaultTodo = JSON.parse(JSON.stringify(list)).sort(todoSorter(entry))[0].todo;
+                var defaultTodo = JSON.parse(JSON.stringify(list)).sort(Domain.todoSorter(entry))[0].todo;
                 list.forEach(function (item) { return item.isDefault = defaultTodo === item.todo; });
             };
         })(Domain = CyclicToDo.Domain || (CyclicToDo.Domain = {}));
@@ -1158,7 +1118,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 undefined :
                 1 <= item.progress ?
                     "background: #22884455" :
-                    Render.backgroundLinerGradient(Math.pow(item.progress, 0.8).toLocaleString("en", { style: "percent" }), "#22884466", "rgba(128,128,128,0.2)"); };
+                    Render.backgroundLinerGradient(item.progress.toLocaleString("en", { style: "percent" }), "#22884466", "rgba(128,128,128,0.2)"); };
             Render.label = function (label) {
                 return ({
                     tag: "span",
@@ -1166,14 +1126,22 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     children: locale.parallel(label),
                 });
             };
-            Render.menuButton = function (onclick) {
-                return ({
-                    tag: "button",
-                    className: "menu-button",
-                    children: "･･･",
-                    onclick: onclick,
+            Render.menuButton = function (onclick) { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            _a = {
+                                tag: "button",
+                                className: "menu-button"
+                            };
+                            return [4 /*yield*/, loadSvg("./ellipsis.1024.svg")];
+                        case 1: return [2 /*return*/, (_a.children = _b.sent(),
+                                _a.onclick = onclick,
+                                _a)];
+                    }
                 });
-            };
+            }); };
             Render.information = function (item) {
                 return ({
                     tag: "div",
@@ -1204,7 +1172,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     className: "value",
                                     children: null === item.standardDeviation ?
                                         Domain.timeStringFromTick(item.smartAverage) :
-                                        Domain.timeStringFromTick(Math.max(item.smartAverage / 10, item.smartAverage - item.standardDeviation)) + " \u301C " + Domain.timeStringFromTick(item.smartAverage + item.standardDeviation),
+                                        Domain.timeStringFromTick(Math.max(item.smartAverage / 10, item.smartAverage - (item.standardDeviation * 2.0))) + " \u301C " + Domain.timeStringFromTick(item.smartAverage + (item.standardDeviation * 2.0)),
                                 }
                             ],
                         },
@@ -1271,65 +1239,76 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     ],
                 });
             };
-            Render.todoItem = function (entry, item) {
-                return ({
-                    tag: "div",
-                    className: "task-item flex-item",
-                    children: [
-                        {
-                            tag: "div",
-                            className: "task-header",
-                            children: [
-                                {
+            Render.todoItem = function (entry, item) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c, _d, _e;
+                var _this = this;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "task-item flex-item"
+                            };
+                            _b = {
+                                tag: "div",
+                                className: "task-header"
+                            };
+                            _c = [{
                                     tag: "div",
                                     className: "task-title",
                                     children: item.todo,
-                                },
-                                {
-                                    tag: "div",
-                                    className: "task-operator",
-                                    children: [
-                                        {
-                                            tag: "button",
-                                            className: item.isDefault ? "default-button" : undefined,
-                                            children: locale.parallel("Done"),
-                                            //children: locale.map("Done"),
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                var fxxkingTypeScriptCompiler;
-                                                return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0:
-                                                            fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
-                                                            if (!fxxkingTypeScriptCompiler) return [3 /*break*/, 1];
-                                                            window.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
-                                                                + "\n"
-                                                                + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。");
-                                                            return [3 /*break*/, 3];
-                                                        case 1:
-                                                            Domain.done(entry.pass, item.todo);
-                                                            return [4 /*yield*/, Render.updateTodoScreen(entry)];
-                                                        case 2:
-                                                            _a.sent();
-                                                            _a.label = 3;
-                                                        case 3: return [2 /*return*/];
-                                                    }
-                                                });
-                                            }); }
-                                        },
-                                        Render.menuButton(function () { }),
-                                    ],
-                                },
+                                }];
+                            _d = {
+                                tag: "div",
+                                className: "task-operator"
+                            };
+                            _e = [{
+                                    tag: "button",
+                                    className: item.isDefault ? "default-button" : undefined,
+                                    children: locale.parallel("Done"),
+                                    //children: locale.map("Done"),
+                                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                        var fxxkingTypeScriptCompiler;
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0:
+                                                    fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
+                                                    if (!fxxkingTypeScriptCompiler) return [3 /*break*/, 1];
+                                                    window.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                                                        + "\n"
+                                                        + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。");
+                                                    return [3 /*break*/, 3];
+                                                case 1:
+                                                    Domain.done(entry.pass, item.todo);
+                                                    return [4 /*yield*/, Render.updateTodoScreen(entry)];
+                                                case 2:
+                                                    _a.sent();
+                                                    _a.label = 3;
+                                                case 3: return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }
+                                }];
+                            return [4 /*yield*/, Render.menuButton(function () { })];
+                        case 1: return [2 /*return*/, (_a.children = [
+                                (_b.children = _c.concat([
+                                    (_d.children = _e.concat([
+                                        _f.sent()
+                                    ]),
+                                        _d)
+                                ]),
+                                    _b),
+                                // DELETE_ME renderInformation(list, item, getHistory(pass, item.task)),
+                                Render.information(item)
                             ],
-                        },
-                        // DELETE_ME renderInformation(list, item, getHistory(pass, item.task)),
-                        Render.information(item),
-                    ],
+                                _a)];
+                    }
                 });
-            };
+            }); };
             Render.todoScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                var _a, _b, _c, _d, _e, _f;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             _a = {
                                 tag: "div",
@@ -1338,25 +1317,34 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             _b = Render.heading;
                             _c = ["h1"];
                             return [4 /*yield*/, Render.applicationIcon()];
-                        case 1: return [2 /*return*/, (_a.children = [
-                                _b.apply(void 0, _c.concat([[
-                                        _d.sent(),
-                                        "" + entry.title,
-                                        Render.menuButton(function () { })
-                                    ]])),
-                                {
-                                    tag: "div",
-                                    className: "column-flex-list",
-                                    children: list.map(function (item) { return Render.todoItem(entry, item); }),
-                                }
-                            ],
+                        case 1:
+                            _d = [
+                                _g.sent(),
+                                "" + entry.title
+                            ];
+                            return [4 /*yield*/, Render.menuButton(function () { })];
+                        case 2:
+                            _e = [
+                                _b.apply(void 0, _c.concat([_d.concat([
+                                        _g.sent()
+                                    ])]))
+                            ];
+                            _f = {
+                                tag: "div",
+                                className: "column-flex-list"
+                            };
+                            return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.todoItem(entry, item); }))];
+                        case 3: return [2 /*return*/, (_a.children = _e.concat([
+                                (_f.children = _g.sent(),
+                                    _f)
+                            ]),
                                 _a)];
                     }
                 });
             }); };
             var updateTodoScreenTimer = undefined;
             Render.updateTodoScreen = function (entry) { return __awaiter(_this, void 0, void 0, function () {
-                var histories, titleRecentrlyAverage, list, _a, _b, _c;
+                var histories, list, _a, _b, _c;
                 var _this = this;
                 return __generator(this, function (_d) {
                     switch (_d.label) {
@@ -1366,8 +1354,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 clearInterval(updateTodoScreenTimer);
                             }
                             histories = Domain.getRecentlyHistories(entry);
-                            titleRecentrlyAverage = Domain.calculateTitleRecentrlyAverage(entry, histories);
-                            list = Domain.getToDoEntries(entry, histories, titleRecentrlyAverage);
+                            list = Domain.getToDoEntries(entry, histories);
+                            Domain.updateProgress(entry, list);
+                            list.sort(Domain.todoSorter(entry));
+                            console.log({ histories: histories, list: list }); // これは消さない！！！
                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                             _c = [
                                 //document.getElementById("screen"),
@@ -1382,7 +1372,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     switch (_d.label) {
                                         case 0:
                                             if (!(0 < document.getElementsByClassName("todo-screen").length)) return [3 /*break*/, 2];
-                                            Domain.updateProgress(entry, list, titleRecentrlyAverage);
+                                            Domain.updateProgress(entry, list);
                                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                             _c = [
                                                 //document.getElementById("screen"),
@@ -1513,9 +1503,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
             }); };
             Render.welcomeScreen = function (_pass) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d;
-                return __generator(this, function (_e) {
-                    switch (_e.label) {
+                var _a, _b, _c, _d, _e;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
                         case 0:
                             _a = {
                                 tag: "div",
@@ -1526,15 +1516,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
                             _d = [
-                                _b.apply(void 0, _c.concat([[
-                                        _e.sent(),
-                                        "" + document.title,
-                                        Render.menuButton(function () { })
-                                    ]]))
+                                _f.sent(),
+                                "" + document.title
+                            ];
+                            return [4 /*yield*/, Render.menuButton(function () { })];
+                        case 2:
+                            _e = [
+                                _b.apply(void 0, _c.concat([_d.concat([
+                                        _f.sent()
+                                    ])]))
                             ];
                             return [4 /*yield*/, Render.applicationIcon()];
-                        case 2: return [2 /*return*/, (_a.children = _d.concat([
-                                _e.sent()
+                        case 3: return [2 /*return*/, (_a.children = _e.concat([
+                                _f.sent()
                             ]),
                                 _a)];
                     }

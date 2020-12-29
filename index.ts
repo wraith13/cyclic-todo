@@ -28,6 +28,21 @@ export module localeParallel
 }export module Calculate
 {
     export const phi = 1.618033988749894;
+    export const intervals = (ticks: number[]) =>
+    {
+        const result: number[] = [];
+        ticks.forEach
+        (
+            (value, index, list) =>
+            {
+                if (0 < index)
+                {
+                    result.push(list[index -1] -value);
+                }
+            }
+        );
+        return result;
+    };
     export const average = (ticks: number[]) => ticks.reduce((a, b) => a +b, 0) /ticks.length;
     export const standardDeviation = (ticks: number[], average: number = Calculate.average(ticks)) =>
         Math.sqrt(Calculate.average(ticks.map(i => (i -average) ** 2)));
@@ -180,10 +195,10 @@ export module CyclicToDo
                 const hour = Math.floor(time /60);
                 const minute = time % 60;
                 const timePart = `${("00" +hour).slice(-2)}:${("00" +minute).slice(-2)}`;
-                return 1000 <= days ?
-                    `${days.toLocaleString()}`:
+                return 10 <= days ?
+                    `${days.toLocaleString()} d`:
                     0 < days ?
-                        `${days.toLocaleString()} ${timePart}`:
+                        `${days.toLocaleString()} d ${timePart}`:
                         timePart;
             }
         };
@@ -200,7 +215,7 @@ export module CyclicToDo
             );
         export const done = async (pass: string, task: string) =>
             Storage.History.add(pass, task, getDoneTicks(pass));
-        const todoSorter = (entry: ToDoTitleEntry) => (a: ToDoEntry, b: ToDoEntry) =>
+        export const todoSorter = (entry: ToDoTitleEntry) => (a: ToDoEntry, b: ToDoEntry) =>
         {
             if (1 < a.count)
             {
@@ -299,100 +314,35 @@ export module CyclicToDo
             );
             return histories;
         };
-        export const calculateTitleRecentrlyAverage = (entry: ToDoTitleEntry, histories: { [todo: string]: { recentries: number[], previous: null | number, count: number, } }) =>
-        {
-            const titleRecentrly = entry.todo.map(todo => histories[todo].recentries).reduce((a, b) => a.concat(b), []).sort(Domain.simpleReverseComparer);
-            return titleRecentrly.length <= 1 ? null: (titleRecentrly[0] -titleRecentrly[titleRecentrly.length -1]) / (titleRecentrly.length -1);
-        };
-        export const getToDoEntries = (entry: ToDoTitleEntry, histories: { [todo: string]: { recentries: number[], previous: null | number, count: number, } }, titleRecentrlyAverage:number, now: number = Domain.getTicks()) =>
-        {
-            const firstStageRecentries = entry.todo.map(todo => histories[todo]).filter(history => 1 === history.count).map(history => history.recentries[0]).sort(Domain.simpleReverseComparer);
-            const firstStage =
+        export const getToDoEntries = (entry: ToDoTitleEntry, histories: { [todo: string]: { recentries: number[], previous: null | number, count: number, } }) => entry.todo.map
+        (
+            todo =>
             {
-                nones: entry.todo.map(todo => histories[todo]).filter(history => 0 === history.count).length,
-                singles: firstStageRecentries.length,
-                average: firstStageRecentries.length <= 1 ? null: (firstStageRecentries[0] -firstStageRecentries[firstStageRecentries.length -1]) / (firstStageRecentries.length -1),
-                standardDeviation: firstStageRecentries.length <= 1 ? null: Calculate.standardDeviation(firstStageRecentries),
-            };
-            const secondStageTarget = entry.todo.map(todo => histories[todo]).filter(history => 2 <= history.count && history.count <= 5);
-            const secondStageRecentries = secondStageTarget.map(history => history.recentries).reduce((a, b) => a.concat(b), []).sort(Domain.simpleReverseComparer);
-            const secondStage =
-            {
-                average: secondStageRecentries.length <= 1 ? null: (secondStageRecentries[0] -secondStageRecentries[secondStageRecentries.length -1]) / (secondStageRecentries.length -1) *secondStageTarget.length,
-                standardDeviation: secondStageRecentries.length <= 1 ? null: Calculate.standardDeviation(secondStageRecentries),
-                //count: secondStageRecentries.length,
-            };
-            const list: ToDoEntry[] = entry.todo.map
-            (
-                todo =>
+                const history = histories[todo];
+                const result: ToDoEntry =
                 {
-                    const history = histories[todo];
-                    const result: ToDoEntry =
-                    {
-                        todo,
-                        isDefault: false,
-                        progress: null,
-                        decayedProgress: null,
-                        previous: history.previous,
-                        elapsed: null,
-                        average: history.recentries.length <= 1 ? null: (history.recentries[0] -history.recentries[history.recentries.length -1]) / (history.recentries.length -1),
-                        standardDeviation: history.recentries.length <= 1 ?
-                            null:
-                            (5 < history.recentries.length || null === secondStage.standardDeviation) ?
-                                Calculate.standardDeviation(history.recentries):
-                                Calculate.average([Calculate.standardDeviation(history.recentries), secondStage.standardDeviation]),
-                        count: history.count,
-                        smartAverage: null,
-                    };
-                    return result;
-                }
-            );
-            list.forEach
-            (
-                item =>
-                {
-                    const history = histories[item.todo];
-                    if (0 < history.count)
-                    {
-                        // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
-                        if (5 < history.count)
-                        {
-                            item.smartAverage =
-                            (
-                                ((history.recentries[0] -history.recentries[Math.min(5, history.recentries.length) -1]) /(Math.min(5, history.recentries.length) -1))
-                                +((history.recentries[0] -history.recentries[Math.min(25, history.recentries.length) -1]) /(Math.min(25, history.recentries.length) -1))
-                            ) /2;
-                        }
-                        else
-                        if (2 <= history.count)
-                        {
-                            item.smartAverage =
-                            (
-                                ((history.recentries[0] -history.recentries[Math.min(5, history.recentries.length) -1]) /(Math.min(5, history.recentries.length) -1))
-                                +secondStage.average
-                            ) /2;
-                        }
-                        else
-                        if (null !== firstStage.average)
-                        {
-                            item.smartAverage = firstStage.average *(firstStage.nones +firstStage.singles);
-                            item.standardDeviation = firstStage.standardDeviation;
-                        }
-                        else
-                        if (null !== secondStage.average)
-                        {
-                            item.smartAverage = secondStage.average;
-                            item.standardDeviation = secondStage.standardDeviation;
-                        }
-                    }
-                }
-            );
-            updateProgress(entry, list, titleRecentrlyAverage, now);
-            list.sort(todoSorter(entry));
-            console.log(list); // これは消さない！！！
-            return list;
-        };
-        export const updateProgress = (entry: ToDoTitleEntry, list: ToDoEntry[], titleRecentrlyAverage: number, now: number = Domain.getTicks()) =>
+                    todo,
+                    isDefault: false,
+                    progress: null,
+                    decayedProgress: null,
+                    previous: history.previous,
+                    elapsed: null,
+                    average: history.recentries.length <= 1 ? null: (history.recentries[0] -history.recentries[history.recentries.length -1]) / (history.recentries.length -1),
+                    standardDeviation: history.recentries.length <= 2 ?
+                        null:
+                        Calculate.standardDeviation(Calculate.intervals(history.recentries)),
+                    count: history.count,
+                    smartAverage: history.recentries.length <= 1 ?
+                        null:
+                        (
+                            ((history.recentries[0] -history.recentries[Math.min(5, history.recentries.length) -1]) /(Math.min(5, history.recentries.length) -1))
+                            +((history.recentries[0] -history.recentries[Math.min(25, history.recentries.length) -1]) /(Math.min(25, history.recentries.length) -1))
+                        ) /2,
+                };
+                return result;
+            }
+        );
+        export const updateProgress = (entry: ToDoTitleEntry, list: ToDoEntry[], now: number = Domain.getTicks()) =>
         {
             list.forEach
             (
@@ -404,18 +354,15 @@ export module CyclicToDo
                         item.elapsed = Math.max(0.0, now -item.previous);
                         if (null !== item.smartAverage)
                         {
-                            item.progress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0));
-                            item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0));
-                            if (null !== titleRecentrlyAverage)
+                            item.progress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
+                            item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
+                            const overrate = (item.elapsed -(item.smartAverage +(item.standardDeviation ?? 0) *3.0)) / item.smartAverage;
+                            if (0.0 < overrate)
                             {
-                                const overrate = (item.elapsed -(item.smartAverage +(item.standardDeviation ?? 0))) / titleRecentrlyAverage;
-                                if (0.0 < overrate)
-                                {
-                                    item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
-                                    item.progress = null;
-                                    item.smartAverage = null;
-                                    item.standardDeviation = null;
-                                }
+                                item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
+                                item.progress = null;
+                                item.smartAverage = null;
+                                item.standardDeviation = null;
                             }
                         }
                     }
@@ -438,7 +385,12 @@ export module CyclicToDo
             undefined:
             1 <= item.progress ?
                 `background: #22884455`:
-                backgroundLinerGradient(Math.pow(item.progress, 0.8).toLocaleString("en", { style: "percent" }), "#22884466", "rgba(128,128,128,0.2)");
+                backgroundLinerGradient
+                (
+                    item.progress.toLocaleString("en", { style: "percent" }),
+                    "#22884466",
+                    "rgba(128,128,128,0.2)"
+                );
         export const label = (label: locale.LocaleKeyType) =>
         ({
             tag: "span",
@@ -446,11 +398,11 @@ export module CyclicToDo
             children: locale.parallel(label),
             //children: locale.map(label),
         });
-        export const menuButton = (onclick: () => unknown) =>
+        export const menuButton = async (onclick: () => unknown) =>
         ({
             tag: "button",
             className: "menu-button",
-            children: "･･･",
+            children: await loadSvg("./ellipsis.1024.svg"),
             onclick,
         });
         export const information = (item: ToDoEntry) =>
@@ -487,7 +439,7 @@ export module CyclicToDo
                             className: "value",
                             children: null === item.standardDeviation ?
                                 Domain.timeStringFromTick(item.smartAverage):
-                                `${Domain.timeStringFromTick(Math.max(item.smartAverage /10, item.smartAverage -item.standardDeviation))} 〜 ${Domain.timeStringFromTick(item.smartAverage +item.standardDeviation)}`,
+                                `${Domain.timeStringFromTick(Math.max(item.smartAverage /10, item.smartAverage -(item.standardDeviation *2.0)))} 〜 ${Domain.timeStringFromTick(item.smartAverage +(item.standardDeviation *2.0))}`,
                         }
                     ],
                 },
@@ -555,7 +507,7 @@ export module CyclicToDo
                 },
             ],
         });
-        export const todoItem = (entry: ToDoTitleEntry, item: ToDoEntry) =>
+        export const todoItem = async (entry: ToDoTitleEntry, item: ToDoEntry) =>
         ({
             tag: "div",
             className: "task-item flex-item",
@@ -601,7 +553,7 @@ export module CyclicToDo
                                         }
                                     }
                                 },
-                                menuButton(() => {}),
+                                await menuButton(() => {}),
                             ],
                         },
                     ],
@@ -622,13 +574,13 @@ export module CyclicToDo
                     [
                         await applicationIcon(),
                         `${entry.title}`,
-                        menuButton(() => {}),
+                        await menuButton(() => {}),
                     ]
                 ),
                 {
                     tag: "div",
                     className: "column-flex-list",
-                    children: list.map(item => todoItem(entry, item)),
+                    children: await Promise.all(list.map(item => todoItem(entry, item))),
                 },
                 // {
                 //     tag: "div",
@@ -687,8 +639,10 @@ export module CyclicToDo
                 clearInterval(updateTodoScreenTimer);
             }
             const histories = Domain.getRecentlyHistories(entry);
-            const titleRecentrlyAverage = Domain.calculateTitleRecentrlyAverage(entry, histories);
-            const list = Domain.getToDoEntries(entry, histories, titleRecentrlyAverage);
+            const list = Domain.getToDoEntries(entry, histories);
+            Domain.updateProgress(entry, list);
+            list.sort(Domain.todoSorter(entry));
+            console.log({histories, list}); // これは消さない！！！
             minamo.dom.replaceChildren
             (
                 //document.getElementById("screen"),
@@ -702,7 +656,7 @@ export module CyclicToDo
                 {
                     if (0 < document.getElementsByClassName("todo-screen").length)
                     {
-                        Domain.updateProgress(entry, list, titleRecentrlyAverage);
+                        Domain.updateProgress(entry, list);
                         minamo.dom.replaceChildren
                         (
                             //document.getElementById("screen"),
@@ -851,7 +805,7 @@ export module CyclicToDo
                     [
                         await applicationIcon(),
                         `${document.title}`,
-                        menuButton(() => {}),
+                        await menuButton(() => {}),
                     ]
                 ),
                 await applicationIcon(),

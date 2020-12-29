@@ -61,11 +61,15 @@ h1
         }
         margin-right: 0.25rem;
     }
-    button.menu-button
+    button.menu-button:not(:hover)
     {
         color: @base-color;
         border-color: @base-color;
         background-color: @accent-color;
+        svg
+        {
+            fill: @base-color;
+        }
     }
 }
 @media (prefers-color-scheme: dark)
@@ -77,10 +81,15 @@ h1
         {
             fill: @dark-base-color;
         }
-        button.menu-button
+        button.menu-button:not(:hover)
         {
             float: right;
             color: @dark-base-color;
+            border-color: @dark-base-color;
+            svg
+            {
+                fill: @dark-base-color;
+            }
         }
     }
 }
@@ -135,13 +144,26 @@ button
     {
         // background-color: transparent;
         // border-color: transparent;
-        padding: 4px 3px;
+        padding: 4px;
+        svg
+        {
+            width: 1.5rem;
+            height: 1.5rem;
+            fill: @accent-color;
+        }
     }
     &:hover
     {
         color: @base-color;
         background-color: @active-color;
         border-color: @active-color;
+        &.menu-button
+        {
+            svg
+            {
+                fill: @base-color;
+            }
+        }
     }
 }
 @media (prefers-color-scheme: dark)
@@ -152,6 +174,13 @@ button
         &:hover
         {
             color: @dark-base-color;
+            &.menu-button
+            {
+                svg
+                {
+                    fill: @dark-base-color;
+                }
+            }
         }
     }
 }
@@ -325,6 +354,10 @@ button.default-button
         }
         .task-operator
         {
+            position: relative;
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
             white-space: nowrap;
             button
             {

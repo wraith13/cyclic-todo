@@ -42,10 +42,13 @@ h1 .icon svg {
   height: 2.5rem;
   fill: #FFFFFF;
 }
-h1 button.menu-button {
+h1 button.menu-button:not(:hover) {
   color: #FFFFFF;
   border-color: #FFFFFF;
   background-color: #228844;
+}
+h1 button.menu-button:not(:hover) svg {
+  fill: #FFFFFF;
 }
 @media (prefers-color-scheme: dark) {
   h1 {
@@ -54,9 +57,13 @@ h1 button.menu-button {
   h1 .icon svg {
     fill: #000022;
   }
-  h1 button.menu-button {
+  h1 button.menu-button:not(:hover) {
     float: right;
     color: #000022;
+    border-color: #000022;
+  }
+  h1 button.menu-button:not(:hover) svg {
+    fill: #000022;
   }
 }
 .github {
@@ -102,12 +109,20 @@ button {
   cursor: pointer;
 }
 button.menu-button {
-  padding: 4px 3px;
+  padding: 4px;
+}
+button.menu-button svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: #228844;
 }
 button:hover {
   color: #FFFFFF;
   background-color: #B6AB57;
   border-color: #B6AB57;
+}
+button:hover.menu-button svg {
+  fill: #FFFFFF;
 }
 @media (prefers-color-scheme: dark) {
   button {
@@ -115,6 +130,9 @@ button:hover {
   }
   button:hover {
     color: #000022;
+  }
+  button:hover.menu-button svg {
+    fill: #000022;
   }
 }
 .long-button {
@@ -245,6 +263,10 @@ button.default-button:hover {
   margin-right: -120px;
 }
 .task-item .task-header .task-operator {
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
   white-space: nowrap;
 }
 .task-item .task-header .task-operator button {
