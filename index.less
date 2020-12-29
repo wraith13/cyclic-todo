@@ -1,7 +1,7 @@
 @main-color: #000022;
 @base-color: #FFFFFF;
 @accent-color: #228844;
-@active-color: #56187F;
+@active-color: #B6AB57;
 @delete-color: #831B50;
 @dark-main-color: @base-color;
 @dark-base-color: @main-color;
@@ -9,6 +9,7 @@
 *
 {
     font-family: ui-sans-serif, "ヒラギノ角ゴ Pro w4", Roboto, Meiryo;
+    font: -apple-system-body;
 }
 body
 {
@@ -39,7 +40,8 @@ h1
     padding: 0.25rem;
     color: @base-color;
     background-color: @accent-color;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: normal;
 
     position: relative;
     display: flex;
@@ -62,6 +64,8 @@ h1
     button.menu-button
     {
         color: @base-color;
+        border-color: @base-color;
+        background-color: @accent-color;
     }
 }
 @media (prefers-color-scheme: dark)
@@ -129,9 +133,9 @@ button
     cursor: pointer;
     &.menu-button
     {
-        background-color: transparent;
-        border-color: transparent;
-        padding: 4px 4px;
+        // background-color: transparent;
+        // border-color: transparent;
+        padding: 4px 3px;
     }
     &:hover
     {
@@ -309,7 +313,7 @@ button.default-button
         .task-title
         {
             display: inline-block;
-            font-size: 1.5em;
+            font-size: 1.2rem;
             line-height: 1.0em;
             box-sizing: border-box;
             overflow: hidden;
@@ -344,8 +348,13 @@ button.default-button
         }
         .label
         {
+            font-size: 1.0rem;
             opacity: 0.4;
             margin-right: -50%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: calc(100% - 180px);
             &::after
             {
                 content: ":";
@@ -353,6 +362,7 @@ button.default-button
         }
         .value
         {
+            font-size: 1.0rem;
             opacity: 0.4;
             float: right;
         }

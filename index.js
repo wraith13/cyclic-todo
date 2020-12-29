@@ -1293,6 +1293,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             tag: "button",
                                             className: item.isDefault ? "default-button" : undefined,
                                             children: locale.parallel("Done"),
+                                            //children: locale.map("Done"),
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                 var fxxkingTypeScriptCompiler;
                                                 return __generator(this, function (_a) {
@@ -1340,52 +1341,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         case 1: return [2 /*return*/, (_a.children = [
                                 _b.apply(void 0, _c.concat([[
                                         _d.sent(),
-                                        "" + document.title,
+                                        "" + entry.title,
                                         Render.menuButton(function () { })
                                     ]])),
                                 {
                                     tag: "div",
                                     className: "column-flex-list",
                                     children: list.map(function (item) { return Render.todoItem(entry, item); }),
-                                },
-                                {
-                                    tag: "div",
-                                    className: "row-flex-list",
-                                    children: [
-                                        {
-                                            tag: "div",
-                                            className: "flex-item",
-                                            children: {
-                                                tag: "button",
-                                                className: "long-button",
-                                                children: "Undo",
-                                                onclick: function () {
-                                                }
-                                            },
-                                        },
-                                        {
-                                            tag: "div",
-                                            className: "flex-item",
-                                            children: {
-                                                tag: "button",
-                                                className: "long-button",
-                                                children: "Add",
-                                                onclick: function () {
-                                                }
-                                            },
-                                        },
-                                        {
-                                            tag: "div",
-                                            className: "flex-item",
-                                            children: {
-                                                tag: "button",
-                                                className: "long-button",
-                                                children: "Edit",
-                                                onclick: function () {
-                                                }
-                                            },
-                                        },
-                                    ],
                                 }
                             ],
                                 _a)];
@@ -1413,7 +1375,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return [4 /*yield*/, Render.todoScreen(entry, list)];
                         case 1:
                             _b.apply(_a, _c.concat([_d.sent()]));
-                            Render.onWindowResize();
+                            Render.resizeFlexList();
                             updateTodoScreenTimer = setInterval(function () { return __awaiter(_this, void 0, void 0, function () {
                                 var _a, _b, _c;
                                 return __generator(this, function (_d) {
@@ -1428,7 +1390,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             return [4 /*yield*/, Render.todoScreen(entry, list)];
                                         case 1:
                                             _b.apply(_a, _c.concat([_d.sent()]));
-                                            Render.onWindowResize();
+                                            Render.resizeFlexList();
                                             return [3 /*break*/, 3];
                                         case 2:
                                             clearInterval(updateTodoScreenTimer);
@@ -1564,7 +1526,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
                             _d = [
-                                _b.apply(void 0, _c.concat([[_e.sent(), "" + document.title]]))
+                                _b.apply(void 0, _c.concat([[
+                                        _e.sent(),
+                                        "" + document.title,
+                                        Render.menuButton(function () { })
+                                    ]]))
                             ];
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 2: return [2 /*return*/, (_a.children = _d.concat([
@@ -1605,7 +1571,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     return [2 /*return*/, minamo_js_1.minamo.dom.appendChildren(document.body, screen)];
                 });
             }); };
-            Render.onWindowResize = function () {
+            Render.resizeFlexList = function () {
                 var minColumns = 1 + Math.floor(window.innerWidth / 780);
                 var maxColumns = Math.max(minColumns, Math.floor(window.innerWidth / 390));
                 Array.from(document.getElementsByClassName("column-flex-list")).forEach(function (list) {
@@ -1614,15 +1580,29 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         list.style.height = undefined;
                     }
                     else {
+                        var height = window.innerHeight - list.offsetTop;
                         var itemHeight = list.childNodes[0].offsetHeight;
-                        var row = 1;
-                        if (minColumns < length) {
-                            var colums = Math.min(maxColumns, Math.max(minColumns, Math.ceil(length / Math.max(1.0, (window.innerHeight - 100) / itemHeight))));
-                            row = Math.ceil(length / colums);
-                        }
+                        // let row = 1;
+                        // if (minColumns < length)
+                        // {
+                        //     const colums = Math.min(maxColumns, Math.max(minColumns, Math.ceil(length / Math.max(1.0, height / itemHeight))));
+                        //     row = Math.ceil(length /colums);
+                        // }
+                        var colums = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, height / itemHeight)));
+                        //const row = Math.ceil(length /colums);
+                        var row = Math.max(Math.ceil(length / colums), Math.min(Math.floor(height / itemHeight)));
                         list.style.height = row * (itemHeight - 1) + "px";
                     }
                 });
+            };
+            var onWindowResizeTimestamp = 0;
+            Render.onWindowResize = function () {
+                var timestamp = onWindowResizeTimestamp = new Date().getTime();
+                setTimeout(function () {
+                    if (timestamp === onWindowResizeTimestamp) {
+                        Render.resizeFlexList();
+                    }
+                }, 100);
             };
         })(Render = CyclicToDo.Render || (CyclicToDo.Render = {}));
         CyclicToDo.getUrlParams = function (url) {

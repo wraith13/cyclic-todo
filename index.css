@@ -1,5 +1,6 @@
 * {
   font-family: ui-sans-serif, "ヒラギノ角ゴ Pro w4", Roboto, Meiryo;
+  font: -apple-system-body;
 }
 body {
   margin: 0px;
@@ -24,7 +25,8 @@ h1 {
   padding: 0.25rem;
   color: #FFFFFF;
   background-color: #228844;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: normal;
   position: relative;
   display: flex;
   flex-direction: row;
@@ -42,6 +44,8 @@ h1 .icon svg {
 }
 h1 button.menu-button {
   color: #FFFFFF;
+  border-color: #FFFFFF;
+  background-color: #228844;
 }
 @media (prefers-color-scheme: dark) {
   h1 {
@@ -98,14 +102,12 @@ button {
   cursor: pointer;
 }
 button.menu-button {
-  background-color: transparent;
-  border-color: transparent;
-  padding: 4px 4px;
+  padding: 4px 3px;
 }
 button:hover {
   color: #FFFFFF;
-  background-color: #56187F;
-  border-color: #56187F;
+  background-color: #B6AB57;
+  border-color: #B6AB57;
 }
 @media (prefers-color-scheme: dark) {
   button {
@@ -128,16 +130,16 @@ button.default-button {
   border-color: #228844;
 }
 button.default-button:hover {
-  background-color: #56187F;
-  border-color: #56187F;
+  background-color: #B6AB57;
+  border-color: #B6AB57;
 }
 @media (prefers-color-scheme: dark) {
   button.default-button {
     color: #000022;
   }
   button.default-button:hover {
-    background-color: #56187F;
-    border-color: #56187F;
+    background-color: #B6AB57;
+    border-color: #B6AB57;
   }
 }
 .row-flex-list,
@@ -232,7 +234,7 @@ button.default-button:hover {
 }
 .task-item .task-header .task-title {
   display: inline-block;
-  font-size: 1.5em;
+  font-size: 1.2rem;
   line-height: 1em;
   box-sizing: border-box;
   overflow: hidden;
@@ -261,13 +263,19 @@ button.default-button:hover {
   line-height: 1.4em;
 }
 .task-item .task-information .label {
+  font-size: 1rem;
   opacity: 0.4;
   margin-right: -50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: calc(100% - 180px);
 }
 .task-item .task-information .label::after {
   content: ":";
 }
 .task-item .task-information .value {
+  font-size: 1rem;
   opacity: 0.4;
   float: right;
 }

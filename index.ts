@@ -444,6 +444,7 @@ export module CyclicToDo
             tag: "span",
             className: "label",
             children: locale.parallel(label),
+            //children: locale.map(label),
         });
         export const menuButton = (onclick: () => unknown) =>
         ({
@@ -451,7 +452,7 @@ export module CyclicToDo
             className: "menu-button",
             children: "･･･",
             onclick,
-        })
+        });
         export const information = (item: ToDoEntry) =>
         ({
             tag: "div",
@@ -579,6 +580,7 @@ export module CyclicToDo
                                     tag: "button",
                                     className: item.isDefault ? "default-button": undefined,
                                     children: locale.parallel("Done"),
+                                    //children: locale.map("Done"),
                                     onclick: async () =>
                                     {
                                         //if (isSessionPass(pass))
@@ -619,7 +621,7 @@ export module CyclicToDo
                     "h1",
                     [
                         await applicationIcon(),
-                        `${document.title}`,
+                        `${entry.title}`,
                         menuButton(() => {}),
                     ]
                 ),
@@ -628,52 +630,52 @@ export module CyclicToDo
                     className: "column-flex-list",
                     children: list.map(item => todoItem(entry, item)),
                 },
-                {
-                    tag: "div",
-                    className: "row-flex-list",
-                    children:
-                    [
-                        {
-                            tag: "div",
-                            className: "flex-item",
-                            children:
-                            {
-                                tag: "button",
-                                className: "long-button",
-                                children: "Undo",
-                                onclick: () =>
-                                {
-                                }
-                            },
-                        },
-                        {
-                            tag: "div",
-                            className: "flex-item",
-                            children:
-                            {
-                                tag: "button",
-                                className: "long-button",
-                                children: "Add",
-                                onclick: () =>
-                                {
-                                }
-                            },
-                        },
-                        {
-                            tag: "div",
-                            className: "flex-item",
-                            children:
-                            {
-                                tag: "button",
-                                className: "long-button",
-                                children: "Edit",
-                                onclick: () =>
-                                {
-                                }
-                            },
-                        },
-                    ],
-                }
+                // {
+                //     tag: "div",
+                //     className: "row-flex-list",
+                //     children:
+                //     [
+                //         {
+                //             tag: "div",
+                //             className: "flex-item",
+                //             children:
+                //             {
+                //                 tag: "button",
+                //                 className: "long-button",
+                //                 children: "Undo",
+                //                 onclick: () =>
+                //                 {
+                //                 }
+                //             },
+                //         },
+                //         {
+                //             tag: "div",
+                //             className: "flex-item",
+                //             children:
+                //             {
+                //                 tag: "button",
+                //                 className: "long-button",
+                //                 children: "Add",
+                //                 onclick: () =>
+                //                 {
+                //                 }
+                //             },
+                //         },
+                //         {
+                //             tag: "div",
+                //             className: "flex-item",
+                //             children:
+                //             {
+                //                 tag: "button",
+                //                 className: "long-button",
+                //                 children: "Edit",
+                //                 onclick: () =>
+                //                 {
+                //                 }
+                //             },
+                //         },
+                //     ],
+                // }
             ]
         });
         let updateTodoScreenTimer = undefined;
@@ -693,7 +695,7 @@ export module CyclicToDo
                 document.body,
                 await todoScreen(entry, list),
             );
-            onWindowResize();
+            resizeFlexList();
             updateTodoScreenTimer = setInterval
             (
                 async () =>
@@ -707,7 +709,7 @@ export module CyclicToDo
                             document.body,
                             await todoScreen(entry, list),
                         );
-                        onWindowResize();
+                        resizeFlexList();
                     }
                     else
                     {
@@ -843,7 +845,15 @@ export module CyclicToDo
             className: "welcome-screen screen",
             children:
             [
-                heading("h1", [await applicationIcon(), `${document.title}`]),
+                heading
+                (
+                    "h1",
+                    [
+                        await applicationIcon(),
+                        `${document.title}`,
+                        menuButton(() => {}),
+                    ]
+                ),
                 await applicationIcon(),
             ],
         });
@@ -872,7 +882,7 @@ export module CyclicToDo
             document.body,
             screen
         );
-        export const onWindowResize = () =>
+        export const resizeFlexList = () =>
         {
             let minColumns = 1 +Math.floor(window.innerWidth / 780);
             let maxColumns = Math.max(minColumns, Math.floor(window.innerWidth / 390));
@@ -887,16 +897,36 @@ export module CyclicToDo
                     }
                     else
                     {
+                        const height = window.innerHeight -list.offsetTop;
                         const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight;
-                        let row = 1;
-                        if (minColumns < length)
-                        {
-                            const colums = Math.min(maxColumns, Math.max(minColumns, Math.ceil(length / Math.max(1.0, (window.innerHeight -100) / itemHeight))));
-                            row = Math.ceil(length /colums);
-                        }
+                        // let row = 1;
+                        // if (minColumns < length)
+                        // {
+                        //     const colums = Math.min(maxColumns, Math.max(minColumns, Math.ceil(length / Math.max(1.0, height / itemHeight))));
+                        //     row = Math.ceil(length /colums);
+                        // }
+                        const colums = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, height / itemHeight)));
+                        //const row = Math.ceil(length /colums);
+                        const row = Math.max(Math.ceil(length /colums), Math.min(Math.floor(height / itemHeight)));
                         list.style.height = `${row *(itemHeight -1)}px`;
                     }
                 }
+            );
+        };
+        let onWindowResizeTimestamp = 0;
+        export const onWindowResize = () =>
+        {
+            const timestamp = onWindowResizeTimestamp = new Date().getTime();
+            setTimeout
+            (
+                () =>
+                {
+                    if (timestamp === onWindowResizeTimestamp)
+                    {
+                        resizeFlexList();
+                    }
+                },
+                100,
             );
         };
     }
