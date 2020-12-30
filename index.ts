@@ -853,14 +853,7 @@ export module CyclicToDo
                     {
                         const height = window.innerHeight -list.offsetTop;
                         const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight;
-                        // let row = 1;
-                        // if (minColumns < length)
-                        // {
-                        //     const colums = Math.min(maxColumns, Math.max(minColumns, Math.ceil(length / Math.max(1.0, height / itemHeight))));
-                        //     row = Math.ceil(length /colums);
-                        // }
                         const colums = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, height / itemHeight)));
-                        //const row = Math.ceil(length /colums);
                         const row = Math.max(Math.ceil(length /colums), Math.min(Math.floor(height / itemHeight)));
                         list.style.height = `${row *(itemHeight -1)}px`;
                     }

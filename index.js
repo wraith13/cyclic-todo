@@ -1576,14 +1576,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     else {
                         var height = window.innerHeight - list.offsetTop;
                         var itemHeight = list.childNodes[0].offsetHeight;
-                        // let row = 1;
-                        // if (minColumns < length)
-                        // {
-                        //     const colums = Math.min(maxColumns, Math.max(minColumns, Math.ceil(length / Math.max(1.0, height / itemHeight))));
-                        //     row = Math.ceil(length /colums);
-                        // }
                         var colums = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, height / itemHeight)));
-                        //const row = Math.ceil(length /colums);
                         var row = Math.max(Math.ceil(length / colums), Math.min(Math.floor(height / itemHeight)));
                         list.style.height = row * (itemHeight - 1) + "px";
                     }
