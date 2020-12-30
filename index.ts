@@ -198,7 +198,7 @@ export module CyclicToDo
                 return 10 <= days ?
                     `${days.toLocaleString()} d`:
                     0 < days ?
-                        `${days.toLocaleString()} d ${timePart}`:
+                        `${days.toLocaleString()} ${locale.map("days")} ${timePart}`:
                         timePart;
             }
         };
@@ -235,7 +235,23 @@ export module CyclicToDo
                     }
                 }
                 const a_progress = a.decayedProgress;
-                const b_progress = 1 < b.count ? b.decayedProgress: 1.0 -(1.0 / Calculate.phi);
+                let b_progress = 1.0 -(1.0 / Calculate.phi);
+                if (null !== b.decayedProgress)
+                {
+                    b_progress = b.decayedProgress;
+                }
+                else
+                if (null !== b.elapsed)
+                {
+                    // 比較対象の予想間隔を借りて decayedProgress を雑に計算。比較対象によって高低が変動する為、プログラム的にはソートアルゴリズム上かなりよろしくないが、挙動としてはこれでいい感じになる。
+                    const interval = a.smartAverage;
+                    b_progress = b.elapsed /interval;
+                    const overrate = (b.elapsed -interval) / interval;
+                    if (0.0 < overrate)
+                    {
+                        b_progress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
+                    }
+                }
                 if (a_progress < b_progress)
                 {
                     return 1;
@@ -384,7 +400,7 @@ export module CyclicToDo
         export const progressStyle = (item: ToDoEntry) => null === item.progress ?
             undefined:
             1 <= item.progress ?
-                `background: #22884455`:
+                `background: #22884466`:
                 backgroundLinerGradient
                 (
                     item.progress.toLocaleString("en", { style: "percent" }),
@@ -398,13 +414,44 @@ export module CyclicToDo
             children: locale.parallel(label),
             //children: locale.map(label),
         });
-        export const menuButton = async (onclick: () => unknown) =>
-        ({
-            tag: "button",
-            className: "menu-button",
-            children: await loadSvg("./ellipsis.1024.svg"),
-            onclick,
-        });
+        export const screenCover = (onclick: () => unknown) =>
+        {
+            const dom = minamo.dom.make(HTMLDivElement)
+            ({
+                tag: "div",
+                className: "screen-cover",
+                onclick: () =>
+                {
+                    minamo.dom.remove(dom);
+                    onclick();
+                }
+            });
+            minamo.dom.appendChildren(document.body, dom);
+        };
+        export const menuButton = async (menu: any) =>
+        {
+            const popup = minamo.dom.make(HTMLDivElement)
+            ({
+                tag: "div",
+                className: "menu-popup",
+                children: menu
+            });
+            const result =
+            [
+                {
+                    tag: "button",
+                    className: "menu-button",
+                    children: await loadSvg("./ellipsis.1024.svg"),
+                    onclick: () =>
+                    {
+                        popup.classList.add("show");
+                        screenCover(() => popup.classList.remove("show"));
+                    },
+                },
+                popup
+            ];
+            return result;
+        };
         export const information = (item: ToDoEntry) =>
         ({
             tag: "div",
@@ -530,7 +577,7 @@ export module CyclicToDo
                             [
                                 {
                                     tag: "button",
-                                    className: item.isDefault ? "default-button": undefined,
+                                    className: item.isDefault ? "default-button main-button": "main-button",
                                     children: locale.parallel("Done"),
                                     //children: locale.map("Done"),
                                     onclick: async () =>
@@ -553,12 +600,11 @@ export module CyclicToDo
                                         }
                                     }
                                 },
-                                await menuButton(() => {}),
+                                await menuButton("ポップアップメニュー"),
                             ],
                         },
                     ],
                 },
-                // DELETE_ME renderInformation(list, item, getHistory(pass, item.task)),
                 information(item),
             ],
         });
@@ -574,12 +620,12 @@ export module CyclicToDo
                     [
                         await applicationIcon(),
                         `${entry.title}`,
-                        await menuButton(() => {}),
+                        await menuButton("ポップアップメニュー"),
                     ]
                 ),
                 {
                     tag: "div",
-                    className: "column-flex-list",
+                    className: "column-flex-list todo-list",
                     children: await Promise.all(list.map(item => todoItem(entry, item))),
                 },
                 // {
@@ -643,12 +689,7 @@ export module CyclicToDo
             Domain.updateProgress(entry, list);
             list.sort(Domain.todoSorter(entry));
             console.log({histories, list}); // これは消さない！！！
-            minamo.dom.replaceChildren
-            (
-                //document.getElementById("screen"),
-                document.body,
-                await todoScreen(entry, list),
-            );
+            showWindow(await todoScreen(entry, list));
             resizeFlexList();
             updateTodoScreenTimer = setInterval
             (
@@ -657,13 +698,29 @@ export module CyclicToDo
                     if (0 < document.getElementsByClassName("todo-screen").length)
                     {
                         Domain.updateProgress(entry, list);
-                        minamo.dom.replaceChildren
                         (
-                            //document.getElementById("screen"),
-                            document.body,
-                            await todoScreen(entry, list),
+                            Array.from
+                            (
+                                (
+                                    document
+                                        .getElementsByClassName("todo-screen")[0]
+                                        .getElementsByClassName("todo-list")[0] as HTMLDivElement
+                                ).childNodes
+                            ) as HTMLDivElement[]
+                        ).forEach
+                        (
+                            (dom, index) =>
+                            {
+                                const item = list[index];
+                                const button = dom.getElementsByClassName("task-operator")[0].getElementsByClassName("main-button")[0] as HTMLButtonElement;
+                                button.classList.toggle("default-button", item.isDefault);
+                                const information = dom.getElementsByClassName("task-information")[0] as HTMLDivElement;
+                                information.setAttribute("style", Render.progressStyle(item));
+                                (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeStringFromTick(item.elapsed);
+                            }
                         );
-                        resizeFlexList();
+                        // showWindow(await todoScreen(entry, list));
+                        // resizeFlexList();
                     }
                     else
                     {
@@ -751,12 +808,8 @@ export module CyclicToDo
             };
             return result;
         };
-        export const updateEditScreen = (title: string, pass: string, todo: string[]) => minamo.dom.replaceChildren
-        (
-            //document.getElementById("screen"),
-            document.body,
-            editScreen(title, pass, todo)
-        );
+        export const updateEditScreen = (title: string, pass: string, todo: string[]) =>
+            showWindow(editScreen(title, pass, todo));
         const loadSvg = async (path : string) : Promise<SVGElement> => new Promise<SVGElement>
         (
             (resolve, reject) =>
@@ -805,7 +858,7 @@ export module CyclicToDo
                     [
                         await applicationIcon(),
                         `${document.title}`,
-                        await menuButton(() => {}),
+                        await menuButton("ポップアップメニュー"),
                     ]
                 ),
                 await applicationIcon(),
@@ -814,26 +867,11 @@ export module CyclicToDo
         export const updateWelcomeScreen = async (pass: string) =>
         {
             document.title = applicationTitle;
-            minamo.dom.replaceChildren
-            (
-                //document.getElementById("screen"),
-                document.body,
-                await welcomeScreen(pass)
-            );
+            showWindow(await welcomeScreen(pass));
         };
-        const screen =
-        [
-            heading("h1", document.title),
-            {
-                tag: "a",
-                className: "github",
-                children: "GitHub",
-                href: "https://github.com/wraith13/cyclic-todo"
-            },
-        ];
-        export const showWindow = async ( ) => minamo.dom.appendChildren
+        export const showWindow = async (screen: any) => minamo.dom.replaceChildren
         (
-            document.body,
+            document.getElementById("body"),
             screen
         );
         export const resizeFlexList = () =>
@@ -926,7 +964,6 @@ export module CyclicToDo
         const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
         const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
         window.addEventListener('resize', Render.onWindowResize);
-        await Render.showWindow();
         if ((todo?.length ?? 0) <= 0)
         {
             switch(hash)

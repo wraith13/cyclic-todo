@@ -1,7 +1,7 @@
 @main-color: #000022;
 @base-color: #FFFFFF;
 @accent-color: #228844;
-@active-color: #B6AB57;
+@active-color: #21788B;
 @delete-color: #831B50;
 @dark-main-color: @base-color;
 @dark-base-color: @main-color;
@@ -10,6 +10,7 @@
 {
     font-family: ui-sans-serif, "ヒラギノ角ゴ Pro w4", Roboto, Meiryo;
     font: -apple-system-body;
+    outline:none;
 }
 body
 {
@@ -71,6 +72,11 @@ h1
             fill: @base-color;
         }
     }
+    .menu-popup
+    {
+        top: calc(2.0rem + 10px);
+        right: 0.5rem;
+    }
 }
 @media (prefers-color-scheme: dark)
 {
@@ -92,16 +98,6 @@ h1
             }
         }
     }
-}
-.github
-{
-    float: right;
-    margin-top: 1rem;
-    padding: 4px 12px;
-    border-radius: 8px;
-    font-weight: bold;
-    color: #FFFFFF;
-    background-color: #000022;
 }
 label
 {
@@ -214,6 +210,30 @@ button.default-button
             border-color: @active-color;
         }
     }
+}
+.menu-popup
+{
+    &:not(.show)
+    {
+        display: none;
+    }
+    position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: stretch;
+    flex-direction: row;
+    top: calc(1.5rem + 10px);
+    right: 0px;
+    z-index: 99999;
+    background-color: @base-color;
+    color: @accent-color;
+    border-color: @accent-color;
+    border-style: solid;
+    border-width: 1px;
+    line-height: 1.5rem;
+    font-size: 1.5rem;
+    //padding: 0px;
 }
 .row-flex-list,
 .column-flex-list

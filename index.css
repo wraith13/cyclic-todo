@@ -1,6 +1,7 @@
 * {
   font-family: ui-sans-serif, "ヒラギノ角ゴ Pro w4", Roboto, Meiryo;
   font: -apple-system-body;
+  outline: none;
 }
 body {
   margin: 0px;
@@ -50,6 +51,10 @@ h1 button.menu-button:not(:hover) {
 h1 button.menu-button:not(:hover) svg {
   fill: #FFFFFF;
 }
+h1 .menu-popup {
+  top: calc(2rem + 10px);
+  right: 0.5rem;
+}
 @media (prefers-color-scheme: dark) {
   h1 {
     color: #000022;
@@ -65,15 +70,6 @@ h1 button.menu-button:not(:hover) svg {
   h1 button.menu-button:not(:hover) svg {
     fill: #000022;
   }
-}
-.github {
-  float: right;
-  margin-top: 1rem;
-  padding: 4px 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  color: #FFFFFF;
-  background-color: #000022;
 }
 label {
   display: block;
@@ -118,8 +114,8 @@ button.menu-button svg {
 }
 button:hover {
   color: #FFFFFF;
-  background-color: #B6AB57;
-  border-color: #B6AB57;
+  background-color: #21788B;
+  border-color: #21788B;
 }
 button:hover.menu-button svg {
   fill: #FFFFFF;
@@ -148,17 +144,38 @@ button.default-button {
   border-color: #228844;
 }
 button.default-button:hover {
-  background-color: #B6AB57;
-  border-color: #B6AB57;
+  background-color: #21788B;
+  border-color: #21788B;
 }
 @media (prefers-color-scheme: dark) {
   button.default-button {
     color: #000022;
   }
   button.default-button:hover {
-    background-color: #B6AB57;
-    border-color: #B6AB57;
+    background-color: #21788B;
+    border-color: #21788B;
   }
+}
+.menu-popup {
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: stretch;
+  flex-direction: row;
+  top: calc(1.5rem + 10px);
+  right: 0px;
+  z-index: 99999;
+  background-color: #FFFFFF;
+  color: #228844;
+  border-color: #228844;
+  border-style: solid;
+  border-width: 1px;
+  line-height: 1.5rem;
+  font-size: 1.5rem;
+}
+.menu-popup:not(.show) {
+  display: none;
 }
 .row-flex-list,
 .column-flex-list {

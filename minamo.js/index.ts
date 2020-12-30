@@ -795,7 +795,13 @@ export module minamo
             }
             if (undefined !== arg.children)
             {
-                core.arrayOrToArray(arg.children).forEach((i: Source) => element.appendChild(make(i)));
+                core.arrayOrToArray(arg.children).forEach
+                (
+                    (i: Source) => core.arrayOrToArray(i).forEach
+                    (
+                        (j: Source) => element.appendChild(make(j))
+                    )
+                );
             }
             if (undefined !== arg.eventListener)
             {

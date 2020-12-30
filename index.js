@@ -756,7 +756,7 @@ define("minamo.js/index", ["require", "exports"], function (require, exports) {
                     core.objectForEach(arg.attributes, function (key, value) { return element.setAttribute(key, value); });
                 }
                 if (undefined !== arg.children) {
-                    core.arrayOrToArray(arg.children).forEach(function (i) { return element.appendChild(make(i)); });
+                    core.arrayOrToArray(arg.children).forEach(function (i) { return core.arrayOrToArray(i).forEach(function (j) { return element.appendChild(make(j)); }); });
                 }
                 if (undefined !== arg.eventListener) {
                     core.objectForEach(arg.eventListener, function (key, value) { return element.addEventListener(key, value); });
@@ -799,14 +799,16 @@ define("lang.en", [], {
     "expected interval": "expected interval",
     "elapsed time": "elapsed time",
     "count": "count",
-    "Done": "Done"
+    "Done": "Done",
+    "days": "days"
 });
 define("lang.ja", [], {
     "previous": "前回",
     "expected interval": "予想間隔",
     "elapsed time": "経過時間",
     "count": "回数",
-    "Done": "完了"
+    "Done": "完了",
+    "days": "日"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -971,7 +973,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     return 10 <= days ?
                         days.toLocaleString() + " d" :
                         0 < days ?
-                            days.toLocaleString() + " d " + timePart :
+                            days.toLocaleString() + " " + locale.map("days") + " " + timePart :
                             timePart;
                 }
             };
@@ -998,7 +1000,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         }
                     }
                     var a_progress = a.decayedProgress;
-                    var b_progress = 1 < b.count ? b.decayedProgress : 1.0 - (1.0 / Calculate.phi);
+                    var b_progress = 1.0 - (1.0 / Calculate.phi);
+                    if (null !== b.decayedProgress) {
+                        b_progress = b.decayedProgress;
+                    }
+                    else if (null !== b.elapsed) {
+                        // 比較対象の予想間隔を借りて decayedProgress を雑に計算。比較対象によって高低が変動する為、プログラム的にはソートアルゴリズム上かなりよろしくないが、挙動としてはこれでいい感じになる。
+                        var interval = a.smartAverage;
+                        b_progress = b.elapsed / interval;
+                        var overrate = (b.elapsed - interval) / interval;
+                        if (0.0 < overrate) {
+                            b_progress = 1.0 / (1.0 + Math.log2(1.0 + overrate));
+                        }
+                    }
                     if (a_progress < b_progress) {
                         return 1;
                     }
@@ -1117,7 +1131,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Render.progressStyle = function (item) { return null === item.progress ?
                 undefined :
                 1 <= item.progress ?
-                    "background: #22884455" :
+                    "background: #22884466" :
                     Render.backgroundLinerGradient(item.progress.toLocaleString("en", { style: "percent" }), "#22884466", "rgba(128,128,128,0.2)"); };
             Render.label = function (label) {
                 return ({
@@ -1126,19 +1140,43 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     children: locale.parallel(label),
                 });
             };
-            Render.menuButton = function (onclick) { return __awaiter(_this, void 0, void 0, function () {
-                var _a;
+            Render.screenCover = function (onclick) {
+                var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
+                    tag: "div",
+                    className: "screen-cover",
+                    onclick: function () {
+                        minamo_js_1.minamo.dom.remove(dom);
+                        onclick();
+                    }
+                });
+                minamo_js_1.minamo.dom.appendChildren(document.body, dom);
+            };
+            Render.menuButton = function (menu) { return __awaiter(_this, void 0, void 0, function () {
+                var popup, result, _a;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
+                            popup = minamo_js_1.minamo.dom.make(HTMLDivElement)({
+                                tag: "div",
+                                className: "menu-popup",
+                                children: menu
+                            });
                             _a = {
                                 tag: "button",
                                 className: "menu-button"
                             };
                             return [4 /*yield*/, loadSvg("./ellipsis.1024.svg")];
-                        case 1: return [2 /*return*/, (_a.children = _b.sent(),
-                                _a.onclick = onclick,
-                                _a)];
+                        case 1:
+                            result = [
+                                (_a.children = _b.sent(),
+                                    _a.onclick = function () {
+                                        popup.classList.add("show");
+                                        Render.screenCover(function () { return popup.classList.remove("show"); });
+                                    },
+                                    _a),
+                                popup
+                            ];
+                            return [2 /*return*/, result];
                     }
                 });
             }); };
@@ -1264,7 +1302,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             };
                             _e = [{
                                     tag: "button",
-                                    className: item.isDefault ? "default-button" : undefined,
+                                    className: item.isDefault ? "default-button main-button" : "main-button",
                                     children: locale.parallel("Done"),
                                     //children: locale.map("Done"),
                                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
@@ -1289,7 +1327,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         });
                                     }); }
                                 }];
-                            return [4 /*yield*/, Render.menuButton(function () { })];
+                            return [4 /*yield*/, Render.menuButton("ポップアップメニュー")];
                         case 1: return [2 /*return*/, (_a.children = [
                                 (_b.children = _c.concat([
                                     (_d.children = _e.concat([
@@ -1298,7 +1336,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         _d)
                                 ]),
                                     _b),
-                                // DELETE_ME renderInformation(list, item, getHistory(pass, item.task)),
                                 Render.information(item)
                             ],
                                 _a)];
@@ -1322,7 +1359,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 _g.sent(),
                                 "" + entry.title
                             ];
-                            return [4 /*yield*/, Render.menuButton(function () { })];
+                            return [4 /*yield*/, Render.menuButton("ポップアップメニュー")];
                         case 2:
                             _e = [
                                 _b.apply(void 0, _c.concat([_d.concat([
@@ -1331,7 +1368,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             ];
                             _f = {
                                 tag: "div",
-                                className: "column-flex-list"
+                                className: "column-flex-list todo-list"
                             };
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.todoItem(entry, item); }))];
                         case 3: return [2 /*return*/, (_a.children = _e.concat([
@@ -1344,10 +1381,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             }); };
             var updateTodoScreenTimer = undefined;
             Render.updateTodoScreen = function (entry) { return __awaiter(_this, void 0, void 0, function () {
-                var histories, list, _a, _b, _c;
+                var histories, list, _a;
                 var _this = this;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
                         case 0:
                             document.title = entry.title + " " + applicationTitle;
                             if (undefined !== updateTodoScreenTimer) {
@@ -1358,36 +1395,33 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             Domain.updateProgress(entry, list);
                             list.sort(Domain.todoSorter(entry));
                             console.log({ histories: histories, list: list }); // これは消さない！！！
-                            _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
-                            _c = [
-                                //document.getElementById("screen"),
-                                document.body];
+                            _a = Render.showWindow;
                             return [4 /*yield*/, Render.todoScreen(entry, list)];
                         case 1:
-                            _b.apply(_a, _c.concat([_d.sent()]));
+                            _a.apply(void 0, [_b.sent()]);
                             Render.resizeFlexList();
                             updateTodoScreenTimer = setInterval(function () { return __awaiter(_this, void 0, void 0, function () {
-                                var _a, _b, _c;
-                                return __generator(this, function (_d) {
-                                    switch (_d.label) {
-                                        case 0:
-                                            if (!(0 < document.getElementsByClassName("todo-screen").length)) return [3 /*break*/, 2];
-                                            Domain.updateProgress(entry, list);
-                                            _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
-                                            _c = [
-                                                //document.getElementById("screen"),
-                                                document.body];
-                                            return [4 /*yield*/, Render.todoScreen(entry, list)];
-                                        case 1:
-                                            _b.apply(_a, _c.concat([_d.sent()]));
-                                            Render.resizeFlexList();
-                                            return [3 /*break*/, 3];
-                                        case 2:
-                                            clearInterval(updateTodoScreenTimer);
-                                            updateTodoScreenTimer = undefined;
-                                            _d.label = 3;
-                                        case 3: return [2 /*return*/];
+                                return __generator(this, function (_a) {
+                                    if (0 < document.getElementsByClassName("todo-screen").length) {
+                                        Domain.updateProgress(entry, list);
+                                        Array.from(document
+                                            .getElementsByClassName("todo-screen")[0]
+                                            .getElementsByClassName("todo-list")[0].childNodes).forEach(function (dom, index) {
+                                            var item = list[index];
+                                            var button = dom.getElementsByClassName("task-operator")[0].getElementsByClassName("main-button")[0];
+                                            button.classList.toggle("default-button", item.isDefault);
+                                            var information = dom.getElementsByClassName("task-information")[0];
+                                            information.setAttribute("style", Render.progressStyle(item));
+                                            information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeStringFromTick(item.elapsed);
+                                        });
+                                        // showWindow(await todoScreen(entry, list));
+                                        // resizeFlexList();
                                     }
+                                    else {
+                                        clearInterval(updateTodoScreenTimer);
+                                        updateTodoScreenTimer = undefined;
+                                    }
+                                    return [2 /*return*/];
                                 });
                             }); }, Domain.TimeAccuracy);
                             return [2 /*return*/];
@@ -1460,9 +1494,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 };
                 return result;
             };
-            Render.updateEditScreen = function (title, pass, todo) { return minamo_js_1.minamo.dom.replaceChildren(
-            //document.getElementById("screen"),
-            document.body, Render.editScreen(title, pass, todo)); };
+            Render.updateEditScreen = function (title, pass, todo) {
+                return Render.showWindow(Render.editScreen(title, pass, todo));
+            };
             var loadSvg = function (path) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, new Promise(function (resolve, reject) {
@@ -1519,7 +1553,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 _f.sent(),
                                 "" + document.title
                             ];
-                            return [4 /*yield*/, Render.menuButton(function () { })];
+                            return [4 /*yield*/, Render.menuButton("ポップアップメニュー")];
                         case 2:
                             _e = [
                                 _b.apply(void 0, _c.concat([_d.concat([
@@ -1535,34 +1569,22 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
             }); };
             Render.updateWelcomeScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                var _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
                         case 0:
                             document.title = applicationTitle;
-                            _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
-                            _c = [
-                                //document.getElementById("screen"),
-                                document.body];
+                            _a = Render.showWindow;
                             return [4 /*yield*/, Render.welcomeScreen(pass)];
                         case 1:
-                            _b.apply(_a, _c.concat([_d.sent()]));
+                            _a.apply(void 0, [_b.sent()]);
                             return [2 /*return*/];
                     }
                 });
             }); };
-            var screen = [
-                Render.heading("h1", document.title),
-                {
-                    tag: "a",
-                    className: "github",
-                    children: "GitHub",
-                    href: "https://github.com/wraith13/cyclic-todo"
-                },
-            ];
-            Render.showWindow = function () { return __awaiter(_this, void 0, void 0, function () {
+            Render.showWindow = function (screen) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    return [2 /*return*/, minamo_js_1.minamo.dom.appendChildren(document.body, screen)];
+                    return [2 /*return*/, minamo_js_1.minamo.dom.replaceChildren(document.getElementById("body"), screen)];
                 });
             }); };
             Render.resizeFlexList = function () {
@@ -1640,27 +1662,24 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         todo = JSON.parse((_d = urlParams["todo"]) !== null && _d !== void 0 ? _d : "null");
                         history = JSON.parse((_e = urlParams["history"]) !== null && _e !== void 0 ? _e : "null");
                         window.addEventListener('resize', Render.onWindowResize);
-                        return [4 /*yield*/, Render.showWindow()];
-                    case 1:
-                        _h.sent();
-                        if (!(((_f = todo === null || todo === void 0 ? void 0 : todo.length) !== null && _f !== void 0 ? _f : 0) <= 0)) return [3 /*break*/, 6];
+                        if (!(((_f = todo === null || todo === void 0 ? void 0 : todo.length) !== null && _f !== void 0 ? _f : 0) <= 0)) return [3 /*break*/, 5];
                         _a = hash;
                         switch (_a) {
-                            case "edit": return [3 /*break*/, 2];
+                            case "edit": return [3 /*break*/, 1];
                         }
-                        return [3 /*break*/, 3];
-                    case 2:
+                        return [3 /*break*/, 2];
+                    case 1:
                         console.log("show edit screen");
                         Render.updateEditScreen(title, pass, []);
-                        return [3 /*break*/, 5];
-                    case 3:
+                        return [3 /*break*/, 4];
+                    case 2:
                         console.log("show welcome screen");
                         return [4 /*yield*/, Render.updateWelcomeScreen(pass)];
-                    case 4:
+                    case 3:
                         _h.sent();
-                        return [3 /*break*/, 5];
-                    case 5: return [3 /*break*/, 7];
-                    case 6:
+                        return [3 /*break*/, 4];
+                    case 4: return [3 /*break*/, 6];
+                    case 5:
                         if (0 < ((_g = history === null || history === void 0 ? void 0 : history.length) !== null && _g !== void 0 ? _g : 0)) {
                             Storage.History.merge(pass, todo, history);
                         }
@@ -1686,8 +1705,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 Render.updateTodoScreen({ title: title, pass: pass, todo: todo });
                                 break;
                         }
-                        _h.label = 7;
-                    case 7: return [2 /*return*/];
+                        _h.label = 6;
+                    case 6: return [2 /*return*/];
                 }
             });
         }); };
