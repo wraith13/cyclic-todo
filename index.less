@@ -74,8 +74,8 @@ h1
     }
     .menu-popup
     {
-        top: calc(2.0rem + 10px);
-        right: 0.5rem;
+        top: calc(1.0rem + 10px);
+        right: -0.5rem;
     }
 }
 @media (prefers-color-scheme: dark)
@@ -147,6 +147,10 @@ button
             height: 1.5rem;
             fill: @accent-color;
         }
+        &:not(:hover) .menu-popup:not(.show)
+        {
+            display: none;
+        }
     }
     &:hover
     {
@@ -213,27 +217,56 @@ button.default-button
 }
 .menu-popup
 {
-    &:not(.show)
-    {
-        display: none;
-    }
     position: absolute;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-    justify-content: stretch;
-    flex-direction: row;
-    top: calc(1.5rem + 10px);
-    right: 0px;
+    top: calc(0.5rem + 10px);
+    right: -1.0rem;
     z-index: 99999;
-    background-color: @base-color;
-    color: @accent-color;
-    border-color: @accent-color;
-    border-style: solid;
-    border-width: 1px;
-    line-height: 1.5rem;
-    font-size: 1.5rem;
-    //padding: 0px;
+    padding: 1.0rem;
+    border-radius: 1.0rem;
+    //background-color: aquamarine;
+    .menu-popup-body
+    {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        justify-content: stretch;
+        flex-direction: column;
+        color: @accent-color;
+        background-color: @base-color;
+        border-color: @accent-color;
+        border-style: solid;
+        border-width: 1px;
+        border-radius: 0.5rem;
+        line-height: 1.5rem;
+        font-size: 1.5rem;
+        overflow: hidden;
+            button
+        {
+            // display: block !important;
+            border-radius: 0px;
+            margin: 0px !important;
+            border-style: none;
+            border-width: 0px;
+            font-size: 1.2rem;
+        }
+    }
+}
+@media (prefers-color-scheme: dark)
+{
+    .menu-popup
+    {
+        background-color: @dark-base-color;
+    }
+}
+.screen-cover
+{
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    background-color: @main-color;
+    opacity: 0.6;
 }
 .row-flex-list,
 .column-flex-list

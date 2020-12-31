@@ -434,21 +434,33 @@ export module CyclicToDo
             ({
                 tag: "div",
                 className: "menu-popup",
-                children: menu
+                children:
+                {
+                    tag: "div",
+                    className: "menu-popup-body",
+                    children: menu
+                },
+                onclick: () =>
+                {
+                    (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[]).forEach(i => i.click());
+                },
             });
             const result =
             [
                 {
                     tag: "button",
                     className: "menu-button",
-                    children: await loadSvg("./ellipsis.1024.svg"),
+                    children:
+                    [
+                        await loadSvg("./ellipsis.1024.svg"),
+                        popup,
+                    ],
                     onclick: () =>
                     {
                         popup.classList.add("show");
                         screenCover(() => popup.classList.remove("show"));
                     },
                 },
-                popup
             ];
             return result;
         };
@@ -600,7 +612,17 @@ export module CyclicToDo
                                         }
                                     }
                                 },
-                                await menuButton("ポップアップメニュー"),
+                                await menuButton
+                                ([
+                                    {
+                                        tag: "button",
+                                        children: "最後の完了を取り消す",
+                                    },
+                                    {
+                                        tag: "button",
+                                        children: "名前を編集",
+                                    },
+                                ]),
                             ],
                         },
                     ],
@@ -620,7 +642,29 @@ export module CyclicToDo
                     [
                         await applicationIcon(),
                         `${entry.title}`,
-                        await menuButton("ポップアップメニュー"),
+                        await menuButton
+                        ([
+                            {
+                                tag: "button",
+                                children: "リストを更新",
+                            },
+                            {
+                                tag: "button",
+                                children: "名前を編集",
+                            },
+                            {
+                                tag: "button",
+                                children: "リストを編集",
+                            },
+                            {
+                                tag: "button",
+                                children: "ToDoを追加",
+                            },
+                            {
+                                tag: "button",
+                                children: "リストをシェア",
+                            }
+                        ]),
                     ]
                 ),
                 {

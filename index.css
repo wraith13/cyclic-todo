@@ -52,8 +52,8 @@ h1 button.menu-button:not(:hover) svg {
   fill: #FFFFFF;
 }
 h1 .menu-popup {
-  top: calc(2rem + 10px);
-  right: 0.5rem;
+  top: calc(1rem + 10px);
+  right: -0.5rem;
 }
 @media (prefers-color-scheme: dark) {
   h1 {
@@ -112,6 +112,9 @@ button.menu-button svg {
   height: 1.5rem;
   fill: #228844;
 }
+button.menu-button:not(:hover) .menu-popup:not(.show) {
+  display: none;
+}
 button:hover {
   color: #FFFFFF;
   background-color: #21788B;
@@ -158,24 +161,48 @@ button.default-button:hover {
 }
 .menu-popup {
   position: absolute;
+  top: calc(0.5rem + 10px);
+  right: -1rem;
+  z-index: 99999;
+  padding: 1rem;
+  border-radius: 1rem;
+}
+.menu-popup .menu-popup-body {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
   justify-content: stretch;
-  flex-direction: row;
-  top: calc(1.5rem + 10px);
-  right: 0px;
-  z-index: 99999;
-  background-color: #FFFFFF;
+  flex-direction: column;
   color: #228844;
+  background-color: #FFFFFF;
   border-color: #228844;
   border-style: solid;
   border-width: 1px;
+  border-radius: 0.5rem;
   line-height: 1.5rem;
   font-size: 1.5rem;
+  overflow: hidden;
 }
-.menu-popup:not(.show) {
-  display: none;
+.menu-popup .menu-popup-body button {
+  border-radius: 0px;
+  margin: 0px !important;
+  border-style: none;
+  border-width: 0px;
+  font-size: 1.2rem;
+}
+@media (prefers-color-scheme: dark) {
+  .menu-popup {
+    background-color: #000022;
+  }
+}
+.screen-cover {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  background-color: #000022;
+  opacity: 0.6;
 }
 .row-flex-list,
 .column-flex-list {

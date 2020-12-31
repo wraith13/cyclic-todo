@@ -1159,7 +1159,14 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             popup = minamo_js_1.minamo.dom.make(HTMLDivElement)({
                                 tag: "div",
                                 className: "menu-popup",
-                                children: menu
+                                children: {
+                                    tag: "div",
+                                    className: "menu-popup-body",
+                                    children: menu
+                                },
+                                onclick: function () {
+                                    Array.from(document.getElementsByClassName("screen-cover")).forEach(function (i) { return i.click(); });
+                                },
                             });
                             _a = {
                                 tag: "button",
@@ -1168,13 +1175,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return [4 /*yield*/, loadSvg("./ellipsis.1024.svg")];
                         case 1:
                             result = [
-                                (_a.children = _b.sent(),
+                                (_a.children = [
+                                    _b.sent(),
+                                    popup
+                                ],
                                     _a.onclick = function () {
                                         popup.classList.add("show");
                                         Render.screenCover(function () { return popup.classList.remove("show"); });
                                     },
-                                    _a),
-                                popup
+                                    _a)
                             ];
                             return [2 /*return*/, result];
                     }
@@ -1327,7 +1336,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         });
                                     }); }
                                 }];
-                            return [4 /*yield*/, Render.menuButton("ポップアップメニュー")];
+                            return [4 /*yield*/, Render.menuButton([
+                                    {
+                                        tag: "button",
+                                        children: "最後の完了を取り消す",
+                                    },
+                                    {
+                                        tag: "button",
+                                        children: "名前を編集",
+                                    },
+                                ])];
                         case 1: return [2 /*return*/, (_a.children = [
                                 (_b.children = _c.concat([
                                     (_d.children = _e.concat([
@@ -1359,7 +1377,28 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 _g.sent(),
                                 "" + entry.title
                             ];
-                            return [4 /*yield*/, Render.menuButton("ポップアップメニュー")];
+                            return [4 /*yield*/, Render.menuButton([
+                                    {
+                                        tag: "button",
+                                        children: "リストを更新",
+                                    },
+                                    {
+                                        tag: "button",
+                                        children: "名前を編集",
+                                    },
+                                    {
+                                        tag: "button",
+                                        children: "リストを編集",
+                                    },
+                                    {
+                                        tag: "button",
+                                        children: "ToDoを追加",
+                                    },
+                                    {
+                                        tag: "button",
+                                        children: "リストをシェア",
+                                    }
+                                ])];
                         case 2:
                             _e = [
                                 _b.apply(void 0, _c.concat([_d.concat([
