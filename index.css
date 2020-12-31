@@ -52,7 +52,7 @@ h1 button.menu-button:not(:hover) svg {
   fill: #FFFFFF;
 }
 h1 .menu-popup {
-  top: calc(1rem + 10px);
+  top: 9px;
   right: -0.5rem;
 }
 @media (prefers-color-scheme: dark) {
@@ -112,7 +112,12 @@ button.menu-button svg {
   height: 1.5rem;
   fill: #228844;
 }
-button.menu-button:not(:hover) .menu-popup:not(.show) {
+button.menu-button:not(:hover) .screen-cover,
+button.menu-button:not(:hover) .screen-cover + .menu-popup {
+  display: none;
+}
+button.menu-button .screen-cover:hover,
+button.menu-button .screen-cover:hover + .menu-popup {
   display: none;
 }
 button:hover {
@@ -161,10 +166,11 @@ button.default-button:hover {
 }
 .menu-popup {
   position: absolute;
-  top: calc(0.5rem + 10px);
+  top: calc(9px - 0.5rem);
   right: -1rem;
   z-index: 99999;
   padding: 1rem;
+  padding-top: 2rem;
   border-radius: 1rem;
 }
 .menu-popup .menu-popup-body {
@@ -189,11 +195,18 @@ button.default-button:hover {
   border-style: none;
   border-width: 0px;
   font-size: 1.2rem;
+  text-align: left;
+}
+.menu-popup:active {
+  z-index: 11111;
 }
 @media (prefers-color-scheme: dark) {
-  .menu-popup {
+  .menu-popup .menu-popup-body {
     background-color: #000022;
   }
+}
+.hide {
+  display: none;
 }
 .screen-cover {
   position: fixed;
@@ -202,7 +215,21 @@ button.default-button:hover {
   bottom: 0px;
   left: 0px;
   background-color: #000022;
-  opacity: 0.6;
+  z-index: 88888;
+  animation-name: fade-in;
+  animation-direction: normal;
+  animation-delay: 0s;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.3;
+  }
 }
 .row-flex-list,
 .column-flex-list {
@@ -344,9 +371,6 @@ button.default-button:hover {
   font-size: 1rem;
   opacity: 0.4;
   float: right;
-}
-.task-item .task-information.no-progress {
-  background-color: rgba(128, 128, 128, 0.4);
 }
 .welcome-screen h1 {
   margin-bottom: 1em;

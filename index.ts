@@ -1,6 +1,10 @@
 import { minamo } from "./minamo.js";
 import localeEn from "./lang.en.json";
 import localeJa from "./lang.ja.json";
+export const timeout = <T>(wait: number = 0, action?: () => T) =>
+    undefined === action ?
+        new Promise(resolve => setTimeout(resolve, wait)):
+        new Promise(resolve => setTimeout(() => resolve(action()), wait));
 export module localeSingle
 {
     export type LocaleKeyType = keyof typeof localeEn;
@@ -398,12 +402,12 @@ export module CyclicToDo
         export const backgroundLinerGradient = (leftPercent: string, leftColor: string, rightColor: string) =>
             `background: linear-gradient(to right, ${leftColor} ${leftPercent}, ${rightColor} ${leftPercent});`;
         export const progressStyle = (item: ToDoEntry) => null === item.progress ?
-            undefined:
+            "background-color: rgba(128,128,128,0.4);":
             1 <= item.progress ?
-                `background: #22884466`:
+                `background: #22884466;`:
                 backgroundLinerGradient
                 (
-                    item.progress.toLocaleString("en", { style: "percent" }),
+                    item.progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }),
                     "#22884466",
                     "rgba(128,128,128,0.2)"
                 );
@@ -414,6 +418,8 @@ export module CyclicToDo
             children: locale.parallel(label),
             //children: locale.map(label),
         });
+        export const prompt = (message?: string, _default?: string): Promise<string | null> =>
+            new Promise(resolve => resolve(window.prompt(message, _default)));
         export const screenCover = (onclick: () => unknown) =>
         {
             const dom = minamo.dom.make(HTMLDivElement)
@@ -440,34 +446,39 @@ export module CyclicToDo
                     className: "menu-popup-body",
                     children: menu
                 },
-                onclick: () =>
-                {
-                    (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[]).forEach(i => i.click());
-                },
+                // onclick: async () =>
+                // {
+                //     (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[]).forEach(i => i.click());
+                //     popup.classList.add("active");
+                //     await timeout(500);
+                //     popup.classList.remove("active");
+                // },
             });
-            const result =
-            [
-                {
-                    tag: "button",
-                    className: "menu-button",
-                    children:
-                    [
-                        await loadSvg("./ellipsis.1024.svg"),
-                        popup,
-                    ],
-                    onclick: () =>
+            const button = minamo.dom.make(HTMLButtonElement)
+            ({
+                tag: "button",
+                className: "menu-button",
+                children:
+                [
+                    await loadSvg("./ellipsis.1024.svg"),
                     {
-                        popup.classList.add("show");
-                        screenCover(() => popup.classList.remove("show"));
+                        tag: "div",
+                        className: "screen-cover",
                     },
-                },
-            ];
-            return result;
+                    popup,
+                ],
+                // onclick: () =>
+                // {
+                //     popup.classList.add("show");
+                //     screenCover(() => popup.classList.remove("show"));
+                // },
+            });
+            return button;
         };
         export const information = (item: ToDoEntry) =>
         ({
             tag: "div",
-            className: null === item.progress ? "task-information no-progress": "task-information",
+            className: "task-information",
             attributes:
             {
                 style: progressStyle(item),
@@ -621,6 +632,14 @@ export module CyclicToDo
                                     {
                                         tag: "button",
                                         children: "名前を編集",
+                                        eventListener:
+                                        {
+                                            "mousedown": async () =>
+                                            {
+                                                await timeout(100);
+                                                await prompt("ToDo の名前を入力してください", item.todo);
+                                            }
+                                        },
                                     },
                                 ]),
                             ],
@@ -647,11 +666,23 @@ export module CyclicToDo
                             {
                                 tag: "button",
                                 children: "リストを更新",
+                                onclick: async () =>
+                                {
+                                    console.log("リストを更新");
+                                }
                             },
                             {
                                 tag: "button",
                                 children: "名前を編集",
-                            },
+                                eventListener:
+                                {
+                                    "mousedown": async () =>
+                                    {
+                                        await timeout(100);
+                                        await prompt("リストの名前を入力してください", entry.title);
+                                    }
+                                },
+                    },
                             {
                                 tag: "button",
                                 children: "リストを編集",
@@ -659,6 +690,14 @@ export module CyclicToDo
                             {
                                 tag: "button",
                                 children: "ToDoを追加",
+                                eventListener:
+                                {
+                                    "mousedown": async () =>
+                                    {
+                                        await timeout(100);
+                                        await prompt("ToDo の名前を入力してください");
+                                    }
+                                },
                             },
                             {
                                 tag: "button",

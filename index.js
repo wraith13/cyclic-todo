@@ -813,9 +813,15 @@ define("lang.ja", [], {
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.CyclicToDo = exports.Calculate = exports.localeParallel = exports.localeSingle = void 0;
+    exports.CyclicToDo = exports.Calculate = exports.localeParallel = exports.localeSingle = exports.timeout = void 0;
     lang_en_json_1 = __importDefault(lang_en_json_1);
     lang_ja_json_1 = __importDefault(lang_ja_json_1);
+    exports.timeout = function (wait, action) {
+        if (wait === void 0) { wait = 0; }
+        return undefined === action ?
+            new Promise(function (resolve) { return setTimeout(resolve, wait); }) :
+            new Promise(function (resolve) { return setTimeout(function () { return resolve(action()); }, wait); });
+    };
     var localeSingle;
     (function (localeSingle) {
         var localeTableKey = navigator.language;
@@ -1129,16 +1135,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return "background: linear-gradient(to right, " + leftColor + " " + leftPercent + ", " + rightColor + " " + leftPercent + ");";
             };
             Render.progressStyle = function (item) { return null === item.progress ?
-                undefined :
+                "background-color: rgba(128,128,128,0.4);" :
                 1 <= item.progress ?
-                    "background: #22884466" :
-                    Render.backgroundLinerGradient(item.progress.toLocaleString("en", { style: "percent" }), "#22884466", "rgba(128,128,128,0.2)"); };
+                    "background: #22884466;" :
+                    Render.backgroundLinerGradient(item.progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }), "#22884466", "rgba(128,128,128,0.2)"); };
             Render.label = function (label) {
                 return ({
                     tag: "span",
                     className: "label",
                     children: locale.parallel(label),
                 });
+            };
+            Render.prompt = function (message, _default) {
+                return new Promise(function (resolve) { return resolve(window.prompt(message, _default)); });
             };
             Render.screenCover = function (onclick) {
                 var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
@@ -1152,9 +1161,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 minamo_js_1.minamo.dom.appendChildren(document.body, dom);
             };
             Render.menuButton = function (menu) { return __awaiter(_this, void 0, void 0, function () {
-                var popup, result, _a;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
+                var popup, button, _a, _b;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             popup = minamo_js_1.minamo.dom.make(HTMLDivElement)({
                                 tag: "div",
@@ -1164,35 +1173,31 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     className: "menu-popup-body",
                                     children: menu
                                 },
-                                onclick: function () {
-                                    Array.from(document.getElementsByClassName("screen-cover")).forEach(function (i) { return i.click(); });
-                                },
                             });
-                            _a = {
+                            _a = minamo_js_1.minamo.dom.make(HTMLButtonElement);
+                            _b = {
                                 tag: "button",
                                 className: "menu-button"
                             };
                             return [4 /*yield*/, loadSvg("./ellipsis.1024.svg")];
                         case 1:
-                            result = [
-                                (_a.children = [
-                                    _b.sent(),
+                            button = _a.apply(void 0, [(_b.children = [
+                                    _c.sent(),
+                                    {
+                                        tag: "div",
+                                        className: "screen-cover",
+                                    },
                                     popup
                                 ],
-                                    _a.onclick = function () {
-                                        popup.classList.add("show");
-                                        Render.screenCover(function () { return popup.classList.remove("show"); });
-                                    },
-                                    _a)
-                            ];
-                            return [2 /*return*/, result];
+                                    _b)]);
+                            return [2 /*return*/, button];
                     }
                 });
             }); };
             Render.information = function (item) {
                 return ({
                     tag: "div",
-                    className: null === item.progress ? "task-information no-progress" : "task-information",
+                    className: "task-information",
                     attributes: {
                         style: Render.progressStyle(item),
                     },
@@ -1344,6 +1349,21 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     {
                                         tag: "button",
                                         children: "名前を編集",
+                                        eventListener: {
+                                            "mousedown": function () { return __awaiter(_this, void 0, void 0, function () {
+                                                return __generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0: return [4 /*yield*/, exports.timeout(100)];
+                                                        case 1:
+                                                            _a.sent();
+                                                            return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください", item.todo)];
+                                                        case 2:
+                                                            _a.sent();
+                                                            return [2 /*return*/];
+                                                    }
+                                                });
+                                            }); }
+                                        },
                                     },
                                 ])];
                         case 1: return [2 /*return*/, (_a.children = [
@@ -1362,6 +1382,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             }); };
             Render.todoScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e, _f;
+                var _this = this;
                 return __generator(this, function (_g) {
                     switch (_g.label) {
                         case 0:
@@ -1381,10 +1402,31 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     {
                                         tag: "button",
                                         children: "リストを更新",
+                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                console.log("リストを更新");
+                                                return [2 /*return*/];
+                                            });
+                                        }); }
                                     },
                                     {
                                         tag: "button",
                                         children: "名前を編集",
+                                        eventListener: {
+                                            "mousedown": function () { return __awaiter(_this, void 0, void 0, function () {
+                                                return __generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0: return [4 /*yield*/, exports.timeout(100)];
+                                                        case 1:
+                                                            _a.sent();
+                                                            return [4 /*yield*/, Render.prompt("リストの名前を入力してください", entry.title)];
+                                                        case 2:
+                                                            _a.sent();
+                                                            return [2 /*return*/];
+                                                    }
+                                                });
+                                            }); }
+                                        },
                                     },
                                     {
                                         tag: "button",
@@ -1393,6 +1435,21 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     {
                                         tag: "button",
                                         children: "ToDoを追加",
+                                        eventListener: {
+                                            "mousedown": function () { return __awaiter(_this, void 0, void 0, function () {
+                                                return __generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0: return [4 /*yield*/, exports.timeout(100)];
+                                                        case 1:
+                                                            _a.sent();
+                                                            return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
+                                                        case 2:
+                                                            _a.sent();
+                                                            return [2 /*return*/];
+                                                    }
+                                                });
+                                            }); }
+                                        },
                                     },
                                     {
                                         tag: "button",
