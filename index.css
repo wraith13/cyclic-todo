@@ -43,6 +43,21 @@ h1 .icon svg {
   height: 2.5rem;
   fill: #FFFFFF;
 }
+h1 label {
+  border-radius: 32px;
+  padding: 4px 16px;
+}
+h1 label select,
+h1 label select + span {
+  font-size: 1.2rem;
+  font-weight: normal;
+}
+h1 label select + span {
+  color: #FFFFFF;
+}
+h1 label:hover {
+  background-color: #21788B;
+}
 h1 button.menu-button:not(:hover) {
   color: #FFFFFF;
   border-color: #FFFFFF;
@@ -62,6 +77,9 @@ h1 .menu-popup {
   h1 .icon svg {
     fill: #000022;
   }
+  h1 label select + span {
+    color: #000022;
+  }
   h1 button.menu-button:not(:hover) {
     float: right;
     color: #000022;
@@ -72,14 +90,29 @@ h1 .menu-popup {
   }
 }
 label {
-  display: block;
+  cursor: pointer;
 }
-label span {
-  width: 8em;
-  display: inline-block;
+label:hover {
+  color: #21788B;
 }
-label input {
-  width: 16em;
+label select {
+  position: absolute;
+  color: transparent;
+  background-color: transparent;
+  pointer-events: auto;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+  cursor: pointer;
+  border-width: 0px;
+  border-style: none;
+}
+label select option {
+  color: initial;
+}
+label select + span {
+  text-align: center;
+  pointer-events: none;
 }
 input {
   margin: 4px;

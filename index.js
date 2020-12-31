@@ -813,7 +813,7 @@ define("lang.ja", [], {
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.CyclicToDo = exports.Calculate = exports.localeParallel = exports.localeSingle = exports.timeout = void 0;
+    exports.CyclicToDo = exports.Calculate = exports.localeParallel = exports.localeSingle = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.timeout = void 0;
     lang_en_json_1 = __importDefault(lang_en_json_1);
     lang_ja_json_1 = __importDefault(lang_ja_json_1);
     exports.timeout = function (wait, action) {
@@ -822,6 +822,17 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             new Promise(function (resolve) { return setTimeout(resolve, wait); }) :
             new Promise(function (resolve) { return setTimeout(function () { return resolve(action()); }, wait); });
     };
+    exports.simpleComparer = function (a, b) {
+        if (a < b) {
+            return -1;
+        }
+        if (b < a) {
+            return 1;
+        }
+        return 0;
+    };
+    exports.simpleReverseComparer = function (a, b) { return -exports.simpleComparer(a, b); };
+    exports.uniqueFilter = function (value, index, list) { return index === list.indexOf(value); };
     var localeSingle;
     (function (localeSingle) {
         var localeTableKey = navigator.language;
@@ -885,7 +896,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 Pass.key = "pass.list";
                 Pass.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Pass.key)) !== null && _a !== void 0 ? _a : []; };
                 Pass.set = function (passList) { return minamo_js_1.minamo.localStorage.set(Pass.key, passList); };
-                Pass.add = function (pass) { return Pass.set(Pass.get().concat([pass])); };
+                Pass.add = function (pass) { return Pass.set(Pass.get().concat([pass]).filter(exports.uniqueFilter)); };
                 Pass.remove = function (pass) { return Pass.set(Pass.get().filter(function (i) { return pass !== i; })); };
             })(Pass = Storage.Pass || (Storage.Pass = {}));
             var Tag;
@@ -895,7 +906,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 Tag.set = function (pass, list) {
                     return Storage.getStorage(pass).set(Tag.makeKey(pass), list);
                 };
-                Tag.add = function (pass, tag) { return Tag.set(pass, Tag.get(pass).concat([tag])); };
+                Tag.add = function (pass, tag) { return Tag.set(pass, Tag.get(pass).concat([tag]).filter(exports.uniqueFilter)); };
                 Tag.remove = function (pass, tag) { return Tag.set(pass, Tag.get(pass).filter(function (i) { return tag !== i; })); };
             })(Tag = Storage.Tag || (Storage.Tag = {}));
             var TagMember;
@@ -905,7 +916,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 TagMember.set = function (pass, tag, list) {
                     return Storage.getStorage(pass).set(TagMember.makeKey(pass, tag), list);
                 };
-                TagMember.add = function (pass, tag, todo) { return TagMember.set(pass, tag, TagMember.get(pass, tag).concat([todo])); };
+                TagMember.add = function (pass, tag, todo) { return TagMember.set(pass, tag, TagMember.get(pass, tag).concat([todo]).filter(exports.uniqueFilter)); };
+                TagMember.merge = function (pass, tag, list) { return TagMember.set(pass, tag, TagMember.get(pass, tag).concat(list).filter(exports.uniqueFilter)); };
                 TagMember.remove = function (pass, tag, todo) { return TagMember.set(pass, tag, TagMember.get(pass, tag).filter(function (i) { return todo !== i; })); };
             })(TagMember = Storage.TagMember || (Storage.TagMember = {}));
             var History;
@@ -916,35 +928,31 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     return Storage.getStorage(pass).set(History.makeKey(pass, task), list);
                 };
                 History.add = function (pass, task, tick) {
-                    var list = History.get(pass, task).concat(tick).filter(function (i, index, array) { return index === array.indexOf(i); });
-                    list.sort(Domain.simpleReverseComparer);
-                    History.set(pass, task, list);
-                };
-                History.merge = function (pass, todo, ticks) {
-                    var temp = {};
-                    todo.forEach(function (task) { return temp[task] = []; });
-                    ticks.forEach(function (tick, index) {
-                        if (null !== tick) {
-                            temp[todo[index % todo.length]].push(tick);
-                        }
-                    });
-                    todo.forEach(function (task) { return History.add(pass, task, temp[task]); });
+                    return History.set(pass, task, History.get(pass, task).concat(tick).filter(exports.uniqueFilter).sort(exports.simpleReverseComparer));
                 };
             })(History = Storage.History || (Storage.History = {}));
         })(Storage = CyclicToDo.Storage || (CyclicToDo.Storage = {}));
         var Domain;
         (function (Domain) {
             var _this = this;
-            Domain.simpleComparer = function (a, b) {
-                if (a < b) {
-                    return -1;
-                }
-                if (b < a) {
-                    return 1;
-                }
-                return 0;
+            Domain.merge = function (pass, tag, todo, _ticks) {
+                Storage.Pass.add(pass);
+                Storage.Tag.add(pass, tag);
+                Storage.TagMember.merge(pass, tag, todo);
+                // const temp:{ [task:string]: number[]} = { };
+                // todo.forEach(task => temp[task] = []);
+                // ticks.forEach
+                // (
+                //     (tick, index) =>
+                //     {
+                //         if (null !== tick)
+                //         {
+                //             temp[todo[index % todo.length]].push(tick);
+                //         }
+                //     }
+                // );
+                // todo.forEach(task => Storage.History.add(pass, task, temp[task]));
             };
-            Domain.simpleReverseComparer = function (a, b) { return -Domain.simpleComparer(a, b); };
             Domain.TimeAccuracy = 60 * 1000;
             Domain.getTicks = function (date) {
                 if (date === void 0) { date = new Date(); }
@@ -1380,6 +1388,32 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
+            Render.DropDownLabel = function (options) {
+                var dropdown = minamo_js_1.minamo.dom.make(HTMLSelectElement)({
+                    className: options.className,
+                    children: options.list.map(function (i) { return ({ tag: "option", value: i, children: i, selected: options.value === i ? true : undefined, }); }),
+                    onchange: function () {
+                        var _a;
+                        if (labelSoan.innerText !== dropdown.value) {
+                            labelSoan.innerText = dropdown.value;
+                            (_a = options.onChange) === null || _a === void 0 ? void 0 : _a.call(options, dropdown.value);
+                        }
+                    },
+                    value: options.value,
+                });
+                var labelSoan = minamo_js_1.minamo.dom.make(HTMLSpanElement)({
+                    children: options.value,
+                });
+                var result = {
+                    tag: "label",
+                    className: options.className,
+                    children: [
+                        dropdown,
+                        labelSoan
+                    ]
+                };
+                return result;
+            };
             Render.todoScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e, _f;
                 var _this = this;
@@ -1396,7 +1430,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         case 1:
                             _d = [
                                 _g.sent(),
-                                "" + entry.title
+                                Render.DropDownLabel({ list: Storage.Tag.get(entry.pass), value: entry.tag, })
                             ];
                             return [4 /*yield*/, Render.menuButton([
                                     {
@@ -1419,7 +1453,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                         case 0: return [4 /*yield*/, exports.timeout(100)];
                                                         case 1:
                                                             _a.sent();
-                                                            return [4 /*yield*/, Render.prompt("リストの名前を入力してください", entry.title)];
+                                                            return [4 /*yield*/, Render.prompt("リストの名前を入力してください", entry.tag)];
                                                         case 2:
                                                             _a.sent();
                                                             return [2 /*return*/];
@@ -1482,7 +1516,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            document.title = entry.title + " " + applicationTitle;
+                            document.title = entry.tag + " " + applicationTitle;
                             if (undefined !== updateTodoScreenTimer) {
                                 clearInterval(updateTodoScreenTimer);
                             }
@@ -1524,11 +1558,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
-            Render.editScreen = function (title, pass, todo) {
-                var titleDiv = minamo_js_1.minamo.dom.make(HTMLInputElement)({
+            Render.editScreen = function (tag, pass, todo) {
+                var tagDiv = minamo_js_1.minamo.dom.make(HTMLInputElement)({
                     tag: "input",
-                    className: "edit-title-input",
-                    value: title,
+                    className: "edit-tag-input",
+                    value: tag,
                 });
                 var passDiv = minamo_js_1.minamo.dom.make(HTMLInputElement)({
                     tag: "input",
@@ -1551,7 +1585,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     tag: "span",
                                     children: "channel",
                                 },
-                                titleDiv,
+                                tagDiv,
                             ],
                         },
                         {
@@ -1580,7 +1614,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             children: "save",
                             onclick: function () {
                                 Render.updateTodoScreen({
-                                    title: titleDiv.value,
+                                    tag: tagDiv.value,
                                     pass: passDiv.value,
                                     todo: todoDom.value.split("\n").map(function (i) { return i.trim(); })
                                 });
@@ -1590,8 +1624,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 };
                 return result;
             };
-            Render.updateEditScreen = function (title, pass, todo) {
-                return Render.showWindow(Render.editScreen(title, pass, todo));
+            Render.updateEditScreen = function (tag, pass, todo) {
+                return Render.showWindow(Render.editScreen(tag, pass, todo));
             };
             var loadSvg = function (path) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
@@ -1745,15 +1779,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             return CyclicToDo.makeUrl(urlParams, CyclicToDo.getUrlHash(url), url);
         };
         CyclicToDo.start = function () { return __awaiter(_this, void 0, void 0, function () {
-            var urlParams, hash, title, pass, todo, history, _a;
-            var _b, _c, _d, _e, _f, _g;
-            return __generator(this, function (_h) {
-                switch (_h.label) {
+            var urlParams, hash, tag, pass, todo, history, _a;
+            var _b, _c, _d, _e, _f;
+            return __generator(this, function (_g) {
+                switch (_g.label) {
                     case 0:
                         console.log("start!!!");
                         urlParams = CyclicToDo.getUrlParams();
                         hash = CyclicToDo.getUrlHash();
-                        title = (_b = urlParams["title"]) !== null && _b !== void 0 ? _b : "untitled";
+                        tag = (_b = urlParams["title"]) !== null && _b !== void 0 ? _b : "untitled";
                         pass = (_c = urlParams["pass"]) !== null && _c !== void 0 ? _c : Storage.sessionPassPrefix + ":" + new Date().getTime();
                         todo = JSON.parse((_d = urlParams["todo"]) !== null && _d !== void 0 ? _d : "null");
                         history = JSON.parse((_e = urlParams["history"]) !== null && _e !== void 0 ? _e : "null");
@@ -1766,23 +1800,21 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         return [3 /*break*/, 2];
                     case 1:
                         console.log("show edit screen");
-                        Render.updateEditScreen(title, pass, []);
+                        Render.updateEditScreen(tag, pass, []);
                         return [3 /*break*/, 4];
                     case 2:
                         console.log("show welcome screen");
                         return [4 /*yield*/, Render.updateWelcomeScreen(pass)];
                     case 3:
-                        _h.sent();
+                        _g.sent();
                         return [3 /*break*/, 4];
                     case 4: return [3 /*break*/, 6];
                     case 5:
-                        if (0 < ((_g = history === null || history === void 0 ? void 0 : history.length) !== null && _g !== void 0 ? _g : 0)) {
-                            Storage.History.merge(pass, todo, history);
-                        }
+                        Domain.merge(pass, tag, todo, history);
                         switch (hash) {
                             case "edit":
                                 console.log("show edit screen");
-                                Render.updateEditScreen(title, pass, todo);
+                                Render.updateEditScreen(tag, pass, todo);
                                 break;
                             // case "history":
                             //     dom.updateHistoryScreen(pass, getToDoHistory(pass, todo));
@@ -1798,10 +1830,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             //     break;
                             default:
                                 console.log("show todo screen");
-                                Render.updateTodoScreen({ title: title, pass: pass, todo: todo });
+                                Render.updateTodoScreen({ tag: tag, pass: pass, todo: todo });
                                 break;
                         }
-                        _h.label = 6;
+                        _g.label = 6;
                     case 6: return [2 /*return*/];
                 }
             });

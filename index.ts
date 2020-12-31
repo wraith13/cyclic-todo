@@ -5,6 +5,20 @@ export const timeout = <T>(wait: number = 0, action?: () => T) =>
     undefined === action ?
         new Promise(resolve => setTimeout(resolve, wait)):
         new Promise(resolve => setTimeout(() => resolve(action()), wait));
+export const simpleComparer = <T>(a: T, b: T) =>
+{
+    if (a < b)
+    {
+        return -1;
+    }
+    if (b < a)
+    {
+        return 1;
+    }
+    return 0;
+};
+export const simpleReverseComparer = <T>(a: T, b: T) => -simpleComparer(a, b);
+export const uniqueFilter = <T>(value: T, index: number, list: T[]) => index === list.indexOf(value);
 export module localeSingle
 {
     export type LocaleKeyType = keyof typeof localeEn;
@@ -64,9 +78,9 @@ export module CyclicToDo
         export const parallel = localeParallel.map;
     }
     
-    interface ToDoTitleEntry
+    interface ToDoTagEntry
     {
-        title: string;
+        tag: string;
         pass: string;
         todo: string[];
     }
@@ -94,7 +108,7 @@ export module CyclicToDo
             export const key = `pass.list`;
             export const get = () => minamo.localStorage.getOrNull<string[]>(key) ?? [];
             export const set = (passList: string[]) => minamo.localStorage.set(key, passList);
-            export const add = (pass: string) => set(get().concat([ pass ]));
+            export const add = (pass: string) => set(get().concat([ pass ]).filter(uniqueFilter));
             export const remove = (pass: string) => set(get().filter(i => pass !== i));
         }
         export module Tag
@@ -104,7 +118,7 @@ export module CyclicToDo
                 getStorage(pass).getOrNull<string[]>(makeKey(pass)) ?? [];
             export const set = (pass: string, list: string[]) =>
                 getStorage(pass).set(makeKey(pass), list);
-            export const add = (pass: string, tag: string) => set(pass, get(pass).concat([ tag ]));
+            export const add = (pass: string, tag: string) => set(pass, get(pass).concat([ tag ]).filter(uniqueFilter));
             export const remove = (pass: string, tag: string) => set(pass, get(pass).filter(i => tag !== i));
         }
         export module TagMember
@@ -114,7 +128,8 @@ export module CyclicToDo
                 getStorage(pass).getOrNull<string[]>(makeKey(pass, tag)) ?? [];
             export const set = (pass: string, tag: string, list: string[]) =>
                 getStorage(pass).set(makeKey(pass, tag), list);
-            export const add = (pass: string, tag: string, todo: string) => set(pass, tag, get(pass, tag).concat([ todo ]));
+            export const add = (pass: string, tag: string, todo: string) => set(pass, tag, get(pass, tag).concat([ todo ]).filter(uniqueFilter));
+            export const merge = (pass: string, tag: string, list: string[]) => set(pass, tag, get(pass, tag).concat(list).filter(uniqueFilter));
             export const remove = (pass: string, tag: string, todo: string) => set(pass, tag, get(pass, tag).filter(i => todo !== i));
         }
         export module History
@@ -125,44 +140,30 @@ export module CyclicToDo
             export const set = (pass: string, task: string, list: number[]) =>
                 getStorage(pass).set(makeKey(pass, task), list);
             export const add = (pass: string, task: string, tick: number | number[]) =>
-            {
-                const list = get(pass, task).concat(tick).filter((i, index, array) => index === array.indexOf(i));
-                list.sort(Domain.simpleReverseComparer);
-                set(pass, task, list);
-            };
-            export const merge = (pass: string, todo: string[], ticks: (number | null)[]) =>
-            {
-                const temp:{ [task:string]: number[]} = { };
-                todo.forEach(task => temp[task] = []);
-                ticks.forEach
-                (
-                    (tick, index) =>
-                    {
-                        if (null !== tick)
-                        {
-                            temp[todo[index % todo.length]].push(tick);
-                        }
-                    }
-                );
-                todo.forEach(task => add(pass, task, temp[task]));
-            };
+                set(pass, task, get(pass, task).concat(tick).filter(uniqueFilter).sort(simpleReverseComparer));
         }
     }
     export module Domain
     {
-        export const simpleComparer = <T>(a: T, b: T) =>
+        export const merge = (pass: string, tag: string, todo: string[], _ticks: (number | null)[]) =>
         {
-            if (a < b)
-            {
-                return -1;
-            }
-            if (b < a)
-            {
-                return 1;
-            }
-            return 0;
+            Storage.Pass.add(pass);
+            Storage.Tag.add(pass, tag);
+            Storage.TagMember.merge(pass, tag, todo);
+            // const temp:{ [task:string]: number[]} = { };
+            // todo.forEach(task => temp[task] = []);
+            // ticks.forEach
+            // (
+            //     (tick, index) =>
+            //     {
+            //         if (null !== tick)
+            //         {
+            //             temp[todo[index % todo.length]].push(tick);
+            //         }
+            //     }
+            // );
+            // todo.forEach(task => Storage.History.add(pass, task, temp[task]));
         };
-        export const simpleReverseComparer = <T>(a: T, b: T) => -simpleComparer(a, b);
         export const TimeAccuracy = 60 *1000;
         export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / TimeAccuracy);
         export const dateStringFromTick = (tick: null | number) =>
@@ -219,7 +220,7 @@ export module CyclicToDo
             );
         export const done = async (pass: string, task: string) =>
             Storage.History.add(pass, task, getDoneTicks(pass));
-        export const todoSorter = (entry: ToDoTitleEntry) => (a: ToDoEntry, b: ToDoEntry) =>
+        export const todoSorter = (entry: ToDoTagEntry) => (a: ToDoEntry, b: ToDoEntry) =>
         {
             if (1 < a.count)
             {
@@ -315,7 +316,7 @@ export module CyclicToDo
             }
             return 0;
         };
-        export const getRecentlyHistories = (entry: ToDoTitleEntry) =>
+        export const getRecentlyHistories = (entry: ToDoTagEntry) =>
         {
             const histories: { [todo: string]: { recentries: number[], previous: null | number, count: number, } } = { };
             entry.todo.forEach
@@ -334,7 +335,7 @@ export module CyclicToDo
             );
             return histories;
         };
-        export const getToDoEntries = (entry: ToDoTitleEntry, histories: { [todo: string]: { recentries: number[], previous: null | number, count: number, } }) => entry.todo.map
+        export const getToDoEntries = (entry: ToDoTagEntry, histories: { [todo: string]: { recentries: number[], previous: null | number, count: number, } }) => entry.todo.map
         (
             todo =>
             {
@@ -362,7 +363,7 @@ export module CyclicToDo
                 return result;
             }
         );
-        export const updateProgress = (entry: ToDoTitleEntry, list: ToDoEntry[], now: number = Domain.getTicks()) =>
+        export const updateProgress = (entry: ToDoTagEntry, list: ToDoEntry[], now: number = Domain.getTicks()) =>
         {
             list.forEach
             (
@@ -577,7 +578,7 @@ export module CyclicToDo
                 },
             ],
         });
-        export const todoItem = async (entry: ToDoTitleEntry, item: ToDoEntry) =>
+        export const todoItem = async (entry: ToDoTagEntry, item: ToDoEntry) =>
         ({
             tag: "div",
             className: "task-item flex-item",
@@ -649,7 +650,39 @@ export module CyclicToDo
                 information(item),
             ],
         });
-        export const todoScreen = async (entry: ToDoTitleEntry, list: ToDoEntry[]) =>
+        export const DropDownLabel = (options: { list: string[], value: string, onChange?: (value: string) => unknown, className?: string}) =>
+        {
+            const dropdown = minamo.dom.make(HTMLSelectElement)
+            ({
+                className: options.className,
+                children: options.list.map(i => ({ tag: "option", value:i, children: i, selected: options.value === i ? true: undefined, })),
+                onchange: () =>
+                {
+                    if (labelSoan.innerText !== dropdown.value)
+                    {
+                        labelSoan.innerText = dropdown.value;
+                        options.onChange?.(dropdown.value);
+                    }
+                },
+                value: options.value,
+            });
+            const labelSoan = minamo.dom.make(HTMLSpanElement)
+            ({
+                children: options.value,
+            });
+            const result =
+            {
+                tag: "label",
+                className: options.className,
+                children:
+                [
+                    dropdown,
+                    labelSoan
+                ]
+            };
+            return result;
+        };
+        export const todoScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         ({
             tag: "div",
             className: "todo-screen screen",
@@ -660,7 +693,7 @@ export module CyclicToDo
                     "h1",
                     [
                         await applicationIcon(),
-                        `${entry.title}`,
+                        DropDownLabel({ list: Storage.Tag.get(entry.pass), value: entry.tag, }),
                         await menuButton
                         ([
                             {
@@ -679,7 +712,7 @@ export module CyclicToDo
                                     "mousedown": async () =>
                                     {
                                         await timeout(100);
-                                        await prompt("リストの名前を入力してください", entry.title);
+                                        await prompt("リストの名前を入力してください", entry.tag);
                                     }
                                 },
                     },
@@ -760,9 +793,9 @@ export module CyclicToDo
             ]
         });
         let updateTodoScreenTimer = undefined;
-        export const updateTodoScreen = async (entry: ToDoTitleEntry) =>
+        export const updateTodoScreen = async (entry: ToDoTagEntry) =>
         {
-            document.title = `${entry.title} ${applicationTitle}`;
+            document.title = `${entry.tag} ${applicationTitle}`;
             if (undefined !== updateTodoScreenTimer)
             {
                 clearInterval(updateTodoScreenTimer);
@@ -814,13 +847,13 @@ export module CyclicToDo
                 Domain.TimeAccuracy
             );
         };
-        export const editScreen = (title: string, pass: string, todo: string[]) =>
+        export const editScreen = (tag: string, pass: string, todo: string[]) =>
         {
-            const titleDiv = minamo.dom.make(HTMLInputElement)
+            const tagDiv = minamo.dom.make(HTMLInputElement)
             ({
                 tag: "input",
-                className: "edit-title-input",
-                value: title,
+                className: "edit-tag-input",
+                value: tag,
             });
             const passDiv = minamo.dom.make(HTMLInputElement)
             ({
@@ -848,7 +881,7 @@ export module CyclicToDo
                                 tag: "span",
                                 children: "channel",
                             },
-                            titleDiv,
+                            tagDiv,
                         ],
                     },
                     {
@@ -881,7 +914,7 @@ export module CyclicToDo
                         {
                             updateTodoScreen
                             ({
-                                title: titleDiv.value,
+                                tag: tagDiv.value,
                                 pass: passDiv.value,
                                 todo: todoDom.value.split("\n").map(i => i.trim())
                             });
@@ -891,8 +924,8 @@ export module CyclicToDo
             };
             return result;
         };
-        export const updateEditScreen = (title: string, pass: string, todo: string[]) =>
-            showWindow(editScreen(title, pass, todo));
+        export const updateEditScreen = (tag: string, pass: string, todo: string[]) =>
+            showWindow(editScreen(tag, pass, todo));
         const loadSvg = async (path : string) : Promise<SVGElement> => new Promise<SVGElement>
         (
             (resolve, reject) =>
@@ -1042,7 +1075,7 @@ export module CyclicToDo
         console.log("start!!!");
         const urlParams = getUrlParams();
         const hash = getUrlHash();
-        const title = urlParams["title"] ?? "untitled";
+        const tag = urlParams["title"] ?? "untitled";
         const pass = urlParams["pass"] ?? `${Storage.sessionPassPrefix}:${new Date().getTime()}`;
         const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
         const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
@@ -1056,7 +1089,7 @@ export module CyclicToDo
             //     break;
             case "edit":
                 console.log("show edit screen");
-                Render.updateEditScreen(title, pass, []);
+                Render.updateEditScreen(tag, pass, []);
                 break;
             default:
                 console.log("show welcome screen");
@@ -1066,15 +1099,12 @@ export module CyclicToDo
         }
         else
         {
-            if (0 < (history?.length ?? 0))
-            {
-                Storage.History.merge(pass, todo, history);
-            }
+            Domain.merge(pass, tag, todo, history);
             switch(hash)
             {
             case "edit":
                 console.log("show edit screen");
-                Render.updateEditScreen(title, pass, todo);
+                Render.updateEditScreen(tag, pass, todo);
                 break;
             // case "history":
             //     dom.updateHistoryScreen(pass, getToDoHistory(pass, todo));
@@ -1090,7 +1120,7 @@ export module CyclicToDo
             //     break;
             default:
                 console.log("show todo screen");
-                Render.updateTodoScreen({ title, pass, todo });
+                Render.updateTodoScreen({ tag: tag, pass, todo });
                 break;
             }
         }

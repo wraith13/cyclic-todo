@@ -62,6 +62,25 @@ h1
         }
         margin-right: 0.25rem;
     }
+    label
+    {
+        border-radius: 32px;
+        padding: 4px 16px;
+        select,
+        select + span
+        {
+            font-size: 1.2rem;
+            font-weight: normal;
+        }
+        select + span
+        {
+            color: @base-color;
+        }
+        &:hover
+        {
+            background-color: @active-color;
+        }
+    }
     button.menu-button:not(:hover)
     {
         color: @base-color;
@@ -87,6 +106,13 @@ h1
         {
             fill: @dark-base-color;
         }
+        label
+        {
+            select + span
+            {
+                color: @dark-base-color;
+            }
+        }
         button.menu-button:not(:hover)
         {
             float: right;
@@ -101,15 +127,41 @@ h1
 }
 label
 {
-    display: block;
-    span
+    cursor: pointer;
+    // position: relative;
+    // display: flex;
+    // flex-direction: column;
+    // align-items: stretch;
+    &:hover
     {
-        width: 8em;
-        display: inline-block;
+        color: @active-color;
     }
-    input
+    select
     {
-        width: 16em;
+        position: absolute;
+        color: transparent;
+        background-color: transparent;
+        pointer-events: auto;
+        // width: calc(100% - 10px);
+        // min-width: calc(100% - 10px);
+        // max-width: calc(100% - 10px);
+        // margin-left: calc(10px - 100%);
+        // text-align: right;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow-x: hidden;
+        cursor: pointer;
+        border-width: 0px;
+        border-style: none;
+        option
+        {
+            color: initial;
+        }
+    }
+    select + span
+    {
+        text-align: center;
+        pointer-events: none;
     }
 }
 input
