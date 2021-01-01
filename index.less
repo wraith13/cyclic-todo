@@ -69,8 +69,15 @@ h1
         select,
         select + span
         {
+            border-radius: 32px;
+            padding: 4px 16px;
             font-size: 1.2rem;
             font-weight: normal;
+        }
+        select
+        {
+            margin-left: -16px;
+            padding-left: 32px;
         }
         select + span
         {
@@ -153,6 +160,9 @@ label
         cursor: pointer;
         border-width: 0px;
         border-style: none;
+        outline: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
         option
         {
             color: initial;

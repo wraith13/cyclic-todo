@@ -800,7 +800,11 @@ define("lang.en", [], {
     "elapsed time": "elapsed time",
     "count": "count",
     "Done": "Done",
-    "days": "days"
+    "days": "days",
+    "@overall": "Overall",
+    "@unoverall": "Excluded in the Overall",
+    "@untagged": "Untagged",
+    "@new": "New tag"
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -808,19 +812,26 @@ define("lang.ja", [], {
     "elapsed time": "経過時間",
     "count": "回数",
     "Done": "完了",
-    "days": "日"
+    "days": "日",
+    "@overall": "総合",
+    "@unoverall": "総合から除外",
+    "@untagged": "タグ付けされてない",
+    "@new": "新しいタグ"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.CyclicToDo = exports.Calculate = exports.localeParallel = exports.localeSingle = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.timeout = void 0;
+    exports.CyclicToDo = exports.Calculate = exports.localeParallel = exports.localeSingle = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.makeObject = void 0;
     lang_en_json_1 = __importDefault(lang_en_json_1);
     lang_ja_json_1 = __importDefault(lang_ja_json_1);
-    exports.timeout = function (wait, action) {
-        if (wait === void 0) { wait = 0; }
-        return undefined === action ?
-            new Promise(function (resolve) { return setTimeout(resolve, wait); }) :
-            new Promise(function (resolve) { return setTimeout(function () { return resolve(action()); }, wait); });
+    // export const timeout = <T>(wait: number = 0, action?: () => T) =>
+    //     undefined === action ?
+    //         new Promise(resolve => setTimeout(resolve, wait)):
+    //         new Promise(resolve => setTimeout(() => resolve(action()), wait));
+    exports.makeObject = function (items) {
+        var result = {};
+        items.forEach(function (i) { return result[i.key] = i.value; });
+        return result;
     };
     exports.simpleComparer = function (a, b) {
         if (a < b) {
@@ -864,7 +875,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             });
             return result;
         };
-        Calculate.average = function (ticks) { return ticks.reduce(function (a, b) { return a + b; }, 0) / ticks.length; };
+        Calculate.average = function (ticks) { return ticks.length <= 0 ?
+            null :
+            ticks.reduce(function (a, b) { return a + b; }, 0) / ticks.length; };
         Calculate.standardDeviation = function (ticks, average) {
             if (average === void 0) { average = Calculate.average(ticks); }
             return Math.sqrt(Calculate.average(ticks.map(function (i) { return Math.pow((i - average), 2); })));
@@ -901,18 +914,36 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             })(Pass = Storage.Pass || (Storage.Pass = {}));
             var Tag;
             (function (Tag) {
+                Tag.isSystemTag = function (tag) { return tag.startsWith("@") && !tag.startsWith("@@"); };
                 Tag.makeKey = function (pass) { return "pass:(" + pass + ").tag.list"; };
                 Tag.get = function (pass) { var _a; return (_a = Storage.getStorage(pass).getOrNull(Tag.makeKey(pass))) !== null && _a !== void 0 ? _a : []; };
                 Tag.set = function (pass, list) {
-                    return Storage.getStorage(pass).set(Tag.makeKey(pass), list);
-                };
+                    return Storage.getStorage(pass).set(Tag.makeKey(pass), list.filter(function (i) { return !Tag.isSystemTag(i); }));
+                }; // システムタグは万が一にも登録させない
                 Tag.add = function (pass, tag) { return Tag.set(pass, Tag.get(pass).concat([tag]).filter(exports.uniqueFilter)); };
                 Tag.remove = function (pass, tag) { return Tag.set(pass, Tag.get(pass).filter(function (i) { return tag !== i; })); };
             })(Tag = Storage.Tag || (Storage.Tag = {}));
             var TagMember;
             (function (TagMember) {
                 TagMember.makeKey = function (pass, tag) { return "pass:(" + pass + ").tag:(" + tag + ")"; };
-                TagMember.get = function (pass, tag) { var _a; return (_a = Storage.getStorage(pass).getOrNull(TagMember.makeKey(pass, tag))) !== null && _a !== void 0 ? _a : []; };
+                TagMember.getRaw = function (pass, tag) { var _a; return (_a = Storage.getStorage(pass).getOrNull(TagMember.makeKey(pass, tag))) !== null && _a !== void 0 ? _a : []; };
+                TagMember.get = function (pass, tag) {
+                    switch (tag) {
+                        case "@overall":
+                            {
+                                var unoverall_1 = TagMember.getRaw(pass, "@unoverall");
+                                return TagMember.getRaw(pass, "@overall").filter(function (i) { return unoverall_1.indexOf(i) < 0; });
+                            }
+                        case "@untagged":
+                            {
+                                var tagged_1 = Tag.get(pass).map(function (tag) { return TagMember.get(pass, tag); }).reduce(function (a, b) { return a.concat(b); }, []);
+                                return TagMember.getRaw(pass, "@overall").filter(function (i) { return tagged_1.indexOf(i) < 0; });
+                            }
+                        case "@unoverall":
+                        default:
+                            return TagMember.getRaw(pass, tag);
+                    }
+                };
                 TagMember.set = function (pass, tag, list) {
                     return Storage.getStorage(pass).set(TagMember.makeKey(pass, tag), list);
                 };
@@ -991,6 +1022,17 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             timePart;
                 }
             };
+            Domain.tagMap = function (tag) {
+                switch (tag) {
+                    case "@overall":
+                    case "@unoverall":
+                    case "@untagged":
+                    case "@new":
+                        return locale.map(tag);
+                    default:
+                        return tag.replace(/^@@/, "@");
+                }
+            };
             Domain.getLastTick = function (pass, task) { var _a; return (_a = Storage.History.get(pass, task)[0]) !== null && _a !== void 0 ? _a : 0; };
             Domain.getDoneTicks = function (pass, key) {
                 var _a;
@@ -1000,77 +1042,85 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Domain.done = function (pass, task) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                 return [2 /*return*/, Storage.History.add(pass, task, Domain.getDoneTicks(pass))];
             }); }); };
-            Domain.todoSorter = function (entry) { return function (a, b) {
-                if (1 < a.count) {
-                    if (null !== a.smartAverage && null !== b.smartAverage) {
-                        var rate = Math.min(a.count, b.count) < 5 ? 1.5 : 1.2;
-                        if (a.smartAverage < b.smartAverage * rate && b.smartAverage < a.smartAverage * rate) {
-                            if (a.elapsed < b.elapsed) {
-                                return 1;
-                            }
-                            if (b.elapsed < a.elapsed) {
-                                return -1;
-                            }
-                        }
-                    }
-                    var a_progress = a.decayedProgress;
-                    var b_progress = 1.0 - (1.0 / Calculate.phi);
-                    if (null !== b.decayedProgress) {
-                        b_progress = b.decayedProgress;
-                    }
-                    else if (null !== b.elapsed) {
-                        // 比較対象の予想間隔を借りて decayedProgress を雑に計算。比較対象によって高低が変動する為、プログラム的にはソートアルゴリズム上かなりよろしくないが、挙動としてはこれでいい感じになる。
-                        var interval = a.smartAverage;
-                        b_progress = b.elapsed / interval;
-                        var overrate = (b.elapsed - interval) / interval;
-                        if (0.0 < overrate) {
-                            b_progress = 1.0 / (1.0 + Math.log2(1.0 + overrate));
-                        }
-                    }
-                    if (a_progress < b_progress) {
-                        return 1;
-                    }
-                    if (b_progress < a_progress) {
-                        return -1;
-                    }
-                }
-                else if (1 < b.count) {
-                    return -Domain.todoSorter(entry)(b, a);
-                }
-                if (1 === a.count && b.count) {
-                    if (a.elapsed < b.elapsed) {
-                        return 1;
-                    }
-                    if (b.elapsed < a.elapsed) {
-                        return -1;
-                    }
-                }
-                if (a.count < b.count) {
-                    return -1;
-                }
-                if (b.count < a.count) {
-                    return 1;
-                }
-                var aTodoIndex = entry.todo.indexOf(a.todo);
-                var bTodoIndex = entry.todo.indexOf(a.todo);
-                if (aTodoIndex < 0 && bTodoIndex < 0) {
-                    if (a.todo < b.todo) {
-                        return 1;
-                    }
-                    if (b.todo < a.todo) {
-                        return -1;
-                    }
+            Domain.todoSortWight = function (item, listAverage) {
+                var _a, _b, _c;
+                if (null === item.elapsed || null === listAverage) {
+                    return 1.0 - (1.0 / Calculate.phi);
                 }
                 else {
-                    if (aTodoIndex < bTodoIndex) {
-                        return 1;
+                    var average = (((_a = item.smartAverage) !== null && _a !== void 0 ? _a : listAverage) + ((_b = item.standardDeviation) !== null && _b !== void 0 ? _b : 0) * 2.0);
+                    var restTime = average - item.elapsed;
+                    var restProgress = restTime / average;
+                    if (0 <= restTime) {
+                        return (restTime / listAverage) * Math.pow(restProgress, 0.9);
                     }
-                    if (bTodoIndex < aTodoIndex) {
-                        return -1;
+                    else {
+                        return 1.0 - ((_c = item.decayedProgress) !== null && _c !== void 0 ? _c : (1.0 / (1.0 + Math.log2(1.0 - restProgress))));
                     }
                 }
-                return 0;
-            }; };
+            };
+            Domain.todoSorter = function (entry, list, listAverage) {
+                if (listAverage === void 0) { listAverage = Calculate.average(list.map(function (i) { return i.smartAverage; }).filter(function (i) { return null !== i; })); }
+                return function (a, b) {
+                    if (1 < a.count) {
+                        if (null !== a.smartAverage && null !== b.smartAverage) {
+                            var rate = Math.min(a.count, b.count) < 5 ? 1.5 : 1.2;
+                            if (a.smartAverage < b.smartAverage * rate && b.smartAverage < a.smartAverage * rate) {
+                                if (a.elapsed < b.elapsed) {
+                                    return 1;
+                                }
+                                if (b.elapsed < a.elapsed) {
+                                    return -1;
+                                }
+                            }
+                        }
+                        var a_wight = Domain.todoSortWight(a, listAverage);
+                        var b_wight = Domain.todoSortWight(b, listAverage);
+                        if (a_wight < b_wight) {
+                            return -1;
+                        }
+                        if (b_wight < a_wight) {
+                            return 1;
+                        }
+                    }
+                    else if (1 < b.count) {
+                        return -Domain.todoSorter(entry, list, listAverage)(b, a);
+                    }
+                    if (1 === a.count && b.count) {
+                        if (a.elapsed < b.elapsed) {
+                            return 1;
+                        }
+                        if (b.elapsed < a.elapsed) {
+                            return -1;
+                        }
+                    }
+                    if (a.count < b.count) {
+                        return -1;
+                    }
+                    if (b.count < a.count) {
+                        return 1;
+                    }
+                    var aTodoIndex = entry.todo.indexOf(a.todo);
+                    var bTodoIndex = entry.todo.indexOf(a.todo);
+                    if (aTodoIndex < 0 && bTodoIndex < 0) {
+                        if (a.todo < b.todo) {
+                            return 1;
+                        }
+                        if (b.todo < a.todo) {
+                            return -1;
+                        }
+                    }
+                    else {
+                        if (aTodoIndex < bTodoIndex) {
+                            return 1;
+                        }
+                        if (bTodoIndex < aTodoIndex) {
+                            return -1;
+                        }
+                    }
+                    return 0;
+                };
+            };
             Domain.getRecentlyHistories = function (entry) {
                 var histories = {};
                 entry.todo.forEach(function (todo) {
@@ -1107,6 +1157,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return result;
             }); };
             Domain.updateProgress = function (entry, list, now) {
+                var _a;
                 if (now === void 0) { now = Domain.getTicks(); }
                 list.forEach(function (item) {
                     var _a, _b, _c;
@@ -1126,7 +1177,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         }
                     }
                 });
-                var defaultTodo = JSON.parse(JSON.stringify(list)).sort(Domain.todoSorter(entry))[0].todo;
+                var defaultTodo = (_a = JSON.parse(JSON.stringify(list)).sort(Domain.todoSorter(entry, list))[0]) === null || _a === void 0 ? void 0 : _a.todo;
                 list.forEach(function (item) { return item.isDefault = defaultTodo === item.todo; });
             };
         })(Domain = CyclicToDo.Domain || (CyclicToDo.Domain = {}));
@@ -1202,6 +1253,18 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
+            Render.menuItem = function (children, onclick, className) {
+                return ({
+                    tag: "button",
+                    className: className,
+                    children: children,
+                    eventListener: {
+                        "mousedown": onclick,
+                        "click": onclick,
+                        "touchstart": onclick,
+                    },
+                });
+            };
             Render.information = function (item) {
                 return ({
                     tag: "div",
@@ -1354,25 +1417,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         tag: "button",
                                         children: "最後の完了を取り消す",
                                     },
-                                    {
-                                        tag: "button",
-                                        children: "名前を編集",
-                                        eventListener: {
-                                            "mousedown": function () { return __awaiter(_this, void 0, void 0, function () {
-                                                return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0: return [4 /*yield*/, exports.timeout(100)];
-                                                        case 1:
-                                                            _a.sent();
-                                                            return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください", item.todo)];
-                                                        case 2:
-                                                            _a.sent();
-                                                            return [2 /*return*/];
-                                                    }
-                                                });
-                                            }); }
-                                        },
-                                    },
+                                    Render.menuItem("名前を編集", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                case 1:
+                                                    _a.sent();
+                                                    return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください", item.todo)];
+                                                case 2:
+                                                    _a.sent();
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }),
                                 ])];
                         case 1: return [2 /*return*/, (_a.children = [
                                 (_b.children = _c.concat([
@@ -1388,21 +1445,27 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
-            Render.DropDownLabel = function (options) {
+            Render.dropDownLabel = function (options) {
+                var _a;
                 var dropdown = minamo_js_1.minamo.dom.make(HTMLSelectElement)({
                     className: options.className,
-                    children: options.list.map(function (i) { return ({ tag: "option", value: i, children: i, selected: options.value === i ? true : undefined, }); }),
+                    children: Array.isArray(options.list) ?
+                        options.list.map(function (i) { return ({ tag: "option", value: i, children: i, selected: options.value === i ? true : undefined, }); }) :
+                        Object.keys(options.list).map(function (i) { var _a; return ({ tag: "option", value: i, children: (_a = options.list[i]) !== null && _a !== void 0 ? _a : i, selected: options.value === i ? true : undefined, }); }),
                     onchange: function () {
-                        var _a;
+                        var _a, _b;
                         if (labelSoan.innerText !== dropdown.value) {
-                            labelSoan.innerText = dropdown.value;
-                            (_a = options.onChange) === null || _a === void 0 ? void 0 : _a.call(options, dropdown.value);
+                            labelSoan.innerText = Array.isArray(options.list) ?
+                                dropdown.value :
+                                ((_a = options.list[dropdown.value]) !== null && _a !== void 0 ? _a : dropdown.value);
+                            (_b = options.onChange) === null || _b === void 0 ? void 0 : _b.call(options, dropdown.value);
                         }
                     },
-                    value: options.value,
                 });
                 var labelSoan = minamo_js_1.minamo.dom.make(HTMLSpanElement)({
-                    children: options.value,
+                    children: Array.isArray(options.list) ?
+                        options.value :
+                        ((_a = options.list[options.value]) !== null && _a !== void 0 ? _a : options.value),
                 });
                 var result = {
                     tag: "label",
@@ -1430,7 +1493,41 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         case 1:
                             _d = [
                                 _g.sent(),
-                                Render.DropDownLabel({ list: Storage.Tag.get(entry.pass), value: entry.tag, })
+                                Render.dropDownLabel({
+                                    list: exports.makeObject(["@overall"].concat(Storage.Tag.get(entry.pass)).concat(["@unoverall", "@untagged", "@new"])
+                                        .map(function (i) { return ({ key: i, value: Domain.tagMap(i), }); })),
+                                    value: entry.tag,
+                                    onChange: function (tag) { return __awaiter(_this, void 0, void 0, function () {
+                                        var _a, newTag;
+                                        return __generator(this, function (_b) {
+                                            switch (_b.label) {
+                                                case 0:
+                                                    _a = tag;
+                                                    switch (_a) {
+                                                        case "@new": return [3 /*break*/, 1];
+                                                    }
+                                                    return [3 /*break*/, 6];
+                                                case 1: return [4 /*yield*/, Render.prompt("タグの名前を入力してください", "")];
+                                                case 2:
+                                                    newTag = _b.sent();
+                                                    if (!(null === newTag)) return [3 /*break*/, 5];
+                                                    return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                case 3:
+                                                    _b.sent();
+                                                    return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                case 4:
+                                                    _b.sent();
+                                                    return [3 /*break*/, 5];
+                                                case 5: return [3 /*break*/, 8];
+                                                case 6: return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: tag, todo: Storage.TagMember.get(entry.pass, tag) })];
+                                                case 7:
+                                                    _b.sent();
+                                                    _b.label = 8;
+                                                case 8: return [2 /*return*/];
+                                            }
+                                        });
+                                    }); },
+                                })
                             ];
                             return [4 /*yield*/, Render.menuButton([
                                     {
@@ -1443,48 +1540,36 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             });
                                         }); }
                                     },
-                                    {
-                                        tag: "button",
-                                        children: "名前を編集",
-                                        eventListener: {
-                                            "mousedown": function () { return __awaiter(_this, void 0, void 0, function () {
-                                                return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0: return [4 /*yield*/, exports.timeout(100)];
-                                                        case 1:
-                                                            _a.sent();
-                                                            return [4 /*yield*/, Render.prompt("リストの名前を入力してください", entry.tag)];
-                                                        case 2:
-                                                            _a.sent();
-                                                            return [2 /*return*/];
-                                                    }
-                                                });
-                                            }); }
-                                        },
-                                    },
+                                    Render.menuItem("名前を編集", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                case 1:
+                                                    _a.sent();
+                                                    return [4 /*yield*/, Render.prompt("リストの名前を入力してください", entry.tag)];
+                                                case 2:
+                                                    _a.sent();
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }),
                                     {
                                         tag: "button",
                                         children: "リストを編集",
                                     },
-                                    {
-                                        tag: "button",
-                                        children: "ToDoを追加",
-                                        eventListener: {
-                                            "mousedown": function () { return __awaiter(_this, void 0, void 0, function () {
-                                                return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0: return [4 /*yield*/, exports.timeout(100)];
-                                                        case 1:
-                                                            _a.sent();
-                                                            return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
-                                                        case 2:
-                                                            _a.sent();
-                                                            return [2 /*return*/];
-                                                    }
-                                                });
-                                            }); }
-                                        },
-                                    },
+                                    Render.menuItem("ToDoを追加", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                case 1:
+                                                    _a.sent();
+                                                    return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
+                                                case 2:
+                                                    _a.sent();
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }),
                                     {
                                         tag: "button",
                                         children: "リストをシェア",
@@ -1516,14 +1601,14 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            document.title = entry.tag + " " + applicationTitle;
+                            document.title = Domain.tagMap(entry.tag) + " " + applicationTitle;
                             if (undefined !== updateTodoScreenTimer) {
                                 clearInterval(updateTodoScreenTimer);
                             }
                             histories = Domain.getRecentlyHistories(entry);
                             list = Domain.getToDoEntries(entry, histories);
                             Domain.updateProgress(entry, list);
-                            list.sort(Domain.todoSorter(entry));
+                            list.sort(Domain.todoSorter(entry, list));
                             console.log({ histories: histories, list: list }); // これは消さない！！！
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.todoScreen(entry, list)];

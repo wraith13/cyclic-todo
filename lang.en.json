@@ -4,5 +4,9 @@
     "elapsed time": "elapsed time",
     "count": "count",
     "Done": "Done",
-    "days": "days"
+    "days": "days",
+    "@overall": "Overall",
+    "@unoverall": "Excluded in the Overall",
+    "@untagged": "Untagged",
+    "@new": "New tag"
 }

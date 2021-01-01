@@ -4,5 +4,9 @@
     "elapsed time": "経過時間",
     "count": "回数",
     "Done": "完了",
-    "days": "日"
+    "days": "日",
+    "@overall": "総合",
+    "@unoverall": "総合から除外",
+    "@untagged": "タグ付けされてない",
+    "@new": "新しいタグ"
 }

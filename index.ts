@@ -1,10 +1,16 @@
 import { minamo } from "./minamo.js";
 import localeEn from "./lang.en.json";
 import localeJa from "./lang.ja.json";
-export const timeout = <T>(wait: number = 0, action?: () => T) =>
-    undefined === action ?
-        new Promise(resolve => setTimeout(resolve, wait)):
-        new Promise(resolve => setTimeout(() => resolve(action()), wait));
+// export const timeout = <T>(wait: number = 0, action?: () => T) =>
+//     undefined === action ?
+//         new Promise(resolve => setTimeout(resolve, wait)):
+//         new Promise(resolve => setTimeout(() => resolve(action()), wait));
+export const makeObject = <T>(items: { key: string, value: T}[]) =>
+{
+    const result: { [key: string]: T} = { };
+    items.forEach(i => result[i.key] = i.value);
+    return result;
+};
 export const simpleComparer = <T>(a: T, b: T) =>
 {
     if (a < b)
@@ -61,7 +67,9 @@ export module localeParallel
         );
         return result;
     };
-    export const average = (ticks: number[]) => ticks.reduce((a, b) => a +b, 0) /ticks.length;
+    export const average = (ticks: number[]) => ticks.length <= 0 ?
+        null:
+        ticks.reduce((a, b) => a +b, 0) /ticks.length;
     export const standardDeviation = (ticks: number[], average: number = Calculate.average(ticks)) =>
         Math.sqrt(Calculate.average(ticks.map(i => (i -average) ** 2)));
     export const standardScore = (average: number, standardDeviation: number, target: number) =>
@@ -113,19 +121,39 @@ export module CyclicToDo
         }
         export module Tag
         {
+            export const isSystemTag = (tag: string) => tag.startsWith("@") && ! tag.startsWith("@@");
             export const makeKey = (pass: string) => `pass:(${pass}).tag.list`;
             export const get = (pass: string) =>
                 getStorage(pass).getOrNull<string[]>(makeKey(pass)) ?? [];
             export const set = (pass: string, list: string[]) =>
-                getStorage(pass).set(makeKey(pass), list);
+                getStorage(pass).set(makeKey(pass), list.filter(i => ! isSystemTag(i))); // システムタグは万が一にも登録させない
             export const add = (pass: string, tag: string) => set(pass, get(pass).concat([ tag ]).filter(uniqueFilter));
             export const remove = (pass: string, tag: string) => set(pass, get(pass).filter(i => tag !== i));
         }
         export module TagMember
         {
             export const makeKey = (pass: string, tag: string) => `pass:(${pass}).tag:(${tag})`;
-            export const get = (pass: string, tag: string) =>
+            export const getRaw = (pass: string, tag: string) =>
                 getStorage(pass).getOrNull<string[]>(makeKey(pass, tag)) ?? [];
+            export const get = (pass: string, tag: string): string[] =>
+            {
+                switch(tag)
+                {
+                case "@overall":
+                    {
+                        const unoverall = getRaw(pass, "@unoverall");
+                        return getRaw(pass, "@overall").filter(i => unoverall.indexOf(i) < 0);
+                    }
+                case "@untagged":
+                    {
+                        const tagged = Tag.get(pass).map(tag => get(pass, tag)).reduce((a, b) => a.concat(b), []);
+                        return getRaw(pass, "@overall").filter(i => tagged.indexOf(i) < 0);
+                    }
+                case "@unoverall":
+                default:
+                    return getRaw(pass, tag);
+                }
+            };
             export const set = (pass: string, tag: string, list: string[]) =>
                 getStorage(pass).set(makeKey(pass, tag), list);
             export const add = (pass: string, tag: string, todo: string) => set(pass, tag, get(pass, tag).concat([ todo ]).filter(uniqueFilter));
@@ -207,6 +235,19 @@ export module CyclicToDo
                         timePart;
             }
         };
+        export const tagMap = (tag: string) =>
+        {
+            switch(tag)
+            {
+            case "@overall":
+            case "@unoverall":
+            case "@untagged":
+            case "@new":
+                return locale.map(tag);
+            default:
+                return tag.replace(/^@@/, "@");
+            }
+        };
         export const getLastTick = (pass: string, task: string) => Storage.History.get(pass, task)[0] ?? 0;
         export const getDoneTicks = (pass: string, key: string = `pass:(${pass}).last.done.ticks`) =>
             minamo.localStorage.set
@@ -220,7 +261,34 @@ export module CyclicToDo
             );
         export const done = async (pass: string, task: string) =>
             Storage.History.add(pass, task, getDoneTicks(pass));
-        export const todoSorter = (entry: ToDoTagEntry) => (a: ToDoEntry, b: ToDoEntry) =>
+        export const todoSortWight = (item: ToDoEntry, listAverage: number | null) =>
+        {
+            if (null === item.elapsed || null === listAverage)
+            {
+                return 1.0 -(1.0 / Calculate.phi);
+            }
+            else
+            {
+                const average = ((item.smartAverage ?? listAverage) +(item.standardDeviation ?? 0) *2.0);
+                const restTime = average -item.elapsed;
+                const restProgress = restTime /average;
+                if (0 <= restTime)
+                {
+                    return (restTime /listAverage) * Math.pow(restProgress, 0.9);
+                }
+                else
+                {
+                    return 1.0 -(item.decayedProgress ?? (1.0 / (1.0 +Math.log2(1.0 -restProgress))));
+                }
+            }
+        };
+        export const todoSorter =
+        (
+            entry: ToDoTagEntry,
+            list: ToDoEntry[],
+            listAverage: number | null = Calculate.average(list.map(i => i.smartAverage).filter(i => null !== i))
+        ) =>
+        (a: ToDoEntry, b: ToDoEntry) =>
         {
             if (1 < a.count)
             {
@@ -239,37 +307,21 @@ export module CyclicToDo
                         }
                     }
                 }
-                const a_progress = a.decayedProgress;
-                let b_progress = 1.0 -(1.0 / Calculate.phi);
-                if (null !== b.decayedProgress)
-                {
-                    b_progress = b.decayedProgress;
-                }
-                else
-                if (null !== b.elapsed)
-                {
-                    // 比較対象の予想間隔を借りて decayedProgress を雑に計算。比較対象によって高低が変動する為、プログラム的にはソートアルゴリズム上かなりよろしくないが、挙動としてはこれでいい感じになる。
-                    const interval = a.smartAverage;
-                    b_progress = b.elapsed /interval;
-                    const overrate = (b.elapsed -interval) / interval;
-                    if (0.0 < overrate)
-                    {
-                        b_progress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
-                    }
-                }
-                if (a_progress < b_progress)
-                {
-                    return 1;
-                }
-                if (b_progress < a_progress)
+                const a_wight = todoSortWight(a, listAverage);
+                const b_wight = todoSortWight(b, listAverage);
+                if (a_wight < b_wight)
                 {
                     return -1;
+                }
+                if (b_wight < a_wight)
+                {
+                    return 1;
                 }
             }
             else
             if (1 < b.count)
             {
-                return -todoSorter(entry)(b, a);
+                return -todoSorter(entry, list, listAverage)(b, a);
             }
             if (1 === a.count && b.count)
             {
@@ -389,7 +441,7 @@ export module CyclicToDo
                     }
                 }
             );
-            const defaultTodo = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoSorter(entry))[0].todo;
+            const defaultTodo = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoSorter(entry, list))[0]?.todo;
             list.forEach(item => item.isDefault = defaultTodo === item.todo);
         };
     }
@@ -476,6 +528,18 @@ export module CyclicToDo
             });
             return button;
         };
+        export const menuItem = (children: minamo.dom.Source, onclick: (event: MouseEvent | TouchEvent) => unknown, className?: string) =>
+        ({
+            tag: "button",
+            className,
+            children,
+            eventListener:
+            {
+                "mousedown": onclick,
+                "click": onclick,
+                "touchstart": onclick,
+            },
+        });
         export const information = (item: ToDoEntry) =>
         ({
             tag: "div",
@@ -630,18 +694,15 @@ export module CyclicToDo
                                         tag: "button",
                                         children: "最後の完了を取り消す",
                                     },
-                                    {
-                                        tag: "button",
-                                        children: "名前を編集",
-                                        eventListener:
+                                    menuItem
+                                    (
+                                        "名前を編集",
+                                        async () =>
                                         {
-                                            "mousedown": async () =>
-                                            {
-                                                await timeout(100);
-                                                await prompt("ToDo の名前を入力してください", item.todo);
-                                            }
-                                        },
-                                    },
+                                            await minamo.core.timeout(500);
+                                            await prompt("ToDo の名前を入力してください", item.todo);
+                                        }
+                                    ),
                                 ]),
                             ],
                         },
@@ -650,25 +711,30 @@ export module CyclicToDo
                 information(item),
             ],
         });
-        export const DropDownLabel = (options: { list: string[], value: string, onChange?: (value: string) => unknown, className?: string}) =>
+        export const dropDownLabel = (options: { list: string[] | { [value:string]:string }, value: string, onChange?: (value: string) => unknown, className?: string}) =>
         {
             const dropdown = minamo.dom.make(HTMLSelectElement)
             ({
                 className: options.className,
-                children: options.list.map(i => ({ tag: "option", value:i, children: i, selected: options.value === i ? true: undefined, })),
+                children: Array.isArray(options.list) ?
+                    options.list.map(i => ({ tag: "option", value:i, children: i, selected: options.value === i ? true: undefined, })):
+                    Object.keys(options.list).map(i => ({ tag: "option", value:i, children: options.list[i] ?? i, selected: options.value === i ? true: undefined, })),
                 onchange: () =>
                 {
                     if (labelSoan.innerText !== dropdown.value)
                     {
-                        labelSoan.innerText = dropdown.value;
+                        labelSoan.innerText =Array.isArray(options.list) ?
+                            dropdown.value:
+                            (options.list[dropdown.value] ?? dropdown.value);
                         options.onChange?.(dropdown.value);
                     }
                 },
-                value: options.value,
             });
             const labelSoan = minamo.dom.make(HTMLSpanElement)
             ({
-                children: options.value,
+                children: Array.isArray(options.list) ?
+                    options.value:
+                    (options.list[options.value] ?? options.value),
             });
             const result =
             {
@@ -693,7 +759,37 @@ export module CyclicToDo
                     "h1",
                     [
                         await applicationIcon(),
-                        DropDownLabel({ list: Storage.Tag.get(entry.pass), value: entry.tag, }),
+                        dropDownLabel
+                        ({
+                            list: makeObject
+                            (
+                                ["@overall"].concat(Storage.Tag.get(entry.pass)).concat(["@unoverall", "@untagged", "@new"])
+                                .map(i => ({ key:i, value: Domain.tagMap(i), }))
+                            ),
+                            value: entry.tag,
+                            onChange: async (tag: string) =>
+                            {
+                                switch(tag)
+                                {
+                                case "@new":
+                                    {
+                                        const newTag = await prompt("タグの名前を入力してください", "");
+                                        if (null === newTag)
+                                        {
+                                            await minamo.core.timeout(500);
+                                            await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                        }
+                                        else
+                                        {
+
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    await updateTodoScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
+                                }
+                            },
+                        }),
                         await menuButton
                         ([
                             {
@@ -704,34 +800,28 @@ export module CyclicToDo
                                     console.log("リストを更新");
                                 }
                             },
-                            {
-                                tag: "button",
-                                children: "名前を編集",
-                                eventListener:
+                            menuItem
+                            (
+                                "名前を編集",
+                                async () =>
                                 {
-                                    "mousedown": async () =>
-                                    {
-                                        await timeout(100);
-                                        await prompt("リストの名前を入力してください", entry.tag);
-                                    }
-                                },
-                    },
+                                    await minamo.core.timeout(500);
+                                    await prompt("リストの名前を入力してください", entry.tag);
+                                }
+                            ),
                             {
                                 tag: "button",
                                 children: "リストを編集",
                             },
-                            {
-                                tag: "button",
-                                children: "ToDoを追加",
-                                eventListener:
+                            menuItem
+                            (
+                                "ToDoを追加",
+                                async () =>
                                 {
-                                    "mousedown": async () =>
-                                    {
-                                        await timeout(100);
-                                        await prompt("ToDo の名前を入力してください");
-                                    }
-                                },
-                            },
+                                    await minamo.core.timeout(500);
+                                    await prompt("ToDo の名前を入力してください");
+                                }
+                            ),
                             {
                                 tag: "button",
                                 children: "リストをシェア",
@@ -795,7 +885,7 @@ export module CyclicToDo
         let updateTodoScreenTimer = undefined;
         export const updateTodoScreen = async (entry: ToDoTagEntry) =>
         {
-            document.title = `${entry.tag} ${applicationTitle}`;
+            document.title = `${Domain.tagMap(entry.tag)} ${applicationTitle}`;
             if (undefined !== updateTodoScreenTimer)
             {
                 clearInterval(updateTodoScreenTimer);
@@ -803,7 +893,7 @@ export module CyclicToDo
             const histories = Domain.getRecentlyHistories(entry);
             const list = Domain.getToDoEntries(entry, histories);
             Domain.updateProgress(entry, list);
-            list.sort(Domain.todoSorter(entry));
+            list.sort(Domain.todoSorter(entry, list));
             console.log({histories, list}); // これは消さない！！！
             showWindow(await todoScreen(entry, list));
             resizeFlexList();
