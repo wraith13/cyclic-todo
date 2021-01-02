@@ -915,6 +915,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             var Tag;
             (function (Tag) {
                 Tag.isSystemTag = function (tag) { return tag.startsWith("@") && !tag.startsWith("@@"); };
+                Tag.encode = function (tag) { return tag.replace(/^@/, "@@"); };
+                Tag.decode = function (tag) { return tag.replace(/^@@/, "@"); };
                 Tag.makeKey = function (pass) { return "pass:(" + pass + ").tag.list"; };
                 Tag.get = function (pass) { var _a; return (_a = Storage.getStorage(pass).getOrNull(Tag.makeKey(pass))) !== null && _a !== void 0 ? _a : []; };
                 Tag.set = function (pass, list) {
@@ -1030,7 +1032,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     case "@new":
                         return locale.map(tag);
                     default:
-                        return tag.replace(/^@@/, "@");
+                        return Storage.Tag.decode(tag);
                 }
             };
             Domain.getLastTick = function (pass, task) { var _a; return (_a = Storage.History.get(pass, task)[0]) !== null && _a !== void 0 ? _a : 0; };
@@ -1042,34 +1044,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Domain.done = function (pass, task) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                 return [2 /*return*/, Storage.History.add(pass, task, Domain.getDoneTicks(pass))];
             }); }); };
-            Domain.todoSortWight = function (item, listAverage) {
-                var _a, _b, _c;
-                var stagnation = Math.pow(1.0 / Calculate.phi, 0.5);
-                if (null === item.elapsed || null === listAverage) {
-                    return stagnation;
-                }
-                else {
-                    var average = (((_a = item.smartAverage) !== null && _a !== void 0 ? _a : listAverage) + ((_b = item.standardDeviation) !== null && _b !== void 0 ? _b : 0) * 2.0);
-                    var restTime = average - item.elapsed;
-                    var restProgress = restTime / average;
-                    if (0 <= restTime) {
-                        if (stagnation < restProgress) {
-                            return restProgress;
-                        }
-                        else {
-                            return Math.min((restTime / listAverage) * Math.pow(restProgress, 0.9), stagnation);
-                        }
-                    }
-                    else {
-                        return 1.0 - ((_c = item.decayedProgress) !== null && _c !== void 0 ? _c : (1.0 / (1.0 + Math.log2(1.0 - restProgress))));
-                    }
-                }
-            };
-            Domain.todoSorter = function (entry, list, listAverage) {
-                if (listAverage === void 0) { listAverage = Calculate.average(list.map(function (i) { return i.smartAverage; }).filter(function (i) { return null !== i; })); }
+            Domain.todoSorter = function (entry) {
                 return function (a, b) {
-                    if (1 < a.count) {
-                        if (null !== a.smartAverage && null !== b.smartAverage) {
+                    var _a, _b;
+                    if (null !== a.progress && null !== b.progress) {
+                        if (Math.abs(a.elapsed - b.elapsed) <= 12 * 60) {
                             var rate = Math.min(a.count, b.count) < 5 ? 1.5 : 1.2;
                             if (a.smartAverage < b.smartAverage * rate && b.smartAverage < a.smartAverage * rate) {
                                 if (a.elapsed < b.elapsed) {
@@ -1080,19 +1059,42 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 }
                             }
                         }
-                        var a_wight = Domain.todoSortWight(a, listAverage);
-                        var b_wight = Domain.todoSortWight(b, listAverage);
-                        if (a_wight < b_wight) {
+                        if (a.progress * Calculate.phi <= 1.0 || b.progress * Calculate.phi <= 1.0) {
+                            if (a.progress < b.progress) {
+                                return 1;
+                            }
+                            if (b.progress < a.progress) {
+                                return -1;
+                            }
+                        }
+                        var a_restTime = (a.smartAverage + ((_a = a.standardDeviation) !== null && _a !== void 0 ? _a : 0) * 2.0) - a.elapsed;
+                        var b_restTime = (b.smartAverage + ((_b = b.standardDeviation) !== null && _b !== void 0 ? _b : 0) * 2.0) - b.elapsed;
+                        if (a_restTime < b_restTime) {
                             return -1;
                         }
-                        if (b_wight < a_wight) {
+                        if (b_restTime < a_restTime) {
                             return 1;
                         }
                     }
-                    else if (1 < b.count) {
-                        return -Domain.todoSorter(entry, list, listAverage)(b, a);
+                    if (null === a.progress && null !== b.progress) {
+                        return 1;
                     }
-                    if (1 === a.count && b.count) {
+                    if (null !== a.progress && null === b.progress) {
+                        return -1;
+                    }
+                    if (1 < a.count && 1 < b.count) {
+                        if (null === a.progress && null === b.progress) {
+                            if (null !== a.elapsed && null !== b.elapsed) {
+                                if (a.elapsed < b.elapsed) {
+                                    return -1;
+                                }
+                                if (b.elapsed < a.elapsed) {
+                                    return 1;
+                                }
+                            }
+                        }
+                    }
+                    if (1 === a.count && 1 === b.count) {
                         if (a.elapsed < b.elapsed) {
                             return 1;
                         }
@@ -1101,28 +1103,26 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         }
                     }
                     if (a.count < b.count) {
-                        return -1;
+                        return 1;
                     }
                     if (b.count < a.count) {
-                        return 1;
+                        return -1;
                     }
                     var aTodoIndex = entry.todo.indexOf(a.todo);
                     var bTodoIndex = entry.todo.indexOf(a.todo);
-                    if (aTodoIndex < 0 && bTodoIndex < 0) {
-                        if (a.todo < b.todo) {
-                            return 1;
-                        }
-                        if (b.todo < a.todo) {
-                            return -1;
-                        }
-                    }
-                    else {
+                    if (0 <= aTodoIndex && 0 <= bTodoIndex) {
                         if (aTodoIndex < bTodoIndex) {
                             return 1;
                         }
                         if (bTodoIndex < aTodoIndex) {
                             return -1;
                         }
+                    }
+                    if (a.todo < b.todo) {
+                        return 1;
+                    }
+                    if (b.todo < a.todo) {
+                        return -1;
                     }
                     return 0;
                 };
@@ -1183,7 +1183,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         }
                     }
                 });
-                var defaultTodo = (_a = JSON.parse(JSON.stringify(list)).sort(Domain.todoSorter(entry, list))[0]) === null || _a === void 0 ? void 0 : _a.todo;
+                var defaultTodo = (_a = JSON.parse(JSON.stringify(list)).sort(Domain.todoSorter(entry))[0]) === null || _a === void 0 ? void 0 : _a.todo;
                 list.forEach(function (item) { return item.isDefault = defaultTodo === item.todo; });
             };
         })(Domain = CyclicToDo.Domain || (CyclicToDo.Domain = {}));
@@ -1504,7 +1504,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         .map(function (i) { return ({ key: i, value: Domain.tagMap(i), }); })),
                                     value: entry.tag,
                                     onChange: function (tag) { return __awaiter(_this, void 0, void 0, function () {
-                                        var _a, newTag;
+                                        var _a, newTag, tag_2;
                                         return __generator(this, function (_b) {
                                             switch (_b.label) {
                                                 case 0:
@@ -1512,24 +1512,34 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     switch (_a) {
                                                         case "@new": return [3 /*break*/, 1];
                                                     }
-                                                    return [3 /*break*/, 6];
-                                                case 1: return [4 /*yield*/, Render.prompt("タグの名前を入力してください", "")];
+                                                    return [3 /*break*/, 9];
+                                                case 1: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
                                                 case 2:
-                                                    newTag = _b.sent();
-                                                    if (!(null === newTag)) return [3 /*break*/, 5];
-                                                    return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
-                                                case 3:
                                                     _b.sent();
-                                                    return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                    return [4 /*yield*/, Render.prompt("タグの名前を入力してください", "")];
+                                                case 3:
+                                                    newTag = _b.sent();
+                                                    if (!(null === newTag)) return [3 /*break*/, 6];
+                                                    return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
                                                 case 4:
                                                     _b.sent();
-                                                    return [3 /*break*/, 5];
-                                                case 5: return [3 /*break*/, 8];
-                                                case 6: return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: tag, todo: Storage.TagMember.get(entry.pass, tag) })];
+                                                    return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                case 5:
+                                                    _b.sent();
+                                                    return [3 /*break*/, 8];
+                                                case 6:
+                                                    tag_2 = Storage.Tag.encode(newTag.trim());
+                                                    Storage.Tag.add(entry.pass, tag_2);
+                                                    return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: tag_2, todo: Storage.TagMember.get(entry.pass, tag_2) })];
                                                 case 7:
                                                     _b.sent();
                                                     _b.label = 8;
-                                                case 8: return [2 /*return*/];
+                                                case 8: return [3 /*break*/, 11];
+                                                case 9: return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: tag, todo: Storage.TagMember.get(entry.pass, tag) })];
+                                                case 10:
+                                                    _b.sent();
+                                                    _b.label = 11;
+                                                case 11: return [2 /*return*/];
                                             }
                                         });
                                     }); },
@@ -1564,6 +1574,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         children: "リストを編集",
                                     },
                                     Render.menuItem("ToDoを追加", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        var newTodo;
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
@@ -1571,8 +1582,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     _a.sent();
                                                     return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
                                                 case 2:
+                                                    newTodo = _a.sent();
+                                                    if (!(null !== newTodo)) return [3 /*break*/, 4];
+                                                    Storage.TagMember.remove(entry.pass, "@deleted", newTodo);
+                                                    Storage.TagMember.add(entry.pass, "@overall", newTodo);
+                                                    Storage.TagMember.add(entry.pass, entry.tag, newTodo);
+                                                    return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                case 3:
                                                     _a.sent();
-                                                    return [2 /*return*/];
+                                                    _a.label = 4;
+                                                case 4: return [2 /*return*/];
                                             }
                                         });
                                     }); }),
@@ -1614,7 +1633,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             histories = Domain.getRecentlyHistories(entry);
                             list = Domain.getToDoEntries(entry, histories);
                             Domain.updateProgress(entry, list);
-                            list.sort(Domain.todoSorter(entry, list));
+                            list.sort(Domain.todoSorter(entry));
                             console.log({ histories: histories, list: list }); // これは消さない！！！
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.todoScreen(entry, list)];
@@ -1819,8 +1838,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     else {
                         var height = window.innerHeight - list.offsetTop;
                         var itemHeight = list.childNodes[0].offsetHeight;
-                        var colums = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, height / itemHeight)));
-                        var row = Math.max(Math.ceil(length / colums), Math.min(Math.floor(height / itemHeight)));
+                        var columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
+                        var row = Math.max(Math.ceil(length / columns), Math.floor(height / itemHeight));
+                        console.log({ "window.innerHeight": window.innerHeight, "list.offsetTop": list.offsetTop, height: height, itemHeight: itemHeight, columns: columns, row: row });
                         list.style.height = row * (itemHeight - 1) + "px";
                     }
                 });

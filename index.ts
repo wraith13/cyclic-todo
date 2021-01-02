@@ -122,6 +122,8 @@ export module CyclicToDo
         export module Tag
         {
             export const isSystemTag = (tag: string) => tag.startsWith("@") && ! tag.startsWith("@@");
+            export const encode = (tag: string) => tag.replace(/^@/, "@@");
+            export const decode = (tag: string) => tag.replace(/^@@/, "@");
             export const makeKey = (pass: string) => `pass:(${pass}).tag.list`;
             export const get = (pass: string) =>
                 getStorage(pass).getOrNull<string[]>(makeKey(pass)) ?? [];
@@ -245,7 +247,7 @@ export module CyclicToDo
             case "@new":
                 return locale.map(tag);
             default:
-                return tag.replace(/^@@/, "@");
+                return Storage.Tag.decode(tag);
             }
         };
         export const getLastTick = (pass: string, task: string) => Storage.History.get(pass, task)[0] ?? 0;
@@ -261,46 +263,12 @@ export module CyclicToDo
             );
         export const done = async (pass: string, task: string) =>
             Storage.History.add(pass, task, getDoneTicks(pass));
-        export const todoSortWight = (item: ToDoEntry, listAverage: number | null) =>
-        {
-            const stagnation = Math.pow(1.0 / Calculate.phi, 0.5);
-            if (null === item.elapsed || null === listAverage)
-            {
-                return stagnation;
-            }
-            else
-            {
-                const average = ((item.smartAverage ?? listAverage) +(item.standardDeviation ?? 0) *2.0);
-                const restTime = average -item.elapsed;
-                const restProgress = restTime /average;
-                if (0 <= restTime)
-                {
-                    if (stagnation < restProgress)
-                    {
-                        return restProgress;
-                    }
-                    else
-                    {
-                        return Math.min((restTime /listAverage) * Math.pow(restProgress, 0.9), stagnation);
-                    }
-                }
-                else
-                {
-                    return 1.0 -(item.decayedProgress ?? (1.0 / (1.0 +Math.log2(1.0 -restProgress))));
-                }
-            }
-        };
-        export const todoSorter =
-        (
-            entry: ToDoTagEntry,
-            list: ToDoEntry[],
-            listAverage: number | null = Calculate.average(list.map(i => i.smartAverage).filter(i => null !== i))
-        ) =>
+        export const todoSorter = (entry: ToDoTagEntry) =>
         (a: ToDoEntry, b: ToDoEntry) =>
         {
-            if (1 < a.count)
+            if (null !== a.progress && null !== b.progress)
             {
-                if (null !== a.smartAverage && null !== b.smartAverage)
+                if (Math.abs(a.elapsed -b.elapsed) <= 12 *60)
                 {
                     const rate = Math.min(a.count, b.count) < 5 ? 1.5: 1.2;
                     if (a.smartAverage < b.smartAverage *rate && b.smartAverage < a.smartAverage *rate)
@@ -315,23 +283,54 @@ export module CyclicToDo
                         }
                     }
                 }
-                const a_wight = todoSortWight(a, listAverage);
-                const b_wight = todoSortWight(b, listAverage);
-                if (a_wight < b_wight)
+                if (a.progress * Calculate.phi <= 1.0 || b.progress * Calculate.phi <= 1.0)
+                {
+                    if (a.progress < b.progress)
+                    {
+                        return 1;
+                    }
+                    if (b.progress < a.progress)
+                    {
+                        return -1;
+                    }
+                }
+                const a_restTime = (a.smartAverage +(a.standardDeviation ?? 0) *2.0) -a.elapsed;
+                const b_restTime = (b.smartAverage +(b.standardDeviation ?? 0) *2.0) -b.elapsed;
+                if (a_restTime < b_restTime)
                 {
                     return -1;
                 }
-                if (b_wight < a_wight)
+                if (b_restTime < a_restTime)
                 {
                     return 1;
                 }
             }
-            else
-            if (1 < b.count)
+            if (null === a.progress && null !== b.progress)
             {
-                return -todoSorter(entry, list, listAverage)(b, a);
+                return 1;
             }
-            if (1 === a.count && b.count)
+            if (null !== a.progress && null === b.progress)
+            {
+                return -1;
+            }
+            if (1 < a.count && 1 < b.count)
+            {
+                if (null === a.progress && null === b.progress)
+                {
+                    if (null !== a.elapsed && null !== b.elapsed)
+                    {
+                        if (a.elapsed < b.elapsed)
+                        {
+                            return -1;
+                        }
+                        if (b.elapsed < a.elapsed)
+                        {
+                            return 1;
+                        }
+                    }
+                }
+            }
+            if (1 === a.count && 1 === b.count)
             {
                 if (a.elapsed < b.elapsed)
                 {
@@ -344,26 +343,15 @@ export module CyclicToDo
             }
             if (a.count < b.count)
             {
-                return -1;
+                return 1;
             }
             if (b.count < a.count)
             {
-                return 1;
+                return -1;
             }
             const aTodoIndex = entry.todo.indexOf(a.todo);
             const bTodoIndex = entry.todo.indexOf(a.todo);
-            if (aTodoIndex < 0 && bTodoIndex < 0)
-            {
-                if (a.todo < b.todo)
-                {
-                    return 1;
-                }
-                if (b.todo < a.todo)
-                {
-                    return -1;
-                }
-            }
-            else
+            if (0 <= aTodoIndex && 0 <= bTodoIndex)
             {
                 if (aTodoIndex < bTodoIndex)
                 {
@@ -373,6 +361,14 @@ export module CyclicToDo
                 {
                     return -1;
                 }
+            }
+            if (a.todo < b.todo)
+            {
+                return 1;
+            }
+            if (b.todo < a.todo)
+            {
+                return -1;
             }
             return 0;
         };
@@ -449,7 +445,7 @@ export module CyclicToDo
                     }
                 }
             );
-            const defaultTodo = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoSorter(entry, list))[0]?.todo;
+            const defaultTodo = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoSorter(entry))[0]?.todo;
             list.forEach(item => item.isDefault = defaultTodo === item.todo);
         };
     }
@@ -781,6 +777,7 @@ export module CyclicToDo
                                 {
                                 case "@new":
                                     {
+                                        await minamo.core.timeout(500);
                                         const newTag = await prompt("タグの名前を入力してください", "");
                                         if (null === newTag)
                                         {
@@ -789,7 +786,9 @@ export module CyclicToDo
                                         }
                                         else
                                         {
-
+                                            const tag = Storage.Tag.encode(newTag.trim());
+                                            Storage.Tag.add(entry.pass, tag);
+                                            await updateTodoScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
                                         }
                                     }
                                     break;
@@ -827,7 +826,14 @@ export module CyclicToDo
                                 async () =>
                                 {
                                     await minamo.core.timeout(500);
-                                    await prompt("ToDo の名前を入力してください");
+                                    const newTodo = await prompt("ToDo の名前を入力してください");
+                                    if (null !== newTodo)
+                                    {
+                                        Storage.TagMember.remove(entry.pass, "@deleted", newTodo);
+                                        Storage.TagMember.add(entry.pass, "@overall", newTodo);
+                                        Storage.TagMember.add(entry.pass, entry.tag, newTodo);
+                                        await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                    }
                                 }
                             ),
                             {
@@ -901,7 +907,7 @@ export module CyclicToDo
             const histories = Domain.getRecentlyHistories(entry);
             const list = Domain.getToDoEntries(entry, histories);
             Domain.updateProgress(entry, list);
-            list.sort(Domain.todoSorter(entry, list));
+            list.sort(Domain.todoSorter(entry));
             console.log({histories, list}); // これは消さない！！！
             showWindow(await todoScreen(entry, list));
             resizeFlexList();
@@ -1105,8 +1111,9 @@ export module CyclicToDo
                     {
                         const height = window.innerHeight -list.offsetTop;
                         const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight;
-                        const colums = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, height / itemHeight)));
-                        const row = Math.max(Math.ceil(length /colums), Math.min(Math.floor(height / itemHeight)));
+                        const columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
+                        const row = Math.max(Math.ceil(length /columns), Math.floor(height / itemHeight));
+console.log({"window.innerHeight": window.innerHeight, "list.offsetTop": list.offsetTop, height, itemHeight, columns, row});
                         list.style.height = `${row *(itemHeight -1)}px`;
                     }
                 }
