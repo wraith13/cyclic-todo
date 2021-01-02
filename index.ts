@@ -263,9 +263,10 @@ export module CyclicToDo
             Storage.History.add(pass, task, getDoneTicks(pass));
         export const todoSortWight = (item: ToDoEntry, listAverage: number | null) =>
         {
+            const stagnation = Math.pow(1.0 / Calculate.phi, 0.5);
             if (null === item.elapsed || null === listAverage)
             {
-                return 1.0 -(1.0 / Calculate.phi);
+                return stagnation;
             }
             else
             {
@@ -274,7 +275,14 @@ export module CyclicToDo
                 const restProgress = restTime /average;
                 if (0 <= restTime)
                 {
-                    return (restTime /listAverage) * Math.pow(restProgress, 0.9);
+                    if (stagnation < restProgress)
+                    {
+                        return restProgress;
+                    }
+                    else
+                    {
+                        return Math.min((restTime /listAverage) * Math.pow(restProgress, 0.9), stagnation);
+                    }
                 }
                 else
                 {

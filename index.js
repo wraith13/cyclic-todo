@@ -1044,15 +1044,21 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             }); }); };
             Domain.todoSortWight = function (item, listAverage) {
                 var _a, _b, _c;
+                var stagnation = Math.pow(1.0 / Calculate.phi, 0.5);
                 if (null === item.elapsed || null === listAverage) {
-                    return 1.0 - (1.0 / Calculate.phi);
+                    return stagnation;
                 }
                 else {
                     var average = (((_a = item.smartAverage) !== null && _a !== void 0 ? _a : listAverage) + ((_b = item.standardDeviation) !== null && _b !== void 0 ? _b : 0) * 2.0);
                     var restTime = average - item.elapsed;
                     var restProgress = restTime / average;
                     if (0 <= restTime) {
-                        return (restTime / listAverage) * Math.pow(restProgress, 0.9);
+                        if (stagnation < restProgress) {
+                            return restProgress;
+                        }
+                        else {
+                            return Math.min((restTime / listAverage) * Math.pow(restProgress, 0.9), stagnation);
+                        }
                     }
                     else {
                         return 1.0 - ((_c = item.decayedProgress) !== null && _c !== void 0 ? _c : (1.0 / (1.0 + Math.log2(1.0 - restProgress))));
