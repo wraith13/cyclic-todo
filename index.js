@@ -1044,7 +1044,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Domain.done = function (pass, task) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                 return [2 /*return*/, Storage.History.add(pass, task, Domain.getDoneTicks(pass))];
             }); }); };
-            Domain.todoSorter = function (entry) {
+            Domain.todoComparer1 = function (entry) {
                 return function (a, b) {
                     var _a, _b;
                     if (null !== a.progress && null !== b.progress) {
@@ -1059,7 +1059,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 }
                             }
                         }
-                        if (a.progress * Calculate.phi <= 1.0 || b.progress * Calculate.phi <= 1.0) {
+                        if (Math.min(a.progress, b.progress) <= 1.0 / 3.0) {
                             if (a.progress < b.progress) {
                                 return 1;
                             }
@@ -1127,6 +1127,35 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     return 0;
                 };
             };
+            Domain.todoComparer2 = function (list, todoList) {
+                if (todoList === void 0) { todoList = list.map(function (i) { return i.todo; }); }
+                return function (a, b) {
+                    if (null !== a.progress && null !== b.progress) {
+                        if (Math.abs(a.elapsed - b.elapsed) <= 12 * 60) {
+                            var rate = Math.min(a.count, b.count) < 5 ? 1.5 : 1.2;
+                            if (a.smartAverage < b.smartAverage * rate && b.smartAverage < a.smartAverage * rate) {
+                                if (a.elapsed < b.elapsed) {
+                                    return 1;
+                                }
+                                if (b.elapsed < a.elapsed) {
+                                    return -1;
+                                }
+                            }
+                        }
+                    }
+                    var aTodoIndex = todoList.indexOf(a.todo);
+                    var bTodoIndex = todoList.indexOf(a.todo);
+                    if (0 <= aTodoIndex && 0 <= bTodoIndex) {
+                        if (aTodoIndex < bTodoIndex) {
+                            return 1;
+                        }
+                        if (bTodoIndex < aTodoIndex) {
+                            return -1;
+                        }
+                    }
+                    return 0;
+                };
+            };
             Domain.getRecentlyHistories = function (entry) {
                 var histories = {};
                 entry.todo.forEach(function (todo) {
@@ -1183,7 +1212,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         }
                     }
                 });
-                var defaultTodo = (_a = JSON.parse(JSON.stringify(list)).sort(Domain.todoSorter(entry))[0]) === null || _a === void 0 ? void 0 : _a.todo;
+                var sorted = JSON.parse(JSON.stringify(list)).sort(Domain.todoComparer1(entry));
+                var defaultTodo = (_a = sorted.sort(Domain.todoComparer2(sorted))[0]) === null || _a === void 0 ? void 0 : _a.todo;
                 list.forEach(function (item) { return item.isDefault = defaultTodo === item.todo; });
             };
         })(Domain = CyclicToDo.Domain || (CyclicToDo.Domain = {}));
@@ -1501,7 +1531,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 _g.sent(),
                                 Render.dropDownLabel({
                                     list: exports.makeObject(["@overall"].concat(Storage.Tag.get(entry.pass)).concat(["@unoverall", "@untagged", "@new"])
-                                        .map(function (i) { return ({ key: i, value: Domain.tagMap(i), }); })),
+                                        .map(function (i) { return ({ key: i, value: Domain.tagMap(i) + " (" + Storage.TagMember.get(entry.pass, i).length + ")", }); })),
                                     value: entry.tag,
                                     onChange: function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                         var _a, newTag, tag_2;
@@ -1633,7 +1663,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             histories = Domain.getRecentlyHistories(entry);
                             list = Domain.getToDoEntries(entry, histories);
                             Domain.updateProgress(entry, list);
-                            list.sort(Domain.todoSorter(entry));
+                            list.sort(Domain.todoComparer1(entry));
+                            list.sort(Domain.todoComparer2(list));
                             console.log({ histories: histories, list: list }); // これは消さない！！！
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.todoScreen(entry, list)];
@@ -1840,7 +1871,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         var itemHeight = list.childNodes[0].offsetHeight;
                         var columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         var row = Math.max(Math.ceil(length / columns), Math.floor(height / itemHeight));
-                        console.log({ "window.innerHeight": window.innerHeight, "list.offsetTop": list.offsetTop, height: height, itemHeight: itemHeight, columns: columns, row: row });
                         list.style.height = row * (itemHeight - 1) + "px";
                     }
                 });

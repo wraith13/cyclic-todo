@@ -263,7 +263,7 @@ export module CyclicToDo
             );
         export const done = async (pass: string, task: string) =>
             Storage.History.add(pass, task, getDoneTicks(pass));
-        export const todoSorter = (entry: ToDoTagEntry) =>
+        export const todoComparer1 = (entry: ToDoTagEntry) =>
         (a: ToDoEntry, b: ToDoEntry) =>
         {
             if (null !== a.progress && null !== b.progress)
@@ -283,7 +283,7 @@ export module CyclicToDo
                         }
                     }
                 }
-                if (a.progress * Calculate.phi <= 1.0 || b.progress * Calculate.phi <= 1.0)
+                if (Math.min(a.progress, b.progress) <= 1.0 / 3.0)
                 {
                     if (a.progress < b.progress)
                     {
@@ -372,6 +372,42 @@ export module CyclicToDo
             }
             return 0;
         };
+        export const todoComparer2 = (list: ToDoEntry[], todoList: string[] = list.map(i => i.todo)) =>
+        (a: ToDoEntry, b: ToDoEntry) =>
+        {
+            if (null !== a.progress && null !== b.progress)
+            {
+                if (Math.abs(a.elapsed -b.elapsed) <= 12 *60)
+                {
+                    const rate = Math.min(a.count, b.count) < 5 ? 1.5: 1.2;
+                    if (a.smartAverage < b.smartAverage *rate && b.smartAverage < a.smartAverage *rate)
+                    {
+                        if (a.elapsed < b.elapsed)
+                        {
+                            return 1;
+                        }
+                        if (b.elapsed < a.elapsed)
+                        {
+                            return -1;
+                        }
+                    }
+                }
+            }
+            const aTodoIndex = todoList.indexOf(a.todo);
+            const bTodoIndex = todoList.indexOf(a.todo);
+            if (0 <= aTodoIndex && 0 <= bTodoIndex)
+            {
+                if (aTodoIndex < bTodoIndex)
+                {
+                    return 1;
+                }
+                if (bTodoIndex < aTodoIndex)
+                {
+                    return -1;
+                }
+            }
+            return 0;
+        };
         export const getRecentlyHistories = (entry: ToDoTagEntry) =>
         {
             const histories: { [todo: string]: { recentries: number[], previous: null | number, count: number, } } = { };
@@ -445,7 +481,8 @@ export module CyclicToDo
                     }
                 }
             );
-            const defaultTodo = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoSorter(entry))[0]?.todo;
+            const sorted = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoComparer1(entry));
+            const defaultTodo = sorted.sort(todoComparer2(sorted))[0]?.todo;
             list.forEach(item => item.isDefault = defaultTodo === item.todo);
         };
     }
@@ -768,7 +805,7 @@ export module CyclicToDo
                             list: makeObject
                             (
                                 ["@overall"].concat(Storage.Tag.get(entry.pass)).concat(["@unoverall", "@untagged", "@new"])
-                                .map(i => ({ key:i, value: Domain.tagMap(i), }))
+                                .map(i => ({ key:i, value: `${Domain.tagMap(i)} (${Storage.TagMember.get(entry.pass, i).length})`, }))
                             ),
                             value: entry.tag,
                             onChange: async (tag: string) =>
@@ -907,7 +944,8 @@ export module CyclicToDo
             const histories = Domain.getRecentlyHistories(entry);
             const list = Domain.getToDoEntries(entry, histories);
             Domain.updateProgress(entry, list);
-            list.sort(Domain.todoSorter(entry));
+            list.sort(Domain.todoComparer1(entry));
+            list.sort(Domain.todoComparer2(list));
             console.log({histories, list}); // これは消さない！！！
             showWindow(await todoScreen(entry, list));
             resizeFlexList();
@@ -1113,7 +1151,6 @@ export module CyclicToDo
                         const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight;
                         const columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         const row = Math.max(Math.ceil(length /columns), Math.floor(height / itemHeight));
-console.log({"window.innerHeight": window.innerHeight, "list.offsetTop": list.offsetTop, height, itemHeight, columns, row});
                         list.style.height = `${row *(itemHeight -1)}px`;
                     }
                 }
