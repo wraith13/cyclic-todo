@@ -111,6 +111,7 @@ export module CyclicToDo
         export const generatePass = (seed: number = new Date().getTime()) => ("" +((seed *13738217) ^ ((seed %387960371999) >> 5 ))).slice(-8);
         export const isSessionPass = (pass: string) => pass.startsWith(sessionPassPrefix);
         export const getStorage = (pass: string) => isSessionPass(pass) ? minamo.sessionStorage: minamo.localStorage;
+        export let lastUpdate = 0;
         export module Pass
         {
             export const key = `pass.list`;
@@ -933,61 +934,49 @@ export module CyclicToDo
                 // }
             ]
         });
-        let updateTodoScreenTimer = undefined;
         export const updateTodoScreen = async (entry: ToDoTagEntry) =>
         {
             document.title = `${Domain.tagMap(entry.tag)} ${applicationTitle}`;
-            if (undefined !== updateTodoScreenTimer)
-            {
-                clearInterval(updateTodoScreenTimer);
-            }
             const histories = Domain.getRecentlyHistories(entry);
             const list = Domain.getToDoEntries(entry, histories);
             Domain.updateProgress(entry, list);
             list.sort(Domain.todoComparer1(entry));
             list.sort(Domain.todoComparer2(list));
             console.log({histories, list}); // これは消さない！！！
-            showWindow(await todoScreen(entry, list));
-            resizeFlexList();
-            updateTodoScreenTimer = setInterval
-            (
-                async () =>
+            let lastUpdate = Storage.lastUpdate;
+            const updateWindow = async () =>
+            {
+                Domain.updateProgress(entry, list);
+                if (lastUpdate === Storage.lastUpdate)
                 {
-                    if (0 < document.getElementsByClassName("todo-screen").length)
-                    {
-                        Domain.updateProgress(entry, list);
+                    (
+                        Array.from
                         (
-                            Array.from
                             (
-                                (
-                                    document
-                                        .getElementsByClassName("todo-screen")[0]
-                                        .getElementsByClassName("todo-list")[0] as HTMLDivElement
-                                ).childNodes
-                            ) as HTMLDivElement[]
-                        ).forEach
-                        (
-                            (dom, index) =>
-                            {
-                                const item = list[index];
-                                const button = dom.getElementsByClassName("task-operator")[0].getElementsByClassName("main-button")[0] as HTMLButtonElement;
-                                button.classList.toggle("default-button", item.isDefault);
-                                const information = dom.getElementsByClassName("task-information")[0] as HTMLDivElement;
-                                information.setAttribute("style", Render.progressStyle(item));
-                                (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeStringFromTick(item.elapsed);
-                            }
-                        );
-                        // showWindow(await todoScreen(entry, list));
-                        // resizeFlexList();
-                    }
-                    else
-                    {
-                        clearInterval(updateTodoScreenTimer);
-                        updateTodoScreenTimer = undefined;
-                    }
-                },
-                Domain.TimeAccuracy
-            );
+                                document
+                                    .getElementsByClassName("todo-screen")[0]
+                                    .getElementsByClassName("todo-list")[0] as HTMLDivElement
+                            ).childNodes
+                        ) as HTMLDivElement[]
+                    ).forEach
+                    (
+                        (dom, index) =>
+                        {
+                            const item = list[index];
+                            const button = dom.getElementsByClassName("task-operator")[0].getElementsByClassName("main-button")[0] as HTMLButtonElement;
+                            button.classList.toggle("default-button", item.isDefault);
+                            const information = dom.getElementsByClassName("task-information")[0] as HTMLDivElement;
+                            information.setAttribute("style", Render.progressStyle(item));
+                            (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeStringFromTick(item.elapsed);
+                        }
+                    );
+                }
+                else
+                {
+                    updateTodoScreen(entry);
+                }
+            };
+            showWindow(await todoScreen(entry, list), updateWindow);
         };
         export const editScreen = (tag: string, pass: string, todo: string[]) =>
         {
@@ -1067,7 +1056,7 @@ export module CyclicToDo
             return result;
         };
         export const updateEditScreen = (tag: string, pass: string, todo: string[]) =>
-            showWindow(editScreen(tag, pass, todo));
+            showWindow(editScreen(tag, pass, todo), () => { });
         const loadSvg = async (path : string) : Promise<SVGElement> => new Promise<SVGElement>
         (
             (resolve, reject) =>
@@ -1125,13 +1114,28 @@ export module CyclicToDo
         export const updateWelcomeScreen = async (pass: string) =>
         {
             document.title = applicationTitle;
-            showWindow(await welcomeScreen(pass));
+            showWindow(await welcomeScreen(pass), () => { });
         };
-        export const showWindow = async (screen: any) => minamo.dom.replaceChildren
-        (
-            document.getElementById("body"),
-            screen
-        );
+        export let updateWindow: () => unknown;
+        let updateWindowTimer = undefined;
+        export const showWindow = async (screen: any, updateWindow: () => unknown) =>
+        {
+            Render.updateWindow = updateWindow;
+            if (undefined === updateWindowTimer)
+            {
+                setInterval
+                (
+                    () => Render.updateWindow?.(),
+                    Domain.TimeAccuracy
+                );
+            }
+            minamo.dom.replaceChildren
+            (
+                document.getElementById("body"),
+                screen
+            );
+            resizeFlexList();
+        };
         export const resizeFlexList = () =>
         {
             let minColumns = 1 +Math.floor(window.innerWidth / 780);
@@ -1170,6 +1174,23 @@ export module CyclicToDo
                     }
                 },
                 100,
+            );
+        };
+        let onUpdateStorageCount = 0;
+        export const onUpdateStorage = () =>
+        {
+            const lastUpdate = Storage.lastUpdate = new Date().getTime();
+            const onUpdateStorageCountCopy = onUpdateStorageCount = onUpdateStorageCount +1;
+            setTimeout
+            (
+                () =>
+                {
+                    if (lastUpdate === Storage.lastUpdate && onUpdateStorageCountCopy === onUpdateStorageCount)
+                    {
+                        updateWindow?.();
+                    }
+                },
+                50,
             );
         };
     }
@@ -1222,6 +1243,7 @@ export module CyclicToDo
         const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
         const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
         window.addEventListener('resize', Render.onWindowResize);
+        window.addEventListener('storage', Render.onUpdateStorage);
         if ((todo?.length ?? 0) <= 0)
         {
             switch(hash)
