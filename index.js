@@ -1239,7 +1239,18 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return ({
                     tag: "span",
                     className: "label",
-                    children: locale.parallel(label),
+                    children: [
+                        {
+                            tag: "span",
+                            className: "locale-parallel",
+                            children: locale.parallel(label),
+                        },
+                        {
+                            tag: "span",
+                            className: "locale-map",
+                            children: locale.map(label),
+                        }
+                    ],
                 });
             };
             Render.prompt = function (message, _default) {
@@ -1425,8 +1436,18 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             _e = [{
                                     tag: "button",
                                     className: item.isDefault ? "default-button main-button" : "main-button",
-                                    children: locale.parallel("Done"),
-                                    //children: locale.map("Done"),
+                                    children: [
+                                        {
+                                            tag: "span",
+                                            className: "locale-parallel",
+                                            children: locale.parallel("Done"),
+                                        },
+                                        {
+                                            tag: "span",
+                                            className: "locale-map",
+                                            children: locale.map("Done"),
+                                        }
+                                    ],
                                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                         var fxxkingTypeScriptCompiler;
                                         return __generator(this, function (_a) {
@@ -1862,6 +1883,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Render.resizeFlexList = function () {
                 var minColumns = 1 + Math.floor(window.innerWidth / 780);
                 var maxColumns = Math.max(minColumns, Math.floor(window.innerWidth / 390));
+                var minItemWidth = window.innerWidth;
                 Array.from(document.getElementsByClassName("column-flex-list")).forEach(function (list) {
                     var length = list.childNodes.length;
                     if (length <= 1 || maxColumns <= 1) {
@@ -1874,7 +1896,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         var row = Math.max(Math.ceil(length / columns), Math.floor(height / itemHeight));
                         list.style.height = row * (itemHeight - 1) + "px";
                     }
+                    var itemWidth = list.childNodes[0].offsetWidth;
+                    if (itemWidth < minItemWidth) {
+                        minItemWidth = itemWidth;
+                    }
                 });
+                var FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
+                var border = FontRemUnit * 23;
+                minItemWidth -= 18; // padding & borer
+                document.body.classList.toggle("locale-parallel-on", border < minItemWidth);
+                document.body.classList.toggle("locale-parallel-off", minItemWidth <= border);
             };
             var onWindowResizeTimestamp = 0;
             Render.onWindowResize = function () {

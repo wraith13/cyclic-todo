@@ -510,8 +510,19 @@ export module CyclicToDo
         ({
             tag: "span",
             className: "label",
-            children: locale.parallel(label),
-            //children: locale.map(label),
+            children:
+            [
+                {
+                    tag: "span",
+                    className: "locale-parallel",
+                    children: locale.parallel(label),
+                },
+                {
+                    tag: "span",
+                    className: "locale-map",
+                    children: locale.map(label),
+                }
+            ],
         });
         export const prompt = (message?: string, _default?: string): Promise<string | null> =>
             new Promise(resolve => resolve(window.prompt(message, _default)));
@@ -708,8 +719,19 @@ export module CyclicToDo
                                 {
                                     tag: "button",
                                     className: item.isDefault ? "default-button main-button": "main-button",
-                                    children: locale.parallel("Done"),
-                                    //children: locale.map("Done"),
+                                    children:
+                                    [
+                                        {
+                                            tag: "span",
+                                            className: "locale-parallel",
+                                            children: locale.parallel("Done"),
+                                        },
+                                        {
+                                            tag: "span",
+                                            className: "locale-map",
+                                            children: locale.map("Done"),
+                                        }
+                                    ],
                                     onclick: async () =>
                                     {
                                         //if (isSessionPass(pass))
@@ -1140,6 +1162,7 @@ export module CyclicToDo
         {
             let minColumns = 1 +Math.floor(window.innerWidth / 780);
             let maxColumns = Math.max(minColumns, Math.floor(window.innerWidth / 390));
+            let minItemWidth = window.innerWidth;
             (Array.from(document.getElementsByClassName("column-flex-list")) as HTMLDivElement[]).forEach
             (
                 list =>
@@ -1157,8 +1180,18 @@ export module CyclicToDo
                         const row = Math.max(Math.ceil(length /columns), Math.floor(height / itemHeight));
                         list.style.height = `${row *(itemHeight -1)}px`;
                     }
+                    const itemWidth = (list.childNodes[0] as HTMLElement).offsetWidth;
+                    if (itemWidth < minItemWidth)
+                    {
+                        minItemWidth = itemWidth;
+                    }
                 }
             );
+            const FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
+            const border = FontRemUnit *23;
+            minItemWidth -= 18; // padding & borer
+            document.body.classList.toggle("locale-parallel-on", border < minItemWidth);
+            document.body.classList.toggle("locale-parallel-off", minItemWidth <= border);
         };
         let onWindowResizeTimestamp = 0;
         export const onWindowResize = () =>

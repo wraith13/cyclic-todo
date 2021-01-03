@@ -9,6 +9,12 @@ body {
   color: #000022;
   background-color: #FFFFFF;
 }
+body.locale-parallel-on .locale-map {
+  display: none;
+}
+body.locale-parallel-off .locale-parallel {
+  display: none;
+}
 .icon svg {
   fill: #000022;
 }
@@ -28,6 +34,8 @@ h1 {
   background-color: #228844;
   font-size: 1.2rem;
   font-weight: normal;
+  max-width: 100vw;
+  overflow-x: hidden;
   position: relative;
   display: flex;
   flex-direction: row;
