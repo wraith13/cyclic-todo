@@ -97,13 +97,13 @@ export module CyclicToDo
         todo: string;
         isDefault: boolean;
         progress: null | number;
-        decayedProgress: null | number;
+        //decayedProgress: null | number;
         previous: null | number;
         elapsed: null | number;
-        average: null | number;
-        standardDeviation: null | number;
+        overallAverage: null | number;
+        RecentlyStandardDeviation: null | number;
+        RecentlySmartAverage: null | number;
         count: number;
-        smartAverage: null | number;
     }
     export module Storage
     {
@@ -272,7 +272,7 @@ export module CyclicToDo
                 if (Math.abs(a.elapsed -b.elapsed) <= 12 *60)
                 {
                     const rate = Math.min(a.count, b.count) < 5 ? 1.5: 1.2;
-                    if (a.smartAverage < b.smartAverage *rate && b.smartAverage < a.smartAverage *rate)
+                    if (a.RecentlySmartAverage < b.RecentlySmartAverage *rate && b.RecentlySmartAverage < a.RecentlySmartAverage *rate)
                     {
                         if (a.elapsed < b.elapsed)
                         {
@@ -295,8 +295,8 @@ export module CyclicToDo
                         return -1;
                     }
                 }
-                const a_restTime = (a.smartAverage +(a.standardDeviation ?? 0) *2.0) -a.elapsed;
-                const b_restTime = (b.smartAverage +(b.standardDeviation ?? 0) *2.0) -b.elapsed;
+                const a_restTime = (a.RecentlySmartAverage +(a.RecentlyStandardDeviation ?? 0) *2.0) -a.elapsed;
+                const b_restTime = (b.RecentlySmartAverage +(b.RecentlyStandardDeviation ?? 0) *2.0) -b.elapsed;
                 if (a_restTime < b_restTime)
                 {
                     return -1;
@@ -381,7 +381,7 @@ export module CyclicToDo
                 if (Math.abs(a.elapsed -b.elapsed) <= 12 *60)
                 {
                     const rate = Math.min(a.count, b.count) < 5 ? 1.5: 1.2;
-                    if (a.smartAverage < b.smartAverage *rate && b.smartAverage < a.smartAverage *rate)
+                    if (a.RecentlySmartAverage < b.RecentlySmartAverage *rate && b.RecentlySmartAverage < a.RecentlySmartAverage *rate)
                     {
                         if (a.elapsed < b.elapsed)
                         {
@@ -433,25 +433,26 @@ export module CyclicToDo
             todo =>
             {
                 const history = histories[todo];
+                const calcAverage = (ticks: number[], maxLength: number = ticks.length, length = Math.min(maxLength, ticks.length)) =>
+                    ((ticks[0] -ticks[length -1]) /(length -1));
                 const result: ToDoEntry =
                 {
                     todo,
                     isDefault: false,
                     progress: null,
-                    decayedProgress: null,
+                    //decayedProgress: null,
                     previous: history.previous,
                     elapsed: null,
-                    average: history.recentries.length <= 1 ? null: (history.recentries[0] -history.recentries[history.recentries.length -1]) / (history.recentries.length -1),
-                    standardDeviation: history.recentries.length <= 2 ?
+                    overallAverage: history.recentries.length <= 1 ? null: calcAverage(history.recentries),
+                    RecentlyStandardDeviation: history.recentries.length <= 1 ?
                         null:
-                        Calculate.standardDeviation(Calculate.intervals(history.recentries)),
+                        history.recentries.length <= 2 ?
+                            calcAverage(history.recentries) *0.05: // この値を標準偏差として代用
+                            Calculate.standardDeviation(Calculate.intervals(history.recentries)),
                     count: history.count,
-                    smartAverage: history.recentries.length <= 1 ?
+                    RecentlySmartAverage: history.recentries.length <= 1 ?
                         null:
-                        (
-                            ((history.recentries[0] -history.recentries[Math.min(5, history.recentries.length) -1]) /(Math.min(5, history.recentries.length) -1))
-                            +((history.recentries[0] -history.recentries[Math.min(25, history.recentries.length) -1]) /(Math.min(25, history.recentries.length) -1))
-                        ) /2,
+                        calcAverage(history.recentries, 25),
                 };
                 return result;
             }
@@ -466,17 +467,17 @@ export module CyclicToDo
                     {
                         // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
                         item.elapsed = Math.max(0.0, now -item.previous);
-                        if (null !== item.smartAverage)
+                        if (null !== item.RecentlySmartAverage)
                         {
-                            item.progress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
-                            item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
-                            const overrate = (item.elapsed -(item.smartAverage +(item.standardDeviation ?? 0) *3.0)) / item.smartAverage;
+                            item.progress = item.elapsed /(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *2.0);
+                            //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
+                            const overrate = (item.elapsed -(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *3.0)) / item.RecentlySmartAverage;
                             if (0.0 < overrate)
                             {
-                                item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
+                                //item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
                                 item.progress = null;
-                                item.smartAverage = null;
-                                item.standardDeviation = null;
+                                item.RecentlySmartAverage = null;
+                                item.RecentlyStandardDeviation = null;
                             }
                         }
                     }
@@ -625,9 +626,9 @@ export module CyclicToDo
                         {
                             tag: "span",
                             className: "value",
-                            children: null === item.standardDeviation ?
-                                Domain.timeStringFromTick(item.smartAverage):
-                                `${Domain.timeStringFromTick(Math.max(item.smartAverage /10, item.smartAverage -(item.standardDeviation *2.0)))} 〜 ${Domain.timeStringFromTick(item.smartAverage +(item.standardDeviation *2.0))}`,
+                            children: null === item.RecentlyStandardDeviation ?
+                                Domain.timeStringFromTick(item.RecentlySmartAverage):
+                                `${Domain.timeStringFromTick(Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *2.0)))} 〜 ${Domain.timeStringFromTick(item.RecentlySmartAverage +(item.RecentlyStandardDeviation *2.0))}`,
                         }
                     ],
                 },
@@ -864,22 +865,19 @@ export module CyclicToDo
                                 children: "リストを更新",
                                 onclick: async () =>
                                 {
-                                    console.log("リストを更新");
+                                    await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                 }
                             },
-                            menuItem
-                            (
-                                "名前を編集",
-                                async () =>
-                                {
-                                    await minamo.core.timeout(500);
-                                    await prompt("リストの名前を入力してください", entry.tag);
-                                }
-                            ),
-                            {
-                                tag: "button",
-                                children: "リストを編集",
-                            },
+                            Storage.Tag.isSystemTag(entry.tag) ? []:
+                                menuItem
+                                (
+                                    "名前を編集",
+                                    async () =>
+                                    {
+                                        await minamo.core.timeout(500);
+                                        await prompt("タグの名前を入力してください", entry.tag);
+                                    }
+                                ),
                             menuItem
                             (
                                 "ToDoを追加",

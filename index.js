@@ -1051,7 +1051,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     if (null !== a.progress && null !== b.progress) {
                         if (Math.abs(a.elapsed - b.elapsed) <= 12 * 60) {
                             var rate = Math.min(a.count, b.count) < 5 ? 1.5 : 1.2;
-                            if (a.smartAverage < b.smartAverage * rate && b.smartAverage < a.smartAverage * rate) {
+                            if (a.RecentlySmartAverage < b.RecentlySmartAverage * rate && b.RecentlySmartAverage < a.RecentlySmartAverage * rate) {
                                 if (a.elapsed < b.elapsed) {
                                     return 1;
                                 }
@@ -1068,8 +1068,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 return -1;
                             }
                         }
-                        var a_restTime = (a.smartAverage + ((_a = a.standardDeviation) !== null && _a !== void 0 ? _a : 0) * 2.0) - a.elapsed;
-                        var b_restTime = (b.smartAverage + ((_b = b.standardDeviation) !== null && _b !== void 0 ? _b : 0) * 2.0) - b.elapsed;
+                        var a_restTime = (a.RecentlySmartAverage + ((_a = a.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * 2.0) - a.elapsed;
+                        var b_restTime = (b.RecentlySmartAverage + ((_b = b.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * 2.0) - b.elapsed;
                         if (a_restTime < b_restTime) {
                             return -1;
                         }
@@ -1134,7 +1134,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     if (null !== a.progress && null !== b.progress) {
                         if (Math.abs(a.elapsed - b.elapsed) <= 12 * 60) {
                             var rate = Math.min(a.count, b.count) < 5 ? 1.5 : 1.2;
-                            if (a.smartAverage < b.smartAverage * rate && b.smartAverage < a.smartAverage * rate) {
+                            if (a.RecentlySmartAverage < b.RecentlySmartAverage * rate && b.RecentlySmartAverage < a.RecentlySmartAverage * rate) {
                                 if (a.elapsed < b.elapsed) {
                                     return 1;
                                 }
@@ -1173,22 +1173,28 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             };
             Domain.getToDoEntries = function (entry, histories) { return entry.todo.map(function (todo) {
                 var history = histories[todo];
+                var calcAverage = function (ticks, maxLength, length) {
+                    if (maxLength === void 0) { maxLength = ticks.length; }
+                    if (length === void 0) { length = Math.min(maxLength, ticks.length); }
+                    return ((ticks[0] - ticks[length - 1]) / (length - 1));
+                };
                 var result = {
                     todo: todo,
                     isDefault: false,
                     progress: null,
-                    decayedProgress: null,
+                    //decayedProgress: null,
                     previous: history.previous,
                     elapsed: null,
-                    average: history.recentries.length <= 1 ? null : (history.recentries[0] - history.recentries[history.recentries.length - 1]) / (history.recentries.length - 1),
-                    standardDeviation: history.recentries.length <= 2 ?
+                    overallAverage: history.recentries.length <= 1 ? null : calcAverage(history.recentries),
+                    RecentlyStandardDeviation: history.recentries.length <= 1 ?
                         null :
-                        Calculate.standardDeviation(Calculate.intervals(history.recentries)),
+                        history.recentries.length <= 2 ?
+                            calcAverage(history.recentries) * 0.05 : // この値を標準偏差として代用
+                            Calculate.standardDeviation(Calculate.intervals(history.recentries)),
                     count: history.count,
-                    smartAverage: history.recentries.length <= 1 ?
+                    RecentlySmartAverage: history.recentries.length <= 1 ?
                         null :
-                        (((history.recentries[0] - history.recentries[Math.min(5, history.recentries.length) - 1]) / (Math.min(5, history.recentries.length) - 1))
-                            + ((history.recentries[0] - history.recentries[Math.min(25, history.recentries.length) - 1]) / (Math.min(25, history.recentries.length) - 1))) / 2,
+                        calcAverage(history.recentries, 25),
                 };
                 return result;
             }); };
@@ -1196,19 +1202,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 var _a;
                 if (now === void 0) { now = Domain.getTicks(); }
                 list.forEach(function (item) {
-                    var _a, _b, _c;
+                    var _a, _b;
                     if (0 < item.count) {
                         // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
                         item.elapsed = Math.max(0.0, now - item.previous);
-                        if (null !== item.smartAverage) {
-                            item.progress = item.elapsed / (item.smartAverage + ((_a = item.standardDeviation) !== null && _a !== void 0 ? _a : 0) * 2.0);
-                            item.decayedProgress = item.elapsed / (item.smartAverage + ((_b = item.standardDeviation) !== null && _b !== void 0 ? _b : 0) * 2.0);
-                            var overrate = (item.elapsed - (item.smartAverage + ((_c = item.standardDeviation) !== null && _c !== void 0 ? _c : 0) * 3.0)) / item.smartAverage;
+                        if (null !== item.RecentlySmartAverage) {
+                            item.progress = item.elapsed / (item.RecentlySmartAverage + ((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * 2.0);
+                            //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
+                            var overrate = (item.elapsed - (item.RecentlySmartAverage + ((_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * 3.0)) / item.RecentlySmartAverage;
                             if (0.0 < overrate) {
-                                item.decayedProgress = 1.0 / (1.0 + Math.log2(1.0 + overrate));
+                                //item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
                                 item.progress = null;
-                                item.smartAverage = null;
-                                item.standardDeviation = null;
+                                item.RecentlySmartAverage = null;
+                                item.RecentlyStandardDeviation = null;
                             }
                         }
                     }
@@ -1341,9 +1347,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 {
                                     tag: "span",
                                     className: "value",
-                                    children: null === item.standardDeviation ?
-                                        Domain.timeStringFromTick(item.smartAverage) :
-                                        Domain.timeStringFromTick(Math.max(item.smartAverage / 10, item.smartAverage - (item.standardDeviation * 2.0))) + " \u301C " + Domain.timeStringFromTick(item.smartAverage + (item.standardDeviation * 2.0)),
+                                    children: null === item.RecentlyStandardDeviation ?
+                                        Domain.timeStringFromTick(item.RecentlySmartAverage) :
+                                        Domain.timeStringFromTick(Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (item.RecentlyStandardDeviation * 2.0))) + " \u301C " + Domain.timeStringFromTick(item.RecentlySmartAverage + (item.RecentlyStandardDeviation * 2.0)),
                                 }
                             ],
                         },
@@ -1603,28 +1609,29 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         children: "リストを更新",
                                         onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
-                                                console.log("リストを更新");
-                                                return [2 /*return*/];
+                                                switch (_a.label) {
+                                                    case 0: return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                    case 1:
+                                                        _a.sent();
+                                                        return [2 /*return*/];
+                                                }
                                             });
                                         }); }
                                     },
-                                    Render.menuItem("名前を編集", function () { return __awaiter(_this, void 0, void 0, function () {
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
-                                                case 1:
-                                                    _a.sent();
-                                                    return [4 /*yield*/, Render.prompt("リストの名前を入力してください", entry.tag)];
-                                                case 2:
-                                                    _a.sent();
-                                                    return [2 /*return*/];
-                                            }
-                                        });
-                                    }); }),
-                                    {
-                                        tag: "button",
-                                        children: "リストを編集",
-                                    },
+                                    Storage.Tag.isSystemTag(entry.tag) ? [] :
+                                        Render.menuItem("名前を編集", function () { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                    case 1:
+                                                        _a.sent();
+                                                        return [4 /*yield*/, Render.prompt("タグの名前を入力してください", entry.tag)];
+                                                    case 2:
+                                                        _a.sent();
+                                                        return [2 /*return*/];
+                                                }
+                                            });
+                                        }); }),
                                     Render.menuItem("ToDoを追加", function () { return __awaiter(_this, void 0, void 0, function () {
                                         var newTodo;
                                         return __generator(this, function (_a) {
