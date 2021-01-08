@@ -804,6 +804,7 @@ define("lang.en", [], {
     "@overall": "Overall",
     "@unoverall": "Excluded in the Overall",
     "@untagged": "Untagged",
+    "@deleted": "Recycle Bin",
     "@new": "New tag"
 });
 define("lang.ja", [], {
@@ -816,6 +817,7 @@ define("lang.ja", [], {
     "@overall": "総合",
     "@unoverall": "総合から除外",
     "@untagged": "タグ付けされてない",
+    "@deleted": "ごみ箱",
     "@new": "新しいタグ"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
@@ -1030,6 +1032,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     case "@overall":
                     case "@unoverall":
                     case "@untagged":
+                    case "@deleted":
                     case "@new":
                         return locale.map(tag);
                     default:
@@ -1558,7 +1561,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             _d = [
                                 _g.sent(),
                                 Render.dropDownLabel({
-                                    list: exports.makeObject(["@overall"].concat(Storage.Tag.get(entry.pass)).concat(["@unoverall", "@untagged", "@new"])
+                                    list: exports.makeObject(["@overall"].concat(Storage.Tag.get(entry.pass)).concat(["@unoverall", "@untagged", "@deleted", "@new"])
                                         .map(function (i) { return ({ key: i, value: Domain.tagMap(i) + " (" + Storage.TagMember.get(entry.pass, i).length + ")", }); })),
                                     value: entry.tag,
                                     onChange: function (tag) { return __awaiter(_this, void 0, void 0, function () {
@@ -1632,32 +1635,42 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 }
                                             });
                                         }); }),
-                                    Render.menuItem("ToDoを追加", function () { return __awaiter(_this, void 0, void 0, function () {
-                                        var newTodo;
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
-                                                case 1:
-                                                    _a.sent();
-                                                    return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
-                                                case 2:
-                                                    newTodo = _a.sent();
-                                                    if (!(null !== newTodo)) return [3 /*break*/, 4];
-                                                    Storage.TagMember.remove(entry.pass, "@deleted", newTodo);
-                                                    Storage.TagMember.add(entry.pass, "@overall", newTodo);
-                                                    Storage.TagMember.add(entry.pass, entry.tag, newTodo);
-                                                    return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
-                                                case 3:
-                                                    _a.sent();
-                                                    _a.label = 4;
-                                                case 4: return [2 /*return*/];
+                                    "@deleted" === entry.tag ?
+                                        [
+                                            Render.menuItem("完全に削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                return __generator(this, function (_a) {
+                                                    return [2 /*return*/];
+                                                });
+                                            }); }),
+                                        ] :
+                                        [
+                                            Render.menuItem("ToDoを追加", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                var newTodo;
+                                                return __generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                        case 1:
+                                                            _a.sent();
+                                                            return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
+                                                        case 2:
+                                                            newTodo = _a.sent();
+                                                            if (!(null !== newTodo)) return [3 /*break*/, 4];
+                                                            Storage.TagMember.remove(entry.pass, "@deleted", newTodo);
+                                                            Storage.TagMember.add(entry.pass, "@overall", newTodo);
+                                                            Storage.TagMember.add(entry.pass, entry.tag, newTodo);
+                                                            return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                        case 3:
+                                                            _a.sent();
+                                                            _a.label = 4;
+                                                        case 4: return [2 /*return*/];
+                                                    }
+                                                });
+                                            }); }),
+                                            {
+                                                tag: "button",
+                                                children: "リストをシェア",
                                             }
-                                        });
-                                    }); }),
-                                    {
-                                        tag: "button",
-                                        children: "リストをシェア",
-                                    }
+                                        ]
                                 ])];
                         case 2:
                             _e = [

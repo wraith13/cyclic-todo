@@ -245,6 +245,7 @@ export module CyclicToDo
             case "@overall":
             case "@unoverall":
             case "@untagged":
+            case "@deleted":
             case "@new":
                 return locale.map(tag);
             default:
@@ -828,7 +829,7 @@ export module CyclicToDo
                         ({
                             list: makeObject
                             (
-                                ["@overall"].concat(Storage.Tag.get(entry.pass)).concat(["@unoverall", "@untagged", "@new"])
+                                ["@overall"].concat(Storage.Tag.get(entry.pass)).concat(["@unoverall", "@untagged", "@deleted", "@new"])
                                 .map(i => ({ key:i, value: `${Domain.tagMap(i)} (${Storage.TagMember.get(entry.pass, i).length})`, }))
                             ),
                             value: entry.tag,
@@ -878,26 +879,38 @@ export module CyclicToDo
                                         await prompt("タグの名前を入力してください", entry.tag);
                                     }
                                 ),
-                            menuItem
-                            (
-                                "ToDoを追加",
-                                async () =>
-                                {
-                                    await minamo.core.timeout(500);
-                                    const newTodo = await prompt("ToDo の名前を入力してください");
-                                    if (null !== newTodo)
+                            "@deleted" === entry.tag ?
+                            [
+                                menuItem
+                                (
+                                    "完全に削除",
+                                    async () =>
                                     {
-                                        Storage.TagMember.remove(entry.pass, "@deleted", newTodo);
-                                        Storage.TagMember.add(entry.pass, "@overall", newTodo);
-                                        Storage.TagMember.add(entry.pass, entry.tag, newTodo);
-                                        await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                     }
+                                ),
+                            ]:
+                            [
+                                menuItem
+                                (
+                                    "ToDoを追加",
+                                    async () =>
+                                    {
+                                        await minamo.core.timeout(500);
+                                        const newTodo = await prompt("ToDo の名前を入力してください");
+                                        if (null !== newTodo)
+                                        {
+                                            Storage.TagMember.remove(entry.pass, "@deleted", newTodo);
+                                            Storage.TagMember.add(entry.pass, "@overall", newTodo);
+                                            Storage.TagMember.add(entry.pass, entry.tag, newTodo);
+                                            await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                        }
+                                    }
+                                ),
+                                {
+                                    tag: "button",
+                                    children: "リストをシェア",
                                 }
-                            ),
-                            {
-                                tag: "button",
-                                children: "リストをシェア",
-                            }
+                            ]
                         ]),
                     ]
                 ),

@@ -8,5 +8,6 @@
     "@overall": "総合",
     "@unoverall": "総合から除外",
     "@untagged": "タグ付けされてない",
+    "@deleted": "ごみ箱",
     "@new": "新しいタグ"
 }

@@ -8,5 +8,6 @@
     "@overall": "Overall",
     "@unoverall": "Excluded in the Overall",
     "@untagged": "Untagged",
+    "@deleted": "Recycle Bin",
     "@new": "New tag"
 }
