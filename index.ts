@@ -761,11 +761,11 @@ export module CyclicToDo
                                 ([
                                     {
                                         tag: "button",
-                                        children: "最後の完了を取り消す",
+                                        children: "🚫 最後の完了を取り消す",
                                     },
                                     menuItem
                                     (
-                                        "名前を編集",
+                                        "🚫 名前を編集",
                                         async () =>
                                         {
                                             await minamo.core.timeout(500);
@@ -887,18 +887,10 @@ export module CyclicToDo
                         }),
                         await menuButton
                         ([
-                            {
-                                tag: "button",
-                                children: "リストを更新",
-                                onclick: async () =>
-                                {
-                                    await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
-                                }
-                            },
                             Storage.Tag.isSystemTag(entry.tag) ? []:
                                 menuItem
                                 (
-                                    "名前を編集",
+                                    "🚫 名前を編集",
                                     async () =>
                                     {
                                         await minamo.core.timeout(500);
@@ -909,7 +901,7 @@ export module CyclicToDo
                             [
                                 menuItem
                                 (
-                                    "完全に削除",
+                                    "🚫 完全に削除",
                                     async () =>
                                     {
                                     }
@@ -934,7 +926,7 @@ export module CyclicToDo
                                 ),
                                 {
                                     tag: "button",
-                                    children: "リストをシェア",
+                                    children: "🚫 リストをシェア",
                                 }
                             ]
                         ]),
@@ -953,7 +945,7 @@ export module CyclicToDo
                         children:
                         {
                             tag: "button",
-                            className: "default-button main-button long-button",
+                            className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
                             children: "新しい ToDo",
                             onclick: async () =>
                             {
@@ -968,52 +960,6 @@ export module CyclicToDo
                             }
                         },
                     }
-                // {
-                //     tag: "div",
-                //     className: "row-flex-list",
-                //     children:
-                //     [
-                //         {
-                //             tag: "div",
-                //             className: "flex-item",
-                //             children:
-                //             {
-                //                 tag: "button",
-                //                 className: "long-button",
-                //                 children: "Undo",
-                //                 onclick: () =>
-                //                 {
-                //                 }
-                //             },
-                //         },
-                //         {
-                //             tag: "div",
-                //             className: "flex-item",
-                //             children:
-                //             {
-                //                 tag: "button",
-                //                 className: "long-button",
-                //                 children: "Add",
-                //                 onclick: () =>
-                //                 {
-                //                 }
-                //             },
-                //         },
-                //         {
-                //             tag: "div",
-                //             className: "flex-item",
-                //             children:
-                //             {
-                //                 tag: "button",
-                //                 className: "long-button",
-                //                 children: "Edit",
-                //                 onclick: () =>
-                //                 {
-                //                 }
-                //             },
-                //         },
-                //     ],
-                // }
             ]
         });
         export const updateTodoScreen = async (entry: ToDoTagEntry) =>
@@ -1060,85 +1006,6 @@ export module CyclicToDo
             };
             showWindow(await todoScreen(entry, list), updateWindow);
         };
-        export const editScreen = (tag: string, pass: string, todo: string[]) =>
-        {
-            const tagDiv = minamo.dom.make(HTMLInputElement)
-            ({
-                tag: "input",
-                className: "edit-tag-input",
-                value: tag,
-            });
-            const passDiv = minamo.dom.make(HTMLInputElement)
-            ({
-                tag: "input",
-                className: "edit-pass-input",
-                children: Storage.isSessionPass(pass) ? Storage.generatePass(): pass,
-            });
-            const todoDom = minamo.dom.make(HTMLTextAreaElement)
-            ({
-                tag: "textarea",
-                className: "edit-todo-input",
-                children: todo.join("\n"),
-            });
-            const result =
-            {
-                tag: "div",
-                className: "application-form",
-                children:
-                [
-                    {
-                        tag: "label",
-                        children:
-                        [
-                            {
-                                tag: "span",
-                                children: "channel",
-                            },
-                            tagDiv,
-                        ],
-                    },
-                    {
-                        tag: "label",
-                        children:
-                        [
-                            {
-                                tag: "span",
-                                children: "channel",
-                            },
-                            passDiv,
-                        ],
-                    },
-                    {
-                        tag: "label",
-                        children:
-                        [
-                            {
-                                tag: "span",
-                                children: "text",
-                            },
-                            todoDom,
-                        ],
-                    },
-                    {
-                        tag: "button",
-                        className: "default-button",
-                        children: "save",
-                        onclick: () =>
-                        {
-                            updateTodoScreen
-                            ({
-                                tag: tagDiv.value,
-                                pass: passDiv.value,
-                                todo: todoDom.value.split("\n").map(i => i.trim())
-                            });
-                        }
-                    },
-                ]
-            };
-            return result;
-        };
-        export const updateEditScreen = (tag: string, pass: string, todo: string[]) =>
-            showWindow(editScreen(tag, pass, todo), () => { });
         const loadSvg = async (path : string) : Promise<SVGElement> => new Promise<SVGElement>
         (
             (resolve, reject) =>
@@ -1187,7 +1054,7 @@ export module CyclicToDo
                     [
                         await applicationIcon(),
                         `${document.title}`,
-                        await menuButton("ポップアップメニュー"),
+                        await menuButton("🚫 ポップアップメニュー"),
                     ]
                 ),
                 {
@@ -1205,7 +1072,7 @@ export module CyclicToDo
                         ({
                             tag: "button",
                             className: "default-button main-button long-button",
-                            children: `ToDo リスト: ${pass}`,
+                            children: `ToDo リスト: ${pass.substr(0, 2)}****${pass.substr(-2)}`,
                             onclick: async () =>　await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
                         })
                     ).concat
@@ -1251,13 +1118,23 @@ export module CyclicToDo
         export const resizeFlexList = () =>
         {
             let minColumns = 1 +Math.floor(window.innerWidth / 780);
-            let maxColumns = Math.max(minColumns, Math.floor(window.innerWidth / 390));
+            let maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 390)));
             let minItemWidth = window.innerWidth;
             (Array.from(document.getElementsByClassName("column-flex-list")) as HTMLDivElement[]).forEach
             (
                 list =>
                 {
                     const length = list.childNodes.length;
+                    list.classList.forEach
+                    (
+                        i =>
+                        {
+                            if (/^max-column-\d+$/.test(i))
+                            {
+                                list.classList.remove(i);
+                            }
+                        }
+                    );
                     if (length <= 1 || maxColumns <= 1)
                     {
                         list.style.height = undefined;
@@ -1265,10 +1142,11 @@ export module CyclicToDo
                     else
                     {
                         const height = window.innerHeight -list.offsetTop;
-                        const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight;
+                        const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight -0.5;
                         const columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         const row = Math.max(Math.ceil(length /columns), Math.floor(height / itemHeight));
-                        list.style.height = `${row *(itemHeight -1)}px`;
+                        list.style.height = `${row *(itemHeight)}px`;
+                        list.classList.add(`max-column-${columns}`);
                     }
                     const itemWidth = (list.childNodes[0] as HTMLElement).offsetWidth;
                     if (itemWidth < minItemWidth)
@@ -1278,7 +1156,7 @@ export module CyclicToDo
                 }
             );
             const FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
-            const border = FontRemUnit *23;
+            const border = FontRemUnit *26;
             minItemWidth -= 18; // padding & borer
             document.body.classList.toggle("locale-parallel-on", border < minItemWidth);
             document.body.classList.toggle("locale-parallel-off", minItemWidth <= border);
@@ -1374,10 +1252,6 @@ export module CyclicToDo
             // case "import":
             //     dom.updateImportScreen(pass);
             //     break;
-            case "edit":
-                console.log("show edit screen");
-                Render.updateEditScreen(tag, pass, []);
-                break;
             default:
                 console.log("show welcome screen");
                 await Render.updateWelcomeScreen(pass);
@@ -1389,10 +1263,6 @@ export module CyclicToDo
             Domain.merge(pass, tag, todo, history);
             switch(hash)
             {
-            case "edit":
-                console.log("show edit screen");
-                Render.updateEditScreen(tag, pass, todo);
-                break;
             // case "history":
             //     dom.updateHistoryScreen(pass, getToDoHistory(pass, todo));
             //     break;

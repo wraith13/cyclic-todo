@@ -1485,9 +1485,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return [4 /*yield*/, Render.menuButton([
                                     {
                                         tag: "button",
-                                        children: "最後の完了を取り消す",
+                                        children: "🚫 最後の完了を取り消す",
                                     },
-                                    Render.menuItem("名前を編集", function () { return __awaiter(_this, void 0, void 0, function () {
+                                    Render.menuItem("🚫 名前を編集", function () { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
@@ -1640,22 +1640,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 })
                             ];
                             return [4 /*yield*/, Render.menuButton([
-                                    {
-                                        tag: "button",
-                                        children: "リストを更新",
-                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                            return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
-                                                    case 1:
-                                                        _a.sent();
-                                                        return [2 /*return*/];
-                                                }
-                                            });
-                                        }); }
-                                    },
                                     Storage.Tag.isSystemTag(entry.tag) ? [] :
-                                        Render.menuItem("名前を編集", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        Render.menuItem("🚫 名前を編集", function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
@@ -1670,7 +1656,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         }); }),
                                     "@deleted" === entry.tag ?
                                         [
-                                            Render.menuItem("完全に削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                            Render.menuItem("🚫 完全に削除", function () { return __awaiter(_this, void 0, void 0, function () {
                                                 return __generator(this, function (_a) {
                                                     return [2 /*return*/];
                                                 });
@@ -1701,7 +1687,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             }); }),
                                             {
                                                 tag: "button",
-                                                children: "リストをシェア",
+                                                children: "🚫 リストをシェア",
                                             }
                                         ]
                                 ])];
@@ -1726,7 +1712,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         className: "button-list",
                                         children: {
                                             tag: "button",
-                                            className: "default-button main-button long-button",
+                                            className: list.length <= 0 ? "default-button main-button long-button" : "main-button long-button",
                                             children: "新しい ToDo",
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                 var newTodo;
@@ -1749,52 +1735,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             }); }
                                         },
                                     }
-                                // {
-                                //     tag: "div",
-                                //     className: "row-flex-list",
-                                //     children:
-                                //     [
-                                //         {
-                                //             tag: "div",
-                                //             className: "flex-item",
-                                //             children:
-                                //             {
-                                //                 tag: "button",
-                                //                 className: "long-button",
-                                //                 children: "Undo",
-                                //                 onclick: () =>
-                                //                 {
-                                //                 }
-                                //             },
-                                //         },
-                                //         {
-                                //             tag: "div",
-                                //             className: "flex-item",
-                                //             children:
-                                //             {
-                                //                 tag: "button",
-                                //                 className: "long-button",
-                                //                 children: "Add",
-                                //                 onclick: () =>
-                                //                 {
-                                //                 }
-                                //             },
-                                //         },
-                                //         {
-                                //             tag: "div",
-                                //             className: "flex-item",
-                                //             children:
-                                //             {
-                                //                 tag: "button",
-                                //                 className: "long-button",
-                                //                 children: "Edit",
-                                //                 onclick: () =>
-                                //                 {
-                                //                 }
-                                //             },
-                                //         },
-                                //     ],
-                                // }
                             ]),
                                 _a)];
                     }
@@ -1843,75 +1783,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
-            Render.editScreen = function (tag, pass, todo) {
-                var tagDiv = minamo_js_1.minamo.dom.make(HTMLInputElement)({
-                    tag: "input",
-                    className: "edit-tag-input",
-                    value: tag,
-                });
-                var passDiv = minamo_js_1.minamo.dom.make(HTMLInputElement)({
-                    tag: "input",
-                    className: "edit-pass-input",
-                    children: Storage.isSessionPass(pass) ? Storage.generatePass() : pass,
-                });
-                var todoDom = minamo_js_1.minamo.dom.make(HTMLTextAreaElement)({
-                    tag: "textarea",
-                    className: "edit-todo-input",
-                    children: todo.join("\n"),
-                });
-                var result = {
-                    tag: "div",
-                    className: "application-form",
-                    children: [
-                        {
-                            tag: "label",
-                            children: [
-                                {
-                                    tag: "span",
-                                    children: "channel",
-                                },
-                                tagDiv,
-                            ],
-                        },
-                        {
-                            tag: "label",
-                            children: [
-                                {
-                                    tag: "span",
-                                    children: "channel",
-                                },
-                                passDiv,
-                            ],
-                        },
-                        {
-                            tag: "label",
-                            children: [
-                                {
-                                    tag: "span",
-                                    children: "text",
-                                },
-                                todoDom,
-                            ],
-                        },
-                        {
-                            tag: "button",
-                            className: "default-button",
-                            children: "save",
-                            onclick: function () {
-                                Render.updateTodoScreen({
-                                    tag: tagDiv.value,
-                                    pass: passDiv.value,
-                                    todo: todoDom.value.split("\n").map(function (i) { return i.trim(); })
-                                });
-                            }
-                        },
-                    ]
-                };
-                return result;
-            };
-            Render.updateEditScreen = function (tag, pass, todo) {
-                return Render.showWindow(Render.editScreen(tag, pass, todo), function () { });
-            };
             var loadSvg = function (path) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, new Promise(function (resolve, reject) {
@@ -1969,7 +1840,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 _f.sent(),
                                 "" + document.title
                             ];
-                            return [4 /*yield*/, Render.menuButton("ポップアップメニュー")];
+                            return [4 /*yield*/, Render.menuButton("🚫 ポップアップメニュー")];
                         case 2:
                             _e = [
                                 _b.apply(void 0, _c.concat([_d.concat([
@@ -1991,7 +1862,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         return ({
                                             tag: "button",
                                             className: "default-button main-button long-button",
-                                            children: "ToDo \u30EA\u30B9\u30C8: " + pass,
+                                            children: "ToDo \u30EA\u30B9\u30C8: " + pass.substr(0, 2) + "****" + pass.substr(-2),
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0: return [4 /*yield*/, Render.updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
@@ -2052,19 +1923,25 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             }); };
             Render.resizeFlexList = function () {
                 var minColumns = 1 + Math.floor(window.innerWidth / 780);
-                var maxColumns = Math.max(minColumns, Math.floor(window.innerWidth / 390));
+                var maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 390)));
                 var minItemWidth = window.innerWidth;
                 Array.from(document.getElementsByClassName("column-flex-list")).forEach(function (list) {
                     var length = list.childNodes.length;
+                    list.classList.forEach(function (i) {
+                        if (/^max-column-\d+$/.test(i)) {
+                            list.classList.remove(i);
+                        }
+                    });
                     if (length <= 1 || maxColumns <= 1) {
                         list.style.height = undefined;
                     }
                     else {
                         var height = window.innerHeight - list.offsetTop;
-                        var itemHeight = list.childNodes[0].offsetHeight;
+                        var itemHeight = list.childNodes[0].offsetHeight - 0.5;
                         var columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         var row = Math.max(Math.ceil(length / columns), Math.floor(height / itemHeight));
-                        list.style.height = row * (itemHeight - 1) + "px";
+                        list.style.height = row * (itemHeight) + "px";
+                        list.classList.add("max-column-" + columns);
                     }
                     var itemWidth = list.childNodes[0].offsetWidth;
                     if (itemWidth < minItemWidth) {
@@ -2072,7 +1949,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
                 var FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
-                var border = FontRemUnit * 23;
+                var border = FontRemUnit * 26;
                 minItemWidth -= 18; // padding & borer
                 document.body.classList.toggle("locale-parallel-on", border < minItemWidth);
                 document.body.classList.toggle("locale-parallel-off", minItemWidth <= border);
@@ -2146,30 +2023,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         history = JSON.parse((_e = urlParams["history"]) !== null && _e !== void 0 ? _e : "null");
                         window.addEventListener('resize', Render.onWindowResize);
                         window.addEventListener('storage', Render.onUpdateStorage);
-                        if (!(((_f = todo === null || todo === void 0 ? void 0 : todo.length) !== null && _f !== void 0 ? _f : 0) <= 0)) return [3 /*break*/, 5];
+                        if (!(((_f = todo === null || todo === void 0 ? void 0 : todo.length) !== null && _f !== void 0 ? _f : 0) <= 0)) return [3 /*break*/, 4];
                         _a = hash;
-                        switch (_a) {
-                            case "edit": return [3 /*break*/, 1];
-                        }
-                        return [3 /*break*/, 2];
+                        return [3 /*break*/, 1];
                     case 1:
-                        console.log("show edit screen");
-                        Render.updateEditScreen(tag, pass, []);
-                        return [3 /*break*/, 4];
-                    case 2:
                         console.log("show welcome screen");
                         return [4 /*yield*/, Render.updateWelcomeScreen(pass)];
-                    case 3:
+                    case 2:
                         _g.sent();
-                        return [3 /*break*/, 4];
-                    case 4: return [3 /*break*/, 6];
-                    case 5:
+                        return [3 /*break*/, 3];
+                    case 3: return [3 /*break*/, 5];
+                    case 4:
                         Domain.merge(pass, tag, todo, history);
                         switch (hash) {
-                            case "edit":
-                                console.log("show edit screen");
-                                Render.updateEditScreen(tag, pass, todo);
-                                break;
                             // case "history":
                             //     dom.updateHistoryScreen(pass, getToDoHistory(pass, todo));
                             //     break;
@@ -2187,8 +2053,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 Render.updateTodoScreen({ tag: tag, pass: pass, todo: todo });
                                 break;
                         }
-                        _g.label = 6;
-                    case 6: return [2 /*return*/];
+                        _g.label = 5;
+                    case 5: return [2 /*return*/];
                 }
             });
         }); };

@@ -362,6 +362,54 @@ button.default-button:hover {
     min-width: calc(100% / 12);
   }
 }
+.max-column-1 .flex-item {
+  min-width: calc(100% / 1);
+  max-width: calc(100% / 1);
+}
+.max-column-2 .flex-item {
+  min-width: calc(100% / 2);
+  max-width: calc(100% / 2);
+}
+.max-column-3 .flex-item {
+  min-width: calc(100% / 3);
+  max-width: calc(100% / 3);
+}
+.max-column-4 .flex-item {
+  min-width: calc(100% / 4);
+  max-width: calc(100% / 4);
+}
+.max-column-5 .flex-item {
+  min-width: calc(100% / 5);
+  max-width: calc(100% / 5);
+}
+.max-column-6 .flex-item {
+  min-width: calc(100% / 6);
+  max-width: calc(100% / 6);
+}
+.max-column-7 .flex-item {
+  min-width: calc(100% / 7);
+  max-width: calc(100% / 7);
+}
+.max-column-8 .flex-item {
+  min-width: calc(100% / 8);
+  max-width: calc(100% / 8);
+}
+.max-column-9 .flex-item {
+  min-width: calc(100% / 9);
+  max-width: calc(100% / 9);
+}
+.max-column-10 .flex-item {
+  min-width: calc(100% / 10);
+  max-width: calc(100% / 10);
+}
+.max-column-11 .flex-item {
+  min-width: calc(100% / 11);
+  max-width: calc(100% / 11);
+}
+.max-column-12 .flex-item {
+  min-width: calc(100% / 12);
+  max-width: calc(100% / 12);
+}
 .task-item {
   padding: 0.5rem;
   border-color: rgba(128, 128, 128, 0.5);
