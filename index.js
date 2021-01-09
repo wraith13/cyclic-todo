@@ -1573,10 +1573,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return result;
             };
             Render.todoScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e, _f;
+                var _a, _b, _c, _d, _e, _f, _g;
                 var _this = this;
-                return __generator(this, function (_g) {
-                    switch (_g.label) {
+                return __generator(this, function (_h) {
+                    switch (_h.label) {
                         case 0:
                             _a = {
                                 tag: "div",
@@ -1584,10 +1584,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             };
                             _b = Render.heading;
                             _c = ["h1"];
+                            _d = {
+                                tag: "a",
+                                href: "./"
+                            };
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
-                            _d = [
-                                _g.sent(),
+                            _e = [
+                                (_d.children = _h.sent(),
+                                    _d),
                                 Render.dropDownLabel({
                                     list: exports.makeObject(["@overall"].concat(Storage.Tag.get(entry.pass)).concat(["@unoverall", "@untagged", "@deleted", "@new"])
                                         .map(function (i) { return ({ key: i, value: Domain.tagMap(i) + " (" + Storage.TagMember.get(entry.pass, i).length + ")", }); })),
@@ -1672,7 +1677,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             }); }),
                                         ] :
                                         [
-                                            Render.menuItem("ToDoを追加", function () { return __awaiter(_this, void 0, void 0, function () {
+                                            Render.menuItem("新しい ToDo", function () { return __awaiter(_this, void 0, void 0, function () {
                                                 var newTodo;
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
@@ -1701,19 +1706,95 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         ]
                                 ])];
                         case 2:
-                            _e = [
-                                _b.apply(void 0, _c.concat([_d.concat([
-                                        _g.sent()
+                            _f = [
+                                _b.apply(void 0, _c.concat([_e.concat([
+                                        _h.sent()
                                     ])]))
                             ];
-                            _f = {
+                            _g = {
                                 tag: "div",
                                 className: "column-flex-list todo-list"
                             };
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.todoItem(entry, item); }))];
-                        case 3: return [2 /*return*/, (_a.children = _e.concat([
-                                (_f.children = _g.sent(),
-                                    _f)
+                        case 3: return [2 /*return*/, (_a.children = _f.concat([
+                                (_g.children = _h.sent(),
+                                    _g),
+                                "@deleted" === entry.tag ?
+                                    [] :
+                                    {
+                                        tag: "div",
+                                        className: "button-list",
+                                        children: {
+                                            tag: "button",
+                                            className: "default-button main-button long-button",
+                                            children: "新しい ToDo",
+                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                var newTodo;
+                                                return __generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
+                                                        case 1:
+                                                            newTodo = _a.sent();
+                                                            if (!(null !== newTodo)) return [3 /*break*/, 3];
+                                                            Storage.TagMember.remove(entry.pass, "@deleted", newTodo);
+                                                            Storage.TagMember.add(entry.pass, "@overall", newTodo);
+                                                            Storage.TagMember.add(entry.pass, entry.tag, newTodo);
+                                                            return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                        case 2:
+                                                            _a.sent();
+                                                            _a.label = 3;
+                                                        case 3: return [2 /*return*/];
+                                                    }
+                                                });
+                                            }); }
+                                        },
+                                    }
+                                // {
+                                //     tag: "div",
+                                //     className: "row-flex-list",
+                                //     children:
+                                //     [
+                                //         {
+                                //             tag: "div",
+                                //             className: "flex-item",
+                                //             children:
+                                //             {
+                                //                 tag: "button",
+                                //                 className: "long-button",
+                                //                 children: "Undo",
+                                //                 onclick: () =>
+                                //                 {
+                                //                 }
+                                //             },
+                                //         },
+                                //         {
+                                //             tag: "div",
+                                //             className: "flex-item",
+                                //             children:
+                                //             {
+                                //                 tag: "button",
+                                //                 className: "long-button",
+                                //                 children: "Add",
+                                //                 onclick: () =>
+                                //                 {
+                                //                 }
+                                //             },
+                                //         },
+                                //         {
+                                //             tag: "div",
+                                //             className: "flex-item",
+                                //             children:
+                                //             {
+                                //                 tag: "button",
+                                //                 className: "long-button",
+                                //                 children: "Edit",
+                                //                 onclick: () =>
+                                //                 {
+                                //                 }
+                                //             },
+                                //         },
+                                //     ],
+                                // }
                             ]),
                                 _a)];
                     }
@@ -1896,78 +1977,48 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     ])])),
                                 {
                                     tag: "div",
-                                    style: "text-align: center;",
+                                    style: "text-align: center; padding: 0.5rem;",
                                     children: "🚧 This static web application is under development. / この Static Web アプリは開発中です。",
                                 }
                             ];
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 3: return [2 /*return*/, (_a.children = _e.concat([
                                 _f.sent(),
-                                Storage.Pass.get().length <= 0 ?
-                                    {
-                                        tag: "div",
-                                        style: "text-align: center;",
-                                        children: {
+                                {
+                                    tag: "div",
+                                    className: "button-list",
+                                    children: Storage.Pass.get().map(function (pass) {
+                                        return ({
                                             tag: "button",
-                                            className: "default-button main-button",
-                                            children: "ToDoを追加",
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                var newTodo, pass;
-                                                return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
-                                                        case 1:
-                                                            newTodo = _a.sent();
-                                                            if (!(null !== newTodo)) return [3 /*break*/, 3];
-                                                            pass = Storage.generatePass();
-                                                            Storage.Pass.add(pass);
-                                                            Storage.TagMember.remove(pass, "@deleted", newTodo);
-                                                            Storage.TagMember.add(pass, "@overall", newTodo);
-                                                            return [4 /*yield*/, Render.updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
-                                                        case 2:
-                                                            _a.sent();
-                                                            _a.label = 3;
-                                                        case 3: return [2 /*return*/];
-                                                    }
-                                                });
-                                            }); }
-                                        },
-                                    } :
-                                    {
-                                        tag: "div",
-                                        style: "text-align: center;",
-                                        children: Storage.Pass.get().map(function (pass) {
-                                            return ({
-                                                tag: "button",
-                                                className: "default-button main-button",
-                                                children: pass + " \u306E ToDo \u30EA\u30B9\u30C8",
-                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0: return [4 /*yield*/, Render.updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
-                                                        case 1: return [2 /*return*/, _a.sent()];
-                                                    }
-                                                }); }); },
+                                            className: "default-button main-button long-button",
+                                            children: "ToDo \u30EA\u30B9\u30C8: " + pass,
+                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0: return [4 /*yield*/, Render.updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
+                                                    case 1: return [2 /*return*/, _a.sent()];
+                                                }
+                                            }); }); },
+                                        });
+                                    }).concat({
+                                        tag: "button",
+                                        className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
+                                        children: "\u65B0\u3057\u3044 ToDo \u30EA\u30B9\u30C8",
+                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                            var pass;
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        pass = Storage.generatePass();
+                                                        Storage.Pass.add(pass);
+                                                        return [4 /*yield*/, Render.updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
+                                                    case 1:
+                                                        _a.sent();
+                                                        return [2 /*return*/];
+                                                }
                                             });
-                                        }).concat({
-                                            tag: "button",
-                                            className: "main-button",
-                                            children: "\u65B0\u3057\u3044 ToDo \u30EA\u30B9\u30C8",
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                var pass;
-                                                return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0:
-                                                            pass = Storage.generatePass();
-                                                            Storage.Pass.add(pass);
-                                                            return [4 /*yield*/, Render.updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
-                                                        case 1:
-                                                            _a.sent();
-                                                            return [2 /*return*/];
-                                                    }
-                                                });
-                                            }); },
-                                        })
-                                    }
+                                        }); },
+                                    })
+                                }
                             ]),
                                 _a)];
                     }

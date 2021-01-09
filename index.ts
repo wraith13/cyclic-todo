@@ -846,7 +846,11 @@ export module CyclicToDo
                 (
                     "h1",
                     [
-                        await applicationIcon(),
+                        {
+                            tag: "a",
+                            href: "./",
+                            children: await applicationIcon(),
+                        },
                         dropDownLabel
                         ({
                             list: makeObject
@@ -914,7 +918,7 @@ export module CyclicToDo
                             [
                                 menuItem
                                 (
-                                    "ToDoを追加",
+                                    "新しい ToDo",
                                     async () =>
                                     {
                                         await minamo.core.timeout(500);
@@ -941,6 +945,29 @@ export module CyclicToDo
                     className: "column-flex-list todo-list",
                     children: await Promise.all(list.map(item => todoItem(entry, item))),
                 },
+                "@deleted" === entry.tag ?
+                    []:
+                    {
+                        tag: "div",
+                        className: "button-list",
+                        children:
+                        {
+                            tag: "button",
+                            className: "default-button main-button long-button",
+                            children: "新しい ToDo",
+                            onclick: async () =>
+                            {
+                                const newTodo = await prompt("ToDo の名前を入力してください");
+                                if (null !== newTodo)
+                                {
+                                    Storage.TagMember.remove(entry.pass, "@deleted", newTodo);
+                                    Storage.TagMember.add(entry.pass, "@overall", newTodo);
+                                    Storage.TagMember.add(entry.pass, entry.tag, newTodo);
+                                    await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                }
+                            }
+                        },
+                    }
                 // {
                 //     tag: "div",
                 //     className: "row-flex-list",
@@ -1165,58 +1192,35 @@ export module CyclicToDo
                 ),
                 {
                     tag: "div",
-                    style: "text-align: center;",
+                    style: "text-align: center; padding: 0.5rem;",
                     children: "🚧 This static web application is under development. / この Static Web アプリは開発中です。",
                 },
                 await applicationIcon(),
-                Storage.Pass.get().length <= 0 ?
-                    {
-                        tag: "div",
-                        style: "text-align: center;",
-                        children:
-                        {
-                            tag: "button",
-                            className: "default-button main-button",
-                            children: "ToDoを追加",
-                            onclick: async () =>
-                            {
-                                const newTodo = await prompt("ToDo の名前を入力してください");
-                                if (null !== newTodo)
-                                {
-                                    const pass = Storage.generatePass();
-                                    Storage.Pass.add(pass);
-                                    Storage.TagMember.remove(pass, "@deleted", newTodo);
-                                    Storage.TagMember.add(pass, "@overall", newTodo);
-                                    await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")});
-                                }
-                            }
-                        },
-                    }:
-                    {
-                        tag: "div",
-                        style: "text-align: center;",
-                        children: Storage.Pass.get().map
-                        (
-                            pass =>
-                            ({
-                                tag: "button",
-                                className: "default-button main-button",
-                                children: `${pass} の ToDo リスト`,
-                                onclick: async () =>　await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
-                            })
-                        ).concat
+                {
+                    tag: "div",
+                    className: "button-list",
+                    children: Storage.Pass.get().map
+                    (
+                        pass =>
                         ({
                             tag: "button",
-                            className: "main-button",
-                            children: `新しい ToDo リスト`,
-                            onclick: async () =>
-                            {
-                                const pass = Storage.generatePass();
-                                Storage.Pass.add(pass);
-                            await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")});
-                            },
+                            className: "default-button main-button long-button",
+                            children: `ToDo リスト: ${pass}`,
+                            onclick: async () =>　await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
                         })
-                    },
+                    ).concat
+                    ({
+                        tag: "button",
+                        className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
+                        children: `新しい ToDo リスト`,
+                        onclick: async () =>
+                        {
+                            const pass = Storage.generatePass();
+                            Storage.Pass.add(pass);
+                        await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")});
+                        },
+                    })
+                },
             ],
         });
         export const updateWelcomeScreen = async (pass: string) =>
