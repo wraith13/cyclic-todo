@@ -140,21 +140,24 @@ export module CyclicToDo
                 getStorage(pass).getOrNull<string[]>(makeKey(pass, tag)) ?? [];
             export const get = (pass: string, tag: string): string[] =>
             {
+                const deleted = getRaw(pass, "@deleted");
                 switch(tag)
                 {
                 case "@overall":
                     {
-                        const unoverall = getRaw(pass, "@unoverall");
+                        const unoverall = getRaw(pass, "@unoverall").concat(deleted);
                         return getRaw(pass, "@overall").filter(i => unoverall.indexOf(i) < 0);
                     }
                 case "@untagged":
                     {
-                        const tagged = Tag.get(pass).map(tag => get(pass, tag)).reduce((a, b) => a.concat(b), []);
+                        const tagged = Tag.get(pass).map(tag => get(pass, tag)).reduce((a, b) => a.concat(b), []).concat(deleted);
                         return getRaw(pass, "@overall").filter(i => tagged.indexOf(i) < 0);
                     }
+                case "@deleted":
+                    return deleted;
                 case "@unoverall":
                 default:
-                    return getRaw(pass, tag);
+                    return getRaw(pass, tag).filter(i => deleted.indexOf(i) < 0);
                 }
             };
             export const set = (pass: string, tag: string, list: string[]) =>
@@ -769,6 +772,25 @@ export module CyclicToDo
                                             await prompt("ToDo の名前を入力してください", item.todo);
                                         }
                                     ),
+                                    "@deleted" === entry.tag ?
+                                        menuItem
+                                        (
+                                            "復元",
+                                            async () =>
+                                            {
+                                                Storage.TagMember.remove(entry.pass, "@deleted", item.todo);
+                                                await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                            }
+                                        ):
+                                        menuItem
+                                        (
+                                            "削除",
+                                            async () =>
+                                            {
+                                                Storage.TagMember.add(entry.pass, "@deleted", item.todo);
+                                                await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                            }
+                                        ),
                                 ]),
                             ],
                         },
@@ -1141,7 +1163,60 @@ export module CyclicToDo
                         await menuButton("ポップアップメニュー"),
                     ]
                 ),
+                {
+                    tag: "div",
+                    style: "text-align: center;",
+                    children: "🚧 This static web application is under development. / この Static Web アプリは開発中です。",
+                },
                 await applicationIcon(),
+                Storage.Pass.get().length <= 0 ?
+                    {
+                        tag: "div",
+                        style: "text-align: center;",
+                        children:
+                        {
+                            tag: "button",
+                            className: "default-button main-button",
+                            children: "ToDoを追加",
+                            onclick: async () =>
+                            {
+                                const newTodo = await prompt("ToDo の名前を入力してください");
+                                if (null !== newTodo)
+                                {
+                                    const pass = Storage.generatePass();
+                                    Storage.Pass.add(pass);
+                                    Storage.TagMember.remove(pass, "@deleted", newTodo);
+                                    Storage.TagMember.add(pass, "@overall", newTodo);
+                                    await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")});
+                                }
+                            }
+                        },
+                    }:
+                    {
+                        tag: "div",
+                        style: "text-align: center;",
+                        children: Storage.Pass.get().map
+                        (
+                            pass =>
+                            ({
+                                tag: "button",
+                                className: "default-button main-button",
+                                children: `${pass} の ToDo リスト`,
+                                onclick: async () =>　await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
+                            })
+                        ).concat
+                        ({
+                            tag: "button",
+                            className: "main-button",
+                            children: `新しい ToDo リスト`,
+                            onclick: async () =>
+                            {
+                                const pass = Storage.generatePass();
+                                Storage.Pass.add(pass);
+                            await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")});
+                            },
+                        })
+                    },
             ],
         });
         export const updateWelcomeScreen = async (pass: string) =>
