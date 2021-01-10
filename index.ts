@@ -108,7 +108,6 @@ export module CyclicToDo
     export module Storage
     {
         export const sessionPassPrefix = "@Session";
-        export const generatePass = (seed: number = new Date().getTime()) => ("" +((seed *13738217) ^ ((seed %387960371999) >> 5 ))).slice(-8);
         export const isSessionPass = (pass: string) => pass.startsWith(sessionPassPrefix);
         export const getStorage = (pass: string) => isSessionPass(pass) ? minamo.sessionStorage: minamo.localStorage;
         export let lastUpdate = 0;
@@ -119,6 +118,16 @@ export module CyclicToDo
             export const set = (passList: string[]) => minamo.localStorage.set(key, passList);
             export const add = (pass: string) => set(get().concat([ pass ]).filter(uniqueFilter));
             export const remove = (pass: string) => set(get().filter(i => pass !== i));
+            export const generate = (seed: number = new Date().getTime()): string =>
+            {
+                const result = ("" +((seed *13738217) ^ ((seed %387960371999) >> 5 ))).slice(-8);
+                if (0 < Pass.get().filter(i => i === result).length)
+                {
+                    return generate(seed +parseInt(result));
+                }
+                Storage.Pass.add(result);
+                return result;
+            };
         }
         export module Tag
         {
@@ -132,6 +141,7 @@ export module CyclicToDo
                 getStorage(pass).set(makeKey(pass), list.filter(i => ! isSystemTag(i))); // システムタグは万が一にも登録させない
             export const add = (pass: string, tag: string) => set(pass, get(pass).concat([ tag ]).filter(uniqueFilter));
             export const remove = (pass: string, tag: string) => set(pass, get(pass).filter(i => tag !== i));
+            export const getByTodo = (pass: string, todo: string) => ["@overall"].concat(get(pass)).concat(["@unoverall", "@untagged"]).filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length);
         }
         export module TagMember
         {
@@ -796,6 +806,20 @@ export module CyclicToDo
                         },
                     ],
                 },
+                {
+                    tag: "div",
+                    className: "task-tags",
+                    children: Storage.Tag.getByTodo(entry.pass, item.todo).map
+                    (
+                        tag =>
+                        ({
+                            tag: "a",
+                            className: "tag",
+                            href: location.href.split("?")[0] +`?pass=${entry.pass}&tag=${tag}`,
+                            children: Domain.tagMap(tag),
+                        })
+                    )
+                },
                 information(item),
             ],
         });
@@ -1082,9 +1106,8 @@ export module CyclicToDo
                         children: `新しい ToDo リスト`,
                         onclick: async () =>
                         {
-                            const pass = Storage.generatePass();
-                            Storage.Pass.add(pass);
-                        await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")});
+                            const pass = Storage.Pass.generate();
+                            await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")});
                         },
                     })
                 },
@@ -1239,13 +1262,13 @@ export module CyclicToDo
         console.log("start!!!");
         const urlParams = getUrlParams();
         const hash = getUrlHash();
-        const tag = urlParams["title"] ?? "untitled";
+        const tag = urlParams["tag"];
         const pass = urlParams["pass"] ?? `${Storage.sessionPassPrefix}:${new Date().getTime()}`;
-        const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
-        const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
+        // const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
+        // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
         window.addEventListener('resize', Render.onWindowResize);
         window.addEventListener('storage', Render.onUpdateStorage);
-        if ((todo?.length ?? 0) <= 0)
+        if (Storage.isSessionPass(pass) && ! tag)
         {
             switch(hash)
             {
@@ -1260,7 +1283,7 @@ export module CyclicToDo
         }
         else
         {
-            Domain.merge(pass, tag, todo, history);
+            //Domain.merge(pass, tag, todo, history);
             switch(hash)
             {
             // case "history":
@@ -1277,7 +1300,7 @@ export module CyclicToDo
             //     break;
             default:
                 console.log("show todo screen");
-                Render.updateTodoScreen({ tag: tag, pass, todo });
+                Render.updateTodoScreen({ tag: tag, pass, todo: Storage.TagMember.get(pass, tag) });
                 break;
             }
         }

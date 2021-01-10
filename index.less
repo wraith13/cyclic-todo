@@ -596,6 +596,34 @@ button.default-button
             }
         }
     }
+    .task-tags
+    {
+        width: 100%;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 0.5rem;
+        margin: 0px -0.5rem;
+        background-color: #8884;
+        height: 1rem;
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        a
+        {
+            color: @main-color;
+            opacity: 0.6;
+            &:not(:hover)
+            {
+                text-decoration: none;
+            }
+        }
+        a + a
+        {
+            margin-left: 1rem;
+        }
+    }
     .task-information
     {
         padding: 0.5rem;

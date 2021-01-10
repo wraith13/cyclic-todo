@@ -449,6 +449,30 @@ button.default-button:hover {
 .task-item .task-header .task-operator button + button {
   margin-left: 4px;
 }
+.task-item .task-tags {
+  width: 100%;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0.5rem;
+  margin: 0px -0.5rem;
+  background-color: #8884;
+  height: 1rem;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.task-item .task-tags a {
+  color: #000022;
+  opacity: 0.6;
+}
+.task-item .task-tags a:not(:hover) {
+  text-decoration: none;
+}
+.task-item .task-tags a + a {
+  margin-left: 1rem;
+}
 .task-item .task-information {
   padding: 0.5rem;
   margin: -0.5rem;
