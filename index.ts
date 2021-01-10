@@ -74,6 +74,46 @@ export module localeParallel
         Math.sqrt(Calculate.average(ticks.map(i => (i -average) ** 2)));
     export const standardScore = (average: number, standardDeviation: number, target: number) =>
         (10 * (target -average) /standardDeviation) +50;
+//     export const expectedNext = (ticks: number[], intervals: number[] = Calculate.intervals(ticks), average: number = Calculate.average(intervals), standardDeviation: number = Calculate.standardDeviation(intervals, average)) =>
+//     {
+//         if (10 <= intervals.length)
+//         {
+// console.log({intervals, average});
+//             const checkPoints: number[] = [];
+//             let i = 0;
+//             let previousDiffAccumulation = (intervals[i] -average);
+//             while(++i < intervals.length /2)
+//             {
+//                 const diffAccumulation = previousDiffAccumulation +(intervals[i] -average);
+// console.log({diffAccumulation, previousDiffAccumulation, current: (intervals[i] -average)});
+//                 if (Math.abs(previousDiffAccumulation + diffAccumulation) < Math.abs(previousDiffAccumulation) +Math.abs(diffAccumulation))
+//                 {
+//                     checkPoints.push(intervals[i]);
+//                     if (10 <= checkPoints.length)
+//                     {
+//                         break;
+//                     }
+//                     previousDiffAccumulation = 0;
+//                 }
+//                 else
+//                 {
+//                     previousDiffAccumulation = diffAccumulation;
+//                 }
+//             }
+// console.log(`checkPoints.length: ${checkPoints.length}, intervals.length: ${intervals.length}`);
+//             if (3 <= checkPoints.length)
+//             {
+//                 const checkPointsAverage = Calculate.average(intervals);
+//                 const checkPointsstandardDeviation = Calculate.standardDeviation(checkPoints, checkPointsAverage);
+// console.log({checkPointsstandardDeviation, standardDeviation});
+//                 if (checkPointsstandardDeviation < standardDeviation)
+//                 {
+//                     return ticks[0] +checkPointsAverage +checkPointsstandardDeviation;
+//                 }
+//             }
+//         }
+//         return null;
+//     };
 }
 export module CyclicToDo
 {
@@ -99,6 +139,7 @@ export module CyclicToDo
         progress: null | number;
         //decayedProgress: null | number;
         previous: null | number;
+        // expectedNext: null | number;
         elapsed: null | number;
         overallAverage: null | number;
         RecentlyStandardDeviation: null | number;
@@ -456,6 +497,7 @@ export module CyclicToDo
                     progress: null,
                     //decayedProgress: null,
                     previous: history.previous,
+                    // expectedNext: Calculate.expectedNext(Storage.History.get(entry.pass, todo)),
                     elapsed: null,
                     overallAverage: history.recentries.length <= 1 ? null: calcAverage(history.recentries),
                     RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -631,6 +673,19 @@ export module CyclicToDo
                         }
                     ],
                 },
+                // {
+                //     tag: "div",
+                //     className: "task-expected-next",
+                //     children:
+                //     [
+                //         label("expected next"),
+                //         {
+                //             tag: "span",
+                //             className: "value",
+                //             children: Domain.dateStringFromTick(item.expectedNext),
+                //         }
+                //     ],
+                // },
                 {
                     tag: "div",
                     className: "task-interval-average",
@@ -1096,7 +1151,7 @@ export module CyclicToDo
                         ({
                             tag: "button",
                             className: "default-button main-button long-button",
-                            children: `ToDo リスト: ${pass.substr(0, 2)}****${pass.substr(-2)}`,
+                            children: `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
                             onclick: async () =>　await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
                         })
                     ).concat
@@ -1167,7 +1222,7 @@ export module CyclicToDo
                         const height = window.innerHeight -list.offsetTop;
                         const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight -0.5;
                         const columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
-                        const row = Math.max(Math.ceil(length /columns), Math.floor(height / itemHeight));
+                        const row = Math.max(Math.ceil(length /columns), Math.min(length, Math.floor(height / itemHeight)));
                         list.style.height = `${row *(itemHeight)}px`;
                         list.classList.add(`max-column-${columns}`);
                     }

@@ -470,6 +470,11 @@ button.default-button:hover {
 .task-item .task-tags a:not(:hover) {
   text-decoration: none;
 }
+@media (prefers-color-scheme: dark) {
+  .task-item .task-tags a {
+    color: #FFFFFF;
+  }
+}
 .task-item .task-tags a + a {
   margin-left: 1rem;
 }

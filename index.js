@@ -796,6 +796,7 @@ define("minamo.js/index", ["require", "exports"], function (require, exports) {
 });
 define("lang.en", [], {
     "previous": "previous",
+    "expected next": "expected next",
     "expected interval": "expected interval",
     "elapsed time": "elapsed time",
     "count": "count",
@@ -809,6 +810,7 @@ define("lang.en", [], {
 });
 define("lang.ja", [], {
     "previous": "前回",
+    "expected next": "次回予想",
     "expected interval": "予想間隔",
     "elapsed time": "経過時間",
     "count": "回数",
@@ -887,6 +889,46 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
         Calculate.standardScore = function (average, standardDeviation, target) {
             return (10 * (target - average) / standardDeviation) + 50;
         };
+        //     export const expectedNext = (ticks: number[], intervals: number[] = Calculate.intervals(ticks), average: number = Calculate.average(intervals), standardDeviation: number = Calculate.standardDeviation(intervals, average)) =>
+        //     {
+        //         if (10 <= intervals.length)
+        //         {
+        // console.log({intervals, average});
+        //             const checkPoints: number[] = [];
+        //             let i = 0;
+        //             let previousDiffAccumulation = (intervals[i] -average);
+        //             while(++i < intervals.length /2)
+        //             {
+        //                 const diffAccumulation = previousDiffAccumulation +(intervals[i] -average);
+        // console.log({diffAccumulation, previousDiffAccumulation, current: (intervals[i] -average)});
+        //                 if (Math.abs(previousDiffAccumulation + diffAccumulation) < Math.abs(previousDiffAccumulation) +Math.abs(diffAccumulation))
+        //                 {
+        //                     checkPoints.push(intervals[i]);
+        //                     if (10 <= checkPoints.length)
+        //                     {
+        //                         break;
+        //                     }
+        //                     previousDiffAccumulation = 0;
+        //                 }
+        //                 else
+        //                 {
+        //                     previousDiffAccumulation = diffAccumulation;
+        //                 }
+        //             }
+        // console.log(`checkPoints.length: ${checkPoints.length}, intervals.length: ${intervals.length}`);
+        //             if (3 <= checkPoints.length)
+        //             {
+        //                 const checkPointsAverage = Calculate.average(intervals);
+        //                 const checkPointsstandardDeviation = Calculate.standardDeviation(checkPoints, checkPointsAverage);
+        // console.log({checkPointsstandardDeviation, standardDeviation});
+        //                 if (checkPointsstandardDeviation < standardDeviation)
+        //                 {
+        //                     return ticks[0] +checkPointsAverage +checkPointsstandardDeviation;
+        //                 }
+        //             }
+        //         }
+        //         return null;
+        //     };
     })(Calculate = exports.Calculate || (exports.Calculate = {}));
     var CyclicToDo;
     (function (CyclicToDo) {
@@ -1196,6 +1238,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     progress: null,
                     //decayedProgress: null,
                     previous: history.previous,
+                    // expectedNext: Calculate.expectedNext(Storage.History.get(entry.pass, todo)),
                     elapsed: null,
                     overallAverage: history.recentries.length <= 1 ? null : calcAverage(history.recentries),
                     RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -1351,6 +1394,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 }
                             ],
                         },
+                        // {
+                        //     tag: "div",
+                        //     className: "task-expected-next",
+                        //     children:
+                        //     [
+                        //         label("expected next"),
+                        //         {
+                        //             tag: "span",
+                        //             className: "value",
+                        //             children: Domain.dateStringFromTick(item.expectedNext),
+                        //         }
+                        //     ],
+                        // },
                         {
                             tag: "div",
                             className: "task-interval-average",
@@ -1880,7 +1936,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         return ({
                                             tag: "button",
                                             className: "default-button main-button long-button",
-                                            children: "ToDo \u30EA\u30B9\u30C8: " + pass.substr(0, 2) + "****" + pass.substr(-2),
+                                            children: "ToDo \u30EA\u30B9\u30C8 ( pass: " + pass.substr(0, 2) + "****" + pass.substr(-2) + " )",
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0: return [4 /*yield*/, Render.updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
@@ -1956,7 +2012,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         var height = window.innerHeight - list.offsetTop;
                         var itemHeight = list.childNodes[0].offsetHeight - 0.5;
                         var columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
-                        var row = Math.max(Math.ceil(length / columns), Math.floor(height / itemHeight));
+                        var row = Math.max(Math.ceil(length / columns), Math.min(length, Math.floor(height / itemHeight)));
                         list.style.height = row * (itemHeight) + "px";
                         list.classList.add("max-column-" + columns);
                     }
