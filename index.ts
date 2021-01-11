@@ -183,6 +183,18 @@ export module CyclicToDo
             export const add = (pass: string, tag: string) => set(pass, get(pass).concat([ tag ]).filter(uniqueFilter));
             export const remove = (pass: string, tag: string) => set(pass, get(pass).filter(i => tag !== i));
             export const getByTodo = (pass: string, todo: string) => ["@overall"].concat(get(pass)).concat(["@unoverall", "@untagged"]).filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length);
+            export const rename = (pass: string, oldTag: string, newTag: string) =>
+            {
+                if ( ! isSystemTag(oldTag) && ! isSystemTag(newTag) && oldTag !== newTag && get(pass).indexOf(newTag) < 0)
+                {
+                    add(pass, newTag);
+                    TagMember.set(pass, newTag, TagMember.getRaw(pass, oldTag));
+                    remove(pass, oldTag);
+                    TagMember.removeKey(pass, oldTag);
+                    return true;
+                }
+                return false;
+            };
         }
         export module TagMember
         {
@@ -213,6 +225,7 @@ export module CyclicToDo
             };
             export const set = (pass: string, tag: string, list: string[]) =>
                 getStorage(pass).set(makeKey(pass, tag), list);
+            export const removeKey = (pass: string, tag: string) => getStorage(pass).remove(makeKey(pass, tag));
             export const add = (pass: string, tag: string, todo: string) => set(pass, tag, get(pass, tag).concat([ todo ]).filter(uniqueFilter));
             export const merge = (pass: string, tag: string, list: string[]) => set(pass, tag, get(pass, tag).concat(list).filter(uniqueFilter));
             export const remove = (pass: string, tag: string, todo: string) => set(pass, tag, get(pass, tag).filter(i => todo !== i));
@@ -226,7 +239,7 @@ export module CyclicToDo
             };
             export const rename = (pass: string, oldTask: string, newTask: string) =>
             {
-                if (TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0)
+                if (oldTask !== newTask && TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0)
                 {
                     Tag.getByTodo(pass, oldTask).forEach
                     (
@@ -1019,11 +1032,22 @@ export module CyclicToDo
                             Storage.Tag.isSystemTag(entry.tag) ? []:
                                 menuItem
                                 (
-                                    "🚫 名前を編集",
+                                    "名前を編集",
                                     async () =>
                                     {
                                         await minamo.core.timeout(500);
-                                        await prompt("タグの名前を入力してください", entry.tag);
+                                        const newTag = await prompt("タグの名前を入力してください", entry.tag);
+                                        if (0 < newTag.length && newTag !== entry.tag)
+                                        {
+                                            if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
+                                            {
+                                                await updateTodoScreen({ pass: entry.pass, tag: newTag, todo: Storage.TagMember.get(entry.pass, newTag)});
+                                            }
+                                            else
+                                            {
+                                                window.alert("その名前のタグは既に存在しています。");
+                                            }
+                                        }
                                     }
                                 ),
                             "@deleted" === entry.tag ?

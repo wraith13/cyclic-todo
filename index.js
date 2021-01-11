@@ -970,6 +970,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 Tag.add = function (pass, tag) { return Tag.set(pass, Tag.get(pass).concat([tag]).filter(exports.uniqueFilter)); };
                 Tag.remove = function (pass, tag) { return Tag.set(pass, Tag.get(pass).filter(function (i) { return tag !== i; })); };
                 Tag.getByTodo = function (pass, todo) { return ["@overall"].concat(Tag.get(pass)).concat(["@unoverall", "@untagged"]).filter(function (tag) { return 0 < TagMember.get(pass, tag).filter(function (i) { return todo === i; }).length; }); };
+                Tag.rename = function (pass, oldTag, newTag) {
+                    if (!Tag.isSystemTag(oldTag) && !Tag.isSystemTag(newTag) && oldTag !== newTag && Tag.get(pass).indexOf(newTag) < 0) {
+                        Tag.add(pass, newTag);
+                        TagMember.set(pass, newTag, TagMember.getRaw(pass, oldTag));
+                        Tag.remove(pass, oldTag);
+                        TagMember.removeKey(pass, oldTag);
+                        return true;
+                    }
+                    return false;
+                };
             })(Tag = Storage.Tag || (Storage.Tag = {}));
             var TagMember;
             (function (TagMember) {
@@ -998,6 +1008,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 TagMember.set = function (pass, tag, list) {
                     return Storage.getStorage(pass).set(TagMember.makeKey(pass, tag), list);
                 };
+                TagMember.removeKey = function (pass, tag) { return Storage.getStorage(pass).remove(TagMember.makeKey(pass, tag)); };
                 TagMember.add = function (pass, tag, todo) { return TagMember.set(pass, tag, TagMember.get(pass, tag).concat([todo]).filter(exports.uniqueFilter)); };
                 TagMember.merge = function (pass, tag, list) { return TagMember.set(pass, tag, TagMember.get(pass, tag).concat(list).filter(exports.uniqueFilter)); };
                 TagMember.remove = function (pass, tag, todo) { return TagMember.set(pass, tag, TagMember.get(pass, tag).filter(function (i) { return todo !== i; })); };
@@ -1009,7 +1020,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     Storage.TagMember.add(pass, "@overall", task);
                 };
                 Task.rename = function (pass, oldTask, newTask) {
-                    if (TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0) {
+                    if (oldTask !== newTask && TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0) {
                         Tag.getByTodo(pass, oldTask).forEach(function (tag) {
                             TagMember.remove(pass, tag, oldTask);
                             TagMember.add(pass, tag, newTask);
@@ -1750,7 +1761,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             ];
                             return [4 /*yield*/, Render.menuButton([
                                     Storage.Tag.isSystemTag(entry.tag) ? [] :
-                                        Render.menuItem("🚫 名前を編集", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        Render.menuItem("名前を編集", function () { return __awaiter(_this, void 0, void 0, function () {
+                                            var newTag;
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
@@ -1758,8 +1770,17 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                         _a.sent();
                                                         return [4 /*yield*/, Render.prompt("タグの名前を入力してください", entry.tag)];
                                                     case 2:
+                                                        newTag = _a.sent();
+                                                        if (!(0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 5];
+                                                        if (!Storage.Tag.rename(entry.pass, entry.tag, newTag)) return [3 /*break*/, 4];
+                                                        return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: newTag, todo: Storage.TagMember.get(entry.pass, newTag) })];
+                                                    case 3:
                                                         _a.sent();
-                                                        return [2 /*return*/];
+                                                        return [3 /*break*/, 5];
+                                                    case 4:
+                                                        window.alert("その名前のタグは既に存在しています。");
+                                                        _a.label = 5;
+                                                    case 5: return [2 /*return*/];
                                                 }
                                             });
                                         }); }),
