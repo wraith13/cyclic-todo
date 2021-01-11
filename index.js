@@ -889,46 +889,41 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
         Calculate.standardScore = function (average, standardDeviation, target) {
             return (10 * (target - average) / standardDeviation) + 50;
         };
-        //     export const expectedNext = (ticks: number[], intervals: number[] = Calculate.intervals(ticks), average: number = Calculate.average(intervals), standardDeviation: number = Calculate.standardDeviation(intervals, average)) =>
-        //     {
-        //         if (10 <= intervals.length)
-        //         {
-        // console.log({intervals, average});
-        //             const checkPoints: number[] = [];
-        //             let i = 0;
-        //             let previousDiffAccumulation = (intervals[i] -average);
-        //             while(++i < intervals.length /2)
-        //             {
-        //                 const diffAccumulation = previousDiffAccumulation +(intervals[i] -average);
-        // console.log({diffAccumulation, previousDiffAccumulation, current: (intervals[i] -average)});
-        //                 if (Math.abs(previousDiffAccumulation + diffAccumulation) < Math.abs(previousDiffAccumulation) +Math.abs(diffAccumulation))
-        //                 {
-        //                     checkPoints.push(intervals[i]);
-        //                     if (10 <= checkPoints.length)
-        //                     {
-        //                         break;
-        //                     }
-        //                     previousDiffAccumulation = 0;
-        //                 }
-        //                 else
-        //                 {
-        //                     previousDiffAccumulation = diffAccumulation;
-        //                 }
-        //             }
-        // console.log(`checkPoints.length: ${checkPoints.length}, intervals.length: ${intervals.length}`);
-        //             if (3 <= checkPoints.length)
-        //             {
-        //                 const checkPointsAverage = Calculate.average(intervals);
-        //                 const checkPointsstandardDeviation = Calculate.standardDeviation(checkPoints, checkPointsAverage);
-        // console.log({checkPointsstandardDeviation, standardDeviation});
-        //                 if (checkPointsstandardDeviation < standardDeviation)
-        //                 {
-        //                     return ticks[0] +checkPointsAverage +checkPointsstandardDeviation;
-        //                 }
-        //             }
-        //         }
-        //         return null;
-        //     };
+        Calculate.expectedNext = function (ticks, intervals, average, standardDeviation) {
+            if (intervals === void 0) { intervals = Calculate.intervals(ticks); }
+            if (average === void 0) { average = Calculate.average(intervals); }
+            if (standardDeviation === void 0) { standardDeviation = Calculate.standardDeviation(intervals, average); }
+            if (10 <= intervals.length && (average * 0.1) < standardDeviation) {
+                console.log({ intervals: intervals, average: average });
+                var checkPoints = [];
+                var i = 0;
+                var previousDiffAccumulation = (intervals[i] - average);
+                while (++i < intervals.length / 2) {
+                    var diffAccumulation = previousDiffAccumulation + (intervals[i] - average);
+                    console.log({ diffAccumulation: diffAccumulation, previousDiffAccumulation: previousDiffAccumulation, current: (intervals[i] - average) });
+                    if (Math.abs(previousDiffAccumulation + diffAccumulation) < Math.abs(previousDiffAccumulation) + Math.abs(diffAccumulation)) {
+                        checkPoints.push(intervals[i]);
+                        if (10 <= checkPoints.length) {
+                            break;
+                        }
+                        previousDiffAccumulation = 0;
+                    }
+                    else {
+                        previousDiffAccumulation = diffAccumulation;
+                    }
+                }
+                console.log("checkPoints.length: " + checkPoints.length + ", intervals.length: " + intervals.length);
+                if (3 <= checkPoints.length) {
+                    var checkPointsAverage = Calculate.average(intervals);
+                    var checkPointsstandardDeviation = Calculate.standardDeviation(checkPoints, checkPointsAverage);
+                    console.log({ checkPointsstandardDeviation: checkPointsstandardDeviation, standardDeviation: standardDeviation });
+                    if (checkPointsstandardDeviation < standardDeviation) {
+                        return ticks[0] + checkPointsAverage + checkPointsstandardDeviation;
+                    }
+                }
+            }
+            return null;
+        };
     })(Calculate = exports.Calculate || (exports.Calculate = {}));
     var CyclicToDo;
     (function (CyclicToDo) {
@@ -1007,6 +1002,25 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 TagMember.merge = function (pass, tag, list) { return TagMember.set(pass, tag, TagMember.get(pass, tag).concat(list).filter(exports.uniqueFilter)); };
                 TagMember.remove = function (pass, tag, todo) { return TagMember.set(pass, tag, TagMember.get(pass, tag).filter(function (i) { return todo !== i; })); };
             })(TagMember = Storage.TagMember || (Storage.TagMember = {}));
+            var Task;
+            (function (Task) {
+                Task.add = function (pass, task) {
+                    Storage.TagMember.remove(pass, "@deleted", task);
+                    Storage.TagMember.add(pass, "@overall", task);
+                };
+                Task.rename = function (pass, oldTask, newTask) {
+                    if (TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0) {
+                        Tag.getByTodo(pass, oldTask).forEach(function (tag) {
+                            TagMember.remove(pass, tag, oldTask);
+                            TagMember.add(pass, tag, newTask);
+                        });
+                        History.set(pass, newTask, History.get(pass, oldTask));
+                        History.remove(pass, oldTask);
+                        return true;
+                    }
+                    return false;
+                };
+            })(Task = Storage.Task || (Storage.Task = {}));
             var History;
             (function (History) {
                 History.makeKey = function (pass, task) { return "pass:(" + pass + ").task:" + task + ".history"; };
@@ -1014,8 +1028,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 History.set = function (pass, task, list) {
                     return Storage.getStorage(pass).set(History.makeKey(pass, task), list);
                 };
+                History.remove = function (pass, task) {
+                    return Storage.getStorage(pass).remove(History.makeKey(pass, task));
+                };
                 History.add = function (pass, task, tick) {
                     return History.set(pass, task, History.get(pass, task).concat(tick).filter(exports.uniqueFilter).sort(exports.simpleReverseComparer));
+                };
+                History.rename = function (pass, oldTask, newTask) {
+                    if (undefined === Storage.getStorage(pass).getRaw(History.makeKey(pass, newTask))) {
+                        History.set(pass, newTask, History.get(pass, oldTask));
+                        History.remove(pass, oldTask);
+                        return true;
+                    }
+                    return false;
                 };
             })(History = Storage.History || (Storage.History = {}));
         })(Storage = CyclicToDo.Storage || (CyclicToDo.Storage = {}));
@@ -1238,7 +1263,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     progress: null,
                     //decayedProgress: null,
                     previous: history.previous,
-                    // expectedNext: Calculate.expectedNext(Storage.History.get(entry.pass, todo)),
+                    expectedNext: Calculate.expectedNext(Storage.History.get(entry.pass, todo)),
                     elapsed: null,
                     overallAverage: history.recentries.length <= 1 ? null : calcAverage(history.recentries),
                     RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -1549,7 +1574,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         tag: "button",
                                         children: "🚫 最後の完了を取り消す",
                                     },
-                                    Render.menuItem("🚫 名前を編集", function () { return __awaiter(_this, void 0, void 0, function () {
+                                    Render.menuItem("名前を編集", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        var newTask;
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
@@ -1557,8 +1583,17 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     _a.sent();
                                                     return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください", item.todo)];
                                                 case 2:
+                                                    newTask = (_a.sent()).trim();
+                                                    if (!(0 < newTask.length && newTask !== item.todo)) return [3 /*break*/, 5];
+                                                    if (!Storage.Task.rename(entry.pass, item.todo, newTask)) return [3 /*break*/, 4];
+                                                    return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                case 3:
                                                     _a.sent();
-                                                    return [2 /*return*/];
+                                                    return [3 /*break*/, 5];
+                                                case 4:
+                                                    window.alert("その名前の ToDo は既に存在しています。");
+                                                    _a.label = 5;
+                                                case 5: return [2 /*return*/];
                                             }
                                         });
                                     }); }),
@@ -1738,7 +1773,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         ] :
                                         [
                                             Render.menuItem("新しい ToDo", function () { return __awaiter(_this, void 0, void 0, function () {
-                                                var newTodo;
+                                                var newTask;
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
                                                         case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
@@ -1746,11 +1781,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                             _a.sent();
                                                             return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
                                                         case 2:
-                                                            newTodo = _a.sent();
-                                                            if (!(null !== newTodo)) return [3 /*break*/, 4];
-                                                            Storage.TagMember.remove(entry.pass, "@deleted", newTodo);
-                                                            Storage.TagMember.add(entry.pass, "@overall", newTodo);
-                                                            Storage.TagMember.add(entry.pass, entry.tag, newTodo);
+                                                            newTask = _a.sent();
+                                                            if (!(null !== newTask)) return [3 /*break*/, 4];
+                                                            Storage.Task.add(entry.pass, newTask);
+                                                            Storage.TagMember.add(entry.pass, entry.tag, newTask);
                                                             return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
                                                         case 3:
                                                             _a.sent();
@@ -1789,16 +1823,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             className: list.length <= 0 ? "default-button main-button long-button" : "main-button long-button",
                                             children: "新しい ToDo",
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                var newTodo;
+                                                var newTask;
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
                                                         case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
                                                         case 1:
-                                                            newTodo = _a.sent();
-                                                            if (!(null !== newTodo)) return [3 /*break*/, 3];
-                                                            Storage.TagMember.remove(entry.pass, "@deleted", newTodo);
-                                                            Storage.TagMember.add(entry.pass, "@overall", newTodo);
-                                                            Storage.TagMember.add(entry.pass, entry.tag, newTodo);
+                                                            newTask = _a.sent();
+                                                            if (!(null !== newTask)) return [3 /*break*/, 3];
+                                                            Storage.Task.add(entry.pass, newTask);
+                                                            Storage.TagMember.add(entry.pass, entry.tag, newTask);
                                                             return [4 /*yield*/, Render.updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
                                                         case 2:
                                                             _a.sent();

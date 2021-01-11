@@ -74,46 +74,46 @@ export module localeParallel
         Math.sqrt(Calculate.average(ticks.map(i => (i -average) ** 2)));
     export const standardScore = (average: number, standardDeviation: number, target: number) =>
         (10 * (target -average) /standardDeviation) +50;
-//     export const expectedNext = (ticks: number[], intervals: number[] = Calculate.intervals(ticks), average: number = Calculate.average(intervals), standardDeviation: number = Calculate.standardDeviation(intervals, average)) =>
-//     {
-//         if (10 <= intervals.length)
-//         {
-// console.log({intervals, average});
-//             const checkPoints: number[] = [];
-//             let i = 0;
-//             let previousDiffAccumulation = (intervals[i] -average);
-//             while(++i < intervals.length /2)
-//             {
-//                 const diffAccumulation = previousDiffAccumulation +(intervals[i] -average);
-// console.log({diffAccumulation, previousDiffAccumulation, current: (intervals[i] -average)});
-//                 if (Math.abs(previousDiffAccumulation + diffAccumulation) < Math.abs(previousDiffAccumulation) +Math.abs(diffAccumulation))
-//                 {
-//                     checkPoints.push(intervals[i]);
-//                     if (10 <= checkPoints.length)
-//                     {
-//                         break;
-//                     }
-//                     previousDiffAccumulation = 0;
-//                 }
-//                 else
-//                 {
-//                     previousDiffAccumulation = diffAccumulation;
-//                 }
-//             }
-// console.log(`checkPoints.length: ${checkPoints.length}, intervals.length: ${intervals.length}`);
-//             if (3 <= checkPoints.length)
-//             {
-//                 const checkPointsAverage = Calculate.average(intervals);
-//                 const checkPointsstandardDeviation = Calculate.standardDeviation(checkPoints, checkPointsAverage);
-// console.log({checkPointsstandardDeviation, standardDeviation});
-//                 if (checkPointsstandardDeviation < standardDeviation)
-//                 {
-//                     return ticks[0] +checkPointsAverage +checkPointsstandardDeviation;
-//                 }
-//             }
-//         }
-//         return null;
-//     };
+    export const expectedNext = (ticks: number[], intervals: number[] = Calculate.intervals(ticks), average: number = Calculate.average(intervals), standardDeviation: number = Calculate.standardDeviation(intervals, average)) =>
+    {
+        if (10 <= intervals.length && (average *0.1) < standardDeviation)
+        {
+console.log({intervals, average});
+            const checkPoints: number[] = [];
+            let i = 0;
+            let previousDiffAccumulation = (intervals[i] -average);
+            while(++i < intervals.length /2)
+            {
+                const diffAccumulation = previousDiffAccumulation +(intervals[i] -average);
+console.log({diffAccumulation, previousDiffAccumulation, current: (intervals[i] -average)});
+                if (Math.abs(previousDiffAccumulation + diffAccumulation) < Math.abs(previousDiffAccumulation) +Math.abs(diffAccumulation))
+                {
+                    checkPoints.push(intervals[i]);
+                    if (10 <= checkPoints.length)
+                    {
+                        break;
+                    }
+                    previousDiffAccumulation = 0;
+                }
+                else
+                {
+                    previousDiffAccumulation = diffAccumulation;
+                }
+            }
+console.log(`checkPoints.length: ${checkPoints.length}, intervals.length: ${intervals.length}`);
+            if (3 <= checkPoints.length)
+            {
+                const checkPointsAverage = Calculate.average(intervals);
+                const checkPointsstandardDeviation = Calculate.standardDeviation(checkPoints, checkPointsAverage);
+console.log({checkPointsstandardDeviation, standardDeviation});
+                if (checkPointsstandardDeviation < standardDeviation)
+                {
+                    return ticks[0] +checkPointsAverage +checkPointsstandardDeviation;
+                }
+            }
+        }
+        return null;
+    };
 }
 export module CyclicToDo
 {
@@ -139,7 +139,7 @@ export module CyclicToDo
         progress: null | number;
         //decayedProgress: null | number;
         previous: null | number;
-        // expectedNext: null | number;
+        expectedNext: null | number;
         elapsed: null | number;
         overallAverage: null | number;
         RecentlyStandardDeviation: null | number;
@@ -217,6 +217,32 @@ export module CyclicToDo
             export const merge = (pass: string, tag: string, list: string[]) => set(pass, tag, get(pass, tag).concat(list).filter(uniqueFilter));
             export const remove = (pass: string, tag: string, todo: string) => set(pass, tag, get(pass, tag).filter(i => todo !== i));
         }
+        export module Task
+        {
+            export const add = (pass: string, task: string) =>
+            {
+                Storage.TagMember.remove(pass, "@deleted", task);
+                Storage.TagMember.add(pass, "@overall", task);
+            };
+            export const rename = (pass: string, oldTask: string, newTask: string) =>
+            {
+                if (TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0)
+                {
+                    Tag.getByTodo(pass, oldTask).forEach
+                    (
+                        tag =>
+                        {
+                            TagMember.remove(pass, tag, oldTask);
+                            TagMember.add(pass, tag, newTask);
+                        }
+                    );
+                    History.set(pass, newTask, History.get(pass, oldTask));
+                    History.remove(pass, oldTask);
+                    return true;
+                }
+                return false;
+            };
+        }
         export module History
         {
             export const makeKey = (pass: string, task: string) => `pass:(${pass}).task:${task}.history`;
@@ -224,8 +250,21 @@ export module CyclicToDo
                 getStorage(pass).getOrNull<number[]>(makeKey(pass, task)) ?? [];
             export const set = (pass: string, task: string, list: number[]) =>
                 getStorage(pass).set(makeKey(pass, task), list);
+            export const remove = (pass: string, task: string) =>
+                getStorage(pass).remove(makeKey(pass, task));
             export const add = (pass: string, task: string, tick: number | number[]) =>
                 set(pass, task, get(pass, task).concat(tick).filter(uniqueFilter).sort(simpleReverseComparer));
+            export const rename = (pass: string, oldTask: string, newTask: string) =>
+            {
+                if (undefined === getStorage(pass).getRaw(makeKey(pass, newTask)))
+                {
+                    set(pass, newTask, get(pass, oldTask));
+                    remove(pass, oldTask);
+
+                    return true;
+                }
+                return false;
+            };
         }
     }
     export module Domain
@@ -497,7 +536,7 @@ export module CyclicToDo
                     progress: null,
                     //decayedProgress: null,
                     previous: history.previous,
-                    // expectedNext: Calculate.expectedNext(Storage.History.get(entry.pass, todo)),
+                    expectedNext: Calculate.expectedNext(Storage.History.get(entry.pass, todo)),
                     elapsed: null,
                     overallAverage: history.recentries.length <= 1 ? null: calcAverage(history.recentries),
                     RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -830,11 +869,22 @@ export module CyclicToDo
                                     },
                                     menuItem
                                     (
-                                        "🚫 名前を編集",
+                                        "名前を編集",
                                         async () =>
                                         {
                                             await minamo.core.timeout(500);
-                                            await prompt("ToDo の名前を入力してください", item.todo);
+                                            const newTask = (await prompt("ToDo の名前を入力してください", item.todo)).trim();
+                                            if (0 < newTask.length && newTask !== item.todo)
+                                            {
+                                                if (Storage.Task.rename(entry.pass, item.todo, newTask))
+                                                {
+                                                    await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                                }
+                                                else
+                                                {
+                                                    window.alert("その名前の ToDo は既に存在しています。");
+                                                }
+                                            }
                                         }
                                     ),
                                     "@deleted" === entry.tag ?
@@ -993,12 +1043,11 @@ export module CyclicToDo
                                     async () =>
                                     {
                                         await minamo.core.timeout(500);
-                                        const newTodo = await prompt("ToDo の名前を入力してください");
-                                        if (null !== newTodo)
+                                        const newTask = await prompt("ToDo の名前を入力してください");
+                                        if (null !== newTask)
                                         {
-                                            Storage.TagMember.remove(entry.pass, "@deleted", newTodo);
-                                            Storage.TagMember.add(entry.pass, "@overall", newTodo);
-                                            Storage.TagMember.add(entry.pass, entry.tag, newTodo);
+                                            Storage.Task.add(entry.pass, newTask);
+                                            Storage.TagMember.add(entry.pass, entry.tag, newTask);
                                             await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                         }
                                     }
@@ -1028,12 +1077,11 @@ export module CyclicToDo
                             children: "新しい ToDo",
                             onclick: async () =>
                             {
-                                const newTodo = await prompt("ToDo の名前を入力してください");
-                                if (null !== newTodo)
+                                const newTask = await prompt("ToDo の名前を入力してください");
+                                if (null !== newTask)
                                 {
-                                    Storage.TagMember.remove(entry.pass, "@deleted", newTodo);
-                                    Storage.TagMember.add(entry.pass, "@overall", newTodo);
-                                    Storage.TagMember.add(entry.pass, entry.tag, newTodo);
+                                    Storage.Task.add(entry.pass, newTask);
+                                    Storage.TagMember.add(entry.pass, entry.tag, newTask);
                                     await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                 }
                             }
