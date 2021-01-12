@@ -6,8 +6,6 @@
 body {
   margin: 0px;
   line-height: 100%;
-  color: #000022;
-  background-color: #FFFFFF;
 }
 body.locale-parallel-on .locale-map {
   display: none;
@@ -15,11 +13,19 @@ body.locale-parallel-on .locale-map {
 body.locale-parallel-off .locale-parallel {
   display: none;
 }
+body,
+input,
+textarea {
+  color: #000022;
+  background-color: #FFFFFF;
+}
 .icon svg {
   fill: #000022;
 }
 @media (prefers-color-scheme: dark) {
-  body {
+  body,
+  input,
+  textarea {
     color: #FFFFFF;
     background-color: #000022;
   }
@@ -515,6 +521,10 @@ button.default-button:hover {
   max-width: 90vw;
   max-height: 80vh;
   display: block;
+}
+.export-screen textarea {
+  width: 100vw;
+  height: calc(100vh - (2.5rem + 10px));
 }
 .application-form button {
   margin-left: calc(8em + 4px);

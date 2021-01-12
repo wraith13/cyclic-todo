@@ -940,6 +940,26 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Storage.isSessionPass = function (pass) { return pass.startsWith(Storage.sessionPassPrefix); };
             Storage.getStorage = function (pass) { return Storage.isSessionPass(pass) ? minamo_js_1.minamo.sessionStorage : minamo_js_1.minamo.localStorage; };
             Storage.lastUpdate = 0;
+            Storage.exportJson = function (pass) {
+                var tags = {};
+                [
+                    "@overall",
+                    "@unoverall",
+                    "@deleted",
+                ].concat(Tag.get(pass))
+                    .forEach(function (tag) { return tags[tag] = TagMember.getRaw(pass, tag); });
+                var todos = TagMember.getRaw(pass, "@overall");
+                var histories = {};
+                todos
+                    .forEach(function (todo) { return histories[todo] = History.get(pass, todo); });
+                var json = {
+                    pass: pass,
+                    todos: todos,
+                    tags: tags,
+                    histories: histories,
+                };
+                return JSON.stringify(json, null, 4);
+            };
             var Pass;
             (function (Pass) {
                 Pass.key = "pass.list";
@@ -1818,7 +1838,17 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 tag: "button",
                                                 children: "🚫 リストをシェア",
                                             }
-                                        ]
+                                        ],
+                                    Render.menuItem("エクスポート", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, Render.updateExportScreen(entry.pass)];
+                                                case 1:
+                                                    _a.sent();
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }),
                                 ])];
                         case 2:
                             _f = [
@@ -2018,6 +2048,65 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     })
                                 }
                             ]),
+                                _a)];
+                    }
+                });
+            }); };
+            Render.updateExportScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            document.title = applicationTitle;
+                            _a = Render.showWindow;
+                            return [4 /*yield*/, Render.exportScreen(pass)];
+                        case 1:
+                            _a.apply(void 0, [_b.sent(), function () { }]);
+                            return [2 /*return*/];
+                    }
+                });
+            }); };
+            Render.exportScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c, _d, _e;
+                var _this = this;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "export-screen screen"
+                            };
+                            _b = Render.heading;
+                            _c = ["h1"];
+                            _d = {
+                                tag: "a",
+                                href: "./"
+                            };
+                            return [4 /*yield*/, Render.applicationIcon()];
+                        case 1:
+                            _e = [
+                                (_d.children = _f.sent(),
+                                    _d),
+                                "" + document.title
+                            ];
+                            return [4 /*yield*/, Render.menuButton([
+                                    Render.menuItem("リストに戻る", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, Render.updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); })
+                                ])];
+                        case 2: return [2 /*return*/, (_a.children = [
+                                _b.apply(void 0, _c.concat([_e.concat([
+                                        _f.sent()
+                                    ])])),
+                                {
+                                    tag: "textarea",
+                                    className: "json",
+                                    children: Storage.exportJson(pass),
+                                }
+                            ],
                                 _a)];
                     }
                 });

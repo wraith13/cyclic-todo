@@ -152,6 +152,34 @@ export module CyclicToDo
         export const isSessionPass = (pass: string) => pass.startsWith(sessionPassPrefix);
         export const getStorage = (pass: string) => isSessionPass(pass) ? minamo.sessionStorage: minamo.localStorage;
         export let lastUpdate = 0;
+        export const exportJson = (pass: string) =>
+        {
+            const tags: { [tag: string]: string[] } = { };
+            [
+                "@overall",
+                "@unoverall",
+                "@deleted",
+            ].concat(Tag.get(pass))
+            .forEach
+            (
+                tag => tags[tag] = TagMember.getRaw(pass, tag)
+            );
+            const todos = TagMember.getRaw(pass, "@overall");
+            const histories: { [todo: string]: number[] } = { };
+            todos
+            .forEach
+            (
+                todo => histories[todo] = History.get(pass, todo)
+            );
+            const json =
+            {
+                pass,
+                todos,
+                tags,
+                histories,
+            };
+            return JSON.stringify(json, null, 4);
+        };
         export module Pass
         {
             export const key = `pass.list`;
@@ -1080,7 +1108,15 @@ export module CyclicToDo
                                     tag: "button",
                                     children: "🚫 リストをシェア",
                                 }
-                            ]
+                            ],
+                            menuItem
+                            (
+                                "エクスポート",
+                                async () =>
+                                {
+                                    await updateExportScreen(entry.pass);
+                                }
+                            ),
                         ]),
                     ]
                 ),
@@ -1238,6 +1274,44 @@ export module CyclicToDo
                         },
                     })
                 },
+            ],
+        });
+        export const updateExportScreen = async (pass: string) =>
+        {
+            document.title = applicationTitle;
+            showWindow(await exportScreen(pass), () => { });
+        };
+        export const exportScreen = async (pass: string) =>
+        ({
+            tag: "div",
+            className: "export-screen screen",
+            children:
+            [
+                heading
+                (
+                    "h1",
+                    [
+                        {
+                            tag: "a",
+                            href: "./",
+                            children: await applicationIcon(),
+                        },
+                        `${document.title}`,
+                        await menuButton
+                        ([
+                            menuItem
+                            (
+                                "リストに戻る",
+                                async () => await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
+                            )
+                        ]),
+                    ]
+                ),
+                {
+                    tag: "textarea",
+                    className: "json",
+                    children: Storage.exportJson(pass),
+                }
             ],
         });
         export const updateWelcomeScreen = async (pass: string) =>
