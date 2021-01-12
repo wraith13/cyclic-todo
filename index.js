@@ -941,6 +941,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Storage.getStorage = function (pass) { return Storage.isSessionPass(pass) ? minamo_js_1.minamo.sessionStorage : minamo_js_1.minamo.localStorage; };
             Storage.lastUpdate = 0;
             Storage.exportJson = function (pass) {
+                var specification = "https://github.com/wraith13/cyclic-todo/README.md";
                 var tags = {};
                 [
                     "@overall",
@@ -953,12 +954,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 todos
                     .forEach(function (todo) { return histories[todo] = History.get(pass, todo); });
                 var json = {
+                    specification: specification,
                     pass: pass,
                     todos: todos,
                     tags: tags,
                     histories: histories,
                 };
-                return JSON.stringify(json, null, 4);
+                return JSON.stringify(json);
             };
             var Pass;
             (function (Pass) {
@@ -991,7 +993,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 Tag.remove = function (pass, tag) { return Tag.set(pass, Tag.get(pass).filter(function (i) { return tag !== i; })); };
                 Tag.getByTodo = function (pass, todo) { return ["@overall"].concat(Tag.get(pass)).concat(["@unoverall", "@untagged"]).filter(function (tag) { return 0 < TagMember.get(pass, tag).filter(function (i) { return todo === i; }).length; }); };
                 Tag.rename = function (pass, oldTag, newTag) {
-                    if (!Tag.isSystemTag(oldTag) && !Tag.isSystemTag(newTag) && oldTag !== newTag && Tag.get(pass).indexOf(newTag) < 0) {
+                    if (0 < newTag.length && !Tag.isSystemTag(oldTag) && !Tag.isSystemTag(newTag) && oldTag !== newTag && Tag.get(pass).indexOf(newTag) < 0) {
                         Tag.add(pass, newTag);
                         TagMember.set(pass, newTag, TagMember.getRaw(pass, oldTag));
                         Tag.remove(pass, oldTag);
@@ -1040,7 +1042,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     Storage.TagMember.add(pass, "@overall", task);
                 };
                 Task.rename = function (pass, oldTask, newTask) {
-                    if (oldTask !== newTask && TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0) {
+                    if (0 < newTask.length && oldTask !== newTask && TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0) {
                         Tag.getByTodo(pass, oldTask).forEach(function (tag) {
                             TagMember.remove(pass, tag, oldTask);
                             TagMember.add(pass, tag, newTask);
@@ -1065,14 +1067,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 History.add = function (pass, task, tick) {
                     return History.set(pass, task, History.get(pass, task).concat(tick).filter(exports.uniqueFilter).sort(exports.simpleReverseComparer));
                 };
-                History.rename = function (pass, oldTask, newTask) {
-                    if (undefined === Storage.getStorage(pass).getRaw(History.makeKey(pass, newTask))) {
-                        History.set(pass, newTask, History.get(pass, oldTask));
-                        History.remove(pass, oldTask);
-                        return true;
-                    }
-                    return false;
-                };
+                // export const rename = (pass: string, oldTask: string, newTask: string) =>
+                // {
+                //     if (0 < newTask.length && oldTask !== newTask && undefined === getStorage(pass).getRaw(makeKey(pass, newTask)))
+                //     {
+                //         set(pass, newTask, get(pass, oldTask));
+                //         remove(pass, oldTask);
+                //         return true;
+                //     }
+                //     return false;
+                // };
             })(History = Storage.History || (Storage.History = {}));
         })(Storage = CyclicToDo.Storage || (CyclicToDo.Storage = {}));
         var Domain;
@@ -1998,7 +2002,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 _f.sent(),
                                 "" + document.title
                             ];
-                            return [4 /*yield*/, Render.menuButton("🚫 ポップアップメニュー")];
+                            return [4 /*yield*/, Render.menuButton([
+                                    Render.menuItem("GitHub", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        return [2 /*return*/, location.href = "https://github.com/wraith13/cyclic-todo/"];
+                                    }); }); }),
+                                ])];
                         case 2:
                             _e = [
                                 _b.apply(void 0, _c.concat([_d.concat([

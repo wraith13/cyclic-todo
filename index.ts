@@ -154,6 +154,7 @@ export module CyclicToDo
         export let lastUpdate = 0;
         export const exportJson = (pass: string) =>
         {
+            const specification = "https://github.com/wraith13/cyclic-todo/README.md";
             const tags: { [tag: string]: string[] } = { };
             [
                 "@overall",
@@ -173,12 +174,13 @@ export module CyclicToDo
             );
             const json =
             {
+                specification,
                 pass,
                 todos,
                 tags,
                 histories,
             };
-            return JSON.stringify(json, null, 4);
+            return JSON.stringify(json);
         };
         export module Pass
         {
@@ -213,7 +215,7 @@ export module CyclicToDo
             export const getByTodo = (pass: string, todo: string) => ["@overall"].concat(get(pass)).concat(["@unoverall", "@untagged"]).filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length);
             export const rename = (pass: string, oldTag: string, newTag: string) =>
             {
-                if ( ! isSystemTag(oldTag) && ! isSystemTag(newTag) && oldTag !== newTag && get(pass).indexOf(newTag) < 0)
+                if (0 < newTag.length && ! isSystemTag(oldTag) && ! isSystemTag(newTag) && oldTag !== newTag && get(pass).indexOf(newTag) < 0)
                 {
                     add(pass, newTag);
                     TagMember.set(pass, newTag, TagMember.getRaw(pass, oldTag));
@@ -267,7 +269,7 @@ export module CyclicToDo
             };
             export const rename = (pass: string, oldTask: string, newTask: string) =>
             {
-                if (oldTask !== newTask && TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0)
+                if (0 < newTask.length && oldTask !== newTask && TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0)
                 {
                     Tag.getByTodo(pass, oldTask).forEach
                     (
@@ -295,17 +297,16 @@ export module CyclicToDo
                 getStorage(pass).remove(makeKey(pass, task));
             export const add = (pass: string, task: string, tick: number | number[]) =>
                 set(pass, task, get(pass, task).concat(tick).filter(uniqueFilter).sort(simpleReverseComparer));
-            export const rename = (pass: string, oldTask: string, newTask: string) =>
-            {
-                if (undefined === getStorage(pass).getRaw(makeKey(pass, newTask)))
-                {
-                    set(pass, newTask, get(pass, oldTask));
-                    remove(pass, oldTask);
-
-                    return true;
-                }
-                return false;
-            };
+            // export const rename = (pass: string, oldTask: string, newTask: string) =>
+            // {
+            //     if (0 < newTask.length && oldTask !== newTask && undefined === getStorage(pass).getRaw(makeKey(pass, newTask)))
+            //     {
+            //         set(pass, newTask, get(pass, oldTask));
+            //         remove(pass, oldTask);
+            //         return true;
+            //     }
+            //     return false;
+            // };
         }
     }
     export module Domain
@@ -1241,7 +1242,14 @@ export module CyclicToDo
                     [
                         await applicationIcon(),
                         `${document.title}`,
-                        await menuButton("🚫 ポップアップメニュー"),
+                        await menuButton
+                        ([
+                            menuItem
+                            (
+                                "GitHub",
+                                async () => location.href = "https://github.com/wraith13/cyclic-todo/",
+                            ),
+                        ]),
                     ]
                 ),
                 {
