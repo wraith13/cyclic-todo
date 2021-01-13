@@ -509,6 +509,12 @@ button.default-button:hover {
   opacity: 0.4;
   float: right;
 }
+body.locale-parallel-on .task-item .task-header .task-title {
+  max-width: calc(100% - 180px);
+}
+body.locale-parallel-off .task-item .task-header .task-title {
+  max-width: calc(100% - 120px);
+}
 .welcome-screen h1 {
   margin-bottom: 1em;
   text-align: center;

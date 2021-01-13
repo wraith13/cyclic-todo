@@ -384,6 +384,65 @@ define("minamo.js/index", ["require", "exports"], function (require, exports) {
                 if (_ === void 0) { _ = null; }
                 throw new Error("Not Yet Implement!");
             };
+            var comparer;
+            (function (comparer) {
+                comparer.basic = function (a, b) {
+                    return a < b ? -1 :
+                        b < a ? 1 :
+                            0;
+                };
+                comparer.make = function (source) {
+                    var _a;
+                    var invoker = function (i) {
+                        var f = i;
+                        if ("function" === typeof f) {
+                            return function (a, b) { return comparer.basic(f(a), f(b)); };
+                        }
+                        var r = i;
+                        if (undefined !== (r === null || r === void 0 ? void 0 : r.raw)) {
+                            return r.raw;
+                        }
+                        var s = i;
+                        if (undefined !== (s === null || s === void 0 ? void 0 : s.getter)) {
+                            var body_1 = function (a, b) { return comparer.basic(s.getter(a), s.getter(b)); };
+                            if (undefined === s.condition) {
+                                return body_1;
+                            }
+                            else {
+                                var f_1 = s.condition;
+                                if ("function" === typeof f_1) {
+                                    return function (a, b) { return f_1(a, b) ? body_1(a, b) : 0; };
+                                }
+                                else {
+                                    var t_1 = s.condition;
+                                    var getter_1 = t_1.getter;
+                                    if (undefined === getter_1) {
+                                        return function (a, b) { return t_1.type === typeof a && t_1.type === typeof b ? body_1(a, b) : 0; };
+                                    }
+                                    else {
+                                        return function (a, b) { return t_1.type === typeof getter_1(a) && t_1.type === typeof getter_1(b) ? body_1(a, b) : 0; };
+                                    }
+                                }
+                            }
+                        }
+                        return undefined;
+                    };
+                    if (Array.isArray(source)) {
+                        var comparerList_1 = source.map(invoker).filter(function (i) { return undefined !== i; });
+                        return function (a, b) {
+                            var result = 0;
+                            for (var i = 0; i < comparerList_1.length && 0 === result; ++i) {
+                                result = comparerList_1[i](a, b);
+                            }
+                            return result;
+                        };
+                    }
+                    else {
+                        return (_a = invoker(source)) !== null && _a !== void 0 ? _a : (function () { return 0; });
+                    }
+                };
+                comparer.lowerCase = comparer.make([function (a) { return a.toLowerCase(); }, { raw: comparer.basic }]);
+            })(comparer = core_1.comparer || (core_1.comparer = {}));
         })(core = minamo.core || (minamo.core = {}));
         var environment;
         (function (environment) {
@@ -837,15 +896,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
         items.forEach(function (i) { return result[i.key] = i.value; });
         return result;
     };
-    exports.simpleComparer = function (a, b) {
-        if (a < b) {
-            return -1;
-        }
-        if (b < a) {
-            return 1;
-        }
-        return 0;
-    };
+    exports.simpleComparer = minamo_js_1.minamo.core.comparer.basic;
     exports.simpleReverseComparer = function (a, b) { return -exports.simpleComparer(a, b); };
     exports.uniqueFilter = function (value, index, list) { return index === list.indexOf(value); };
     var localeSingle;
@@ -1159,6 +1210,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Domain.done = function (pass, task) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                 return [2 /*return*/, Storage.History.add(pass, task, Domain.getDoneTicks(pass))];
             }); }); };
+            Domain.tagComparer = function (pass) { return minamo_js_1.minamo.core.comparer.make(function (tag) { return -Storage.TagMember.get(pass, tag).map(function (todo) { return Storage.History.get(pass, todo).length; }).reduce(function (a, b) { return a + b; }, 0); }); };
             Domain.todoComparer1 = function (entry) {
                 return function (a, b) {
                     var _a, _b;
@@ -1271,6 +1323,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     return 0;
                 };
             };
+            // export const todoComparer2 = (list: ToDoEntry[], todoList: string[] = list.map(i => i.todo)) =>
+            // minamo.core.comparer.make<ToDoEntry>
+            // ([
+            //     { condition: (a, b) => null !== a.progress && null !== b.progress ......., getter: a => -a.elapsed },
+            //     { getter: a => todoList.indexOf(a.todo), valueCondition: (a, b) => 0 <= a && 0 <= b, }
+            // ]);
             Domain.getRecentlyHistories = function (entry) {
                 var histories = {};
                 entry.todo.forEach(function (todo) {
@@ -1738,7 +1796,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 (_d.children = _h.sent(),
                                     _d),
                                 Render.dropDownLabel({
-                                    list: exports.makeObject(["@overall"].concat(Storage.Tag.get(entry.pass)).concat(["@unoverall", "@untagged", "@deleted", "@new"])
+                                    list: exports.makeObject(["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@deleted", "@new"])
                                         .map(function (i) { return ({ key: i, value: Domain.tagMap(i) + " (" + Storage.TagMember.get(entry.pass, i).length + ")", }); })),
                                     value: entry.tag,
                                     onChange: function (tag) { return __awaiter(_this, void 0, void 0, function () {

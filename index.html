@@ -16,7 +16,13 @@
         document.head.append(stylesheet);
     </script>
     <script type="text/javascript" src="https://wraith13.github.io/evil-commonjs/index.js"></script>
-    <script type="text/javascript" src="index.js?tick=2"></script>
+    <!-- script type="text/javascript" src="index.js?tick=2"></script -->
+    <script>
+        const script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "./index.js?tick=" +new Date().getTime();
+        document.head.append(script);
+    </script>
 </head>
 <body onload="require('index').CyclicToDo.start()"><div id="body"></div></body>
 </html>

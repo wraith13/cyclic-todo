@@ -11,18 +11,7 @@ export const makeObject = <T>(items: { key: string, value: T}[]) =>
     items.forEach(i => result[i.key] = i.value);
     return result;
 };
-export const simpleComparer = <T>(a: T, b: T) =>
-{
-    if (a < b)
-    {
-        return -1;
-    }
-    if (b < a)
-    {
-        return 1;
-    }
-    return 0;
-};
+export const simpleComparer = minamo.core.comparer.basic;
 export const simpleReverseComparer = <T>(a: T, b: T) => -simpleComparer(a, b);
 export const uniqueFilter = <T>(value: T, index: number, list: T[]) => index === list.indexOf(value);
 export module localeSingle
@@ -128,8 +117,8 @@ export module CyclicToDo
     
     interface ToDoTagEntry
     {
-        tag: string;
         pass: string;
+        tag: string;
         todo: string[];
     }
     interface ToDoEntry
@@ -400,6 +389,10 @@ export module CyclicToDo
             );
         export const done = async (pass: string, task: string) =>
             Storage.History.add(pass, task, getDoneTicks(pass));
+        export const tagComparer = (pass: string) => minamo.core.comparer.make<string>
+        (
+            tag => -Storage.TagMember.get(pass, tag).map(todo => Storage.History.get(pass, todo).length).reduce((a, b) => a +b, 0)
+        );
         export const todoComparer1 = (entry: ToDoTagEntry) =>
         (a: ToDoEntry, b: ToDoEntry) =>
         {
@@ -545,6 +538,12 @@ export module CyclicToDo
             }
             return 0;
         };
+        // export const todoComparer2 = (list: ToDoEntry[], todoList: string[] = list.map(i => i.todo)) =>
+        // minamo.core.comparer.make<ToDoEntry>
+        // ([
+        //     { condition: (a, b) => null !== a.progress && null !== b.progress ......., getter: a => -a.elapsed },
+        //     { getter: a => todoList.indexOf(a.todo), valueCondition: (a, b) => 0 <= a && 0 <= b, }
+        // ]);
         export const getRecentlyHistories = (entry: ToDoTagEntry) =>
         {
             const histories: { [todo: string]: { recentries: number[], previous: null | number, count: number, } } = { };
@@ -1026,7 +1025,7 @@ export module CyclicToDo
                         ({
                             list: makeObject
                             (
-                                ["@overall"].concat(Storage.Tag.get(entry.pass)).concat(["@unoverall", "@untagged", "@deleted", "@new"])
+                                ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@deleted", "@new"])
                                 .map(i => ({ key:i, value: `${Domain.tagMap(i)} (${Storage.TagMember.get(entry.pass, i).length})`, }))
                             ),
                             value: entry.tag,
