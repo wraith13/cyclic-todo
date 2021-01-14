@@ -56,50 +56,132 @@ export module localeParallel
         );
         return result;
     };
+    export const sum = (ticks: number[]) => ticks.length <= 0 ?
+        null:
+        ticks.reduce((a, b) => a +b, 0);
     export const average = (ticks: number[]) => ticks.length <= 0 ?
         null:
-        ticks.reduce((a, b) => a +b, 0) /ticks.length;
+        sum(ticks) /ticks.length;
     export const standardDeviation = (ticks: number[], average: number = Calculate.average(ticks)) =>
         Math.sqrt(Calculate.average(ticks.map(i => (i -average) ** 2)));
     export const standardScore = (average: number, standardDeviation: number, target: number) =>
         (10 * (target -average) /standardDeviation) +50;
-    export const expectedNext = (ticks: number[], intervals: number[] = Calculate.intervals(ticks), average: number = Calculate.average(intervals), standardDeviation: number = Calculate.standardDeviation(intervals, average)) =>
+    export const expectedNext = (ticks: number[]) =>
     {
+        const intervals: number[] = Calculate.intervals(ticks).reverse();
+        const average: number = Calculate.average(intervals);
+        const standardDeviation: number = Calculate.standardDeviation(intervals, average);
         if (10 <= intervals.length && (average *0.1) < standardDeviation)
         {
-console.log({intervals, average});
-            const checkPoints: number[] = [];
-            let i = 0;
-            let previousDiffAccumulation = (intervals[i] -average);
-            while(++i < intervals.length /2)
+            const waveLenghResolution = 10;
+            const angleResolution = 10;
+            const base = 2 *standardDeviation;
+            const regulatedIntervals = intervals.map(i => Math.min(1.0, Math.max(-1.0, (i -average) /base)));
+            // const regulatedAverage = Calculate.average(regulatedIntervals);
+            // const regulatedStandardDeviation = Calculate.standardDeviation(regulatedIntervals, regulatedAverage);
+            const primeWaveLength = Math.pow(Calculate.phi, Math.ceil(Math.log(regulatedIntervals.length) /Math.log(Calculate.phi)));
+            let diff = regulatedIntervals.map(i => i);
+            const rates: number[][] = [];
+            const calcLevel = (angle: number, waveLength: number, index: number) => Math.sin(((index /waveLength) +(angle /angleResolution)) *(Math.PI *2));
+            //const calcLevel = (_offset: number, waveLength: number, index: number) => Math.sin((index /waveLength) *(Math.PI *2));
+            const calcRate = (values: number[], offset: number, waveLength: number) => Calculate.average(values.map((value, index) => Math.min(1.0, Math.max(-1.0, value / calcLevel(offset, waveLength, index)))));
+            const calcAccuracy = (values: number[]) => Calculate.average(values.map(i => 1 -Math.abs(i)));
+            const calcWorstAccuracy = (values: number[]) => values.map(i => 1 -Math.abs(i)).reduce((a, b) => a < b ? a: b, 1);
+            const initAccuracy = calcAccuracy(diff);
+            const initWorstAccuracy = calcWorstAccuracy(diff);
+            console.log(diff);
+            let wave = 0;
+            //while(Math.pow(Calculate.phi, offset /resolution) <= primeWaveLength)
+            let previousAccuracy = initAccuracy;
+            let previousWorstAccuracy = initWorstAccuracy;
+            while(wave < waveLenghResolution)
             {
-                const diffAccumulation = previousDiffAccumulation +(intervals[i] -average);
-console.log({diffAccumulation, previousDiffAccumulation, current: (intervals[i] -average)});
-                if (Math.abs(previousDiffAccumulation + diffAccumulation) < Math.abs(previousDiffAccumulation) +Math.abs(diffAccumulation))
+                const waveLength = primeWaveLength /Math.pow(Calculate.phi, wave /waveLenghResolution);
+                const currentRates: number[] = [];
+                for(let angle = 0; angle < angleResolution; ++angle)
                 {
-                    checkPoints.push(intervals[i]);
-                    if (10 <= checkPoints.length)
+                    const rate = calcRate(diff, angle, waveLength);
+                    const nextDiff = diff.map((value, index) => value -(rate *calcLevel(angle, waveLength, index)));
+                    //console.log(`rate: ${rate}, accuracy: ${calcAccuracy(diff).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}`);
+                    //console.log({ waveLength, diff, });
+                    let nextAccuracy = calcAccuracy(nextDiff);
+                    let nextWorstAccuracy = calcWorstAccuracy(nextDiff);
+                    if (previousAccuracy < nextAccuracy && previousWorstAccuracy < nextWorstAccuracy)
                     {
-                        break;
+                        previousAccuracy = nextAccuracy;
+                        previousWorstAccuracy = nextWorstAccuracy;
+                        diff = nextDiff;
+                        currentRates.push(rate);
                     }
-                    previousDiffAccumulation = 0;
+                    else
+                    {
+                        currentRates.push(0);
+                    }
                 }
-                else
-                {
-                    previousDiffAccumulation = diffAccumulation;
-                }
+                rates.push(currentRates);
+                ++wave;
             }
-console.log(`checkPoints.length: ${checkPoints.length}, intervals.length: ${intervals.length}`);
-            if (3 <= checkPoints.length)
+            const finalAccuracy = calcAccuracy(diff);
+            const finalWorstAccuracy = calcWorstAccuracy(diff);
+            console.log(diff);
+            console.log(rates);
+            console.log(`init accuracy: ${initAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}, ${initWorstAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}`);
+            console.log(`final accuracy: ${finalAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}, ${finalWorstAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}`);
+            if (initAccuracy < finalAccuracy)
             {
-                const checkPointsAverage = Calculate.average(intervals);
-                const checkPointsstandardDeviation = Calculate.standardDeviation(checkPoints, checkPointsAverage);
-console.log({checkPointsstandardDeviation, standardDeviation});
-                if (checkPointsstandardDeviation < standardDeviation)
-                {
-                    return ticks[0] +checkPointsAverage +checkPointsstandardDeviation;
-                }
+                const next = ticks[0] +average +
+                (
+                    Calculate.sum
+                    (
+                        rates.map
+                        (
+                            (currentRates, wave) =>
+                            Calculate.sum
+                            (
+                                currentRates.map
+                                (
+                                    (rate, angle) => 0 === rate ? 0:
+                                        rate *calcLevel(angle, primeWaveLength /Math.pow(Calculate.phi, wave /waveLenghResolution), regulatedIntervals.length)
+                                )
+                            )
+                        )
+                    ) *base
+                );
+                return next;
             }
+// console.log({intervals, average});
+//             const checkPoints: number[] = [];
+//             let i = 0;
+//             let previousDiffAccumulation = (intervals[i] -average);
+//             while(++i < intervals.length /2)
+//             {
+//                 const diffAccumulation = previousDiffAccumulation +(intervals[i] -average);
+// console.log({diffAccumulation, previousDiffAccumulation, current: (intervals[i] -average)});
+//                 if (Math.abs(previousDiffAccumulation + diffAccumulation) < Math.abs(previousDiffAccumulation) +Math.abs(diffAccumulation))
+//                 {
+//                     checkPoints.push(intervals[i]);
+//                     if (10 <= checkPoints.length)
+//                     {
+//                         break;
+//                     }
+//                     previousDiffAccumulation = 0;
+//                 }
+//                 else
+//                 {
+//                     previousDiffAccumulation = diffAccumulation;
+//                 }
+//             }
+// console.log(`checkPoints.length: ${checkPoints.length}, intervals.length: ${intervals.length}`);
+//             if (3 <= checkPoints.length)
+//             {
+//                 const checkPointsAverage = Calculate.average(intervals);
+//                 const checkPointsstandardDeviation = Calculate.standardDeviation(checkPoints, checkPointsAverage);
+// console.log({checkPointsstandardDeviation, standardDeviation});
+//                 if (checkPointsstandardDeviation < standardDeviation)
+//                 {
+//                     return ticks[0] +checkPointsAverage +checkPointsstandardDeviation;
+//                 }
+//             }
         }
         return null;
     };

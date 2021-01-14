@@ -930,9 +930,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             });
             return result;
         };
+        Calculate.sum = function (ticks) { return ticks.length <= 0 ?
+            null :
+            ticks.reduce(function (a, b) { return a + b; }, 0); };
         Calculate.average = function (ticks) { return ticks.length <= 0 ?
             null :
-            ticks.reduce(function (a, b) { return a + b; }, 0) / ticks.length; };
+            Calculate.sum(ticks) / ticks.length; };
         Calculate.standardDeviation = function (ticks, average) {
             if (average === void 0) { average = Calculate.average(ticks); }
             return Math.sqrt(Calculate.average(ticks.map(function (i) { return Math.pow((i - average), 2); })));
@@ -940,38 +943,108 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
         Calculate.standardScore = function (average, standardDeviation, target) {
             return (10 * (target - average) / standardDeviation) + 50;
         };
-        Calculate.expectedNext = function (ticks, intervals, average, standardDeviation) {
-            if (intervals === void 0) { intervals = Calculate.intervals(ticks); }
-            if (average === void 0) { average = Calculate.average(intervals); }
-            if (standardDeviation === void 0) { standardDeviation = Calculate.standardDeviation(intervals, average); }
+        Calculate.expectedNext = function (ticks) {
+            var intervals = Calculate.intervals(ticks).reverse();
+            var average = Calculate.average(intervals);
+            var standardDeviation = Calculate.standardDeviation(intervals, average);
             if (10 <= intervals.length && (average * 0.1) < standardDeviation) {
-                console.log({ intervals: intervals, average: average });
-                var checkPoints = [];
-                var i = 0;
-                var previousDiffAccumulation = (intervals[i] - average);
-                while (++i < intervals.length / 2) {
-                    var diffAccumulation = previousDiffAccumulation + (intervals[i] - average);
-                    console.log({ diffAccumulation: diffAccumulation, previousDiffAccumulation: previousDiffAccumulation, current: (intervals[i] - average) });
-                    if (Math.abs(previousDiffAccumulation + diffAccumulation) < Math.abs(previousDiffAccumulation) + Math.abs(diffAccumulation)) {
-                        checkPoints.push(intervals[i]);
-                        if (10 <= checkPoints.length) {
-                            break;
+                var waveLenghResolution_1 = 10;
+                var angleResolution_1 = 10;
+                var base_1 = 2 * standardDeviation;
+                var regulatedIntervals_1 = intervals.map(function (i) { return Math.min(1.0, Math.max(-1.0, (i - average) / base_1)); });
+                // const regulatedAverage = Calculate.average(regulatedIntervals);
+                // const regulatedStandardDeviation = Calculate.standardDeviation(regulatedIntervals, regulatedAverage);
+                var primeWaveLength_1 = Math.pow(Calculate.phi, Math.ceil(Math.log(regulatedIntervals_1.length) / Math.log(Calculate.phi)));
+                var diff = regulatedIntervals_1.map(function (i) { return i; });
+                var rates = [];
+                var calcLevel_1 = function (angle, waveLength, index) { return Math.sin(((index / waveLength) + (angle / angleResolution_1)) * (Math.PI * 2)); };
+                //const calcLevel = (_offset: number, waveLength: number, index: number) => Math.sin((index /waveLength) *(Math.PI *2));
+                var calcRate = function (values, offset, waveLength) { return Calculate.average(values.map(function (value, index) { return Math.min(1.0, Math.max(-1.0, value / calcLevel_1(offset, waveLength, index))); })); };
+                var calcAccuracy = function (values) { return Calculate.average(values.map(function (i) { return 1 - Math.abs(i); })); };
+                var calcWorstAccuracy = function (values) { return values.map(function (i) { return 1 - Math.abs(i); }).reduce(function (a, b) { return a < b ? a : b; }, 1); };
+                var initAccuracy = calcAccuracy(diff);
+                var initWorstAccuracy = calcWorstAccuracy(diff);
+                console.log(diff);
+                var wave = 0;
+                //while(Math.pow(Calculate.phi, offset /resolution) <= primeWaveLength)
+                var previousAccuracy = initAccuracy;
+                var previousWorstAccuracy = initWorstAccuracy;
+                var _loop_1 = function () {
+                    var waveLength = primeWaveLength_1 / Math.pow(Calculate.phi, wave / waveLenghResolution_1);
+                    var currentRates = [];
+                    var _loop_2 = function (angle) {
+                        var rate = calcRate(diff, angle, waveLength);
+                        var nextDiff = diff.map(function (value, index) { return value - (rate * calcLevel_1(angle, waveLength, index)); });
+                        //console.log(`rate: ${rate}, accuracy: ${calcAccuracy(diff).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}`);
+                        //console.log({ waveLength, diff, });
+                        var nextAccuracy = calcAccuracy(nextDiff);
+                        var nextWorstAccuracy = calcWorstAccuracy(nextDiff);
+                        if (previousAccuracy < nextAccuracy && previousWorstAccuracy < nextWorstAccuracy) {
+                            previousAccuracy = nextAccuracy;
+                            previousWorstAccuracy = nextWorstAccuracy;
+                            diff = nextDiff;
+                            currentRates.push(rate);
                         }
-                        previousDiffAccumulation = 0;
+                        else {
+                            currentRates.push(0);
+                        }
+                    };
+                    for (var angle = 0; angle < angleResolution_1; ++angle) {
+                        _loop_2(angle);
                     }
-                    else {
-                        previousDiffAccumulation = diffAccumulation;
-                    }
+                    rates.push(currentRates);
+                    ++wave;
+                };
+                while (wave < waveLenghResolution_1) {
+                    _loop_1();
                 }
-                console.log("checkPoints.length: " + checkPoints.length + ", intervals.length: " + intervals.length);
-                if (3 <= checkPoints.length) {
-                    var checkPointsAverage = Calculate.average(intervals);
-                    var checkPointsstandardDeviation = Calculate.standardDeviation(checkPoints, checkPointsAverage);
-                    console.log({ checkPointsstandardDeviation: checkPointsstandardDeviation, standardDeviation: standardDeviation });
-                    if (checkPointsstandardDeviation < standardDeviation) {
-                        return ticks[0] + checkPointsAverage + checkPointsstandardDeviation;
-                    }
+                var finalAccuracy = calcAccuracy(diff);
+                var finalWorstAccuracy = calcWorstAccuracy(diff);
+                console.log(diff);
+                console.log(rates);
+                console.log("init accuracy: " + initAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }) + ", " + initWorstAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }));
+                console.log("final accuracy: " + finalAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }) + ", " + finalWorstAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }));
+                if (initAccuracy < finalAccuracy) {
+                    var next = ticks[0] + average +
+                        (Calculate.sum(rates.map(function (currentRates, wave) {
+                            return Calculate.sum(currentRates.map(function (rate, angle) { return 0 === rate ? 0 :
+                                rate * calcLevel_1(angle, primeWaveLength_1 / Math.pow(Calculate.phi, wave / waveLenghResolution_1), regulatedIntervals_1.length); }));
+                        })) * base_1);
+                    return next;
                 }
+                // console.log({intervals, average});
+                //             const checkPoints: number[] = [];
+                //             let i = 0;
+                //             let previousDiffAccumulation = (intervals[i] -average);
+                //             while(++i < intervals.length /2)
+                //             {
+                //                 const diffAccumulation = previousDiffAccumulation +(intervals[i] -average);
+                // console.log({diffAccumulation, previousDiffAccumulation, current: (intervals[i] -average)});
+                //                 if (Math.abs(previousDiffAccumulation + diffAccumulation) < Math.abs(previousDiffAccumulation) +Math.abs(diffAccumulation))
+                //                 {
+                //                     checkPoints.push(intervals[i]);
+                //                     if (10 <= checkPoints.length)
+                //                     {
+                //                         break;
+                //                     }
+                //                     previousDiffAccumulation = 0;
+                //                 }
+                //                 else
+                //                 {
+                //                     previousDiffAccumulation = diffAccumulation;
+                //                 }
+                //             }
+                // console.log(`checkPoints.length: ${checkPoints.length}, intervals.length: ${intervals.length}`);
+                //             if (3 <= checkPoints.length)
+                //             {
+                //                 const checkPointsAverage = Calculate.average(intervals);
+                //                 const checkPointsstandardDeviation = Calculate.standardDeviation(checkPoints, checkPointsAverage);
+                // console.log({checkPointsstandardDeviation, standardDeviation});
+                //                 if (checkPointsstandardDeviation < standardDeviation)
+                //                 {
+                //                     return ticks[0] +checkPointsAverage +checkPointsstandardDeviation;
+                //                 }
+                //             }
             }
             return null;
         };
