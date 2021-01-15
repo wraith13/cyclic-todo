@@ -442,6 +442,8 @@ button.default-button
     display: inline-block;
     box-sizing: border-box;
     min-width: calc(100% / 1);
+    border-color: rgba(128,128,128,0.5);
+    border-style: solid;
     border-width: 1px;
     margin: -0.5px;
     @media (min-width:780px)
@@ -556,9 +558,6 @@ button.default-button
     //width: 480px;
     //max-width: 100vw;
 
-    border-color: rgba(128,128,128,0.5);
-    border-style: solid;
-
     .task-header
     {
         position: relative;
@@ -580,6 +579,7 @@ button.default-button
             height: 1em;
             max-width: calc(100% - 180px);
             margin-right: -120px;
+            cursor: pointer;
         }
         .task-operator
         {
@@ -669,6 +669,20 @@ body.locale-parallel-on .task-item .task-header .task-title
 body.locale-parallel-off .task-item .task-header .task-title
 {
     max-width: calc(100% - 120px);
+}
+.todo-screen
+{
+    .task-item
+    {
+        padding-top: 0px;
+    }
+    .tick-list
+    {
+        .tick-item
+        {
+            padding: 0.5rem;
+        }
+    }
 }
 .welcome-screen
 {

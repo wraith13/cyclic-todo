@@ -205,12 +205,12 @@ export module CyclicToDo
     }
     interface ToDoEntry
     {
-        todo: string;
+        task: string;
         isDefault: boolean;
         progress: null | number;
         //decayedProgress: null | number;
         previous: null | number;
-        expectedNext: null | number;
+        //expectedNext: null | number;
         elapsed: null | number;
         overallAverage: null | number;
         RecentlyStandardDeviation: null | number;
@@ -561,8 +561,8 @@ export module CyclicToDo
             {
                 return -1;
             }
-            const aTodoIndex = entry.todo.indexOf(a.todo);
-            const bTodoIndex = entry.todo.indexOf(a.todo);
+            const aTodoIndex = entry.todo.indexOf(a.task);
+            const bTodoIndex = entry.todo.indexOf(a.task);
             if (0 <= aTodoIndex && 0 <= bTodoIndex)
             {
                 if (aTodoIndex < bTodoIndex)
@@ -574,17 +574,17 @@ export module CyclicToDo
                     return -1;
                 }
             }
-            if (a.todo < b.todo)
+            if (a.task < b.task)
             {
                 return 1;
             }
-            if (b.todo < a.todo)
+            if (b.task < a.task)
             {
                 return -1;
             }
             return 0;
         };
-        export const todoComparer2 = (list: ToDoEntry[], todoList: string[] = list.map(i => i.todo)) =>
+        export const todoComparer2 = (list: ToDoEntry[], todoList: string[] = list.map(i => i.task)) =>
         (a: ToDoEntry, b: ToDoEntry) =>
         {
             if (null !== a.progress && null !== b.progress)
@@ -605,8 +605,8 @@ export module CyclicToDo
                     }
                 }
             }
-            const aTodoIndex = todoList.indexOf(a.todo);
-            const bTodoIndex = todoList.indexOf(a.todo);
+            const aTodoIndex = todoList.indexOf(a.task);
+            const bTodoIndex = todoList.indexOf(a.task);
             if (0 <= aTodoIndex && 0 <= bTodoIndex)
             {
                 if (aTodoIndex < bTodoIndex)
@@ -626,84 +626,71 @@ export module CyclicToDo
         //     { condition: (a, b) => null !== a.progress && null !== b.progress ......., getter: a => -a.elapsed },
         //     { getter: a => todoList.indexOf(a.todo), valueCondition: (a, b) => 0 <= a && 0 <= b, }
         // ]);
-        export const getRecentlyHistories = (entry: ToDoTagEntry) =>
+        export const getRecentlyHistory = (pass: string, task: string) =>
         {
-            const histories: { [todo: string]: { recentries: number[], previous: null | number, count: number, } } = { };
-            entry.todo.forEach
-            (
-                todo =>
-                {
-                    const full = Storage.History.get(entry.pass, todo);
-                    histories[todo] =
-                    {
-                        recentries: full.filter((_, index) => index < 25),
-                        previous: full.length <= 0 ? null: full[0],
-                        //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
-                        count: full.length,
-                    };
-                }
-            );
-            return histories;
-        };
-        export const getToDoEntries = (entry: ToDoTagEntry, histories: { [todo: string]: { recentries: number[], previous: null | number, count: number, } }) => entry.todo.map
-        (
-            todo =>
+            const full = Storage.History.get(pass, task);
+            const result =
             {
-                const history = histories[todo];
-                const calcAverage = (ticks: number[], maxLength: number = ticks.length, length = Math.min(maxLength, ticks.length)) =>
-                    ((ticks[0] -ticks[length -1]) /(length -1));
-                const result: ToDoEntry =
-                {
-                    todo,
-                    isDefault: false,
-                    progress: null,
-                    //decayedProgress: null,
-                    previous: history.previous,
-                    expectedNext: Calculate.expectedNext(Storage.History.get(entry.pass, todo)),
-                    elapsed: null,
-                    overallAverage: history.recentries.length <= 1 ? null: calcAverage(history.recentries),
-                    RecentlyStandardDeviation: history.recentries.length <= 1 ?
-                        null:
-                        history.recentries.length <= 2 ?
-                            calcAverage(history.recentries) *0.05: // この値を標準偏差として代用
-                            Calculate.standardDeviation(Calculate.intervals(history.recentries)),
-                    count: history.count,
-                    RecentlySmartAverage: history.recentries.length <= 1 ?
-                        null:
-                        calcAverage(history.recentries, 25),
-                };
-                return result;
-            }
-        );
-        export const updateProgress = (entry: ToDoTagEntry, list: ToDoEntry[], now: number = Domain.getTicks()) =>
+                recentries: full.filter((_, index) => index < 25),
+                previous: full.length <= 0 ? null: full[0],
+                //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
+                count: full.length,
+            };
+            return result;
+        };
+        export const getToDoEntry = (task: string, history: { recentries: number[], previous: null | number, count: number, }) =>
         {
-            list.forEach
-            (
-                item =>
+            const calcAverage = (ticks: number[], maxLength: number = ticks.length, length = Math.min(maxLength, ticks.length)) =>
+                ((ticks[0] -ticks[length -1]) /(length -1));
+            const result: ToDoEntry =
+            {
+                task,
+                isDefault: false,
+                progress: null,
+                //decayedProgress: null,
+                previous: history.previous,
+                //expectedNext: Calculate.expectedNext(Storage.History.get(entry.pass, todo)),
+                elapsed: null,
+                overallAverage: history.recentries.length <= 1 ? null: calcAverage(history.recentries),
+                RecentlyStandardDeviation: history.recentries.length <= 1 ?
+                    null:
+                    history.recentries.length <= 2 ?
+                        calcAverage(history.recentries) *0.05: // この値を標準偏差として代用
+                        Calculate.standardDeviation(Calculate.intervals(history.recentries)),
+                count: history.count,
+                RecentlySmartAverage: history.recentries.length <= 1 ?
+                    null:
+                    calcAverage(history.recentries, 25),
+            };
+            return result;
+        };
+        export const updateProgress = (item: ToDoEntry, now: number = Domain.getTicks()) =>
+        {
+            if (0 < item.count)
+            {
+                // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
+                item.elapsed = Math.max(0.0, now -item.previous);
+                if (null !== item.RecentlySmartAverage)
                 {
-                    if (0 < item.count)
+                    item.progress = item.elapsed /(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *2.0);
+                    //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
+                    const overrate = (item.elapsed -(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *3.0)) / item.RecentlySmartAverage;
+                    if (0.0 < overrate)
                     {
-                        // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
-                        item.elapsed = Math.max(0.0, now -item.previous);
-                        if (null !== item.RecentlySmartAverage)
-                        {
-                            item.progress = item.elapsed /(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *2.0);
-                            //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
-                            const overrate = (item.elapsed -(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *3.0)) / item.RecentlySmartAverage;
-                            if (0.0 < overrate)
-                            {
-                                //item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
-                                item.progress = null;
-                                item.RecentlySmartAverage = null;
-                                item.RecentlyStandardDeviation = null;
-                            }
-                        }
+                        //item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
+                        item.progress = null;
+                        item.RecentlySmartAverage = null;
+                        item.RecentlyStandardDeviation = null;
                     }
                 }
-            );
+            }
+        };
+        export const updateListProgress = (entry: ToDoTagEntry, list: ToDoEntry[], now: number = Domain.getTicks()) =>
+        {
+            list.forEach(item => updateProgress(item, now));
             const sorted = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoComparer1(entry));
-            const defaultTodo = sorted.sort(todoComparer2(sorted))[0]?.todo;
-            list.forEach(item => item.isDefault = defaultTodo === item.todo);
+            const defaultTodo = sorted.sort(todoComparer2(sorted))[0]?.task;
+            list.forEach(item => item.isDefault = defaultTodo === item.task);
         };
     }
     export module Render
@@ -941,7 +928,11 @@ export module CyclicToDo
                         {
                             tag: "div",
                             className: "task-title",
-                            children: item.todo,
+                            children: item.task,
+                            onclick: async () =>
+                            {
+                                await updateTodoScreen(entry.pass, item.task);
+                            }
                         },
                         {
                             tag: "div",
@@ -979,8 +970,8 @@ export module CyclicToDo
                                         }
                                         else
                                         {
-                                            Domain.done(entry.pass, item.todo);
-                                            await updateTodoScreen(entry);
+                                            Domain.done(entry.pass, item.task);
+                                            await updateListScreen(entry);
                                         }
                                     }
                                 },
@@ -996,12 +987,12 @@ export module CyclicToDo
                                         async () =>
                                         {
                                             await minamo.core.timeout(500);
-                                            const newTask = (await prompt("ToDo の名前を入力してください", item.todo)).trim();
-                                            if (0 < newTask.length && newTask !== item.todo)
+                                            const newTask = (await prompt("ToDo の名前を入力してください", item.task)).trim();
+                                            if (0 < newTask.length && newTask !== item.task)
                                             {
-                                                if (Storage.Task.rename(entry.pass, item.todo, newTask))
+                                                if (Storage.Task.rename(entry.pass, item.task, newTask))
                                                 {
-                                                    await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                                    await updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                                 }
                                                 else
                                                 {
@@ -1016,8 +1007,8 @@ export module CyclicToDo
                                             "復元",
                                             async () =>
                                             {
-                                                Storage.TagMember.remove(entry.pass, "@deleted", item.todo);
-                                                await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                                Storage.TagMember.remove(entry.pass, "@deleted", item.task);
+                                                await updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                             }
                                         ):
                                         menuItem
@@ -1025,8 +1016,8 @@ export module CyclicToDo
                                             "削除",
                                             async () =>
                                             {
-                                                Storage.TagMember.add(entry.pass, "@deleted", item.todo);
-                                                await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                                Storage.TagMember.add(entry.pass, "@deleted", item.task);
+                                                await updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                             }
                                         ),
                                 ]),
@@ -1037,7 +1028,7 @@ export module CyclicToDo
                 {
                     tag: "div",
                     className: "task-tags",
-                    children: Storage.Tag.getByTodo(entry.pass, item.todo).map
+                    children: Storage.Tag.getByTodo(entry.pass, item.task).map
                     (
                         tag =>
                         ({
@@ -1050,6 +1041,12 @@ export module CyclicToDo
                 },
                 information(item),
             ],
+        });
+        export const tickItem = async (_pass: string, _item: ToDoEntry, tick: number) =>
+        ({
+            tag: "div",
+            className: "tick-item flex-item",
+            children: Domain.dateStringFromTick(tick),
         });
         export const dropDownLabel = (options: { list: string[] | { [value:string]:string }, value: string, onChange?: (value: string) => unknown, className?: string}) =>
         {
@@ -1088,10 +1085,10 @@ export module CyclicToDo
             };
             return result;
         };
-        export const todoScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
+        export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         ({
             tag: "div",
-            className: "todo-screen screen",
+            className: "list-screen screen",
             children:
             [
                 heading
@@ -1122,18 +1119,18 @@ export module CyclicToDo
                                         if (null === newTag)
                                         {
                                             await minamo.core.timeout(500);
-                                            await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                            await updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                         }
                                         else
                                         {
                                             const tag = Storage.Tag.encode(newTag.trim());
                                             Storage.Tag.add(entry.pass, tag);
-                                            await updateTodoScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
+                                            await updateListScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
                                         }
                                     }
                                     break;
                                 default:
-                                    await updateTodoScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
+                                    await updateListScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
                                 }
                             },
                         }),
@@ -1151,7 +1148,7 @@ export module CyclicToDo
                                         {
                                             if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
                                             {
-                                                await updateTodoScreen({ pass: entry.pass, tag: newTag, todo: Storage.TagMember.get(entry.pass, newTag)});
+                                                await updateListScreen({ pass: entry.pass, tag: newTag, todo: Storage.TagMember.get(entry.pass, newTag)});
                                             }
                                             else
                                             {
@@ -1182,7 +1179,7 @@ export module CyclicToDo
                                         {
                                             Storage.Task.add(entry.pass, newTask);
                                             Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                            await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                            await updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                         }
                                     }
                                 ),
@@ -1224,26 +1221,24 @@ export module CyclicToDo
                                 {
                                     Storage.Task.add(entry.pass, newTask);
                                     Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                    await updateTodoScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                    await updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                 }
                             }
                         },
                     }
             ]
         });
-        export const updateTodoScreen = async (entry: ToDoTagEntry) =>
+        export const updateListScreen = async (entry: ToDoTagEntry) =>
         {
             document.title = `${Domain.tagMap(entry.tag)} ${applicationTitle}`;
-            const histories = Domain.getRecentlyHistories(entry);
-            const list = Domain.getToDoEntries(entry, histories);
-            Domain.updateProgress(entry, list);
+            const list = entry.todo.map(task => Domain.getToDoEntry(task, Domain.getRecentlyHistory(entry.pass, task)));
+            Domain.updateListProgress(entry, list);
             list.sort(Domain.todoComparer1(entry));
             list.sort(Domain.todoComparer2(list));
-            console.log({histories, list}); // これは消さない！！！
             let lastUpdate = Storage.lastUpdate;
             const updateWindow = async () =>
             {
-                Domain.updateProgress(entry, list);
+                Domain.updateListProgress(entry, list);
                 if (lastUpdate === Storage.lastUpdate)
                 {
                     (
@@ -1251,7 +1246,7 @@ export module CyclicToDo
                         (
                             (
                                 document
-                                    .getElementsByClassName("todo-screen")[0]
+                                    .getElementsByClassName("list-screen")[0]
                                     .getElementsByClassName("todo-list")[0] as HTMLDivElement
                             ).childNodes
                         ) as HTMLDivElement[]
@@ -1270,11 +1265,168 @@ export module CyclicToDo
                 }
                 else
                 {
-                    updateTodoScreen(entry);
+                    updateListScreen(entry);
                 }
             };
-            showWindow(await todoScreen(entry, list), updateWindow);
+            showWindow(await listScreen(entry, list), updateWindow);
         };
+        export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[]) =>
+        ({
+            tag: "div",
+            className: "todo-screen screen",
+            children:
+            [
+                heading
+                (
+                    "h1",
+                    [
+                        {
+                            tag: "a",
+                            href: "./",
+                            children: await applicationIcon(),
+                        },
+                        `${item.task}`,
+                        await menuButton
+                        ([
+                            menuItem
+                            (
+                                "名前を編集",
+                                async () =>
+                                {
+                                    await minamo.core.timeout(500);
+                                    const newTask = (await prompt("ToDo の名前を入力してください", item.task)).trim();
+                                    if (0 < newTask.length && newTask !== item.task)
+                                    {
+                                        if (Storage.Task.rename(pass, item.task, newTask))
+                                        {
+                                            await todoScreen(pass, Domain.getToDoEntry(newTask, Domain.getRecentlyHistory(pass, newTask)), Storage.History.get(pass, newTask));
+                                        }
+                                        else
+                                        {
+                                            window.alert("その名前の ToDo は既に存在しています。");
+                                        }
+                                    }
+                                }
+                            ),
+                            0 <= Storage.TagMember.get(pass, "@deleted").indexOf(item.task) ?
+                                menuItem
+                                (
+                                    "復元",
+                                    async () =>
+                                    {
+                                        Storage.TagMember.remove(pass, "@deleted", item.task);
+                                        await todoScreen(pass, Domain.getToDoEntry(item.task, Domain.getRecentlyHistory(pass, item.task)), Storage.History.get(pass, item.task));
+                                    }
+                                ):
+                                menuItem
+                                (
+                                    "削除",
+                                    async () =>
+                                    {
+                                        Storage.TagMember.add(pass, "@deleted", item.task);
+                                        await todoScreen(pass, Domain.getToDoEntry(item.task, Domain.getRecentlyHistory(pass, item.task)), Storage.History.get(pass, item.task));
+                                    }
+                                ),
+                            {
+                                tag: "button",
+                                children: "🚫 ToDo をシェア",
+                            },
+                            menuItem
+                            (
+                                "エクスポート",
+                                async () =>
+                                {
+                                    await updateExportScreen(pass);
+                                }
+                            ),
+                        ]),
+                    ]
+                ),
+                {
+                    tag: "div",
+                    className: "task-item",
+                    children:
+                    [
+                        {
+                            tag: "div",
+                            className: "task-tags",
+                            children: Storage.Tag.getByTodo(pass, item.task).map
+                            (
+                                tag =>
+                                ({
+                                    tag: "a",
+                                    className: "tag",
+                                    href: location.href.split("?")[0] +`?pass=${pass}&tag=${tag}`,
+                                    children: Domain.tagMap(tag),
+                                })
+                            )
+                        },
+                        information(item),
+                    ],
+                },
+                {
+                    tag: "div",
+                    className: "column-flex-list tick-list",
+                    children: await Promise.all(ticks.map(tick => tickItem(pass, item, tick))),
+                },
+                0 <= Storage.TagMember.get(pass, "@deleted").indexOf(item.task) || Storage.isSessionPass(pass) ?
+                    []:
+                    {
+                        tag: "div",
+                        className: "button-list",
+                        children:
+                        {
+                            tag: "button",
+                            className: "default-button main-button long-button",
+                            children: locale.parallel("Done"),
+                            onclick: async () =>
+                            {
+                                Domain.done(pass, item.task);
+                                await updateTodoScreen(pass, item.task);
+                            }
+                        },
+                    }
+            ]
+        });
+        export const updateTodoScreen = async (pass: string, task: string) =>
+        {
+            document.title = `${task} ${applicationTitle}`;
+            const item = Domain.getToDoEntry(task, Domain.getRecentlyHistory(pass, task));
+            let lastUpdate = Storage.lastUpdate;
+            const updateWindow = async () =>
+            {
+                Domain.updateProgress(item);
+                if (lastUpdate === Storage.lastUpdate)
+                {
+                    (
+                        Array.from
+                        (
+                            (
+                                document
+                                    .getElementsByClassName("todo-screen")[0]
+                                    .getElementsByClassName("todo-list")[0] as HTMLDivElement
+                            ).childNodes
+                        ) as HTMLDivElement[]
+                    ).forEach
+                    (
+                        dom =>
+                        {
+                            const button = dom.getElementsByClassName("task-operator")[0].getElementsByClassName("main-button")[0] as HTMLButtonElement;
+                            button.classList.toggle("default-button", item.isDefault);
+                            const information = dom.getElementsByClassName("task-information")[0] as HTMLDivElement;
+                            information.setAttribute("style", Render.progressStyle(item));
+                            (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeStringFromTick(item.elapsed);
+                        }
+                    );
+                }
+                else
+                {
+                    updateTodoScreen(pass, task);
+                }
+            };
+            showWindow(await todoScreen(pass, item, Storage.History.get(pass, task)), updateWindow);
+        };
+
         const loadSvg = async (path : string) : Promise<SVGElement> => new Promise<SVGElement>
         (
             (resolve, reject) =>
@@ -1349,7 +1501,7 @@ export module CyclicToDo
                             tag: "button",
                             className: "default-button main-button long-button",
                             children: `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
-                            onclick: async () =>　await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
+                            onclick: async () =>　await updateListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
                         })
                     ).concat
                     ({
@@ -1359,7 +1511,7 @@ export module CyclicToDo
                         onclick: async () =>
                         {
                             const pass = Storage.Pass.generate();
-                            await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")});
+                            await updateListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")});
                         },
                     })
                 },
@@ -1391,7 +1543,7 @@ export module CyclicToDo
                             menuItem
                             (
                                 "リストに戻る",
-                                async () => await updateTodoScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
+                                async () => await updateListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
                             )
                         ]),
                     ]
@@ -1590,7 +1742,7 @@ export module CyclicToDo
             //     break;
             default:
                 console.log("show todo screen");
-                Render.updateTodoScreen({ tag: tag, pass, todo: Storage.TagMember.get(pass, tag) });
+                Render.updateListScreen({ tag: tag, pass, todo: Storage.TagMember.get(pass, tag) });
                 break;
             }
         }

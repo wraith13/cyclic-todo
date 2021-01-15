@@ -310,6 +310,8 @@ button.default-button:hover {
   display: inline-block;
   box-sizing: border-box;
   min-width: calc(100% / 1);
+  border-color: rgba(128, 128, 128, 0.5);
+  border-style: solid;
   border-width: 1px;
   margin: -0.5px;
 }
@@ -418,8 +420,6 @@ button.default-button:hover {
 }
 .task-item {
   padding: 0.5rem;
-  border-color: rgba(128, 128, 128, 0.5);
-  border-style: solid;
 }
 .task-item .task-header {
   position: relative;
@@ -440,6 +440,7 @@ button.default-button:hover {
   height: 1em;
   max-width: calc(100% - 180px);
   margin-right: -120px;
+  cursor: pointer;
 }
 .task-item .task-header .task-operator {
   position: relative;
@@ -514,6 +515,12 @@ body.locale-parallel-on .task-item .task-header .task-title {
 }
 body.locale-parallel-off .task-item .task-header .task-title {
   max-width: calc(100% - 120px);
+}
+.todo-screen .task-item {
+  padding-top: 0px;
+}
+.todo-screen .tick-list .tick-item {
+  padding: 0.5rem;
 }
 .welcome-screen h1 {
   margin-bottom: 1em;
