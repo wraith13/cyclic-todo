@@ -2246,20 +2246,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         case 0:
                             document.title = task + " " + applicationTitle;
                             item = Domain.getToDoEntry(task, Domain.getRecentlyHistory(pass, task));
+                            Domain.updateProgress(item);
                             lastUpdate = Storage.lastUpdate;
                             updateWindow = function () { return __awaiter(_this, void 0, void 0, function () {
+                                var dom, information_1;
                                 return __generator(this, function (_a) {
                                     Domain.updateProgress(item);
                                     if (lastUpdate === Storage.lastUpdate) {
-                                        Array.from(document
+                                        dom = document
                                             .getElementsByClassName("todo-screen")[0]
-                                            .getElementsByClassName("todo-list")[0].childNodes).forEach(function (dom) {
-                                            var button = dom.getElementsByClassName("task-operator")[0].getElementsByClassName("main-button")[0];
-                                            button.classList.toggle("default-button", item.isDefault);
-                                            var information = dom.getElementsByClassName("task-information")[0];
-                                            information.setAttribute("style", Render.progressStyle(item));
-                                            information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeStringFromTick(item.elapsed);
-                                        });
+                                            .getElementsByClassName("task-item")[0];
+                                        information_1 = dom.getElementsByClassName("task-information")[0];
+                                        information_1.setAttribute("style", Render.progressStyle(item));
+                                        information_1.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeStringFromTick(item.elapsed);
                                     }
                                     else {
                                         Render.updateTodoScreen(pass, task);

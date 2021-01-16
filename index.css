@@ -442,6 +442,9 @@ button.default-button:hover {
   margin-right: -120px;
   cursor: pointer;
 }
+.task-item .task-header .task-title:hover {
+  text-decoration: underline;
+}
 .task-item .task-header .task-operator {
   position: relative;
   display: inline-flex;

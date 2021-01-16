@@ -1392,32 +1392,19 @@ export module CyclicToDo
         {
             document.title = `${task} ${applicationTitle}`;
             const item = Domain.getToDoEntry(task, Domain.getRecentlyHistory(pass, task));
+            Domain.updateProgress(item);
             let lastUpdate = Storage.lastUpdate;
             const updateWindow = async () =>
             {
                 Domain.updateProgress(item);
                 if (lastUpdate === Storage.lastUpdate)
                 {
-                    (
-                        Array.from
-                        (
-                            (
-                                document
-                                    .getElementsByClassName("todo-screen")[0]
-                                    .getElementsByClassName("todo-list")[0] as HTMLDivElement
-                            ).childNodes
-                        ) as HTMLDivElement[]
-                    ).forEach
-                    (
-                        dom =>
-                        {
-                            const button = dom.getElementsByClassName("task-operator")[0].getElementsByClassName("main-button")[0] as HTMLButtonElement;
-                            button.classList.toggle("default-button", item.isDefault);
-                            const information = dom.getElementsByClassName("task-information")[0] as HTMLDivElement;
-                            information.setAttribute("style", Render.progressStyle(item));
-                            (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeStringFromTick(item.elapsed);
-                        }
-                    );
+                    const dom = document
+                        .getElementsByClassName("todo-screen")[0]
+                        .getElementsByClassName("task-item")[0] as HTMLDivElement;
+                    const information = dom.getElementsByClassName("task-information")[0] as HTMLDivElement;
+                    information.setAttribute("style", Render.progressStyle(item));
+                    (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeStringFromTick(item.elapsed);
                 }
                 else
                 {
