@@ -1239,7 +1239,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     date.setMinutes(0);
                     date.setSeconds(0);
                     date.setMilliseconds(0);
-                    return date.toLocaleDateString() + " " + Domain.timeStringFromTick(tick - Domain.getTicks(date));
+                    return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).substr(-2) + "-" + ("0" + date.getDate()).substr(-2) + " " + Domain.timeStringFromTick(tick - Domain.getTicks(date));
                 }
             };
             Domain.timeStringFromTick = function (tick) {
@@ -1577,7 +1577,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 Render.label("previous"),
                                 {
                                     tag: "span",
-                                    className: "value",
+                                    className: "value monospace",
                                     children: Domain.dateStringFromTick(item.previous),
                                 }
                             ],
@@ -1590,7 +1590,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         //         label("expected next"),
                         //         {
                         //             tag: "span",
-                        //             className: "value",
+                        //             className: "value  monospace",
                         //             children: Domain.dateStringFromTick(item.expectedNext),
                         //         }
                         //     ],
@@ -1602,7 +1602,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 Render.label("expected interval"),
                                 {
                                     tag: "span",
-                                    className: "value",
+                                    className: "value monospace",
                                     children: null === item.RecentlyStandardDeviation ?
                                         Domain.timeStringFromTick(item.RecentlySmartAverage) :
                                         Domain.timeStringFromTick(Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (item.RecentlyStandardDeviation * 2.0))) + " \u301C " + Domain.timeStringFromTick(item.RecentlySmartAverage + (item.RecentlyStandardDeviation * 2.0)),
@@ -1616,7 +1616,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 Render.label("elapsed time"),
                                 {
                                     tag: "span",
-                                    className: "value",
+                                    className: "value monospace",
                                     children: Domain.timeStringFromTick(item.elapsed),
                                 }
                             ],
@@ -1634,7 +1634,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 },
                                 {
                                     tag: "span",
-                                    className: "value",
+                                    className: "value monospace",
                                     children: renderTime(item.smartAverage),
                                 }
                             ],
@@ -1651,7 +1651,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 },
                                 {
                                     tag: "span",
-                                    className: "value",
+                                    className: "value monospace",
                                     children: renderTime(item.average),
                                 }
                             ],
@@ -1664,7 +1664,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 Render.label("count"),
                                 {
                                     tag: "span",
-                                    className: "value",
+                                    className: "value monospace",
                                     children: item.count.toLocaleString(),
                                 }
                             ],
@@ -1687,19 +1687,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 className: "task-header"
                             };
                             _c = [{
-                                    tag: "div",
+                                    tag: "a",
                                     className: "task-title",
-                                    children: item.task,
-                                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, Render.updateTodoScreen(entry.pass, item.task)];
-                                                case 1:
-                                                    _a.sent();
-                                                    return [2 /*return*/];
-                                            }
-                                        });
-                                    }); }
+                                    href: location.href.split("?")[0] + ("?pass=" + entry.pass + "&todo=" + item.task),
+                                    children: item.task
                                 }];
                             _d = {
                                 tag: "div",
@@ -1826,7 +1817,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return __generator(this, function (_a) {
                     return [2 /*return*/, ({
                             tag: "div",
-                            className: "tick-item flex-item",
+                            className: "tick-item flex-item  monospace",
                             children: Domain.dateStringFromTick(tick),
                         })];
                 });
@@ -1877,7 +1868,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             _c = ["h1"];
                             _d = {
                                 tag: "a",
-                                href: "./"
+                                href: "@overall" === entry.tag ? "./" : "./?pass=" + entry.pass + "&tag=@overall"
                             };
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
@@ -2104,7 +2095,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             _c = ["h1"];
                             _d = {
                                 tag: "a",
-                                href: "./"
+                                href: "./?pass=" + pass + "&tag=@overall"
                             };
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
@@ -2562,7 +2553,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             return CyclicToDo.makeUrl(urlParams, CyclicToDo.getUrlHash(url), url);
         };
         CyclicToDo.start = function () { return __awaiter(_this, void 0, void 0, function () {
-            var urlParams, hash, tag, pass, _a;
+            var urlParams, hash, tag, todo, pass, _a;
             var _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -2571,22 +2562,29 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         urlParams = CyclicToDo.getUrlParams();
                         hash = CyclicToDo.getUrlHash();
                         tag = urlParams["tag"];
+                        todo = urlParams["todo"];
                         pass = (_b = urlParams["pass"]) !== null && _b !== void 0 ? _b : Storage.sessionPassPrefix + ":" + new Date().getTime();
                         // const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
                         // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
                         window.addEventListener('resize', Render.onWindowResize);
                         window.addEventListener('storage', Render.onUpdateStorage);
-                        if (!(Storage.isSessionPass(pass) && !tag)) return [3 /*break*/, 4];
-                        _a = hash;
-                        return [3 /*break*/, 1];
+                        if (!(pass && todo)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, Render.updateTodoScreen(pass, todo)];
                     case 1:
+                        _c.sent();
+                        _c.label = 2;
+                    case 2:
+                        if (!(Storage.isSessionPass(pass) && !tag)) return [3 /*break*/, 6];
+                        _a = hash;
+                        return [3 /*break*/, 3];
+                    case 3:
                         console.log("show welcome screen");
                         return [4 /*yield*/, Render.updateWelcomeScreen(pass)];
-                    case 2:
-                        _c.sent();
-                        return [3 /*break*/, 3];
-                    case 3: return [3 /*break*/, 5];
                     case 4:
+                        _c.sent();
+                        return [3 /*break*/, 5];
+                    case 5: return [3 /*break*/, 7];
+                    case 6:
                         //Domain.merge(pass, tag, todo, history);
                         switch (hash) {
                             // case "history":
@@ -2606,8 +2604,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 Render.updateListScreen({ tag: tag, pass: pass, todo: Storage.TagMember.get(pass, tag) });
                                 break;
                         }
-                        _c.label = 5;
-                    case 5: return [2 /*return*/];
+                        _c.label = 7;
+                    case 7: return [2 /*return*/];
                 }
             });
         }); };

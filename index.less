@@ -12,6 +12,10 @@
     font: -apple-system-body;
     outline:none;
 }
+.monospace
+{
+    font-family: monospace;
+}
 body
 {
     margin: 0px;
@@ -582,7 +586,12 @@ button.default-button
             cursor: pointer;
             &:hover
             {
-                text-decoration: underline;
+                color: @active-color;
+            }
+            &:not(:hover)
+            {
+                color: @main-color;
+                text-decoration: none;
             }
         }
         .task-operator
@@ -664,6 +673,13 @@ button.default-button
             opacity: 0.4;
             float: right;
         }
+    }
+}
+@media (prefers-color-scheme: dark)
+{
+    .task-item .task-header .task-title:not(:hover)
+    {
+        color: @dark-main-color;
     }
 }
 body.locale-parallel-on .task-item .task-header .task-title

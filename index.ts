@@ -416,7 +416,7 @@ export module CyclicToDo
                 date.setMinutes(0);
                 date.setSeconds(0);
                 date.setMilliseconds(0);
-                return `${date.toLocaleDateString()} ${timeStringFromTick(tick -getTicks(date))}`;
+                return `${date.getFullYear()}-${("0" +(date.getMonth() +1)).substr(-2)}-${("0" +date.getDate()).substr(-2)} ${timeStringFromTick(tick -getTicks(date))}`;
             }
         };
         export const timeStringFromTick = (tick: null | number) =>
@@ -817,7 +817,7 @@ export module CyclicToDo
                         label("previous"),
                         {
                             tag: "span",
-                            className: "value",
+                            className: "value monospace",
                             children: Domain.dateStringFromTick(item.previous),
                         }
                     ],
@@ -830,7 +830,7 @@ export module CyclicToDo
                 //         label("expected next"),
                 //         {
                 //             tag: "span",
-                //             className: "value",
+                //             className: "value  monospace",
                 //             children: Domain.dateStringFromTick(item.expectedNext),
                 //         }
                 //     ],
@@ -843,7 +843,7 @@ export module CyclicToDo
                         label("expected interval"),
                         {
                             tag: "span",
-                            className: "value",
+                            className: "value monospace",
                             children: null === item.RecentlyStandardDeviation ?
                                 Domain.timeStringFromTick(item.RecentlySmartAverage):
                                 `${Domain.timeStringFromTick(Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *2.0)))} 〜 ${Domain.timeStringFromTick(item.RecentlySmartAverage +(item.RecentlyStandardDeviation *2.0))}`,
@@ -858,7 +858,7 @@ export module CyclicToDo
                         label("elapsed time"),
                         {
                             tag: "span",
-                            className: "value",
+                            className: "value monospace",
                             children: Domain.timeStringFromTick(item.elapsed),
                         }
                     ],
@@ -876,7 +876,7 @@ export module CyclicToDo
                         },
                         {
                             tag: "span",
-                            className: "value",
+                            className: "value monospace",
                             children: renderTime(item.smartAverage),
                         }
                     ],
@@ -893,7 +893,7 @@ export module CyclicToDo
                         },
                         {
                             tag: "span",
-                            className: "value",
+                            className: "value monospace",
                             children: renderTime(item.average),
                         }
                     ],
@@ -907,7 +907,7 @@ export module CyclicToDo
                         label("count"),
                         {
                             tag: "span",
-                            className: "value",
+                            className: "value monospace",
                             children: item.count.toLocaleString(),
                         }
                     ],
@@ -926,13 +926,10 @@ export module CyclicToDo
                     children:
                     [
                         {
-                            tag: "div",
+                            tag: "a",
                             className: "task-title",
-                            children: item.task,
-                            onclick: async () =>
-                            {
-                                await updateTodoScreen(entry.pass, item.task);
-                            }
+                            href: location.href.split("?")[0] +`?pass=${entry.pass}&todo=${item.task}`,
+                            children: item.task
                         },
                         {
                             tag: "div",
@@ -1045,7 +1042,7 @@ export module CyclicToDo
         export const tickItem = async (_pass: string, _item: ToDoEntry, tick: number) =>
         ({
             tag: "div",
-            className: "tick-item flex-item",
+            className: "tick-item flex-item  monospace",
             children: Domain.dateStringFromTick(tick),
         });
         export const dropDownLabel = (options: { list: string[] | { [value:string]:string }, value: string, onChange?: (value: string) => unknown, className?: string}) =>
@@ -1097,7 +1094,7 @@ export module CyclicToDo
                     [
                         {
                             tag: "a",
-                            href: "./",
+                            href: "@overall" === entry.tag ? "./": `./?pass=${entry.pass}&tag=@overall`,
                             children: await applicationIcon(),
                         },
                         dropDownLabel
@@ -1282,7 +1279,7 @@ export module CyclicToDo
                     [
                         {
                             tag: "a",
-                            href: "./",
+                            href: `./?pass=${pass}&tag=@overall`,
                             children: await applicationIcon(),
                         },
                         `${item.task}`,
@@ -1692,11 +1689,16 @@ export module CyclicToDo
         const urlParams = getUrlParams();
         const hash = getUrlHash();
         const tag = urlParams["tag"];
+        const todo = urlParams["todo"];
         const pass = urlParams["pass"] ?? `${Storage.sessionPassPrefix}:${new Date().getTime()}`;
         // const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
         // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
         window.addEventListener('resize', Render.onWindowResize);
         window.addEventListener('storage', Render.onUpdateStorage);
+        if (pass && todo)
+        {
+            await Render.updateTodoScreen(pass, todo);
+        }
         if (Storage.isSessionPass(pass) && ! tag)
         {
             switch(hash)
