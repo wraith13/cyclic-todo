@@ -1256,7 +1256,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     var minute = time % 60;
                     var timePart = ("00" + hour).slice(-2) + ":" + ("00" + minute).slice(-2);
                     return 10 <= days ?
-                        days.toLocaleString() + " d" :
+                        days.toLocaleString() + " " + locale.map("days") :
                         0 < days ?
                             days.toLocaleString() + " " + locale.map("days") + " " + timePart :
                             timePart;

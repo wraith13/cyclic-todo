@@ -438,7 +438,7 @@ export module CyclicToDo
                 const minute = time % 60;
                 const timePart = `${("00" +hour).slice(-2)}:${("00" +minute).slice(-2)}`;
                 return 10 <= days ?
-                    `${days.toLocaleString()} d`:
+                    `${days.toLocaleString()} ${locale.map("days")}`:
                     0 < days ?
                         `${days.toLocaleString()} ${locale.map("days")} ${timePart}`:
                         timePart;
