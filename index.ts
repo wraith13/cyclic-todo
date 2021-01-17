@@ -968,7 +968,7 @@ export module CyclicToDo
                                         else
                                         {
                                             Domain.done(entry.pass, item.task);
-                                            await updateListScreen(entry);
+                                            await showListScreen(entry);
                                         }
                                     }
                                 },
@@ -989,7 +989,7 @@ export module CyclicToDo
                                             {
                                                 if (Storage.Task.rename(entry.pass, item.task, newTask))
                                                 {
-                                                    await updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                                    await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                                 }
                                                 else
                                                 {
@@ -1005,7 +1005,7 @@ export module CyclicToDo
                                             async () =>
                                             {
                                                 Storage.TagMember.remove(entry.pass, "@deleted", item.task);
-                                                await updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                                await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                             }
                                         ):
                                         menuItem
@@ -1014,7 +1014,7 @@ export module CyclicToDo
                                             async () =>
                                             {
                                                 Storage.TagMember.add(entry.pass, "@deleted", item.task);
-                                                await updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                                await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                             }
                                         ),
                                 ]),
@@ -1116,18 +1116,18 @@ export module CyclicToDo
                                         if (null === newTag)
                                         {
                                             await minamo.core.timeout(500);
-                                            await updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                            await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                         }
                                         else
                                         {
                                             const tag = Storage.Tag.encode(newTag.trim());
                                             Storage.Tag.add(entry.pass, tag);
-                                            await updateListScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
+                                            await showListScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
                                         }
                                     }
                                     break;
                                 default:
-                                    await updateListScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
+                                    await showListScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
                                 }
                             },
                         }),
@@ -1145,7 +1145,7 @@ export module CyclicToDo
                                         {
                                             if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
                                             {
-                                                await updateListScreen({ pass: entry.pass, tag: newTag, todo: Storage.TagMember.get(entry.pass, newTag)});
+                                                await showListScreen({ pass: entry.pass, tag: newTag, todo: Storage.TagMember.get(entry.pass, newTag)});
                                             }
                                             else
                                             {
@@ -1176,7 +1176,7 @@ export module CyclicToDo
                                         {
                                             Storage.Task.add(entry.pass, newTask);
                                             Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                            await updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                            await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                         }
                                     }
                                 ),
@@ -1190,7 +1190,7 @@ export module CyclicToDo
                                 "エクスポート",
                                 async () =>
                                 {
-                                    await updateExportScreen(entry.pass);
+                                    await showExportScreen(entry.pass);
                                 }
                             ),
                         ]),
@@ -1217,7 +1217,7 @@ export module CyclicToDo
                                 {
                                     Storage.Task.add(entry.pass, newTask);
                                     Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                    await updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                    await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                 }
                             }
                         },
@@ -1243,7 +1243,7 @@ export module CyclicToDo
                         }
             ]
         });
-        export const updateListScreen = async (entry: ToDoTagEntry) =>
+        export const showListScreen = async (entry: ToDoTagEntry) =>
         {
             document.title = `${Domain.tagMap(entry.tag)} ${applicationTitle}`;
             const list = entry.todo.map(task => Domain.getToDoEntry(task, Domain.getRecentlyHistory(entry.pass, task)));
@@ -1280,7 +1280,7 @@ export module CyclicToDo
                 }
                 else
                 {
-                    updateListScreen(entry);
+                    showListScreen(entry);
                 }
             };
             showWindow(await listScreen(entry, list), updateWindow);
@@ -1351,7 +1351,7 @@ export module CyclicToDo
                                 "エクスポート",
                                 async () =>
                                 {
-                                    await updateExportScreen(pass);
+                                    await showExportScreen(pass);
                                 }
                             ),
                         ]),
@@ -1397,13 +1397,13 @@ export module CyclicToDo
                             onclick: async () =>
                             {
                                 Domain.done(pass, item.task);
-                                await updateTodoScreen(pass, item.task);
+                                await showTodoScreen(pass, item.task);
                             }
                         },
                     }
             ]
         });
-        export const updateTodoScreen = async (pass: string, task: string) =>
+        export const showTodoScreen = async (pass: string, task: string) =>
         {
             document.title = `${task} ${applicationTitle}`;
             const item = Domain.getToDoEntry(task, Domain.getRecentlyHistory(pass, task));
@@ -1423,7 +1423,7 @@ export module CyclicToDo
                 }
                 else
                 {
-                    updateTodoScreen(pass, task);
+                    showTodoScreen(pass, task);
                 }
             };
             showWindow(await todoScreen(pass, item, Storage.History.get(pass, task)), updateWindow);
@@ -1459,13 +1459,102 @@ export module CyclicToDo
                 request.send(null);
             }
         );
+        export const showExportScreen = async (pass: string) =>
+        {
+            document.title = applicationTitle;
+            showWindow(await exportScreen(pass), () => { });
+        };
+        export const exportScreen = async (pass: string) =>
+        ({
+            tag: "div",
+            className: "export-screen screen",
+            children:
+            [
+                heading
+                (
+                    "h1",
+                    [
+                        {
+                            tag: "a",
+                            href: "./",
+                            children: await applicationIcon(),
+                        },
+                        `${document.title}`,
+                        await menuButton
+                        ([
+                            menuItem
+                            (
+                                "リストに戻る",
+                                async () => await showListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
+                            )
+                        ]),
+                    ]
+                ),
+                {
+                    tag: "textarea",
+                    className: "json",
+                    children: Storage.exportJson(pass),
+                }
+            ],
+        });
+        export const showImportScreen = async () =>
+        {
+            document.title = applicationTitle;
+            showWindow(await importScreen(), () => { });
+        };
+        export const importScreen = async () =>
+        ({
+            tag: "div",
+            className: "import-screen screen",
+            children:
+            [
+                heading
+                (
+                    "h1",
+                    [
+                        {
+                            tag: "a",
+                            href: "./",
+                            children: await applicationIcon(),
+                        },
+                        `${document.title}`,
+                        await menuButton
+                        ([
+                            menuItem
+                            (
+                                "トップ画面に戻る",
+                                async () => await showWelcomeScreen(),
+                            )
+                        ]),
+                    ]
+                ),
+                {
+                    tag: "textarea",
+                    className: "json",
+                    placeholder: "エクスポートした JSON をペーストしてください。"
+                },
+                {
+                    tag: "div",
+                    className: "button-list",
+                    children:
+                    {
+                        tag: "button",
+                        className: "default-button main-button long-button",
+                        children: `🚫 インポート`,
+                        onclick: async () =>
+                        {
+                        },
+                    },
+                },
+            ],
+        });
         export const applicationIcon = async () =>
         ({
             tag: "div",
             className: "application-icon icon",
             children: await loadSvg("./cyclictodohex.1024.svg"),
         });
-        export const welcomeScreen = async (_pass: string) =>
+        export const welcomeScreen = async () =>
         ({
             tag: "div",
             className: "welcome-screen screen",
@@ -1503,64 +1592,34 @@ export module CyclicToDo
                             tag: "button",
                             className: "default-button main-button long-button",
                             children: `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
-                            onclick: async () =>　await updateListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
+                            onclick: async () =>　await showListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
                         })
                     ).concat
-                    ({
-                        tag: "button",
-                        className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
-                        children: `新しい ToDo リスト`,
-                        onclick: async () =>
+                    ([
                         {
-                            const pass = Storage.Pass.generate();
-                            await updateListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")});
+                            tag: "button",
+                            className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
+                            children: `新しい ToDo リスト`,
+                            onclick: async () =>
+                            {
+                                const pass = Storage.Pass.generate();
+                                await showListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")});
+                            },
                         },
-                    })
+                        {
+                            tag: "button",
+                            className: "main-button long-button",
+                            children: `リストをインポート`,
+                            onclick: async () => await showImportScreen(),
+                        },
+                    ])
                 },
             ],
         });
-        export const updateExportScreen = async (pass: string) =>
+        export const showWelcomeScreen = async () =>
         {
             document.title = applicationTitle;
-            showWindow(await exportScreen(pass), () => { });
-        };
-        export const exportScreen = async (pass: string) =>
-        ({
-            tag: "div",
-            className: "export-screen screen",
-            children:
-            [
-                heading
-                (
-                    "h1",
-                    [
-                        {
-                            tag: "a",
-                            href: "./",
-                            children: await applicationIcon(),
-                        },
-                        `${document.title}`,
-                        await menuButton
-                        ([
-                            menuItem
-                            (
-                                "リストに戻る",
-                                async () => await updateListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
-                            )
-                        ]),
-                    ]
-                ),
-                {
-                    tag: "textarea",
-                    className: "json",
-                    children: Storage.exportJson(pass),
-                }
-            ],
-        });
-        export const updateWelcomeScreen = async (pass: string) =>
-        {
-            document.title = applicationTitle;
-            showWindow(await welcomeScreen(pass), () => { });
+            showWindow(await welcomeScreen(), () => { });
         };
         export let updateWindow: () => unknown;
         let updateWindowTimer = undefined;
@@ -1715,7 +1774,7 @@ export module CyclicToDo
         window.addEventListener('storage', Render.onUpdateStorage);
         if (pass && todo)
         {
-            await Render.updateTodoScreen(pass, todo);
+            await Render.showTodoScreen(pass, todo);
         }
         if (Storage.isSessionPass(pass) && ! tag)
         {
@@ -1726,7 +1785,7 @@ export module CyclicToDo
             //     break;
             default:
                 console.log("show welcome screen");
-                await Render.updateWelcomeScreen(pass);
+                await Render.showWelcomeScreen();
                 break;
             }
         }
@@ -1749,7 +1808,7 @@ export module CyclicToDo
             //     break;
             default:
                 console.log("show todo screen");
-                Render.updateListScreen({ tag: tag, pass, todo: Storage.TagMember.get(pass, tag) });
+                Render.showListScreen({ tag: tag, pass, todo: Storage.TagMember.get(pass, tag) });
                 break;
             }
         }

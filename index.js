@@ -1724,7 +1724,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     return [3 /*break*/, 3];
                                                 case 1:
                                                     Domain.done(entry.pass, item.task);
-                                                    return [4 /*yield*/, Render.updateListScreen(entry)];
+                                                    return [4 /*yield*/, Render.showListScreen(entry)];
                                                 case 2:
                                                     _a.sent();
                                                     _a.label = 3;
@@ -1750,7 +1750,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     newTask = (_a.sent()).trim();
                                                     if (!(0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 5];
                                                     if (!Storage.Task.rename(entry.pass, item.task, newTask)) return [3 /*break*/, 4];
-                                                    return [4 /*yield*/, Render.updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                    return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
                                                 case 3:
                                                     _a.sent();
                                                     return [3 /*break*/, 5];
@@ -1767,7 +1767,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 switch (_a.label) {
                                                     case 0:
                                                         Storage.TagMember.remove(entry.pass, "@deleted", item.task);
-                                                        return [4 /*yield*/, Render.updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                        return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
                                                     case 1:
                                                         _a.sent();
                                                         return [2 /*return*/];
@@ -1779,7 +1779,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 switch (_a.label) {
                                                     case 0:
                                                         Storage.TagMember.add(entry.pass, "@deleted", item.task);
-                                                        return [4 /*yield*/, Render.updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                        return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
                                                     case 1:
                                                         _a.sent();
                                                         return [2 /*return*/];
@@ -1901,19 +1901,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
                                                 case 4:
                                                     _b.sent();
-                                                    return [4 /*yield*/, Render.updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                    return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
                                                 case 5:
                                                     _b.sent();
                                                     return [3 /*break*/, 8];
                                                 case 6:
                                                     tag_2 = Storage.Tag.encode(newTag.trim());
                                                     Storage.Tag.add(entry.pass, tag_2);
-                                                    return [4 /*yield*/, Render.updateListScreen({ pass: entry.pass, tag: tag_2, todo: Storage.TagMember.get(entry.pass, tag_2) })];
+                                                    return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: tag_2, todo: Storage.TagMember.get(entry.pass, tag_2) })];
                                                 case 7:
                                                     _b.sent();
                                                     _b.label = 8;
                                                 case 8: return [3 /*break*/, 11];
-                                                case 9: return [4 /*yield*/, Render.updateListScreen({ pass: entry.pass, tag: tag, todo: Storage.TagMember.get(entry.pass, tag) })];
+                                                case 9: return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: tag, todo: Storage.TagMember.get(entry.pass, tag) })];
                                                 case 10:
                                                     _b.sent();
                                                     _b.label = 11;
@@ -1937,7 +1937,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                         newTag = _a.sent();
                                                         if (!(0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 5];
                                                         if (!Storage.Tag.rename(entry.pass, entry.tag, newTag)) return [3 /*break*/, 4];
-                                                        return [4 /*yield*/, Render.updateListScreen({ pass: entry.pass, tag: newTag, todo: Storage.TagMember.get(entry.pass, newTag) })];
+                                                        return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: newTag, todo: Storage.TagMember.get(entry.pass, newTag) })];
                                                     case 3:
                                                         _a.sent();
                                                         return [3 /*break*/, 5];
@@ -1970,7 +1970,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                             if (!(null !== newTask)) return [3 /*break*/, 4];
                                                             Storage.Task.add(entry.pass, newTask);
                                                             Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                                            return [4 /*yield*/, Render.updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                            return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
                                                         case 3:
                                                             _a.sent();
                                                             _a.label = 4;
@@ -1986,7 +1986,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     Render.menuItem("エクスポート", function () { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
-                                                case 0: return [4 /*yield*/, Render.updateExportScreen(entry.pass)];
+                                                case 0: return [4 /*yield*/, Render.showExportScreen(entry.pass)];
                                                 case 1:
                                                     _a.sent();
                                                     return [2 /*return*/];
@@ -2026,7 +2026,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                             if (!(null !== newTask)) return [3 /*break*/, 3];
                                                             Storage.Task.add(entry.pass, newTask);
                                                             Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                                            return [4 /*yield*/, Render.updateListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                            return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
                                                         case 2:
                                                             _a.sent();
                                                             _a.label = 3;
@@ -2061,7 +2061,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
-            Render.updateListScreen = function (entry) { return __awaiter(_this, void 0, void 0, function () {
+            Render.showListScreen = function (entry) { return __awaiter(_this, void 0, void 0, function () {
                 var list, lastUpdate, updateWindow, _a;
                 var _this = this;
                 return __generator(this, function (_b) {
@@ -2089,7 +2089,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         });
                                     }
                                     else {
-                                        Render.updateListScreen(entry);
+                                        Render.showListScreen(entry);
                                     }
                                     return [2 /*return*/];
                                 });
@@ -2181,7 +2181,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     Render.menuItem("エクスポート", function () { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
-                                                case 0: return [4 /*yield*/, Render.updateExportScreen(pass)];
+                                                case 0: return [4 /*yield*/, Render.showExportScreen(pass)];
                                                 case 1:
                                                     _a.sent();
                                                     return [2 /*return*/];
@@ -2236,7 +2236,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     switch (_a.label) {
                                                         case 0:
                                                             Domain.done(pass, item.task);
-                                                            return [4 /*yield*/, Render.updateTodoScreen(pass, item.task)];
+                                                            return [4 /*yield*/, Render.showTodoScreen(pass, item.task)];
                                                         case 1:
                                                             _a.sent();
                                                             return [2 /*return*/];
@@ -2250,7 +2250,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
-            Render.updateTodoScreen = function (pass, task) { return __awaiter(_this, void 0, void 0, function () {
+            Render.showTodoScreen = function (pass, task) { return __awaiter(_this, void 0, void 0, function () {
                 var item, lastUpdate, updateWindow, _a;
                 var _this = this;
                 return __generator(this, function (_b) {
@@ -2273,7 +2273,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         information_1.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeStringFromTick(item.elapsed);
                                     }
                                     else {
-                                        Render.updateTodoScreen(pass, task);
+                                        Render.showTodoScreen(pass, task);
                                     }
                                     return [2 /*return*/];
                                 });
@@ -2310,6 +2310,138 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         })];
                 });
             }); };
+            Render.showExportScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            document.title = applicationTitle;
+                            _a = Render.showWindow;
+                            return [4 /*yield*/, Render.exportScreen(pass)];
+                        case 1:
+                            _a.apply(void 0, [_b.sent(), function () { }]);
+                            return [2 /*return*/];
+                    }
+                });
+            }); };
+            Render.exportScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c, _d, _e;
+                var _this = this;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "export-screen screen"
+                            };
+                            _b = Render.heading;
+                            _c = ["h1"];
+                            _d = {
+                                tag: "a",
+                                href: "./"
+                            };
+                            return [4 /*yield*/, Render.applicationIcon()];
+                        case 1:
+                            _e = [
+                                (_d.children = _f.sent(),
+                                    _d),
+                                "" + document.title
+                            ];
+                            return [4 /*yield*/, Render.menuButton([
+                                    Render.menuItem("リストに戻る", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, Render.showListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); })
+                                ])];
+                        case 2: return [2 /*return*/, (_a.children = [
+                                _b.apply(void 0, _c.concat([_e.concat([
+                                        _f.sent()
+                                    ])])),
+                                {
+                                    tag: "textarea",
+                                    className: "json",
+                                    children: Storage.exportJson(pass),
+                                }
+                            ],
+                                _a)];
+                    }
+                });
+            }); };
+            Render.showImportScreen = function () { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            document.title = applicationTitle;
+                            _a = Render.showWindow;
+                            return [4 /*yield*/, Render.importScreen()];
+                        case 1:
+                            _a.apply(void 0, [_b.sent(), function () { }]);
+                            return [2 /*return*/];
+                    }
+                });
+            }); };
+            Render.importScreen = function () { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c, _d, _e;
+                var _this = this;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "import-screen screen"
+                            };
+                            _b = Render.heading;
+                            _c = ["h1"];
+                            _d = {
+                                tag: "a",
+                                href: "./"
+                            };
+                            return [4 /*yield*/, Render.applicationIcon()];
+                        case 1:
+                            _e = [
+                                (_d.children = _f.sent(),
+                                    _d),
+                                "" + document.title
+                            ];
+                            return [4 /*yield*/, Render.menuButton([
+                                    Render.menuItem("トップ画面に戻る", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, Render.showWelcomeScreen()];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); })
+                                ])];
+                        case 2: return [2 /*return*/, (_a.children = [
+                                _b.apply(void 0, _c.concat([_e.concat([
+                                        _f.sent()
+                                    ])])),
+                                {
+                                    tag: "textarea",
+                                    className: "json",
+                                    placeholder: "エクスポートした JSON をペーストしてください。"
+                                },
+                                {
+                                    tag: "div",
+                                    className: "button-list",
+                                    children: {
+                                        tag: "button",
+                                        className: "default-button main-button long-button",
+                                        children: "\uD83D\uDEAB \u30A4\u30F3\u30DD\u30FC\u30C8",
+                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                return [2 /*return*/];
+                                            });
+                                        }); },
+                                    },
+                                }
+                            ],
+                                _a)];
+                    }
+                });
+            }); };
             Render.applicationIcon = function () { return __awaiter(_this, void 0, void 0, function () {
                 var _a;
                 return __generator(this, function (_b) {
@@ -2325,7 +2457,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
-            Render.welcomeScreen = function (_pass) { return __awaiter(_this, void 0, void 0, function () {
+            Render.welcomeScreen = function () { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e;
                 var _this = this;
                 return __generator(this, function (_f) {
@@ -2372,102 +2504,56 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             children: "ToDo \u30EA\u30B9\u30C8 ( pass: " + pass.substr(0, 2) + "****" + pass.substr(-2) + " )",
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                                 switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, Render.updateListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
+                                                    case 0: return [4 /*yield*/, Render.showListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
                                                     case 1: return [2 /*return*/, _a.sent()];
                                                 }
                                             }); }); },
                                         });
-                                    }).concat({
-                                        tag: "button",
-                                        className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
-                                        children: "\u65B0\u3057\u3044 ToDo \u30EA\u30B9\u30C8",
-                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                            var pass;
-                                            return __generator(this, function (_a) {
+                                    }).concat([
+                                        {
+                                            tag: "button",
+                                            className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
+                                            children: "\u65B0\u3057\u3044 ToDo \u30EA\u30B9\u30C8",
+                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                var pass;
+                                                return __generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0:
+                                                            pass = Storage.Pass.generate();
+                                                            return [4 /*yield*/, Render.showListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
+                                                        case 1:
+                                                            _a.sent();
+                                                            return [2 /*return*/];
+                                                    }
+                                                });
+                                            }); },
+                                        },
+                                        {
+                                            tag: "button",
+                                            className: "main-button long-button",
+                                            children: "\u30EA\u30B9\u30C8\u3092\u30A4\u30F3\u30DD\u30FC\u30C8",
+                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                                 switch (_a.label) {
-                                                    case 0:
-                                                        pass = Storage.Pass.generate();
-                                                        return [4 /*yield*/, Render.updateListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
-                                                    case 1:
-                                                        _a.sent();
-                                                        return [2 /*return*/];
+                                                    case 0: return [4 /*yield*/, Render.showImportScreen()];
+                                                    case 1: return [2 /*return*/, _a.sent()];
                                                 }
-                                            });
-                                        }); },
-                                    })
+                                            }); }); },
+                                        },
+                                    ])
                                 }
                             ]),
                                 _a)];
                     }
                 });
             }); };
-            Render.updateExportScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
+            Render.showWelcomeScreen = function () { return __awaiter(_this, void 0, void 0, function () {
                 var _a;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
                             document.title = applicationTitle;
                             _a = Render.showWindow;
-                            return [4 /*yield*/, Render.exportScreen(pass)];
-                        case 1:
-                            _a.apply(void 0, [_b.sent(), function () { }]);
-                            return [2 /*return*/];
-                    }
-                });
-            }); };
-            Render.exportScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e;
-                var _this = this;
-                return __generator(this, function (_f) {
-                    switch (_f.label) {
-                        case 0:
-                            _a = {
-                                tag: "div",
-                                className: "export-screen screen"
-                            };
-                            _b = Render.heading;
-                            _c = ["h1"];
-                            _d = {
-                                tag: "a",
-                                href: "./"
-                            };
-                            return [4 /*yield*/, Render.applicationIcon()];
-                        case 1:
-                            _e = [
-                                (_d.children = _f.sent(),
-                                    _d),
-                                "" + document.title
-                            ];
-                            return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem("リストに戻る", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0: return [4 /*yield*/, Render.updateListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
-                                            case 1: return [2 /*return*/, _a.sent()];
-                                        }
-                                    }); }); })
-                                ])];
-                        case 2: return [2 /*return*/, (_a.children = [
-                                _b.apply(void 0, _c.concat([_e.concat([
-                                        _f.sent()
-                                    ])])),
-                                {
-                                    tag: "textarea",
-                                    className: "json",
-                                    children: Storage.exportJson(pass),
-                                }
-                            ],
-                                _a)];
-                    }
-                });
-            }); };
-            Render.updateWelcomeScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
-                var _a;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
-                        case 0:
-                            document.title = applicationTitle;
-                            _a = Render.showWindow;
-                            return [4 /*yield*/, Render.welcomeScreen(pass)];
+                            return [4 /*yield*/, Render.welcomeScreen()];
                         case 1:
                             _a.apply(void 0, [_b.sent(), function () { }]);
                             return [2 /*return*/];
@@ -2590,7 +2676,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         window.addEventListener('resize', Render.onWindowResize);
                         window.addEventListener('storage', Render.onUpdateStorage);
                         if (!(pass && todo)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, Render.updateTodoScreen(pass, todo)];
+                        return [4 /*yield*/, Render.showTodoScreen(pass, todo)];
                     case 1:
                         _c.sent();
                         _c.label = 2;
@@ -2600,7 +2686,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         return [3 /*break*/, 3];
                     case 3:
                         console.log("show welcome screen");
-                        return [4 /*yield*/, Render.updateWelcomeScreen(pass)];
+                        return [4 /*yield*/, Render.showWelcomeScreen()];
                     case 4:
                         _c.sent();
                         return [3 /*break*/, 5];
@@ -2622,7 +2708,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             //     break;
                             default:
                                 console.log("show todo screen");
-                                Render.updateListScreen({ tag: tag, pass: pass, todo: Storage.TagMember.get(pass, tag) });
+                                Render.showListScreen({ tag: tag, pass: pass, todo: Storage.TagMember.get(pass, tag) });
                                 break;
                         }
                         _c.label = 7;

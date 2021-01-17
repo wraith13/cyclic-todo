@@ -555,6 +555,10 @@ body.locale-parallel-off .task-item .task-header .task-title {
   width: 100vw;
   height: calc(100vh - (2.5rem + 10px));
 }
+.import-screen textarea {
+  width: 100vw;
+  height: calc(100vh - (12.5rem + 10px));
+}
 .application-form button {
   margin-left: calc(8em + 4px);
   width: 16em;
