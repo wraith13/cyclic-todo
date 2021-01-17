@@ -1022,20 +1022,20 @@ export module CyclicToDo
                         },
                     ],
                 },
-                {
-                    tag: "div",
-                    className: "task-tags",
-                    children: Storage.Tag.getByTodo(entry.pass, item.task).map
-                    (
-                        tag =>
-                        ({
-                            tag: "a",
-                            className: "tag",
-                            href: location.href.split("?")[0] +`?pass=${entry.pass}&tag=${tag}`,
-                            children: Domain.tagMap(tag),
-                        })
-                    )
-                },
+                // {
+                //     tag: "div",
+                //     className: "task-tags",
+                //     children: Storage.Tag.getByTodo(entry.pass, item.task).map
+                //     (
+                //         tag =>
+                //         ({
+                //             tag: "a",
+                //             className: "tag",
+                //             href: location.href.split("?")[0] +`?pass=${entry.pass}&tag=${tag}`,
+                //             children: Domain.tagMap(tag),
+                //         })
+                //     )
+                // },
                 information(item),
             ],
         });
@@ -1201,8 +1201,7 @@ export module CyclicToDo
                     className: "column-flex-list todo-list",
                     children: await Promise.all(list.map(item => todoItem(entry, item))),
                 },
-                "@deleted" === entry.tag ?
-                    []:
+                "@deleted" !== entry.tag ?
                     {
                         tag: "div",
                         className: "button-list",
@@ -1222,7 +1221,26 @@ export module CyclicToDo
                                 }
                             }
                         },
-                    }
+                    }:
+                    0 < list.length ?
+                        {
+                            tag: "div",
+                            className: "button-list",
+                            children:
+                            {
+                                tag: "button",
+                                className: "default-button main-button long-button",
+                                children: "🚫 完全に削除",
+                                onclick: async () =>
+                                {
+                                }
+                            },
+                        }:
+                        {
+                            tag: "div",
+                            className: "button-list",
+                            children: "ごみ箱は空です。",
+                        }
             ]
         });
         export const updateListScreen = async (entry: ToDoTagEntry) =>

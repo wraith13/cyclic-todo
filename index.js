@@ -1795,18 +1795,20 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         _d)
                                 ]),
                                     _b),
-                                {
-                                    tag: "div",
-                                    className: "task-tags",
-                                    children: Storage.Tag.getByTodo(entry.pass, item.task).map(function (tag) {
-                                        return ({
-                                            tag: "a",
-                                            className: "tag",
-                                            href: location.href.split("?")[0] + ("?pass=" + entry.pass + "&tag=" + tag),
-                                            children: Domain.tagMap(tag),
-                                        });
-                                    })
-                                },
+                                // {
+                                //     tag: "div",
+                                //     className: "task-tags",
+                                //     children: Storage.Tag.getByTodo(entry.pass, item.task).map
+                                //     (
+                                //         tag =>
+                                //         ({
+                                //             tag: "a",
+                                //             className: "tag",
+                                //             href: location.href.split("?")[0] +`?pass=${entry.pass}&tag=${tag}`,
+                                //             children: Domain.tagMap(tag),
+                                //         })
+                                //     )
+                                // },
                                 Render.information(item)
                             ],
                                 _a)];
@@ -2006,8 +2008,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         case 3: return [2 /*return*/, (_a.children = _f.concat([
                                 (_g.children = _h.sent(),
                                     _g),
-                                "@deleted" === entry.tag ?
-                                    [] :
+                                "@deleted" !== entry.tag ?
                                     {
                                         tag: "div",
                                         className: "button-list",
@@ -2034,7 +2035,27 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 });
                                             }); }
                                         },
-                                    }
+                                    } :
+                                    0 < list.length ?
+                                        {
+                                            tag: "div",
+                                            className: "button-list",
+                                            children: {
+                                                tag: "button",
+                                                className: "default-button main-button long-button",
+                                                children: "🚫 完全に削除",
+                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    return __generator(this, function (_a) {
+                                                        return [2 /*return*/];
+                                                    });
+                                                }); }
+                                            },
+                                        } :
+                                        {
+                                            tag: "div",
+                                            className: "button-list",
+                                            children: "ごみ箱は空です。",
+                                        }
                             ]),
                                 _a)];
                     }
