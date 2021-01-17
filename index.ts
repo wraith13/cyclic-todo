@@ -253,6 +253,9 @@ export module CyclicToDo
             };
             return JSON.stringify(json);
         };
+        export const importJson = (_json: string) =>
+        {
+        };
         export module Pass
         {
             export const key = `pass.list`;
@@ -273,9 +276,10 @@ export module CyclicToDo
         }
         export module Tag
         {
-            export const isSystemTag = (tag: string) => tag.startsWith("@") && ! tag.startsWith("@@");
-            export const encode = (tag: string) => tag.replace(/^@/, "@@");
-            export const decode = (tag: string) => tag.replace(/^@@/, "@");
+            export const isSystemTag = (tag: string) => tag.startsWith("@") && ! tag.startsWith("@=") && ! isSublist(tag);
+            export const isSublist = (tag: string) => tag.startsWith("@:");
+            export const encode = (tag: string) => tag.replace(/@/, "@=");
+            export const decode = (tag: string) => tag.replace(/@=/, "@");
             export const makeKey = (pass: string) => `pass:(${pass}).tag.list`;
             export const get = (pass: string) =>
                 getStorage(pass).getOrNull<string[]>(makeKey(pass)) ?? [];
@@ -333,6 +337,18 @@ export module CyclicToDo
         }
         export module Task
         {
+            export const encode = (task: string) => task.replace(/@/, "@=");
+            export const decode = (task: string) => task.replace(/@=/, "@").replace(/@:/, ": ");
+            export const getSublist = (task: string) =>
+            {
+                const split = task.split("@:");
+                return 2 <= split.length ? split[0]: null;
+            };
+            export const getBody = (task: string) =>
+            {
+                const split = task.split("@:");
+                return 2 <= split.length ? split[1]: task;
+            };
             export const add = (pass: string, task: string) =>
             {
                 Storage.TagMember.remove(pass, "@deleted", task);
@@ -1167,7 +1183,7 @@ export module CyclicToDo
                             [
                                 menuItem
                                 (
-                                    "新しい ToDo",
+                                    locale.parallel("New ToDo"),
                                     async () =>
                                     {
                                         await minamo.core.timeout(500);
@@ -1209,7 +1225,7 @@ export module CyclicToDo
                         {
                             tag: "button",
                             className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
-                            children: "新しい ToDo",
+                            children: locale.parallel("New ToDo"),
                             onclick: async () =>
                             {
                                 const newTask = await prompt("ToDo の名前を入力してください");
@@ -1543,6 +1559,8 @@ export module CyclicToDo
                         children: `🚫 インポート`,
                         onclick: async () =>
                         {
+                            const textarea = document.getElementsByClassName("json")[0] as HTMLTextAreaElement;
+                            Storage.importJson(textarea.value);
                         },
                     },
                 },
@@ -1599,7 +1617,7 @@ export module CyclicToDo
                         {
                             tag: "button",
                             className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
-                            children: `新しい ToDo リスト`,
+                            children: locale.parallel("New ToDo List"),
                             onclick: async () =>
                             {
                                 const pass = Storage.Pass.generate();
@@ -1609,7 +1627,7 @@ export module CyclicToDo
                         {
                             tag: "button",
                             className: "main-button long-button",
-                            children: `リストをインポート`,
+                            children:  locale.parallel("Import List"),
                             onclick: async () => await showImportScreen(),
                         },
                     ])

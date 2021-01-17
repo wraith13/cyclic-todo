@@ -10,5 +10,8 @@
     "@unoverall": "Excluded in the Overall",
     "@untagged": "Untagged",
     "@deleted": "Recycle Bin",
-    "@new": "New tag"
+    "@new": "New tag",
+    "New ToDo": "New ToDo",
+    "New ToDo List": "New ToDo List",
+    "Import List": "Import List"
 }

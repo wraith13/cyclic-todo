@@ -865,7 +865,10 @@ define("lang.en", [], {
     "@unoverall": "Excluded in the Overall",
     "@untagged": "Untagged",
     "@deleted": "Recycle Bin",
-    "@new": "New tag"
+    "@new": "New tag",
+    "New ToDo": "New ToDo",
+    "New ToDo List": "New ToDo List",
+    "Import List": "Import List"
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -879,7 +882,10 @@ define("lang.ja", [], {
     "@unoverall": "総合から除外",
     "@untagged": "タグ付けされてない",
     "@deleted": "ごみ箱",
-    "@new": "新しいタグ"
+    "@new": "新しいタグ",
+    "New ToDo": "新しい ToDo",
+    "New ToDo List": "新しい ToDo リスト",
+    "Import List": "リストをインポート"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -1086,6 +1092,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 };
                 return JSON.stringify(json);
             };
+            Storage.importJson = function (_json) {
+            };
             var Pass;
             (function (Pass) {
                 Pass.key = "pass.list";
@@ -1105,9 +1113,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             })(Pass = Storage.Pass || (Storage.Pass = {}));
             var Tag;
             (function (Tag) {
-                Tag.isSystemTag = function (tag) { return tag.startsWith("@") && !tag.startsWith("@@"); };
-                Tag.encode = function (tag) { return tag.replace(/^@/, "@@"); };
-                Tag.decode = function (tag) { return tag.replace(/^@@/, "@"); };
+                Tag.isSystemTag = function (tag) { return tag.startsWith("@") && !tag.startsWith("@=") && !Tag.isSublist(tag); };
+                Tag.isSublist = function (tag) { return tag.startsWith("@:"); };
+                Tag.encode = function (tag) { return tag.replace(/@/, "@="); };
+                Tag.decode = function (tag) { return tag.replace(/@=/, "@"); };
                 Tag.makeKey = function (pass) { return "pass:(" + pass + ").tag.list"; };
                 Tag.get = function (pass) { var _a; return (_a = Storage.getStorage(pass).getOrNull(Tag.makeKey(pass))) !== null && _a !== void 0 ? _a : []; };
                 Tag.set = function (pass, list) {
@@ -1161,6 +1170,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             })(TagMember = Storage.TagMember || (Storage.TagMember = {}));
             var Task;
             (function (Task) {
+                Task.encode = function (task) { return task.replace(/@/, "@="); };
+                Task.decode = function (task) { return task.replace(/@=/, "@").replace(/@:/, ": "); };
+                Task.getSublist = function (task) {
+                    var split = task.split("@:");
+                    return 2 <= split.length ? split[0] : null;
+                };
+                Task.getBody = function (task) {
+                    var split = task.split("@:");
+                    return 2 <= split.length ? split[1] : task;
+                };
                 Task.add = function (pass, task) {
                     Storage.TagMember.remove(pass, "@deleted", task);
                     Storage.TagMember.add(pass, "@overall", task);
@@ -1957,7 +1976,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             }); }),
                                         ] :
                                         [
-                                            Render.menuItem("新しい ToDo", function () { return __awaiter(_this, void 0, void 0, function () {
+                                            Render.menuItem(locale.parallel("New ToDo"), function () { return __awaiter(_this, void 0, void 0, function () {
                                                 var newTask;
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
@@ -2015,7 +2034,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         children: {
                                             tag: "button",
                                             className: list.length <= 0 ? "default-button main-button long-button" : "main-button long-button",
-                                            children: "新しい ToDo",
+                                            children: locale.parallel("New ToDo"),
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                 var newTask;
                                                 return __generator(this, function (_a) {
@@ -2431,7 +2450,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         className: "default-button main-button long-button",
                                         children: "\uD83D\uDEAB \u30A4\u30F3\u30DD\u30FC\u30C8",
                                         onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                            var textarea;
                                             return __generator(this, function (_a) {
+                                                textarea = document.getElementsByClassName("json")[0];
+                                                Storage.importJson(textarea.value);
                                                 return [2 /*return*/];
                                             });
                                         }); },
@@ -2513,7 +2535,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         {
                                             tag: "button",
                                             className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
-                                            children: "\u65B0\u3057\u3044 ToDo \u30EA\u30B9\u30C8",
+                                            children: locale.parallel("New ToDo List"),
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                 var pass;
                                                 return __generator(this, function (_a) {
@@ -2531,7 +2553,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         {
                                             tag: "button",
                                             className: "main-button long-button",
-                                            children: "\u30EA\u30B9\u30C8\u3092\u30A4\u30F3\u30DD\u30FC\u30C8",
+                                            children: locale.parallel("Import List"),
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0: return [4 /*yield*/, Render.showImportScreen()];
