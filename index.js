@@ -965,7 +965,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 var rates = [];
                 var calcLevel_1 = function (angle, waveLength, index) { return Math.sin(((index / waveLength) + (angle / angleResolution_1)) * (Math.PI * 2)); };
                 //const calcLevel = (_offset: number, waveLength: number, index: number) => Math.sin((index /waveLength) *(Math.PI *2));
-                var calcRate = function (values, offset, waveLength) { return Calculate.average(values.map(function (value, index) { return Math.min(1.0, Math.max(-1.0, value / calcLevel_1(offset, waveLength, index))); })); };
+                var calcRate = function (values, offset, waveLength) { return Math.min(1.0, Math.max(0.0, Calculate.average(values.map(function (value, index) { return 1.0 - (calcLevel_1(offset, waveLength, index) - value); })))); };
                 var calcAccuracy = function (values) { return Calculate.average(values.map(function (i) { return 1 - Math.abs(i); })); };
                 var calcWorstAccuracy = function (values) { return values.map(function (i) { return 1 - Math.abs(i); }).reduce(function (a, b) { return a < b ? a : b; }, 1); };
                 var initAccuracy = calcAccuracy(diff);
@@ -1431,7 +1431,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 };
                 return result;
             };
-            Domain.getToDoEntry = function (task, history) {
+            Domain.getToDoEntry = function (_pass, task, history) {
                 var calcAverage = function (ticks, maxLength, length) {
                     if (maxLength === void 0) { maxLength = ticks.length; }
                     if (length === void 0) { length = Math.min(maxLength, ticks.length); }
@@ -1443,7 +1443,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     progress: null,
                     //decayedProgress: null,
                     previous: history.previous,
-                    //expectedNext: Calculate.expectedNext(Storage.History.get(entry.pass, todo)),
+                    //expectedNext: Calculate.expectedNext(Storage.History.get(pass, task)),
                     elapsed: null,
                     overallAverage: history.recentries.length <= 1 ? null : calcAverage(history.recentries),
                     RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -1754,7 +1754,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     return [3 /*break*/, 3];
                                                 case 1:
                                                     Domain.done(entry.pass, item.task);
-                                                    return [4 /*yield*/, Render.showListScreen(entry)];
+                                                    return [4 /*yield*/, CyclicToDo.showPage()];
                                                 case 2:
                                                     _a.sent();
                                                     _a.label = 3;
@@ -2093,7 +2093,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     switch (_b.label) {
                         case 0:
                             document.title = Domain.tagMap(entry.tag) + " " + applicationTitle;
-                            list = entry.todo.map(function (task) { return Domain.getToDoEntry(task, Domain.getRecentlyHistory(entry.pass, task)); });
+                            list = entry.todo.map(function (task) { return Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)); });
                             Domain.updateListProgress(entry, list);
                             list.sort(Domain.todoComparer1(entry));
                             list.sort(Domain.todoComparer2(list));
@@ -2163,7 +2163,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     newTask = (_a.sent()).trim();
                                                     if (!(0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 5];
                                                     if (!Storage.Task.rename(pass, item.task, newTask)) return [3 /*break*/, 4];
-                                                    return [4 /*yield*/, Render.todoScreen(pass, Domain.getToDoEntry(newTask, Domain.getRecentlyHistory(pass, newTask)), Storage.History.get(pass, newTask))];
+                                                    return [4 /*yield*/, Render.showTodoScreen(pass, newTask)];
                                                 case 3:
                                                     _a.sent();
                                                     return [3 /*break*/, 5];
@@ -2180,7 +2180,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 switch (_a.label) {
                                                     case 0:
                                                         Storage.TagMember.remove(pass, "@deleted", item.task);
-                                                        return [4 /*yield*/, Render.todoScreen(pass, Domain.getToDoEntry(item.task, Domain.getRecentlyHistory(pass, item.task)), Storage.History.get(pass, item.task))];
+                                                        return [4 /*yield*/, Render.showTodoScreen(pass, item.task)];
                                                     case 1:
                                                         _a.sent();
                                                         return [2 /*return*/];
@@ -2192,7 +2192,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 switch (_a.label) {
                                                     case 0:
                                                         Storage.TagMember.add(pass, "@deleted", item.task);
-                                                        return [4 /*yield*/, Render.todoScreen(pass, Domain.getToDoEntry(item.task, Domain.getRecentlyHistory(pass, item.task)), Storage.History.get(pass, item.task))];
+                                                        return [4 /*yield*/, Render.todoScreen(pass, Domain.getToDoEntry(pass, item.task, Domain.getRecentlyHistory(pass, item.task)), Storage.History.get(pass, item.task))];
                                                     case 1:
                                                         _a.sent();
                                                         return [2 /*return*/];
@@ -2258,7 +2258,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     switch (_a.label) {
                                                         case 0:
                                                             Domain.done(pass, item.task);
-                                                            return [4 /*yield*/, Render.showTodoScreen(pass, item.task)];
+                                                            return [4 /*yield*/, CyclicToDo.showPage()];
                                                         case 1:
                                                             _a.sent();
                                                             return [2 /*return*/];
@@ -2279,7 +2279,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     switch (_b.label) {
                         case 0:
                             document.title = task + " " + applicationTitle;
-                            item = Domain.getToDoEntry(task, Domain.getRecentlyHistory(pass, task));
+                            item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
                             Domain.updateProgress(item);
                             lastUpdate = Storage.lastUpdate;
                             updateWindow = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -2547,7 +2547,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             children: "ToDo \u30EA\u30B9\u30C8 ( pass: " + pass.substr(0, 2) + "****" + pass.substr(-2) + " )",
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                                 switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, Render.showListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
+                                                    case 0: return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + pass + "&tag=@overall")];
                                                     case 1: return [2 /*return*/, _a.sent()];
                                                 }
                                             }); }); },
@@ -2557,19 +2557,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             tag: "button",
                                             className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
                                             children: locale.parallel("New ToDo List"),
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                var pass;
-                                                return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0:
-                                                            pass = Storage.Pass.generate();
-                                                            return [4 /*yield*/, Render.showListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall") })];
-                                                        case 1:
-                                                            _a.sent();
-                                                            return [2 /*return*/];
-                                                    }
-                                                });
-                                            }); },
+                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0: return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + Storage.Pass.generate() + "&tag=@overall")];
+                                                    case 1: return [2 /*return*/, _a.sent()];
+                                                }
+                                            }); }); },
                                         },
                                         {
                                             tag: "button",

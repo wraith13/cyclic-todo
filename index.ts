@@ -84,7 +84,7 @@ export module localeParallel
             const rates: number[][] = [];
             const calcLevel = (angle: number, waveLength: number, index: number) => Math.sin(((index /waveLength) +(angle /angleResolution)) *(Math.PI *2));
             //const calcLevel = (_offset: number, waveLength: number, index: number) => Math.sin((index /waveLength) *(Math.PI *2));
-            const calcRate = (values: number[], offset: number, waveLength: number) => Calculate.average(values.map((value, index) => Math.min(1.0, Math.max(-1.0, value / calcLevel(offset, waveLength, index)))));
+            const calcRate = (values: number[], offset: number, waveLength: number) => Math.min(1.0, Math.max(0.0, Calculate.average(values.map((value, index) => 1.0 - (calcLevel(offset, waveLength, index) -value)))));
             const calcAccuracy = (values: number[]) => Calculate.average(values.map(i => 1 -Math.abs(i)));
             const calcWorstAccuracy = (values: number[]) => values.map(i => 1 -Math.abs(i)).reduce((a, b) => a < b ? a: b, 1);
             const initAccuracy = calcAccuracy(diff);
@@ -654,7 +654,7 @@ export module CyclicToDo
             };
             return result;
         };
-        export const getToDoEntry = (task: string, history: { recentries: number[], previous: null | number, count: number, }) =>
+        export const getToDoEntry = (_pass: string, task: string, history: { recentries: number[], previous: null | number, count: number, }) =>
         {
             const calcAverage = (ticks: number[], maxLength: number = ticks.length, length = Math.min(maxLength, ticks.length)) =>
                 ((ticks[0] -ticks[length -1]) /(length -1));
@@ -665,7 +665,7 @@ export module CyclicToDo
                 progress: null,
                 //decayedProgress: null,
                 previous: history.previous,
-                //expectedNext: Calculate.expectedNext(Storage.History.get(entry.pass, todo)),
+                //expectedNext: Calculate.expectedNext(Storage.History.get(pass, task)),
                 elapsed: null,
                 overallAverage: history.recentries.length <= 1 ? null: calcAverage(history.recentries),
                 RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -996,7 +996,8 @@ export module CyclicToDo
                                         else
                                         {
                                             Domain.done(entry.pass, item.task);
-                                            await showListScreen(entry);
+                                            await showPage();
+                                            //await showListScreen(entry);
                                         }
                                     }
                                 },
@@ -1273,7 +1274,7 @@ export module CyclicToDo
         export const showListScreen = async (entry: ToDoTagEntry) =>
         {
             document.title = `${Domain.tagMap(entry.tag)} ${applicationTitle}`;
-            const list = entry.todo.map(task => Domain.getToDoEntry(task, Domain.getRecentlyHistory(entry.pass, task)));
+            const list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)));
             Domain.updateListProgress(entry, list);
             list.sort(Domain.todoComparer1(entry));
             list.sort(Domain.todoComparer2(list));
@@ -1341,7 +1342,7 @@ export module CyclicToDo
                                     {
                                         if (Storage.Task.rename(pass, item.task, newTask))
                                         {
-                                            await todoScreen(pass, Domain.getToDoEntry(newTask, Domain.getRecentlyHistory(pass, newTask)), Storage.History.get(pass, newTask));
+                                            await showTodoScreen(pass, newTask);
                                         }
                                         else
                                         {
@@ -1357,7 +1358,7 @@ export module CyclicToDo
                                     async () =>
                                     {
                                         Storage.TagMember.remove(pass, "@deleted", item.task);
-                                        await todoScreen(pass, Domain.getToDoEntry(item.task, Domain.getRecentlyHistory(pass, item.task)), Storage.History.get(pass, item.task));
+                                        await showTodoScreen(pass, item.task);
                                     }
                                 ):
                                 menuItem
@@ -1366,7 +1367,7 @@ export module CyclicToDo
                                     async () =>
                                     {
                                         Storage.TagMember.add(pass, "@deleted", item.task);
-                                        await todoScreen(pass, Domain.getToDoEntry(item.task, Domain.getRecentlyHistory(pass, item.task)), Storage.History.get(pass, item.task));
+                                        await todoScreen(pass, Domain.getToDoEntry(pass, item.task, Domain.getRecentlyHistory(pass, item.task)), Storage.History.get(pass, item.task));
                                     }
                                 ),
                             {
@@ -1423,7 +1424,8 @@ export module CyclicToDo
                             onclick: async () =>
                             {
                                 Domain.done(pass, item.task);
-                                await showTodoScreen(pass, item.task);
+                                await showPage();
+                                //await showTodoScreen(pass, item.task);
                             }
                         },
                     }
@@ -1432,7 +1434,7 @@ export module CyclicToDo
         export const showTodoScreen = async (pass: string, task: string) =>
         {
             document.title = `${task} ${applicationTitle}`;
-            const item = Domain.getToDoEntry(task, Domain.getRecentlyHistory(pass, task));
+            const item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
             Domain.updateProgress(item);
             let lastUpdate = Storage.lastUpdate;
             const updateWindow = async () =>
@@ -1622,7 +1624,8 @@ export module CyclicToDo
                             tag: "button",
                             className: "default-button main-button long-button",
                             children: `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
-                            onclick: async () =>　await showListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
+                            onclick: async () =>　await showUrl(`./?pass=${pass}&tag=@overall`),
+                            //onclick: async () =>　await showListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
                         })
                     ).concat
                     ([
@@ -1631,10 +1634,11 @@ export module CyclicToDo
                             className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
                             children: locale.parallel("New ToDo List"),
                             onclick: async () =>
-                            {
-                                const pass = Storage.Pass.generate();
-                                await showListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")});
-                            },
+                                await showUrl(`./?pass=${Storage.Pass.generate()}&tag=@overall`),
+                            // {
+                            //     const pass = Storage.Pass.generate();
+                            //     await showListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")});
+                            // },
                         },
                         {
                             tag: "button",
