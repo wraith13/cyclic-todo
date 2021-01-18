@@ -711,6 +711,18 @@ export module CyclicToDo
     }
     export module Render
     {
+        export const internalLink = (data: { className?: string, href: string, children: minamo.dom.Source}) =>
+        ({
+            tag: "a",
+            className: data.className,
+            href: data.href,
+            children: data.children,
+            onclick: () =>
+            {
+                showUrl(data.href);
+                return false;
+            }
+        });
         export const heading = (tag: string, text: minamo.dom.Source) =>
         ({
             tag,
@@ -788,7 +800,7 @@ export module CyclicToDo
                 className: "menu-button",
                 children:
                 [
-                    await loadSvg("./ellipsis.1024.svg"),
+                    await loadSvgOrCache("./ellipsis.1024.svg"),
                     {
                         tag: "div",
                         className: "screen-cover",
@@ -941,12 +953,12 @@ export module CyclicToDo
                     className: "task-header",
                     children:
                     [
-                        {
-                            tag: "a",
+                        internalLink
+                        ({
                             className: "task-title",
                             href: location.href.split("?")[0] +`?pass=${entry.pass}&todo=${item.task}`,
                             children: item.task
-                        },
+                        }),
                         {
                             tag: "div",
                             className: "task-operator",
@@ -1038,20 +1050,19 @@ export module CyclicToDo
                         },
                     ],
                 },
-                // {
-                //     tag: "div",
-                //     className: "task-tags",
-                //     children: Storage.Tag.getByTodo(entry.pass, item.task).map
-                //     (
-                //         tag =>
-                //         ({
-                //             tag: "a",
-                //             className: "tag",
-                //             href: location.href.split("?")[0] +`?pass=${entry.pass}&tag=${tag}`,
-                //             children: Domain.tagMap(tag),
-                //         })
-                //     )
-                // },
+                {
+                    tag: "div",
+                    className: "task-tags",
+                    children: Storage.Tag.getByTodo(entry.pass, item.task).map
+                    (
+                        tag => internalLink
+                        ({
+                            className: "tag",
+                            href: location.href.split("?")[0] +`?pass=${entry.pass}&tag=${tag}`,
+                            children: Domain.tagMap(tag),
+                        })
+                    )
+                },
                 information(item),
             ],
         });
@@ -1108,11 +1119,11 @@ export module CyclicToDo
                 (
                     "h1",
                     [
-                        {
-                            tag: "a",
+                        internalLink
+                        ({
                             href: "@overall" === entry.tag ? "./": `./?pass=${entry.pass}&tag=@overall`,
                             children: await applicationIcon(),
-                        },
+                        }),
                         dropDownLabel
                         ({
                             list: makeObject
@@ -1311,11 +1322,11 @@ export module CyclicToDo
                 (
                     "h1",
                     [
-                        {
-                            tag: "a",
+                        internalLink
+                        ({
                             href: `./?pass=${pass}&tag=@overall`,
                             children: await applicationIcon(),
-                        },
+                        }),
                         `${item.task}`,
                         await menuButton
                         ([
@@ -1383,9 +1394,8 @@ export module CyclicToDo
                             className: "task-tags",
                             children: Storage.Tag.getByTodo(pass, item.task).map
                             (
-                                tag =>
+                                tag => internalLink
                                 ({
-                                    tag: "a",
                                     className: "tag",
                                     href: location.href.split("?")[0] +`?pass=${pass}&tag=${tag}`,
                                     children: Domain.tagMap(tag),
@@ -1444,8 +1454,7 @@ export module CyclicToDo
             };
             showWindow(await todoScreen(pass, item, Storage.History.get(pass, task)), updateWindow);
         };
-
-        const loadSvg = async (path : string) : Promise<SVGElement> => new Promise<SVGElement>
+        const loadSvg = async (path : string): Promise<string> => new Promise<string>
         (
             (resolve, reject) =>
             {
@@ -1459,7 +1468,7 @@ export module CyclicToDo
                         {
                             try
                             {
-                                resolve(new DOMParser().parseFromString(request.responseText, "image/svg+xml").documentElement as any);
+                                resolve(request.responseText);
                             }
                             catch(err)
                             {
@@ -1475,6 +1484,9 @@ export module CyclicToDo
                 request.send(null);
             }
         );
+        const svgCache: { [path: string]: string} = { };
+        const loadSvgOrCache = async (path : string): Promise<SVGElement> =>
+            new DOMParser().parseFromString(svgCache[path] ?? (svgCache[path] = await loadSvg(path)), "image/svg+xml").documentElement as any;
         export const showExportScreen = async (pass: string) =>
         {
             document.title = applicationTitle;
@@ -1490,11 +1502,11 @@ export module CyclicToDo
                 (
                     "h1",
                     [
-                        {
-                            tag: "a",
+                        internalLink
+                        ({
                             href: "./",
                             children: await applicationIcon(),
-                        },
+                        }),
                         `${document.title}`,
                         await menuButton
                         ([
@@ -1528,11 +1540,11 @@ export module CyclicToDo
                 (
                     "h1",
                     [
-                        {
-                            tag: "a",
+                        internalLink
+                        ({
                             href: "./",
                             children: await applicationIcon(),
-                        },
+                        }),
                         `${document.title}`,
                         await menuButton
                         ([
@@ -1570,7 +1582,7 @@ export module CyclicToDo
         ({
             tag: "div",
             className: "application-icon icon",
-            children: await loadSvg("./cyclictodohex.1024.svg"),
+            children: await loadSvgOrCache("./cyclictodohex.1024.svg"),
         });
         export const welcomeScreen = async () =>
         ({
@@ -1781,6 +1793,11 @@ export module CyclicToDo
     export const start = async () =>
     {
         console.log("start!!!");
+        window.onpopstate = showPage;
+        await showPage();
+    };
+    export const showPage = async () =>
+    {
         const urlParams = getUrlParams();
         const hash = getUrlHash();
         const tag = urlParams["tag"];
@@ -1830,5 +1847,11 @@ export module CyclicToDo
                 break;
             }
         }
+    };
+    export const showUrl = async (url: string) =>
+    {
+        history.pushState(null, applicationTitle, url);
+        await showPage();
+        history.replaceState(null, document.title, url);
     };
 }

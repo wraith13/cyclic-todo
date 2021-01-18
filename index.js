@@ -1489,6 +1489,18 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
         var Render;
         (function (Render) {
             var _this = this;
+            Render.internalLink = function (data) {
+                return ({
+                    tag: "a",
+                    className: data.className,
+                    href: data.href,
+                    children: data.children,
+                    onclick: function () {
+                        CyclicToDo.showUrl(data.href);
+                        return false;
+                    }
+                });
+            };
             Render.heading = function (tag, text) {
                 return ({
                     tag: tag,
@@ -1554,7 +1566,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 tag: "button",
                                 className: "menu-button"
                             };
-                            return [4 /*yield*/, loadSvg("./ellipsis.1024.svg")];
+                            return [4 /*yield*/, loadSvgOrCache("./ellipsis.1024.svg")];
                         case 1:
                             button = _a.apply(void 0, [(_b.children = [
                                     _c.sent(),
@@ -1705,12 +1717,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 tag: "div",
                                 className: "task-header"
                             };
-                            _c = [{
-                                    tag: "a",
+                            _c = [Render.internalLink({
                                     className: "task-title",
                                     href: location.href.split("?")[0] + ("?pass=" + entry.pass + "&todo=" + item.task),
                                     children: item.task
-                                }];
+                                })];
                             _d = {
                                 tag: "div",
                                 className: "task-operator"
@@ -1814,20 +1825,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         _d)
                                 ]),
                                     _b),
-                                // {
-                                //     tag: "div",
-                                //     className: "task-tags",
-                                //     children: Storage.Tag.getByTodo(entry.pass, item.task).map
-                                //     (
-                                //         tag =>
-                                //         ({
-                                //             tag: "a",
-                                //             className: "tag",
-                                //             href: location.href.split("?")[0] +`?pass=${entry.pass}&tag=${tag}`,
-                                //             children: Domain.tagMap(tag),
-                                //         })
-                                //     )
-                                // },
+                                {
+                                    tag: "div",
+                                    className: "task-tags",
+                                    children: Storage.Tag.getByTodo(entry.pass, item.task).map(function (tag) { return Render.internalLink({
+                                        className: "tag",
+                                        href: location.href.split("?")[0] + ("?pass=" + entry.pass + "&tag=" + tag),
+                                        children: Domain.tagMap(tag),
+                                    }); })
+                                },
                                 Render.information(item)
                             ],
                                 _a)];
@@ -1876,10 +1882,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return result;
             };
             Render.listScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e, _f, _g;
+                var _a, _b, _c, _d, _e, _f, _g, _h;
                 var _this = this;
-                return __generator(this, function (_h) {
-                    switch (_h.label) {
+                return __generator(this, function (_j) {
+                    switch (_j.label) {
                         case 0:
                             _a = {
                                 tag: "div",
@@ -1887,15 +1893,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             };
                             _b = Render.heading;
                             _c = ["h1"];
-                            _d = {
-                                tag: "a",
+                            _d = Render.internalLink;
+                            _e = {
                                 href: "@overall" === entry.tag ? "./" : "./?pass=" + entry.pass + "&tag=@overall"
                             };
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
-                            _e = [
-                                (_d.children = _h.sent(),
-                                    _d),
+                            _f = [
+                                _d.apply(void 0, [(_e.children = _j.sent(),
+                                        _e)]),
                                 Render.dropDownLabel({
                                     list: exports.makeObject(["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@deleted", "@new"])
                                         .map(function (i) { return ({ key: i, value: Domain.tagMap(i) + " (" + Storage.TagMember.get(entry.pass, i).length + ")", }); })),
@@ -2014,19 +2020,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     }); }),
                                 ])];
                         case 2:
-                            _f = [
-                                _b.apply(void 0, _c.concat([_e.concat([
-                                        _h.sent()
+                            _g = [
+                                _b.apply(void 0, _c.concat([_f.concat([
+                                        _j.sent()
                                     ])]))
                             ];
-                            _g = {
+                            _h = {
                                 tag: "div",
                                 className: "column-flex-list todo-list"
                             };
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.todoItem(entry, item); }))];
-                        case 3: return [2 /*return*/, (_a.children = _f.concat([
-                                (_g.children = _h.sent(),
-                                    _g),
+                        case 3: return [2 /*return*/, (_a.children = _g.concat([
+                                (_h.children = _j.sent(),
+                                    _h),
                                 "@deleted" !== entry.tag ?
                                     {
                                         tag: "div",
@@ -2122,10 +2128,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
             }); };
             Render.todoScreen = function (pass, item, ticks) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e, _f, _g;
+                var _a, _b, _c, _d, _e, _f, _g, _h;
                 var _this = this;
-                return __generator(this, function (_h) {
-                    switch (_h.label) {
+                return __generator(this, function (_j) {
+                    switch (_j.label) {
                         case 0:
                             _a = {
                                 tag: "div",
@@ -2133,15 +2139,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             };
                             _b = Render.heading;
                             _c = ["h1"];
-                            _d = {
-                                tag: "a",
+                            _d = Render.internalLink;
+                            _e = {
                                 href: "./?pass=" + pass + "&tag=@overall"
                             };
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
-                            _e = [
-                                (_d.children = _h.sent(),
-                                    _d),
+                            _f = [
+                                _d.apply(void 0, [(_e.children = _j.sent(),
+                                        _e)]),
                                 "" + item.task
                             ];
                             return [4 /*yield*/, Render.menuButton([
@@ -2209,9 +2215,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     }); }),
                                 ])];
                         case 2:
-                            _f = [
-                                _b.apply(void 0, _c.concat([_e.concat([
-                                        _h.sent()
+                            _g = [
+                                _b.apply(void 0, _c.concat([_f.concat([
+                                        _j.sent()
                                     ])])),
                                 {
                                     tag: "div",
@@ -2220,27 +2226,24 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         {
                                             tag: "div",
                                             className: "task-tags",
-                                            children: Storage.Tag.getByTodo(pass, item.task).map(function (tag) {
-                                                return ({
-                                                    tag: "a",
-                                                    className: "tag",
-                                                    href: location.href.split("?")[0] + ("?pass=" + pass + "&tag=" + tag),
-                                                    children: Domain.tagMap(tag),
-                                                });
-                                            })
+                                            children: Storage.Tag.getByTodo(pass, item.task).map(function (tag) { return Render.internalLink({
+                                                className: "tag",
+                                                href: location.href.split("?")[0] + ("?pass=" + pass + "&tag=" + tag),
+                                                children: Domain.tagMap(tag),
+                                            }); })
                                         },
                                         Render.information(item),
                                     ],
                                 }
                             ];
-                            _g = {
+                            _h = {
                                 tag: "div",
                                 className: "column-flex-list tick-list"
                             };
                             return [4 /*yield*/, Promise.all(ticks.map(function (tick) { return Render.tickItem(pass, item, tick); }))];
-                        case 3: return [2 /*return*/, (_a.children = _f.concat([
-                                (_g.children = _h.sent(),
-                                    _g),
+                        case 3: return [2 /*return*/, (_a.children = _g.concat([
+                                (_h.children = _j.sent(),
+                                    _h),
                                 0 <= Storage.TagMember.get(pass, "@deleted").indexOf(item.task) || Storage.isSessionPass(pass) ?
                                     [] :
                                     {
@@ -2314,7 +2317,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 if (4 === request.readyState) {
                                     if (200 <= request.status && request.status < 300) {
                                         try {
-                                            resolve(new DOMParser().parseFromString(request.responseText, "image/svg+xml").documentElement);
+                                            resolve(request.responseText);
                                         }
                                         catch (err) {
                                             reject(err);
@@ -2329,6 +2332,24 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         })];
                 });
             }); };
+            var svgCache = {};
+            var loadSvgOrCache = function (path) { return __awaiter(_this, void 0, void 0, function () { var _a, _b, _c, _d, _e; var _f; return __generator(this, function (_g) {
+                switch (_g.label) {
+                    case 0:
+                        _b = (_a = new DOMParser()).parseFromString;
+                        if (!((_f = svgCache[path]) !== null && _f !== void 0)) return [3 /*break*/, 1];
+                        _c = _f;
+                        return [3 /*break*/, 3];
+                    case 1:
+                        _d = svgCache;
+                        _e = path;
+                        return [4 /*yield*/, loadSvg(path)];
+                    case 2:
+                        _c = (_d[_e] = _g.sent());
+                        _g.label = 3;
+                    case 3: return [2 /*return*/, _b.apply(_a, [_c, "image/svg+xml"]).documentElement];
+                }
+            }); }); };
             Render.showExportScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
                 var _a;
                 return __generator(this, function (_b) {
@@ -2344,10 +2365,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
             }); };
             Render.exportScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e;
+                var _a, _b, _c, _d, _e, _f;
                 var _this = this;
-                return __generator(this, function (_f) {
-                    switch (_f.label) {
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             _a = {
                                 tag: "div",
@@ -2355,15 +2376,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             };
                             _b = Render.heading;
                             _c = ["h1"];
-                            _d = {
-                                tag: "a",
+                            _d = Render.internalLink;
+                            _e = {
                                 href: "./"
                             };
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
-                            _e = [
-                                (_d.children = _f.sent(),
-                                    _d),
+                            _f = [
+                                _d.apply(void 0, [(_e.children = _g.sent(),
+                                        _e)]),
                                 "" + document.title
                             ];
                             return [4 /*yield*/, Render.menuButton([
@@ -2375,8 +2396,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     }); }); })
                                 ])];
                         case 2: return [2 /*return*/, (_a.children = [
-                                _b.apply(void 0, _c.concat([_e.concat([
-                                        _f.sent()
+                                _b.apply(void 0, _c.concat([_f.concat([
+                                        _g.sent()
                                     ])])),
                                 {
                                     tag: "textarea",
@@ -2403,10 +2424,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
             }); };
             Render.importScreen = function () { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e;
+                var _a, _b, _c, _d, _e, _f;
                 var _this = this;
-                return __generator(this, function (_f) {
-                    switch (_f.label) {
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             _a = {
                                 tag: "div",
@@ -2414,15 +2435,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             };
                             _b = Render.heading;
                             _c = ["h1"];
-                            _d = {
-                                tag: "a",
+                            _d = Render.internalLink;
+                            _e = {
                                 href: "./"
                             };
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
-                            _e = [
-                                (_d.children = _f.sent(),
-                                    _d),
+                            _f = [
+                                _d.apply(void 0, [(_e.children = _g.sent(),
+                                        _e)]),
                                 "" + document.title
                             ];
                             return [4 /*yield*/, Render.menuButton([
@@ -2434,8 +2455,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     }); }); })
                                 ])];
                         case 2: return [2 /*return*/, (_a.children = [
-                                _b.apply(void 0, _c.concat([_e.concat([
-                                        _f.sent()
+                                _b.apply(void 0, _c.concat([_f.concat([
+                                        _g.sent()
                                     ])])),
                                 {
                                     tag: "textarea",
@@ -2473,7 +2494,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 tag: "div",
                                 className: "application-icon icon"
                             };
-                            return [4 /*yield*/, loadSvg("./cyclictodohex.1024.svg")];
+                            return [4 /*yield*/, loadSvgOrCache("./cyclictodohex.1024.svg")];
                         case 1: return [2 /*return*/, (_a.children = _b.sent(),
                                 _a)];
                     }
@@ -2682,12 +2703,24 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             return CyclicToDo.makeUrl(urlParams, CyclicToDo.getUrlHash(url), url);
         };
         CyclicToDo.start = function () { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        console.log("start!!!");
+                        window.onpopstate = CyclicToDo.showPage;
+                        return [4 /*yield*/, CyclicToDo.showPage()];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        }); };
+        CyclicToDo.showPage = function () { return __awaiter(_this, void 0, void 0, function () {
             var urlParams, hash, tag, todo, pass, _a;
             var _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        console.log("start!!!");
                         urlParams = CyclicToDo.getUrlParams();
                         hash = CyclicToDo.getUrlHash();
                         tag = urlParams["tag"];
@@ -2735,6 +2768,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         }
                         _c.label = 7;
                     case 7: return [2 /*return*/];
+                }
+            });
+        }); };
+        CyclicToDo.showUrl = function (url) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        history.pushState(null, applicationTitle, url);
+                        return [4 /*yield*/, CyclicToDo.showPage()];
+                    case 1:
+                        _a.sent();
+                        history.replaceState(null, document.title, url);
+                        return [2 /*return*/];
                 }
             });
         }); };
