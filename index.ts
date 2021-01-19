@@ -1067,11 +1067,39 @@ export module CyclicToDo
                 information(item),
             ],
         });
-        export const tickItem = async (_pass: string, _item: ToDoEntry, tick: number) =>
+        export const tickItem = async (_pass: string, _item: ToDoEntry, tick: number, interval: number | null) =>
         ({
             tag: "div",
-            className: "tick-item flex-item  monospace",
-            children: Domain.dateStringFromTick(tick),
+            className: "tick-item flex-item ",
+            children:
+            [
+                {
+                    tag: "div",
+                    className: "tick-timestamp",
+                    children:
+                    [
+                        label("timestamp"),
+                        {
+                            tag: "span",
+                            className: "value monospace",
+                            children: Domain.dateStringFromTick(tick),
+                        }
+                    ],
+                },
+                {
+                    tag: "div",
+                    className: "tick-interval monospace",
+                    children:
+                    [
+                        label("interval"),
+                        {
+                            tag: "span",
+                            className: "value monospace",
+                            children: Domain.timeStringFromTick(interval),
+                        }
+                    ],
+                },
+            ]
         });
         export const dropDownLabel = (options: { list: string[] | { [value:string]:string }, value: string, onChange?: (value: string) => unknown, className?: string}) =>
         {
@@ -1409,7 +1437,7 @@ export module CyclicToDo
                 {
                     tag: "div",
                     className: "column-flex-list tick-list",
-                    children: await Promise.all(ticks.map(tick => tickItem(pass, item, tick))),
+                    children: await Promise.all(ticks.map((tick, index) => tickItem(pass, item, tick, "number" === typeof ticks[index +1] ? tick -ticks[index +1]: null))),
                 },
                 0 <= Storage.TagMember.get(pass, "@deleted").indexOf(item.task) || Storage.isSessionPass(pass) ?
                     []:

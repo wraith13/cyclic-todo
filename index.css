@@ -536,7 +536,21 @@ body.locale-parallel-off .task-item .task-header .task-title {
   padding-top: 0px;
 }
 .todo-screen .tick-list .tick-item {
+  position: relative;
   padding: 0.5rem;
+}
+.todo-screen .tick-list .tick-item > * {
+  width: 100%;
+  line-height: 1.4em;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+}
+.todo-screen .tick-list .tick-item .value {
+  float: right;
 }
 .welcome-screen h1 {
   margin-bottom: 1em;

@@ -13,5 +13,7 @@
     "@new": "新しいタグ",
     "New ToDo": "新しい ToDo",
     "New ToDo List": "新しい ToDo リスト",
-    "Import List": "リストをインポート"
+    "Import List": "リストをインポート",
+    "timestamp": "日時",
+    "interval": "間隔"
 }

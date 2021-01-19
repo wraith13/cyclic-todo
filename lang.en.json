@@ -13,5 +13,7 @@
     "@new": "New tag",
     "New ToDo": "New ToDo",
     "New ToDo List": "New ToDo List",
-    "Import List": "Import List"
+    "Import List": "Import List",
+    "timestamp": "timestamp",
+    "interval": "interval"
 }

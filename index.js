@@ -868,7 +868,9 @@ define("lang.en", [], {
     "@new": "New tag",
     "New ToDo": "New ToDo",
     "New ToDo List": "New ToDo List",
-    "Import List": "Import List"
+    "Import List": "Import List",
+    "timestamp": "timestamp",
+    "interval": "interval"
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -885,7 +887,9 @@ define("lang.ja", [], {
     "@new": "新しいタグ",
     "New ToDo": "新しい ToDo",
     "New ToDo List": "新しい ToDo リスト",
-    "Import List": "リストをインポート"
+    "Import List": "リストをインポート",
+    "timestamp": "日時",
+    "interval": "間隔"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -1840,12 +1844,37 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
-            Render.tickItem = function (_pass, _item, tick) { return __awaiter(_this, void 0, void 0, function () {
+            Render.tickItem = function (_pass, _item, tick, interval) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, ({
                             tag: "div",
-                            className: "tick-item flex-item  monospace",
-                            children: Domain.dateStringFromTick(tick),
+                            className: "tick-item flex-item ",
+                            children: [
+                                {
+                                    tag: "div",
+                                    className: "tick-timestamp",
+                                    children: [
+                                        Render.label("timestamp"),
+                                        {
+                                            tag: "span",
+                                            className: "value monospace",
+                                            children: Domain.dateStringFromTick(tick),
+                                        }
+                                    ],
+                                },
+                                {
+                                    tag: "div",
+                                    className: "tick-interval monospace",
+                                    children: [
+                                        Render.label("interval"),
+                                        {
+                                            tag: "span",
+                                            className: "value monospace",
+                                            children: Domain.timeStringFromTick(interval),
+                                        }
+                                    ],
+                                },
+                            ]
                         })];
                 });
             }); };
@@ -2240,7 +2269,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 tag: "div",
                                 className: "column-flex-list tick-list"
                             };
-                            return [4 /*yield*/, Promise.all(ticks.map(function (tick) { return Render.tickItem(pass, item, tick); }))];
+                            return [4 /*yield*/, Promise.all(ticks.map(function (tick, index) { return Render.tickItem(pass, item, tick, "number" === typeof ticks[index + 1] ? tick - ticks[index + 1] : null); }))];
                         case 3: return [2 /*return*/, (_a.children = _g.concat([
                                 (_h.children = _j.sent(),
                                     _h),
