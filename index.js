@@ -870,7 +870,10 @@ define("lang.en", [], {
     "New ToDo List": "New ToDo List",
     "Import List": "Import List",
     "timestamp": "timestamp",
-    "interval": "interval"
+    "interval": "interval",
+    "Rename": "Rename",
+    "Delete": "Delete",
+    "Restore": "Restore"
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -889,7 +892,10 @@ define("lang.ja", [], {
     "New ToDo List": "新しい ToDo リスト",
     "Import List": "リストをインポート",
     "timestamp": "日時",
-    "interval": "間隔"
+    "interval": "間隔",
+    "Rename": "名前を変更",
+    "Delete": "削除",
+    "Restore": "復元"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -958,8 +964,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             var average = Calculate.average(intervals);
             var standardDeviation = Calculate.standardDeviation(intervals, average);
             if (10 <= intervals.length && (average * 0.1) < standardDeviation) {
-                var waveLenghResolution_1 = 10;
-                var angleResolution_1 = 10;
+                var waveLenghResolution_1 = 100;
+                var angleResolution_1 = 100;
                 var base_1 = 2 * standardDeviation;
                 var regulatedIntervals_1 = intervals.map(function (i) { return Math.min(1.0, Math.max(-1.0, (i - average) / base_1)); });
                 // const regulatedAverage = Calculate.average(regulatedIntervals);
@@ -967,18 +973,17 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 var primeWaveLength_1 = Math.pow(Calculate.phi, Math.ceil(Math.log(regulatedIntervals_1.length) / Math.log(Calculate.phi)));
                 var diff = regulatedIntervals_1.map(function (i) { return i; });
                 var rates = [];
-                var calcLevel_1 = function (angle, waveLength, index) { return Math.sin(((index / waveLength) + (angle / angleResolution_1)) * (Math.PI * 2)); };
                 //const calcLevel = (_offset: number, waveLength: number, index: number) => Math.sin((index /waveLength) *(Math.PI *2));
-                var calcRate = function (values, offset, waveLength) { return Math.min(1.0, Math.max(0.0, Calculate.average(values.map(function (value, index) { return 1.0 - (calcLevel_1(offset, waveLength, index) - value); })))); };
+                //const calcLevel = (angle: number, waveLength: number, index: number) => Math.sin(((index /waveLength) +(angle /angleResolution)) *(Math.PI *2));
+                var calcLevel_1 = function (angle, waveLength, index) { return 0 === Math.floor(((index / waveLength) + (angle / angleResolution_1)) * 2) % 2 ? 1.0 : -1.0; };
+                //const calcRate = (values: number[], offset: number, waveLength: number) => Math.min(1.0, Math.max(0.0, Calculate.average(values.map((value, index) => 1.0 - (calcLevel(offset, waveLength, index) -value)))));
+                var calcRate = function (values, offset, waveLength) { return Calculate.average(values.map(function (value, index) { return value * calcLevel_1(offset, waveLength, index); })); };
                 var calcAccuracy = function (values) { return Calculate.average(values.map(function (i) { return 1 - Math.abs(i); })); };
                 var calcWorstAccuracy = function (values) { return values.map(function (i) { return 1 - Math.abs(i); }).reduce(function (a, b) { return a < b ? a : b; }, 1); };
                 var initAccuracy = calcAccuracy(diff);
                 var initWorstAccuracy = calcWorstAccuracy(diff);
                 console.log(diff);
                 var wave = 0;
-                //while(Math.pow(Calculate.phi, offset /resolution) <= primeWaveLength)
-                var previousAccuracy = initAccuracy;
-                var previousWorstAccuracy = initWorstAccuracy;
                 var _loop_1 = function () {
                     var waveLength = primeWaveLength_1 / Math.pow(Calculate.phi, wave / waveLenghResolution_1);
                     var currentRates = [];
@@ -987,11 +992,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         var nextDiff = diff.map(function (value, index) { return value - (rate * calcLevel_1(angle, waveLength, index)); });
                         //console.log(`rate: ${rate}, accuracy: ${calcAccuracy(diff).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}`);
                         //console.log({ waveLength, diff, });
-                        var nextAccuracy = calcAccuracy(nextDiff);
-                        var nextWorstAccuracy = calcWorstAccuracy(nextDiff);
-                        if (previousAccuracy < nextAccuracy && previousWorstAccuracy < nextWorstAccuracy) {
-                            previousAccuracy = nextAccuracy;
-                            previousWorstAccuracy = nextWorstAccuracy;
+                        // let nextAccuracy = calcAccuracy(nextDiff);
+                        // let nextWorstAccuracy = calcWorstAccuracy(nextDiff);
+                        // if (previousAccuracy < nextAccuracy && previousWorstAccuracy < nextWorstAccuracy)
+                        if (0.001 < Math.abs(rate)) {
+                            // previousAccuracy = nextAccuracy;
+                            // previousWorstAccuracy = nextWorstAccuracy;
                             diff = nextDiff;
                             currentRates.push(rate);
                         }
@@ -1005,6 +1011,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     rates.push(currentRates);
                     ++wave;
                 };
+                //while(Math.pow(Calculate.phi, offset /resolution) <= primeWaveLength)
+                // let previousAccuracy = initAccuracy;
+                // let previousWorstAccuracy = initWorstAccuracy;
                 while (wave < waveLenghResolution_1) {
                     _loop_1();
                 }
@@ -1447,7 +1456,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     progress: null,
                     //decayedProgress: null,
                     previous: history.previous,
-                    //expectedNext: Calculate.expectedNext(Storage.History.get(pass, task)),
+                    // expectedNext: Calculate.expectedNext(Storage.History.get(pass, task)),
                     elapsed: null,
                     overallAverage: history.recentries.length <= 1 ? null : calcAverage(history.recentries),
                     RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -1772,7 +1781,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         tag: "button",
                                         children: "🚫 最後の完了を取り消す",
                                     },
-                                    Render.menuItem("名前を編集", function () { return __awaiter(_this, void 0, void 0, function () {
+                                    Render.menuItem(locale.parallel("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
                                         var newTask;
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
@@ -1796,7 +1805,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         });
                                     }); }),
                                     "@deleted" === entry.tag ?
-                                        Render.menuItem("復元", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        Render.menuItem(locale.parallel("Restore"), function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0:
@@ -1808,7 +1817,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 }
                                             });
                                         }); }) :
-                                        Render.menuItem("削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        Render.menuItem(locale.parallel("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0:
@@ -1979,7 +1988,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             ];
                             return [4 /*yield*/, Render.menuButton([
                                     Storage.Tag.isSystemTag(entry.tag) ? [] :
-                                        Render.menuItem("名前を編集", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        Render.menuItem(locale.parallel("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
                                             var newTag;
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
@@ -2180,7 +2189,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 "" + item.task
                             ];
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem("名前を編集", function () { return __awaiter(_this, void 0, void 0, function () {
+                                    Render.menuItem(locale.parallel("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
                                         var newTask;
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
@@ -2204,7 +2213,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         });
                                     }); }),
                                     0 <= Storage.TagMember.get(pass, "@deleted").indexOf(item.task) ?
-                                        Render.menuItem("復元", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        Render.menuItem(locale.parallel("Restore"), function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0:
@@ -2216,7 +2225,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 }
                                             });
                                         }); }) :
-                                        Render.menuItem("削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        Render.menuItem(locale.parallel("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0:

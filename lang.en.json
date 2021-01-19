@@ -15,5 +15,8 @@
     "New ToDo List": "New ToDo List",
     "Import List": "Import List",
     "timestamp": "timestamp",
-    "interval": "interval"
+    "interval": "interval",
+    "Rename": "Rename",
+    "Delete": "Delete",
+    "Restore": "Restore"
 }

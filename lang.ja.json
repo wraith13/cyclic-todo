@@ -15,5 +15,8 @@
     "New ToDo List": "新しい ToDo リスト",
     "Import List": "リストをインポート",
     "timestamp": "日時",
-    "interval": "間隔"
+    "interval": "間隔",
+    "Rename": "名前を変更",
+    "Delete": "削除",
+    "Restore": "復元"
 }

@@ -73,8 +73,8 @@ export module localeParallel
         const standardDeviation: number = Calculate.standardDeviation(intervals, average);
         if (10 <= intervals.length && (average *0.1) < standardDeviation)
         {
-            const waveLenghResolution = 10;
-            const angleResolution = 10;
+            const waveLenghResolution = 100;
+            const angleResolution = 100;
             const base = 2 *standardDeviation;
             const regulatedIntervals = intervals.map(i => Math.min(1.0, Math.max(-1.0, (i -average) /base)));
             // const regulatedAverage = Calculate.average(regulatedIntervals);
@@ -82,9 +82,11 @@ export module localeParallel
             const primeWaveLength = Math.pow(Calculate.phi, Math.ceil(Math.log(regulatedIntervals.length) /Math.log(Calculate.phi)));
             let diff = regulatedIntervals.map(i => i);
             const rates: number[][] = [];
-            const calcLevel = (angle: number, waveLength: number, index: number) => Math.sin(((index /waveLength) +(angle /angleResolution)) *(Math.PI *2));
             //const calcLevel = (_offset: number, waveLength: number, index: number) => Math.sin((index /waveLength) *(Math.PI *2));
-            const calcRate = (values: number[], offset: number, waveLength: number) => Math.min(1.0, Math.max(0.0, Calculate.average(values.map((value, index) => 1.0 - (calcLevel(offset, waveLength, index) -value)))));
+            //const calcLevel = (angle: number, waveLength: number, index: number) => Math.sin(((index /waveLength) +(angle /angleResolution)) *(Math.PI *2));
+            const calcLevel = (angle: number, waveLength: number, index: number) => 0 === Math.floor(((index /waveLength) +(angle /angleResolution)) *2) %2 ? 1.0: -1.0;
+            //const calcRate = (values: number[], offset: number, waveLength: number) => Math.min(1.0, Math.max(0.0, Calculate.average(values.map((value, index) => 1.0 - (calcLevel(offset, waveLength, index) -value)))));
+            const calcRate = (values: number[], offset: number, waveLength: number) => Calculate.average(values.map((value, index) => value *calcLevel(offset, waveLength, index)));
             const calcAccuracy = (values: number[]) => Calculate.average(values.map(i => 1 -Math.abs(i)));
             const calcWorstAccuracy = (values: number[]) => values.map(i => 1 -Math.abs(i)).reduce((a, b) => a < b ? a: b, 1);
             const initAccuracy = calcAccuracy(diff);
@@ -92,8 +94,8 @@ export module localeParallel
             console.log(diff);
             let wave = 0;
             //while(Math.pow(Calculate.phi, offset /resolution) <= primeWaveLength)
-            let previousAccuracy = initAccuracy;
-            let previousWorstAccuracy = initWorstAccuracy;
+            // let previousAccuracy = initAccuracy;
+            // let previousWorstAccuracy = initWorstAccuracy;
             while(wave < waveLenghResolution)
             {
                 const waveLength = primeWaveLength /Math.pow(Calculate.phi, wave /waveLenghResolution);
@@ -104,12 +106,13 @@ export module localeParallel
                     const nextDiff = diff.map((value, index) => value -(rate *calcLevel(angle, waveLength, index)));
                     //console.log(`rate: ${rate}, accuracy: ${calcAccuracy(diff).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}`);
                     //console.log({ waveLength, diff, });
-                    let nextAccuracy = calcAccuracy(nextDiff);
-                    let nextWorstAccuracy = calcWorstAccuracy(nextDiff);
-                    if (previousAccuracy < nextAccuracy && previousWorstAccuracy < nextWorstAccuracy)
+                    // let nextAccuracy = calcAccuracy(nextDiff);
+                    // let nextWorstAccuracy = calcWorstAccuracy(nextDiff);
+                    // if (previousAccuracy < nextAccuracy && previousWorstAccuracy < nextWorstAccuracy)
+                    if (0.001 < Math.abs(rate))
                     {
-                        previousAccuracy = nextAccuracy;
-                        previousWorstAccuracy = nextWorstAccuracy;
+                        // previousAccuracy = nextAccuracy;
+                        // previousWorstAccuracy = nextWorstAccuracy;
                         diff = nextDiff;
                         currentRates.push(rate);
                     }
@@ -210,7 +213,7 @@ export module CyclicToDo
         progress: null | number;
         //decayedProgress: null | number;
         previous: null | number;
-        //expectedNext: null | number;
+        // expectedNext: null | number;
         elapsed: null | number;
         overallAverage: null | number;
         RecentlyStandardDeviation: null | number;
@@ -665,7 +668,7 @@ export module CyclicToDo
                 progress: null,
                 //decayedProgress: null,
                 previous: history.previous,
-                //expectedNext: Calculate.expectedNext(Storage.History.get(pass, task)),
+                // expectedNext: Calculate.expectedNext(Storage.History.get(pass, task)),
                 elapsed: null,
                 overallAverage: history.recentries.length <= 1 ? null: calcAverage(history.recentries),
                 RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -1009,7 +1012,7 @@ export module CyclicToDo
                                     },
                                     menuItem
                                     (
-                                        "名前を編集",
+                                        locale.parallel("Rename"),
                                         async () =>
                                         {
                                             await minamo.core.timeout(500);
@@ -1030,7 +1033,7 @@ export module CyclicToDo
                                     "@deleted" === entry.tag ?
                                         menuItem
                                         (
-                                            "復元",
+                                            locale.parallel("Restore"),
                                             async () =>
                                             {
                                                 Storage.TagMember.remove(entry.pass, "@deleted", item.task);
@@ -1039,7 +1042,7 @@ export module CyclicToDo
                                         ):
                                         menuItem
                                         (
-                                            "削除",
+                                            locale.parallel("Delete"),
                                             async () =>
                                             {
                                                 Storage.TagMember.add(entry.pass, "@deleted", item.task);
@@ -1192,7 +1195,7 @@ export module CyclicToDo
                             Storage.Tag.isSystemTag(entry.tag) ? []:
                                 menuItem
                                 (
-                                    "名前を編集",
+                                    locale.parallel("Rename"),
                                     async () =>
                                     {
                                         await minamo.core.timeout(500);
@@ -1361,7 +1364,7 @@ export module CyclicToDo
                         ([
                             menuItem
                             (
-                                "名前を編集",
+                                locale.parallel("Rename"),
                                 async () =>
                                 {
                                     await minamo.core.timeout(500);
@@ -1382,7 +1385,7 @@ export module CyclicToDo
                             0 <= Storage.TagMember.get(pass, "@deleted").indexOf(item.task) ?
                                 menuItem
                                 (
-                                    "復元",
+                                    locale.parallel("Restore"),
                                     async () =>
                                     {
                                         Storage.TagMember.remove(pass, "@deleted", item.task);
@@ -1391,7 +1394,7 @@ export module CyclicToDo
                                 ):
                                 menuItem
                                 (
-                                    "削除",
+                                    locale.parallel("Delete"),
                                     async () =>
                                     {
                                         Storage.TagMember.add(pass, "@deleted", item.task);
