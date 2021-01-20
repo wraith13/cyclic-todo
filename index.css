@@ -532,6 +532,43 @@ body.locale-parallel-on .task-item .task-header .task-title {
 body.locale-parallel-off .task-item .task-header .task-title {
   max-width: calc(100% - 120px);
 }
+.history-list .history-item {
+  position: relative;
+  padding: 0.5rem;
+}
+.history-list .history-item > * {
+  display: inline-block !important;
+  width: calc(50% - 2rem);
+  line-height: 1.4em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+}
+.history-list .history-item .history-title {
+  font-size: 1.2rem;
+  line-height: 1em;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 1em;
+  max-width: calc(100% - 180px);
+  margin-right: -120px;
+  cursor: pointer;
+}
+.history-list .history-item .history-title:hover {
+  color: #21788B;
+}
+.history-list .history-item .history-title:not(:hover) {
+  color: #000022;
+  text-decoration: none;
+}
+.history-list .history-item .value {
+  float: right;
+  text-align: right;
+}
 .todo-screen .task-item {
   padding-top: 0px;
 }

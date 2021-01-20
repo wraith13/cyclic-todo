@@ -691,6 +691,52 @@ body.locale-parallel-off .task-item .task-header .task-title
 {
     max-width: calc(100% - 120px);
 }
+.history-list
+{
+    .history-item
+    {
+        position: relative;
+        padding: 0.5rem;
+        & > *
+        {
+            display: inline-block !important;
+            width: calc(50% - 2rem);
+            line-height: 1.4em;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            flex-direction: row;
+        }
+        .history-title
+        {
+            font-size: 1.2rem;
+            line-height: 1.0em;
+            box-sizing: border-box;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            height: 1em;
+            max-width: calc(100% - 180px);
+            margin-right: -120px;
+            cursor: pointer;
+            &:hover
+            {
+                color: @active-color;
+            }
+            &:not(:hover)
+            {
+                color: @main-color;
+                text-decoration: none;
+            }
+        }
+        .value
+        {
+            float: right;
+            text-align: right;
+        }
+}
+}
 .todo-screen
 {
     .task-item
@@ -714,7 +760,7 @@ body.locale-parallel-off .task-item .task-header .task-title
                 align-items: center;
                 justify-content: space-between;
                 flex-direction: row;
-                }
+            }
             .value
             {
                 float: right;

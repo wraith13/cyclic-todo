@@ -1853,6 +1853,26 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
+            Render.historyItem = function (entry, item) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, ({
+                            tag: "div",
+                            className: "history-item flex-item ",
+                            children: [
+                                Render.internalLink({
+                                    className: "history-title",
+                                    href: location.href.split("?")[0] + ("?pass=" + entry.pass + "&todo=" + item.task),
+                                    children: item.task
+                                }),
+                                {
+                                    tag: "span",
+                                    className: "value monospace",
+                                    children: Domain.dateStringFromTick(item.tick),
+                                }
+                            ]
+                        })];
+                });
+            }); };
             Render.tickItem = function (_pass, _item, tick, interval) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, ({
@@ -1987,6 +2007,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 })
                             ];
                             return [4 /*yield*/, Render.menuButton([
+                                    Render.menuItem("履歴", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, Render.showHistoryScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                case 1:
+                                                    _a.sent();
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }),
                                     Storage.Tag.isSystemTag(entry.tag) ? [] :
                                         Render.menuItem(locale.parallel("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
                                             var newTag;
@@ -2161,6 +2191,208 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return [4 /*yield*/, Render.listScreen(entry, list)];
                         case 1:
                             _a.apply(void 0, [_b.sent(), updateWindow]);
+                            return [2 /*return*/];
+                    }
+                });
+            }); };
+            Render.historyScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c, _d, _e, _f, _g, _h;
+                var _this = this;
+                return __generator(this, function (_j) {
+                    switch (_j.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "history-screen screen"
+                            };
+                            _b = Render.heading;
+                            _c = ["h1"];
+                            _d = Render.internalLink;
+                            _e = {
+                                href: "@overall" === entry.tag ? "./" : "./?pass=" + entry.pass + "&tag=@overall"
+                            };
+                            return [4 /*yield*/, Render.applicationIcon()];
+                        case 1:
+                            _f = [
+                                _d.apply(void 0, [(_e.children = _j.sent(),
+                                        _e)]),
+                                Render.dropDownLabel({
+                                    list: exports.makeObject(["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@deleted", "@new"])
+                                        .map(function (i) { return ({ key: i, value: Domain.tagMap(i) + " (" + Storage.TagMember.get(entry.pass, i).length + ")", }); })),
+                                    value: entry.tag,
+                                    onChange: function (tag) { return __awaiter(_this, void 0, void 0, function () {
+                                        var _a, newTag, tag_3;
+                                        return __generator(this, function (_b) {
+                                            switch (_b.label) {
+                                                case 0:
+                                                    _a = tag;
+                                                    switch (_a) {
+                                                        case "@new": return [3 /*break*/, 1];
+                                                    }
+                                                    return [3 /*break*/, 9];
+                                                case 1: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                case 2:
+                                                    _b.sent();
+                                                    return [4 /*yield*/, Render.prompt("タグの名前を入力してください", "")];
+                                                case 3:
+                                                    newTag = _b.sent();
+                                                    if (!(null === newTag)) return [3 /*break*/, 6];
+                                                    return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                case 4:
+                                                    _b.sent();
+                                                    return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                case 5:
+                                                    _b.sent();
+                                                    return [3 /*break*/, 8];
+                                                case 6:
+                                                    tag_3 = Storage.Tag.encode(newTag.trim());
+                                                    Storage.Tag.add(entry.pass, tag_3);
+                                                    return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: tag_3, todo: Storage.TagMember.get(entry.pass, tag_3) })];
+                                                case 7:
+                                                    _b.sent();
+                                                    _b.label = 8;
+                                                case 8: return [3 /*break*/, 11];
+                                                case 9: return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: tag, todo: Storage.TagMember.get(entry.pass, tag) })];
+                                                case 10:
+                                                    _b.sent();
+                                                    _b.label = 11;
+                                                case 11: return [2 /*return*/];
+                                            }
+                                        });
+                                    }); },
+                                })
+                            ];
+                            return [4 /*yield*/, Render.menuButton([
+                                    Render.menuItem("リストに戻る", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                case 1:
+                                                    _a.sent();
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }),
+                                    Storage.Tag.isSystemTag(entry.tag) ? [] :
+                                        Render.menuItem(locale.parallel("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                            var newTag;
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                    case 1:
+                                                        _a.sent();
+                                                        return [4 /*yield*/, Render.prompt("タグの名前を入力してください", entry.tag)];
+                                                    case 2:
+                                                        newTag = _a.sent();
+                                                        if (!(0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 5];
+                                                        if (!Storage.Tag.rename(entry.pass, entry.tag, newTag)) return [3 /*break*/, 4];
+                                                        return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: newTag, todo: Storage.TagMember.get(entry.pass, newTag) })];
+                                                    case 3:
+                                                        _a.sent();
+                                                        return [3 /*break*/, 5];
+                                                    case 4:
+                                                        window.alert("その名前のタグは既に存在しています。");
+                                                        _a.label = 5;
+                                                    case 5: return [2 /*return*/];
+                                                }
+                                            });
+                                        }); }),
+                                    "@deleted" === entry.tag ?
+                                        [
+                                            Render.menuItem("🚫 完全に削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                return __generator(this, function (_a) {
+                                                    return [2 /*return*/];
+                                                });
+                                            }); }),
+                                        ] :
+                                        [
+                                            Render.menuItem(locale.parallel("New ToDo"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                                var newTask;
+                                                return __generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                        case 1:
+                                                            _a.sent();
+                                                            return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
+                                                        case 2:
+                                                            newTask = _a.sent();
+                                                            if (!(null !== newTask)) return [3 /*break*/, 4];
+                                                            Storage.Task.add(entry.pass, newTask);
+                                                            Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                                                            return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                        case 3:
+                                                            _a.sent();
+                                                            _a.label = 4;
+                                                        case 4: return [2 /*return*/];
+                                                    }
+                                                });
+                                            }); }),
+                                            {
+                                                tag: "button",
+                                                children: "🚫 リストをシェア",
+                                            }
+                                        ],
+                                    Render.menuItem("エクスポート", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, Render.showExportScreen(entry.pass)];
+                                                case 1:
+                                                    _a.sent();
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }),
+                                ])];
+                        case 2:
+                            _g = [
+                                _b.apply(void 0, _c.concat([_f.concat([
+                                        _j.sent()
+                                    ])]))
+                            ];
+                            _h = {
+                                tag: "div",
+                                className: "column-flex-list history-list"
+                            };
+                            return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.historyItem(entry, item); }))];
+                        case 3: return [2 /*return*/, (_a.children = _g.concat([
+                                (_h.children = _j.sent(),
+                                    _h),
+                                {
+                                    tag: "div",
+                                    className: "button-list",
+                                    children: {
+                                        tag: "button",
+                                        className: "default-button main-button long-button",
+                                        children: "リストに戻る",
+                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0: return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                    case 1:
+                                                        _a.sent();
+                                                        return [2 /*return*/];
+                                                }
+                                            });
+                                        }); }
+                                    },
+                                }
+                            ]),
+                                _a)];
+                    }
+                });
+            }); };
+            Render.showHistoryScreen = function (entry) { return __awaiter(_this, void 0, void 0, function () {
+                var list, _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            document.title = "\u5C65\u6B74: " + Domain.tagMap(entry.tag) + " " + applicationTitle;
+                            list = entry.todo.map(function (task) { return Storage.History.get(entry.pass, task).map(function (tick) { return ({ task: task, tick: tick }); }); }).reduce(function (a, b) { return a.concat(b); }, []);
+                            list.sort(minamo_js_1.minamo.core.comparer.make(function (a) { return -a.tick; }));
+                            _a = Render.showWindow;
+                            return [4 /*yield*/, Render.historyScreen(entry, list)];
+                        case 1:
+                            _a.apply(void 0, [_b.sent(), Render.updateWindow]);
                             return [2 /*return*/];
                     }
                 });

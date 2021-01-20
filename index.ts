@@ -1070,6 +1070,25 @@ export module CyclicToDo
                 information(item),
             ],
         });
+        export const historyItem = async (entry: ToDoTagEntry, item: { task: string, tick: number }) =>
+        ({
+            tag: "div",
+            className: "history-item flex-item ",
+            children:
+            [
+                internalLink
+                ({
+                    className: "history-title",
+                    href: location.href.split("?")[0] +`?pass=${entry.pass}&todo=${item.task}`,
+                    children: item.task
+                }),
+                {
+                    tag: "span",
+                    className: "value monospace",
+                    children: Domain.dateStringFromTick(item.tick),
+                }
+            ]
+        });
         export const tickItem = async (_pass: string, _item: ToDoEntry, tick: number, interval: number | null) =>
         ({
             tag: "div",
@@ -1192,6 +1211,14 @@ export module CyclicToDo
                         }),
                         await menuButton
                         ([
+                            menuItem
+                            (
+                                "履歴",
+                                async () =>
+                                {
+                                    await showHistoryScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                }
+                            ),
                             Storage.Tag.isSystemTag(entry.tag) ? []:
                                 menuItem
                                 (
@@ -1344,6 +1371,157 @@ export module CyclicToDo
             };
             showWindow(await listScreen(entry, list), updateWindow);
         };
+        export const historyScreen = async (entry: ToDoTagEntry, list: { task: string, tick: number }[]) =>
+        ({
+            tag: "div",
+            className: "history-screen screen",
+            children:
+            [
+                heading
+                (
+                    "h1",
+                    [
+                        internalLink
+                        ({
+                            href: "@overall" === entry.tag ? "./": `./?pass=${entry.pass}&tag=@overall`,
+                            children: await applicationIcon(),
+                        }),
+                        dropDownLabel
+                        ({
+                            list: makeObject
+                            (
+                                ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@deleted", "@new"])
+                                .map(i => ({ key:i, value: `${Domain.tagMap(i)} (${Storage.TagMember.get(entry.pass, i).length})`, }))
+                            ),
+                            value: entry.tag,
+                            onChange: async (tag: string) =>
+                            {
+                                switch(tag)
+                                {
+                                case "@new":
+                                    {
+                                        await minamo.core.timeout(500);
+                                        const newTag = await prompt("タグの名前を入力してください", "");
+                                        if (null === newTag)
+                                        {
+                                            await minamo.core.timeout(500);
+                                            await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                        }
+                                        else
+                                        {
+                                            const tag = Storage.Tag.encode(newTag.trim());
+                                            Storage.Tag.add(entry.pass, tag);
+                                            await showListScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    await showListScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
+                                }
+                            },
+                        }),
+                        await menuButton
+                        ([
+                            menuItem
+                            (
+                                "リストに戻る",
+                                async () =>
+                                {
+                                    await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                }
+                            ),
+                            Storage.Tag.isSystemTag(entry.tag) ? []:
+                                menuItem
+                                (
+                                    locale.parallel("Rename"),
+                                    async () =>
+                                    {
+                                        await minamo.core.timeout(500);
+                                        const newTag = await prompt("タグの名前を入力してください", entry.tag);
+                                        if (0 < newTag.length && newTag !== entry.tag)
+                                        {
+                                            if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
+                                            {
+                                                await showListScreen({ pass: entry.pass, tag: newTag, todo: Storage.TagMember.get(entry.pass, newTag)});
+                                            }
+                                            else
+                                            {
+                                                window.alert("その名前のタグは既に存在しています。");
+                                            }
+                                        }
+                                    }
+                                ),
+                            "@deleted" === entry.tag ?
+                            [
+                                menuItem
+                                (
+                                    "🚫 完全に削除",
+                                    async () =>
+                                    {
+                                    }
+                                ),
+                            ]:
+                            [
+                                menuItem
+                                (
+                                    locale.parallel("New ToDo"),
+                                    async () =>
+                                    {
+                                        await minamo.core.timeout(500);
+                                        const newTask = await prompt("ToDo の名前を入力してください");
+                                        if (null !== newTask)
+                                        {
+                                            Storage.Task.add(entry.pass, newTask);
+                                            Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                                            await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                        }
+                                    }
+                                ),
+                                {
+                                    tag: "button",
+                                    children: "🚫 リストをシェア",
+                                }
+                            ],
+                            menuItem
+                            (
+                                "エクスポート",
+                                async () =>
+                                {
+                                    await showExportScreen(entry.pass);
+                                }
+                            ),
+                        ]),
+                    ]
+                ),
+                {
+                    tag: "div",
+                    className: "column-flex-list history-list",
+                    children: await Promise.all(list.map(item => historyItem(entry, item))),
+                },
+                {
+                    tag: "div",
+                    className: "button-list",
+                    children:
+                    {
+                        tag: "button",
+                        className: "default-button main-button long-button",
+                        children: "リストに戻る",
+                        onclick: async () =>
+                        {
+                            await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                        }
+                    },
+                },
+            ]
+        });
+        export const showHistoryScreen = async (entry: ToDoTagEntry) =>
+        {
+            document.title = `履歴: ${Domain.tagMap(entry.tag)} ${applicationTitle}`;
+            const list = entry.todo.map(task => Storage.History.get(entry.pass, task).map(tick => ({ task, tick }))).reduce((a, b) => a.concat(b), []);
+            list.sort(minamo.core.comparer.make(a => -a.tick));
+            showWindow(await historyScreen(entry, list), updateWindow);
+        };
+
         export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[]) =>
         ({
             tag: "div",
