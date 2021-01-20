@@ -2105,29 +2105,46 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     {
                                         tag: "div",
                                         className: "button-list",
-                                        children: {
-                                            tag: "button",
-                                            className: list.length <= 0 ? "default-button main-button long-button" : "main-button long-button",
-                                            children: locale.parallel("New ToDo"),
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                var newTask;
-                                                return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
-                                                        case 1:
-                                                            newTask = _a.sent();
-                                                            if (!(null !== newTask)) return [3 /*break*/, 3];
-                                                            Storage.Task.add(entry.pass, newTask);
-                                                            Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                                            return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
-                                                        case 2:
-                                                            _a.sent();
-                                                            _a.label = 3;
-                                                        case 3: return [2 /*return*/];
-                                                    }
-                                                });
-                                            }); }
-                                        },
+                                        children: [
+                                            {
+                                                tag: "button",
+                                                className: list.length <= 0 ? "default-button main-button long-button" : "main-button long-button",
+                                                children: locale.parallel("New ToDo"),
+                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    var newTask;
+                                                    return __generator(this, function (_a) {
+                                                        switch (_a.label) {
+                                                            case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
+                                                            case 1:
+                                                                newTask = _a.sent();
+                                                                if (!(null !== newTask)) return [3 /*break*/, 3];
+                                                                Storage.Task.add(entry.pass, newTask);
+                                                                Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                                                                return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                            case 2:
+                                                                _a.sent();
+                                                                _a.label = 3;
+                                                            case 3: return [2 /*return*/];
+                                                        }
+                                                    });
+                                                }); }
+                                            },
+                                            {
+                                                tag: "button",
+                                                className: "main-button long-button",
+                                                children: "履歴",
+                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    return __generator(this, function (_a) {
+                                                        switch (_a.label) {
+                                                            case 0: return [4 /*yield*/, Render.showHistoryScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                            case 1:
+                                                                _a.sent();
+                                                                return [2 /*return*/];
+                                                        }
+                                                    });
+                                                }); }
+                                            },
+                                        ]
                                     } :
                                     0 < list.length ?
                                         {
@@ -2209,7 +2226,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             _c = ["h1"];
                             _d = Render.internalLink;
                             _e = {
-                                href: "@overall" === entry.tag ? "./" : "./?pass=" + entry.pass + "&tag=@overall"
+                                href: "@overall" === entry.tag ? "./" : "./?pass=" + entry.pass + "&tag=" + entry.tag
                             };
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
@@ -2240,19 +2257,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
                                                 case 4:
                                                     _b.sent();
-                                                    return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                    return [4 /*yield*/, Render.showHistoryScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
                                                 case 5:
                                                     _b.sent();
                                                     return [3 /*break*/, 8];
                                                 case 6:
                                                     tag_3 = Storage.Tag.encode(newTag.trim());
                                                     Storage.Tag.add(entry.pass, tag_3);
-                                                    return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: tag_3, todo: Storage.TagMember.get(entry.pass, tag_3) })];
+                                                    return [4 /*yield*/, Render.showHistoryScreen({ pass: entry.pass, tag: tag_3, todo: Storage.TagMember.get(entry.pass, tag_3) })];
                                                 case 7:
                                                     _b.sent();
                                                     _b.label = 8;
                                                 case 8: return [3 /*break*/, 11];
-                                                case 9: return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: tag, todo: Storage.TagMember.get(entry.pass, tag) })];
+                                                case 9: return [4 /*yield*/, Render.showHistoryScreen({ pass: entry.pass, tag: tag, todo: Storage.TagMember.get(entry.pass, tag) })];
                                                 case 10:
                                                     _b.sent();
                                                     _b.label = 11;
@@ -2382,13 +2399,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
             }); };
             Render.showHistoryScreen = function (entry) { return __awaiter(_this, void 0, void 0, function () {
-                var list, _a;
+                var histories, list, _a;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
                             document.title = "\u5C65\u6B74: " + Domain.tagMap(entry.tag) + " " + applicationTitle;
-                            list = entry.todo.map(function (task) { return Storage.History.get(entry.pass, task).map(function (tick) { return ({ task: task, tick: tick }); }); }).reduce(function (a, b) { return a.concat(b); }, []);
+                            histories = {};
+                            list = entry.todo.map(function (task) { return (histories[task] = Storage.History.get(entry.pass, task)).map(function (tick) { return ({ task: task, tick: tick }); }); }).reduce(function (a, b) { return a.concat(b); }, []);
                             list.sort(minamo_js_1.minamo.core.comparer.make(function (a) { return -a.tick; }));
+                            list = list.concat(entry.todo.filter(function (task) { return histories[task].length <= 0; }).map(function (task) { return ({ task: task, tick: null }); }));
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.historyScreen(entry, list)];
                         case 1:

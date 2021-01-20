@@ -569,6 +569,11 @@ body.locale-parallel-off .task-item .task-header .task-title {
   float: right;
   text-align: right;
 }
+@media (prefers-color-scheme: dark) {
+  .history-list .history-item .history-title:not(:hover) {
+    color: #FFFFFF;
+  }
+}
 .todo-screen .task-item {
   padding-top: 0px;
 }

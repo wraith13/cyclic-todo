@@ -1292,21 +1292,33 @@ export module CyclicToDo
                         tag: "div",
                         className: "button-list",
                         children:
-                        {
-                            tag: "button",
-                            className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
-                            children: locale.parallel("New ToDo"),
-                            onclick: async () =>
+                        [
                             {
-                                const newTask = await prompt("ToDo の名前を入力してください");
-                                if (null !== newTask)
+                                tag: "button",
+                                className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
+                                children: locale.parallel("New ToDo"),
+                                onclick: async () =>
                                 {
-                                    Storage.Task.add(entry.pass, newTask);
-                                    Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                    await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                    const newTask = await prompt("ToDo の名前を入力してください");
+                                    if (null !== newTask)
+                                    {
+                                        Storage.Task.add(entry.pass, newTask);
+                                        Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                                        await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                    }
                                 }
-                            }
-                        },
+                            },
+                            {
+                                tag: "button",
+                                className: "main-button long-button",
+                                children: "履歴",
+                                onclick: async () =>
+                                {
+                                    await showHistoryScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                }
+
+                            },
+                        ]
                     }:
                     0 < list.length ?
                         {
@@ -1371,7 +1383,7 @@ export module CyclicToDo
             };
             showWindow(await listScreen(entry, list), updateWindow);
         };
-        export const historyScreen = async (entry: ToDoTagEntry, list: { task: string, tick: number }[]) =>
+        export const historyScreen = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[]) =>
         ({
             tag: "div",
             className: "history-screen screen",
@@ -1383,7 +1395,7 @@ export module CyclicToDo
                     [
                         internalLink
                         ({
-                            href: "@overall" === entry.tag ? "./": `./?pass=${entry.pass}&tag=@overall`,
+                            href: "@overall" === entry.tag ? "./": `./?pass=${entry.pass}&tag=${entry.tag}`,
                             children: await applicationIcon(),
                         }),
                         dropDownLabel
@@ -1405,18 +1417,18 @@ export module CyclicToDo
                                         if (null === newTag)
                                         {
                                             await minamo.core.timeout(500);
-                                            await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                            await showHistoryScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
                                         }
                                         else
                                         {
                                             const tag = Storage.Tag.encode(newTag.trim());
                                             Storage.Tag.add(entry.pass, tag);
-                                            await showListScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
+                                            await showHistoryScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
                                         }
                                     }
                                     break;
                                 default:
-                                    await showListScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
+                                    await showHistoryScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
                                 }
                             },
                         }),
@@ -1517,8 +1529,10 @@ export module CyclicToDo
         export const showHistoryScreen = async (entry: ToDoTagEntry) =>
         {
             document.title = `履歴: ${Domain.tagMap(entry.tag)} ${applicationTitle}`;
-            const list = entry.todo.map(task => Storage.History.get(entry.pass, task).map(tick => ({ task, tick }))).reduce((a, b) => a.concat(b), []);
+            const histories: { [task:string]:number[] } = { };
+            let list = entry.todo.map(task => (histories[task] = Storage.History.get(entry.pass, task)).map(tick => ({ task, tick }))).reduce((a, b) => a.concat(b), []);
             list.sort(minamo.core.comparer.make(a => -a.tick));
+            list = list.concat(entry.todo.filter(task => histories[task].length <= 0).map(task => ({ task, tick: null })));
             showWindow(await historyScreen(entry, list), updateWindow);
         };
 
