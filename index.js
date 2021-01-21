@@ -959,13 +959,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
         Calculate.standardScore = function (average, standardDeviation, target) {
             return (10 * (target - average) / standardDeviation) + 50;
         };
-        Calculate.expectedNext = function (ticks) {
+        Calculate.expectedNext = function (task, ticks) {
             var intervals = Calculate.intervals(ticks).reverse();
             var average = Calculate.average(intervals);
             var standardDeviation = Calculate.standardDeviation(intervals, average);
             if (10 <= intervals.length && (average * 0.1) < standardDeviation) {
-                var waveLenghResolution_1 = 100;
-                var angleResolution_1 = 100;
+                var waveLenghResolution_1 = 50;
+                var angleResolution_1 = 50;
                 var base_1 = 2 * standardDeviation;
                 var regulatedIntervals_1 = intervals.map(function (i) { return Math.min(1.0, Math.max(-1.0, (i - average) / base_1)); });
                 // const regulatedAverage = Calculate.average(regulatedIntervals);
@@ -987,26 +987,46 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 var _loop_1 = function () {
                     var waveLength = primeWaveLength_1 / Math.pow(Calculate.phi, wave / waveLenghResolution_1);
                     var currentRates = [];
-                    var _loop_2 = function (angle) {
+                    // for(let angle = 0; angle < angleResolution; ++angle)
+                    // {
+                    //     const rate = calcRate(diff, angle, waveLength);
+                    //     const nextDiff = diff.map((value, index) => value -(rate *calcLevel(angle, waveLength, index)));
+                    //     //console.log(`rate: ${rate}, accuracy: ${calcAccuracy(diff).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}`);
+                    //     //console.log({ waveLength, diff, });
+                    //     // let nextAccuracy = calcAccuracy(nextDiff);
+                    //     // let nextWorstAccuracy = calcWorstAccuracy(nextDiff);
+                    //     // if (previousAccuracy < nextAccuracy && previousWorstAccuracy < nextWorstAccuracy)
+                    //     if (0.001 < Math.abs(rate))
+                    //     {
+                    //         // previousAccuracy = nextAccuracy;
+                    //         // previousWorstAccuracy = nextWorstAccuracy;
+                    //         diff = nextDiff;
+                    //         currentRates.push(rate);
+                    //     }
+                    //     else
+                    //     {
+                    //         currentRates.push(0);
+                    //     }
+                    // }
+                    var maxRate = 0;
+                    var maxAngle = -1;
+                    for (var angle = 0; angle < angleResolution_1; ++angle) {
                         var rate = calcRate(diff, angle, waveLength);
-                        var nextDiff = diff.map(function (value, index) { return value - (rate * calcLevel_1(angle, waveLength, index)); });
-                        //console.log(`rate: ${rate}, accuracy: ${calcAccuracy(diff).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}`);
-                        //console.log({ waveLength, diff, });
-                        // let nextAccuracy = calcAccuracy(nextDiff);
-                        // let nextWorstAccuracy = calcWorstAccuracy(nextDiff);
-                        // if (previousAccuracy < nextAccuracy && previousWorstAccuracy < nextWorstAccuracy)
-                        if (0.001 < Math.abs(rate)) {
-                            // previousAccuracy = nextAccuracy;
-                            // previousWorstAccuracy = nextWorstAccuracy;
-                            diff = nextDiff;
-                            currentRates.push(rate);
+                        if (Math.abs(maxRate) < Math.abs(rate)) {
+                            maxRate = rate;
+                            maxAngle = angle;
+                        }
+                    }
+                    for (var angle = 0; angle < angleResolution_1; ++angle) {
+                        if (maxAngle === angle) {
+                            currentRates.push(maxRate);
                         }
                         else {
                             currentRates.push(0);
                         }
-                    };
-                    for (var angle = 0; angle < angleResolution_1; ++angle) {
-                        _loop_2(angle);
+                    }
+                    if (0 <= maxAngle) {
+                        diff = diff.map(function (value, index) { return value - (maxRate * calcLevel_1(maxAngle, waveLength, index)); });
                     }
                     rates.push(currentRates);
                     ++wave;
@@ -1024,11 +1044,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 console.log("init accuracy: " + initAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }) + ", " + initWorstAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }));
                 console.log("final accuracy: " + finalAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }) + ", " + finalWorstAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }));
                 if (initAccuracy < finalAccuracy) {
-                    var next = ticks[0] + average +
-                        (Calculate.sum(rates.map(function (currentRates, wave) {
-                            return Calculate.sum(currentRates.map(function (rate, angle) { return 0 === rate ? 0 :
-                                rate * calcLevel_1(angle, primeWaveLength_1 / Math.pow(Calculate.phi, wave / waveLenghResolution_1), regulatedIntervals_1.length); }));
-                        })) * base_1);
+                    var exptected = Calculate.sum(rates.map(function (currentRates, wave) {
+                        return Calculate.sum(currentRates.map(function (rate, angle) { return 0 === rate ? 0 :
+                            rate * calcLevel_1(angle, primeWaveLength_1 / Math.pow(Calculate.phi, wave / waveLenghResolution_1), regulatedIntervals_1.length); }));
+                    }));
+                    console.log({ task: task, exptected: exptected });
+                    var exptectedRate = 0.5;
+                    var next = ticks[0] + average + (Math.pow(Math.abs(exptected), exptectedRate) * (exptected < 0 ? -base_1 : base_1));
                     return next;
                 }
                 // console.log({intervals, average});
@@ -1456,7 +1478,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     progress: null,
                     //decayedProgress: null,
                     previous: history.previous,
-                    // expectedNext: Calculate.expectedNext(Storage.History.get(pass, task)),
+                    //expectedNext: Calculate.expectedNext(task, Storage.History.get(_pass, task)),
                     elapsed: null,
                     overallAverage: history.recentries.length <= 1 ? null : calcAverage(history.recentries),
                     RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -1732,7 +1754,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             };
                             _c = [Render.internalLink({
                                     className: "task-title",
-                                    href: location.href.split("?")[0] + ("?pass=" + entry.pass + "&todo=" + item.task),
+                                    href: "./?pass=" + entry.pass + "&todo=" + item.task,
                                     children: item.task
                                 })];
                             _d = {
@@ -1767,7 +1789,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     return [3 /*break*/, 3];
                                                 case 1:
                                                     Domain.done(entry.pass, item.task);
-                                                    return [4 /*yield*/, CyclicToDo.showPage()];
+                                                    return [4 /*yield*/, CyclicToDo.reload()];
                                                 case 2:
                                                     _a.sent();
                                                     _a.label = 3;
@@ -1793,7 +1815,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     newTask = (_a.sent()).trim();
                                                     if (!(0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 5];
                                                     if (!Storage.Task.rename(entry.pass, item.task, newTask)) return [3 /*break*/, 4];
-                                                    return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                    return [4 /*yield*/, CyclicToDo.reload()];
                                                 case 3:
                                                     _a.sent();
                                                     return [3 /*break*/, 5];
@@ -1810,7 +1832,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 switch (_a.label) {
                                                     case 0:
                                                         Storage.TagMember.remove(entry.pass, "@deleted", item.task);
-                                                        return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                        return [4 /*yield*/, CyclicToDo.reload()];
                                                     case 1:
                                                         _a.sent();
                                                         return [2 /*return*/];
@@ -1822,7 +1844,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 switch (_a.label) {
                                                     case 0:
                                                         Storage.TagMember.add(entry.pass, "@deleted", item.task);
-                                                        return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                        return [4 /*yield*/, CyclicToDo.reload()];
                                                     case 1:
                                                         _a.sent();
                                                         return [2 /*return*/];
@@ -1843,7 +1865,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     className: "task-tags",
                                     children: Storage.Tag.getByTodo(entry.pass, item.task).map(function (tag) { return Render.internalLink({
                                         className: "tag",
-                                        href: location.href.split("?")[0] + ("?pass=" + entry.pass + "&tag=" + tag),
+                                        href: "./?pass=" + entry.pass + "&tag=" + tag,
                                         children: Domain.tagMap(tag),
                                     }); })
                                 },
@@ -1861,7 +1883,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             children: [
                                 Render.internalLink({
                                     className: "history-title",
-                                    href: location.href.split("?")[0] + ("?pass=" + entry.pass + "&todo=" + item.task),
+                                    href: "./?pass=" + entry.pass + "&todo=" + item.task,
                                     children: item.task
                                 }),
                                 {
@@ -1984,19 +2006,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
                                                 case 4:
                                                     _b.sent();
-                                                    return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                    return [4 /*yield*/, CyclicToDo.reload()];
                                                 case 5:
                                                     _b.sent();
                                                     return [3 /*break*/, 8];
                                                 case 6:
                                                     tag_2 = Storage.Tag.encode(newTag.trim());
                                                     Storage.Tag.add(entry.pass, tag_2);
-                                                    return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: tag_2, todo: Storage.TagMember.get(entry.pass, tag_2) })];
+                                                    return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + entry.pass + "&tag=" + newTag)];
                                                 case 7:
                                                     _b.sent();
                                                     _b.label = 8;
                                                 case 8: return [3 /*break*/, 11];
-                                                case 9: return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: tag, todo: Storage.TagMember.get(entry.pass, tag) })];
+                                                case 9: return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + entry.pass + "&tag=" + tag)];
                                                 case 10:
                                                     _b.sent();
                                                     _b.label = 11;
@@ -2007,16 +2029,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 })
                             ];
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem("履歴", function () { return __awaiter(_this, void 0, void 0, function () {
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, Render.showHistoryScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
-                                                case 1:
-                                                    _a.sent();
-                                                    return [2 /*return*/];
-                                            }
-                                        });
-                                    }); }),
+                                    Render.menuItem("履歴", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + entry.pass + "&tag=" + entry.tag + "#history")];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); }),
                                     Storage.Tag.isSystemTag(entry.tag) ? [] :
                                         Render.menuItem(locale.parallel("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
                                             var newTag;
@@ -2030,7 +2048,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                         newTag = _a.sent();
                                                         if (!(0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 5];
                                                         if (!Storage.Tag.rename(entry.pass, entry.tag, newTag)) return [3 /*break*/, 4];
-                                                        return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: newTag, todo: Storage.TagMember.get(entry.pass, newTag) })];
+                                                        return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + entry.pass + "&tag=" + newTag)];
                                                     case 3:
                                                         _a.sent();
                                                         return [3 /*break*/, 5];
@@ -2063,7 +2081,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                             if (!(null !== newTask)) return [3 /*break*/, 4];
                                                             Storage.Task.add(entry.pass, newTask);
                                                             Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                                            return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                            return [4 /*yield*/, CyclicToDo.reload()];
                                                         case 3:
                                                             _a.sent();
                                                             _a.label = 4;
@@ -2076,16 +2094,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 children: "🚫 リストをシェア",
                                             }
                                         ],
-                                    Render.menuItem("エクスポート", function () { return __awaiter(_this, void 0, void 0, function () {
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, Render.showExportScreen(entry.pass)];
-                                                case 1:
-                                                    _a.sent();
-                                                    return [2 /*return*/];
-                                            }
-                                        });
-                                    }); }),
+                                    Render.menuItem("エクスポート", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + entry.pass + "#export")];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); }),
                                 ])];
                         case 2:
                             _g = [
@@ -2120,7 +2134,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                                 if (!(null !== newTask)) return [3 /*break*/, 3];
                                                                 Storage.Task.add(entry.pass, newTask);
                                                                 Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                                                return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                                return [4 /*yield*/, CyclicToDo.reload()];
                                                             case 2:
                                                                 _a.sent();
                                                                 _a.label = 3;
@@ -2133,16 +2147,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 tag: "button",
                                                 className: "main-button long-button",
                                                 children: "履歴",
-                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                    return __generator(this, function (_a) {
-                                                        switch (_a.label) {
-                                                            case 0: return [4 /*yield*/, Render.showHistoryScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
-                                                            case 1:
-                                                                _a.sent();
-                                                                return [2 /*return*/];
-                                                        }
-                                                    });
-                                                }); }
+                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0: return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + entry.pass + "&tag=" + entry.tag + "#history")];
+                                                        case 1: return [2 /*return*/, _a.sent()];
+                                                    }
+                                                }); }); },
                                             },
                                         ]
                                     } :
@@ -2257,19 +2267,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
                                                 case 4:
                                                     _b.sent();
-                                                    return [4 /*yield*/, Render.showHistoryScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                    return [4 /*yield*/, CyclicToDo.reload()];
                                                 case 5:
                                                     _b.sent();
                                                     return [3 /*break*/, 8];
                                                 case 6:
                                                     tag_3 = Storage.Tag.encode(newTag.trim());
                                                     Storage.Tag.add(entry.pass, tag_3);
-                                                    return [4 /*yield*/, Render.showHistoryScreen({ pass: entry.pass, tag: tag_3, todo: Storage.TagMember.get(entry.pass, tag_3) })];
+                                                    return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + entry.pass + "&tag=" + newTag + "#history")];
                                                 case 7:
                                                     _b.sent();
                                                     _b.label = 8;
                                                 case 8: return [3 /*break*/, 11];
-                                                case 9: return [4 /*yield*/, Render.showHistoryScreen({ pass: entry.pass, tag: tag, todo: Storage.TagMember.get(entry.pass, tag) })];
+                                                case 9: return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + entry.pass + "&tag=" + tag + "#history")];
                                                 case 10:
                                                     _b.sent();
                                                     _b.label = 11;
@@ -2280,16 +2290,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 })
                             ];
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem("リストに戻る", function () { return __awaiter(_this, void 0, void 0, function () {
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
-                                                case 1:
-                                                    _a.sent();
-                                                    return [2 /*return*/];
-                                            }
-                                        });
-                                    }); }),
+                                    Render.menuItem("リストに戻る", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + entry.pass + "&tag=" + entry.tag)];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); }),
                                     Storage.Tag.isSystemTag(entry.tag) ? [] :
                                         Render.menuItem(locale.parallel("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
                                             var newTag;
@@ -2303,7 +2309,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                         newTag = _a.sent();
                                                         if (!(0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 5];
                                                         if (!Storage.Tag.rename(entry.pass, entry.tag, newTag)) return [3 /*break*/, 4];
-                                                        return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: newTag, todo: Storage.TagMember.get(entry.pass, newTag) })];
+                                                        return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + entry.pass + "&tag=" + newTag + "#history")];
                                                     case 3:
                                                         _a.sent();
                                                         return [3 /*break*/, 5];
@@ -2336,7 +2342,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                             if (!(null !== newTask)) return [3 /*break*/, 4];
                                                             Storage.Task.add(entry.pass, newTask);
                                                             Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                                            return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
+                                                            return [4 /*yield*/, CyclicToDo.reload()];
                                                         case 3:
                                                             _a.sent();
                                                             _a.label = 4;
@@ -2349,16 +2355,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 children: "🚫 リストをシェア",
                                             }
                                         ],
-                                    Render.menuItem("エクスポート", function () { return __awaiter(_this, void 0, void 0, function () {
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, Render.showExportScreen(entry.pass)];
-                                                case 1:
-                                                    _a.sent();
-                                                    return [2 /*return*/];
-                                            }
-                                        });
-                                    }); }),
+                                    Render.menuItem("エクスポート", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + entry.pass + "#export")];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); }),
                                 ])];
                         case 2:
                             _g = [
@@ -2381,16 +2383,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         tag: "button",
                                         className: "default-button main-button long-button",
                                         children: "リストに戻る",
-                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                            return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, Render.showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag) })];
-                                                    case 1:
-                                                        _a.sent();
-                                                        return [2 /*return*/];
-                                                }
-                                            });
-                                        }); }
+                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + entry.pass + "&tag=" + entry.tag)];
+                                                case 1: return [2 /*return*/, _a.sent()];
+                                            }
+                                        }); }); }
                                     },
                                 }
                             ]),
@@ -2452,7 +2450,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     newTask = (_a.sent()).trim();
                                                     if (!(0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 5];
                                                     if (!Storage.Task.rename(pass, item.task, newTask)) return [3 /*break*/, 4];
-                                                    return [4 /*yield*/, Render.showTodoScreen(pass, newTask)];
+                                                    return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + pass + "&todo=" + newTask)];
                                                 case 3:
                                                     _a.sent();
                                                     return [3 /*break*/, 5];
@@ -2469,7 +2467,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 switch (_a.label) {
                                                     case 0:
                                                         Storage.TagMember.remove(pass, "@deleted", item.task);
-                                                        return [4 /*yield*/, Render.showTodoScreen(pass, item.task)];
+                                                        return [4 /*yield*/, CyclicToDo.reload()];
                                                     case 1:
                                                         _a.sent();
                                                         return [2 /*return*/];
@@ -2481,7 +2479,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 switch (_a.label) {
                                                     case 0:
                                                         Storage.TagMember.add(pass, "@deleted", item.task);
-                                                        return [4 /*yield*/, Render.todoScreen(pass, Domain.getToDoEntry(pass, item.task, Domain.getRecentlyHistory(pass, item.task)), Storage.History.get(pass, item.task))];
+                                                        return [4 /*yield*/, CyclicToDo.reload()];
                                                     case 1:
                                                         _a.sent();
                                                         return [2 /*return*/];
@@ -2492,16 +2490,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         tag: "button",
                                         children: "🚫 ToDo をシェア",
                                     },
-                                    Render.menuItem("エクスポート", function () { return __awaiter(_this, void 0, void 0, function () {
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, Render.showExportScreen(pass)];
-                                                case 1:
-                                                    _a.sent();
-                                                    return [2 /*return*/];
-                                            }
-                                        });
-                                    }); }),
+                                    Render.menuItem("エクスポート", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl("./?pass=" + pass + "#export")];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); }),
                                 ])];
                         case 2:
                             _g = [
@@ -2517,7 +2511,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             className: "task-tags",
                                             children: Storage.Tag.getByTodo(pass, item.task).map(function (tag) { return Render.internalLink({
                                                 className: "tag",
-                                                href: location.href.split("?")[0] + ("?pass=" + pass + "&tag=" + tag),
+                                                href: "./?pass=" + pass + "&tag=" + tag,
                                                 children: Domain.tagMap(tag),
                                             }); })
                                         },
@@ -2547,7 +2541,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     switch (_a.label) {
                                                         case 0:
                                                             Domain.done(pass, item.task);
-                                                            return [4 /*yield*/, CyclicToDo.showPage()];
+                                                            return [4 /*yield*/, CyclicToDo.reload()];
                                                         case 1:
                                                             _a.sent();
                                                             return [2 /*return*/];
@@ -2738,7 +2732,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return [4 /*yield*/, Render.menuButton([
                                     Render.menuItem("トップ画面に戻る", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
-                                            case 0: return [4 /*yield*/, Render.showWelcomeScreen()];
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl("./")];
                                             case 1: return [2 /*return*/, _a.sent()];
                                         }
                                     }); }); })
@@ -2859,7 +2853,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             children: locale.parallel("Import List"),
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                                 switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, Render.showImportScreen()];
+                                                    case 0: return [4 /*yield*/, CyclicToDo.showUrl("#import")];
                                                     case 1: return [2 /*return*/, _a.sent()];
                                                 }
                                             }); }); },
@@ -2989,7 +2983,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 switch (_a.label) {
                     case 0:
                         console.log("start!!!");
-                        window.onpopstate = CyclicToDo.showPage;
+                        window.onpopstate = function () { return CyclicToDo.showPage(); };
                         return [4 /*yield*/, CyclicToDo.showPage()];
                     case 1:
                         _a.sent();
@@ -2997,75 +2991,88 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 }
             });
         }); };
-        CyclicToDo.showPage = function () { return __awaiter(_this, void 0, void 0, function () {
-            var urlParams, hash, tag, todo, pass, _a;
-            var _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        urlParams = CyclicToDo.getUrlParams();
-                        hash = CyclicToDo.getUrlHash();
-                        tag = urlParams["tag"];
-                        todo = urlParams["todo"];
-                        pass = (_b = urlParams["pass"]) !== null && _b !== void 0 ? _b : Storage.sessionPassPrefix + ":" + new Date().getTime();
-                        // const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
-                        // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
-                        window.addEventListener('resize', Render.onWindowResize);
-                        window.addEventListener('storage', Render.onUpdateStorage);
-                        if (!(pass && todo)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, Render.showTodoScreen(pass, todo)];
-                    case 1:
-                        _c.sent();
-                        _c.label = 2;
-                    case 2:
-                        if (!(Storage.isSessionPass(pass) && !tag)) return [3 /*break*/, 6];
-                        _a = hash;
-                        return [3 /*break*/, 3];
-                    case 3:
-                        console.log("show welcome screen");
-                        return [4 /*yield*/, Render.showWelcomeScreen()];
-                    case 4:
-                        _c.sent();
-                        return [3 /*break*/, 5];
-                    case 5: return [3 /*break*/, 7];
-                    case 6:
-                        //Domain.merge(pass, tag, todo, history);
-                        switch (hash) {
-                            // case "history":
-                            //     dom.updateHistoryScreen(pass, getToDoHistory(pass, todo));
-                            //     break;
-                            // case "statistics":
-                            //     dom.updateStatisticsScreen(title, pass, todo);
-                            //     break;
-                            // case "import":
-                            //     dom.updateImportScreen(pass);
-                            //     break;
-                            // case "export":
-                            //     dom.updateExportScreen(title, pass, getToDoHistory(pass, todo));
-                            //     break;
-                            default:
-                                console.log("show todo screen");
-                                Render.showListScreen({ tag: tag, pass: pass, todo: Storage.TagMember.get(pass, tag) });
-                                break;
-                        }
-                        _c.label = 7;
-                    case 7: return [2 /*return*/];
-                }
+        CyclicToDo.showPage = function (url) {
+            if (url === void 0) { url = location.href; }
+            return __awaiter(_this, void 0, void 0, function () {
+                var urlParams, hash, tag, todo, pass, _a;
+                var _b;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            urlParams = CyclicToDo.getUrlParams(url);
+                            hash = CyclicToDo.getUrlHash(url);
+                            tag = urlParams["tag"];
+                            todo = urlParams["todo"];
+                            pass = (_b = urlParams["pass"]) !== null && _b !== void 0 ? _b : Storage.sessionPassPrefix + ":" + new Date().getTime();
+                            // const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
+                            // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
+                            window.addEventListener('resize', Render.onWindowResize);
+                            window.addEventListener('storage', Render.onUpdateStorage);
+                            if (!(pass && todo)) return [3 /*break*/, 2];
+                            console.log("show todo screen");
+                            return [4 /*yield*/, Render.showTodoScreen(pass, todo)];
+                        case 1:
+                            _c.sent();
+                            return [3 /*break*/, 8];
+                        case 2:
+                            if (!(Storage.isSessionPass(pass) && !tag)) return [3 /*break*/, 7];
+                            _a = hash;
+                            switch (_a) {
+                                case "import": return [3 /*break*/, 3];
+                            }
+                            return [3 /*break*/, 4];
+                        case 3:
+                            console.log("show import screen");
+                            Render.showImportScreen();
+                            return [3 /*break*/, 6];
+                        case 4:
+                            console.log("show welcome screen");
+                            return [4 /*yield*/, Render.showWelcomeScreen()];
+                        case 5:
+                            _c.sent();
+                            return [3 /*break*/, 6];
+                        case 6: return [3 /*break*/, 8];
+                        case 7:
+                            //Domain.merge(pass, tag, todo, history);
+                            switch (hash) {
+                                case "history":
+                                    console.log("show history screen");
+                                    Render.showHistoryScreen({ tag: tag, pass: pass, todo: Storage.TagMember.get(pass, tag) });
+                                    break;
+                                // case "statistics":
+                                //     dom.updateStatisticsScreen(title, pass, todo);
+                                //     break;
+                                case "import":
+                                    console.log("show import screen");
+                                    Render.showImportScreen();
+                                    break;
+                                case "export":
+                                    console.log("show export screen");
+                                    Render.showExportScreen(pass);
+                                    break;
+                                default:
+                                    console.log("show list screen");
+                                    Render.showListScreen({ tag: tag !== null && tag !== void 0 ? tag : "@overall", pass: pass, todo: Storage.TagMember.get(pass, tag) });
+                                    break;
+                            }
+                            _c.label = 8;
+                        case 8: return [2 /*return*/];
+                    }
+                });
             });
-        }); };
+        };
         CyclicToDo.showUrl = function (url) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        history.pushState(null, applicationTitle, url);
-                        return [4 /*yield*/, CyclicToDo.showPage()];
+                    case 0: return [4 /*yield*/, CyclicToDo.showPage(url)];
                     case 1:
                         _a.sent();
-                        history.replaceState(null, document.title, url);
+                        history.pushState(null, applicationTitle, url);
                         return [2 /*return*/];
                 }
             });
         }); };
+        CyclicToDo.reload = CyclicToDo.showPage;
     })(CyclicToDo = exports.CyclicToDo || (exports.CyclicToDo = {}));
 });
 //# sourceMappingURL=index.js.map

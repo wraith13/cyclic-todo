@@ -66,15 +66,15 @@ export module localeParallel
         Math.sqrt(Calculate.average(ticks.map(i => (i -average) ** 2)));
     export const standardScore = (average: number, standardDeviation: number, target: number) =>
         (10 * (target -average) /standardDeviation) +50;
-    export const expectedNext = (ticks: number[]) =>
+    export const expectedNext = (task: string, ticks: number[]) =>
     {
         const intervals: number[] = Calculate.intervals(ticks).reverse();
         const average: number = Calculate.average(intervals);
         const standardDeviation: number = Calculate.standardDeviation(intervals, average);
         if (10 <= intervals.length && (average *0.1) < standardDeviation)
         {
-            const waveLenghResolution = 100;
-            const angleResolution = 100;
+            const waveLenghResolution = 50;
+            const angleResolution = 50;
             const base = 2 *standardDeviation;
             const regulatedIntervals = intervals.map(i => Math.min(1.0, Math.max(-1.0, (i -average) /base)));
             // const regulatedAverage = Calculate.average(regulatedIntervals);
@@ -100,27 +100,55 @@ export module localeParallel
             {
                 const waveLength = primeWaveLength /Math.pow(Calculate.phi, wave /waveLenghResolution);
                 const currentRates: number[] = [];
+                // for(let angle = 0; angle < angleResolution; ++angle)
+                // {
+                //     const rate = calcRate(diff, angle, waveLength);
+                //     const nextDiff = diff.map((value, index) => value -(rate *calcLevel(angle, waveLength, index)));
+                //     //console.log(`rate: ${rate}, accuracy: ${calcAccuracy(diff).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}`);
+                //     //console.log({ waveLength, diff, });
+                //     // let nextAccuracy = calcAccuracy(nextDiff);
+                //     // let nextWorstAccuracy = calcWorstAccuracy(nextDiff);
+                //     // if (previousAccuracy < nextAccuracy && previousWorstAccuracy < nextWorstAccuracy)
+                //     if (0.001 < Math.abs(rate))
+                //     {
+                //         // previousAccuracy = nextAccuracy;
+                //         // previousWorstAccuracy = nextWorstAccuracy;
+                //         diff = nextDiff;
+                //         currentRates.push(rate);
+                //     }
+                //     else
+                //     {
+                //         currentRates.push(0);
+                //     }
+                // }
+
+                let maxRate = 0;
+                let maxAngle = -1;
                 for(let angle = 0; angle < angleResolution; ++angle)
                 {
                     const rate = calcRate(diff, angle, waveLength);
-                    const nextDiff = diff.map((value, index) => value -(rate *calcLevel(angle, waveLength, index)));
-                    //console.log(`rate: ${rate}, accuracy: ${calcAccuracy(diff).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}`);
-                    //console.log({ waveLength, diff, });
-                    // let nextAccuracy = calcAccuracy(nextDiff);
-                    // let nextWorstAccuracy = calcWorstAccuracy(nextDiff);
-                    // if (previousAccuracy < nextAccuracy && previousWorstAccuracy < nextWorstAccuracy)
-                    if (0.001 < Math.abs(rate))
+                    if (Math.abs(maxRate) < Math.abs(rate))
                     {
-                        // previousAccuracy = nextAccuracy;
-                        // previousWorstAccuracy = nextWorstAccuracy;
-                        diff = nextDiff;
-                        currentRates.push(rate);
+                        maxRate = rate;
+                        maxAngle = angle;
+                    }
+                }
+                for(let angle = 0; angle < angleResolution; ++angle)
+                {
+                    if (maxAngle === angle)
+                    {
+                        currentRates.push(maxRate);
                     }
                     else
                     {
                         currentRates.push(0);
                     }
                 }
+                if (0 <= maxAngle)
+                {
+                    diff = diff.map((value, index) => value -(maxRate *calcLevel(maxAngle, waveLength, index)));
+                }
+
                 rates.push(currentRates);
                 ++wave;
             }
@@ -132,24 +160,24 @@ export module localeParallel
             console.log(`final accuracy: ${finalAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}, ${finalWorstAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}`);
             if (initAccuracy < finalAccuracy)
             {
-                const next = ticks[0] +average +
+                const exptected = Calculate.sum
                 (
-                    Calculate.sum
+                    rates.map
                     (
-                        rates.map
+                        (currentRates, wave) =>
+                        Calculate.sum
                         (
-                            (currentRates, wave) =>
-                            Calculate.sum
+                            currentRates.map
                             (
-                                currentRates.map
-                                (
-                                    (rate, angle) => 0 === rate ? 0:
-                                        rate *calcLevel(angle, primeWaveLength /Math.pow(Calculate.phi, wave /waveLenghResolution), regulatedIntervals.length)
-                                )
+                                (rate, angle) => 0 === rate ? 0:
+                                    rate *calcLevel(angle, primeWaveLength /Math.pow(Calculate.phi, wave /waveLenghResolution), regulatedIntervals.length)
                             )
                         )
-                    ) *base
+                    )
                 );
+                console.log({ task, exptected });
+                const exptectedRate = 0.5;
+                const next = ticks[0] +average +(Math.pow(Math.abs(exptected), exptectedRate) *(exptected < 0 ? -base: base));
                 return next;
             }
 // console.log({intervals, average});
@@ -213,7 +241,7 @@ export module CyclicToDo
         progress: null | number;
         //decayedProgress: null | number;
         previous: null | number;
-        // expectedNext: null | number;
+        //expectedNext: null | number;
         elapsed: null | number;
         overallAverage: null | number;
         RecentlyStandardDeviation: null | number;
@@ -668,7 +696,7 @@ export module CyclicToDo
                 progress: null,
                 //decayedProgress: null,
                 previous: history.previous,
-                // expectedNext: Calculate.expectedNext(Storage.History.get(pass, task)),
+                //expectedNext: Calculate.expectedNext(task, Storage.History.get(_pass, task)),
                 elapsed: null,
                 overallAverage: history.recentries.length <= 1 ? null: calcAverage(history.recentries),
                 RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -959,7 +987,7 @@ export module CyclicToDo
                         internalLink
                         ({
                             className: "task-title",
-                            href: location.href.split("?")[0] +`?pass=${entry.pass}&todo=${item.task}`,
+                            href: `./?pass=${entry.pass}&todo=${item.task}`,
                             children: item.task
                         }),
                         {
@@ -999,8 +1027,7 @@ export module CyclicToDo
                                         else
                                         {
                                             Domain.done(entry.pass, item.task);
-                                            await showPage();
-                                            //await showListScreen(entry);
+                                            await reload();
                                         }
                                     }
                                 },
@@ -1021,7 +1048,7 @@ export module CyclicToDo
                                             {
                                                 if (Storage.Task.rename(entry.pass, item.task, newTask))
                                                 {
-                                                    await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                                    await reload();
                                                 }
                                                 else
                                                 {
@@ -1037,7 +1064,7 @@ export module CyclicToDo
                                             async () =>
                                             {
                                                 Storage.TagMember.remove(entry.pass, "@deleted", item.task);
-                                                await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                                await reload();
                                             }
                                         ):
                                         menuItem
@@ -1046,7 +1073,7 @@ export module CyclicToDo
                                             async () =>
                                             {
                                                 Storage.TagMember.add(entry.pass, "@deleted", item.task);
-                                                await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                                await reload();
                                             }
                                         ),
                                 ]),
@@ -1062,7 +1089,7 @@ export module CyclicToDo
                         tag => internalLink
                         ({
                             className: "tag",
-                            href: location.href.split("?")[0] +`?pass=${entry.pass}&tag=${tag}`,
+                            href: `./?pass=${entry.pass}&tag=${tag}`,
                             children: Domain.tagMap(tag),
                         })
                     )
@@ -1079,7 +1106,7 @@ export module CyclicToDo
                 internalLink
                 ({
                     className: "history-title",
-                    href: location.href.split("?")[0] +`?pass=${entry.pass}&todo=${item.task}`,
+                    href: `./?pass=${entry.pass}&todo=${item.task}`,
                     children: item.task
                 }),
                 {
@@ -1194,18 +1221,18 @@ export module CyclicToDo
                                         if (null === newTag)
                                         {
                                             await minamo.core.timeout(500);
-                                            await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                            await reload();
                                         }
                                         else
                                         {
                                             const tag = Storage.Tag.encode(newTag.trim());
                                             Storage.Tag.add(entry.pass, tag);
-                                            await showListScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
+                                            await showUrl(`./?pass=${entry.pass}&tag=${newTag}`);
                                         }
                                     }
                                     break;
                                 default:
-                                    await showListScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
+                                    await showUrl(`./?pass=${entry.pass}&tag=${tag}`);
                                 }
                             },
                         }),
@@ -1214,10 +1241,7 @@ export module CyclicToDo
                             menuItem
                             (
                                 "履歴",
-                                async () =>
-                                {
-                                    await showHistoryScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
-                                }
+                                async () => await showUrl(`./?pass=${entry.pass}&tag=${entry.tag}#history`)
                             ),
                             Storage.Tag.isSystemTag(entry.tag) ? []:
                                 menuItem
@@ -1231,7 +1255,7 @@ export module CyclicToDo
                                         {
                                             if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
                                             {
-                                                await showListScreen({ pass: entry.pass, tag: newTag, todo: Storage.TagMember.get(entry.pass, newTag)});
+                                                await showUrl(`./?pass=${entry.pass}&tag=${newTag}`);
                                             }
                                             else
                                             {
@@ -1262,7 +1286,7 @@ export module CyclicToDo
                                         {
                                             Storage.Task.add(entry.pass, newTask);
                                             Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                            await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                            await reload();
                                         }
                                     }
                                 ),
@@ -1274,10 +1298,7 @@ export module CyclicToDo
                             menuItem
                             (
                                 "エクスポート",
-                                async () =>
-                                {
-                                    await showExportScreen(entry.pass);
-                                }
+                                async () => await showUrl(`./?pass=${entry.pass}#export`)
                             ),
                         ]),
                     ]
@@ -1304,7 +1325,7 @@ export module CyclicToDo
                                     {
                                         Storage.Task.add(entry.pass, newTask);
                                         Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                        await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                        await reload();
                                     }
                                 }
                             },
@@ -1312,11 +1333,7 @@ export module CyclicToDo
                                 tag: "button",
                                 className: "main-button long-button",
                                 children: "履歴",
-                                onclick: async () =>
-                                {
-                                    await showHistoryScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
-                                }
-
+                                onclick: async () => await showUrl(`./?pass=${entry.pass}&tag=${entry.tag}#history`),
                             },
                         ]
                     }:
@@ -1417,18 +1434,18 @@ export module CyclicToDo
                                         if (null === newTag)
                                         {
                                             await minamo.core.timeout(500);
-                                            await showHistoryScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                            await reload();
                                         }
                                         else
                                         {
                                             const tag = Storage.Tag.encode(newTag.trim());
                                             Storage.Tag.add(entry.pass, tag);
-                                            await showHistoryScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
+                                            await showUrl(`./?pass=${entry.pass}&tag=${newTag}#history`);
                                         }
                                     }
                                     break;
                                 default:
-                                    await showHistoryScreen({ pass: entry.pass, tag, todo: Storage.TagMember.get(entry.pass, tag)});
+                                    await showUrl(`./?pass=${entry.pass}&tag=${tag}#history`);
                                 }
                             },
                         }),
@@ -1437,10 +1454,7 @@ export module CyclicToDo
                             menuItem
                             (
                                 "リストに戻る",
-                                async () =>
-                                {
-                                    await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
-                                }
+                                async () => await showUrl(`./?pass=${entry.pass}&tag=${entry.tag}`)
                             ),
                             Storage.Tag.isSystemTag(entry.tag) ? []:
                                 menuItem
@@ -1454,7 +1468,7 @@ export module CyclicToDo
                                         {
                                             if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
                                             {
-                                                await showListScreen({ pass: entry.pass, tag: newTag, todo: Storage.TagMember.get(entry.pass, newTag)});
+                                                await showUrl(`./?pass=${entry.pass}&tag=${newTag}#history`);
                                             }
                                             else
                                             {
@@ -1485,7 +1499,7 @@ export module CyclicToDo
                                         {
                                             Storage.Task.add(entry.pass, newTask);
                                             Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                            await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
+                                            await reload();
                                         }
                                     }
                                 ),
@@ -1497,10 +1511,7 @@ export module CyclicToDo
                             menuItem
                             (
                                 "エクスポート",
-                                async () =>
-                                {
-                                    await showExportScreen(entry.pass);
-                                }
+                                async () => await showUrl(`./?pass=${entry.pass}#export`)
                             ),
                         ]),
                     ]
@@ -1518,10 +1529,7 @@ export module CyclicToDo
                         tag: "button",
                         className: "default-button main-button long-button",
                         children: "リストに戻る",
-                        onclick: async () =>
-                        {
-                            await showListScreen({ pass: entry.pass, tag: entry.tag, todo: Storage.TagMember.get(entry.pass, entry.tag)});
-                        }
+                        onclick: async () => await showUrl(`./?pass=${entry.pass}&tag=${entry.tag}`)
                     },
                 },
             ]
@@ -1565,7 +1573,7 @@ export module CyclicToDo
                                     {
                                         if (Storage.Task.rename(pass, item.task, newTask))
                                         {
-                                            await showTodoScreen(pass, newTask);
+                                            await showUrl(`./?pass=${pass}&todo=${newTask}`);
                                         }
                                         else
                                         {
@@ -1581,7 +1589,7 @@ export module CyclicToDo
                                     async () =>
                                     {
                                         Storage.TagMember.remove(pass, "@deleted", item.task);
-                                        await showTodoScreen(pass, item.task);
+                                        await reload();
                                     }
                                 ):
                                 menuItem
@@ -1590,7 +1598,7 @@ export module CyclicToDo
                                     async () =>
                                     {
                                         Storage.TagMember.add(pass, "@deleted", item.task);
-                                        await todoScreen(pass, Domain.getToDoEntry(pass, item.task, Domain.getRecentlyHistory(pass, item.task)), Storage.History.get(pass, item.task));
+                                        await reload();
                                     }
                                 ),
                             {
@@ -1600,10 +1608,7 @@ export module CyclicToDo
                             menuItem
                             (
                                 "エクスポート",
-                                async () =>
-                                {
-                                    await showExportScreen(pass);
-                                }
+                                async () => await showUrl(`./?pass=${pass}#export`)
                             ),
                         ]),
                     ]
@@ -1621,7 +1626,7 @@ export module CyclicToDo
                                 tag => internalLink
                                 ({
                                     className: "tag",
-                                    href: location.href.split("?")[0] +`?pass=${pass}&tag=${tag}`,
+                                    href: `./?pass=${pass}&tag=${tag}`,
                                     children: Domain.tagMap(tag),
                                 })
                             )
@@ -1647,8 +1652,7 @@ export module CyclicToDo
                             onclick: async () =>
                             {
                                 Domain.done(pass, item.task);
-                                await showPage();
-                                //await showTodoScreen(pass, item.task);
+                                await reload();
                             }
                         },
                     }
@@ -1776,7 +1780,7 @@ export module CyclicToDo
                             menuItem
                             (
                                 "トップ画面に戻る",
-                                async () => await showWelcomeScreen(),
+                                async () => await showUrl("./"),
                             )
                         ]),
                     ]
@@ -1848,7 +1852,6 @@ export module CyclicToDo
                             className: "default-button main-button long-button",
                             children: `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
                             onclick: async () =>　await showUrl(`./?pass=${pass}&tag=@overall`),
-                            //onclick: async () =>　await showListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
                         })
                     ).concat
                     ([
@@ -1856,18 +1859,13 @@ export module CyclicToDo
                             tag: "button",
                             className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
                             children: locale.parallel("New ToDo List"),
-                            onclick: async () =>
-                                await showUrl(`./?pass=${Storage.Pass.generate()}&tag=@overall`),
-                            // {
-                            //     const pass = Storage.Pass.generate();
-                            //     await showListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")});
-                            // },
+                            onclick: async () => await showUrl(`./?pass=${Storage.Pass.generate()}&tag=@overall`),
                         },
                         {
                             tag: "button",
                             className: "main-button long-button",
                             children:  locale.parallel("Import List"),
-                            onclick: async () => await showImportScreen(),
+                            onclick: async () => await showUrl(`#import`),
                         },
                     ])
                 },
@@ -2020,13 +2018,13 @@ export module CyclicToDo
     export const start = async () =>
     {
         console.log("start!!!");
-        window.onpopstate = showPage;
+        window.onpopstate = () => showPage();
         await showPage();
     };
-    export const showPage = async () =>
+    export const showPage = async (url: string = location.href) =>
     {
-        const urlParams = getUrlParams();
-        const hash = getUrlHash();
+        const urlParams = getUrlParams(url);
+        const hash = getUrlHash(url);
         const tag = urlParams["tag"];
         const todo = urlParams["todo"];
         const pass = urlParams["pass"] ?? `${Storage.sessionPassPrefix}:${new Date().getTime()}`;
@@ -2036,15 +2034,18 @@ export module CyclicToDo
         window.addEventListener('storage', Render.onUpdateStorage);
         if (pass && todo)
         {
+            console.log("show todo screen");
             await Render.showTodoScreen(pass, todo);
         }
+        else
         if (Storage.isSessionPass(pass) && ! tag)
         {
             switch(hash)
             {
-            // case "import":
-            //     dom.updateImportScreen(pass);
-            //     break;
+            case "import":
+                console.log("show import screen");
+                Render.showImportScreen();
+                break;
             default:
                 console.log("show welcome screen");
                 await Render.showWelcomeScreen();
@@ -2056,29 +2057,32 @@ export module CyclicToDo
             //Domain.merge(pass, tag, todo, history);
             switch(hash)
             {
-            // case "history":
-            //     dom.updateHistoryScreen(pass, getToDoHistory(pass, todo));
-            //     break;
+            case "history":
+                console.log("show history screen");
+                Render.showHistoryScreen({ tag: tag, pass, todo: Storage.TagMember.get(pass, tag) });
+                break;
             // case "statistics":
             //     dom.updateStatisticsScreen(title, pass, todo);
             //     break;
-            // case "import":
-            //     dom.updateImportScreen(pass);
-            //     break;
-            // case "export":
-            //     dom.updateExportScreen(title, pass, getToDoHistory(pass, todo));
-            //     break;
+            case "import":
+                console.log("show import screen");
+                Render.showImportScreen();
+                break;
+            case "export":
+                console.log("show export screen");
+                Render.showExportScreen(pass);
+                break;
             default:
-                console.log("show todo screen");
-                Render.showListScreen({ tag: tag, pass, todo: Storage.TagMember.get(pass, tag) });
+                console.log("show list screen");
+                Render.showListScreen({ tag: tag ?? "@overall", pass, todo: Storage.TagMember.get(pass, tag) });
                 break;
             }
         }
     };
     export const showUrl = async (url: string) =>
     {
+        await showPage(url);
         history.pushState(null, applicationTitle, url);
-        await showPage();
-        history.replaceState(null, document.title, url);
     };
+    export const reload = showPage;
 }

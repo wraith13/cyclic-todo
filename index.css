@@ -538,7 +538,6 @@ body.locale-parallel-off .task-item .task-header .task-title {
 }
 .history-list .history-item > * {
   display: inline-block !important;
-  width: calc(50% - 2rem);
   line-height: 1.4em;
   display: flex;
   flex-wrap: wrap;
@@ -554,7 +553,6 @@ body.locale-parallel-off .task-item .task-header .task-title {
   text-overflow: ellipsis;
   white-space: nowrap;
   height: 1em;
-  max-width: calc(100% - 180px);
   margin-right: -120px;
   cursor: pointer;
 }
