@@ -1584,6 +1584,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             };
             Render.menuButton = function (menu) { return __awaiter(_this, void 0, void 0, function () {
                 var popup, button, _a, _b;
+                var _this = this;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
@@ -1595,6 +1596,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     className: "menu-popup-body",
                                     children: menu
                                 },
+                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        Array.from(document.getElementsByClassName("screen-cover")).forEach(function (i) { return i.click(); });
+                                        return [2 /*return*/];
+                                    });
+                                }); },
                             });
                             _a = minamo_js_1.minamo.dom.make(HTMLButtonElement);
                             _b = {
@@ -1604,15 +1611,14 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return [4 /*yield*/, loadSvgOrCache("./ellipsis.1024.svg")];
                         case 1:
                             button = _a.apply(void 0, [(_b.children = [
-                                    _c.sent(),
-                                    {
-                                        tag: "div",
-                                        className: "screen-cover",
-                                    },
-                                    popup
+                                    _c.sent()
                                 ],
+                                    _b.onclick = function () {
+                                        popup.classList.add("show");
+                                        Render.screenCover(function () { return popup.classList.remove("show"); });
+                                    },
                                     _b)]);
-                            return [2 /*return*/, button];
+                            return [2 /*return*/, [button, popup,]];
                     }
                 });
             }); };
@@ -2236,7 +2242,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             _c = ["h1"];
                             _d = Render.internalLink;
                             _e = {
-                                href: "@overall" === entry.tag ? "./" : "./?pass=" + entry.pass + "&tag=" + entry.tag
+                                href: "./?pass=" + entry.pass + "&tag=" + entry.tag
                             };
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
@@ -2999,6 +3005,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
+                            window.scrollTo(0, 0);
                             urlParams = CyclicToDo.getUrlParams(url);
                             hash = CyclicToDo.getUrlHash(url);
                             tag = urlParams["tag"];

@@ -232,16 +232,16 @@ button
             height: 1.5rem;
             fill: @accent-color;
         }
-        &:not(:hover) .screen-cover,
-        &:not(:hover) .screen-cover + .menu-popup
-        {
-            display: none;
-        }
-        .screen-cover:hover,
-        .screen-cover:hover +.menu-popup
-        {
-            display: none;
-        }
+        // &:not(:hover) .screen-cover,
+        // &:not(:hover) .screen-cover + .menu-popup
+        // {
+        //     display: none;
+        // }
+        // .screen-cover:hover,
+        // .screen-cover:hover +.menu-popup
+        // {
+        //     display: none;
+        // }
         // &:not(:hover) .menu-popup:not(.show)
         // {
         //     display: none;
@@ -312,6 +312,10 @@ button.default-button
 }
 .menu-popup
 {
+    &:not(.show)
+    {
+        display: none;
+    }
     position: absolute;
     top: calc(9px - 0.5rem);
     right: -1.0rem;

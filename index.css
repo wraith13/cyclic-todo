@@ -172,14 +172,6 @@ button.menu-button svg {
   height: 1.5rem;
   fill: #228844;
 }
-button.menu-button:not(:hover) .screen-cover,
-button.menu-button:not(:hover) .screen-cover + .menu-popup {
-  display: none;
-}
-button.menu-button .screen-cover:hover,
-button.menu-button .screen-cover:hover + .menu-popup {
-  display: none;
-}
 button:hover {
   color: #FFFFFF;
   background-color: #21788B;
@@ -232,6 +224,9 @@ button.default-button:hover {
   padding: 1rem;
   padding-top: 2rem;
   border-radius: 1rem;
+}
+.menu-popup:not(.show) {
+  display: none;
 }
 .menu-popup .menu-popup-body {
   display: flex;

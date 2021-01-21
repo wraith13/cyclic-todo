@@ -817,13 +817,13 @@ export module CyclicToDo
                     className: "menu-popup-body",
                     children: menu
                 },
-                // onclick: async () =>
-                // {
-                //     (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[]).forEach(i => i.click());
-                //     popup.classList.add("active");
-                //     await timeout(500);
-                //     popup.classList.remove("active");
-                // },
+                onclick: async () =>
+                {
+                    (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[]).forEach(i => i.click());
+                    // popup.classList.add("active");
+                    // await timeout(500);
+                    // popup.classList.remove("active");
+                },
             });
             const button = minamo.dom.make(HTMLButtonElement)
             ({
@@ -832,19 +832,19 @@ export module CyclicToDo
                 children:
                 [
                     await loadSvgOrCache("./ellipsis.1024.svg"),
-                    {
-                        tag: "div",
-                        className: "screen-cover",
-                    },
-                    popup,
+                    // {
+                    //     tag: "div",
+                    //     className: "screen-cover",
+                    // },
+                    //popup,
                 ],
-                // onclick: () =>
-                // {
-                //     popup.classList.add("show");
-                //     screenCover(() => popup.classList.remove("show"));
-                // },
+                onclick: () =>
+                {
+                    popup.classList.add("show");
+                    screenCover(() => popup.classList.remove("show"));
+                },
             });
-            return button;
+            return [ button, popup, ];
         };
         export const menuItem = (children: minamo.dom.Source, onclick: (event: MouseEvent | TouchEvent) => unknown, className?: string) =>
         ({
@@ -1412,7 +1412,7 @@ export module CyclicToDo
                     [
                         internalLink
                         ({
-                            href: "@overall" === entry.tag ? "./": `./?pass=${entry.pass}&tag=${entry.tag}`,
+                            href: `./?pass=${entry.pass}&tag=${entry.tag}`,
                             children: await applicationIcon(),
                         }),
                         dropDownLabel
@@ -2023,6 +2023,7 @@ export module CyclicToDo
     };
     export const showPage = async (url: string = location.href) =>
     {
+        window.scrollTo(0,0);
         const urlParams = getUrlParams(url);
         const hash = getUrlHash(url);
         const tag = urlParams["tag"];
