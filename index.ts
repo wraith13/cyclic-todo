@@ -742,11 +742,11 @@ export module CyclicToDo
     }
     export module Render
     {
-        export const internalLink = (data: { className?: string, href: string, children: minamo.dom.Source}) =>
+        export const internalLink = (data: { className?: string, href: { pass?:string, tag?:string, todo?: string, hash?: string}, children: minamo.dom.Source}) =>
         ({
             tag: "a",
             className: data.className,
-            href: data.href,
+            href: makeUrl(data.href),
             children: data.children,
             onclick: () =>
             {
@@ -987,7 +987,7 @@ export module CyclicToDo
                         internalLink
                         ({
                             className: "task-title",
-                            href: `./?pass=${entry.pass}&todo=${item.task}`,
+                            href: { pass: entry.pass, todo: item.task },
                             children: item.task
                         }),
                         {
@@ -1089,7 +1089,7 @@ export module CyclicToDo
                         tag => internalLink
                         ({
                             className: "tag",
-                            href: `./?pass=${entry.pass}&tag=${tag}`,
+                            href: { pass: entry.pass, tag, },
                             children: Domain.tagMap(tag),
                         })
                     )
@@ -1106,7 +1106,7 @@ export module CyclicToDo
                 internalLink
                 ({
                     className: "history-title",
-                    href: `./?pass=${entry.pass}&todo=${item.task}`,
+                    href: { pass: entry.pass, todo: item.task, },
                     children: item.task
                 }),
                 {
@@ -1199,7 +1199,7 @@ export module CyclicToDo
                     [
                         internalLink
                         ({
-                            href: "@overall" === entry.tag ? "./": `./?pass=${entry.pass}&tag=@overall`,
+                            href: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall" },
                             children: await applicationIcon(),
                         }),
                         dropDownLabel
@@ -1227,12 +1227,12 @@ export module CyclicToDo
                                         {
                                             const tag = Storage.Tag.encode(newTag.trim());
                                             Storage.Tag.add(entry.pass, tag);
-                                            await showUrl(`./?pass=${entry.pass}&tag=${newTag}`);
+                                            await showUrl({ pass: entry.pass, tag: newTag, });
                                         }
                                     }
                                     break;
                                 default:
-                                    await showUrl(`./?pass=${entry.pass}&tag=${tag}`);
+                                    await showUrl({ pass: entry.pass, tag, });
                                 }
                             },
                         }),
@@ -1241,7 +1241,7 @@ export module CyclicToDo
                             menuItem
                             (
                                 "履歴",
-                                async () => await showUrl(`./?pass=${entry.pass}&tag=${entry.tag}#history`)
+                                async () => await showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })
                             ),
                             Storage.Tag.isSystemTag(entry.tag) ? []:
                                 menuItem
@@ -1255,7 +1255,7 @@ export module CyclicToDo
                                         {
                                             if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
                                             {
-                                                await showUrl(`./?pass=${entry.pass}&tag=${newTag}`);
+                                                await showUrl({ pass: entry.pass, tag: newTag });
                                             }
                                             else
                                             {
@@ -1298,7 +1298,7 @@ export module CyclicToDo
                             menuItem
                             (
                                 "エクスポート",
-                                async () => await showUrl(`./?pass=${entry.pass}#export`)
+                                async () => await showUrl({ pass: entry.pass, hash: "export", })
                             ),
                         ]),
                     ]
@@ -1333,7 +1333,7 @@ export module CyclicToDo
                                 tag: "button",
                                 className: "main-button long-button",
                                 children: "履歴",
-                                onclick: async () => await showUrl(`./?pass=${entry.pass}&tag=${entry.tag}#history`),
+                                onclick: async () => await showUrl({ pass: entry.pass, tag: entry.tag, hash: "history", }),
                             },
                         ]
                     }:
@@ -1395,7 +1395,7 @@ export module CyclicToDo
                 }
                 else
                 {
-                    showListScreen(entry);
+                    await reload();
                 }
             };
             showWindow(await listScreen(entry, list), updateWindow);
@@ -1412,7 +1412,7 @@ export module CyclicToDo
                     [
                         internalLink
                         ({
-                            href: `./?pass=${entry.pass}&tag=${entry.tag}`,
+                            href: { pass: entry.pass, tag: entry.tag, },
                             children: await applicationIcon(),
                         }),
                         dropDownLabel
@@ -1440,12 +1440,12 @@ export module CyclicToDo
                                         {
                                             const tag = Storage.Tag.encode(newTag.trim());
                                             Storage.Tag.add(entry.pass, tag);
-                                            await showUrl(`./?pass=${entry.pass}&tag=${newTag}#history`);
+                                            await showUrl({ pass: entry.pass, tag: newTag, hash: "history", });
                                         }
                                     }
                                     break;
                                 default:
-                                    await showUrl(`./?pass=${entry.pass}&tag=${tag}#history`);
+                                    await showUrl({ pass: entry.pass, tag, hash: "history", });
                                 }
                             },
                         }),
@@ -1454,7 +1454,7 @@ export module CyclicToDo
                             menuItem
                             (
                                 "リストに戻る",
-                                async () => await showUrl(`./?pass=${entry.pass}&tag=${entry.tag}`)
+                                async () => await showUrl({ pass: entry.pass, tag: entry.tag, })
                             ),
                             Storage.Tag.isSystemTag(entry.tag) ? []:
                                 menuItem
@@ -1468,7 +1468,7 @@ export module CyclicToDo
                                         {
                                             if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
                                             {
-                                                await showUrl(`./?pass=${entry.pass}&tag=${newTag}#history`);
+                                                await showUrl({ pass: entry.pass, tag: newTag, hash: "history", });
                                             }
                                             else
                                             {
@@ -1511,7 +1511,7 @@ export module CyclicToDo
                             menuItem
                             (
                                 "エクスポート",
-                                async () => await showUrl(`./?pass=${entry.pass}#export`)
+                                async () => await showUrl({ pass: entry.pass, hash: "export", })
                             ),
                         ]),
                     ]
@@ -1529,7 +1529,7 @@ export module CyclicToDo
                         tag: "button",
                         className: "default-button main-button long-button",
                         children: "リストに戻る",
-                        onclick: async () => await showUrl(`./?pass=${entry.pass}&tag=${entry.tag}`)
+                        onclick: async () => await showUrl({ pass: entry.pass, tag: entry.tag, })
                     },
                 },
             ]
@@ -1556,7 +1556,7 @@ export module CyclicToDo
                     [
                         internalLink
                         ({
-                            href: `./?pass=${pass}&tag=@overall`,
+                            href: { pass, tag: "@overall", },
                             children: await applicationIcon(),
                         }),
                         `${item.task}`,
@@ -1573,7 +1573,7 @@ export module CyclicToDo
                                     {
                                         if (Storage.Task.rename(pass, item.task, newTask))
                                         {
-                                            await showUrl(`./?pass=${pass}&todo=${newTask}`);
+                                            await showUrl({ pass, todo:newTask, });
                                         }
                                         else
                                         {
@@ -1608,7 +1608,7 @@ export module CyclicToDo
                             menuItem
                             (
                                 "エクスポート",
-                                async () => await showUrl(`./?pass=${pass}#export`)
+                                async () => await showUrl({ pass, hash: "export", })
                             ),
                         ]),
                     ]
@@ -1626,7 +1626,7 @@ export module CyclicToDo
                                 tag => internalLink
                                 ({
                                     className: "tag",
-                                    href: `./?pass=${pass}&tag=${tag}`,
+                                    href: { pass, tag, },
                                     children: Domain.tagMap(tag),
                                 })
                             )
@@ -1678,7 +1678,7 @@ export module CyclicToDo
                 }
                 else
                 {
-                    showTodoScreen(pass, task);
+                    await reload();
                 }
             };
             showWindow(await todoScreen(pass, item, Storage.History.get(pass, task)), updateWindow);
@@ -1733,7 +1733,7 @@ export module CyclicToDo
                     [
                         internalLink
                         ({
-                            href: "./",
+                            href: { pass, tag: "@overall", },
                             children: await applicationIcon(),
                         }),
                         `${document.title}`,
@@ -1742,7 +1742,7 @@ export module CyclicToDo
                             menuItem
                             (
                                 "リストに戻る",
-                                async () => await showListScreen({ pass: pass, tag: "@overall", todo: Storage.TagMember.get(pass, "@overall")}),
+                                async () => async () => await showUrl({ pass, tag: "@overall", }),
                             )
                         ]),
                     ]
@@ -1771,7 +1771,7 @@ export module CyclicToDo
                     [
                         internalLink
                         ({
-                            href: "./",
+                            href: { },
                             children: await applicationIcon(),
                         }),
                         `${document.title}`,
@@ -1780,7 +1780,7 @@ export module CyclicToDo
                             menuItem
                             (
                                 "トップ画面に戻る",
-                                async () => await showUrl("./"),
+                                async () => await showUrl({ }),
                             )
                         ]),
                     ]
@@ -1851,7 +1851,7 @@ export module CyclicToDo
                             tag: "button",
                             className: "default-button main-button long-button",
                             children: `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
-                            onclick: async () =>　await showUrl(`./?pass=${pass}&tag=@overall`),
+                            onclick: async () =>　await showUrl({ pass, tag: "@overall", }),
                         })
                     ).concat
                     ([
@@ -1859,13 +1859,13 @@ export module CyclicToDo
                             tag: "button",
                             className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
                             children: locale.parallel("New ToDo List"),
-                            onclick: async () => await showUrl(`./?pass=${Storage.Pass.generate()}&tag=@overall`),
+                            onclick: async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", }),
                         },
                         {
                             tag: "button",
                             className: "main-button long-button",
                             children:  locale.parallel("Import List"),
-                            onclick: async () => await showUrl(`#import`),
+                            onclick: async () => await showUrl({ hash: "import", }),
                         },
                     ])
                 },
@@ -1992,29 +1992,40 @@ export module CyclicToDo
     export const makeUrl =
     (
         args: {[key: string]: string},
-        hash: string = getUrlHash(),
         href: string = location.href
     ) =>
         href
             .replace(/\?.*/, "")
             .replace(/#.*/, "")
             +"?"
-            +Object.keys(args).map(i => `${i}=${encodeURIComponent(args[i])}`).join("&")
-            +`#${hash}`;
-    export const makeSharingUrl = (url: string = location.href) =>
-    {
-        const urlParams = getUrlParams(url);
-        if (undefined !== urlParams["pass"])
-        {
-            delete urlParams["pass"];
-        }
-        return makeUrl
-        (
-            urlParams,
-            getUrlHash(url),
-            url
-        );
-    };
+            +Object.keys(args).filter(i => "hash" !== i).map(i => `${i}=${encodeURIComponent(args[i])}`).join("&")
+            +`#${args["hash"] ?? ""}`;
+    // export const makeUrl =
+    // (
+    //     args: {[key: string]: string},
+    //     hash: string = getUrlHash(),
+    //     href: string = location.href
+    // ) =>
+    //     href
+    //         .replace(/\?.*/, "")
+    //         .replace(/#.*/, "")
+    //         +"?"
+    //         +Object.keys(args).map(i => `${i}=${encodeURIComponent(args[i])}`).join("&")
+    //         +`#${hash}`;
+    // export const makeSharingUrl = (url: string = location.href) =>
+    // {
+    //     const urlParams = getUrlParams(url);
+    //     if (undefined !== urlParams["pass"])
+    //     {
+    //         delete urlParams["pass"];
+    //     }
+    //     return makeUrl
+    //     (
+    //         urlParams,
+    //         getUrlHash(url),
+    //         url
+    //     );
+    // };
     export const start = async () =>
     {
         console.log("start!!!");
@@ -2080,8 +2091,9 @@ export module CyclicToDo
             }
         }
     };
-    export const showUrl = async (url: string) =>
+    export const showUrl = async (data: { pass?:string, tag?:string, todo?: string, hash?: string}) =>
     {
+        const url = makeUrl(data);
         await showPage(url);
         history.pushState(null, applicationTitle, url);
     };
