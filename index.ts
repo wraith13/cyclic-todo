@@ -790,7 +790,7 @@ export module CyclicToDo
             ],
         });
         export const prompt = (message?: string, _default?: string): Promise<string | null> =>
-            new Promise(resolve => resolve(window.prompt(message, _default)));
+            new Promise(resolve => resolve(window.prompt(message, _default)?.trim() ?? null));
         export const screenCover = (onclick: () => unknown) =>
         {
             const dom = minamo.dom.make(HTMLDivElement)
@@ -799,6 +799,7 @@ export module CyclicToDo
                 className: "screen-cover",
                 onclick: () =>
                 {
+                    console.log("screen-cover.click!");
                     minamo.dom.remove(dom);
                     onclick();
                 }
@@ -819,6 +820,7 @@ export module CyclicToDo
                 },
                 onclick: async () =>
                 {
+                    console.log("menu-popup.click!");
                     (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[]).forEach(i => i.click());
                     // popup.classList.add("active");
                     // await timeout(500);
@@ -840,6 +842,7 @@ export module CyclicToDo
                 ],
                 onclick: () =>
                 {
+                    console.log("menu-button.click!");
                     popup.classList.add("show");
                     screenCover(() => popup.classList.remove("show"));
                 },
@@ -851,12 +854,26 @@ export module CyclicToDo
             tag: "button",
             className,
             children,
-            eventListener:
-            {
-                "mousedown": onclick,
-                "click": onclick,
-                "touchstart": onclick,
-            },
+            onclick,
+            // onclick: (event: MouseEvent) =>
+            // {
+            //     console.log("menu-item-button.click!");
+            //     onclick(event);
+            // },
+            // eventListener:
+            // {
+            //     "mousedown":  (event: MouseEvent) =>
+            //     {
+            //         console.log("menu-item-button.click!");
+            //         onclick(event);
+            //     },
+            //     "click": (event: MouseEvent) =>
+            //     {
+            //         console.log("menu-item-button.click!");
+            //         onclick(event);
+            //     },
+            //     //"touchstart": onclick,
+            // },
         });
         export const information = (item: ToDoEntry) =>
         ({
@@ -1043,8 +1060,8 @@ export module CyclicToDo
                                         async () =>
                                         {
                                             await minamo.core.timeout(500);
-                                            const newTask = (await prompt("ToDo の名前を入力してください", item.task)).trim();
-                                            if (0 < newTask.length && newTask !== item.task)
+                                            const newTask = await prompt("ToDo の名前を入力してください", item.task);
+                                            if (null !== newTask && 0 < newTask.length && newTask !== item.task)
                                             {
                                                 if (Storage.Task.rename(entry.pass, item.task, newTask))
                                                 {
@@ -1218,7 +1235,7 @@ export module CyclicToDo
                                     {
                                         await minamo.core.timeout(500);
                                         const newTag = await prompt("タグの名前を入力してください", "");
-                                        if (null === newTag)
+                                        if (null === newTag || newTag.length <= 0)
                                         {
                                             await minamo.core.timeout(500);
                                             await reload();
@@ -1251,7 +1268,7 @@ export module CyclicToDo
                                     {
                                         await minamo.core.timeout(500);
                                         const newTag = await prompt("タグの名前を入力してください", entry.tag);
-                                        if (0 < newTag.length && newTag !== entry.tag)
+                                        if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
                                         {
                                             if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
                                             {
@@ -1464,7 +1481,7 @@ export module CyclicToDo
                                     {
                                         await minamo.core.timeout(500);
                                         const newTag = await prompt("タグの名前を入力してください", entry.tag);
-                                        if (0 < newTag.length && newTag !== entry.tag)
+                                        if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
                                         {
                                             if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
                                             {
@@ -1568,8 +1585,8 @@ export module CyclicToDo
                                 async () =>
                                 {
                                     await minamo.core.timeout(500);
-                                    const newTask = (await prompt("ToDo の名前を入力してください", item.task)).trim();
-                                    if (0 < newTask.length && newTask !== item.task)
+                                    const newTask = await prompt("ToDo の名前を入力してください", item.task);
+                                    if (null !== newTask && 0 < newTask.length && newTask !== item.task)
                                     {
                                         if (Storage.Task.rename(pass, item.task, newTask))
                                         {

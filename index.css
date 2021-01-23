@@ -252,9 +252,6 @@ button.default-button:hover {
   font-size: 1.2rem;
   text-align: left;
 }
-.menu-popup:active {
-  z-index: 11111;
-}
 @media (prefers-color-scheme: dark) {
   .menu-popup .menu-popup-body {
     background-color: #000022;
@@ -283,7 +280,7 @@ button.default-button:hover {
     opacity: 0;
   }
   100% {
-    opacity: 0.3;
+    opacity: 0.618;
   }
 }
 .button-list {

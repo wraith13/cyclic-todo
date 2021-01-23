@@ -1569,13 +1569,14 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
             };
             Render.prompt = function (message, _default) {
-                return new Promise(function (resolve) { return resolve(window.prompt(message, _default)); });
+                return new Promise(function (resolve) { var _a, _b; return resolve((_b = (_a = window.prompt(message, _default)) === null || _a === void 0 ? void 0 : _a.trim()) !== null && _b !== void 0 ? _b : null); });
             };
             Render.screenCover = function (onclick) {
                 var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
                     tag: "div",
                     className: "screen-cover",
                     onclick: function () {
+                        console.log("screen-cover.click!");
                         minamo_js_1.minamo.dom.remove(dom);
                         onclick();
                     }
@@ -1598,6 +1599,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 },
                                 onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
+                                        console.log("menu-popup.click!");
                                         Array.from(document.getElementsByClassName("screen-cover")).forEach(function (i) { return i.click(); });
                                         return [2 /*return*/];
                                     });
@@ -1614,6 +1616,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     _c.sent()
                                 ],
                                     _b.onclick = function () {
+                                        console.log("menu-button.click!");
                                         popup.classList.add("show");
                                         Render.screenCover(function () { return popup.classList.remove("show"); });
                                     },
@@ -1627,11 +1630,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     tag: "button",
                     className: className,
                     children: children,
-                    eventListener: {
-                        "mousedown": onclick,
-                        "click": onclick,
-                        "touchstart": onclick,
-                    },
+                    onclick: onclick,
                 });
             };
             Render.information = function (item) {
@@ -1818,8 +1817,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     _a.sent();
                                                     return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください", item.task)];
                                                 case 2:
-                                                    newTask = (_a.sent()).trim();
-                                                    if (!(0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 5];
+                                                    newTask = _a.sent();
+                                                    if (!(null !== newTask && 0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 5];
                                                     if (!Storage.Task.rename(entry.pass, item.task, newTask)) return [3 /*break*/, 4];
                                                     return [4 /*yield*/, CyclicToDo.reload()];
                                                 case 3:
@@ -2008,7 +2007,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     return [4 /*yield*/, Render.prompt("タグの名前を入力してください", "")];
                                                 case 3:
                                                     newTag = _b.sent();
-                                                    if (!(null === newTag)) return [3 /*break*/, 6];
+                                                    if (!(null === newTag || newTag.length <= 0)) return [3 /*break*/, 6];
                                                     return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
                                                 case 4:
                                                     _b.sent();
@@ -2052,7 +2051,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                         return [4 /*yield*/, Render.prompt("タグの名前を入力してください", entry.tag)];
                                                     case 2:
                                                         newTag = _a.sent();
-                                                        if (!(0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 5];
+                                                        if (!(null !== newTag && 0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 5];
                                                         if (!Storage.Tag.rename(entry.pass, entry.tag, newTag)) return [3 /*break*/, 4];
                                                         return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: newTag })];
                                                     case 3:
@@ -2317,7 +2316,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                         return [4 /*yield*/, Render.prompt("タグの名前を入力してください", entry.tag)];
                                                     case 2:
                                                         newTag = _a.sent();
-                                                        if (!(0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 5];
+                                                        if (!(null !== newTag && 0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 5];
                                                         if (!Storage.Tag.rename(entry.pass, entry.tag, newTag)) return [3 /*break*/, 4];
                                                         return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: newTag, hash: "history", })];
                                                     case 3:
@@ -2457,8 +2456,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     _a.sent();
                                                     return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください", item.task)];
                                                 case 2:
-                                                    newTask = (_a.sent()).trim();
-                                                    if (!(0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 5];
+                                                    newTask = _a.sent();
+                                                    if (!(null !== newTask && 0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 5];
                                                     if (!Storage.Task.rename(pass, item.task, newTask)) return [3 /*break*/, 4];
                                                     return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: newTask, })];
                                                 case 3:
