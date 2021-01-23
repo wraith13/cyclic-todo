@@ -123,8 +123,8 @@ h1
     }
     .menu-popup
     {
-        top: 9px;
-        right: -0.5rem;
+        top: calc(10px + 2.0rem);
+        right: 0.5rem;
     }
 }
 @media (prefers-color-scheme: dark)
@@ -232,20 +232,6 @@ button
             height: 1.5rem;
             fill: @accent-color;
         }
-        // &:not(:hover) .screen-cover,
-        // &:not(:hover) .screen-cover + .menu-popup
-        // {
-        //     display: none;
-        // }
-        // .screen-cover:hover,
-        // .screen-cover:hover +.menu-popup
-        // {
-        //     display: none;
-        // }
-        // &:not(:hover) .menu-popup:not(.show)
-        // {
-        //     display: none;
-        // }
     }
     &:hover
     {
@@ -317,70 +303,34 @@ button.default-button
         display: none;
     }
     position: absolute;
-    top: calc(9px - 0.5rem);
-    right: -1.0rem;
+    top: calc(10px + 1.5rem);
+    right: 0.0rem;
     z-index: 99999;
-    padding: 1.0rem;
-    padding-top: 2.0rem;
-    border-radius: 1.0rem;
-    //background-color: aquamarine;
-    .menu-popup-body
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: stretch;
+    flex-direction: column;
+    color: @accent-color;
+    background-color: @base-color;
+    border-color: @accent-color;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 0.5rem;
+    line-height: 1.5rem;
+    font-size: 1.5rem;
+    overflow: hidden;
+    button
     {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: stretch;
-        justify-content: stretch;
-        flex-direction: column;
-        color: @accent-color;
-        background-color: @base-color;
-        border-color: @accent-color;
-        border-style: solid;
-        border-width: 1px;
-        border-radius: 0.5rem;
-        line-height: 1.5rem;
-        font-size: 1.5rem;
-        overflow: hidden;
-        button
-        {
-            // display: block !important;
-            border-radius: 0px;
-            margin: 0px !important;
-            border-style: none;
-            border-width: 0px;
-            font-size: 1.2rem;
-            text-align: left;
-        }
+        // display: block !important;
+        border-radius: 0px;
+        margin: 0px !important;
+        border-style: none;
+        border-width: 0px;
+        font-size: 1.2rem;
+        text-align: left;
     }
-    // &:active
-    // {
-    //     z-index: 11111;
-    //     // animation-name: active-out;
-    //     // animation-direction: normal;
-    //     // animation-delay: 0s;
-    //     // animation-duration: 0.5s;
-    //     // animation-fill-mode: both;
-    // }
 }
-// @keyframes active-out
-// {
-//     0%
-//     {
-//         z-index: 99999;
-//         opacity: 1.0;
-//         background-color:blue;
-//     }
-//     99%
-//     {
-//         z-index: 99999;
-//         opacity: 1.0;
-//     }
-//     100%
-//     {
-//         opacity: 0.0;
-//         z-index: 11111;
-//         background-color:brown;
-//     }
-// }
 @media (prefers-color-scheme: dark)
 {
     .menu-popup
@@ -404,7 +354,14 @@ button.default-button
     left: 0px;
     background-color: @main-color;
     z-index: 88888;
-    animation-name: fade-in;
+    &.fade-in
+    {
+        animation-name: fade-in;
+    }
+    &.fade-out
+    {
+        animation-name: fade-out;
+    }
     animation-direction: normal;
     animation-delay: 0s;
     animation-duration: 0.5s;
@@ -420,6 +377,17 @@ button.default-button
     100%
     {
         opacity: 0.618;
+    }
+}
+@keyframes fade-out
+{
+    0%
+    {
+        opacity: 0.618;
+    }
+    100%
+    {
+        opacity: 0.0;
     }
 }
 .button-list

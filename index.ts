@@ -1,10 +1,6 @@
 import { minamo } from "./minamo.js";
 import localeEn from "./lang.en.json";
 import localeJa from "./lang.ja.json";
-// export const timeout = <T>(wait: number = 0, action?: () => T) =>
-//     undefined === action ?
-//         new Promise(resolve => setTimeout(resolve, wait)):
-//         new Promise(resolve => setTimeout(() => resolve(action()), wait));
 export const makeObject = <T>(items: { key: string, value: T}[]) =>
 {
     const result: { [key: string]: T} = { };
@@ -56,6 +52,7 @@ export module localeParallel
         );
         return result;
     };
+    export const sign = (n: number) => 0 <= n ? 1: -1; // Math.sign() とは挙動が異なるので注意。
     export const sum = (ticks: number[]) => ticks.length <= 0 ?
         null:
         ticks.reduce((a, b) => a +b, 0);
@@ -66,7 +63,7 @@ export module localeParallel
         Math.sqrt(Calculate.average(ticks.map(i => (i -average) ** 2)));
     export const standardScore = (average: number, standardDeviation: number, target: number) =>
         (10 * (target -average) /standardDeviation) +50;
-    export const expectedNext = (task: string, ticks: number[]) =>
+    export const expectedNextByTransverseWare = (task: string, ticks: number[]) =>
     {
         const intervals: number[] = Calculate.intervals(ticks).reverse();
         const average: number = Calculate.average(intervals);
@@ -216,6 +213,79 @@ export module localeParallel
         }
         return null;
     };
+    export const expectedNextByLongitudinalWare = (task: string, ticks: number[]) =>
+    {
+        const intervals: number[] = Calculate.intervals(ticks).reverse();
+        const average: number = Calculate.average(intervals);
+        const standardDeviation: number = Calculate.standardDeviation(intervals, average);
+        if (5 <= intervals.length && (average *0.3) < standardDeviation)
+        {
+            console.log({ task, ticks, });
+            const biasIntervals: number[][] = [];
+            let currentBias = sign(intervals[0]);
+            let currentGroup: number[] = [];
+            intervals.forEach
+            (
+                interval =>
+                {
+                    const bias = sign(interval -average);
+                    if (currentBias === bias)
+                    {
+                        currentGroup.push(interval);
+                    }
+                    else
+                    {
+                        biasIntervals.push(currentGroup);
+                        currentBias = bias;
+                        currentGroup = [];
+                    }
+                }
+            );
+            biasIntervals.push(currentGroup);
+            if (biasIntervals.length <= 0)
+            {
+                return null;
+            }
+            if (1 === biasIntervals.length)
+            {
+                return ticks[0] +average;
+            }
+            if (2 === biasIntervals.length)
+            {
+                return ticks[0] +Calculate.average(biasIntervals.filter((_, ix) => 1 === ix %2).reduce((a, b) => a.concat(b), []));
+            }
+            const biasTerms =
+            [
+                biasIntervals.filter((_, ix) => 0 === ix %2 && 0 < ix).map(i => sum(i)),
+                biasIntervals.filter((_, ix) => 1 === ix %2 && ix < biasIntervals.length -1).map(i => sum(i)),
+            ];
+            const biasTermAverage =
+            [
+                Calculate.average(biasTerms[0]),
+                Calculate.average(biasTerms[1]),
+            ];
+            const biasTermStandardDeviation =
+            [
+                Calculate.standardDeviation(biasTerms[0], biasTermAverage[0]),
+                Calculate.standardDeviation(biasTerms[1], biasTermAverage[1]),
+            ];
+            const biasIntervalAverage =
+            [
+                Calculate.average(biasIntervals.filter((_, ix) => 0 === ix %2).reduce((a, b) => a.concat(b), [])),
+                Calculate.average(biasIntervals.filter((_, ix) => 1 === ix %2).reduce((a, b) => a.concat(b), [])),
+            ];
+            const lastBiasIndex = biasIntervals.length %2;
+            const lastTerm = biasIntervals[biasIntervals.length -1];
+            const isTermContinue = sum(lastTerm) + biasIntervalAverage[lastBiasIndex] < biasTermAverage[lastBiasIndex] +(2 *biasTermStandardDeviation[lastBiasIndex]);
+            return ticks[0] +biasIntervalAverage[isTermContinue ? lastBiasIndex: ((lastBiasIndex +1) %2)];
+        }
+        if (null !== average)
+        {
+            return ticks[0] +average;
+        }
+        return null;
+    };
+    export const expectedNext = expectedNextByLongitudinalWare;
 }
 export module CyclicToDo
 {
@@ -241,7 +311,7 @@ export module CyclicToDo
         progress: null | number;
         //decayedProgress: null | number;
         previous: null | number;
-        //expectedNext: null | number;
+        expectedNext: null | number;
         elapsed: null | number;
         overallAverage: null | number;
         RecentlyStandardDeviation: null | number;
@@ -696,7 +766,7 @@ export module CyclicToDo
                 progress: null,
                 //decayedProgress: null,
                 previous: history.previous,
-                //expectedNext: Calculate.expectedNext(task, Storage.History.get(_pass, task)),
+                expectedNext: Calculate.expectedNext(task, Storage.History.get(_pass, task)),
                 elapsed: null,
                 overallAverage: history.recentries.length <= 1 ? null: calcAverage(history.recentries),
                 RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -789,19 +859,26 @@ export module CyclicToDo
                 }
             ],
         });
-        export const prompt = (message?: string, _default?: string): Promise<string | null> =>
-            new Promise(resolve => resolve(window.prompt(message, _default)?.trim() ?? null));
+        export const prompt = async (message?: string, _default?: string): Promise<string | null> =>
+        {
+            await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが window.prompt が表示されてる間、ずっと表示される事になる。
+            return await new Promise(resolve => resolve(window.prompt(message, _default)?.trim() ?? null));
+        };
         export const screenCover = (onclick: () => unknown) =>
         {
             const dom = minamo.dom.make(HTMLDivElement)
             ({
                 tag: "div",
-                className: "screen-cover",
-                onclick: () =>
+                className: "screen-cover fade-in",
+                onclick: async () =>
                 {
                     console.log("screen-cover.click!");
-                    minamo.dom.remove(dom);
+                    dom.onclick = undefined;
+                    dom.classList.remove("fade-in");
+                    dom.classList.add("fade-out");
                     onclick();
+                    await minamo.core.timeout(500);
+                    minamo.dom.remove(dom);
                 }
             });
             minamo.dom.appendChildren(document.body, dom);
@@ -812,19 +889,11 @@ export module CyclicToDo
             ({
                 tag: "div",
                 className: "menu-popup",
-                children:
-                {
-                    tag: "div",
-                    className: "menu-popup-body",
-                    children: menu
-                },
+                children: menu,
                 onclick: async () =>
                 {
                     console.log("menu-popup.click!");
                     (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[]).forEach(i => i.click());
-                    // popup.classList.add("active");
-                    // await timeout(500);
-                    // popup.classList.remove("active");
                 },
             });
             const button = minamo.dom.make(HTMLButtonElement)
@@ -834,11 +903,6 @@ export module CyclicToDo
                 children:
                 [
                     await loadSvgOrCache("./ellipsis.1024.svg"),
-                    // {
-                    //     tag: "div",
-                    //     className: "screen-cover",
-                    // },
-                    //popup,
                 ],
                 onclick: () =>
                 {
@@ -855,25 +919,6 @@ export module CyclicToDo
             className,
             children,
             onclick,
-            // onclick: (event: MouseEvent) =>
-            // {
-            //     console.log("menu-item-button.click!");
-            //     onclick(event);
-            // },
-            // eventListener:
-            // {
-            //     "mousedown":  (event: MouseEvent) =>
-            //     {
-            //         console.log("menu-item-button.click!");
-            //         onclick(event);
-            //     },
-            //     "click": (event: MouseEvent) =>
-            //     {
-            //         console.log("menu-item-button.click!");
-            //         onclick(event);
-            //     },
-            //     //"touchstart": onclick,
-            // },
         });
         export const information = (item: ToDoEntry) =>
         ({
@@ -898,19 +943,19 @@ export module CyclicToDo
                         }
                     ],
                 },
-                // {
-                //     tag: "div",
-                //     className: "task-expected-next",
-                //     children:
-                //     [
-                //         label("expected next"),
-                //         {
-                //             tag: "span",
-                //             className: "value  monospace",
-                //             children: Domain.dateStringFromTick(item.expectedNext),
-                //         }
-                //     ],
-                // },
+                {
+                    tag: "div",
+                    className: "task-expected-next",
+                    children:
+                    [
+                        label("expected next"),
+                        {
+                            tag: "span",
+                            className: "value  monospace",
+                            children: Domain.dateStringFromTick(item.expectedNext),
+                        }
+                    ],
+                },
                 {
                     tag: "div",
                     className: "task-interval-average",
@@ -1059,7 +1104,6 @@ export module CyclicToDo
                                         locale.parallel("Rename"),
                                         async () =>
                                         {
-                                            await minamo.core.timeout(500);
                                             const newTask = await prompt("ToDo の名前を入力してください", item.task);
                                             if (null !== newTask && 0 < newTask.length && newTask !== item.task)
                                             {
@@ -1233,11 +1277,9 @@ export module CyclicToDo
                                 {
                                 case "@new":
                                     {
-                                        await minamo.core.timeout(500);
                                         const newTag = await prompt("タグの名前を入力してください", "");
                                         if (null === newTag || newTag.length <= 0)
                                         {
-                                            await minamo.core.timeout(500);
                                             await reload();
                                         }
                                         else
@@ -1266,7 +1308,6 @@ export module CyclicToDo
                                     locale.parallel("Rename"),
                                     async () =>
                                     {
-                                        await minamo.core.timeout(500);
                                         const newTag = await prompt("タグの名前を入力してください", entry.tag);
                                         if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
                                         {
@@ -1297,7 +1338,6 @@ export module CyclicToDo
                                     locale.parallel("New ToDo"),
                                     async () =>
                                     {
-                                        await minamo.core.timeout(500);
                                         const newTask = await prompt("ToDo の名前を入力してください");
                                         if (null !== newTask)
                                         {
@@ -1446,11 +1486,9 @@ export module CyclicToDo
                                 {
                                 case "@new":
                                     {
-                                        await minamo.core.timeout(500);
                                         const newTag = await prompt("タグの名前を入力してください", "");
                                         if (null === newTag)
                                         {
-                                            await minamo.core.timeout(500);
                                             await reload();
                                         }
                                         else
@@ -1479,7 +1517,6 @@ export module CyclicToDo
                                     locale.parallel("Rename"),
                                     async () =>
                                     {
-                                        await minamo.core.timeout(500);
                                         const newTag = await prompt("タグの名前を入力してください", entry.tag);
                                         if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
                                         {
@@ -1510,7 +1547,6 @@ export module CyclicToDo
                                     locale.parallel("New ToDo"),
                                     async () =>
                                     {
-                                        await minamo.core.timeout(500);
                                         const newTask = await prompt("ToDo の名前を入力してください");
                                         if (null !== newTask)
                                         {
@@ -1584,7 +1620,6 @@ export module CyclicToDo
                                 locale.parallel("Rename"),
                                 async () =>
                                 {
-                                    await minamo.core.timeout(500);
                                     const newTask = await prompt("ToDo の名前を入力してください", item.task);
                                     if (null !== newTask && 0 < newTask.length && newTask !== item.task)
                                     {

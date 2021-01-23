@@ -903,10 +903,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
     exports.CyclicToDo = exports.Calculate = exports.localeParallel = exports.localeSingle = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.makeObject = void 0;
     lang_en_json_1 = __importDefault(lang_en_json_1);
     lang_ja_json_1 = __importDefault(lang_ja_json_1);
-    // export const timeout = <T>(wait: number = 0, action?: () => T) =>
-    //     undefined === action ?
-    //         new Promise(resolve => setTimeout(resolve, wait)):
-    //         new Promise(resolve => setTimeout(() => resolve(action()), wait));
     exports.makeObject = function (items) {
         var result = {};
         items.forEach(function (i) { return result[i.key] = i.value; });
@@ -946,6 +942,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             });
             return result;
         };
+        Calculate.sign = function (n) { return 0 <= n ? 1 : -1; }; // Math.sign() とは挙動が異なるので注意。
         Calculate.sum = function (ticks) { return ticks.length <= 0 ?
             null :
             ticks.reduce(function (a, b) { return a + b; }, 0); };
@@ -959,7 +956,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
         Calculate.standardScore = function (average, standardDeviation, target) {
             return (10 * (target - average) / standardDeviation) + 50;
         };
-        Calculate.expectedNext = function (task, ticks) {
+        Calculate.expectedNextByTransverseWare = function (task, ticks) {
             var intervals = Calculate.intervals(ticks).reverse();
             var average = Calculate.average(intervals);
             var standardDeviation = Calculate.standardDeviation(intervals, average);
@@ -1089,6 +1086,63 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             }
             return null;
         };
+        Calculate.expectedNextByLongitudinalWare = function (task, ticks) {
+            var intervals = Calculate.intervals(ticks).reverse();
+            var average = Calculate.average(intervals);
+            var standardDeviation = Calculate.standardDeviation(intervals, average);
+            if (5 <= intervals.length && (average * 0.3) < standardDeviation) {
+                console.log({ task: task, ticks: ticks, });
+                var biasIntervals_1 = [];
+                var currentBias_1 = Calculate.sign(intervals[0]);
+                var currentGroup_1 = [];
+                intervals.forEach(function (interval) {
+                    var bias = Calculate.sign(interval - average);
+                    if (currentBias_1 === bias) {
+                        currentGroup_1.push(interval);
+                    }
+                    else {
+                        biasIntervals_1.push(currentGroup_1);
+                        currentBias_1 = bias;
+                        currentGroup_1 = [];
+                    }
+                });
+                biasIntervals_1.push(currentGroup_1);
+                if (biasIntervals_1.length <= 0) {
+                    return null;
+                }
+                if (1 === biasIntervals_1.length) {
+                    return ticks[0] + average;
+                }
+                if (2 === biasIntervals_1.length) {
+                    return ticks[0] + Calculate.average(biasIntervals_1.filter(function (_, ix) { return 1 === ix % 2; }).reduce(function (a, b) { return a.concat(b); }, []));
+                }
+                var biasTerms = [
+                    biasIntervals_1.filter(function (_, ix) { return 0 === ix % 2 && 0 < ix; }).map(function (i) { return Calculate.sum(i); }),
+                    biasIntervals_1.filter(function (_, ix) { return 1 === ix % 2 && ix < biasIntervals_1.length - 1; }).map(function (i) { return Calculate.sum(i); }),
+                ];
+                var biasTermAverage = [
+                    Calculate.average(biasTerms[0]),
+                    Calculate.average(biasTerms[1]),
+                ];
+                var biasTermStandardDeviation = [
+                    Calculate.standardDeviation(biasTerms[0], biasTermAverage[0]),
+                    Calculate.standardDeviation(biasTerms[1], biasTermAverage[1]),
+                ];
+                var biasIntervalAverage = [
+                    Calculate.average(biasIntervals_1.filter(function (_, ix) { return 0 === ix % 2; }).reduce(function (a, b) { return a.concat(b); }, [])),
+                    Calculate.average(biasIntervals_1.filter(function (_, ix) { return 1 === ix % 2; }).reduce(function (a, b) { return a.concat(b); }, [])),
+                ];
+                var lastBiasIndex = biasIntervals_1.length % 2;
+                var lastTerm = biasIntervals_1[biasIntervals_1.length - 1];
+                var isTermContinue = Calculate.sum(lastTerm) + biasIntervalAverage[lastBiasIndex] < biasTermAverage[lastBiasIndex] + (2 * biasTermStandardDeviation[lastBiasIndex]);
+                return ticks[0] + biasIntervalAverage[isTermContinue ? lastBiasIndex : ((lastBiasIndex + 1) % 2)];
+            }
+            if (null !== average) {
+                return ticks[0] + average;
+            }
+            return null;
+        };
+        Calculate.expectedNext = Calculate.expectedNextByLongitudinalWare;
     })(Calculate = exports.Calculate || (exports.Calculate = {}));
     var CyclicToDo;
     (function (CyclicToDo) {
@@ -1478,7 +1532,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     progress: null,
                     //decayedProgress: null,
                     previous: history.previous,
-                    //expectedNext: Calculate.expectedNext(task, Storage.History.get(_pass, task)),
+                    expectedNext: Calculate.expectedNext(task, Storage.History.get(_pass, task)),
                     elapsed: null,
                     overallAverage: history.recentries.length <= 1 ? null : calcAverage(history.recentries),
                     RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -1568,18 +1622,39 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     ],
                 });
             };
-            Render.prompt = function (message, _default) {
-                return new Promise(function (resolve) { var _a, _b; return resolve((_b = (_a = window.prompt(message, _default)) === null || _a === void 0 ? void 0 : _a.trim()) !== null && _b !== void 0 ? _b : null); });
-            };
+            Render.prompt = function (message, _default) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(100)];
+                        case 1:
+                            _a.sent(); // この wait をかましてないと呼び出し元のポップアップメニューが window.prompt が表示されてる間、ずっと表示される事になる。
+                            return [4 /*yield*/, new Promise(function (resolve) { var _a, _b; return resolve((_b = (_a = window.prompt(message, _default)) === null || _a === void 0 ? void 0 : _a.trim()) !== null && _b !== void 0 ? _b : null); })];
+                        case 2: // この wait をかましてないと呼び出し元のポップアップメニューが window.prompt が表示されてる間、ずっと表示される事になる。
+                        return [2 /*return*/, _a.sent()];
+                    }
+                });
+            }); };
             Render.screenCover = function (onclick) {
                 var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
                     tag: "div",
-                    className: "screen-cover",
-                    onclick: function () {
-                        console.log("screen-cover.click!");
-                        minamo_js_1.minamo.dom.remove(dom);
-                        onclick();
-                    }
+                    className: "screen-cover fade-in",
+                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    console.log("screen-cover.click!");
+                                    dom.onclick = undefined;
+                                    dom.classList.remove("fade-in");
+                                    dom.classList.add("fade-out");
+                                    onclick();
+                                    return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                case 1:
+                                    _a.sent();
+                                    minamo_js_1.minamo.dom.remove(dom);
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); }
                 });
                 minamo_js_1.minamo.dom.appendChildren(document.body, dom);
             };
@@ -1592,11 +1667,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             popup = minamo_js_1.minamo.dom.make(HTMLDivElement)({
                                 tag: "div",
                                 className: "menu-popup",
-                                children: {
-                                    tag: "div",
-                                    className: "menu-popup-body",
-                                    children: menu
-                                },
+                                children: menu,
                                 onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         console.log("menu-popup.click!");
@@ -1653,19 +1724,18 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 }
                             ],
                         },
-                        // {
-                        //     tag: "div",
-                        //     className: "task-expected-next",
-                        //     children:
-                        //     [
-                        //         label("expected next"),
-                        //         {
-                        //             tag: "span",
-                        //             className: "value  monospace",
-                        //             children: Domain.dateStringFromTick(item.expectedNext),
-                        //         }
-                        //     ],
-                        // },
+                        {
+                            tag: "div",
+                            className: "task-expected-next",
+                            children: [
+                                Render.label("expected next"),
+                                {
+                                    tag: "span",
+                                    className: "value  monospace",
+                                    children: Domain.dateStringFromTick(item.expectedNext),
+                                }
+                            ],
+                        },
                         {
                             tag: "div",
                             className: "task-interval-average",
@@ -1812,22 +1882,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         var newTask;
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
-                                                case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください", item.task)];
                                                 case 1:
-                                                    _a.sent();
-                                                    return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください", item.task)];
-                                                case 2:
                                                     newTask = _a.sent();
-                                                    if (!(null !== newTask && 0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 5];
-                                                    if (!Storage.Task.rename(entry.pass, item.task, newTask)) return [3 /*break*/, 4];
+                                                    if (!(null !== newTask && 0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 4];
+                                                    if (!Storage.Task.rename(entry.pass, item.task, newTask)) return [3 /*break*/, 3];
                                                     return [4 /*yield*/, CyclicToDo.reload()];
-                                                case 3:
+                                                case 2:
                                                     _a.sent();
-                                                    return [3 /*break*/, 5];
-                                                case 4:
+                                                    return [3 /*break*/, 4];
+                                                case 3:
                                                     window.alert("その名前の ToDo は既に存在しています。");
-                                                    _a.label = 5;
-                                                case 5: return [2 /*return*/];
+                                                    _a.label = 4;
+                                                case 4: return [2 /*return*/];
                                             }
                                         });
                                     }); }),
@@ -2000,34 +2067,28 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     switch (_a) {
                                                         case "@new": return [3 /*break*/, 1];
                                                     }
-                                                    return [3 /*break*/, 9];
-                                                case 1: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                    return [3 /*break*/, 7];
+                                                case 1: return [4 /*yield*/, Render.prompt("タグの名前を入力してください", "")];
                                                 case 2:
-                                                    _b.sent();
-                                                    return [4 /*yield*/, Render.prompt("タグの名前を入力してください", "")];
-                                                case 3:
                                                     newTag = _b.sent();
-                                                    if (!(null === newTag || newTag.length <= 0)) return [3 /*break*/, 6];
-                                                    return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
-                                                case 4:
-                                                    _b.sent();
+                                                    if (!(null === newTag || newTag.length <= 0)) return [3 /*break*/, 4];
                                                     return [4 /*yield*/, CyclicToDo.reload()];
-                                                case 5:
+                                                case 3:
                                                     _b.sent();
-                                                    return [3 /*break*/, 8];
-                                                case 6:
+                                                    return [3 /*break*/, 6];
+                                                case 4:
                                                     tag_2 = Storage.Tag.encode(newTag.trim());
                                                     Storage.Tag.add(entry.pass, tag_2);
                                                     return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: newTag, })];
-                                                case 7:
+                                                case 5:
                                                     _b.sent();
-                                                    _b.label = 8;
-                                                case 8: return [3 /*break*/, 11];
-                                                case 9: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: tag, })];
-                                                case 10:
+                                                    _b.label = 6;
+                                                case 6: return [3 /*break*/, 9];
+                                                case 7: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: tag, })];
+                                                case 8:
                                                     _b.sent();
-                                                    _b.label = 11;
-                                                case 11: return [2 /*return*/];
+                                                    _b.label = 9;
+                                                case 9: return [2 /*return*/];
                                             }
                                         });
                                     }); },
@@ -2045,22 +2106,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             var newTag;
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                    case 0: return [4 /*yield*/, Render.prompt("タグの名前を入力してください", entry.tag)];
                                                     case 1:
-                                                        _a.sent();
-                                                        return [4 /*yield*/, Render.prompt("タグの名前を入力してください", entry.tag)];
-                                                    case 2:
                                                         newTag = _a.sent();
-                                                        if (!(null !== newTag && 0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 5];
-                                                        if (!Storage.Tag.rename(entry.pass, entry.tag, newTag)) return [3 /*break*/, 4];
+                                                        if (!(null !== newTag && 0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 4];
+                                                        if (!Storage.Tag.rename(entry.pass, entry.tag, newTag)) return [3 /*break*/, 3];
                                                         return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: newTag })];
-                                                    case 3:
+                                                    case 2:
                                                         _a.sent();
-                                                        return [3 /*break*/, 5];
-                                                    case 4:
+                                                        return [3 /*break*/, 4];
+                                                    case 3:
                                                         window.alert("その名前のタグは既に存在しています。");
-                                                        _a.label = 5;
-                                                    case 5: return [2 /*return*/];
+                                                        _a.label = 4;
+                                                    case 4: return [2 /*return*/];
                                                 }
                                             });
                                         }); }),
@@ -2077,20 +2135,17 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 var newTask;
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
-                                                        case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                        case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
                                                         case 1:
-                                                            _a.sent();
-                                                            return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
-                                                        case 2:
                                                             newTask = _a.sent();
-                                                            if (!(null !== newTask)) return [3 /*break*/, 4];
+                                                            if (!(null !== newTask)) return [3 /*break*/, 3];
                                                             Storage.Task.add(entry.pass, newTask);
                                                             Storage.TagMember.add(entry.pass, entry.tag, newTask);
                                                             return [4 /*yield*/, CyclicToDo.reload()];
-                                                        case 3:
+                                                        case 2:
                                                             _a.sent();
-                                                            _a.label = 4;
-                                                        case 4: return [2 /*return*/];
+                                                            _a.label = 3;
+                                                        case 3: return [2 /*return*/];
                                                     }
                                                 });
                                             }); }),
@@ -2265,34 +2320,28 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     switch (_a) {
                                                         case "@new": return [3 /*break*/, 1];
                                                     }
-                                                    return [3 /*break*/, 9];
-                                                case 1: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                    return [3 /*break*/, 7];
+                                                case 1: return [4 /*yield*/, Render.prompt("タグの名前を入力してください", "")];
                                                 case 2:
-                                                    _b.sent();
-                                                    return [4 /*yield*/, Render.prompt("タグの名前を入力してください", "")];
-                                                case 3:
                                                     newTag = _b.sent();
-                                                    if (!(null === newTag)) return [3 /*break*/, 6];
-                                                    return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
-                                                case 4:
-                                                    _b.sent();
+                                                    if (!(null === newTag)) return [3 /*break*/, 4];
                                                     return [4 /*yield*/, CyclicToDo.reload()];
-                                                case 5:
+                                                case 3:
                                                     _b.sent();
-                                                    return [3 /*break*/, 8];
-                                                case 6:
+                                                    return [3 /*break*/, 6];
+                                                case 4:
                                                     tag_3 = Storage.Tag.encode(newTag.trim());
                                                     Storage.Tag.add(entry.pass, tag_3);
                                                     return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: newTag, hash: "history", })];
-                                                case 7:
+                                                case 5:
                                                     _b.sent();
-                                                    _b.label = 8;
-                                                case 8: return [3 /*break*/, 11];
-                                                case 9: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: tag, hash: "history", })];
-                                                case 10:
+                                                    _b.label = 6;
+                                                case 6: return [3 /*break*/, 9];
+                                                case 7: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: tag, hash: "history", })];
+                                                case 8:
                                                     _b.sent();
-                                                    _b.label = 11;
-                                                case 11: return [2 /*return*/];
+                                                    _b.label = 9;
+                                                case 9: return [2 /*return*/];
                                             }
                                         });
                                     }); },
@@ -2310,22 +2359,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             var newTag;
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                    case 0: return [4 /*yield*/, Render.prompt("タグの名前を入力してください", entry.tag)];
                                                     case 1:
-                                                        _a.sent();
-                                                        return [4 /*yield*/, Render.prompt("タグの名前を入力してください", entry.tag)];
-                                                    case 2:
                                                         newTag = _a.sent();
-                                                        if (!(null !== newTag && 0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 5];
-                                                        if (!Storage.Tag.rename(entry.pass, entry.tag, newTag)) return [3 /*break*/, 4];
+                                                        if (!(null !== newTag && 0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 4];
+                                                        if (!Storage.Tag.rename(entry.pass, entry.tag, newTag)) return [3 /*break*/, 3];
                                                         return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: newTag, hash: "history", })];
-                                                    case 3:
+                                                    case 2:
                                                         _a.sent();
-                                                        return [3 /*break*/, 5];
-                                                    case 4:
+                                                        return [3 /*break*/, 4];
+                                                    case 3:
                                                         window.alert("その名前のタグは既に存在しています。");
-                                                        _a.label = 5;
-                                                    case 5: return [2 /*return*/];
+                                                        _a.label = 4;
+                                                    case 4: return [2 /*return*/];
                                                 }
                                             });
                                         }); }),
@@ -2342,20 +2388,17 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 var newTask;
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
-                                                        case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                        case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
                                                         case 1:
-                                                            _a.sent();
-                                                            return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
-                                                        case 2:
                                                             newTask = _a.sent();
-                                                            if (!(null !== newTask)) return [3 /*break*/, 4];
+                                                            if (!(null !== newTask)) return [3 /*break*/, 3];
                                                             Storage.Task.add(entry.pass, newTask);
                                                             Storage.TagMember.add(entry.pass, entry.tag, newTask);
                                                             return [4 /*yield*/, CyclicToDo.reload()];
-                                                        case 3:
+                                                        case 2:
                                                             _a.sent();
-                                                            _a.label = 4;
-                                                        case 4: return [2 /*return*/];
+                                                            _a.label = 3;
+                                                        case 3: return [2 /*return*/];
                                                     }
                                                 });
                                             }); }),
@@ -2451,22 +2494,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         var newTask;
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
-                                                case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください", item.task)];
                                                 case 1:
-                                                    _a.sent();
-                                                    return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください", item.task)];
-                                                case 2:
                                                     newTask = _a.sent();
-                                                    if (!(null !== newTask && 0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 5];
-                                                    if (!Storage.Task.rename(pass, item.task, newTask)) return [3 /*break*/, 4];
+                                                    if (!(null !== newTask && 0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 4];
+                                                    if (!Storage.Task.rename(pass, item.task, newTask)) return [3 /*break*/, 3];
                                                     return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: newTask, })];
-                                                case 3:
+                                                case 2:
                                                     _a.sent();
-                                                    return [3 /*break*/, 5];
-                                                case 4:
+                                                    return [3 /*break*/, 4];
+                                                case 3:
                                                     window.alert("その名前の ToDo は既に存在しています。");
-                                                    _a.label = 5;
-                                                case 5: return [2 /*return*/];
+                                                    _a.label = 4;
+                                                case 4: return [2 /*return*/];
                                             }
                                         });
                                     }); }),

@@ -91,8 +91,8 @@ h1 button.menu-button:not(:hover) svg {
   fill: #FFFFFF;
 }
 h1 .menu-popup {
-  top: 9px;
-  right: -0.5rem;
+  top: calc(10px + 2rem);
+  right: 0.5rem;
 }
 @media (prefers-color-scheme: dark) {
   h1 {
@@ -218,17 +218,9 @@ button.default-button:hover {
 }
 .menu-popup {
   position: absolute;
-  top: calc(9px - 0.5rem);
-  right: -1rem;
+  top: calc(10px + 1.5rem);
+  right: 0rem;
   z-index: 99999;
-  padding: 1rem;
-  padding-top: 2rem;
-  border-radius: 1rem;
-}
-.menu-popup:not(.show) {
-  display: none;
-}
-.menu-popup .menu-popup-body {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
@@ -244,7 +236,10 @@ button.default-button:hover {
   font-size: 1.5rem;
   overflow: hidden;
 }
-.menu-popup .menu-popup-body button {
+.menu-popup:not(.show) {
+  display: none;
+}
+.menu-popup button {
   border-radius: 0px;
   margin: 0px !important;
   border-style: none;
@@ -268,12 +263,17 @@ button.default-button:hover {
   left: 0px;
   background-color: #000022;
   z-index: 88888;
-  animation-name: fade-in;
   animation-direction: normal;
   animation-delay: 0s;
   animation-duration: 0.5s;
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
+}
+.screen-cover.fade-in {
+  animation-name: fade-in;
+}
+.screen-cover.fade-out {
+  animation-name: fade-out;
 }
 @keyframes fade-in {
   0% {
@@ -281,6 +281,14 @@ button.default-button:hover {
   }
   100% {
     opacity: 0.618;
+  }
+}
+@keyframes fade-out {
+  0% {
+    opacity: 0.618;
+  }
+  100% {
+    opacity: 0;
   }
 }
 .button-list {
