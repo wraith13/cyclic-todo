@@ -873,7 +873,9 @@ define("lang.en", [], {
     "interval": "interval",
     "Rename": "Rename",
     "Delete": "Delete",
-    "Restore": "Restore"
+    "Restore": "Restore",
+    "History": "History",
+    "Back to List": "Back to List"
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -895,7 +897,9 @@ define("lang.ja", [], {
     "interval": "間隔",
     "Rename": "名前を変更",
     "Delete": "削除",
-    "Restore": "復元"
+    "Restore": "復元",
+    "History": "履歴",
+    "Back to List": "リストに戻る"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -1532,7 +1536,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     progress: null,
                     //decayedProgress: null,
                     previous: history.previous,
-                    expectedNext: Calculate.expectedNext(task, Storage.History.get(_pass, task)),
+                    //expectedNext: Calculate.expectedNext(task, Storage.History.get(_pass, task)),
                     elapsed: null,
                     overallAverage: history.recentries.length <= 1 ? null : calcAverage(history.recentries),
                     RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -1724,18 +1728,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 }
                             ],
                         },
-                        {
-                            tag: "div",
-                            className: "task-expected-next",
-                            children: [
-                                Render.label("expected next"),
-                                {
-                                    tag: "span",
-                                    className: "value  monospace",
-                                    children: Domain.dateStringFromTick(item.expectedNext),
-                                }
-                            ],
-                        },
+                        // {
+                        //     tag: "div",
+                        //     className: "task-expected-next",
+                        //     children:
+                        //     [
+                        //         label("expected next"),
+                        //         {
+                        //             tag: "span",
+                        //             className: "value  monospace",
+                        //             children: Domain.dateStringFromTick(item.expectedNext),
+                        //         }
+                        //     ],
+                        // },
                         {
                             tag: "div",
                             className: "task-interval-average",
@@ -1874,10 +1879,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     }); }
                                 }];
                             return [4 /*yield*/, Render.menuButton([
-                                    {
-                                        tag: "button",
-                                        children: "🚫 最後の完了を取り消す",
-                                    },
                                     Render.menuItem(locale.parallel("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
                                         var newTask;
                                         return __generator(this, function (_a) {
@@ -2095,7 +2096,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 })
                             ];
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem("履歴", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    Render.menuItem(locale.parallel("History"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })];
                                             case 1: return [2 /*return*/, _a.sent()];
@@ -2206,7 +2207,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             {
                                                 tag: "button",
                                                 className: "main-button long-button",
-                                                children: "履歴",
+                                                children: locale.parallel("History"),
                                                 onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                                     switch (_a.label) {
                                                         case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: entry.tag, hash: "history", })];
@@ -2348,7 +2349,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 })
                             ];
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem("リストに戻る", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    Render.menuItem(locale.parallel("Back to List"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: entry.tag, })];
                                             case 1: return [2 /*return*/, _a.sent()];
@@ -2434,7 +2435,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     children: {
                                         tag: "button",
                                         className: "default-button main-button long-button",
-                                        children: "リストに戻る",
+                                        children: locale.parallel("Back to List"),
                                         onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: entry.tag, })];
@@ -2453,7 +2454,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            document.title = "\u5C65\u6B74: " + Domain.tagMap(entry.tag) + " " + applicationTitle;
+                            document.title = locale.map("History") + ": " + Domain.tagMap(entry.tag) + " " + applicationTitle;
                             histories = {};
                             list = entry.todo.map(function (task) { return (histories[task] = Storage.History.get(entry.pass, task)).map(function (tick) { return ({ task: task, tick: tick }); }); }).reduce(function (a, b) { return a.concat(b); }, []);
                             list.sort(minamo_js_1.minamo.core.comparer.make(function (a) { return -a.tick; }));
@@ -2724,7 +2725,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 "" + document.title
                             ];
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem("リストに戻る", function () { return __awaiter(_this, void 0, void 0, function () {
+                                    Render.menuItem(locale.parallel("Back to List"), function () { return __awaiter(_this, void 0, void 0, function () {
                                         var _this = this;
                                         return __generator(this, function (_a) {
                                             return [2 /*return*/, function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
@@ -2951,7 +2952,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             }); };
             Render.resizeFlexList = function () {
                 var minColumns = 1 + Math.floor(window.innerWidth / 780);
-                var maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 390)));
+                var maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 450)));
                 var minItemWidth = window.innerWidth;
                 Array.from(document.getElementsByClassName("column-flex-list")).forEach(function (list) {
                     var length = list.childNodes.length;

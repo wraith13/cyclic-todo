@@ -18,5 +18,7 @@
     "interval": "interval",
     "Rename": "Rename",
     "Delete": "Delete",
-    "Restore": "Restore"
+    "Restore": "Restore",
+    "History": "History",
+    "Back to List": "Back to List"
 }

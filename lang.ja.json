@@ -18,5 +18,7 @@
     "interval": "間隔",
     "Rename": "名前を変更",
     "Delete": "削除",
-    "Restore": "復元"
+    "Restore": "復元",
+    "History": "履歴",
+    "Back to List": "リストに戻る"
 }

@@ -310,7 +310,7 @@ export module CyclicToDo
         progress: null | number;
         //decayedProgress: null | number;
         previous: null | number;
-        expectedNext: null | number;
+        //expectedNext: null | number;
         elapsed: null | number;
         overallAverage: null | number;
         RecentlyStandardDeviation: null | number;
@@ -765,7 +765,7 @@ export module CyclicToDo
                 progress: null,
                 //decayedProgress: null,
                 previous: history.previous,
-                expectedNext: Calculate.expectedNext(task, Storage.History.get(_pass, task)),
+                //expectedNext: Calculate.expectedNext(task, Storage.History.get(_pass, task)),
                 elapsed: null,
                 overallAverage: history.recentries.length <= 1 ? null: calcAverage(history.recentries),
                 RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -942,19 +942,19 @@ export module CyclicToDo
                         }
                     ],
                 },
-                {
-                    tag: "div",
-                    className: "task-expected-next",
-                    children:
-                    [
-                        label("expected next"),
-                        {
-                            tag: "span",
-                            className: "value  monospace",
-                            children: Domain.dateStringFromTick(item.expectedNext),
-                        }
-                    ],
-                },
+                // {
+                //     tag: "div",
+                //     className: "task-expected-next",
+                //     children:
+                //     [
+                //         label("expected next"),
+                //         {
+                //             tag: "span",
+                //             className: "value  monospace",
+                //             children: Domain.dateStringFromTick(item.expectedNext),
+                //         }
+                //     ],
+                // },
                 {
                     tag: "div",
                     className: "task-interval-average",
@@ -1094,10 +1094,6 @@ export module CyclicToDo
                                 },
                                 await menuButton
                                 ([
-                                    {
-                                        tag: "button",
-                                        children: "🚫 最後の完了を取り消す",
-                                    },
                                     menuItem
                                     (
                                         locale.parallel("Rename"),
@@ -1298,7 +1294,7 @@ export module CyclicToDo
                         ([
                             menuItem
                             (
-                                "履歴",
+                                locale.parallel("History"),
                                 async () => await showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })
                             ),
                             Storage.Tag.isSystemTag(entry.tag) ? []:
@@ -1388,7 +1384,7 @@ export module CyclicToDo
                             {
                                 tag: "button",
                                 className: "main-button long-button",
-                                children: "履歴",
+                                children: locale.parallel("History"),
                                 onclick: async () => await showUrl({ pass: entry.pass, tag: entry.tag, hash: "history", }),
                             },
                         ]
@@ -1507,7 +1503,7 @@ export module CyclicToDo
                         ([
                             menuItem
                             (
-                                "リストに戻る",
+                                locale.parallel("Back to List"),
                                 async () => await showUrl({ pass: entry.pass, tag: entry.tag, })
                             ),
                             Storage.Tag.isSystemTag(entry.tag) ? []:
@@ -1580,7 +1576,7 @@ export module CyclicToDo
                     {
                         tag: "button",
                         className: "default-button main-button long-button",
-                        children: "リストに戻る",
+                        children: locale.parallel("Back to List"),
                         onclick: async () => await showUrl({ pass: entry.pass, tag: entry.tag, })
                     },
                 },
@@ -1588,7 +1584,7 @@ export module CyclicToDo
         });
         export const showHistoryScreen = async (entry: ToDoTagEntry) =>
         {
-            document.title = `履歴: ${Domain.tagMap(entry.tag)} ${applicationTitle}`;
+            document.title = `${locale.map("History")}: ${Domain.tagMap(entry.tag)} ${applicationTitle}`;
             const histories: { [task:string]:number[] } = { };
             let list = entry.todo.map(task => (histories[task] = Storage.History.get(entry.pass, task)).map(tick => ({ task, tick }))).reduce((a, b) => a.concat(b), []);
             list.sort(minamo.core.comparer.make(a => -a.tick));
@@ -1792,7 +1788,7 @@ export module CyclicToDo
                         ([
                             menuItem
                             (
-                                "リストに戻る",
+                                locale.parallel("Back to List"),
                                 async () => async () => await showUrl({ pass, tag: "@overall", }),
                             )
                         ]),
@@ -1950,7 +1946,7 @@ export module CyclicToDo
         export const resizeFlexList = () =>
         {
             let minColumns = 1 +Math.floor(window.innerWidth / 780);
-            let maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 390)));
+            let maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 450)));
             let minItemWidth = window.innerWidth;
             (Array.from(document.getElementsByClassName("column-flex-list")) as HTMLDivElement[]).forEach
             (
