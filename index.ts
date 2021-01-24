@@ -1589,7 +1589,7 @@ export module CyclicToDo
             let list = entry.todo.map(task => (histories[task] = Storage.History.get(entry.pass, task)).map(tick => ({ task, tick }))).reduce((a, b) => a.concat(b), []);
             list.sort(minamo.core.comparer.make(a => -a.tick));
             list = list.concat(entry.todo.filter(task => histories[task].length <= 0).map(task => ({ task, tick: null })));
-            showWindow(await historyScreen(entry, list), updateWindow);
+            showWindow(await historyScreen(entry, list));
         };
 
         export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[]) =>
@@ -1766,7 +1766,7 @@ export module CyclicToDo
         export const showExportScreen = async (pass: string) =>
         {
             document.title = applicationTitle;
-            showWindow(await exportScreen(pass), () => { });
+            showWindow(await exportScreen(pass));
         };
         export const exportScreen = async (pass: string) =>
         ({
@@ -1804,7 +1804,7 @@ export module CyclicToDo
         export const showImportScreen = async () =>
         {
             document.title = applicationTitle;
-            showWindow(await importScreen(), () => { });
+            showWindow(await importScreen());
         };
         export const importScreen = async () =>
         ({
@@ -1921,13 +1921,27 @@ export module CyclicToDo
         export const showWelcomeScreen = async () =>
         {
             document.title = applicationTitle;
-            showWindow(await welcomeScreen(), () => { });
+            showWindow(await welcomeScreen());
         };
         export let updateWindow: () => unknown;
         let updateWindowTimer = undefined;
-        export const showWindow = async (screen: any, updateWindow: () => unknown) =>
+        export const showWindow = async (screen: any, updateWindow?: () => unknown) =>
         {
-            Render.updateWindow = updateWindow;
+            if (undefined !== updateWindow)
+            {
+                Render.updateWindow = updateWindow;
+            }
+            else
+            {
+                let lastUpdate = Storage.lastUpdate;
+                Render.updateWindow = async () =>
+                {
+                    if (lastUpdate !== Storage.lastUpdate)
+                    {
+                        await reload();
+                    }
+                };
+            }
             if (undefined === updateWindowTimer)
             {
                 setInterval

@@ -2462,7 +2462,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.historyScreen(entry, list)];
                         case 1:
-                            _a.apply(void 0, [_b.sent(), Render.updateWindow]);
+                            _a.apply(void 0, [_b.sent()]);
                             return [2 /*return*/];
                     }
                 });
@@ -2696,7 +2696,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.exportScreen(pass)];
                         case 1:
-                            _a.apply(void 0, [_b.sent(), function () { }]);
+                            _a.apply(void 0, [_b.sent()]);
                             return [2 /*return*/];
                     }
                 });
@@ -2760,7 +2760,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.importScreen()];
                         case 1:
-                            _a.apply(void 0, [_b.sent(), function () { }]);
+                            _a.apply(void 0, [_b.sent()]);
                             return [2 /*return*/];
                     }
                 });
@@ -2933,15 +2933,35 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.welcomeScreen()];
                         case 1:
-                            _a.apply(void 0, [_b.sent(), function () { }]);
+                            _a.apply(void 0, [_b.sent()]);
                             return [2 /*return*/];
                     }
                 });
             }); };
             var updateWindowTimer = undefined;
             Render.showWindow = function (screen, updateWindow) { return __awaiter(_this, void 0, void 0, function () {
+                var lastUpdate_1;
+                var _this = this;
                 return __generator(this, function (_a) {
-                    Render.updateWindow = updateWindow;
+                    if (undefined !== updateWindow) {
+                        Render.updateWindow = updateWindow;
+                    }
+                    else {
+                        lastUpdate_1 = Storage.lastUpdate;
+                        Render.updateWindow = function () { return __awaiter(_this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        if (!(lastUpdate_1 !== Storage.lastUpdate)) return [3 /*break*/, 2];
+                                        return [4 /*yield*/, CyclicToDo.reload()];
+                                    case 1:
+                                        _a.sent();
+                                        _a.label = 2;
+                                    case 2: return [2 /*return*/];
+                                }
+                            });
+                        }); };
+                    }
                     if (undefined === updateWindowTimer) {
                         setInterval(function () { var _a; return (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render); }, Domain.TimeAccuracy);
                     }
