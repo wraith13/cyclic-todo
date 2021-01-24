@@ -1091,20 +1091,17 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             var average = Calculate.average(intervals);
             var standardDeviation = Calculate.standardDeviation(intervals, average);
             if (5 <= intervals.length && (average * 0.3) < standardDeviation) {
-                console.log({ task: task, ticks: ticks, });
                 var biasIntervals_1 = [];
                 var currentBias_1 = Calculate.sign(intervals[0]);
                 var currentGroup_1 = [];
                 intervals.forEach(function (interval) {
                     var bias = Calculate.sign(interval - average);
-                    if (currentBias_1 === bias) {
-                        currentGroup_1.push(interval);
-                    }
-                    else {
+                    if (currentBias_1 !== bias) {
                         biasIntervals_1.push(currentGroup_1);
                         currentBias_1 = bias;
                         currentGroup_1 = [];
                     }
+                    currentGroup_1.push(interval);
                 });
                 biasIntervals_1.push(currentGroup_1);
                 if (biasIntervals_1.length <= 0) {
@@ -1132,10 +1129,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     Calculate.average(biasIntervals_1.filter(function (_, ix) { return 0 === ix % 2; }).reduce(function (a, b) { return a.concat(b); }, [])),
                     Calculate.average(biasIntervals_1.filter(function (_, ix) { return 1 === ix % 2; }).reduce(function (a, b) { return a.concat(b); }, [])),
                 ];
-                var lastBiasIndex = biasIntervals_1.length % 2;
-                var lastTerm = biasIntervals_1[biasIntervals_1.length - 1];
-                var isTermContinue = Calculate.sum(lastTerm) + biasIntervalAverage[lastBiasIndex] < biasTermAverage[lastBiasIndex] + (2 * biasTermStandardDeviation[lastBiasIndex]);
-                return ticks[0] + biasIntervalAverage[isTermContinue ? lastBiasIndex : ((lastBiasIndex + 1) % 2)];
+                var lastBiasIndex = (biasIntervals_1.length - 1) % 2;
+                var lastTerm = Calculate.sum(biasIntervals_1[biasIntervals_1.length - 1]);
+                var isTermContinue = lastTerm + biasIntervalAverage[lastBiasIndex] < biasTermAverage[lastBiasIndex] + (2 * biasTermStandardDeviation[lastBiasIndex]);
+                var curentIntervalAverage = biasIntervalAverage[lastBiasIndex];
+                var counterIntervalAverage = biasIntervalAverage[(lastBiasIndex + 1) % 2];
+                console.log({ task: task, ticks: ticks, intervals: intervals, average: average, lastTerm: lastTerm, isTermContinue: isTermContinue, curentIntervalAverage: curentIntervalAverage, counterIntervalAverage: counterIntervalAverage, lastBiasIndex: lastBiasIndex, biasIntervals: biasIntervals_1, biasTerms: biasTerms, biasTermAverage: biasTermAverage, biasIntervalAverage: biasIntervalAverage, biasTermStandardDeviation: biasTermStandardDeviation, });
+                return ticks[0] + (isTermContinue ? curentIntervalAverage : counterIntervalAverage);
             }
             if (null !== average) {
                 return ticks[0] + average;

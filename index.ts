@@ -220,7 +220,6 @@ export module localeParallel
         const standardDeviation: number = Calculate.standardDeviation(intervals, average);
         if (5 <= intervals.length && (average *0.3) < standardDeviation)
         {
-            console.log({ task, ticks, });
             const biasIntervals: number[][] = [];
             let currentBias = sign(intervals[0]);
             let currentGroup: number[] = [];
@@ -229,16 +228,13 @@ export module localeParallel
                 interval =>
                 {
                     const bias = sign(interval -average);
-                    if (currentBias === bias)
-                    {
-                        currentGroup.push(interval);
-                    }
-                    else
+                    if (currentBias !== bias)
                     {
                         biasIntervals.push(currentGroup);
                         currentBias = bias;
                         currentGroup = [];
                     }
+                    currentGroup.push(interval);
                 }
             );
             biasIntervals.push(currentGroup);
@@ -274,10 +270,13 @@ export module localeParallel
                 Calculate.average(biasIntervals.filter((_, ix) => 0 === ix %2).reduce((a, b) => a.concat(b), [])),
                 Calculate.average(biasIntervals.filter((_, ix) => 1 === ix %2).reduce((a, b) => a.concat(b), [])),
             ];
-            const lastBiasIndex = biasIntervals.length %2;
-            const lastTerm = biasIntervals[biasIntervals.length -1];
-            const isTermContinue = sum(lastTerm) + biasIntervalAverage[lastBiasIndex] < biasTermAverage[lastBiasIndex] +(2 *biasTermStandardDeviation[lastBiasIndex]);
-            return ticks[0] +biasIntervalAverage[isTermContinue ? lastBiasIndex: ((lastBiasIndex +1) %2)];
+            const lastBiasIndex = (biasIntervals.length -1) %2;
+            const lastTerm = sum(biasIntervals[biasIntervals.length -1]);
+            const isTermContinue = lastTerm + biasIntervalAverage[lastBiasIndex] < biasTermAverage[lastBiasIndex] +(2 *biasTermStandardDeviation[lastBiasIndex]);
+            const curentIntervalAverage = biasIntervalAverage[lastBiasIndex];
+            const counterIntervalAverage = biasIntervalAverage[(lastBiasIndex +1) %2];
+            console.log({ task, ticks, intervals, average, lastTerm, isTermContinue, curentIntervalAverage, counterIntervalAverage, lastBiasIndex, biasIntervals, biasTerms, biasTermAverage, biasIntervalAverage, biasTermStandardDeviation, });
+            return ticks[0] +(isTermContinue ? curentIntervalAverage: counterIntervalAverage);
         }
         if (null !== average)
         {
