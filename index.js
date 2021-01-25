@@ -1818,6 +1818,69 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     ],
                 });
             };
+            Render.todoRenameMenu = function (pass, item, onRename) {
+                if (onRename === void 0) { onRename = function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, CyclicToDo.reload()];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                }); }); }; }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, Render.menuItem(locale.parallel("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                var newTask;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください。", item.task)];
+                                        case 1:
+                                            newTask = _a.sent();
+                                            if (!(null !== newTask && 0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 4];
+                                            if (!Storage.Task.rename(pass, item.task, newTask)) return [3 /*break*/, 3];
+                                            return [4 /*yield*/, onRename(newTask)];
+                                        case 2:
+                                            _a.sent();
+                                            return [3 /*break*/, 4];
+                                        case 3:
+                                            window.alert("その名前の ToDo は既に存在しています。");
+                                            _a.label = 4;
+                                        case 4: return [2 /*return*/];
+                                    }
+                                });
+                            }); })];
+                    });
+                });
+            };
+            Render.todoDeleteMenu = function (pass, item) { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, 0 <= Storage.TagMember.get(pass, "@deleted").indexOf(item.task) ?
+                            Render.menuItem(locale.parallel("Restore"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            Storage.TagMember.remove(pass, "@deleted", item.task);
+                                            return [4 /*yield*/, CyclicToDo.reload()];
+                                        case 1:
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }) :
+                            Render.menuItem(locale.parallel("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            Storage.TagMember.add(pass, "@deleted", item.task);
+                                            return [4 /*yield*/, CyclicToDo.reload()];
+                                        case 1:
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); })];
+                });
+            }); };
             Render.todoItem = function (entry, item) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e;
                 var _this = this;
@@ -1879,51 +1942,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     }); }
                                 }];
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem(locale.parallel("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                        var newTask;
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください", item.task)];
-                                                case 1:
-                                                    newTask = _a.sent();
-                                                    if (!(null !== newTask && 0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 4];
-                                                    if (!Storage.Task.rename(entry.pass, item.task, newTask)) return [3 /*break*/, 3];
-                                                    return [4 /*yield*/, CyclicToDo.reload()];
-                                                case 2:
-                                                    _a.sent();
-                                                    return [3 /*break*/, 4];
-                                                case 3:
-                                                    window.alert("その名前の ToDo は既に存在しています。");
-                                                    _a.label = 4;
-                                                case 4: return [2 /*return*/];
-                                            }
-                                        });
-                                    }); }),
-                                    "@deleted" === entry.tag ?
-                                        Render.menuItem(locale.parallel("Restore"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                            return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0:
-                                                        Storage.TagMember.remove(entry.pass, "@deleted", item.task);
-                                                        return [4 /*yield*/, CyclicToDo.reload()];
-                                                    case 1:
-                                                        _a.sent();
-                                                        return [2 /*return*/];
-                                                }
-                                            });
-                                        }); }) :
-                                        Render.menuItem(locale.parallel("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                            return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0:
-                                                        Storage.TagMember.add(entry.pass, "@deleted", item.task);
-                                                        return [4 /*yield*/, CyclicToDo.reload()];
-                                                    case 1:
-                                                        _a.sent();
-                                                        return [2 /*return*/];
-                                                }
-                                            });
-                                        }); }),
+                                    Render.todoRenameMenu(entry.pass, item),
+                                    Render.todoDeleteMenu(entry.pass, item),
                                 ])];
                         case 1: return [2 /*return*/, (_a.children = [
                                 (_b.children = _c.concat([
@@ -2491,51 +2511,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 "" + item.task
                             ];
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem(locale.parallel("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                        var newTask;
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください", item.task)];
-                                                case 1:
-                                                    newTask = _a.sent();
-                                                    if (!(null !== newTask && 0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 4];
-                                                    if (!Storage.Task.rename(pass, item.task, newTask)) return [3 /*break*/, 3];
-                                                    return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: newTask, })];
-                                                case 2:
-                                                    _a.sent();
-                                                    return [3 /*break*/, 4];
-                                                case 3:
-                                                    window.alert("その名前の ToDo は既に存在しています。");
-                                                    _a.label = 4;
-                                                case 4: return [2 /*return*/];
-                                            }
-                                        });
-                                    }); }),
-                                    0 <= Storage.TagMember.get(pass, "@deleted").indexOf(item.task) ?
-                                        Render.menuItem(locale.parallel("Restore"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                            return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0:
-                                                        Storage.TagMember.remove(pass, "@deleted", item.task);
-                                                        return [4 /*yield*/, CyclicToDo.reload()];
-                                                    case 1:
-                                                        _a.sent();
-                                                        return [2 /*return*/];
-                                                }
-                                            });
-                                        }); }) :
-                                        Render.menuItem(locale.parallel("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                            return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0:
-                                                        Storage.TagMember.add(pass, "@deleted", item.task);
-                                                        return [4 /*yield*/, CyclicToDo.reload()];
-                                                    case 1:
-                                                        _a.sent();
-                                                        return [2 /*return*/];
-                                                }
-                                            });
-                                        }); }),
+                                    Render.todoRenameMenu(pass, item, function (newTask) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: newTask, })];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); }),
+                                    Render.todoDeleteMenu(pass, item),
                                     {
                                         tag: "button",
                                         children: "🚫 ToDo をシェア",

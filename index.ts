@@ -1034,6 +1034,52 @@ export module CyclicToDo
                 },
             ],
         });
+        export const todoRenameMenu =
+        async (
+            pass: string,
+            item: ToDoEntry,
+            onRename: (newName: string) => Promise<unknown> = async () => await reload()
+        ) =>
+        menuItem
+        (
+            locale.parallel("Rename"),
+            async () =>
+            {
+                const newTask = await prompt("ToDo の名前を入力してください。", item.task);
+                if (null !== newTask && 0 < newTask.length && newTask !== item.task)
+                {
+                    if (Storage.Task.rename(pass, item.task, newTask))
+                    {
+                        await onRename(newTask);
+                        //await reload();
+                    }
+                    else
+                    {
+                        window.alert("その名前の ToDo は既に存在しています。");
+                    }
+                }
+            }
+        );
+        export const todoDeleteMenu = async (pass: string, item: ToDoEntry) =>
+            0 <= Storage.TagMember.get(pass, "@deleted").indexOf(item.task) ?
+                menuItem
+                (
+                    locale.parallel("Restore"),
+                    async () =>
+                    {
+                        Storage.TagMember.remove(pass, "@deleted", item.task);
+                        await reload();
+                    }
+                ):
+                menuItem
+                (
+                    locale.parallel("Delete"),
+                    async () =>
+                    {
+                        Storage.TagMember.add(pass, "@deleted", item.task);
+                        await reload();
+                    }
+                );
         export const todoItem = async (entry: ToDoTagEntry, item: ToDoEntry) =>
         ({
             tag: "div",
@@ -1094,44 +1140,8 @@ export module CyclicToDo
                                 },
                                 await menuButton
                                 ([
-                                    menuItem
-                                    (
-                                        locale.parallel("Rename"),
-                                        async () =>
-                                        {
-                                            const newTask = await prompt("ToDo の名前を入力してください", item.task);
-                                            if (null !== newTask && 0 < newTask.length && newTask !== item.task)
-                                            {
-                                                if (Storage.Task.rename(entry.pass, item.task, newTask))
-                                                {
-                                                    await reload();
-                                                }
-                                                else
-                                                {
-                                                    window.alert("その名前の ToDo は既に存在しています。");
-                                                }
-                                            }
-                                        }
-                                    ),
-                                    "@deleted" === entry.tag ?
-                                        menuItem
-                                        (
-                                            locale.parallel("Restore"),
-                                            async () =>
-                                            {
-                                                Storage.TagMember.remove(entry.pass, "@deleted", item.task);
-                                                await reload();
-                                            }
-                                        ):
-                                        menuItem
-                                        (
-                                            locale.parallel("Delete"),
-                                            async () =>
-                                            {
-                                                Storage.TagMember.add(entry.pass, "@deleted", item.task);
-                                                await reload();
-                                            }
-                                        ),
+                                    todoRenameMenu(entry.pass, item),
+                                    todoDeleteMenu(entry.pass, item),
                                 ]),
                             ],
                         },
@@ -1610,44 +1620,8 @@ export module CyclicToDo
                         `${item.task}`,
                         await menuButton
                         ([
-                            menuItem
-                            (
-                                locale.parallel("Rename"),
-                                async () =>
-                                {
-                                    const newTask = await prompt("ToDo の名前を入力してください", item.task);
-                                    if (null !== newTask && 0 < newTask.length && newTask !== item.task)
-                                    {
-                                        if (Storage.Task.rename(pass, item.task, newTask))
-                                        {
-                                            await showUrl({ pass, todo:newTask, });
-                                        }
-                                        else
-                                        {
-                                            window.alert("その名前の ToDo は既に存在しています。");
-                                        }
-                                    }
-                                }
-                            ),
-                            0 <= Storage.TagMember.get(pass, "@deleted").indexOf(item.task) ?
-                                menuItem
-                                (
-                                    locale.parallel("Restore"),
-                                    async () =>
-                                    {
-                                        Storage.TagMember.remove(pass, "@deleted", item.task);
-                                        await reload();
-                                    }
-                                ):
-                                menuItem
-                                (
-                                    locale.parallel("Delete"),
-                                    async () =>
-                                    {
-                                        Storage.TagMember.add(pass, "@deleted", item.task);
-                                        await reload();
-                                    }
-                                ),
+                            todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
+                            todoDeleteMenu(pass, item),
                             {
                                 tag: "button",
                                 children: "🚫 ToDo をシェア",
