@@ -1662,6 +1662,32 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
                 minamo_js_1.minamo.dom.appendChildren(document.body, dom);
             };
+            Render.popup = function (data) {
+                var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
+                    tag: "div",
+                    className: "popup",
+                    children: data.children,
+                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            console.log("popup.click!");
+                            Array.from(document.getElementsByClassName("screen-cover")).forEach(function (i) { return i.click(); });
+                            return [2 /*return*/];
+                        });
+                    }); },
+                });
+                minamo_js_1.minamo.dom.appendChildren(document.body, dom);
+                Render.screenCover(function () { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, (data === null || data === void 0 ? void 0 : data.onClose())];
+                            case 1:
+                                _a.sent();
+                                minamo_js_1.minamo.dom.remove(dom);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); });
+            };
             Render.menuButton = function (menu) { return __awaiter(_this, void 0, void 0, function () {
                 var popup, button, _a, _b;
                 var _this = this;

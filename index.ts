@@ -882,7 +882,30 @@ export module CyclicToDo
             });
             minamo.dom.appendChildren(document.body, dom);
         };
-        export const menuButton = async (menu: any) =>
+        export const popup = (data: { children: minamo.dom.Source, onClose?: () => Promise<unknown>}) =>
+        {
+            const dom = minamo.dom.make(HTMLDivElement)
+            ({
+                tag: "div",
+                className: "popup",
+                children: data.children,
+                onclick: async () =>
+                {
+                    console.log("popup.click!");
+                    (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[]).forEach(i => i.click());
+                },
+            });
+            minamo.dom.appendChildren(document.body, dom);
+            screenCover
+            (
+                async () =>
+                {
+                    await data?.onClose();
+                    minamo.dom.remove(dom);
+                }
+            );
+        };
+        export const menuButton = async (menu: minamo.dom.Source) =>
         {
             const popup = minamo.dom.make(HTMLDivElement)
             ({
@@ -1899,7 +1922,7 @@ export module CyclicToDo
         };
         export let updateWindow: () => unknown;
         let updateWindowTimer = undefined;
-        export const showWindow = async (screen: any, updateWindow?: () => unknown) =>
+        export const showWindow = async (screen: minamo.dom.Source, updateWindow?: () => unknown) =>
         {
             if (undefined !== updateWindow)
             {
