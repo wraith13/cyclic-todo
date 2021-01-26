@@ -1058,7 +1058,7 @@ export module CyclicToDo
             ],
         });
         export const todoRenameMenu =
-        async (
+        (
             pass: string,
             item: ToDoEntry,
             onRename: (newName: string) => Promise<unknown> = async () => await reload()
@@ -1083,7 +1083,14 @@ export module CyclicToDo
                 }
             }
         );
-        export const todoDeleteMenu = async (pass: string, item: ToDoEntry) =>
+        export const todoTagMenu = (_pass: string, _item: ToDoEntry) => menuItem
+        (
+            locale.parallel("Add/Remove Tag"),
+            async () =>
+            {
+            }
+        );
+        export const todoDeleteMenu = (pass: string, item: ToDoEntry) =>
             0 <= Storage.TagMember.get(pass, "@deleted").indexOf(item.task) ?
                 menuItem
                 (
@@ -1164,6 +1171,7 @@ export module CyclicToDo
                                 await menuButton
                                 ([
                                     todoRenameMenu(entry.pass, item),
+                                    todoTagMenu(entry.pass, item),
                                     todoDeleteMenu(entry.pass, item),
                                 ]),
                             ],
@@ -1644,6 +1652,7 @@ export module CyclicToDo
                         await menuButton
                         ([
                             todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
+                            todoTagMenu(pass, item),
                             todoDeleteMenu(pass, item),
                             {
                                 tag: "button",
