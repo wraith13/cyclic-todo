@@ -377,7 +377,7 @@ export module CyclicToDo
         export module Tag
         {
             export const isSystemTag = (tag: string) => tag.startsWith("@") && ! tag.startsWith("@=") && ! isSublist(tag);
-            export const isSublist = (tag: string) => tag.startsWith("@:");
+            export const isSublist = (tag: string) => tag.endsWith("@:");
             export const encode = (tag: string) => tag.replace(/@/, "@=");
             export const decode = (tag: string) => tag.replace(/@=/, "@");
             export const makeKey = (pass: string) => `pass:(${pass}).tag.list`;
@@ -425,7 +425,9 @@ export module CyclicToDo
                     return deleted;
                 case "@unoverall":
                 default:
-                    return getRaw(pass, tag).filter(i => deleted.indexOf(i) < 0);
+                    return Tag.isSublist(tag) ?
+                        getRaw(pass, "@overall").filter(i => tag === Task.getSublist(i)):
+                        getRaw(pass, tag).filter(i => deleted.indexOf(i) < 0);
                 }
             };
             export const set = (pass: string, tag: string, list: string[]) =>
@@ -442,7 +444,7 @@ export module CyclicToDo
             export const getSublist = (task: string) =>
             {
                 const split = task.split("@:");
-                return 2 <= split.length ? split[0]: null;
+                return 2 <= split.length ? `${split[0]}@:`: null;
             };
             export const getBody = (task: string) =>
             {

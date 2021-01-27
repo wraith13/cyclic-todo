@@ -1209,7 +1209,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             var Tag;
             (function (Tag) {
                 Tag.isSystemTag = function (tag) { return tag.startsWith("@") && !tag.startsWith("@=") && !Tag.isSublist(tag); };
-                Tag.isSublist = function (tag) { return tag.startsWith("@:"); };
+                Tag.isSublist = function (tag) { return tag.endsWith("@:"); };
                 Tag.encode = function (tag) { return tag.replace(/@/, "@="); };
                 Tag.decode = function (tag) { return tag.replace(/@=/, "@"); };
                 Tag.makeKey = function (pass) { return "pass:(" + pass + ").tag.list"; };
@@ -1252,7 +1252,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return deleted;
                         case "@unoverall":
                         default:
-                            return TagMember.getRaw(pass, tag).filter(function (i) { return deleted.indexOf(i) < 0; });
+                            return Tag.isSublist(tag) ?
+                                TagMember.getRaw(pass, "@overall").filter(function (i) { return tag === Task.getSublist(i); }) :
+                                TagMember.getRaw(pass, tag).filter(function (i) { return deleted.indexOf(i) < 0; });
                     }
                 };
                 TagMember.set = function (pass, tag, list) {
@@ -1269,7 +1271,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 Task.decode = function (task) { return task.replace(/@=/, "@").replace(/@:/, ": "); };
                 Task.getSublist = function (task) {
                     var split = task.split("@:");
-                    return 2 <= split.length ? split[0] : null;
+                    return 2 <= split.length ? split[0] + "@:" : null;
                 };
                 Task.getBody = function (task) {
                     var split = task.split("@:");
