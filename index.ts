@@ -433,9 +433,35 @@ export module CyclicToDo
             export const set = (pass: string, tag: string, list: string[]) =>
                 getStorage(pass).set(makeKey(pass, tag), list);
             export const removeKey = (pass: string, tag: string) => getStorage(pass).remove(makeKey(pass, tag));
-            export const add = (pass: string, tag: string, todo: string) => set(pass, tag, get(pass, tag).concat([ todo ]).filter(uniqueFilter));
-            export const merge = (pass: string, tag: string, list: string[]) => set(pass, tag, get(pass, tag).concat(list).filter(uniqueFilter));
-            export const remove = (pass: string, tag: string, todo: string) => set(pass, tag, get(pass, tag).filter(i => todo !== i));
+            export const add = (pass: string, tag: string, todo: string) =>
+            {
+                if (Tag.isSublist(tag))
+                {
+                    if (tag !== Task.getSublist(todo))
+                    {
+                        Task.rename(pass, todo, `${tag}@:${Task.getBody(todo)}`);
+                    }
+                }
+                else
+                {
+                    set(pass, tag, get(pass, tag).concat([ todo ]).filter(uniqueFilter));
+                }
+            };
+            //export const merge = (pass: string, tag: string, list: string[]) => set(pass, tag, get(pass, tag).concat(list).filter(uniqueFilter));
+            export const remove = (pass: string, tag: string, todo: string) =>
+            {
+                if (Tag.isSublist(tag))
+                {
+                    if (null !== Task.getSublist(todo))
+                    {
+                        Task.rename(pass, todo, Task.getBody(todo));
+                    }
+                }
+                else
+                {
+                    set(pass, tag, get(pass, tag).filter(i => todo !== i));
+                }
+            };
         }
         export module Task
         {
@@ -449,7 +475,7 @@ export module CyclicToDo
             export const getBody = (task: string) =>
             {
                 const split = task.split("@:");
-                return 2 <= split.length ? split[1]: task;
+                return 2 <= split.length ? split[split.length -1]: task;
             };
             export const add = (pass: string, task: string) =>
             {
@@ -500,25 +526,25 @@ export module CyclicToDo
     }
     export module Domain
     {
-        export const merge = (pass: string, tag: string, todo: string[], _ticks: (number | null)[]) =>
-        {
-            Storage.Pass.add(pass);
-            Storage.Tag.add(pass, tag);
-            Storage.TagMember.merge(pass, tag, todo);
-            // const temp:{ [task:string]: number[]} = { };
-            // todo.forEach(task => temp[task] = []);
-            // ticks.forEach
-            // (
-            //     (tick, index) =>
-            //     {
-            //         if (null !== tick)
-            //         {
-            //             temp[todo[index % todo.length]].push(tick);
-            //         }
-            //     }
-            // );
-            // todo.forEach(task => Storage.History.add(pass, task, temp[task]));
-        };
+        // export const merge = (pass: string, tag: string, todo: string[], _ticks: (number | null)[]) =>
+        // {
+        //     Storage.Pass.add(pass);
+        //     Storage.Tag.add(pass, tag);
+        //     Storage.TagMember.merge(pass, tag, todo);
+        //     // const temp:{ [task:string]: number[]} = { };
+        //     // todo.forEach(task => temp[task] = []);
+        //     // ticks.forEach
+        //     // (
+        //     //     (tick, index) =>
+        //     //     {
+        //     //         if (null !== tick)
+        //     //         {
+        //     //             temp[todo[index % todo.length]].push(tick);
+        //     //         }
+        //     //     }
+        //     // );
+        //     // todo.forEach(task => Storage.History.add(pass, task, temp[task]));
+        // };
         export const TimeAccuracy = 60 *1000;
         export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / TimeAccuracy);
         export const dateStringFromTick = (tick: null | number) =>

@@ -1261,9 +1261,27 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     return Storage.getStorage(pass).set(TagMember.makeKey(pass, tag), list);
                 };
                 TagMember.removeKey = function (pass, tag) { return Storage.getStorage(pass).remove(TagMember.makeKey(pass, tag)); };
-                TagMember.add = function (pass, tag, todo) { return TagMember.set(pass, tag, TagMember.get(pass, tag).concat([todo]).filter(exports.uniqueFilter)); };
-                TagMember.merge = function (pass, tag, list) { return TagMember.set(pass, tag, TagMember.get(pass, tag).concat(list).filter(exports.uniqueFilter)); };
-                TagMember.remove = function (pass, tag, todo) { return TagMember.set(pass, tag, TagMember.get(pass, tag).filter(function (i) { return todo !== i; })); };
+                TagMember.add = function (pass, tag, todo) {
+                    if (Tag.isSublist(tag)) {
+                        if (tag !== Task.getSublist(todo)) {
+                            Task.rename(pass, todo, tag + "@:" + Task.getBody(todo));
+                        }
+                    }
+                    else {
+                        TagMember.set(pass, tag, TagMember.get(pass, tag).concat([todo]).filter(exports.uniqueFilter));
+                    }
+                };
+                //export const merge = (pass: string, tag: string, list: string[]) => set(pass, tag, get(pass, tag).concat(list).filter(uniqueFilter));
+                TagMember.remove = function (pass, tag, todo) {
+                    if (Tag.isSublist(tag)) {
+                        if (null !== Task.getSublist(todo)) {
+                            Task.rename(pass, todo, Task.getBody(todo));
+                        }
+                    }
+                    else {
+                        TagMember.set(pass, tag, TagMember.get(pass, tag).filter(function (i) { return todo !== i; }));
+                    }
+                };
             })(TagMember = Storage.TagMember || (Storage.TagMember = {}));
             var Task;
             (function (Task) {
@@ -1275,7 +1293,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 };
                 Task.getBody = function (task) {
                     var split = task.split("@:");
-                    return 2 <= split.length ? split[1] : task;
+                    return 2 <= split.length ? split[split.length - 1] : task;
                 };
                 Task.add = function (pass, task) {
                     Storage.TagMember.remove(pass, "@deleted", task);
@@ -1322,24 +1340,25 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
         var Domain;
         (function (Domain) {
             var _this = this;
-            Domain.merge = function (pass, tag, todo, _ticks) {
-                Storage.Pass.add(pass);
-                Storage.Tag.add(pass, tag);
-                Storage.TagMember.merge(pass, tag, todo);
-                // const temp:{ [task:string]: number[]} = { };
-                // todo.forEach(task => temp[task] = []);
-                // ticks.forEach
-                // (
-                //     (tick, index) =>
-                //     {
-                //         if (null !== tick)
-                //         {
-                //             temp[todo[index % todo.length]].push(tick);
-                //         }
-                //     }
-                // );
-                // todo.forEach(task => Storage.History.add(pass, task, temp[task]));
-            };
+            // export const merge = (pass: string, tag: string, todo: string[], _ticks: (number | null)[]) =>
+            // {
+            //     Storage.Pass.add(pass);
+            //     Storage.Tag.add(pass, tag);
+            //     Storage.TagMember.merge(pass, tag, todo);
+            //     // const temp:{ [task:string]: number[]} = { };
+            //     // todo.forEach(task => temp[task] = []);
+            //     // ticks.forEach
+            //     // (
+            //     //     (tick, index) =>
+            //     //     {
+            //     //         if (null !== tick)
+            //     //         {
+            //     //             temp[todo[index % todo.length]].push(tick);
+            //     //         }
+            //     //     }
+            //     // );
+            //     // todo.forEach(task => Storage.History.add(pass, task, temp[task]));
+            // };
             Domain.TimeAccuracy = 60 * 1000;
             Domain.getTicks = function (date) {
                 if (date === void 0) { date = new Date(); }
