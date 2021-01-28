@@ -1359,6 +1359,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             //     // );
             //     // todo.forEach(task => Storage.History.add(pass, task, temp[task]));
             // };
+            Domain.standardDeviationRate = 1.5;
+            Domain.standardDeviationOverRate = 2.5;
             Domain.TimeAccuracy = 60 * 1000;
             Domain.getTicks = function (date) {
                 if (date === void 0) { date = new Date(); }
@@ -1424,7 +1426,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     var _a, _b;
                     if (null !== a.progress && null !== b.progress) {
                         if (Math.abs(a.elapsed - b.elapsed) <= 12 * 60) {
-                            var rate = Math.min(a.count, b.count) < 5 ? 1.5 : 1.2;
+                            var rate = Math.min(a.count, b.count) < 5 ? Domain.standardDeviationRate : 1.2;
                             if (a.RecentlySmartAverage < b.RecentlySmartAverage * rate && b.RecentlySmartAverage < a.RecentlySmartAverage * rate) {
                                 if (a.elapsed < b.elapsed) {
                                     return 1;
@@ -1442,8 +1444,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 return -1;
                             }
                         }
-                        var a_restTime = (a.RecentlySmartAverage + ((_a = a.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * 2.0) - a.elapsed;
-                        var b_restTime = (b.RecentlySmartAverage + ((_b = b.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * 2.0) - b.elapsed;
+                        var a_restTime = (a.RecentlySmartAverage + ((_a = a.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate) - a.elapsed;
+                        var b_restTime = (b.RecentlySmartAverage + ((_b = b.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * Domain.standardDeviationRate) - b.elapsed;
                         if (a_restTime < b_restTime) {
                             return -1;
                         }
@@ -1548,6 +1550,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return result;
             };
             Domain.getToDoEntry = function (_pass, task, history) {
+                var inflateRecentrly = function (intervals) { return 20 <= intervals.length ?
+                    intervals.filter(function (_, ix) { return ix < 5; }).concat(intervals.filter(function (_, ix) { return ix < 10; }), intervals) :
+                    intervals.filter(function (_, ix) { return ix < 5; }).concat(intervals); };
                 var calcAverage = function (ticks, maxLength, length) {
                     if (maxLength === void 0) { maxLength = ticks.length; }
                     if (length === void 0) { length = Math.min(maxLength, ticks.length); }
@@ -1566,11 +1571,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         null :
                         history.recentries.length <= 2 ?
                             calcAverage(history.recentries) * 0.05 : // この値を標準偏差として代用
-                            Calculate.standardDeviation(Calculate.intervals(history.recentries)),
+                            Calculate.standardDeviation(inflateRecentrly(Calculate.intervals(history.recentries))),
                     count: history.count,
                     RecentlySmartAverage: history.recentries.length <= 1 ?
                         null :
-                        calcAverage(history.recentries, 25),
+                        Calculate.average(inflateRecentrly(Calculate.intervals(history.recentries))),
                 };
                 return result;
             };
@@ -1581,9 +1586,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
                     item.elapsed = Math.max(0.0, now - item.previous);
                     if (null !== item.RecentlySmartAverage) {
-                        item.progress = item.elapsed / (item.RecentlySmartAverage + ((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * 2.0);
+                        item.progress = item.elapsed / (item.RecentlySmartAverage + ((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate);
                         //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
-                        var overrate = (item.elapsed - (item.RecentlySmartAverage + ((_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * 3.0)) / item.RecentlySmartAverage;
+                        var overrate = (item.elapsed - (item.RecentlySmartAverage + ((_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * Domain.standardDeviationOverRate)) / item.RecentlySmartAverage;
                         if (0.0 < overrate) {
                             //item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
                             item.progress = null;
@@ -1661,6 +1666,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
+            Render.alert = function (message) { return window.alert(message); };
             Render.screenCover = function (onclick) {
                 var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
                     tag: "div",
@@ -1800,7 +1806,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     className: "value monospace",
                                     children: null === item.RecentlyStandardDeviation ?
                                         Domain.timeStringFromTick(item.RecentlySmartAverage) :
-                                        Domain.timeStringFromTick(Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (item.RecentlyStandardDeviation * 2.0))) + " \u301C " + Domain.timeStringFromTick(item.RecentlySmartAverage + (item.RecentlyStandardDeviation * 2.0)),
+                                        Domain.timeStringFromTick(Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (item.RecentlyStandardDeviation * Domain.standardDeviationRate))) + " \u301C " + Domain.timeStringFromTick(item.RecentlySmartAverage + (item.RecentlyStandardDeviation * Domain.standardDeviationRate)),
                                 }
                             ],
                         },
@@ -1888,7 +1894,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 _a.sent();
                                 return [3 /*break*/, 4];
                             case 3:
-                                window.alert("その名前の ToDo は既に存在しています。");
+                                Render.alert("その名前の ToDo は既に存在しています。");
                                 _a.label = 4;
                             case 4: return [2 /*return*/];
                         }
@@ -1972,7 +1978,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 case 0:
                                                     fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
                                                     if (!fxxkingTypeScriptCompiler) return [3 /*break*/, 1];
-                                                    window.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                                                    Render.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
                                                         + "\n"
                                                         + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。");
                                                     return [3 /*break*/, 3];
@@ -2184,7 +2190,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                         _a.sent();
                                                         return [3 /*break*/, 4];
                                                     case 3:
-                                                        window.alert("その名前のタグは既に存在しています。");
+                                                        Render.alert("その名前のタグは既に存在しています。");
                                                         _a.label = 4;
                                                     case 4: return [2 /*return*/];
                                                 }
@@ -2437,7 +2443,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                         _a.sent();
                                                         return [3 /*break*/, 4];
                                                     case 3:
-                                                        window.alert("その名前のタグは既に存在しています。");
+                                                        Render.alert("その名前のタグは既に存在しています。");
                                                         _a.label = 4;
                                                     case 4: return [2 /*return*/];
                                                 }

@@ -34,7 +34,8 @@ export module localeParallel
         ja: localeJa,
     }[navigator.language] ?? localeJa;
     export const map = (key : LocaleKeyType) : string => `${firstLocale[key]} / ${secondLocale[key]}`;
-}export module Calculate
+}
+export module Calculate
 {
     export const phi = 1.618033988749894;
     export const intervals = (ticks: number[]) =>
@@ -545,6 +546,8 @@ export module CyclicToDo
         //     // );
         //     // todo.forEach(task => Storage.History.add(pass, task, temp[task]));
         // };
+        export const standardDeviationRate = 1.5;
+        export const standardDeviationOverRate = 2.5;
         export const TimeAccuracy = 60 *1000;
         export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / TimeAccuracy);
         export const dateStringFromTick = (tick: null | number) =>
@@ -626,7 +629,7 @@ export module CyclicToDo
             {
                 if (Math.abs(a.elapsed -b.elapsed) <= 12 *60)
                 {
-                    const rate = Math.min(a.count, b.count) < 5 ? 1.5: 1.2;
+                    const rate = Math.min(a.count, b.count) < 5 ? Domain.standardDeviationRate: 1.2;
                     if (a.RecentlySmartAverage < b.RecentlySmartAverage *rate && b.RecentlySmartAverage < a.RecentlySmartAverage *rate)
                     {
                         if (a.elapsed < b.elapsed)
@@ -650,8 +653,8 @@ export module CyclicToDo
                         return -1;
                     }
                 }
-                const a_restTime = (a.RecentlySmartAverage +(a.RecentlyStandardDeviation ?? 0) *2.0) -a.elapsed;
-                const b_restTime = (b.RecentlySmartAverage +(b.RecentlyStandardDeviation ?? 0) *2.0) -b.elapsed;
+                const a_restTime = (a.RecentlySmartAverage +(a.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate) -a.elapsed;
+                const b_restTime = (b.RecentlySmartAverage +(b.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate) -b.elapsed;
                 if (a_restTime < b_restTime)
                 {
                     return -1;
@@ -784,6 +787,9 @@ export module CyclicToDo
         };
         export const getToDoEntry = (_pass: string, task: string, history: { recentries: number[], previous: null | number, count: number, }) =>
         {
+            const inflateRecentrly = (intervals: number[]) => 20 <= intervals.length ?
+                intervals.filter((_, ix) => ix < 5).concat(intervals.filter((_, ix) => ix < 10), intervals):
+                intervals.filter((_, ix) => ix < 5).concat(intervals);
             const calcAverage = (ticks: number[], maxLength: number = ticks.length, length = Math.min(maxLength, ticks.length)) =>
                 ((ticks[0] -ticks[length -1]) /(length -1));
             const result: ToDoEntry =
@@ -800,11 +806,11 @@ export module CyclicToDo
                     null:
                     history.recentries.length <= 2 ?
                         calcAverage(history.recentries) *0.05: // この値を標準偏差として代用
-                        Calculate.standardDeviation(Calculate.intervals(history.recentries)),
+                        Calculate.standardDeviation(inflateRecentrly(Calculate.intervals(history.recentries))),
                 count: history.count,
                 RecentlySmartAverage: history.recentries.length <= 1 ?
                     null:
-                    calcAverage(history.recentries, 25),
+                    Calculate.average(inflateRecentrly(Calculate.intervals(history.recentries))),
             };
             return result;
         };
@@ -816,9 +822,9 @@ export module CyclicToDo
                 item.elapsed = Math.max(0.0, now -item.previous);
                 if (null !== item.RecentlySmartAverage)
                 {
-                    item.progress = item.elapsed /(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *2.0);
+                    item.progress = item.elapsed /(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
                     //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
-                    const overrate = (item.elapsed -(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *3.0)) / item.RecentlySmartAverage;
+                    const overrate = (item.elapsed -(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate)) / item.RecentlySmartAverage;
                     if (0.0 < overrate)
                     {
                         //item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
@@ -891,6 +897,7 @@ export module CyclicToDo
             await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが window.prompt が表示されてる間、ずっと表示される事になる。
             return await new Promise(resolve => resolve(window.prompt(message, _default)?.trim() ?? null));
         };
+        export const alert = (message: string) => window.alert(message);
         export const screenCover = (onclick: () => unknown) =>
         {
             const dom = minamo.dom.make(HTMLDivElement)
@@ -1017,7 +1024,7 @@ export module CyclicToDo
                             className: "value monospace",
                             children: null === item.RecentlyStandardDeviation ?
                                 Domain.timeStringFromTick(item.RecentlySmartAverage):
-                                `${Domain.timeStringFromTick(Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *2.0)))} 〜 ${Domain.timeStringFromTick(item.RecentlySmartAverage +(item.RecentlyStandardDeviation *2.0))}`,
+                                `${Domain.timeStringFromTick(Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)))} 〜 ${Domain.timeStringFromTick(item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate))}`,
                         }
                     ],
                 },
@@ -1106,7 +1113,7 @@ export module CyclicToDo
                     }
                     else
                     {
-                        window.alert("その名前の ToDo は既に存在しています。");
+                        alert("その名前の ToDo は既に存在しています。");
                     }
                 }
             }
@@ -1182,7 +1189,7 @@ export module CyclicToDo
                                         const fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
                                         if (fxxkingTypeScriptCompiler)
                                         {
-                                            window.alert
+                                            alert
                                             (
                                                 "This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
                                                 +"\n"
@@ -1381,7 +1388,7 @@ export module CyclicToDo
                                             }
                                             else
                                             {
-                                                window.alert("その名前のタグは既に存在しています。");
+                                                alert("その名前のタグは既に存在しています。");
                                             }
                                         }
                                     }
@@ -1590,7 +1597,7 @@ export module CyclicToDo
                                             }
                                             else
                                             {
-                                                window.alert("その名前のタグは既に存在しています。");
+                                                alert("その名前のタグは既に存在しています。");
                                             }
                                         }
                                     }
