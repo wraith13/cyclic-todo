@@ -1428,6 +1428,25 @@ export module CyclicToDo
                                 "エクスポート",
                                 async () => await showUrl({ pass: entry.pass, hash: "export", })
                             ),
+                            Storage.Tag.isSystemTag(entry.tag) ? []:
+                                menuItem
+                                (
+                                    Storage.Tag.isSublist(entry.tag) ?
+                                        "🚫 このサブリストを削除":
+                                        "🚫 このタグを削除",
+                                    async () =>
+                                    {
+                                    }
+                                ),
+                            "@overall" === entry.tag ?
+                                menuItem
+                                (
+                                    "🚫 このリストを削除",
+                                    async () =>
+                                    {
+                                    }
+                                ):
+                                [],
                         ]),
                     ]
                 ),
@@ -1637,6 +1656,25 @@ export module CyclicToDo
                                 "エクスポート",
                                 async () => await showUrl({ pass: entry.pass, hash: "export", })
                             ),
+                            Storage.Tag.isSystemTag(entry.tag) ? []:
+                                menuItem
+                                (
+                                    Storage.Tag.isSublist(entry.tag) ?
+                                        "🚫 このサブリストを削除":
+                                        "🚫 このタグを削除",
+                                    async () =>
+                                    {
+                                    }
+                                ),
+                            "@overall" === entry.tag ?
+                                menuItem
+                                (
+                                    "🚫 このリストを削除",
+                                    async () =>
+                                    {
+                                    }
+                                ):
+                                [],
                         ]),
                     ]
                 ),

@@ -2234,6 +2234,21 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             case 1: return [2 /*return*/, _a.sent()];
                                         }
                                     }); }); }),
+                                    Storage.Tag.isSystemTag(entry.tag) ? [] :
+                                        Render.menuItem(Storage.Tag.isSublist(entry.tag) ?
+                                            "🚫 このサブリストを削除" :
+                                            "🚫 このタグを削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                return [2 /*return*/];
+                                            });
+                                        }); }),
+                                    "@overall" === entry.tag ?
+                                        Render.menuItem("🚫 このリストを削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                return [2 /*return*/];
+                                            });
+                                        }); }) :
+                                        [],
                                 ])];
                         case 2:
                             _g = [
@@ -2487,6 +2502,21 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             case 1: return [2 /*return*/, _a.sent()];
                                         }
                                     }); }); }),
+                                    Storage.Tag.isSystemTag(entry.tag) ? [] :
+                                        Render.menuItem(Storage.Tag.isSublist(entry.tag) ?
+                                            "🚫 このサブリストを削除" :
+                                            "🚫 このタグを削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                return [2 /*return*/];
+                                            });
+                                        }); }),
+                                    "@overall" === entry.tag ?
+                                        Render.menuItem("🚫 このリストを削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                return [2 /*return*/];
+                                            });
+                                        }); }) :
+                                        [],
                                 ])];
                         case 2:
                             _g = [
