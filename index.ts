@@ -344,7 +344,7 @@ export module CyclicToDo
             (
                 todo => histories[todo] = History.get(pass, todo)
             );
-            const json =
+            const result =
             {
                 specification,
                 pass,
@@ -352,18 +352,33 @@ export module CyclicToDo
                 tags,
                 histories,
             };
-            return JSON.stringify(json);
+            return JSON.stringify(result);
         };
         export const importJson = (_json: string) =>
         {
         };
+        export module Backup
+        {
+            export const key = `backup`;
+            export const get = () => minamo.localStorage.getOrNull<string[]>(key) ?? [];
+            const set = (backupList: string[]) => minamo.localStorage.set(key, backupList);
+            export const add = (json: string) => set(get().concat([ json ]));
+            export const clear = () => set([]);
+        }
         export module Pass
         {
             export const key = `pass.list`;
             export const get = () => minamo.localStorage.getOrNull<string[]>(key) ?? [];
             export const set = (passList: string[]) => minamo.localStorage.set(key, passList);
             export const add = (pass: string) => set(get().concat([ pass ]).filter(uniqueFilter));
-            export const remove = (pass: string) => set(get().filter(i => pass !== i));
+            export const remove = (pass: string) =>
+            {
+                Backup.add(exportJson(pass));
+                set(get().filter(i => pass !== i));
+                TagMember.get(pass, "@overall").forEach(task => History.remove(pass, task));
+                Tag.get(pass).filter(tag => ! Tag.isSystemTag(tag) && ! Tag.isSublist(tag)).forEach(tag => TagMember.removeKey(pass, tag));
+                Tag.removeKey(pass);
+            };
             export const generate = (seed: number = new Date().getTime()): string =>
             {
                 const result = ("" +((seed *13738217) ^ ((seed %387960371999) >> 5 ))).slice(-8);
@@ -401,6 +416,7 @@ export module CyclicToDo
                 }
                 return false;
             };
+            export const removeKey = (pass: string) => getStorage(pass).remove(makeKey(pass));
         }
         export module TagMember
         {
@@ -1957,6 +1973,11 @@ export module CyclicToDo
                             (
                                 "GitHub",
                                 async () => location.href = "https://github.com/wraith13/cyclic-todo/",
+                            ),
+                            menuItem
+                            (
+                                "🚫 ごみ箱",
+                                async () => { },
                             ),
                         ]),
                     ]

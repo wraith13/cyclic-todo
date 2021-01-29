@@ -1178,24 +1178,38 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 var histories = {};
                 todos
                     .forEach(function (todo) { return histories[todo] = History.get(pass, todo); });
-                var json = {
+                var result = {
                     specification: specification,
                     pass: pass,
                     todos: todos,
                     tags: tags,
                     histories: histories,
                 };
-                return JSON.stringify(json);
+                return JSON.stringify(result);
             };
             Storage.importJson = function (_json) {
             };
+            var Backup;
+            (function (Backup) {
+                Backup.key = "backup";
+                Backup.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Backup.key)) !== null && _a !== void 0 ? _a : []; };
+                var set = function (backupList) { return minamo_js_1.minamo.localStorage.set(Backup.key, backupList); };
+                Backup.add = function (json) { return set(Backup.get().concat([json])); };
+                Backup.clear = function () { return set([]); };
+            })(Backup = Storage.Backup || (Storage.Backup = {}));
             var Pass;
             (function (Pass) {
                 Pass.key = "pass.list";
                 Pass.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Pass.key)) !== null && _a !== void 0 ? _a : []; };
                 Pass.set = function (passList) { return minamo_js_1.minamo.localStorage.set(Pass.key, passList); };
                 Pass.add = function (pass) { return Pass.set(Pass.get().concat([pass]).filter(exports.uniqueFilter)); };
-                Pass.remove = function (pass) { return Pass.set(Pass.get().filter(function (i) { return pass !== i; })); };
+                Pass.remove = function (pass) {
+                    Backup.add(Storage.exportJson(pass));
+                    Pass.set(Pass.get().filter(function (i) { return pass !== i; }));
+                    TagMember.get(pass, "@overall").forEach(function (task) { return History.remove(pass, task); });
+                    Tag.get(pass).filter(function (tag) { return !Tag.isSystemTag(tag) && !Tag.isSublist(tag); }).forEach(function (tag) { return TagMember.removeKey(pass, tag); });
+                    Tag.removeKey(pass);
+                };
                 Pass.generate = function (seed) {
                     if (seed === void 0) { seed = new Date().getTime(); }
                     var result = ("" + ((seed * 13738217) ^ ((seed % 387960371999) >> 5))).slice(-8);
@@ -1230,6 +1244,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                     return false;
                 };
+                Tag.removeKey = function (pass) { return Storage.getStorage(pass).remove(Tag.makeKey(pass)); };
             })(Tag = Storage.Tag || (Storage.Tag = {}));
             var TagMember;
             (function (TagMember) {
@@ -2929,6 +2944,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return [4 /*yield*/, Render.menuButton([
                                     Render.menuItem("GitHub", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         return [2 /*return*/, location.href = "https://github.com/wraith13/cyclic-todo/"];
+                                    }); }); }),
+                                    Render.menuItem("🚫 ごみ箱", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        return [2 /*return*/];
                                     }); }); }),
                                 ])];
                         case 2:
