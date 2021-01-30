@@ -1601,14 +1601,17 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
                     item.elapsed = Math.max(0.0, now - item.previous);
                     if (null !== item.RecentlySmartAverage) {
-                        var short = (item.RecentlySmartAverage - ((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate);
-                        var long = (item.RecentlySmartAverage + ((_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * Domain.standardDeviationRate);
+                        var short = item.RecentlySmartAverage - (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate);
+                        var long = item.RecentlySmartAverage + (((_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * Domain.standardDeviationRate);
                         var shortOneThird = short / 3.0;
                         if (item.elapsed < shortOneThird) {
                             item.progress = item.elapsed / short;
                         }
+                        else if (item.elapsed < long) {
+                            item.progress = (1.0 / 3.0) + (((item.elapsed - shortOneThird) / (long - shortOneThird)) * 2.0 / 3.0);
+                        }
                         else {
-                            item.progress = (item.elapsed - shortOneThird) / (long - shortOneThird);
+                            item.progress = 1.0 + ((item.elapsed - long) / item.RecentlySmartAverage);
                         }
                         //item.progress = item.elapsed /(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
                         //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);

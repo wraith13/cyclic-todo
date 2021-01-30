@@ -838,16 +838,21 @@ export module CyclicToDo
                 item.elapsed = Math.max(0.0, now -item.previous);
                 if (null !== item.RecentlySmartAverage)
                 {
-                    const short = (item.RecentlySmartAverage -(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
-                    const long = (item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
+                    const short = item.RecentlySmartAverage -((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
+                    const long = item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
                     const shortOneThird = short /3.0;
                     if (item.elapsed < shortOneThird)
                     {
                         item.progress = item.elapsed /short;
                     }
                     else
+                    if (item.elapsed < long)
                     {
-                        item.progress = (item.elapsed -shortOneThird) /(long -shortOneThird);
+                        item.progress = (1.0 /3.0) +(((item.elapsed -shortOneThird) /(long -shortOneThird)) *2.0 /3.0);
+                    }
+                    else
+                    {
+                        item.progress = 1.0 +((item.elapsed -long) /item.RecentlySmartAverage);
                     }
                     //item.progress = item.elapsed /(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
                     //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
