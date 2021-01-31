@@ -1167,6 +1167,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Storage.lastUpdate = 0;
             Storage.exportJson = function (pass) {
                 var specification = "https://github.com/wraith13/cyclic-todo/README.md";
+                var timeAccuracy = Domain.TimeAccuracy;
                 var tags = {};
                 [
                     "@overall",
@@ -1180,6 +1181,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     .forEach(function (todo) { return histories[todo] = History.get(pass, todo); });
                 var result = {
                     specification: specification,
+                    timeAccuracy: timeAccuracy,
                     pass: pass,
                     todos: todos,
                     tags: tags,

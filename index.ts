@@ -318,6 +318,15 @@ export module CyclicToDo
         RecentlySmartAverage: null | number;
         count: number;
     }
+    export interface TodoList
+    {
+        specification: "https://github.com/wraith13/cyclic-todo/README.md";
+        timeAccuracy: number;
+        pass: string;
+        todos: string[];
+        tags: { [tag: string]: string[] };
+        histories: { [todo: string]: number[] };
+    }
     export module Storage
     {
         export const sessionPassPrefix = "@Session";
@@ -327,6 +336,7 @@ export module CyclicToDo
         export const exportJson = (pass: string) =>
         {
             const specification = "https://github.com/wraith13/cyclic-todo/README.md";
+            const timeAccuracy = Domain.TimeAccuracy;
             const tags: { [tag: string]: string[] } = { };
             [
                 "@overall",
@@ -344,9 +354,10 @@ export module CyclicToDo
             (
                 todo => histories[todo] = History.get(pass, todo)
             );
-            const result =
+            const result: TodoList =
             {
                 specification,
+                timeAccuracy,
                 pass,
                 todos,
                 tags,
