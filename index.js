@@ -1170,7 +1170,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 var timeAccuracy = Domain.TimeAccuracy;
                 var tags = {};
                 [
-                    "@overall",
+                    //"@overall", todos でカバーされるのでここには含めない
                     "@unoverall",
                     "@deleted",
                 ].concat(Tag.get(pass))
@@ -1189,7 +1189,28 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 };
                 return JSON.stringify(result);
             };
-            Storage.importJson = function (_json) {
+            Storage.importJson = function (json) {
+                try {
+                    var data_1 = JSON.parse(json);
+                    if ("https://github.com/wraith13/cyclic-todo/README.md" === data_1.specification &&
+                        "number" === typeof data_1.timeAccuracy &&
+                        "string" === typeof data_1.pass &&
+                        Array.isArray(data_1.todos) &&
+                        data_1.todos.filter(function (i) { return "string" !== typeof i; }).length <= 0 &&
+                        "object" === typeof data_1.tags &&
+                        "object" === typeof data_1.histories) {
+                        Pass.add(data_1.pass);
+                        TagMember.set(data_1.pass, "@overall", data_1.todos);
+                        Tag.set(data_1.pass, Object.keys(data_1.tags));
+                        Object.keys(data_1.tags).forEach(function (tag) { return TagMember.set(data_1.pass, tag, data_1.tags[tag]); });
+                        Object.keys(data_1.histories).forEach(function (todo) { return History.set(data_1.pass, todo, data_1.histories[todo]); });
+                        return true;
+                    }
+                }
+                catch (_a) {
+                    //  JSON parse error
+                }
+                return false;
             };
             var Backup;
             (function (Backup) {

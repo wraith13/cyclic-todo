@@ -339,7 +339,7 @@ export module CyclicToDo
             const timeAccuracy = Domain.TimeAccuracy;
             const tags: { [tag: string]: string[] } = { };
             [
-                "@overall",
+                //"@overall", todos でカバーされるのでここには含めない
                 "@unoverall",
                 "@deleted",
             ].concat(Tag.get(pass))
@@ -365,8 +365,35 @@ export module CyclicToDo
             };
             return JSON.stringify(result);
         };
-        export const importJson = (_json: string) =>
+        export const importJson = (json: string) =>
         {
+            try
+            {
+                const data = JSON.parse(json) as TodoList;
+                if
+                (
+                    "https://github.com/wraith13/cyclic-todo/README.md" === data.specification &&
+                    "number" === typeof data.timeAccuracy &&
+                    "string" === typeof data.pass &&
+                    Array.isArray(data.todos) &&
+                    data.todos.filter(i => "string" !== typeof i).length <= 0 &&
+                    "object" === typeof data.tags &&
+                    "object" === typeof data.histories
+                )
+                {
+                    Pass.add(data.pass);
+                    TagMember.set(data.pass, "@overall", data.todos);
+                    Tag.set(data.pass, Object.keys(data.tags));
+                    Object.keys(data.tags).forEach(tag => TagMember.set(data.pass, tag, data.tags[tag]));
+                    Object.keys(data.histories).forEach(todo => History.set(data.pass, todo, data.histories[todo]));
+                    return true;
+                }
+            }
+            catch
+            {
+                //  JSON parse error
+            }
+            return false;
         };
         export module Backup
         {
