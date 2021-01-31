@@ -838,7 +838,7 @@ export module CyclicToDo
                 item.elapsed = Math.max(0.0, now -item.previous);
                 if (null !== item.RecentlySmartAverage)
                 {
-                    const short = item.RecentlySmartAverage -((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
+                    const short = Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate));
                     const long = item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
                     const shortOneThird = short /3.0;
                     if (item.elapsed < shortOneThird)
@@ -1987,13 +1987,23 @@ export module CyclicToDo
                         ([
                             menuItem
                             (
-                                "GitHub",
-                                async () => location.href = "https://github.com/wraith13/cyclic-todo/",
+                                locale.parallel("New ToDo List"),
+                                async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", }),
                             ),
                             menuItem
                             (
                                 "🚫 ごみ箱",
                                 async () => { },
+                            ),
+                            menuItem
+                            (
+                                locale.parallel("Import List"),
+                                async () => await showUrl({ hash: "import", }),
+                            ),
+                            menuItem
+                            (
+                                "GitHub",
+                                async () => location.href = "https://github.com/wraith13/cyclic-todo/",
                             ),
                         ]),
                     ]
@@ -2007,30 +2017,23 @@ export module CyclicToDo
                 {
                     tag: "div",
                     className: "button-list",
-                    children: Storage.Pass.get().map
-                    (
-                        pass =>
-                        ({
-                            tag: "button",
-                            className: "default-button main-button long-button",
-                            children: `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
-                            onclick: async () =>　await showUrl({ pass, tag: "@overall", }),
-                        })
-                    ).concat
-                    ([
+                    children: 0 < Storage.Pass.get().length ?
+                        Storage.Pass.get().map
+                        (
+                            pass =>
+                            ({
+                                tag: "button",
+                                className: "default-button main-button long-button",
+                                children: `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
+                                onclick: async () =>　await showUrl({ pass, tag: "@overall", }),
+                            })
+                        ):
                         {
                             tag: "button",
                             className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
                             children: locale.parallel("New ToDo List"),
                             onclick: async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", }),
                         },
-                        {
-                            tag: "button",
-                            className: "main-button long-button",
-                            children:  locale.parallel("Import List"),
-                            onclick: async () => await showUrl({ hash: "import", }),
-                        },
-                    ])
                 },
             ],
         });

@@ -1601,7 +1601,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
                     item.elapsed = Math.max(0.0, now - item.previous);
                     if (null !== item.RecentlySmartAverage) {
-                        var short = item.RecentlySmartAverage - (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate);
+                        var short = Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate));
                         var long = item.RecentlySmartAverage + (((_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * Domain.standardDeviationRate);
                         var shortOneThird = short / 3.0;
                         if (item.elapsed < shortOneThird) {
@@ -2954,11 +2954,23 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 "" + document.title
                             ];
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem("GitHub", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        return [2 /*return*/, location.href = "https://github.com/wraith13/cyclic-todo/"];
+                                    Render.menuItem(locale.parallel("New ToDo List"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: Storage.Pass.generate(), tag: "@overall", })];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
                                     }); }); }),
                                     Render.menuItem("🚫 ごみ箱", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         return [2 /*return*/];
+                                    }); }); }),
+                                    Render.menuItem(locale.parallel("Import List"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ hash: "import", })];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); }),
+                                    Render.menuItem("GitHub", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        return [2 /*return*/, location.href = "https://github.com/wraith13/cyclic-todo/"];
                                     }); }); }),
                                 ])];
                         case 2:
@@ -2978,19 +2990,20 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 {
                                     tag: "div",
                                     className: "button-list",
-                                    children: Storage.Pass.get().map(function (pass) {
-                                        return ({
-                                            tag: "button",
-                                            className: "default-button main-button long-button",
-                                            children: "ToDo \u30EA\u30B9\u30C8 ( pass: " + pass.substr(0, 2) + "****" + pass.substr(-2) + " )",
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, tag: "@overall", })];
-                                                    case 1: return [2 /*return*/, _a.sent()];
-                                                }
-                                            }); }); },
-                                        });
-                                    }).concat([
+                                    children: 0 < Storage.Pass.get().length ?
+                                        Storage.Pass.get().map(function (pass) {
+                                            return ({
+                                                tag: "button",
+                                                className: "default-button main-button long-button",
+                                                children: "ToDo \u30EA\u30B9\u30C8 ( pass: " + pass.substr(0, 2) + "****" + pass.substr(-2) + " )",
+                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, tag: "@overall", })];
+                                                        case 1: return [2 /*return*/, _a.sent()];
+                                                    }
+                                                }); }); },
+                                            });
+                                        }) :
                                         {
                                             tag: "button",
                                             className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
@@ -3002,18 +3015,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 }
                                             }); }); },
                                         },
-                                        {
-                                            tag: "button",
-                                            className: "main-button long-button",
-                                            children: locale.parallel("Import List"),
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, CyclicToDo.showUrl({ hash: "import", })];
-                                                    case 1: return [2 /*return*/, _a.sent()];
-                                                }
-                                            }); }); },
-                                        },
-                                    ])
                                 }
                             ]),
                                 _a)];
