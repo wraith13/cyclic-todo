@@ -1204,13 +1204,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         Tag.set(data_1.pass, Object.keys(data_1.tags));
                         Object.keys(data_1.tags).forEach(function (tag) { return TagMember.set(data_1.pass, tag, data_1.tags[tag]); });
                         Object.keys(data_1.histories).forEach(function (todo) { return History.set(data_1.pass, todo, data_1.histories[todo]); });
-                        return true;
+                        return data_1.pass;
                     }
                 }
                 catch (_a) {
                     //  JSON parse error
                 }
-                return false;
+                return null;
             };
             var Backup;
             (function (Backup) {
@@ -2927,12 +2927,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     children: {
                                         tag: "button",
                                         className: "default-button main-button long-button",
-                                        children: "\uD83D\uDEAB \u30A4\u30F3\u30DD\u30FC\u30C8",
+                                        children: "\u30A4\u30F3\u30DD\u30FC\u30C8",
                                         onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                            var textarea;
+                                            var textarea, pass;
                                             return __generator(this, function (_a) {
                                                 textarea = document.getElementsByClassName("json")[0];
-                                                Storage.importJson(textarea.value);
+                                                pass = Storage.importJson(textarea.value);
+                                                if (null !== pass) {
+                                                    CyclicToDo.showUrl({ pass: pass, tag: "@overall", });
+                                                }
                                                 return [2 /*return*/];
                                             });
                                         }); },

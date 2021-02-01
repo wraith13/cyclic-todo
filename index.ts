@@ -386,14 +386,14 @@ export module CyclicToDo
                     Tag.set(data.pass, Object.keys(data.tags));
                     Object.keys(data.tags).forEach(tag => TagMember.set(data.pass, tag, data.tags[tag]));
                     Object.keys(data.histories).forEach(todo => History.set(data.pass, todo, data.histories[todo]));
-                    return true;
+                    return data.pass;
                 }
             }
             catch
             {
                 //  JSON parse error
             }
-            return false;
+            return null;
         };
         export module Backup
         {
@@ -1993,11 +1993,15 @@ export module CyclicToDo
                     {
                         tag: "button",
                         className: "default-button main-button long-button",
-                        children: `🚫 インポート`,
+                        children: `インポート`,
                         onclick: async () =>
                         {
                             const textarea = document.getElementsByClassName("json")[0] as HTMLTextAreaElement;
-                            Storage.importJson(textarea.value);
+                            const pass = Storage.importJson(textarea.value);
+                            if (null !== pass)
+                            {
+                                showUrl({ pass, tag: "@overall", });
+                            }
                         },
                     },
                 },
