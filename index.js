@@ -2946,6 +2946,125 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
+            Render.removedListItem = function (list) {
+                return ({
+                    tag: "div",
+                    className: "removed-list-item flex-item",
+                    children: [
+                        {
+                            tag: "div",
+                            className: "removed-list-header",
+                            children: "ToDo \u30EA\u30B9\u30C8 ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )",
+                        },
+                        {
+                            tag: "button",
+                            className: "default-button main-button",
+                            children: "復元",
+                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                var pass;
+                                return __generator(this, function (_a) {
+                                    pass = Storage.importJson(JSON.stringify(list));
+                                    if (null !== pass) {
+                                        CyclicToDo.showUrl({ pass: pass, tag: "@overall", });
+                                    }
+                                    return [2 /*return*/];
+                                });
+                            }); }
+                        },
+                    ]
+                });
+            };
+            Render.showRemovedListScreen = function () { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            document.title = applicationTitle;
+                            _a = Render.showWindow;
+                            return [4 /*yield*/, Render.removedListScreen()];
+                        case 1:
+                            _a.apply(void 0, [_b.sent()]);
+                            return [2 /*return*/];
+                    }
+                });
+            }); };
+            Render.removedListScreen = function () { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c, _d, _e, _f, _g, _h;
+                var _this = this;
+                return __generator(this, function (_j) {
+                    switch (_j.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "remove-list-screen screen"
+                            };
+                            _b = Render.heading;
+                            _c = ["h1"];
+                            _d = Render.internalLink;
+                            _e = {
+                                href: {}
+                            };
+                            return [4 /*yield*/, Render.applicationIcon()];
+                        case 1:
+                            _f = [
+                                _d.apply(void 0, [(_e.children = _j.sent(),
+                                        _e)]),
+                                "" + document.title
+                            ];
+                            return [4 /*yield*/, Render.menuButton([
+                                    Render.menuItem("トップ画面に戻る", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({})];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); })
+                                ])];
+                        case 2:
+                            _g = [
+                                _b.apply(void 0, _c.concat([_f.concat([
+                                        _j.sent()
+                                    ])]))
+                            ];
+                            _h = {
+                                tag: "div",
+                                className: "column-flex-list removed-list-list"
+                            };
+                            return [4 /*yield*/, Promise.all(Storage.Backup.get().map(function (json) { return Render.removedListItem(JSON.parse(json)); }))];
+                        case 3: return [2 /*return*/, (_a.children = _g.concat([
+                                (_h.children = _j.sent(),
+                                    _h),
+                                0 < Storage.Backup.get().length ?
+                                    {
+                                        tag: "div",
+                                        className: "button-list",
+                                        children: {
+                                            tag: "button",
+                                            className: "default-button main-button long-button",
+                                            children: "完全に削除",
+                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                return __generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0:
+                                                            Storage.Backup.clear();
+                                                            return [4 /*yield*/, CyclicToDo.reload()];
+                                                        case 1:
+                                                            _a.sent();
+                                                            return [2 /*return*/];
+                                                    }
+                                                });
+                                            }); }
+                                        },
+                                    } :
+                                    {
+                                        tag: "div",
+                                        className: "button-list",
+                                        children: "ごみ箱は空です。",
+                                    }
+                            ]),
+                                _a)];
+                    }
+                });
+            }); };
             Render.applicationIcon = function () { return __awaiter(_this, void 0, void 0, function () {
                 var _a;
                 return __generator(this, function (_b) {
@@ -2986,8 +3105,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             case 1: return [2 /*return*/, _a.sent()];
                                         }
                                     }); }); }),
-                                    Render.menuItem("🚫 ごみ箱", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        return [2 /*return*/];
+                                    Render.menuItem("ごみ箱", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ hash: "removed", })];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
                                     }); }); }),
                                     Render.menuItem(locale.parallel("Import List"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
@@ -3234,26 +3356,31 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return [4 /*yield*/, Render.showTodoScreen(pass, todo)];
                         case 1:
                             _c.sent();
-                            return [3 /*break*/, 8];
+                            return [3 /*break*/, 9];
                         case 2:
-                            if (!(Storage.isSessionPass(pass) && !tag)) return [3 /*break*/, 7];
+                            if (!(Storage.isSessionPass(pass) && !tag)) return [3 /*break*/, 8];
                             _a = hash;
                             switch (_a) {
                                 case "import": return [3 /*break*/, 3];
+                                case "removed": return [3 /*break*/, 4];
                             }
-                            return [3 /*break*/, 4];
+                            return [3 /*break*/, 5];
                         case 3:
                             console.log("show import screen");
                             Render.showImportScreen();
-                            return [3 /*break*/, 6];
+                            return [3 /*break*/, 7];
                         case 4:
+                            console.log("show removed-list screen");
+                            Render.showRemovedListScreen();
+                            return [3 /*break*/, 7];
+                        case 5:
                             console.log("show welcome screen");
                             return [4 /*yield*/, Render.showWelcomeScreen()];
-                        case 5:
+                        case 6:
                             _c.sent();
-                            return [3 /*break*/, 6];
-                        case 6: return [3 /*break*/, 8];
-                        case 7:
+                            return [3 /*break*/, 7];
+                        case 7: return [3 /*break*/, 9];
+                        case 8:
                             //Domain.merge(pass, tag, todo, history);
                             switch (hash) {
                                 case "history":
@@ -3276,8 +3403,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     Render.showListScreen({ tag: tag !== null && tag !== void 0 ? tag : "@overall", pass: pass, todo: Storage.TagMember.get(pass, tag) });
                                     break;
                             }
-                            _c.label = 8;
-                        case 8: return [2 /*return*/];
+                            _c.label = 9;
+                        case 9: return [2 /*return*/];
                     }
                 });
             });

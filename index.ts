@@ -2007,7 +2007,91 @@ export module CyclicToDo
                 },
             ],
         });
-        export const applicationIcon = async () =>
+        export const removedListItem = (list: TodoList) =>
+        ({
+            tag: "div",
+            className: "removed-list-item flex-item",
+            children:
+            [
+                {
+                    tag: "div",
+                    className: "removed-list-header",
+                    children: `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
+                },
+                {
+                    tag: "button",
+                    className: "default-button main-button",
+                    children: "復元",
+                    onclick: async () =>
+                    {
+                        const pass = Storage.importJson(JSON.stringify(list));
+                        if (null !== pass)
+                        {
+                            showUrl({ pass, tag: "@overall", });
+                        }
+                    }
+                },
+            ]
+        });
+        export const showRemovedListScreen = async () =>
+        {
+            document.title = applicationTitle;
+            showWindow(await removedListScreen());
+        };
+        export const removedListScreen = async () =>
+        ({
+            tag: "div",
+            className: "remove-list-screen screen",
+            children:
+            [
+                heading
+                (
+                    "h1",
+                    [
+                        internalLink
+                        ({
+                            href: { },
+                            children: await applicationIcon(),
+                        }),
+                        `${document.title}`,
+                        await menuButton
+                        ([
+                            menuItem
+                            (
+                                "トップ画面に戻る",
+                                async () => await showUrl({ }),
+                            )
+                        ]),
+                    ]
+                ),
+                {
+                    tag: "div",
+                    className: "column-flex-list removed-list-list",
+                    children: await Promise.all(Storage.Backup.get().map(json => removedListItem(JSON.parse(json) as TodoList))),
+                },
+                0 < Storage.Backup.get().length ?
+                {
+                    tag: "div",
+                    className: "button-list",
+                    children:
+                    {
+                        tag: "button",
+                        className: "default-button main-button long-button",
+                        children: "完全に削除",
+                        onclick: async () =>
+                        {
+                            Storage.Backup.clear();
+                            await reload();
+                        }
+                    },
+                }:
+                {
+                    tag: "div",
+                    className: "button-list",
+                    children: "ごみ箱は空です。",
+                }
+        ],
+        });        export const applicationIcon = async () =>
         ({
             tag: "div",
             className: "application-icon icon",
@@ -2034,8 +2118,8 @@ export module CyclicToDo
                             ),
                             menuItem
                             (
-                                "🚫 ごみ箱",
-                                async () => { },
+                                "ごみ箱",
+                                async () => await showUrl({ hash: "removed", }),
                             ),
                             menuItem
                             (
@@ -2279,6 +2363,10 @@ export module CyclicToDo
             case "import":
                 console.log("show import screen");
                 Render.showImportScreen();
+                break;
+            case "removed":
+                console.log("show removed-list screen");
+                Render.showRemovedListScreen();
                 break;
             default:
                 console.log("show welcome screen");
