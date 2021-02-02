@@ -318,7 +318,7 @@ export module CyclicToDo
         RecentlySmartAverage: null | number;
         count: number;
     }
-    export interface TodoList
+    export interface ToDoList
     {
         specification: "https://github.com/wraith13/cyclic-todo/README.md";
         timeAccuracy: number;
@@ -354,7 +354,7 @@ export module CyclicToDo
             (
                 todo => histories[todo] = History.get(pass, todo)
             );
-            const result: TodoList =
+            const result: ToDoList =
             {
                 specification,
                 timeAccuracy,
@@ -369,7 +369,7 @@ export module CyclicToDo
         {
             try
             {
-                const data = JSON.parse(json) as TodoList;
+                const data = JSON.parse(json) as ToDoList;
                 if
                 (
                     "https://github.com/wraith13/cyclic-todo/README.md" === data.specification &&
@@ -401,6 +401,7 @@ export module CyclicToDo
             export const get = () => minamo.localStorage.getOrNull<string[]>(key) ?? [];
             const set = (backupList: string[]) => minamo.localStorage.set(key, backupList);
             export const add = (json: string) => set(get().concat([ json ]));
+            export const remove = (pass: string) => set(get().filter(i => pass !== (JSON.parse(i) as ToDoList).pass));
             export const clear = () => set([]);
         }
         export module Pass
@@ -408,7 +409,11 @@ export module CyclicToDo
             export const key = `pass.list`;
             export const get = () => minamo.localStorage.getOrNull<string[]>(key) ?? [];
             export const set = (passList: string[]) => minamo.localStorage.set(key, passList);
-            export const add = (pass: string) => set(get().concat([ pass ]).filter(uniqueFilter));
+            export const add = (pass: string) =>
+            {
+                set(get().concat([ pass ]).filter(uniqueFilter));
+                Backup.remove(pass);
+            };
             export const remove = (pass: string) =>
             {
                 Backup.add(exportJson(pass));
@@ -1511,9 +1516,11 @@ export module CyclicToDo
                             "@overall" === entry.tag ?
                                 menuItem
                                 (
-                                    "🚫 このリストを削除",
+                                    "このリストを削除",
                                     async () =>
                                     {
+                                        Storage.Pass.remove(entry.pass);
+                                        await showUrl({ });
                                     }
                                 ):
                                 [],
@@ -1739,9 +1746,11 @@ export module CyclicToDo
                             "@overall" === entry.tag ?
                                 menuItem
                                 (
-                                    "🚫 このリストを削除",
+                                    "このリストを削除",
                                     async () =>
                                     {
+                                        Storage.Pass.remove(entry.pass);
+                                        await showUrl({ });
                                     }
                                 ):
                                 [],
@@ -2007,7 +2016,7 @@ export module CyclicToDo
                 },
             ],
         });
-        export const removedListItem = (list: TodoList) =>
+        export const removedListItem = (list: ToDoList) =>
         ({
             tag: "div",
             className: "removed-list-item flex-item",
@@ -2067,7 +2076,7 @@ export module CyclicToDo
                 {
                     tag: "div",
                     className: "column-flex-list removed-list-list",
-                    children: await Promise.all(Storage.Backup.get().map(json => removedListItem(JSON.parse(json) as TodoList))),
+                    children: await Promise.all(Storage.Backup.get().map(json => removedListItem(JSON.parse(json) as ToDoList))),
                 },
                 0 < Storage.Backup.get().length ?
                 {

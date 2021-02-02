@@ -1218,6 +1218,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 Backup.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Backup.key)) !== null && _a !== void 0 ? _a : []; };
                 var set = function (backupList) { return minamo_js_1.minamo.localStorage.set(Backup.key, backupList); };
                 Backup.add = function (json) { return set(Backup.get().concat([json])); };
+                Backup.remove = function (pass) { return set(Backup.get().filter(function (i) { return pass !== JSON.parse(i).pass; })); };
                 Backup.clear = function () { return set([]); };
             })(Backup = Storage.Backup || (Storage.Backup = {}));
             var Pass;
@@ -1225,7 +1226,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 Pass.key = "pass.list";
                 Pass.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Pass.key)) !== null && _a !== void 0 ? _a : []; };
                 Pass.set = function (passList) { return minamo_js_1.minamo.localStorage.set(Pass.key, passList); };
-                Pass.add = function (pass) { return Pass.set(Pass.get().concat([pass]).filter(exports.uniqueFilter)); };
+                Pass.add = function (pass) {
+                    Pass.set(Pass.get().concat([pass]).filter(exports.uniqueFilter));
+                    Backup.remove(pass);
+                };
                 Pass.remove = function (pass) {
                     Backup.add(Storage.exportJson(pass));
                     Pass.set(Pass.get().filter(function (i) { return pass !== i; }));
@@ -2293,9 +2297,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             });
                                         }); }),
                                     "@overall" === entry.tag ?
-                                        Render.menuItem("🚫 このリストを削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        Render.menuItem("このリストを削除", function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
-                                                return [2 /*return*/];
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        Storage.Pass.remove(entry.pass);
+                                                        return [4 /*yield*/, CyclicToDo.showUrl({})];
+                                                    case 1:
+                                                        _a.sent();
+                                                        return [2 /*return*/];
+                                                }
                                             });
                                         }); }) :
                                         [],
@@ -2561,9 +2572,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             });
                                         }); }),
                                     "@overall" === entry.tag ?
-                                        Render.menuItem("🚫 このリストを削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        Render.menuItem("このリストを削除", function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
-                                                return [2 /*return*/];
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        Storage.Pass.remove(entry.pass);
+                                                        return [4 /*yield*/, CyclicToDo.showUrl({})];
+                                                    case 1:
+                                                        _a.sent();
+                                                        return [2 /*return*/];
+                                                }
                                             });
                                         }); }) :
                                         [],
