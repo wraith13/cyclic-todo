@@ -1234,7 +1234,7 @@ export module CyclicToDo
                         internalLink
                         ({
                             className: "task-title",
-                            href: { pass: entry.pass, todo: item.task },
+                            href: { pass: entry.pass, todo: item.task, },
                             children: item.task
                         }),
                         {
@@ -1513,17 +1513,17 @@ export module CyclicToDo
                                     {
                                     }
                                 ),
-                            "@overall" === entry.tag ?
-                                menuItem
-                                (
-                                    "このリストを削除",
-                                    async () =>
-                                    {
-                                        Storage.Pass.remove(entry.pass);
-                                        await showUrl({ });
-                                    }
-                                ):
-                                [],
+                            // "@overall" === entry.tag ?
+                            //     menuItem
+                            //     (
+                            //         "このリストを削除",
+                            //         async () =>
+                            //         {
+                            //             Storage.Pass.remove(entry.pass);
+                            //             await showUrl({ });
+                            //         }
+                            //     ):
+                            //     [],
                         ]),
                     ]
                 ),
@@ -1743,17 +1743,17 @@ export module CyclicToDo
                                     {
                                     }
                                 ),
-                            "@overall" === entry.tag ?
-                                menuItem
-                                (
-                                    "このリストを削除",
-                                    async () =>
-                                    {
-                                        Storage.Pass.remove(entry.pass);
-                                        await showUrl({ });
-                                    }
-                                ):
-                                [],
+                            // "@overall" === entry.tag ?
+                            //     menuItem
+                            //     (
+                            //         "このリストを削除",
+                            //         async () =>
+                            //         {
+                            //             Storage.Pass.remove(entry.pass);
+                            //             await showUrl({ });
+                            //         }
+                            //     ):
+                            //     [],
                         ]),
                     ]
                 ),
@@ -2016,29 +2016,44 @@ export module CyclicToDo
                 },
             ],
         });
-        export const removedListItem = (list: ToDoList) =>
+        export const removedListItem = async (list: ToDoList) =>
         ({
             tag: "div",
-            className: "removed-list-item flex-item",
+            className: "list-item flex-item",
             children:
             [
                 {
                     tag: "div",
-                    className: "removed-list-header",
-                    children: `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
-                },
-                {
-                    tag: "button",
-                    className: "default-button main-button",
-                    children: "復元",
-                    onclick: async () =>
-                    {
-                        const pass = Storage.importJson(JSON.stringify(list));
-                        if (null !== pass)
+                    className: "list-header",
+                    children:
+                    [
+                        internalLink
+                        ({
+                            className: "list-title",
+                            href: { pass: list.pass, tag: "@overall", },
+                            children: `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`
+                        }),
                         {
-                            showUrl({ pass, tag: "@overall", });
+                            tag: "div",
+                            className: "list-operator",
+                            children:
+                            [
+                                {
+                                    tag: "button",
+                                    className: "default-button main-button",
+                                    children: "復元",
+                                    onclick: async () =>
+                                    {
+                                        const pass = Storage.importJson(JSON.stringify(list));
+                                        if (null !== pass)
+                                        {
+                                            showUrl({ pass, tag: "@overall", });
+                                        }
+                                    }
+                                },
+                            ]
                         }
-                    }
+                    ]
                 },
             ]
         });
@@ -2106,6 +2121,60 @@ export module CyclicToDo
             className: "application-icon icon",
             children: await loadSvgOrCache("./cyclictodohex.1024.svg"),
         });
+        export const listItem = async (list: ToDoList) =>
+        ({
+            tag: "div",
+            className: "list-item flex-item",
+            children:
+            [
+                {
+                    tag: "div",
+                    className: "list-header",
+                    children:
+                    [
+                        internalLink
+                        ({
+                            className: "list-title",
+                            href: { pass: list.pass, tag: "@overall", },
+                            children: `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`
+                        }),
+                        {
+                            tag: "div",
+                            className: "list-operator",
+                            children:
+                            [
+                                {
+                                    tag: "button",
+                                    className: "default-button main-button",
+                                    children: "開く",
+                                    onclick: async () =>
+                                    {
+                                        showUrl({ pass: list.pass, tag: "@overall", });
+                                    }
+                                },
+                                await menuButton
+                                ([
+                                    menuItem
+                                    (
+                                        "エクスポート",
+                                        async () => await showUrl({ pass: list.pass, hash: "export", })
+                                    ),
+                                    menuItem
+                                    (
+                                        "削除",
+                                        async () =>
+                                        {
+                                            Storage.Pass.remove(list.pass);
+                                            await showUrl({ });
+                                        }
+                                    )
+                                ]),
+                            ]
+                        }
+                    ]
+                },
+            ]
+        });
         export const welcomeScreen = async () =>
         ({
             tag: "div",
@@ -2151,24 +2220,19 @@ export module CyclicToDo
                 await applicationIcon(),
                 {
                     tag: "div",
+                    className: "column-flex-list list-list",
+                    children: await Promise.all(Storage.Pass.get().map(pass => listItem(JSON.parse(Storage.exportJson(pass)) as ToDoList))),
+                },
+                {
+                    tag: "div",
                     className: "button-list",
-                    children: 0 < Storage.Pass.get().length ?
-                        Storage.Pass.get().map
-                        (
-                            pass =>
-                            ({
-                                tag: "button",
-                                className: "default-button main-button long-button",
-                                children: `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
-                                onclick: async () =>　await showUrl({ pass, tag: "@overall", }),
-                            })
-                        ):
-                        {
-                            tag: "button",
-                            className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
-                            children: locale.parallel("New ToDo List"),
-                            onclick: async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", }),
-                        },
+                    children:
+                    {
+                        tag: "button",
+                        className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
+                        children: locale.parallel("New ToDo List"),
+                        onclick: async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", }),
+                    },
                 },
             ],
         });

@@ -422,17 +422,27 @@ button.default-button:hover {
   min-width: calc(100% / 12);
   max-width: calc(100% / 12);
 }
+.list-item,
 .task-item {
   padding: 0.5rem;
 }
+.list-item .list-header,
+.task-item .list-header,
+.list-item .task-header,
 .task-item .task-header {
   position: relative;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 0.5rem;
 }
+.list-item .list-header .list-title,
+.task-item .list-header .list-title,
+.list-item .task-header .list-title,
+.task-item .task-header .list-title,
+.list-item .list-header .task-title,
+.task-item .list-header .task-title,
+.list-item .task-header .task-title,
 .task-item .task-header .task-title {
   display: inline-block;
   font-size: 1.2rem;
@@ -446,13 +456,34 @@ button.default-button:hover {
   margin-right: -120px;
   cursor: pointer;
 }
+.list-item .list-header .list-title:hover,
+.task-item .list-header .list-title:hover,
+.list-item .task-header .list-title:hover,
+.task-item .task-header .list-title:hover,
+.list-item .list-header .task-title:hover,
+.task-item .list-header .task-title:hover,
+.list-item .task-header .task-title:hover,
 .task-item .task-header .task-title:hover {
   color: #21788B;
 }
+.list-item .list-header .list-title:not(:hover),
+.task-item .list-header .list-title:not(:hover),
+.list-item .task-header .list-title:not(:hover),
+.task-item .task-header .list-title:not(:hover),
+.list-item .list-header .task-title:not(:hover),
+.task-item .list-header .task-title:not(:hover),
+.list-item .task-header .task-title:not(:hover),
 .task-item .task-header .task-title:not(:hover) {
   color: #000022;
   text-decoration: none;
 }
+.list-item .list-header .list-operator,
+.task-item .list-header .list-operator,
+.list-item .task-header .list-operator,
+.task-item .task-header .list-operator,
+.list-item .list-header .task-operator,
+.task-item .list-header .task-operator,
+.list-item .task-header .task-operator,
 .task-item .task-header .task-operator {
   position: relative;
   display: inline-flex;
@@ -460,12 +491,29 @@ button.default-button:hover {
   align-items: center;
   white-space: nowrap;
 }
+.list-item .list-header .list-operator button,
+.task-item .list-header .list-operator button,
+.list-item .task-header .list-operator button,
+.task-item .task-header .list-operator button,
+.list-item .list-header .task-operator button,
+.task-item .list-header .task-operator button,
+.list-item .task-header .task-operator button,
 .task-item .task-header .task-operator button {
   display: inline-block;
   margin: 0px;
 }
+.list-item .list-header .list-operator button + button,
+.task-item .list-header .list-operator button + button,
+.list-item .task-header .list-operator button + button,
+.task-item .task-header .list-operator button + button,
+.list-item .list-header .task-operator button + button,
+.task-item .list-header .task-operator button + button,
+.list-item .task-header .task-operator button + button,
 .task-item .task-header .task-operator button + button {
   margin-left: 4px;
+}
+.task-item .task-header {
+  padding-bottom: 0.5rem;
 }
 .task-item .task-tags {
   width: 100%;
@@ -522,6 +570,7 @@ button.default-button:hover {
   float: right;
 }
 @media (prefers-color-scheme: dark) {
+  .list-item .list-header .list-title:not(:hover),
   .task-item .task-header .task-title:not(:hover) {
     color: #FFFFFF;
   }

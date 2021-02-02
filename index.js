@@ -2003,7 +2003,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             };
                             _c = [Render.internalLink({
                                     className: "task-title",
-                                    href: { pass: entry.pass, todo: item.task },
+                                    href: { pass: entry.pass, todo: item.task, },
                                     children: item.task
                                 })];
                             _d = {
@@ -2296,20 +2296,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 return [2 /*return*/];
                                             });
                                         }); }),
-                                    "@overall" === entry.tag ?
-                                        Render.menuItem("このリストを削除", function () { return __awaiter(_this, void 0, void 0, function () {
-                                            return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0:
-                                                        Storage.Pass.remove(entry.pass);
-                                                        return [4 /*yield*/, CyclicToDo.showUrl({})];
-                                                    case 1:
-                                                        _a.sent();
-                                                        return [2 /*return*/];
-                                                }
-                                            });
-                                        }); }) :
-                                        [],
                                 ])];
                         case 2:
                             _g = [
@@ -2571,20 +2557,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 return [2 /*return*/];
                                             });
                                         }); }),
-                                    "@overall" === entry.tag ?
-                                        Render.menuItem("このリストを削除", function () { return __awaiter(_this, void 0, void 0, function () {
-                                            return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0:
-                                                        Storage.Pass.remove(entry.pass);
-                                                        return [4 /*yield*/, CyclicToDo.showUrl({})];
-                                                    case 1:
-                                                        _a.sent();
-                                                        return [2 /*return*/];
-                                                }
-                                            });
-                                        }); }) :
-                                        [],
                                 ])];
                         case 2:
                             _g = [
@@ -2964,34 +2936,49 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
-            Render.removedListItem = function (list) {
-                return ({
-                    tag: "div",
-                    className: "removed-list-item flex-item",
-                    children: [
-                        {
+            Render.removedListItem = function (list) { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, ({
                             tag: "div",
-                            className: "removed-list-header",
-                            children: "ToDo \u30EA\u30B9\u30C8 ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )",
-                        },
-                        {
-                            tag: "button",
-                            className: "default-button main-button",
-                            children: "復元",
-                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                var pass;
-                                return __generator(this, function (_a) {
-                                    pass = Storage.importJson(JSON.stringify(list));
-                                    if (null !== pass) {
-                                        CyclicToDo.showUrl({ pass: pass, tag: "@overall", });
-                                    }
-                                    return [2 /*return*/];
-                                });
-                            }); }
-                        },
-                    ]
+                            className: "list-item flex-item",
+                            children: [
+                                {
+                                    tag: "div",
+                                    className: "list-header",
+                                    children: [
+                                        Render.internalLink({
+                                            className: "list-title",
+                                            href: { pass: list.pass, tag: "@overall", },
+                                            children: "ToDo \u30EA\u30B9\u30C8 ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )"
+                                        }),
+                                        {
+                                            tag: "div",
+                                            className: "list-operator",
+                                            children: [
+                                                {
+                                                    tag: "button",
+                                                    className: "default-button main-button",
+                                                    children: "復元",
+                                                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        var pass;
+                                                        return __generator(this, function (_a) {
+                                                            pass = Storage.importJson(JSON.stringify(list));
+                                                            if (null !== pass) {
+                                                                CyclicToDo.showUrl({ pass: pass, tag: "@overall", });
+                                                            }
+                                                            return [2 /*return*/];
+                                                        });
+                                                    }); }
+                                                },
+                                            ]
+                                        }
+                                    ]
+                                },
+                            ]
+                        })];
                 });
-            };
+            }); };
             Render.showRemovedListScreen = function () { return __awaiter(_this, void 0, void 0, function () {
                 var _a;
                 return __generator(this, function (_b) {
@@ -3098,11 +3085,78 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
-            Render.welcomeScreen = function () { return __awaiter(_this, void 0, void 0, function () {
+            Render.listItem = function (list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e;
                 var _this = this;
                 return __generator(this, function (_f) {
                     switch (_f.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "list-item flex-item"
+                            };
+                            _b = {
+                                tag: "div",
+                                className: "list-header"
+                            };
+                            _c = [Render.internalLink({
+                                    className: "list-title",
+                                    href: { pass: list.pass, tag: "@overall", },
+                                    children: "ToDo \u30EA\u30B9\u30C8 ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )"
+                                })];
+                            _d = {
+                                tag: "div",
+                                className: "list-operator"
+                            };
+                            _e = [{
+                                    tag: "button",
+                                    className: "default-button main-button",
+                                    children: "開く",
+                                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            CyclicToDo.showUrl({ pass: list.pass, tag: "@overall", });
+                                            return [2 /*return*/];
+                                        });
+                                    }); }
+                                }];
+                            return [4 /*yield*/, Render.menuButton([
+                                    Render.menuItem("エクスポート", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: list.pass, hash: "export", })];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); }),
+                                    Render.menuItem("削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0:
+                                                    Storage.Pass.remove(list.pass);
+                                                    return [4 /*yield*/, CyclicToDo.showUrl({})];
+                                                case 1:
+                                                    _a.sent();
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); })
+                                ])];
+                        case 1: return [2 /*return*/, (_a.children = [
+                                (_b.children = _c.concat([
+                                    (_d.children = _e.concat([
+                                        _f.sent()
+                                    ]),
+                                        _d)
+                                ]),
+                                    _b)
+                            ],
+                                _a)];
+                    }
+                });
+            }); };
+            Render.welcomeScreen = function () { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c, _d, _e, _f;
+                var _this = this;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             _a = {
                                 tag: "div",
@@ -3113,7 +3167,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
                             _d = [
-                                _f.sent(),
+                                _g.sent(),
                                 "" + document.title
                             ];
                             return [4 /*yield*/, Render.menuButton([
@@ -3142,7 +3196,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         case 2:
                             _e = [
                                 _b.apply(void 0, _c.concat([_d.concat([
-                                        _f.sent()
+                                        _g.sent()
                                     ])])),
                                 {
                                     tag: "div",
@@ -3151,36 +3205,32 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 }
                             ];
                             return [4 /*yield*/, Render.applicationIcon()];
-                        case 3: return [2 /*return*/, (_a.children = _e.concat([
-                                _f.sent(),
+                        case 3:
+                            _e = _e.concat([
+                                _g.sent()
+                            ]);
+                            _f = {
+                                tag: "div",
+                                className: "column-flex-list list-list"
+                            };
+                            return [4 /*yield*/, Promise.all(Storage.Pass.get().map(function (pass) { return Render.listItem(JSON.parse(Storage.exportJson(pass))); }))];
+                        case 4: return [2 /*return*/, (_a.children = _e.concat([
+                                (_f.children = _g.sent(),
+                                    _f),
                                 {
                                     tag: "div",
                                     className: "button-list",
-                                    children: 0 < Storage.Pass.get().length ?
-                                        Storage.Pass.get().map(function (pass) {
-                                            return ({
-                                                tag: "button",
-                                                className: "default-button main-button long-button",
-                                                children: "ToDo \u30EA\u30B9\u30C8 ( pass: " + pass.substr(0, 2) + "****" + pass.substr(-2) + " )",
-                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, tag: "@overall", })];
-                                                        case 1: return [2 /*return*/, _a.sent()];
-                                                    }
-                                                }); }); },
-                                            });
-                                        }) :
-                                        {
-                                            tag: "button",
-                                            className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
-                                            children: locale.parallel("New ToDo List"),
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: Storage.Pass.generate(), tag: "@overall", })];
-                                                    case 1: return [2 /*return*/, _a.sent()];
-                                                }
-                                            }); }); },
-                                        },
+                                    children: {
+                                        tag: "button",
+                                        className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
+                                        children: locale.parallel("New ToDo List"),
+                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: Storage.Pass.generate(), tag: "@overall", })];
+                                                case 1: return [2 /*return*/, _a.sent()];
+                                            }
+                                        }); }); },
+                                    },
                                 }
                             ]),
                                 _a)];
