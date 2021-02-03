@@ -1055,7 +1055,7 @@ export module CyclicToDo
         export const information = (item: ToDoEntry) =>
         ({
             tag: "div",
-            className: "task-information",
+            className: "item-information",
             attributes:
             {
                 style: progressStyle(item),
@@ -1228,18 +1228,18 @@ export module CyclicToDo
             [
                 {
                     tag: "div",
-                    className: "task-header",
+                    className: "item-header",
                     children:
                     [
                         internalLink
                         ({
-                            className: "task-title",
+                            className: "item-title",
                             href: { pass: entry.pass, todo: item.task, },
                             children: item.task
                         }),
                         {
                             tag: "div",
-                            className: "task-operator",
+                            className: "item-operator",
                             children:
                             [
                                 {
@@ -1290,7 +1290,7 @@ export module CyclicToDo
                 },
                 {
                     tag: "div",
-                    className: "task-tags",
+                    className: "item-tags",
                     children: Storage.Tag.getByTodo(entry.pass, item.task).map
                     (
                         tag => internalLink
@@ -1312,7 +1312,7 @@ export module CyclicToDo
             [
                 internalLink
                 ({
-                    className: "history-title",
+                    className: "item-title",
                     href: { pass: entry.pass, todo: item.task, },
                     children: item.task
                 }),
@@ -1609,9 +1609,9 @@ export module CyclicToDo
                         (dom, index) =>
                         {
                             const item = list[index];
-                            const button = dom.getElementsByClassName("task-operator")[0].getElementsByClassName("main-button")[0] as HTMLButtonElement;
+                            const button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0] as HTMLButtonElement;
                             button.classList.toggle("default-button", item.isDefault);
-                            const information = dom.getElementsByClassName("task-information")[0] as HTMLDivElement;
+                            const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
                             information.setAttribute("style", Render.progressStyle(item));
                             (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeStringFromTick(item.elapsed);
                         }
@@ -1825,7 +1825,7 @@ export module CyclicToDo
                     [
                         {
                             tag: "div",
-                            className: "task-tags",
+                            className: "item-tags",
                             children: Storage.Tag.getByTodo(pass, item.task).map
                             (
                                 tag => internalLink
@@ -1877,7 +1877,7 @@ export module CyclicToDo
                     const dom = document
                         .getElementsByClassName("todo-screen")[0]
                         .getElementsByClassName("task-item")[0] as HTMLDivElement;
-                    const information = dom.getElementsByClassName("task-information")[0] as HTMLDivElement;
+                    const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
                     information.setAttribute("style", Render.progressStyle(item));
                     (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeStringFromTick(item.elapsed);
                 }
@@ -2024,18 +2024,18 @@ export module CyclicToDo
             [
                 {
                     tag: "div",
-                    className: "list-header",
+                    className: "item-header",
                     children:
                     [
                         internalLink
                         ({
-                            className: "list-title",
+                            className: "item-title",
                             href: { pass: list.pass, tag: "@overall", },
                             children: `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`
                         }),
                         {
                             tag: "div",
-                            className: "list-operator",
+                            className: "item-operator",
                             children:
                             [
                                 {
@@ -2129,18 +2129,18 @@ export module CyclicToDo
             [
                 {
                     tag: "div",
-                    className: "list-header",
+                    className: "item-header",
                     children:
                     [
                         internalLink
                         ({
-                            className: "list-title",
+                            className: "item-title",
                             href: { pass: list.pass, tag: "@overall", },
                             children: `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`
                         }),
                         {
                             tag: "div",
-                            className: "list-operator",
+                            className: "item-operator",
                             children:
                             [
                                 {

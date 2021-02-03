@@ -536,8 +536,7 @@ button.default-button
     //width: 480px;
     //max-width: 100vw;
 
-    .list-header,
-    .task-header
+    .item-header
     {
         position: relative;
         display: flex;
@@ -545,8 +544,7 @@ button.default-button
         justify-content: space-between;
         align-items: center;
     
-        .list-title,
-        .task-title
+        .item-title
         {
             display: inline-block;
             font-size: 1.2rem;
@@ -569,8 +567,7 @@ button.default-button
                 text-decoration: none;
             }
         }
-        .list-operator,
-        .task-operator
+        .item-operator
         {
             position: relative;
             display: inline-flex;
@@ -591,11 +588,11 @@ button.default-button
 }
 .task-item
 {
-    .task-header
+    .item-header
     {
         padding-bottom: 0.5rem;
     }
-    .task-tags
+    .item-tags
     {
         width: 100%;
         overflow: hidden;
@@ -627,7 +624,7 @@ button.default-button
             margin-left: 1rem;
         }
     }
-    .task-information
+    .item-information
     {
         padding: 0.5rem;
         margin: -0.5rem;
@@ -660,17 +657,17 @@ button.default-button
 }
 @media (prefers-color-scheme: dark)
 {
-    .list-item .list-header .list-title:not(:hover),
-    .task-item .task-header .task-title:not(:hover)
+    .list-item .item-header .item-title:not(:hover),
+    .task-item .item-header .item-title:not(:hover)
     {
         color: @dark-main-color;
     }
 }
-body.locale-parallel-on .task-item .task-header .task-title
+body.locale-parallel-on .task-item .item-header .item-title
 {
     max-width: calc(100% - 180px);
 }
-body.locale-parallel-off .task-item .task-header .task-title
+body.locale-parallel-off .task-item .item-header .item-title
 {
     max-width: calc(100% - 120px);
 }
@@ -691,7 +688,7 @@ body.locale-parallel-off .task-item .task-header .task-title
             justify-content: space-between;
             flex-direction: row;
         }
-        .history-title
+        .item-title
         {
             font-size: 1.2rem;
             line-height: 1.0em;
@@ -722,7 +719,7 @@ body.locale-parallel-off .task-item .task-header .task-title
 }
 @media (prefers-color-scheme: dark)
 {
-    .history-list .history-item .history-title:not(:hover)
+    .history-list .history-item .item-title:not(:hover)
     {
         color: @dark-main-color;
     }

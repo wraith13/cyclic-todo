@@ -1820,7 +1820,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Render.information = function (item) {
                 return ({
                     tag: "div",
-                    className: "task-information",
+                    className: "item-information",
                     attributes: {
                         style: Render.progressStyle(item),
                     },
@@ -1999,16 +1999,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             };
                             _b = {
                                 tag: "div",
-                                className: "task-header"
+                                className: "item-header"
                             };
                             _c = [Render.internalLink({
-                                    className: "task-title",
+                                    className: "item-title",
                                     href: { pass: entry.pass, todo: item.task, },
                                     children: item.task
                                 })];
                             _d = {
                                 tag: "div",
-                                className: "task-operator"
+                                className: "item-operator"
                             };
                             _e = [{
                                     tag: "button",
@@ -2062,7 +2062,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     _b),
                                 {
                                     tag: "div",
-                                    className: "task-tags",
+                                    className: "item-tags",
                                     children: Storage.Tag.getByTodo(entry.pass, item.task).map(function (tag) { return Render.internalLink({
                                         className: "tag",
                                         href: { pass: entry.pass, tag: tag, },
@@ -2082,7 +2082,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             className: "history-item flex-item ",
                             children: [
                                 Render.internalLink({
-                                    className: "history-title",
+                                    className: "item-title",
                                     href: { pass: entry.pass, todo: item.task, },
                                     children: item.task
                                 }),
@@ -2399,9 +2399,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 .getElementsByClassName("list-screen")[0]
                                                 .getElementsByClassName("todo-list")[0].childNodes).forEach(function (dom, index) {
                                                 var item = list[index];
-                                                var button = dom.getElementsByClassName("task-operator")[0].getElementsByClassName("main-button")[0];
+                                                var button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0];
                                                 button.classList.toggle("default-button", item.isDefault);
-                                                var information = dom.getElementsByClassName("task-information")[0];
+                                                var information = dom.getElementsByClassName("item-information")[0];
                                                 information.setAttribute("style", Render.progressStyle(item));
                                                 information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeStringFromTick(item.elapsed);
                                             });
@@ -2664,7 +2664,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     children: [
                                         {
                                             tag: "div",
-                                            className: "task-tags",
+                                            className: "item-tags",
                                             children: Storage.Tag.getByTodo(pass, item.task).map(function (tag) { return Render.internalLink({
                                                 className: "tag",
                                                 href: { pass: pass, tag: tag, },
@@ -2731,7 +2731,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             dom = document
                                                 .getElementsByClassName("todo-screen")[0]
                                                 .getElementsByClassName("task-item")[0];
-                                            information_1 = dom.getElementsByClassName("task-information")[0];
+                                            information_1 = dom.getElementsByClassName("item-information")[0];
                                             information_1.setAttribute("style", Render.progressStyle(item));
                                             information_1.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeStringFromTick(item.elapsed);
                                             return [3 /*break*/, 3];
@@ -2945,16 +2945,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             children: [
                                 {
                                     tag: "div",
-                                    className: "list-header",
+                                    className: "item-header",
                                     children: [
                                         Render.internalLink({
-                                            className: "list-title",
+                                            className: "item-title",
                                             href: { pass: list.pass, tag: "@overall", },
                                             children: "ToDo \u30EA\u30B9\u30C8 ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )"
                                         }),
                                         {
                                             tag: "div",
-                                            className: "list-operator",
+                                            className: "item-operator",
                                             children: [
                                                 {
                                                     tag: "button",
@@ -3097,16 +3097,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             };
                             _b = {
                                 tag: "div",
-                                className: "list-header"
+                                className: "item-header"
                             };
                             _c = [Render.internalLink({
-                                    className: "list-title",
+                                    className: "item-title",
                                     href: { pass: list.pass, tag: "@overall", },
                                     children: "ToDo \u30EA\u30B9\u30C8 ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )"
                                 })];
                             _d = {
                                 tag: "div",
-                                className: "list-operator"
+                                className: "item-operator"
                             };
                             _e = [{
                                     tag: "button",
