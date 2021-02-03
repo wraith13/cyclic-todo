@@ -21,5 +21,7 @@
     "Restore": "復元",
     "History": "履歴",
     "Back to List": "リストに戻る",
-    "Add/Remove Tag": "タグの追加/削除"
+    "Add/Remove Tag": "タグの追加/削除",
+    "Export": "エクスポート",
+    "Import": "インポート"
 }

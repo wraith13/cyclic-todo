@@ -1500,15 +1500,13 @@ export module CyclicToDo
                             ],
                             menuItem
                             (
-                                "エクスポート",
+                                locale.parallel("Export"),
                                 async () => await showUrl({ pass: entry.pass, hash: "export", })
                             ),
                             Storage.Tag.isSystemTag(entry.tag) ? []:
                                 menuItem
                                 (
-                                    Storage.Tag.isSublist(entry.tag) ?
-                                        "🚫 このサブリストを削除":
-                                        "🚫 このタグを削除",
+                                    locale.parallel("Delete"),
                                     async () =>
                                     {
                                     }
@@ -1516,7 +1514,7 @@ export module CyclicToDo
                             // "@overall" === entry.tag ?
                             //     menuItem
                             //     (
-                            //         "このリストを削除",
+                            //         locale.parallel("Delete"),
                             //         async () =>
                             //         {
                             //             Storage.Pass.remove(entry.pass);
@@ -1730,15 +1728,13 @@ export module CyclicToDo
                             ],
                             menuItem
                             (
-                                "エクスポート",
+                                locale.parallel("Export"),
                                 async () => await showUrl({ pass: entry.pass, hash: "export", })
                             ),
                             Storage.Tag.isSystemTag(entry.tag) ? []:
                                 menuItem
                                 (
-                                    Storage.Tag.isSublist(entry.tag) ?
-                                        "🚫 このサブリストを削除":
-                                        "🚫 このタグを削除",
+                                    locale.parallel("Delete"),
                                     async () =>
                                     {
                                     }
@@ -1746,7 +1742,7 @@ export module CyclicToDo
                             // "@overall" === entry.tag ?
                             //     menuItem
                             //     (
-                            //         "このリストを削除",
+                            //         locale.parallel("Delete"),
                             //         async () =>
                             //         {
                             //             Storage.Pass.remove(entry.pass);
@@ -1812,7 +1808,7 @@ export module CyclicToDo
                             },
                             menuItem
                             (
-                                "エクスポート",
+                                locale.parallel("Export"),
                                 async () => await showUrl({ pass, hash: "export", })
                             ),
                         ]),
@@ -2002,7 +1998,7 @@ export module CyclicToDo
                     {
                         tag: "button",
                         className: "default-button main-button long-button",
-                        children: `インポート`,
+                        children: locale.parallel("Import"),
                         onclick: async () =>
                         {
                             const textarea = document.getElementsByClassName("json")[0] as HTMLTextAreaElement;
@@ -2156,12 +2152,12 @@ export module CyclicToDo
                                 ([
                                     menuItem
                                     (
-                                        "エクスポート",
+                                        locale.parallel("Export"),
                                         async () => await showUrl({ pass: list.pass, hash: "export", })
                                     ),
                                     menuItem
                                     (
-                                        "削除",
+                                        locale.parallel("Delete"),
                                         async () =>
                                         {
                                             Storage.Pass.remove(list.pass);

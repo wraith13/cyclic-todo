@@ -876,7 +876,9 @@ define("lang.en", [], {
     "Restore": "Restore",
     "History": "History",
     "Back to List": "Back to List",
-    "Add/Remove Tag": "Add/Remove Tag"
+    "Add/Remove Tag": "Add/Remove Tag",
+    "Export": "Export",
+    "Import": "Import"
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -901,7 +903,9 @@ define("lang.ja", [], {
     "Restore": "復元",
     "History": "履歴",
     "Back to List": "リストに戻る",
-    "Add/Remove Tag": "タグの追加/削除"
+    "Add/Remove Tag": "タグの追加/削除",
+    "Export": "エクスポート",
+    "Import": "インポート"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -2282,16 +2286,14 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 children: "🚫 リストをシェア",
                                             }
                                         ],
-                                    Render.menuItem("エクスポート", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    Render.menuItem(locale.parallel("Export"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, hash: "export", })];
                                             case 1: return [2 /*return*/, _a.sent()];
                                         }
                                     }); }); }),
                                     Storage.Tag.isSystemTag(entry.tag) ? [] :
-                                        Render.menuItem(Storage.Tag.isSublist(entry.tag) ?
-                                            "🚫 このサブリストを削除" :
-                                            "🚫 このタグを削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        Render.menuItem(locale.parallel("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
                                                 return [2 /*return*/];
                                             });
@@ -2543,16 +2545,14 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 children: "🚫 リストをシェア",
                                             }
                                         ],
-                                    Render.menuItem("エクスポート", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    Render.menuItem(locale.parallel("Export"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, hash: "export", })];
                                             case 1: return [2 /*return*/, _a.sent()];
                                         }
                                     }); }); }),
                                     Storage.Tag.isSystemTag(entry.tag) ? [] :
-                                        Render.menuItem(Storage.Tag.isSublist(entry.tag) ?
-                                            "🚫 このサブリストを削除" :
-                                            "🚫 このタグを削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        Render.menuItem(locale.parallel("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
                                                 return [2 /*return*/];
                                             });
@@ -2646,7 +2646,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         tag: "button",
                                         children: "🚫 ToDo をシェア",
                                     },
-                                    Render.menuItem("エクスポート", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    Render.menuItem(locale.parallel("Export"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, hash: "export", })];
                                             case 1: return [2 /*return*/, _a.sent()];
@@ -2917,7 +2917,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     children: {
                                         tag: "button",
                                         className: "default-button main-button long-button",
-                                        children: "\u30A4\u30F3\u30DD\u30FC\u30C8",
+                                        children: locale.parallel("Import"),
                                         onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                             var textarea, pass;
                                             return __generator(this, function (_a) {
@@ -3120,13 +3120,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     }); }
                                 }];
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem("エクスポート", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    Render.menuItem(locale.parallel("Export"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: list.pass, hash: "export", })];
                                             case 1: return [2 /*return*/, _a.sent()];
                                         }
                                     }); }); }),
-                                    Render.menuItem("削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                    Render.menuItem(locale.parallel("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0:

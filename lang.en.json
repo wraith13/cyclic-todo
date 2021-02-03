@@ -21,5 +21,7 @@
     "Restore": "Restore",
     "History": "History",
     "Back to List": "Back to List",
-    "Add/Remove Tag": "Add/Remove Tag"
+    "Add/Remove Tag": "Add/Remove Tag",
+    "Export": "Export",
+    "Import": "Import"
 }
