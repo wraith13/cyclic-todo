@@ -878,7 +878,8 @@ define("lang.en", [], {
     "Back to List": "Back to List",
     "Add/Remove Tag": "Add/Remove Tag",
     "Export": "Export",
-    "Import": "Import"
+    "Import": "Import",
+    "Recycle Bin is empty.": "Recycle Bin is empty."
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -905,7 +906,8 @@ define("lang.ja", [], {
     "Back to List": "リストに戻る",
     "Add/Remove Tag": "タグの追加/削除",
     "Export": "エクスポート",
-    "Import": "インポート"
+    "Import": "インポート",
+    "Recycle Bin is empty.": "ごみ箱は空です。"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -2399,7 +2401,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         {
                                             tag: "div",
                                             className: "button-list",
-                                            children: "ごみ箱は空です。",
+                                            children: locale.parallel("Recycle Bin is empty."),
                                         }
                             ]),
                                 _a)];
@@ -3011,7 +3013,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            document.title = applicationTitle;
+                            document.title = locale.map("@deleted") + " " + document.title;
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.removedListScreen()];
                         case 1:
@@ -3090,7 +3092,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     {
                                         tag: "div",
                                         className: "button-list",
-                                        children: "ごみ箱は空です。",
+                                        children: locale.parallel("Recycle Bin is empty."),
                                     }
                             ]),
                                 _a)];
@@ -3204,7 +3206,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             case 1: return [2 /*return*/, _a.sent()];
                                         }
                                     }); }); }),
-                                    Render.menuItem("ごみ箱", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    Render.menuItem(locale.parallel("@deleted"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, CyclicToDo.showUrl({ hash: "removed", })];
                                             case 1: return [2 /*return*/, _a.sent()];

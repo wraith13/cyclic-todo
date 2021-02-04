@@ -528,6 +528,35 @@ button.default-button
     min-width: calc(100% / 12);
     max-width: calc(100% / 12);
 }
+.item-title
+{
+    display: inline-block;
+    font-size: 1.2rem;
+    line-height: 1.0em;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 1em;
+    margin-right: -120px;
+    cursor: pointer;
+    &:hover
+    {
+        color: @active-color;
+    }
+    &:not(:hover)
+    {
+        color: @main-color;
+        text-decoration: none;
+    }
+}
+@media (prefers-color-scheme: dark)
+{
+    .item-title:not(:hover)
+    {
+        color: @dark-main-color;
+    }
+}
 .list-item,
 .task-item
 {
@@ -546,26 +575,7 @@ button.default-button
     
         .item-title
         {
-            display: inline-block;
-            font-size: 1.2rem;
-            line-height: 1.0em;
-            box-sizing: border-box;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            height: 1em;
             max-width: calc(100% - 180px);
-            margin-right: -120px;
-            cursor: pointer;
-            &:hover
-            {
-                color: @active-color;
-            }
-            &:not(:hover)
-            {
-                color: @main-color;
-                text-decoration: none;
-            }
         }
         .item-operator
         {
@@ -655,14 +665,6 @@ button.default-button
         }
     }
 }
-@media (prefers-color-scheme: dark)
-{
-    .list-item .item-header .item-title:not(:hover),
-    .task-item .item-header .item-title:not(:hover)
-    {
-        color: @dark-main-color;
-    }
-}
 body.locale-parallel-on .task-item .item-header .item-title
 {
     max-width: calc(100% - 180px);
@@ -687,28 +689,6 @@ body.locale-parallel-off .task-item .item-header .item-title
             align-items: center;
             justify-content: space-between;
             flex-direction: row;
-        }
-        .item-title
-        {
-            font-size: 1.2rem;
-            line-height: 1.0em;
-            box-sizing: border-box;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            height: 1em;
-            //max-width: calc(100% - 180px);
-            margin-right: -120px;
-            cursor: pointer;
-            &:hover
-            {
-                color: @active-color;
-            }
-            &:not(:hover)
-            {
-                color: @main-color;
-                text-decoration: none;
-            }
         }
         .value
         {

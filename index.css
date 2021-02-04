@@ -422,6 +422,30 @@ button.default-button:hover {
   min-width: calc(100% / 12);
   max-width: calc(100% / 12);
 }
+.item-title {
+  display: inline-block;
+  font-size: 1.2rem;
+  line-height: 1em;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 1em;
+  margin-right: -120px;
+  cursor: pointer;
+}
+.item-title:hover {
+  color: #21788B;
+}
+.item-title:not(:hover) {
+  color: #000022;
+  text-decoration: none;
+}
+@media (prefers-color-scheme: dark) {
+  .item-title:not(:hover) {
+    color: #FFFFFF;
+  }
+}
 .list-item,
 .task-item {
   padding: 0.5rem;
@@ -436,26 +460,7 @@ button.default-button:hover {
 }
 .list-item .item-header .item-title,
 .task-item .item-header .item-title {
-  display: inline-block;
-  font-size: 1.2rem;
-  line-height: 1em;
-  box-sizing: border-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  height: 1em;
   max-width: calc(100% - 180px);
-  margin-right: -120px;
-  cursor: pointer;
-}
-.list-item .item-header .item-title:hover,
-.task-item .item-header .item-title:hover {
-  color: #21788B;
-}
-.list-item .item-header .item-title:not(:hover),
-.task-item .item-header .item-title:not(:hover) {
-  color: #000022;
-  text-decoration: none;
 }
 .list-item .item-header .item-operator,
 .task-item .item-header .item-operator {
@@ -531,12 +536,6 @@ button.default-button:hover {
   opacity: 0.4;
   float: right;
 }
-@media (prefers-color-scheme: dark) {
-  .list-item .item-header .item-title:not(:hover),
-  .task-item .item-header .item-title:not(:hover) {
-    color: #FFFFFF;
-  }
-}
 body.locale-parallel-on .task-item .item-header .item-title {
   max-width: calc(100% - 180px);
 }
@@ -555,24 +554,6 @@ body.locale-parallel-off .task-item .item-header .item-title {
   align-items: center;
   justify-content: space-between;
   flex-direction: row;
-}
-.history-list .history-item .item-title {
-  font-size: 1.2rem;
-  line-height: 1em;
-  box-sizing: border-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  height: 1em;
-  margin-right: -120px;
-  cursor: pointer;
-}
-.history-list .history-item .item-title:hover {
-  color: #21788B;
-}
-.history-list .history-item .item-title:not(:hover) {
-  color: #000022;
-  text-decoration: none;
 }
 .history-list .history-item .value {
   float: right;

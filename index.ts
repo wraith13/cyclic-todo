@@ -1616,7 +1616,7 @@ export module CyclicToDo
                         {
                             tag: "div",
                             className: "button-list",
-                            children: "ごみ箱は空です。",
+                            children: locale.parallel("Recycle Bin is empty."),
                         }
             ]
         });
@@ -2095,7 +2095,7 @@ export module CyclicToDo
         });
         export const showRemovedListScreen = async () =>
         {
-            document.title = applicationTitle;
+            document.title = `${locale.map("@deleted")} ${document.title}`;
             showWindow(await removedListScreen());
         };
         export const removedListScreen = async () =>
@@ -2148,10 +2148,11 @@ export module CyclicToDo
                 {
                     tag: "div",
                     className: "button-list",
-                    children: "ごみ箱は空です。",
+                    children: locale.parallel("Recycle Bin is empty."),
                 }
         ],
-        });        export const applicationIcon = async () =>
+        });
+        export const applicationIcon = async () =>
         ({
             tag: "div",
             className: "application-icon icon",
@@ -2232,7 +2233,7 @@ export module CyclicToDo
                             ),
                             menuItem
                             (
-                                "ごみ箱",
+                                locale.parallel("@deleted"),
                                 async () => await showUrl({ hash: "removed", }),
                             ),
                             menuItem
