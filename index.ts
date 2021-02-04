@@ -622,10 +622,10 @@ export module CyclicToDo
                 date.setMinutes(0);
                 date.setSeconds(0);
                 date.setMilliseconds(0);
-                return `${date.getFullYear()}-${("0" +(date.getMonth() +1)).substr(-2)}-${("0" +date.getDate()).substr(-2)} ${timeStringFromTick(tick -getTicks(date))}`;
+                return `${date.getFullYear()}-${("0" +(date.getMonth() +1)).substr(-2)}-${("0" +date.getDate()).substr(-2)} ${timeCoreStringFromTick(tick -getTicks(date))}`;
             }
         };
-        export const timeStringFromTick = (tick: null | number) =>
+        export const timeCoreStringFromTick = (tick: null | number) =>
         {
             if (null === tick)
             {
@@ -634,22 +634,58 @@ export module CyclicToDo
             else
             if (tick < 0)
             {
-                return `-${timeStringFromTick(-tick)}`;
+                return `-${timeCoreStringFromTick(-tick)}`;
+            }
+            else
+            {
+                const time = Math.floor(tick) % (24 *60);
+                const hour = Math.floor(time /60);
+                const minute = time % 60;
+                return `${("00" +hour).slice(-2)}:${("00" +minute).slice(-2)}`;
+            }
+        };
+        export const timeShortStringFromTick = (tick: null | number) =>
+        {
+            if (null === tick)
+            {
+                return "N/A";
+            }
+            else
+            if (tick < 0)
+            {
+                return `-${timeShortStringFromTick(-tick)}`;
             }
             else
             {
                 const days = Math.floor(tick / (24 *60));
-                const time = Math.floor(tick) % (24 *60);
-                const hour = Math.floor(time /60);
-                const minute = time % 60;
-                const timePart = `${("00" +hour).slice(-2)}:${("00" +minute).slice(-2)}`;
                 return 10 <= days ?
                     `${days.toLocaleString()} ${locale.map("days")}`:
                     0 < days ?
-                        `${days.toLocaleString()} ${locale.map("days")} ${timePart}`:
-                        timePart;
+                        `${days.toLocaleString()} ${locale.map("days")} ${timeCoreStringFromTick(tick)}`:
+                        timeCoreStringFromTick(tick);
             }
         };
+        export const timeLongStringFromTick = (tick: null | number) =>
+        {
+            if (null === tick)
+            {
+                return "N/A";
+            }
+            else
+            if (tick < 0)
+            {
+                return `-${timeLongStringFromTick(-tick)}`;
+            }
+            else
+            {
+                const days = Math.floor(tick / (24 *60));
+                return 0 < days ?
+                    `${days.toLocaleString()} ${locale.map("days")} ${timeCoreStringFromTick(tick)}`:
+                    timeCoreStringFromTick(tick);
+            }
+        };
+        export const timeRangeStringFromTick = (a: null | number, b: null | number) =>
+            `${Domain.timeShortStringFromTick(a)} 〜 ${Domain.timeShortStringFromTick(b)}`;
         export const tagMap = (tag: string) =>
         {
             switch(tag)
@@ -1098,8 +1134,12 @@ export module CyclicToDo
                             tag: "span",
                             className: "value monospace",
                             children: null === item.RecentlyStandardDeviation ?
-                                Domain.timeStringFromTick(item.RecentlySmartAverage):
-                                `${Domain.timeStringFromTick(Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)))} 〜 ${Domain.timeStringFromTick(item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate))}`,
+                                Domain.timeLongStringFromTick(item.RecentlySmartAverage):
+                                Domain.timeRangeStringFromTick
+                                (
+                                    Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
+                                    item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
+                                ),
                         }
                     ],
                 },
@@ -1112,7 +1152,7 @@ export module CyclicToDo
                         {
                             tag: "span",
                             className: "value monospace",
-                            children: Domain.timeStringFromTick(item.elapsed),
+                            children: Domain.timeLongStringFromTick(item.elapsed),
                         }
                     ],
                 },
@@ -1351,7 +1391,7 @@ export module CyclicToDo
                         {
                             tag: "span",
                             className: "value monospace",
-                            children: Domain.timeStringFromTick(interval),
+                            children: Domain.timeLongStringFromTick(interval),
                         }
                     ],
                 },
@@ -1611,7 +1651,7 @@ export module CyclicToDo
                             button.classList.toggle("default-button", item.isDefault);
                             const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
                             information.setAttribute("style", Render.progressStyle(item));
-                            (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeStringFromTick(item.elapsed);
+                            (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
                         }
                     );
                 }
@@ -1875,7 +1915,7 @@ export module CyclicToDo
                         .getElementsByClassName("task-item")[0] as HTMLDivElement;
                     const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
                     information.setAttribute("style", Render.progressStyle(item));
-                    (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeStringFromTick(item.elapsed);
+                    (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
                 }
                 else
                 {

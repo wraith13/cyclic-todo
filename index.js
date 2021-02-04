@@ -1422,28 +1422,55 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     date.setMinutes(0);
                     date.setSeconds(0);
                     date.setMilliseconds(0);
-                    return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).substr(-2) + "-" + ("0" + date.getDate()).substr(-2) + " " + Domain.timeStringFromTick(tick - Domain.getTicks(date));
+                    return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).substr(-2) + "-" + ("0" + date.getDate()).substr(-2) + " " + Domain.timeCoreStringFromTick(tick - Domain.getTicks(date));
                 }
             };
-            Domain.timeStringFromTick = function (tick) {
+            Domain.timeCoreStringFromTick = function (tick) {
                 if (null === tick) {
                     return "N/A";
                 }
                 else if (tick < 0) {
-                    return "-" + Domain.timeStringFromTick(-tick);
+                    return "-" + Domain.timeCoreStringFromTick(-tick);
                 }
                 else {
-                    var days = Math.floor(tick / (24 * 60));
                     var time = Math.floor(tick) % (24 * 60);
                     var hour = Math.floor(time / 60);
                     var minute = time % 60;
-                    var timePart = ("00" + hour).slice(-2) + ":" + ("00" + minute).slice(-2);
+                    return ("00" + hour).slice(-2) + ":" + ("00" + minute).slice(-2);
+                }
+            };
+            Domain.timeShortStringFromTick = function (tick) {
+                if (null === tick) {
+                    return "N/A";
+                }
+                else if (tick < 0) {
+                    return "-" + Domain.timeShortStringFromTick(-tick);
+                }
+                else {
+                    var days = Math.floor(tick / (24 * 60));
                     return 10 <= days ?
                         days.toLocaleString() + " " + locale.map("days") :
                         0 < days ?
-                            days.toLocaleString() + " " + locale.map("days") + " " + timePart :
-                            timePart;
+                            days.toLocaleString() + " " + locale.map("days") + " " + Domain.timeCoreStringFromTick(tick) :
+                            Domain.timeCoreStringFromTick(tick);
                 }
+            };
+            Domain.timeLongStringFromTick = function (tick) {
+                if (null === tick) {
+                    return "N/A";
+                }
+                else if (tick < 0) {
+                    return "-" + Domain.timeLongStringFromTick(-tick);
+                }
+                else {
+                    var days = Math.floor(tick / (24 * 60));
+                    return 0 < days ?
+                        days.toLocaleString() + " " + locale.map("days") + " " + Domain.timeCoreStringFromTick(tick) :
+                        Domain.timeCoreStringFromTick(tick);
+                }
+            };
+            Domain.timeRangeStringFromTick = function (a, b) {
+                return Domain.timeShortStringFromTick(a) + " \u301C " + Domain.timeShortStringFromTick(b);
             };
             Domain.tagMap = function (tag) {
                 switch (tag) {
@@ -1863,8 +1890,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     tag: "span",
                                     className: "value monospace",
                                     children: null === item.RecentlyStandardDeviation ?
-                                        Domain.timeStringFromTick(item.RecentlySmartAverage) :
-                                        Domain.timeStringFromTick(Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (item.RecentlyStandardDeviation * Domain.standardDeviationRate))) + " \u301C " + Domain.timeStringFromTick(item.RecentlySmartAverage + (item.RecentlyStandardDeviation * Domain.standardDeviationRate)),
+                                        Domain.timeLongStringFromTick(item.RecentlySmartAverage) :
+                                        Domain.timeRangeStringFromTick(Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (item.RecentlyStandardDeviation * Domain.standardDeviationRate)), item.RecentlySmartAverage + (item.RecentlyStandardDeviation * Domain.standardDeviationRate)),
                                 }
                             ],
                         },
@@ -1876,7 +1903,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 {
                                     tag: "span",
                                     className: "value monospace",
-                                    children: Domain.timeStringFromTick(item.elapsed),
+                                    children: Domain.timeLongStringFromTick(item.elapsed),
                                 }
                             ],
                         },
@@ -2125,7 +2152,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         {
                                             tag: "span",
                                             className: "value monospace",
-                                            children: Domain.timeStringFromTick(interval),
+                                            children: Domain.timeLongStringFromTick(interval),
                                         }
                                     ],
                                 },
@@ -2405,7 +2432,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 button.classList.toggle("default-button", item.isDefault);
                                                 var information = dom.getElementsByClassName("item-information")[0];
                                                 information.setAttribute("style", Render.progressStyle(item));
-                                                information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeStringFromTick(item.elapsed);
+                                                information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
                                             });
                                             return [3 /*break*/, 3];
                                         case 1: return [4 /*yield*/, CyclicToDo.reload()];
@@ -2733,7 +2760,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 .getElementsByClassName("task-item")[0];
                                             information_1 = dom.getElementsByClassName("item-information")[0];
                                             information_1.setAttribute("style", Render.progressStyle(item));
-                                            information_1.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeStringFromTick(item.elapsed);
+                                            information_1.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
                                             return [3 /*break*/, 3];
                                         case 1: return [4 /*yield*/, CyclicToDo.reload()];
                                         case 2:
