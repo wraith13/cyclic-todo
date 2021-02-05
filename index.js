@@ -879,7 +879,8 @@ define("lang.en", [], {
     "Add/Remove Tag": "Add/Remove Tag",
     "Export": "Export",
     "Import": "Import",
-    "Recycle Bin is empty.": "Recycle Bin is empty."
+    "Recycle Bin is empty.": "Recycle Bin is empty.",
+    "Back to Home": "Back to Home"
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -907,7 +908,8 @@ define("lang.ja", [], {
     "Add/Remove Tag": "タグの追加/削除",
     "Export": "エクスポート",
     "Import": "インポート",
-    "Recycle Bin is empty.": "ごみ箱は空です。"
+    "Recycle Bin is empty.": "ごみ箱は空です。",
+    "Back to Home": "ホーム画面に戻る"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -2924,7 +2926,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 "" + document.title
                             ];
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem("トップ画面に戻る", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    Render.menuItem(locale.parallel("Back to Home"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, CyclicToDo.showUrl({})];
                                             case 1: return [2 /*return*/, _a.sent()];
@@ -3046,7 +3048,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 "" + document.title
                             ];
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem("トップ画面に戻る", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    Render.menuItem(locale.parallel("Back to Home"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, CyclicToDo.showUrl({})];
                                             case 1: return [2 /*return*/, _a.sent()];
@@ -3240,7 +3242,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             ]);
                             _f = {
                                 tag: "div",
-                                className: "column-flex-list list-list"
+                                className: "row-flex-list list-list"
                             };
                             return [4 /*yield*/, Promise.all(Storage.Pass.get().map(function (pass) { return Render.listItem(JSON.parse(Storage.exportJson(pass))); }))];
                         case 4: return [2 /*return*/, (_a.children = _e.concat([
@@ -3332,6 +3334,24 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         var columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         var row = Math.max(Math.ceil(length / columns), Math.min(length, Math.floor(height / itemHeight)));
                         list.style.height = row * (itemHeight) + "px";
+                        list.classList.add("max-column-" + columns);
+                    }
+                    var itemWidth = list.childNodes[0].offsetWidth;
+                    if (itemWidth < minItemWidth) {
+                        minItemWidth = itemWidth;
+                    }
+                });
+                Array.from(document.getElementsByClassName("row-flex-list")).forEach(function (list) {
+                    var length = list.childNodes.length;
+                    list.classList.forEach(function (i) {
+                        if (/^max-column-\d+$/.test(i)) {
+                            list.classList.remove(i);
+                        }
+                    });
+                    if (length <= 1 || maxColumns <= 1) {
+                    }
+                    else {
+                        var columns = Math.min(maxColumns, Math.max(1, length));
                         list.classList.add("max-column-" + columns);
                     }
                     var itemWidth = list.childNodes[0].offsetWidth;

@@ -2020,7 +2020,7 @@ export module CyclicToDo
                         ([
                             menuItem
                             (
-                                "トップ画面に戻る",
+                                locale.parallel("Back to Home"),
                                 async () => await showUrl({ }),
                             )
                         ]),
@@ -2118,7 +2118,7 @@ export module CyclicToDo
                         ([
                             menuItem
                             (
-                                "トップ画面に戻る",
+                                locale.parallel("Back to Home"),
                                 async () => await showUrl({ }),
                             )
                         ]),
@@ -2257,7 +2257,7 @@ export module CyclicToDo
                 await applicationIcon(),
                 {
                     tag: "div",
-                    className: "column-flex-list list-list",
+                    className: "row-flex-list list-list",
                     children: await Promise.all(Storage.Pass.get().map(pass => listItem(JSON.parse(Storage.exportJson(pass)) as ToDoList))),
                 },
                 {
@@ -2343,6 +2343,36 @@ export module CyclicToDo
                         const columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         const row = Math.max(Math.ceil(length /columns), Math.min(length, Math.floor(height / itemHeight)));
                         list.style.height = `${row *(itemHeight)}px`;
+                        list.classList.add(`max-column-${columns}`);
+                    }
+                    const itemWidth = (list.childNodes[0] as HTMLElement).offsetWidth;
+                    if (itemWidth < minItemWidth)
+                    {
+                        minItemWidth = itemWidth;
+                    }
+                }
+            );
+            (Array.from(document.getElementsByClassName("row-flex-list")) as HTMLDivElement[]).forEach
+            (
+                list =>
+                {
+                    const length = list.childNodes.length;
+                    list.classList.forEach
+                    (
+                        i =>
+                        {
+                            if (/^max-column-\d+$/.test(i))
+                            {
+                                list.classList.remove(i);
+                            }
+                        }
+                    );
+                    if (length <= 1 || maxColumns <= 1)
+                    {
+                    }
+                    else
+                    {
+                        const columns = Math.min(maxColumns, Math.max(1, length));
                         list.classList.add(`max-column-${columns}`);
                     }
                     const itemWidth = (list.childNodes[0] as HTMLElement).offsetWidth;
