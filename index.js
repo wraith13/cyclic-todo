@@ -3251,17 +3251,41 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 {
                                     tag: "div",
                                     className: "button-list",
-                                    children: {
-                                        tag: "button",
-                                        className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
-                                        children: locale.parallel("New ToDo List"),
-                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: Storage.Pass.generate(), tag: "@overall", })];
-                                                case 1: return [2 /*return*/, _a.sent()];
-                                            }
-                                        }); }); },
-                                    },
+                                    children: [
+                                        {
+                                            tag: "button",
+                                            className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
+                                            children: locale.parallel("New ToDo List"),
+                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: Storage.Pass.generate(), tag: "@overall", })];
+                                                    case 1: return [2 /*return*/, _a.sent()];
+                                                }
+                                            }); }); },
+                                        },
+                                        {
+                                            tag: "button",
+                                            className: "main-button long-button",
+                                            children: locale.parallel("Import"),
+                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0: return [4 /*yield*/, CyclicToDo.showUrl({ hash: "import", })];
+                                                    case 1: return [2 /*return*/, _a.sent()];
+                                                }
+                                            }); }); },
+                                        },
+                                        {
+                                            tag: "button",
+                                            className: "main-button long-button",
+                                            children: locale.parallel("@deleted"),
+                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0: return [4 /*yield*/, CyclicToDo.showUrl({ hash: "removed", })];
+                                                    case 1: return [2 /*return*/, _a.sent()];
+                                                }
+                                            }); }); },
+                                        },
+                                    ]
                                 }
                             ]),
                                 _a)];
@@ -3348,12 +3372,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             list.classList.remove(i);
                         }
                     });
-                    if (length <= 1 || maxColumns <= 1) {
-                    }
-                    else {
-                        var columns = Math.min(maxColumns, Math.max(1, length));
-                        list.classList.add("max-column-" + columns);
-                    }
+                    var columns = Math.min(maxColumns, Math.max(1, length));
+                    list.classList.add("max-column-" + columns);
                     var itemWidth = list.childNodes[0].offsetWidth;
                     if (itemWidth < minItemWidth) {
                         minItemWidth = itemWidth;

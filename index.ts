@@ -2264,12 +2264,26 @@ export module CyclicToDo
                     tag: "div",
                     className: "button-list",
                     children:
-                    {
-                        tag: "button",
-                        className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
-                        children: locale.parallel("New ToDo List"),
-                        onclick: async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", }),
-                    },
+                    [
+                        {
+                            tag: "button",
+                            className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
+                            children: locale.parallel("New ToDo List"),
+                            onclick: async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", }),
+                        },
+                        {
+                            tag: "button",
+                            className: "main-button long-button",
+                            children: locale.parallel("Import"),
+                            onclick: async () => await showUrl({ hash: "import", }),
+                        },
+                        {
+                            tag: "button",
+                            className: "main-button long-button",
+                            children: locale.parallel("@deleted"),
+                            onclick: async () => await showUrl({ hash: "removed", }),
+                        },
+                    ]
                 },
             ],
         });
@@ -2367,14 +2381,8 @@ export module CyclicToDo
                             }
                         }
                     );
-                    if (length <= 1 || maxColumns <= 1)
-                    {
-                    }
-                    else
-                    {
-                        const columns = Math.min(maxColumns, Math.max(1, length));
-                        list.classList.add(`max-column-${columns}`);
-                    }
+                    const columns = Math.min(maxColumns, Math.max(1, length));
+                    list.classList.add(`max-column-${columns}`);
                     const itemWidth = (list.childNodes[0] as HTMLElement).offsetWidth;
                     if (itemWidth < minItemWidth)
                     {
