@@ -3341,7 +3341,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Render.resizeFlexList = function () {
                 var minColumns = 1 + Math.floor(window.innerWidth / 780);
                 var maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 450)));
-                var minItemWidth = window.innerWidth;
+                var FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
+                var border = FontRemUnit * 26 + 10;
                 Array.from(document.getElementsByClassName("column-flex-list")).forEach(function (list) {
                     var length = list.childNodes.length;
                     list.classList.forEach(function (i) {
@@ -3360,10 +3361,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         list.style.height = row * (itemHeight) + "px";
                         list.classList.add("max-column-" + columns);
                     }
-                    var itemWidth = list.childNodes[0].offsetWidth;
-                    if (itemWidth < minItemWidth) {
-                        minItemWidth = itemWidth;
-                    }
+                    var itemWidth = Math.min(window.innerWidth, list.childNodes[0].offsetWidth);
+                    list.classList.toggle("locale-parallel-on", border < itemWidth);
+                    list.classList.toggle("locale-parallel-off", itemWidth <= border);
                 });
                 Array.from(document.getElementsByClassName("row-flex-list")).forEach(function (list) {
                     var length = list.childNodes.length;
@@ -3374,16 +3374,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     });
                     var columns = Math.min(maxColumns, Math.max(1, length));
                     list.classList.add("max-column-" + columns);
-                    var itemWidth = list.childNodes[0].offsetWidth;
-                    if (itemWidth < minItemWidth) {
-                        minItemWidth = itemWidth;
-                    }
+                    var itemWidth = Math.min(window.innerWidth, list.childNodes[0].offsetWidth);
+                    list.classList.toggle("locale-parallel-on", border < itemWidth);
+                    list.classList.toggle("locale-parallel-off", itemWidth <= border);
                 });
-                var FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
-                var border = FontRemUnit * 26;
-                minItemWidth -= 18; // padding & borer
-                document.body.classList.toggle("locale-parallel-on", border < minItemWidth);
-                document.body.classList.toggle("locale-parallel-off", minItemWidth <= border);
             };
             var onWindowResizeTimestamp = 0;
             Render.onWindowResize = function () {

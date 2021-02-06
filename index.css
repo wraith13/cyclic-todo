@@ -11,12 +11,6 @@ body {
   margin-bottom: 5rem;
   line-height: 100%;
 }
-body.locale-parallel-on .locale-map {
-  display: none;
-}
-body.locale-parallel-off .locale-parallel {
-  display: none;
-}
 body,
 input,
 textarea {
@@ -303,6 +297,14 @@ button.default-button:hover {
   align-items: stretch;
   justify-content: stretch;
 }
+.row-flex-list.locale-parallel-on .locale-map,
+.column-flex-list.locale-parallel-on .locale-map {
+  display: none;
+}
+.row-flex-list.locale-parallel-off .locale-parallel,
+.column-flex-list.locale-parallel-off .locale-parallel {
+  display: none;
+}
 .row-flex-list {
   flex-direction: row;
 }
@@ -536,10 +538,10 @@ button.default-button:hover {
   opacity: 0.4;
   float: right;
 }
-body.locale-parallel-on .task-item .item-header .item-title {
+.locale-parallel-on .task-item .item-header .item-title {
   max-width: calc(100% - 180px);
 }
-body.locale-parallel-off .task-item .item-header .item-title {
+.locale-parallel-off .task-item .item-header .item-title {
   max-width: calc(100% - 120px);
 }
 .history-list .history-item {

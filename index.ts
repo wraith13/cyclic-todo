@@ -2328,9 +2328,10 @@ export module CyclicToDo
         };
         export const resizeFlexList = () =>
         {
-            let minColumns = 1 +Math.floor(window.innerWidth / 780);
-            let maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 450)));
-            let minItemWidth = window.innerWidth;
+            const minColumns = 1 +Math.floor(window.innerWidth / 780);
+            const maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 450)));
+            const FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
+            const border = FontRemUnit *26 +10;
             (Array.from(document.getElementsByClassName("column-flex-list")) as HTMLDivElement[]).forEach
             (
                 list =>
@@ -2359,11 +2360,9 @@ export module CyclicToDo
                         list.style.height = `${row *(itemHeight)}px`;
                         list.classList.add(`max-column-${columns}`);
                     }
-                    const itemWidth = (list.childNodes[0] as HTMLElement).offsetWidth;
-                    if (itemWidth < minItemWidth)
-                    {
-                        minItemWidth = itemWidth;
-                    }
+                    const itemWidth = Math.min(window.innerWidth, (list.childNodes[0] as HTMLElement).offsetWidth);
+                    list.classList.toggle("locale-parallel-on", border < itemWidth);
+                    list.classList.toggle("locale-parallel-off", itemWidth <= border);
                 }
             );
             (Array.from(document.getElementsByClassName("row-flex-list")) as HTMLDivElement[]).forEach
@@ -2383,18 +2382,11 @@ export module CyclicToDo
                     );
                     const columns = Math.min(maxColumns, Math.max(1, length));
                     list.classList.add(`max-column-${columns}`);
-                    const itemWidth = (list.childNodes[0] as HTMLElement).offsetWidth;
-                    if (itemWidth < minItemWidth)
-                    {
-                        minItemWidth = itemWidth;
-                    }
+                    const itemWidth = Math.min(window.innerWidth, (list.childNodes[0] as HTMLElement).offsetWidth);
+                    list.classList.toggle("locale-parallel-on", border < itemWidth);
+                    list.classList.toggle("locale-parallel-off", itemWidth <= border);
                 }
             );
-            const FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
-            const border = FontRemUnit *26;
-            minItemWidth -= 18; // padding & borer
-            document.body.classList.toggle("locale-parallel-on", border < minItemWidth);
-            document.body.classList.toggle("locale-parallel-off", minItemWidth <= border);
         };
         let onWindowResizeTimestamp = 0;
         export const onWindowResize = () =>

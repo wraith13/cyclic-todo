@@ -21,20 +21,6 @@ body
     margin: 0px;
     margin-bottom: 5rem; // for iOS Safari
     line-height: 100%;
-    &.locale-parallel-on
-    {
-        .locale-map
-        {
-            display: none;
-        }
-    }
-    &.locale-parallel-off
-    {
-        .locale-parallel
-        {
-            display: none;
-        }
-    }
 }
 body, input, textarea
 {
@@ -403,6 +389,20 @@ button.default-button
     flex-wrap: wrap;
     align-items: stretch;
     justify-content: stretch;
+    &.locale-parallel-on
+    {
+        .locale-map
+        {
+            display: none;
+        }
+    }
+    &.locale-parallel-off
+    {
+        .locale-parallel
+        {
+            display: none;
+        }
+    }
 }
 .row-flex-list
 {
@@ -665,11 +665,11 @@ button.default-button
         }
     }
 }
-body.locale-parallel-on .task-item .item-header .item-title
+.locale-parallel-on .task-item .item-header .item-title
 {
     max-width: calc(100% - 180px);
 }
-body.locale-parallel-off .task-item .item-header .item-title
+.locale-parallel-off .task-item .item-header .item-title
 {
     max-width: calc(100% - 120px);
 }
