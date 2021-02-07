@@ -1350,16 +1350,49 @@ export module CyclicToDo
             className: "history-item flex-item ",
             children:
             [
-                internalLink
-                ({
-                    className: "item-title",
-                    href: { pass: entry.pass, todo: item.task, },
-                    children: item.task
-                }),
                 {
-                    tag: "span",
-                    className: "value monospace",
-                    children: Domain.dateStringFromTick(item.tick),
+                    tag: "div",
+                    className: "item-information",
+                    children:
+                    [
+                        internalLink
+                        ({
+                            className: "item-title",
+                            href: { pass: entry.pass, todo: item.task, },
+                            children: item.task
+                        }),
+                        {
+                            tag: "span",
+                            className: "value monospace",
+                            children: Domain.dateStringFromTick(item.tick),
+                        },
+                    ]
+                },
+                {
+                    tag: "div",
+                    className: "item-operator",
+                    children:
+                    [
+                        // {
+                        //     tag: "button",
+                        //     className: "default-button main-button",
+                        //     children: "開く",
+                        //     onclick: async () => { }
+                        // },
+                        await menuButton
+                        ([
+                            menuItem
+                            (
+                                "🚫 編集",
+                                async () => { }
+                            ),
+                            menuItem
+                            (
+                                "🚫 削除",
+                                async () => { }
+                            )
+                        ]),
+                    ]
                 }
             ]
         });

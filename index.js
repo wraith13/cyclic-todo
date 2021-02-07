@@ -2111,23 +2111,63 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
             }); };
             Render.historyItem = function (entry, item) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    return [2 /*return*/, ({
-                            tag: "div",
-                            className: "history-item flex-item ",
-                            children: [
-                                Render.internalLink({
-                                    className: "item-title",
-                                    href: { pass: entry.pass, todo: item.task, },
-                                    children: item.task
-                                }),
-                                {
-                                    tag: "span",
-                                    className: "value monospace",
-                                    children: Domain.dateStringFromTick(item.tick),
-                                }
-                            ]
-                        })];
+                var _a, _b, _c;
+                var _this = this;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "history-item flex-item "
+                            };
+                            _b = [{
+                                    tag: "div",
+                                    className: "item-information",
+                                    children: [
+                                        Render.internalLink({
+                                            className: "item-title",
+                                            href: { pass: entry.pass, todo: item.task, },
+                                            children: item.task
+                                        }),
+                                        {
+                                            tag: "span",
+                                            className: "value monospace",
+                                            children: Domain.dateStringFromTick(item.tick),
+                                        },
+                                    ]
+                                }];
+                            _c = {
+                                tag: "div",
+                                className: "item-operator"
+                            };
+                            // {
+                            //     tag: "button",
+                            //     className: "default-button main-button",
+                            //     children: "開く",
+                            //     onclick: async () => { }
+                            // },
+                            return [4 /*yield*/, Render.menuButton([
+                                    Render.menuItem("🚫 編集", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        return [2 /*return*/];
+                                    }); }); }),
+                                    Render.menuItem("🚫 削除", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        return [2 /*return*/];
+                                    }); }); })
+                                ])];
+                        case 1: return [2 /*return*/, (_a.children = _b.concat([
+                                (_c.children = [
+                                    // {
+                                    //     tag: "button",
+                                    //     className: "default-button main-button",
+                                    //     children: "開く",
+                                    //     onclick: async () => { }
+                                    // },
+                                    _d.sent()
+                                ],
+                                    _c)
+                            ]),
+                                _a)];
+                    }
                 });
             }); };
             Render.tickItem = function (_pass, _item, tick, interval) { return __awaiter(_this, void 0, void 0, function () {

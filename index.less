@@ -679,22 +679,49 @@ button.default-button
     {
         position: relative;
         padding: 0.5rem;
-        & > *
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+        white-space: nowrap;
+        height: 3.8rem;
+        .item-information
         {
-            display: inline-block !important;
-            //width: calc(50% - 2rem);
+            width: 100%;
             line-height: 1.4em;
+            position: relative;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
             flex-direction: row;
+            .value
+            {
+                float: right;
+            }
         }
-        .value
+        .item-operator
         {
-            float: right;
-            text-align: right;
+            padding-left: 0.5rem;
         }
+        // .item-information
+        // {
+        //     & > *
+        //     {
+        //         display: inline-block !important;
+        //         //width: calc(50% - 2rem);
+        //         line-height: 1.4em;
+        //         display: flex;
+        //         flex-wrap: wrap;
+        //         align-items: center;
+        //         justify-content: space-between;
+        //         flex-direction: row;
+        //     }
+        //     .value
+        //     {
+        //         float: right;
+        //         text-align: right;
+        //     }
+        // }
     }
 }
 @media (prefers-color-scheme: dark)

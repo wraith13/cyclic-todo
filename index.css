@@ -542,19 +542,27 @@ button.default-button:hover {
 .history-list .history-item {
   position: relative;
   padding: 0.5rem;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  white-space: nowrap;
+  height: 3.8rem;
 }
-.history-list .history-item > * {
-  display: inline-block !important;
+.history-list .history-item .item-information {
+  width: 100%;
   line-height: 1.4em;
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   flex-direction: row;
 }
-.history-list .history-item .value {
+.history-list .history-item .item-information .value {
   float: right;
-  text-align: right;
+}
+.history-list .history-item .item-operator {
+  padding-left: 0.5rem;
 }
 @media (prefers-color-scheme: dark) {
   .history-list .history-item .item-title:not(:hover) {
