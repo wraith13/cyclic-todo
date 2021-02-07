@@ -2731,18 +2731,24 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     ])])),
                                 {
                                     tag: "div",
-                                    className: "task-item",
+                                    className: "row-flex-list todo-list",
                                     children: [
                                         {
                                             tag: "div",
-                                            className: "item-tags",
-                                            children: Storage.Tag.getByTodo(pass, item.task).map(function (tag) { return Render.internalLink({
-                                                className: "tag",
-                                                href: { pass: pass, tag: tag, },
-                                                children: Domain.tagMap(tag),
-                                            }); })
+                                            className: "task-item flex-item",
+                                            children: [
+                                                {
+                                                    tag: "div",
+                                                    className: "item-tags",
+                                                    children: Storage.Tag.getByTodo(pass, item.task).map(function (tag) { return Render.internalLink({
+                                                        className: "tag",
+                                                        href: { pass: pass, tag: tag, },
+                                                        children: Domain.tagMap(tag),
+                                                    }); })
+                                                },
+                                                Render.information(item),
+                                            ],
                                         },
-                                        Render.information(item),
                                     ],
                                 }
                             ];

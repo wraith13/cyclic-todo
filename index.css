@@ -17,6 +17,12 @@ textarea {
   color: #000022;
   background-color: #FFFFFF;
 }
+.locale-parallel-on .locale-map {
+  display: none !important;
+}
+.locale-parallel-off .locale-parallel {
+  display: none !important;
+}
 .icon svg {
   fill: #000022;
 }
@@ -297,14 +303,6 @@ button.default-button:hover {
   align-items: stretch;
   justify-content: stretch;
 }
-.row-flex-list.locale-parallel-on .locale-map,
-.column-flex-list.locale-parallel-on .locale-map {
-  display: none !important;
-}
-.row-flex-list.locale-parallel-off .locale-parallel,
-.column-flex-list.locale-parallel-off .locale-parallel {
-  display: none !important;
-}
 .row-flex-list {
   flex-direction: row;
 }
@@ -573,6 +571,7 @@ button.default-button:hover {
   flex-direction: row;
   align-items: center;
   white-space: nowrap;
+  height: 3.8rem;
 }
 .todo-screen .tick-list .tick-item .item-information {
   width: 100%;

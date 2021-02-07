@@ -27,6 +27,20 @@ body, input, textarea
     color: @main-color;
     background-color: @base-color;
 }
+.locale-parallel-on
+{
+    .locale-map
+    {
+        display: none !important;
+    }
+}
+.locale-parallel-off
+{
+    .locale-parallel
+    {
+        display: none !important;
+    }
+}
 .icon svg
 {
     fill: @main-color;
@@ -389,20 +403,6 @@ button.default-button
     flex-wrap: wrap;
     align-items: stretch;
     justify-content: stretch;
-    &.locale-parallel-on
-    {
-        .locale-map
-        {
-            display: none !important;
-        }
-    }
-    &.locale-parallel-off
-    {
-        .locale-parallel
-        {
-            display: none !important;
-        }
-    }
 }
 .row-flex-list
 {
@@ -716,12 +716,11 @@ button.default-button
         {
             position: relative;
             padding: 0.5rem;
-
             display: inline-flex;
             flex-direction: row;
             align-items: center;
             white-space: nowrap;
-
+            height: 3.8rem;
             .item-information
             {
                 width: 100%;

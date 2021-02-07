@@ -1889,23 +1889,30 @@ export module CyclicToDo
                 ),
                 {
                     tag: "div",
-                    className: "task-item",
+                    className: "row-flex-list todo-list",
                     children:
                     [
                         {
                             tag: "div",
-                            className: "item-tags",
-                            children: Storage.Tag.getByTodo(pass, item.task).map
-                            (
-                                tag => internalLink
-                                ({
-                                    className: "tag",
-                                    href: { pass, tag, },
-                                    children: Domain.tagMap(tag),
-                                })
-                            )
+                            className: "task-item flex-item",
+                            children:
+                            [
+                                {
+                                    tag: "div",
+                                    className: "item-tags",
+                                    children: Storage.Tag.getByTodo(pass, item.task).map
+                                    (
+                                        tag => internalLink
+                                        ({
+                                            className: "tag",
+                                            href: { pass, tag, },
+                                            children: Domain.tagMap(tag),
+                                        })
+                                    )
+                                },
+                                information(item),
+                            ],
                         },
-                        information(item),
                     ],
                 },
                 {
