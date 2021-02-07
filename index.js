@@ -2131,37 +2131,77 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
             }); };
             Render.tickItem = function (_pass, _item, tick, interval) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    return [2 /*return*/, ({
-                            tag: "div",
-                            className: "tick-item flex-item ",
-                            children: [
-                                {
+                var _a, _b, _c;
+                var _this = this;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "tick-item flex-item "
+                            };
+                            _b = [{
                                     tag: "div",
-                                    className: "tick-timestamp",
+                                    className: "item-information",
                                     children: [
-                                        Render.label("timestamp"),
                                         {
-                                            tag: "span",
-                                            className: "value monospace",
-                                            children: Domain.dateStringFromTick(tick),
-                                        }
-                                    ],
-                                },
-                                {
-                                    tag: "div",
-                                    className: "tick-interval monospace",
-                                    children: [
-                                        Render.label("interval"),
+                                            tag: "div",
+                                            className: "tick-timestamp",
+                                            children: [
+                                                Render.label("timestamp"),
+                                                {
+                                                    tag: "span",
+                                                    className: "value monospace",
+                                                    children: Domain.dateStringFromTick(tick),
+                                                }
+                                            ],
+                                        },
                                         {
-                                            tag: "span",
-                                            className: "value monospace",
-                                            children: Domain.timeLongStringFromTick(interval),
-                                        }
+                                            tag: "div",
+                                            className: "tick-interval",
+                                            children: [
+                                                Render.label("interval"),
+                                                {
+                                                    tag: "span",
+                                                    className: "value monospace",
+                                                    children: Domain.timeLongStringFromTick(interval),
+                                                }
+                                            ],
+                                        },
                                     ],
-                                },
-                            ]
-                        })];
+                                }];
+                            _c = {
+                                tag: "div",
+                                className: "item-operator"
+                            };
+                            // {
+                            //     tag: "button",
+                            //     className: "default-button main-button",
+                            //     children: "開く",
+                            //     onclick: async () => { }
+                            // },
+                            return [4 /*yield*/, Render.menuButton([
+                                    Render.menuItem("🚫 編集", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        return [2 /*return*/];
+                                    }); }); }),
+                                    Render.menuItem("🚫 削除", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        return [2 /*return*/];
+                                    }); }); })
+                                ])];
+                        case 1: return [2 /*return*/, (_a.children = _b.concat([
+                                (_c.children = [
+                                    // {
+                                    //     tag: "button",
+                                    //     className: "default-button main-button",
+                                    //     children: "開く",
+                                    //     onclick: async () => { }
+                                    // },
+                                    _d.sent()
+                                ],
+                                    _c)
+                            ]),
+                                _a)];
+                    }
                 });
             }); };
             Render.dropDownLabel = function (options) {

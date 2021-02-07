@@ -393,14 +393,14 @@ button.default-button
     {
         .locale-map
         {
-            display: none;
+            display: none !important;
         }
     }
     &.locale-parallel-off
     {
         .locale-parallel
         {
-            display: none;
+            display: none !important;
         }
     }
 }
@@ -577,23 +577,6 @@ button.default-button
         {
             max-width: calc(100% - 180px);
         }
-        .item-operator
-        {
-            position: relative;
-            display: inline-flex;
-            flex-direction: row;
-            align-items: center;
-            white-space: nowrap;
-            button
-            {
-                display: inline-block;
-                margin: 0px;
-            }
-            button+button
-            {
-                margin-left: 4px;
-            }
-        }
     }
 }
 .task-item
@@ -673,6 +656,23 @@ button.default-button
 {
     max-width: calc(100% - 120px);
 }
+.item-operator
+{
+    position: relative;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap;
+    button
+    {
+        display: inline-block;
+        margin: 0px;
+    }
+    button+button
+    {
+        margin-left: 4px;
+    }
+}
 .history-list
 {
     .history-item
@@ -717,20 +717,33 @@ button.default-button
             position: relative;
             padding: 0.5rem;
 
-            & > *
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+            white-space: nowrap;
+
+            .item-information
             {
                 width: 100%;
-                line-height: 1.4em;
-                position: relative;
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-                justify-content: space-between;
-                flex-direction: row;
+                & > *
+                {
+                    width: 100%;
+                    line-height: 1.4em;
+                    position: relative;
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    justify-content: space-between;
+                    flex-direction: row;
+                    // .value
+                    // {
+                    //     float: right;
+                    // }
+                }
             }
-            .value
+            .item-operator
             {
-                float: right;
+                padding-left: 0.5rem;
             }
         }
     }

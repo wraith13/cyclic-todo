@@ -299,11 +299,11 @@ button.default-button:hover {
 }
 .row-flex-list.locale-parallel-on .locale-map,
 .column-flex-list.locale-parallel-on .locale-map {
-  display: none;
+  display: none !important;
 }
 .row-flex-list.locale-parallel-off .locale-parallel,
 .column-flex-list.locale-parallel-off .locale-parallel {
-  display: none;
+  display: none !important;
 }
 .row-flex-list {
   flex-direction: row;
@@ -464,23 +464,6 @@ button.default-button:hover {
 .task-item .item-header .item-title {
   max-width: calc(100% - 180px);
 }
-.list-item .item-header .item-operator,
-.task-item .item-header .item-operator {
-  position: relative;
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-  white-space: nowrap;
-}
-.list-item .item-header .item-operator button,
-.task-item .item-header .item-operator button {
-  display: inline-block;
-  margin: 0px;
-}
-.list-item .item-header .item-operator button + button,
-.task-item .item-header .item-operator button + button {
-  margin-left: 4px;
-}
 .task-item .item-header {
   padding-bottom: 0.5rem;
 }
@@ -544,6 +527,20 @@ button.default-button:hover {
 .locale-parallel-off .task-item .item-header .item-title {
   max-width: calc(100% - 120px);
 }
+.item-operator {
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  white-space: nowrap;
+}
+.item-operator button {
+  display: inline-block;
+  margin: 0px;
+}
+.item-operator button + button {
+  margin-left: 4px;
+}
 .history-list .history-item {
   position: relative;
   padding: 0.5rem;
@@ -572,8 +569,15 @@ button.default-button:hover {
 .todo-screen .tick-list .tick-item {
   position: relative;
   padding: 0.5rem;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  white-space: nowrap;
 }
-.todo-screen .tick-list .tick-item > * {
+.todo-screen .tick-list .tick-item .item-information {
+  width: 100%;
+}
+.todo-screen .tick-list .tick-item .item-information > * {
   width: 100%;
   line-height: 1.4em;
   position: relative;
@@ -583,8 +587,8 @@ button.default-button:hover {
   justify-content: space-between;
   flex-direction: row;
 }
-.todo-screen .tick-list .tick-item .value {
-  float: right;
+.todo-screen .tick-list .tick-item .item-operator {
+  padding-left: 0.5rem;
 }
 .welcome-screen h1 {
   margin-bottom: 1em;

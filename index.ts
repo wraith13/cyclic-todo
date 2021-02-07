@@ -1371,30 +1371,63 @@ export module CyclicToDo
             [
                 {
                     tag: "div",
-                    className: "tick-timestamp",
+                    className: "item-information",
                     children:
                     [
-                        label("timestamp"),
                         {
-                            tag: "span",
-                            className: "value monospace",
-                            children: Domain.dateStringFromTick(tick),
-                        }
+                            tag: "div",
+                            className: "tick-timestamp",
+                            children:
+                            [
+                                label("timestamp"),
+                                {
+                                    tag: "span",
+                                    className: "value monospace",
+                                    children: Domain.dateStringFromTick(tick),
+                                }
+                            ],
+                        },
+                        {
+                            tag: "div",
+                            className: "tick-interval",
+                            children:
+                            [
+                                label("interval"),
+                                {
+                                    tag: "span",
+                                    className: "value monospace",
+                                    children: Domain.timeLongStringFromTick(interval),
+                                }
+                            ],
+                        },
                     ],
                 },
                 {
                     tag: "div",
-                    className: "tick-interval monospace",
+                    className: "item-operator",
                     children:
                     [
-                        label("interval"),
-                        {
-                            tag: "span",
-                            className: "value monospace",
-                            children: Domain.timeLongStringFromTick(interval),
-                        }
-                    ],
-                },
+                        // {
+                        //     tag: "button",
+                        //     className: "default-button main-button",
+                        //     children: "開く",
+                        //     onclick: async () => { }
+                        // },
+                        await menuButton
+                        ([
+                            menuItem
+                            (
+                                "🚫 編集",
+                                async () => { }
+                            ),
+                            menuItem
+                            (
+                                "🚫 削除",
+                                async () => { }
+                            )
+                        ]),
+                    ]
+                }
             ]
         });
         export const dropDownLabel = (options: { list: string[] | { [value:string]:string }, value: string, onChange?: (value: string) => unknown, className?: string}) =>
