@@ -2721,6 +2721,84 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
+            Render.removedScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c, _d, _e, _f;
+                var _this = this;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "removed-screen screen"
+                            };
+                            _b = Render.heading;
+                            _c = ["h1"];
+                            _d = Render.internalLink;
+                            _e = {
+                                href: { pass: pass, tag: "@overall", }
+                            };
+                            return [4 /*yield*/, Render.applicationIcon()];
+                        case 1:
+                            _f = [
+                                _d.apply(void 0, [(_e.children = _g.sent(),
+                                        _e)]),
+                                locale.map("@deleted")
+                            ];
+                            return [4 /*yield*/, Render.menuButton([
+                                    Render.menuItem(locale.parallel("Back to List"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, tag: "@overall", })];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); }),
+                                    Render.menuItem("🚫 完全に削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            return [2 /*return*/];
+                                        });
+                                    }); }),
+                                ])];
+                        case 2: return [2 /*return*/, (_a.children = [
+                                _b.apply(void 0, _c.concat([_f.concat([
+                                        _g.sent()
+                                    ])])),
+                                {
+                                    tag: "div",
+                                    className: "column-flex-list removed-list",
+                                },
+                                {
+                                    tag: "div",
+                                    className: "button-list",
+                                    children: {
+                                        tag: "button",
+                                        className: "default-button main-button long-button",
+                                        children: locale.parallel("Back to List"),
+                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, tag: "@overall", })];
+                                                case 1: return [2 /*return*/, _a.sent()];
+                                            }
+                                        }); }); }
+                                    },
+                                }
+                            ],
+                                _a)];
+                    }
+                });
+            }); };
+            Render.showRemovedScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            document.title = locale.map("@deleted") + " " + applicationTitle;
+                            _a = Render.showWindow;
+                            return [4 /*yield*/, Render.removedScreen(pass)];
+                        case 1:
+                            _a.apply(void 0, [_b.sent()]);
+                            return [2 /*return*/];
+                    }
+                });
+            }); };
             Render.todoScreen = function (pass, item, ticks) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e, _f, _g, _h;
                 var _this = this;
@@ -3607,6 +3685,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 // case "statistics":
                                 //     dom.updateStatisticsScreen(title, pass, todo);
                                 //     break;
+                                case "removed":
+                                    console.log("show removed screen");
+                                    Render.showRemovedScreen(pass);
+                                    break;
                                 case "import":
                                     console.log("show import screen");
                                     Render.showImportScreen();

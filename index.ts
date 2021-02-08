@@ -1886,7 +1886,62 @@ export module CyclicToDo
             list = list.concat(entry.todo.filter(task => histories[task].length <= 0).map(task => ({ task, tick: null })));
             showWindow(await historyScreen(entry, list));
         };
-
+        export const removedScreen = async (pass: string) =>
+        ({
+            tag: "div",
+            className: "removed-screen screen",
+            children:
+            [
+                heading
+                (
+                    "h1",
+                    [
+                        internalLink
+                        ({
+                            href: { pass, tag: "@overall", },
+                            children: await applicationIcon(),
+                        }),
+                        locale.map("@deleted"),
+                        await menuButton
+                        ([
+                            menuItem
+                            (
+                                locale.parallel("Back to List"),
+                                async () => await showUrl({ pass, tag: "@overall", })
+                            ),
+                            menuItem
+                            (
+                                "🚫 完全に削除",
+                                async () =>
+                                {
+                                }
+                            ),
+                        ]),
+                    ]
+                ),
+                {
+                    tag: "div",
+                    className: "column-flex-list removed-list",
+                    //children: await Promise.all(list.map(item => removedItem(entry, item))),
+                },
+                {
+                    tag: "div",
+                    className: "button-list",
+                    children:
+                    {
+                        tag: "button",
+                        className: "default-button main-button long-button",
+                        children: locale.parallel("Back to List"),
+                        onclick: async () => await showUrl({ pass: pass, tag: "@overall", })
+                    },
+                },
+            ]
+        });
+        export const showRemovedScreen = async (pass: string) =>
+        {
+            document.title = `${locale.map("@deleted")} ${applicationTitle}`;
+            showWindow(await removedScreen(pass));
+        };
         export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[]) =>
         ({
             tag: "div",
@@ -2599,6 +2654,10 @@ export module CyclicToDo
             // case "statistics":
             //     dom.updateStatisticsScreen(title, pass, todo);
             //     break;
+            case "removed":
+                console.log("show removed screen");
+                Render.showRemovedScreen(pass);
+                break;
             case "import":
                 console.log("show import screen");
                 Render.showImportScreen();
