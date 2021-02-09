@@ -1720,11 +1720,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Render.backgroundLinerGradient = function (leftPercent, leftColor, rightColor) {
                 return "background: linear-gradient(to right, " + leftColor + " " + leftPercent + ", " + rightColor + " " + leftPercent + ");";
             };
-            Render.progressStyle = function (item) { return null === item.progress ?
+            Render.progressStyle = function (progress) { return null === progress ?
                 "background-color: rgba(128,128,128,0.4);" :
-                1 <= item.progress ?
+                1 <= progress ?
                     "background: #22884466;" :
-                    Render.backgroundLinerGradient(item.progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }), "#22884466", "rgba(128,128,128,0.2)"); };
+                    Render.backgroundLinerGradient(progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }), "#22884466", "rgba(128,128,128,0.2)"); };
             Render.label = function (label) {
                 return ({
                     tag: "span",
@@ -1857,7 +1857,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     tag: "div",
                     className: "item-information",
                     attributes: {
-                        style: Render.progressStyle(item),
+                        style: Render.progressStyle(item.progress),
                     },
                     children: [
                         {
@@ -2170,7 +2170,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
-            Render.tickItem = function (_pass, _item, tick, interval) { return __awaiter(_this, void 0, void 0, function () {
+            Render.tickItem = function (_pass, _item, tick, interval, max) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c;
                 var _this = this;
                 return __generator(this, function (_d) {
@@ -2178,7 +2178,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         case 0:
                             _a = {
                                 tag: "div",
-                                className: "tick-item flex-item "
+                                className: "tick-item flex-item ",
+                                style: Render.progressStyle(null === interval ? null : interval / max)
                             };
                             _b = [{
                                     tag: "div",
@@ -2515,7 +2516,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 var button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0];
                                                 button.classList.toggle("default-button", item.isDefault);
                                                 var information = dom.getElementsByClassName("item-information")[0];
-                                                information.setAttribute("style", Render.progressStyle(item));
+                                                information.setAttribute("style", Render.progressStyle(item.progress));
                                                 information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
                                             });
                                             return [3 /*break*/, 3];
@@ -2874,7 +2875,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 tag: "div",
                                 className: "column-flex-list tick-list"
                             };
-                            return [4 /*yield*/, Promise.all(ticks.map(function (tick, index) { return Render.tickItem(pass, item, tick, "number" === typeof ticks[index + 1] ? tick - ticks[index + 1] : null); }))];
+                            return [4 /*yield*/, Promise.all(ticks.map(function (tick, index) { return Render.tickItem(pass, item, tick, "number" === typeof ticks[index + 1] ? tick - ticks[index + 1] : null, ticks.length < 2 ? null : Math.max.apply(null, Calculate.intervals(ticks))); }))];
                         case 3: return [2 /*return*/, (_a.children = _g.concat([
                                 (_h.children = _j.sent(),
                                     _h),
@@ -2927,7 +2928,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 .getElementsByClassName("todo-screen")[0]
                                                 .getElementsByClassName("task-item")[0];
                                             information_1 = dom.getElementsByClassName("item-information")[0];
-                                            information_1.setAttribute("style", Render.progressStyle(item));
+                                            information_1.setAttribute("style", Render.progressStyle(item.progress));
                                             information_1.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
                                             return [3 /*break*/, 3];
                                         case 1: return [4 /*yield*/, CyclicToDo.reload()];

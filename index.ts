@@ -583,6 +583,9 @@ export module CyclicToDo
             //     return false;
             // };
         }
+        export module Removed
+        {
+        }
     }
     export module Domain
     {
@@ -975,13 +978,13 @@ export module CyclicToDo
         });
         export const backgroundLinerGradient = (leftPercent: string, leftColor: string, rightColor: string) =>
             `background: linear-gradient(to right, ${leftColor} ${leftPercent}, ${rightColor} ${leftPercent});`;
-        export const progressStyle = (item: ToDoEntry) => null === item.progress ?
+        export const progressStyle = (progress: number | null) => null === progress ?
             "background-color: rgba(128,128,128,0.4);":
-            1 <= item.progress ?
+            1 <= progress ?
                 `background: #22884466;`:
                 backgroundLinerGradient
                 (
-                    item.progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }),
+                    progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }),
                     "#22884466",
                     "rgba(128,128,128,0.2)"
                 );
@@ -1094,7 +1097,7 @@ export module CyclicToDo
             className: "item-information",
             attributes:
             {
-                style: progressStyle(item),
+                style: progressStyle(item.progress),
             },
             children:
             [
@@ -1396,10 +1399,11 @@ export module CyclicToDo
                 }
             ]
         });
-        export const tickItem = async (_pass: string, _item: ToDoEntry, tick: number, interval: number | null) =>
+        export const tickItem = async (_pass: string, _item: ToDoEntry, tick: number, interval: number | null, max: number | null) =>
         ({
             tag: "div",
             className: "tick-item flex-item ",
+            style: Render.progressStyle(null === interval ? null: interval /max),
             children:
             [
                 {
@@ -1716,7 +1720,7 @@ export module CyclicToDo
                             const button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0] as HTMLButtonElement;
                             button.classList.toggle("default-button", item.isDefault);
                             const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
-                            information.setAttribute("style", Render.progressStyle(item));
+                            information.setAttribute("style", Render.progressStyle(item.progress));
                             (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
                         }
                     );
@@ -2006,7 +2010,20 @@ export module CyclicToDo
                 {
                     tag: "div",
                     className: "column-flex-list tick-list",
-                    children: await Promise.all(ticks.map((tick, index) => tickItem(pass, item, tick, "number" === typeof ticks[index +1] ? tick -ticks[index +1]: null))),
+                    children: await Promise.all
+                    (
+                        ticks.map
+                        (
+                            (tick, index) => tickItem
+                            (
+                                pass,
+                                item,
+                                tick,
+                                "number" === typeof ticks[index +1] ? tick -ticks[index +1]: null,
+                                ticks.length < 2 ? null: Math.max.apply(null, Calculate.intervals(ticks))
+                            )
+                        )
+                    ),
                 },
                 0 <= Storage.TagMember.get(pass, "@deleted").indexOf(item.task) || Storage.isSessionPass(pass) ?
                     []:
@@ -2042,7 +2059,7 @@ export module CyclicToDo
                         .getElementsByClassName("todo-screen")[0]
                         .getElementsByClassName("task-item")[0] as HTMLDivElement;
                     const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
-                    information.setAttribute("style", Render.progressStyle(item));
+                    information.setAttribute("style", Render.progressStyle(item.progress));
                     (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
                 }
                 else
