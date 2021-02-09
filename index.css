@@ -153,7 +153,7 @@ input {
 }
 button {
   margin: 4px;
-  background-color: #FFFFFF;
+  background-color: transparent;
   color: #228844;
   border-color: #228844;
   padding: 4px 16px;
@@ -181,9 +181,6 @@ button:hover.menu-button svg {
   fill: #FFFFFF;
 }
 @media (prefers-color-scheme: dark) {
-  button {
-    background-color: #000022;
-  }
   button:hover {
     color: #000022;
   }
@@ -248,7 +245,7 @@ button.default-button:hover {
   text-align: left;
 }
 @media (prefers-color-scheme: dark) {
-  .menu-popup .menu-popup-body {
+  .menu-popup {
     background-color: #000022;
   }
 }
