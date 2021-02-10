@@ -84,7 +84,6 @@ h1 label:hover {
 }
 h1 button.menu-button:not(:hover) {
   color: #FFFFFF;
-  border-color: #FFFFFF;
   background-color: #228844;
 }
 h1 button.menu-button:not(:hover) svg {
@@ -107,7 +106,6 @@ h1 .menu-popup {
   h1 button.menu-button:not(:hover) {
     float: right;
     color: #000022;
-    border-color: #000022;
   }
   h1 button.menu-button:not(:hover) svg {
     fill: #000022;
@@ -165,6 +163,7 @@ button {
   cursor: pointer;
 }
 button.menu-button {
+  border-color: transparent;
   padding: 4px;
 }
 button.menu-button svg {
@@ -175,7 +174,6 @@ button.menu-button svg {
 button:hover {
   color: #FFFFFF;
   background-color: #21788B;
-  border-color: #21788B;
 }
 button:hover.menu-button svg {
   fill: #FFFFFF;
@@ -556,6 +554,7 @@ button.default-button:hover {
   flex-direction: row;
 }
 .history-list .history-item .item-information .value {
+  opacity: 0.4;
   float: right;
 }
 .history-list .history-item .item-operator {
@@ -582,6 +581,7 @@ button.default-button:hover {
   width: 100%;
 }
 .todo-screen .tick-list .tick-item .item-information > * {
+  opacity: 0.6;
   width: 100%;
   line-height: 1.4em;
   position: relative;

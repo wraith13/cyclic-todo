@@ -114,7 +114,7 @@ h1
     button.menu-button:not(:hover)
     {
         color: @base-color;
-        border-color: @base-color;
+        //border-color: @base-color;
         background-color: @accent-color;
         svg
         {
@@ -147,7 +147,7 @@ h1
         {
             float: right;
             color: @dark-base-color;
-            border-color: @dark-base-color;
+            //border-color: @dark-base-color;
             svg
             {
                 fill: @dark-base-color;
@@ -225,7 +225,7 @@ button
     &.menu-button
     {
         // background-color: transparent;
-        // border-color: transparent;
+        border-color: transparent;
         padding: 4px;
         svg
         {
@@ -238,7 +238,7 @@ button
     {
         color: @base-color;
         background-color: @active-color;
-        border-color: @active-color;
+        // border-color: @active-color;
         &.menu-button
         {
             svg
@@ -694,6 +694,7 @@ button.default-button
             flex-direction: row;
             .value
             {
+                opacity: 0.4;
                 float: right;
             }
         }
@@ -751,6 +752,7 @@ button.default-button
                 width: 100%;
                 & > *
                 {
+                    opacity: 0.6;
                     width: 100%;
                     line-height: 1.4em;
                     position: relative;
