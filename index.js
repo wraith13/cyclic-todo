@@ -3528,10 +3528,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                     else {
                         var height = window.innerHeight - list.offsetTop;
-                        var itemHeight = list.childNodes[0].offsetHeight - 0.5;
+                        var itemHeight = list.childNodes[0].offsetHeight;
                         var columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         var row = Math.max(Math.ceil(length / columns), Math.min(length, Math.floor(height / itemHeight)));
-                        list.style.height = row * (itemHeight) + "px";
+                        list.style.height = row * itemHeight + "px";
                         list.classList.add("max-column-" + columns);
                     }
                     var itemWidth = Math.min(window.innerWidth, list.childNodes[0].offsetWidth);

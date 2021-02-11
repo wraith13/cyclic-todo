@@ -2502,10 +2502,10 @@ export module CyclicToDo
                     else
                     {
                         const height = window.innerHeight -list.offsetTop;
-                        const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight -0.5;
+                        const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight;
                         const columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         const row = Math.max(Math.ceil(length /columns), Math.min(length, Math.floor(height / itemHeight)));
-                        list.style.height = `${row *(itemHeight)}px`;
+                        list.style.height = `${row *itemHeight}px`;
                         list.classList.add(`max-column-${columns}`);
                     }
                     const itemWidth = Math.min(window.innerWidth, (list.childNodes[0] as HTMLElement).offsetWidth);
