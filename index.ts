@@ -418,7 +418,7 @@ export module CyclicToDo
             {
                 Backup.add(exportJson(pass));
                 set(get().filter(i => pass !== i));
-                TagMember.get(pass, "@overall").forEach(task => History.remove(pass, task));
+                TagMember.get(pass, "@overall").forEach(task => History.removeKey(pass, task));
                 Tag.get(pass).filter(tag => ! Tag.isSystemTag(tag) && ! Tag.isSublist(tag)).forEach(tag => TagMember.removeKey(pass, tag));
                 Tag.removeKey(pass);
             };
@@ -555,7 +555,7 @@ export module CyclicToDo
                         }
                     );
                     History.set(pass, newTask, History.get(pass, oldTask));
-                    History.remove(pass, oldTask);
+                    History.removeKey(pass, oldTask);
                     return true;
                 }
                 return false;
@@ -568,10 +568,12 @@ export module CyclicToDo
                 getStorage(pass).getOrNull<number[]>(makeKey(pass, task)) ?? [];
             export const set = (pass: string, task: string, list: number[]) =>
                 getStorage(pass).set(makeKey(pass, task), list);
-            export const remove = (pass: string, task: string) =>
+            export const removeKey = (pass: string, task: string) =>
                 getStorage(pass).remove(makeKey(pass, task));
             export const add = (pass: string, task: string, tick: number | number[]) =>
                 set(pass, task, get(pass, task).concat(tick).filter(uniqueFilter).sort(simpleReverseComparer));
+            export const remove = (pass: string, task: string, tick: number | number[]) =>
+                set(pass, task, get(pass, task).filter(i => tick !== i).sort(simpleReverseComparer));
             // export const rename = (pass: string, oldTask: string, newTask: string) =>
             // {
             //     if (0 < newTask.length && oldTask !== newTask && undefined === getStorage(pass).getRaw(makeKey(pass, newTask)))
@@ -2508,9 +2510,12 @@ export module CyclicToDo
                         list.style.height = `${row *itemHeight}px`;
                         list.classList.add(`max-column-${columns}`);
                     }
-                    const itemWidth = Math.min(window.innerWidth, (list.childNodes[0] as HTMLElement).offsetWidth);
-                    list.classList.toggle("locale-parallel-on", border < itemWidth);
-                    list.classList.toggle("locale-parallel-off", itemWidth <= border);
+                    if (0 < length)
+                    {
+                        const itemWidth = Math.min(window.innerWidth, (list.childNodes[0] as HTMLElement).offsetWidth);
+                        list.classList.toggle("locale-parallel-on", border < itemWidth);
+                        list.classList.toggle("locale-parallel-off", itemWidth <= border);
+                    }
                 }
             );
             (Array.from(document.getElementsByClassName("row-flex-list")) as HTMLDivElement[]).forEach
@@ -2530,9 +2535,12 @@ export module CyclicToDo
                     );
                     const columns = Math.min(maxColumns, Math.max(1, length));
                     list.classList.add(`max-column-${columns}`);
-                    const itemWidth = Math.min(window.innerWidth, (list.childNodes[0] as HTMLElement).offsetWidth);
-                    list.classList.toggle("locale-parallel-on", border < itemWidth);
-                    list.classList.toggle("locale-parallel-off", itemWidth <= border);
+                    if (0 < length)
+                    {
+                        const itemWidth = Math.min(window.innerWidth, (list.childNodes[0] as HTMLElement).offsetWidth);
+                        list.classList.toggle("locale-parallel-on", border < itemWidth);
+                        list.classList.toggle("locale-parallel-off", itemWidth <= border);
+                    }
                 }
             );
         };

@@ -1241,7 +1241,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 Pass.remove = function (pass) {
                     Backup.add(Storage.exportJson(pass));
                     Pass.set(Pass.get().filter(function (i) { return pass !== i; }));
-                    TagMember.get(pass, "@overall").forEach(function (task) { return History.remove(pass, task); });
+                    TagMember.get(pass, "@overall").forEach(function (task) { return History.removeKey(pass, task); });
                     Tag.get(pass).filter(function (tag) { return !Tag.isSystemTag(tag) && !Tag.isSublist(tag); }).forEach(function (tag) { return TagMember.removeKey(pass, tag); });
                     Tag.removeKey(pass);
                 };
@@ -1356,7 +1356,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             TagMember.add(pass, tag, newTask);
                         });
                         History.set(pass, newTask, History.get(pass, oldTask));
-                        History.remove(pass, oldTask);
+                        History.removeKey(pass, oldTask);
                         return true;
                     }
                     return false;
@@ -1369,11 +1369,14 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 History.set = function (pass, task, list) {
                     return Storage.getStorage(pass).set(History.makeKey(pass, task), list);
                 };
-                History.remove = function (pass, task) {
+                History.removeKey = function (pass, task) {
                     return Storage.getStorage(pass).remove(History.makeKey(pass, task));
                 };
                 History.add = function (pass, task, tick) {
                     return History.set(pass, task, History.get(pass, task).concat(tick).filter(exports.uniqueFilter).sort(exports.simpleReverseComparer));
+                };
+                History.remove = function (pass, task, tick) {
+                    return History.set(pass, task, History.get(pass, task).filter(function (i) { return tick !== i; }).sort(exports.simpleReverseComparer));
                 };
                 // export const rename = (pass: string, oldTask: string, newTask: string) =>
                 // {
@@ -3534,9 +3537,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         list.style.height = row * itemHeight + "px";
                         list.classList.add("max-column-" + columns);
                     }
-                    var itemWidth = Math.min(window.innerWidth, list.childNodes[0].offsetWidth);
-                    list.classList.toggle("locale-parallel-on", border < itemWidth);
-                    list.classList.toggle("locale-parallel-off", itemWidth <= border);
+                    if (0 < length) {
+                        var itemWidth = Math.min(window.innerWidth, list.childNodes[0].offsetWidth);
+                        list.classList.toggle("locale-parallel-on", border < itemWidth);
+                        list.classList.toggle("locale-parallel-off", itemWidth <= border);
+                    }
                 });
                 Array.from(document.getElementsByClassName("row-flex-list")).forEach(function (list) {
                     var length = list.childNodes.length;
@@ -3547,9 +3552,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     });
                     var columns = Math.min(maxColumns, Math.max(1, length));
                     list.classList.add("max-column-" + columns);
-                    var itemWidth = Math.min(window.innerWidth, list.childNodes[0].offsetWidth);
-                    list.classList.toggle("locale-parallel-on", border < itemWidth);
-                    list.classList.toggle("locale-parallel-off", itemWidth <= border);
+                    if (0 < length) {
+                        var itemWidth = Math.min(window.innerWidth, list.childNodes[0].offsetWidth);
+                        list.classList.toggle("locale-parallel-on", border < itemWidth);
+                        list.classList.toggle("locale-parallel-off", itemWidth <= border);
+                    }
                 });
             };
             var onWindowResizeTimestamp = 0;
