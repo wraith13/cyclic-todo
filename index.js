@@ -1657,14 +1657,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return result;
             };
             Domain.updateProgress = function (item, now) {
-                var _a, _b, _c;
+                var _a, _b, _c, _d;
                 if (now === void 0) { now = Domain.getTicks(); }
                 if (0 < item.count) {
                     // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
                     item.elapsed = Math.max(0.0, now - item.previous);
                     if (null !== item.RecentlySmartAverage) {
-                        var short = Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate));
-                        var long = item.RecentlySmartAverage + (((_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * Domain.standardDeviationRate);
+                        item.isDefault = Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - ((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 180)) <= item.elapsed;
+                        var short = Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (((_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * Domain.standardDeviationRate));
+                        var long = item.RecentlySmartAverage + (((_c = item.RecentlyStandardDeviation) !== null && _c !== void 0 ? _c : 0) * Domain.standardDeviationRate);
                         var shortOneThird = short / 3.0;
                         if (item.elapsed < shortOneThird) {
                             item.progress = item.elapsed / short;
@@ -1677,23 +1678,23 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         }
                         //item.progress = item.elapsed /(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
                         //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
-                        var overrate = (item.elapsed - (item.RecentlySmartAverage + ((_c = item.RecentlyStandardDeviation) !== null && _c !== void 0 ? _c : 0) * Domain.standardDeviationOverRate)) / item.RecentlySmartAverage;
+                        var overrate = (item.elapsed - (item.RecentlySmartAverage + ((_d = item.RecentlyStandardDeviation) !== null && _d !== void 0 ? _d : 0) * Domain.standardDeviationOverRate)) / item.RecentlySmartAverage;
                         if (0.0 < overrate) {
                             //item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
                             item.progress = null;
                             item.RecentlySmartAverage = null;
                             item.RecentlyStandardDeviation = null;
+                            item.isDefault = false;
                         }
                     }
                 }
             };
-            Domain.updateListProgress = function (entry, list, now) {
-                var _a;
+            Domain.updateListProgress = function (_entry, list, now) {
                 if (now === void 0) { now = Domain.getTicks(); }
                 list.forEach(function (item) { return Domain.updateProgress(item, now); });
-                var sorted = JSON.parse(JSON.stringify(list)).sort(Domain.todoComparer1(entry));
-                var defaultTodo = (_a = sorted.sort(Domain.todoComparer2(sorted))[0]) === null || _a === void 0 ? void 0 : _a.task;
-                list.forEach(function (item) { return item.isDefault = defaultTodo === item.task; });
+                //const sorted = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoComparer1(entry));
+                // const defaultTodo = sorted.sort(todoComparer2(sorted))[0]?.task;
+                // list.forEach(item => item.isDefault = defaultTodo === item.task);
             };
         })(Domain = CyclicToDo.Domain || (CyclicToDo.Domain = {}));
         var Render;
@@ -2111,10 +2112,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
             }); };
             Render.historyItem = function (entry, item) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c;
+                var _a, _b, _c, _d;
                 var _this = this;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
                         case 0:
                             _a = {
                                 tag: "div",
@@ -2140,6 +2141,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 tag: "div",
                                 className: "item-operator"
                             };
+                            if (!(null !== item.tick)) return [3 /*break*/, 2];
                             // {
                             //     tag: "button",
                             //     className: "default-button main-button",
@@ -2154,16 +2156,22 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         return [2 /*return*/];
                                     }); }); })
                                 ])];
-                        case 1: return [2 /*return*/, (_a.children = _b.concat([
-                                (_c.children = [
-                                    // {
-                                    //     tag: "button",
-                                    //     className: "default-button main-button",
-                                    //     children: "開く",
-                                    //     onclick: async () => { }
-                                    // },
-                                    _d.sent()
-                                ],
+                        case 1:
+                            _d = [
+                                // {
+                                //     tag: "button",
+                                //     className: "default-button main-button",
+                                //     children: "開く",
+                                //     onclick: async () => { }
+                                // },
+                                _e.sent()
+                            ];
+                            return [3 /*break*/, 3];
+                        case 2:
+                            _d = [];
+                            _e.label = 3;
+                        case 3: return [2 /*return*/, (_a.children = _b.concat([
+                                (_c.children = _d,
                                     _c)
                             ]),
                                 _a)];

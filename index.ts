@@ -920,6 +920,7 @@ export module CyclicToDo
                 item.elapsed = Math.max(0.0, now -item.previous);
                 if (null !== item.RecentlySmartAverage)
                 {
+                    item.isDefault = Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation ?? 180)) <= item.elapsed;
                     const short = Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate));
                     const long = item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
                     const shortOneThird = short /3.0;
@@ -945,16 +946,17 @@ export module CyclicToDo
                         item.progress = null;
                         item.RecentlySmartAverage = null;
                         item.RecentlyStandardDeviation = null;
+                        item.isDefault = false;
                     }
                 }
             }
         };
-        export const updateListProgress = (entry: ToDoTagEntry, list: ToDoEntry[], now: number = Domain.getTicks()) =>
+        export const updateListProgress = (_entry: ToDoTagEntry, list: ToDoEntry[], now: number = Domain.getTicks()) =>
         {
             list.forEach(item => updateProgress(item, now));
-            const sorted = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoComparer1(entry));
-            const defaultTodo = sorted.sort(todoComparer2(sorted))[0]?.task;
-            list.forEach(item => item.isDefault = defaultTodo === item.task);
+            //const sorted = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoComparer1(entry));
+            // const defaultTodo = sorted.sort(todoComparer2(sorted))[0]?.task;
+            // list.forEach(item => item.isDefault = defaultTodo === item.task);
         };
     }
     export module Render
@@ -1374,7 +1376,7 @@ export module CyclicToDo
                 {
                     tag: "div",
                     className: "item-operator",
-                    children:
+                    children: null !== item.tick ?
                     [
                         // {
                         //     tag: "button",
@@ -1395,7 +1397,8 @@ export module CyclicToDo
                                 async () => { }
                             )
                         ]),
-                    ]
+                    ]:
+                    [],
                 }
             ]
         });
