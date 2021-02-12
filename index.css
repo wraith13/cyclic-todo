@@ -297,6 +297,9 @@ button.default-button:hover {
   flex-wrap: wrap;
   align-items: stretch;
   justify-content: stretch;
+}
+.row-flex-list:not(.empty-list),
+.column-flex-list:not(.empty-list) {
   border-color: rgba(128, 128, 128, 0.5);
   border-style: solid;
   border-width: 1px 0px 0px 1px;

@@ -3542,6 +3542,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         list.classList.toggle("locale-parallel-on", border < itemWidth);
                         list.classList.toggle("locale-parallel-off", itemWidth <= border);
                     }
+                    list.classList.toggle("empty-list", length <= 0);
                 });
                 Array.from(document.getElementsByClassName("row-flex-list")).forEach(function (list) {
                     var length = list.childNodes.length;
@@ -3557,6 +3558,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         list.classList.toggle("locale-parallel-on", border < itemWidth);
                         list.classList.toggle("locale-parallel-off", itemWidth <= border);
                     }
+                    list.classList.toggle("empty-list", length <= 0);
                 });
             };
             var onWindowResizeTimestamp = 0;

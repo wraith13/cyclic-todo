@@ -2516,6 +2516,7 @@ export module CyclicToDo
                         list.classList.toggle("locale-parallel-on", border < itemWidth);
                         list.classList.toggle("locale-parallel-off", itemWidth <= border);
                     }
+                    list.classList.toggle("empty-list", length <= 0);
                 }
             );
             (Array.from(document.getElementsByClassName("row-flex-list")) as HTMLDivElement[]).forEach
@@ -2541,6 +2542,7 @@ export module CyclicToDo
                         list.classList.toggle("locale-parallel-on", border < itemWidth);
                         list.classList.toggle("locale-parallel-off", itemWidth <= border);
                     }
+                    list.classList.toggle("empty-list", length <= 0);
                 }
             );
         };

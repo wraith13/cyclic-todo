@@ -401,9 +401,12 @@ button.default-button
     flex-wrap: wrap;
     align-items: stretch;
     justify-content: stretch;
-    border-color: rgba(128,128,128,0.5);
-    border-style: solid;
-    border-width: 1px 0px 0px 1px;
+    &:not(.empty-list)
+    {
+        border-color: rgba(128,128,128,0.5);
+        border-style: solid;
+        border-width: 1px 0px 0px 1px;
+    }
 }
 .row-flex-list
 {
