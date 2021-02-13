@@ -1669,15 +1669,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return result;
             };
             Domain.updateProgress = function (item, now) {
-                var _a, _b, _c, _d;
+                var _a, _b, _c;
                 if (now === void 0) { now = Domain.getTicks(); }
                 if (0 < item.count) {
                     // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
                     item.elapsed = Math.max(0.0, now - item.previous);
                     if (null !== item.RecentlySmartAverage) {
-                        item.isDefault = Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - ((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 180)) <= item.elapsed;
-                        var short = Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (((_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * Domain.standardDeviationRate));
-                        var long = item.RecentlySmartAverage + (((_c = item.RecentlyStandardDeviation) !== null && _c !== void 0 ? _c : 0) * Domain.standardDeviationRate);
+                        var short = Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate));
+                        var long = item.RecentlySmartAverage + (((_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * Domain.standardDeviationRate);
+                        item.isDefault = short <= item.elapsed;
                         var shortOneThird = short / 3.0;
                         if (item.elapsed < shortOneThird) {
                             item.progress = item.elapsed / short;
@@ -1690,7 +1690,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         }
                         //item.progress = item.elapsed /(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
                         //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
-                        var overrate = (item.elapsed - (item.RecentlySmartAverage + ((_d = item.RecentlyStandardDeviation) !== null && _d !== void 0 ? _d : 0) * Domain.standardDeviationOverRate)) / item.RecentlySmartAverage;
+                        var overrate = (item.elapsed - (item.RecentlySmartAverage + ((_c = item.RecentlyStandardDeviation) !== null && _c !== void 0 ? _c : 0) * Domain.standardDeviationOverRate)) / item.RecentlySmartAverage;
                         if (0.0 < overrate) {
                             //item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
                             item.progress = null;

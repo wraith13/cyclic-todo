@@ -954,9 +954,9 @@ export module CyclicToDo
                 item.elapsed = Math.max(0.0, now -item.previous);
                 if (null !== item.RecentlySmartAverage)
                 {
-                    item.isDefault = Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation ?? 180)) <= item.elapsed;
                     const short = Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate));
                     const long = item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
+                    item.isDefault = short <= item.elapsed;
                     const shortOneThird = short /3.0;
                     if (item.elapsed < shortOneThird)
                     {
