@@ -587,6 +587,38 @@ export module CyclicToDo
         }
         export module Removed
         {
+            export interface Base
+            {
+                type: "Tag" | "Sublist" | "Task" | "Tick";
+            }
+            export interface Tag extends Base
+            {
+                name: string;
+                tasks: string[];
+            }
+            export interface Sublist extends Base
+            {
+                name: string;
+                tasks: Task[];
+            }
+            export interface Task extends Base
+            {
+                name: string;
+                tags: string[];
+                ticks: number[];
+            }
+            export interface Tick extends Base
+            {
+                task: string;
+                tick: number;
+            }
+            export type Type = Tag | Sublist | Task | Tick;
+            export const makeKey = (pass: string) => `pass:(${pass}).removed`;
+            export const get = (pass: string) => minamo.localStorage.getOrNull<string[]>(makeKey(pass)) ?? [];
+            const set = (pass: string, list: string[]) => minamo.localStorage.set(makeKey(pass), list);
+            export const add = (pass: string, target: Type) => set(pass, get(pass).concat([ JSON.stringify(target) ]));
+            export const remove = (pass: string, target: string) => set(pass, get(pass).filter(i => target !== i));
+            export const clear = (pass: string) => set(pass, []);
         }
     }
     export module Domain

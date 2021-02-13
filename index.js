@@ -1389,6 +1389,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 //     return false;
                 // };
             })(History = Storage.History || (Storage.History = {}));
+            var Removed;
+            (function (Removed) {
+                Removed.makeKey = function (pass) { return "pass:(" + pass + ").removed"; };
+                Removed.get = function (pass) { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Removed.makeKey(pass))) !== null && _a !== void 0 ? _a : []; };
+                var set = function (pass, list) { return minamo_js_1.minamo.localStorage.set(Removed.makeKey(pass), list); };
+                Removed.add = function (pass, target) { return set(pass, Removed.get(pass).concat([JSON.stringify(target)])); };
+                Removed.remove = function (pass, target) { return set(pass, Removed.get(pass).filter(function (i) { return target !== i; })); };
+                Removed.clear = function (pass) { return set(pass, []); };
+            })(Removed = Storage.Removed || (Storage.Removed = {}));
         })(Storage = CyclicToDo.Storage || (CyclicToDo.Storage = {}));
         var Domain;
         (function (Domain) {
