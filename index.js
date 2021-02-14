@@ -1703,12 +1703,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 }
             };
-            Domain.updateListProgress = function (_entry, list, now) {
+            Domain.updateListProgress = function (entry, list, now) {
                 if (now === void 0) { now = Domain.getTicks(); }
+                var tasks = JSON.stringify(list.map(function (i) { return i.task; }));
                 list.forEach(function (item) { return Domain.updateProgress(item, now); });
                 //const sorted = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoComparer1(entry));
                 // const defaultTodo = sorted.sort(todoComparer2(sorted))[0]?.task;
                 // list.forEach(item => item.isDefault = defaultTodo === item.task);
+                list.sort(Domain.todoComparer1(entry));
+                list.sort(Domain.todoComparer2(list));
+                return tasks === JSON.stringify(list.map(function (i) { return i.task; }));
             };
         })(Domain = CyclicToDo.Domain || (CyclicToDo.Domain = {}));
         var Render;
@@ -2522,15 +2526,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             document.title = Domain.tagMap(entry.tag) + " " + applicationTitle;
                             list = entry.todo.map(function (task) { return Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)); });
                             Domain.updateListProgress(entry, list);
-                            list.sort(Domain.todoComparer1(entry));
-                            list.sort(Domain.todoComparer2(list));
                             lastUpdate = Storage.lastUpdate;
                             updateWindow = function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
-                                            Domain.updateListProgress(entry, list);
-                                            if (!(lastUpdate === Storage.lastUpdate)) return [3 /*break*/, 1];
+                                            if (!(lastUpdate === Storage.lastUpdate && Domain.updateListProgress(entry, list))) return [3 /*break*/, 1];
                                             Array.from(document
                                                 .getElementsByClassName("list-screen")[0]
                                                 .getElementsByClassName("todo-list")[0].childNodes).forEach(function (dom, index) {
@@ -3574,7 +3575,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         }); };
                     }
                     if (undefined === updateWindowTimer) {
-                        setInterval(function () { var _a; return (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render); }, Domain.TimeAccuracy);
+                        updateWindowTimer = setInterval(function () { var _a; return (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render); }, Domain.TimeAccuracy);
                     }
                     minamo_js_1.minamo.dom.replaceChildren(document.getElementById("body"), screen);
                     Render.resizeFlexList();
@@ -3812,7 +3813,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 switch (_a.label) {
                     case 0:
                         Render.showUpdatingScreen();
-                        return [4 /*yield*/, minamo_js_1.minamo.core.timeout(1000)];
+                        return [4 /*yield*/, minamo_js_1.minamo.core.timeout(600)];
                     case 1:
                         _a.sent();
                         return [4 /*yield*/, CyclicToDo.showPage()];

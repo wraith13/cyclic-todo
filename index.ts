@@ -985,12 +985,16 @@ export module CyclicToDo
                 }
             }
         };
-        export const updateListProgress = (_entry: ToDoTagEntry, list: ToDoEntry[], now: number = Domain.getTicks()) =>
+        export const updateListProgress = (entry: ToDoTagEntry, list: ToDoEntry[], now: number = Domain.getTicks()) =>
         {
+            const tasks = JSON.stringify(list.map(i => i.task));
             list.forEach(item => updateProgress(item, now));
             //const sorted = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoComparer1(entry));
             // const defaultTodo = sorted.sort(todoComparer2(sorted))[0]?.task;
             // list.forEach(item => item.isDefault = defaultTodo === item.task);
+            list.sort(Domain.todoComparer1(entry));
+            list.sort(Domain.todoComparer2(list));
+            return tasks === JSON.stringify(list.map(i => i.task));
         };
     }
     export module Render
@@ -1732,13 +1736,10 @@ export module CyclicToDo
             document.title = `${Domain.tagMap(entry.tag)} ${applicationTitle}`;
             const list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)));
             Domain.updateListProgress(entry, list);
-            list.sort(Domain.todoComparer1(entry));
-            list.sort(Domain.todoComparer2(list));
             let lastUpdate = Storage.lastUpdate;
             const updateWindow = async () =>
             {
-                Domain.updateListProgress(entry, list);
-                if (lastUpdate === Storage.lastUpdate)
+                if (lastUpdate === Storage.lastUpdate && Domain.updateListProgress(entry, list))
                 {
                     (
                         Array.from
@@ -2530,7 +2531,7 @@ export module CyclicToDo
             }
             if (undefined === updateWindowTimer)
             {
-                setInterval
+                updateWindowTimer = setInterval
                 (
                     () => Render.updateWindow?.(),
                     Domain.TimeAccuracy
@@ -2779,7 +2780,7 @@ export module CyclicToDo
     export const reload = async () =>
     {
         Render.showUpdatingScreen();
-        await minamo.core.timeout(1000);
+        await minamo.core.timeout(600);
         await showPage();
     };
 }
