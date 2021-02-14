@@ -2384,7 +2384,7 @@ export module CyclicToDo
                                         async () =>
                                         {
                                             Storage.Pass.remove(list.pass);
-                                            await showUrl({ });
+                                            await reload();
                                         }
                                     )
                                 ]),
@@ -2473,6 +2473,41 @@ export module CyclicToDo
         {
             document.title = applicationTitle;
             showWindow(await welcomeScreen());
+        };
+        export const updatingScreen = async () =>
+        ({
+            tag: "div",
+            className: "updating-screen screen",
+            children:
+            [
+                heading
+                (
+                    "h1",
+                    [
+                        await applicationIcon(),
+                        `${document.title}`,
+                        await menuButton
+                        ([
+                            menuItem
+                            (
+                                "GitHub",
+                                async () => location.href = "https://github.com/wraith13/cyclic-todo/",
+                            ),
+                        ]),
+                    ]
+                ),
+                await applicationIcon(),
+                {
+                    tag: "div",
+                    className: "message",
+                    children: locale.parallel("Updating..."),
+                },
+            ],
+        });
+        export const showUpdatingScreen = async () =>
+        {
+            document.title = "Updating...";
+            showWindow(await updatingScreen());
         };
         export let updateWindow: () => unknown;
         let updateWindowTimer = undefined;
@@ -2741,5 +2776,10 @@ export module CyclicToDo
         await showPage(url);
         history.pushState(null, applicationTitle, url);
     };
-    export const reload = showPage;
+    export const reload = async () =>
+    {
+        Render.showUpdatingScreen();
+        await minamo.core.timeout(1000);
+        await showPage();
+    };
 }

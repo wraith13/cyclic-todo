@@ -880,7 +880,8 @@ define("lang.en", [], {
     "Export": "Export",
     "Import": "Import",
     "Recycle Bin is empty.": "Recycle Bin is empty.",
-    "Back to Home": "Back to Home"
+    "Back to Home": "Back to Home",
+    "Updating...": "Updating..."
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -909,7 +910,8 @@ define("lang.ja", [], {
     "Export": "エクスポート",
     "Import": "インポート",
     "Recycle Bin is empty.": "ごみ箱は空です。",
-    "Back to Home": "ホーム画面に戻る"
+    "Back to Home": "ホーム画面に戻る",
+    "Updating...": "更新中..."
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -3347,7 +3349,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             switch (_a.label) {
                                                 case 0:
                                                     Storage.Pass.remove(list.pass);
-                                                    return [4 /*yield*/, CyclicToDo.showUrl({})];
+                                                    return [4 /*yield*/, CyclicToDo.reload()];
                                                 case 1:
                                                     _a.sent();
                                                     return [2 /*return*/];
@@ -3485,6 +3487,62 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             document.title = applicationTitle;
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.welcomeScreen()];
+                        case 1:
+                            _a.apply(void 0, [_b.sent()]);
+                            return [2 /*return*/];
+                    }
+                });
+            }); };
+            Render.updatingScreen = function () { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c, _d, _e;
+                var _this = this;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "updating-screen screen"
+                            };
+                            _b = Render.heading;
+                            _c = ["h1"];
+                            return [4 /*yield*/, Render.applicationIcon()];
+                        case 1:
+                            _d = [
+                                _f.sent(),
+                                "" + document.title
+                            ];
+                            return [4 /*yield*/, Render.menuButton([
+                                    Render.menuItem("GitHub", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        return [2 /*return*/, location.href = "https://github.com/wraith13/cyclic-todo/"];
+                                    }); }); }),
+                                ])];
+                        case 2:
+                            _e = [
+                                _b.apply(void 0, _c.concat([_d.concat([
+                                        _f.sent()
+                                    ])]))
+                            ];
+                            return [4 /*yield*/, Render.applicationIcon()];
+                        case 3: return [2 /*return*/, (_a.children = _e.concat([
+                                _f.sent(),
+                                {
+                                    tag: "div",
+                                    className: "message",
+                                    children: locale.parallel("Updating..."),
+                                }
+                            ]),
+                                _a)];
+                    }
+                });
+            }); };
+            Render.showUpdatingScreen = function () { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            document.title = "Updating...";
+                            _a = Render.showWindow;
+                            return [4 /*yield*/, Render.updatingScreen()];
                         case 1:
                             _a.apply(void 0, [_b.sent()]);
                             return [2 /*return*/];
@@ -3749,7 +3807,21 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 }
             });
         }); };
-        CyclicToDo.reload = CyclicToDo.showPage;
+        CyclicToDo.reload = function () { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        Render.showUpdatingScreen();
+                        return [4 /*yield*/, minamo_js_1.minamo.core.timeout(1000)];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, CyclicToDo.showPage()];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        }); };
     })(CyclicToDo = exports.CyclicToDo || (exports.CyclicToDo = {}));
 });
 //# sourceMappingURL=index.js.map
