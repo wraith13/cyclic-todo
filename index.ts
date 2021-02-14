@@ -572,43 +572,52 @@ export module CyclicToDo
                 getStorage(pass).remove(makeKey(pass, task));
             export const add = (pass: string, task: string, tick: number | number[]) =>
                 set(pass, task, get(pass, task).concat(tick).filter(uniqueFilter).sort(simpleReverseComparer));
-            export const remove = (pass: string, task: string, tick: number | number[]) =>
+            export const removeRaw = (pass: string, task: string, tick: number | number[]) =>
                 set(pass, task, get(pass, task).filter(i => tick !== i).sort(simpleReverseComparer));
-            // export const rename = (pass: string, oldTask: string, newTask: string) =>
-            // {
-            //     if (0 < newTask.length && oldTask !== newTask && undefined === getStorage(pass).getRaw(makeKey(pass, newTask)))
-            //     {
-            //         set(pass, newTask, get(pass, oldTask));
-            //         remove(pass, oldTask);
-            //         return true;
-            //     }
-            //     return false;
-            // };
+            export const remove = (pass: string, task: string, tick: number) =>
+            {
+                removeRaw(pass, task, tick),
+                Removed.add
+                (
+                    pass,
+                    {
+                        type: "Tick",
+                        deteledAt: Domain.getTicks(),
+                        task,
+                        tick,
+                    }
+                );
+            };
         }
         export module Removed
         {
             export interface Base
             {
                 type: "Tag" | "Sublist" | "Task" | "Tick";
+                deteledAt: number;
             }
             export interface Tag extends Base
             {
+                type: "Tag";
                 name: string;
                 tasks: string[];
             }
             export interface Sublist extends Base
             {
+                type: "Sublist";
                 name: string;
                 tasks: Task[];
             }
             export interface Task extends Base
             {
+                type: "Task";
                 name: string;
                 tags: string[];
                 ticks: number[];
             }
             export interface Tick extends Base
             {
+                type: "Tick";
                 task: string;
                 tick: number;
             }

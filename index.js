@@ -1377,19 +1377,18 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 History.add = function (pass, task, tick) {
                     return History.set(pass, task, History.get(pass, task).concat(tick).filter(exports.uniqueFilter).sort(exports.simpleReverseComparer));
                 };
-                History.remove = function (pass, task, tick) {
+                History.removeRaw = function (pass, task, tick) {
                     return History.set(pass, task, History.get(pass, task).filter(function (i) { return tick !== i; }).sort(exports.simpleReverseComparer));
                 };
-                // export const rename = (pass: string, oldTask: string, newTask: string) =>
-                // {
-                //     if (0 < newTask.length && oldTask !== newTask && undefined === getStorage(pass).getRaw(makeKey(pass, newTask)))
-                //     {
-                //         set(pass, newTask, get(pass, oldTask));
-                //         remove(pass, oldTask);
-                //         return true;
-                //     }
-                //     return false;
-                // };
+                History.remove = function (pass, task, tick) {
+                    History.removeRaw(pass, task, tick),
+                        Removed.add(pass, {
+                            type: "Tick",
+                            deteledAt: Domain.getTicks(),
+                            task: task,
+                            tick: tick,
+                        });
+                };
             })(History = Storage.History || (Storage.History = {}));
             var Removed;
             (function (Removed) {
