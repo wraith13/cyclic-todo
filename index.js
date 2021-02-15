@@ -3723,8 +3723,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 }
             });
         }); };
-        CyclicToDo.showPage = function (url) {
+        CyclicToDo.showPage = function (url, wait) {
             if (url === void 0) { url = location.href; }
+            if (wait === void 0) { wait = 150; }
             return __awaiter(_this, void 0, void 0, function () {
                 var urlParams, hash, tag, todo, pass, _a;
                 var _b;
@@ -3732,6 +3733,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     switch (_c.label) {
                         case 0:
                             window.scrollTo(0, 0);
+                            Render.showUpdatingScreen();
+                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(wait)];
+                        case 1:
+                            _c.sent();
                             urlParams = CyclicToDo.getUrlParams(url);
                             hash = CyclicToDo.getUrlHash(url);
                             tag = urlParams["tag"];
@@ -3741,36 +3746,36 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
                             window.addEventListener('resize', Render.onWindowResize);
                             window.addEventListener('storage', Render.onUpdateStorage);
-                            if (!(pass && todo)) return [3 /*break*/, 2];
+                            if (!(pass && todo)) return [3 /*break*/, 3];
                             console.log("show todo screen");
                             return [4 /*yield*/, Render.showTodoScreen(pass, todo)];
-                        case 1:
-                            _c.sent();
-                            return [3 /*break*/, 9];
                         case 2:
-                            if (!(Storage.isSessionPass(pass) && !tag)) return [3 /*break*/, 8];
+                            _c.sent();
+                            return [3 /*break*/, 10];
+                        case 3:
+                            if (!(Storage.isSessionPass(pass) && !tag)) return [3 /*break*/, 9];
                             _a = hash;
                             switch (_a) {
-                                case "import": return [3 /*break*/, 3];
-                                case "removed": return [3 /*break*/, 4];
+                                case "import": return [3 /*break*/, 4];
+                                case "removed": return [3 /*break*/, 5];
                             }
-                            return [3 /*break*/, 5];
-                        case 3:
+                            return [3 /*break*/, 6];
+                        case 4:
                             console.log("show import screen");
                             Render.showImportScreen();
-                            return [3 /*break*/, 7];
-                        case 4:
+                            return [3 /*break*/, 8];
+                        case 5:
                             console.log("show removed-list screen");
                             Render.showRemovedListScreen();
-                            return [3 /*break*/, 7];
-                        case 5:
+                            return [3 /*break*/, 8];
+                        case 6:
                             console.log("show welcome screen");
                             return [4 /*yield*/, Render.showWelcomeScreen()];
-                        case 6:
+                        case 7:
                             _c.sent();
-                            return [3 /*break*/, 7];
-                        case 7: return [3 /*break*/, 9];
-                        case 8:
+                            return [3 /*break*/, 8];
+                        case 8: return [3 /*break*/, 10];
+                        case 9:
                             //Domain.merge(pass, tag, todo, history);
                             switch (hash) {
                                 case "history":
@@ -3797,8 +3802,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     Render.showListScreen({ tag: tag !== null && tag !== void 0 ? tag : "@overall", pass: pass, todo: Storage.TagMember.get(pass, tag) });
                                     break;
                             }
-                            _c.label = 9;
-                        case 9: return [2 /*return*/];
+                            _c.label = 10;
+                        case 10: return [2 /*return*/];
                     }
                 });
             });
@@ -3817,21 +3822,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 }
             });
         }); };
-        CyclicToDo.reload = function () { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        Render.showUpdatingScreen();
-                        return [4 /*yield*/, minamo_js_1.minamo.core.timeout(600)];
-                    case 1:
-                        _a.sent();
-                        return [4 /*yield*/, CyclicToDo.showPage()];
-                    case 2:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
-            });
-        }); };
+        CyclicToDo.reload = function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, CyclicToDo.showPage(location.href, 600)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        }); }); };
     })(CyclicToDo = exports.CyclicToDo || (exports.CyclicToDo = {}));
 });
 //# sourceMappingURL=index.js.map

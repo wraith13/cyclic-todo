@@ -2726,9 +2726,11 @@ export module CyclicToDo
         window.onpopstate = () => showPage();
         await showPage();
     };
-    export const showPage = async (url: string = location.href) =>
+    export const showPage = async (url: string = location.href, wait: number = 150) =>
     {
         window.scrollTo(0,0);
+        Render.showUpdatingScreen();
+        await minamo.core.timeout(wait);
         const urlParams = getUrlParams(url);
         const hash = getUrlHash(url);
         const tag = urlParams["tag"];
@@ -2799,10 +2801,5 @@ export module CyclicToDo
         await showPage(url);
         history.pushState(null, applicationTitle, url);
     };
-    export const reload = async () =>
-    {
-        Render.showUpdatingScreen();
-        await minamo.core.timeout(600);
-        await showPage();
-    };
+    export const reload = async () => await showPage(location.href, 600);
 }
