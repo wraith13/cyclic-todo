@@ -1513,7 +1513,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Domain.tagComparer = function (pass) { return minamo_js_1.minamo.core.comparer.make(function (tag) { return -Storage.TagMember.get(pass, tag).map(function (todo) { return Storage.History.get(pass, todo).length; }).reduce(function (a, b) { return a + b; }, 0); }); };
             Domain.todoComparer1 = function (entry) {
                 return function (a, b) {
-                    var _a, _b;
+                    var _a, _b, _c, _d;
                     if (null !== a.progress && null !== b.progress) {
                         if (Math.abs(a.elapsed - b.elapsed) <= 12 * 60) {
                             var rate = Math.min(a.count, b.count) < 5 ? Domain.standardDeviationRate : 1.2;
@@ -1534,8 +1534,18 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 return -1;
                             }
                         }
-                        var a_restTime = (a.RecentlySmartAverage + ((_a = a.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate) - a.elapsed;
-                        var b_restTime = (b.RecentlySmartAverage + ((_b = b.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * Domain.standardDeviationRate) - b.elapsed;
+                        if (Math.min(a.progress, b.progress) <= 2.0 / 3.0) {
+                            var a_restTime_1 = (a.RecentlySmartAverage + ((_a = a.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate) - a.elapsed;
+                            var b_restTime_1 = (b.RecentlySmartAverage + ((_b = b.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * Domain.standardDeviationRate) - b.elapsed;
+                            if (a_restTime_1 < b_restTime_1) {
+                                return -1;
+                            }
+                            if (b_restTime_1 < a_restTime_1) {
+                                return 1;
+                            }
+                        }
+                        var a_restTime = (a.RecentlySmartAverage + ((_c = a.RecentlyStandardDeviation) !== null && _c !== void 0 ? _c : 0) * Domain.standardDeviationOverRate) - a.elapsed;
+                        var b_restTime = (b.RecentlySmartAverage + ((_d = b.RecentlyStandardDeviation) !== null && _d !== void 0 ? _d : 0) * Domain.standardDeviationOverRate) - b.elapsed;
                         if (a_restTime < b_restTime) {
                             return -1;
                         }

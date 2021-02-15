@@ -794,8 +794,21 @@ export module CyclicToDo
                         return -1;
                     }
                 }
-                const a_restTime = (a.RecentlySmartAverage +(a.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate) -a.elapsed;
-                const b_restTime = (b.RecentlySmartAverage +(b.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate) -b.elapsed;
+                if (Math.min(a.progress, b.progress) <= 2.0 / 3.0)
+                {
+                    const a_restTime = (a.RecentlySmartAverage +(a.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate) -a.elapsed;
+                    const b_restTime = (b.RecentlySmartAverage +(b.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate) -b.elapsed;
+                    if (a_restTime < b_restTime)
+                    {
+                        return -1;
+                    }
+                    if (b_restTime < a_restTime)
+                    {
+                        return 1;
+                    }
+                }
+                const a_restTime = (a.RecentlySmartAverage +(a.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -a.elapsed;
+                const b_restTime = (b.RecentlySmartAverage +(b.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -b.elapsed;
                 if (a_restTime < b_restTime)
                 {
                     return -1;
