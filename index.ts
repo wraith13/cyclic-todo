@@ -1033,6 +1033,13 @@ export module CyclicToDo
                 return false;
             }
         });
+        export const externalLink = (data: { className?: string, href: string, children: minamo.dom.Source}) =>
+        ({
+            tag: "a",
+            className: data.className,
+            href: data.href,
+            children: data.children,
+        });
         export const heading = (tag: string, text: minamo.dom.Source) =>
         ({
             tag,
@@ -1146,7 +1153,7 @@ export module CyclicToDo
             });
             return [ button, popup, ];
         };
-        export const menuItem = (children: minamo.dom.Source, onclick: (event: MouseEvent | TouchEvent) => unknown, className?: string) =>
+        export const menuItem = (children: minamo.dom.Source, onclick?: (event: MouseEvent | TouchEvent) => unknown, className?: string) =>
         ({
             tag: "button",
             className,
@@ -1616,11 +1623,11 @@ export module CyclicToDo
                         }),
                         await menuButton
                         ([
-                            menuItem
-                            (
-                                locale.parallel("History"),
-                                async () => await showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })
-                            ),
+                            internalLink
+                            ({
+                                href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                                children: menuItem(locale.parallel("History")),
+                            }),
                             Storage.Tag.isSystemTag(entry.tag) ? []:
                                 menuItem
                                 (
@@ -1671,11 +1678,11 @@ export module CyclicToDo
                                     children: "🚫 リストをシェア",
                                 }
                             ],
-                            menuItem
-                            (
-                                locale.parallel("Export"),
-                                async () => await showUrl({ pass: entry.pass, hash: "export", })
-                            ),
+                            internalLink
+                            ({
+                                href: { pass: entry.pass, hash: "export" },
+                                children: menuItem(locale.parallel("Export")),
+                            }),
                             Storage.Tag.isSystemTag(entry.tag) ? []:
                                 menuItem
                                 (
@@ -1724,12 +1731,16 @@ export module CyclicToDo
                                     }
                                 }
                             },
-                            {
-                                tag: "button",
-                                className: "main-button long-button",
-                                children: locale.parallel("History"),
-                                onclick: async () => await showUrl({ pass: entry.pass, tag: entry.tag, hash: "history", }),
-                            },
+                            internalLink
+                            ({
+                                href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                                children:
+                                {
+                                    tag: "button",
+                                    className: "main-button long-button",
+                                    children: locale.parallel("History"),
+                                },
+                            }),
                         ]
                     }:
                     0 < list.length ?
@@ -1931,13 +1942,16 @@ export module CyclicToDo
                 {
                     tag: "div",
                     className: "button-list",
-                    children:
-                    {
-                        tag: "button",
-                        className: "default-button main-button long-button",
-                        children: locale.parallel("Back to List"),
-                        onclick: async () => await showUrl({ pass: entry.pass, tag: entry.tag, })
-                    },
+                    children: internalLink
+                    ({
+                        href: { pass: entry.pass, tag: entry.tag, },
+                        children:
+                        {
+                            tag: "button",
+                            className: "default-button main-button long-button",
+                            children: locale.parallel("Back to List"),
+                        },
+                    }),
                 },
             ]
         });
@@ -2436,21 +2450,21 @@ export module CyclicToDo
                                 locale.parallel("New ToDo List"),
                                 async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", }),
                             ),
-                            menuItem
-                            (
-                                locale.parallel("@deleted"),
-                                async () => await showUrl({ hash: "removed", }),
-                            ),
-                            menuItem
-                            (
-                                locale.parallel("Import List"),
-                                async () => await showUrl({ hash: "import", }),
-                            ),
-                            menuItem
-                            (
-                                "GitHub",
-                                async () => location.href = "https://github.com/wraith13/cyclic-todo/",
-                            ),
+                            internalLink
+                            ({
+                                href: { hash: "import", },
+                                children: menuItem(locale.parallel("Import List")),
+                            }),
+                            internalLink
+                            ({
+                                href: { hash: "removed", },
+                                children: menuItem(locale.parallel("@deleted")),
+                            }),
+                            externalLink
+                            ({
+                                href: "https://github.com/wraith13/cyclic-todo/",
+                                children: menuItem("GitHub"),
+                            }),
                         ]),
                     ]
                 ),
@@ -2476,18 +2490,26 @@ export module CyclicToDo
                             children: locale.parallel("New ToDo List"),
                             onclick: async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", }),
                         },
-                        {
-                            tag: "button",
-                            className: "main-button long-button",
-                            children: locale.parallel("Import"),
-                            onclick: async () => await showUrl({ hash: "import", }),
-                        },
-                        {
-                            tag: "button",
-                            className: "main-button long-button",
-                            children: locale.parallel("@deleted"),
-                            onclick: async () => await showUrl({ hash: "removed", }),
-                        },
+                        internalLink
+                        ({
+                            href: { hash: "import", },
+                            children:
+                            {
+                                tag: "button",
+                                className: "main-button long-button",
+                                children: locale.parallel("Import"),
+                            },
+                        }),
+                        internalLink
+                        ({
+                            href: { hash: "removed", },
+                            children:
+                            {
+                                tag: "button",
+                                className: "main-button long-button",
+                                children: locale.parallel("@deleted"),
+                            },
+                        }),
                     ]
                 },
             ],
@@ -2726,7 +2748,7 @@ export module CyclicToDo
         window.onpopstate = () => showPage();
         await showPage();
     };
-    export const showPage = async (url: string = location.href, wait: number = 150) =>
+    export const showPage = async (url: string = location.href, wait: number = 100) =>
     {
         window.scrollTo(0,0);
         Render.showUpdatingScreen();

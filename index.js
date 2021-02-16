@@ -1739,6 +1739,14 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             };
+            Render.externalLink = function (data) {
+                return ({
+                    tag: "a",
+                    className: data.className,
+                    href: data.href,
+                    children: data.children,
+                });
+            };
             Render.heading = function (tag, text) {
                 return ({
                     tag: tag,
@@ -2374,12 +2382,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 })
                             ];
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem(locale.parallel("History"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })];
-                                            case 1: return [2 /*return*/, _a.sent()];
-                                        }
-                                    }); }); }),
+                                    Render.internalLink({
+                                        href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                                        children: Render.menuItem(locale.parallel("History")),
+                                    }),
                                     Storage.Tag.isSystemTag(entry.tag) ? [] :
                                         Render.menuItem(locale.parallel("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
                                             var newTag;
@@ -2433,12 +2439,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 children: "🚫 リストをシェア",
                                             }
                                         ],
-                                    Render.menuItem(locale.parallel("Export"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, hash: "export", })];
-                                            case 1: return [2 /*return*/, _a.sent()];
-                                        }
-                                    }); }); }),
+                                    Render.internalLink({
+                                        href: { pass: entry.pass, hash: "export" },
+                                        children: Render.menuItem(locale.parallel("Export")),
+                                    }),
                                     Storage.Tag.isSystemTag(entry.tag) ? [] :
                                         Render.menuItem(locale.parallel("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
@@ -2488,17 +2492,14 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     });
                                                 }); }
                                             },
-                                            {
-                                                tag: "button",
-                                                className: "main-button long-button",
-                                                children: locale.parallel("History"),
-                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: entry.tag, hash: "history", })];
-                                                        case 1: return [2 /*return*/, _a.sent()];
-                                                    }
-                                                }); }); },
-                                            },
+                                            Render.internalLink({
+                                                href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                                                children: {
+                                                    tag: "button",
+                                                    className: "main-button long-button",
+                                                    children: locale.parallel("History"),
+                                                },
+                                            }),
                                         ]
                                     } :
                                     0 < list.length ?
@@ -2719,17 +2720,14 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 {
                                     tag: "div",
                                     className: "button-list",
-                                    children: {
-                                        tag: "button",
-                                        className: "default-button main-button long-button",
-                                        children: locale.parallel("Back to List"),
-                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: entry.tag, })];
-                                                case 1: return [2 /*return*/, _a.sent()];
-                                            }
-                                        }); }); }
-                                    },
+                                    children: Render.internalLink({
+                                        href: { pass: entry.pass, tag: entry.tag, },
+                                        children: {
+                                            tag: "button",
+                                            className: "default-button main-button long-button",
+                                            children: locale.parallel("Back to List"),
+                                        },
+                                    }),
                                 }
                             ]),
                                 _a)];
@@ -3405,21 +3403,18 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             case 1: return [2 /*return*/, _a.sent()];
                                         }
                                     }); }); }),
-                                    Render.menuItem(locale.parallel("@deleted"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ hash: "removed", })];
-                                            case 1: return [2 /*return*/, _a.sent()];
-                                        }
-                                    }); }); }),
-                                    Render.menuItem(locale.parallel("Import List"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ hash: "import", })];
-                                            case 1: return [2 /*return*/, _a.sent()];
-                                        }
-                                    }); }); }),
-                                    Render.menuItem("GitHub", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        return [2 /*return*/, location.href = "https://github.com/wraith13/cyclic-todo/"];
-                                    }); }); }),
+                                    Render.internalLink({
+                                        href: { hash: "import", },
+                                        children: Render.menuItem(locale.parallel("Import List")),
+                                    }),
+                                    Render.internalLink({
+                                        href: { hash: "removed", },
+                                        children: Render.menuItem(locale.parallel("@deleted")),
+                                    }),
+                                    Render.externalLink({
+                                        href: "https://github.com/wraith13/cyclic-todo/",
+                                        children: Render.menuItem("GitHub"),
+                                    }),
                                 ])];
                         case 2:
                             _e = [
@@ -3460,28 +3455,22 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 }
                                             }); }); },
                                         },
-                                        {
-                                            tag: "button",
-                                            className: "main-button long-button",
-                                            children: locale.parallel("Import"),
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, CyclicToDo.showUrl({ hash: "import", })];
-                                                    case 1: return [2 /*return*/, _a.sent()];
-                                                }
-                                            }); }); },
-                                        },
-                                        {
-                                            tag: "button",
-                                            className: "main-button long-button",
-                                            children: locale.parallel("@deleted"),
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, CyclicToDo.showUrl({ hash: "removed", })];
-                                                    case 1: return [2 /*return*/, _a.sent()];
-                                                }
-                                            }); }); },
-                                        },
+                                        Render.internalLink({
+                                            href: { hash: "import", },
+                                            children: {
+                                                tag: "button",
+                                                className: "main-button long-button",
+                                                children: locale.parallel("Import"),
+                                            },
+                                        }),
+                                        Render.internalLink({
+                                            href: { hash: "removed", },
+                                            children: {
+                                                tag: "button",
+                                                className: "main-button long-button",
+                                                children: locale.parallel("@deleted"),
+                                            },
+                                        }),
                                     ]
                                 }
                             ]),
@@ -3725,7 +3714,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
         }); };
         CyclicToDo.showPage = function (url, wait) {
             if (url === void 0) { url = location.href; }
-            if (wait === void 0) { wait = 150; }
+            if (wait === void 0) { wait = 100; }
             return __awaiter(_this, void 0, void 0, function () {
                 var urlParams, hash, tag, todo, pass, _a;
                 var _b;

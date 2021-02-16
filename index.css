@@ -216,11 +216,6 @@ button.default-button:hover {
   top: calc(10px + 1.5rem);
   right: 0rem;
   z-index: 99999;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
-  justify-content: stretch;
-  flex-direction: column;
   color: #228844;
   background-color: #FFFFFF;
   border-color: #228844;
@@ -234,6 +229,15 @@ button.default-button:hover {
 .menu-popup:not(.show) {
   display: none;
 }
+.menu-popup,
+.menu-popup > a {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: stretch;
+  flex-direction: column;
+}
+.menu-popup a,
 .menu-popup button {
   border-radius: 0px;
   margin: 0px !important;
@@ -241,6 +245,7 @@ button.default-button:hover {
   border-width: 0px;
   font-size: 1.2rem;
   text-align: left;
+  text-decoration: none;
 }
 @media (prefers-color-scheme: dark) {
   .menu-popup {

@@ -307,11 +307,14 @@ button.default-button
     top: calc(10px + 1.5rem);
     right: 0.0rem;
     z-index: 99999;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-    justify-content: stretch;
-    flex-direction: column;
+    &, & > a
+    {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        justify-content: stretch;
+        flex-direction: column;
+    }
     color: @accent-color;
     background-color: @base-color;
     border-color: @accent-color;
@@ -321,7 +324,7 @@ button.default-button
     line-height: 1.5rem;
     font-size: 1.5rem;
     overflow: hidden;
-    button
+    a, button
     {
         // display: block !important;
         border-radius: 0px;
@@ -330,6 +333,7 @@ button.default-button
         border-width: 0px;
         font-size: 1.2rem;
         text-align: left;
+        text-decoration: none;
     }
 }
 @media (prefers-color-scheme: dark)
