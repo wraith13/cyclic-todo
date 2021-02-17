@@ -2213,7 +2213,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
-            Render.tickItem = function (_pass, _item, tick, interval, max) { return __awaiter(_this, void 0, void 0, function () {
+            Render.tickItem = function (pass, item, tick, interval, max) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c;
                 var _this = this;
                 return __generator(this, function (_d) {
@@ -2268,9 +2268,18 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     Render.menuItem("🚫 編集", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         return [2 /*return*/];
                                     }); }); }),
-                                    Render.menuItem("🚫 削除", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        return [2 /*return*/];
-                                    }); }); })
+                                    Render.menuItem(locale.map("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0:
+                                                    Storage.History.remove(pass, item.task, tick);
+                                                    return [4 /*yield*/, CyclicToDo.reload()];
+                                                case 1:
+                                                    _a.sent();
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); })
                                 ])];
                         case 1: return [2 /*return*/, (_a.children = _b.concat([
                                 (_c.children = [

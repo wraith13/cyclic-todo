@@ -1469,7 +1469,7 @@ export module CyclicToDo
                 }
             ]
         });
-        export const tickItem = async (_pass: string, _item: ToDoEntry, tick: number, interval: number | null, max: number | null) =>
+        export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null) =>
         ({
             tag: "div",
             className: "tick-item flex-item ",
@@ -1529,8 +1529,12 @@ export module CyclicToDo
                             ),
                             menuItem
                             (
-                                "🚫 削除",
-                                async () => { }
+                                locale.map("Delete"),
+                                async () =>
+                                {
+                                    Storage.History.remove(pass, item.task, tick);
+                                    await reload();
+                                }
                             )
                         ]),
                     ]
