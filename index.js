@@ -2528,7 +2528,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
             }); };
             Render.showListScreen = function (entry) { return __awaiter(_this, void 0, void 0, function () {
-                var list, lastUpdate, updateWindow, _a;
+                var list, lastUpdate, isDirty, updateWindow, _a;
                 var _this = this;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
@@ -2537,11 +2537,18 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             list = entry.todo.map(function (task) { return Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)); });
                             Domain.updateListProgress(entry, list);
                             lastUpdate = Storage.lastUpdate;
+                            isDirty = false;
                             updateWindow = function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
-                                            if (!(lastUpdate === Storage.lastUpdate && Domain.updateListProgress(entry, list))) return [3 /*break*/, 1];
+                                            isDirty = (!Domain.updateListProgress(entry, list)) || isDirty;
+                                            if (!(lastUpdate !== Storage.lastUpdate || (isDirty && document.body.scrollTop <= 0))) return [3 /*break*/, 2];
+                                            return [4 /*yield*/, CyclicToDo.reload()];
+                                        case 1:
+                                            _a.sent();
+                                            return [3 /*break*/, 3];
+                                        case 2:
                                             Array.from(document
                                                 .getElementsByClassName("list-screen")[0]
                                                 .getElementsByClassName("todo-list")[0].childNodes).forEach(function (dom, index) {
@@ -2552,10 +2559,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 information.setAttribute("style", Render.progressStyle(item.progress));
                                                 information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
                                             });
-                                            return [3 /*break*/, 3];
-                                        case 1: return [4 /*yield*/, CyclicToDo.reload()];
-                                        case 2:
-                                            _a.sent();
                                             _a.label = 3;
                                         case 3: return [2 /*return*/];
                                     }
@@ -3574,6 +3577,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                     if (undefined === updateWindowTimer) {
                         updateWindowTimer = setInterval(function () { var _a; return (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render); }, Domain.TimeAccuracy);
+                        document.addEventListener("scroll", function () {
+                            var _a;
+                            if (document.body.scrollTop <= 0) {
+                                (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render);
+                            }
+                        });
                     }
                     minamo_js_1.minamo.dom.replaceChildren(document.getElementById("body"), screen);
                     Render.resizeFlexList();

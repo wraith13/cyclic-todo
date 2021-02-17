@@ -1770,9 +1770,15 @@ export module CyclicToDo
             const list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)));
             Domain.updateListProgress(entry, list);
             let lastUpdate = Storage.lastUpdate;
+            let isDirty = false;
             const updateWindow = async () =>
             {
-                if (lastUpdate === Storage.lastUpdate && Domain.updateListProgress(entry, list))
+                isDirty = ( ! Domain.updateListProgress(entry, list)) || isDirty;
+                if (lastUpdate !== Storage.lastUpdate || (isDirty && document.body.scrollTop <= 0))
+                {
+                    await reload();
+                }
+                else
                 {
                     (
                         Array.from
@@ -1795,10 +1801,6 @@ export module CyclicToDo
                             (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
                         }
                     );
-                }
-                else
-                {
-                    await reload();
                 }
             };
             showWindow(await listScreen(entry, list), updateWindow);
@@ -2579,6 +2581,17 @@ export module CyclicToDo
                 (
                     () => Render.updateWindow?.(),
                     Domain.TimeAccuracy
+                );
+                document.addEventListener
+                (
+                    "scroll",
+                    () =>
+                    {
+                        if (document.body.scrollTop <= 0)
+                        {
+                            Render.updateWindow?.();
+                        }
+                    }
                 );
             }
             minamo.dom.replaceChildren
