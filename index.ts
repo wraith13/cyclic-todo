@@ -445,7 +445,45 @@ export module CyclicToDo
             export const set = (pass: string, list: string[]) =>
                 getStorage(pass).set(makeKey(pass), list.filter(i => ! isSystemTag(i))); // システムタグは万が一にも登録させない
             export const add = (pass: string, tag: string) => set(pass, get(pass).concat([ tag ]).filter(uniqueFilter));
-            export const remove = (pass: string, tag: string) => set(pass, get(pass).filter(i => tag !== i));
+            export const removeRaw = (pass: string, tag: string) => set(pass, get(pass).filter(i => tag !== i));
+            export const remove = (pass: string, tag: string) =>
+            {
+                if ( ! isSystemTag(tag))
+                {
+                    if (isSublist(tag))
+                    {
+                        const tasks = TagMember.getRaw(pass, tag).map(task => Task.serialize(pass, task));
+                        removeRaw(pass, tag);
+                        TagMember.removeKey(pass, tag);
+                        Removed.add
+                        (
+                            pass,
+                            {
+                                type: "Sublist",
+                                deteledAt: Domain.getTicks(),
+                                name: tag,
+                                tasks,
+                            }
+                        );
+                    }
+                    else
+                    {
+                        const tasks = TagMember.getRaw(pass, tag);
+                        removeRaw(pass, tag);
+                        TagMember.removeKey(pass, tag);
+                        Removed.add
+                        (
+                            pass,
+                            {
+                                type: "Tag",
+                                deteledAt: Domain.getTicks(),
+                                name: tag,
+                                tasks,
+                            }
+                        );
+                    }
+                }
+            };
             export const getByTodo = (pass: string, todo: string) => ["@overall"].concat(get(pass)).concat(["@unoverall", "@untagged"]).filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length);
             export const rename = (pass: string, oldTag: string, newTag: string) =>
             {
@@ -559,6 +597,31 @@ export module CyclicToDo
                     return true;
                 }
                 return false;
+            };
+            export const remove = (pass: string, task: string) =>
+            {
+                const tags = Tag.getByTodo(pass, task);
+                tags.map(tag => Storage.TagMember.remove(pass, tag, task));
+                History.removeKey(pass, task);
+                Removed.add
+                (
+                    pass,
+                    serialize(pass, task),
+                );
+            };
+            export const serialize = (pass: string, task: string) =>
+            {
+                const tags = Tag.getByTodo(pass, task);
+                const ticks = History.get(pass, task);
+                const result: Removed.Task =
+                {
+                    type: "Task",
+                    deteledAt: Domain.getTicks(),
+                    name: task,
+                    tags,
+                    ticks,
+                };
+                return result;
             };
         }
         export module History

@@ -1269,7 +1269,33 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     return Storage.getStorage(pass).set(Tag.makeKey(pass), list.filter(function (i) { return !Tag.isSystemTag(i); }));
                 }; // システムタグは万が一にも登録させない
                 Tag.add = function (pass, tag) { return Tag.set(pass, Tag.get(pass).concat([tag]).filter(exports.uniqueFilter)); };
-                Tag.remove = function (pass, tag) { return Tag.set(pass, Tag.get(pass).filter(function (i) { return tag !== i; })); };
+                Tag.removeRaw = function (pass, tag) { return Tag.set(pass, Tag.get(pass).filter(function (i) { return tag !== i; })); };
+                Tag.remove = function (pass, tag) {
+                    if (!Tag.isSystemTag(tag)) {
+                        if (Tag.isSublist(tag)) {
+                            var tasks = TagMember.getRaw(pass, tag).map(function (task) { return Task.serialize(pass, task); });
+                            Tag.removeRaw(pass, tag);
+                            TagMember.removeKey(pass, tag);
+                            Removed.add(pass, {
+                                type: "Sublist",
+                                deteledAt: Domain.getTicks(),
+                                name: tag,
+                                tasks: tasks,
+                            });
+                        }
+                        else {
+                            var tasks = TagMember.getRaw(pass, tag);
+                            Tag.removeRaw(pass, tag);
+                            TagMember.removeKey(pass, tag);
+                            Removed.add(pass, {
+                                type: "Tag",
+                                deteledAt: Domain.getTicks(),
+                                name: tag,
+                                tasks: tasks,
+                            });
+                        }
+                    }
+                };
                 Tag.getByTodo = function (pass, todo) { return ["@overall"].concat(Tag.get(pass)).concat(["@unoverall", "@untagged"]).filter(function (tag) { return 0 < TagMember.get(pass, tag).filter(function (i) { return todo === i; }).length; }); };
                 Tag.rename = function (pass, oldTag, newTag) {
                     if (0 < newTag.length && !Tag.isSystemTag(oldTag) && !Tag.isSystemTag(newTag) && oldTag !== newTag && Tag.get(pass).indexOf(newTag) < 0) {
@@ -1362,6 +1388,24 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         return true;
                     }
                     return false;
+                };
+                Task.remove = function (pass, task) {
+                    var tags = Tag.getByTodo(pass, task);
+                    tags.map(function (tag) { return Storage.TagMember.remove(pass, tag, task); });
+                    History.removeKey(pass, task);
+                    Removed.add(pass, Task.serialize(pass, task));
+                };
+                Task.serialize = function (pass, task) {
+                    var tags = Tag.getByTodo(pass, task);
+                    var ticks = History.get(pass, task);
+                    var result = {
+                        type: "Task",
+                        deteledAt: Domain.getTicks(),
+                        name: task,
+                        tags: tags,
+                        ticks: ticks,
+                    };
+                    return result;
                 };
             })(Task = Storage.Task || (Storage.Task = {}));
             var History;
