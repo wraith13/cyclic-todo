@@ -691,6 +691,18 @@ export module CyclicToDo
             export const add = (pass: string, target: Type) => set(pass, get(pass).concat([ JSON.stringify(target) ]));
             export const remove = (pass: string, target: string) => set(pass, get(pass).filter(i => target !== i));
             export const clear = (pass: string) => set(pass, []);
+            export const getTypeName = (item: Type) => locale.map(item.type);
+            export const getName = (item: Type) =>
+            {
+                if ("Tick" === item.type)
+                {
+                    return `${item.task}: ${Domain.timeLongStringFromTick(item.tick)}`;
+                }
+                else
+                {
+                    return item.name;
+                }
+            };
         }
     }
     export module Domain
@@ -2033,6 +2045,46 @@ export module CyclicToDo
             list = list.concat(entry.todo.filter(task => histories[task].length <= 0).map(task => ({ task, tick: null })));
             showWindow(await historyScreen(entry, list));
         };
+        export const removedItem = async (item: Storage.Removed.Type) =>
+        ({
+            tag: "div",
+            className: "removed-item flex-item",
+            children:
+            [
+                {
+                    tag: "div",
+                    className: "item-header",
+                    children:
+                    [
+                        {
+                            tag: "div",
+                            className: "item-title",
+                            children: `${Storage.Removed.getTypeName(item)}: ${Storage.Removed.getName(item)}`
+                        },
+                        {
+                            tag: "div",
+                            className: "item-operator",
+                            children:
+                            [
+                                {
+                                    tag: "button",
+                                    className: "default-button main-button",
+                                    children: "復元",
+                                    onclick: async () =>
+                                    {
+                                        // const pass = Storage.importJson(JSON.stringify(list));
+                                        // if (null !== pass)
+                                        // {
+                                        //     showUrl({ pass, tag: "@overall", });
+                                        // }
+                                    }
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        });
         export const removedScreen = async (pass: string) =>
         ({
             tag: "div",
@@ -2351,12 +2403,12 @@ export module CyclicToDo
                     className: "item-header",
                     children:
                     [
-                        internalLink
-                        ({
+                        {
+                            tag: "div",
                             className: "item-title",
-                            href: { pass: list.pass, tag: "@overall", },
+                            //href: { pass: list.pass, tag: "@overall", },
                             children: `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`
-                        }),
+                        },
                         {
                             tag: "div",
                             className: "item-operator",
@@ -2373,13 +2425,13 @@ export module CyclicToDo
                                         {
                                             showUrl({ pass, tag: "@overall", });
                                         }
-                                    }
+                                    },
                                 },
-                            ]
-                        }
-                    ]
+                            ],
+                        },
+                    ],
                 },
-            ]
+            ],
         });
         export const showRemovedListScreen = async () =>
         {

@@ -26,5 +26,9 @@
     "Import": "Import",
     "Recycle Bin is empty.": "Recycle Bin is empty.",
     "Back to Home": "Back to Home",
-    "Updating...": "Updating..."
+    "Updating...": "Updating...",
+    "Tag": "Tag",
+    "Sublist": "Sublist",
+    "Task": "Task",
+    "Tick": "Tick"
 }

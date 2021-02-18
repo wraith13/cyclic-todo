@@ -881,7 +881,11 @@ define("lang.en", [], {
     "Import": "Import",
     "Recycle Bin is empty.": "Recycle Bin is empty.",
     "Back to Home": "Back to Home",
-    "Updating...": "Updating..."
+    "Updating...": "Updating...",
+    "Tag": "Tag",
+    "Sublist": "Sublist",
+    "Task": "Task",
+    "Tick": "Tick"
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -911,7 +915,11 @@ define("lang.ja", [], {
     "Import": "インポート",
     "Recycle Bin is empty.": "ごみ箱は空です。",
     "Back to Home": "ホーム画面に戻る",
-    "Updating...": "更新中..."
+    "Updating...": "更新中...",
+    "Tag": "タグ",
+    "Sublist": "サブリスト",
+    "Task": "タスク",
+    "Tick": "記録"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -1442,6 +1450,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 Removed.add = function (pass, target) { return set(pass, Removed.get(pass).concat([JSON.stringify(target)])); };
                 Removed.remove = function (pass, target) { return set(pass, Removed.get(pass).filter(function (i) { return target !== i; })); };
                 Removed.clear = function (pass) { return set(pass, []); };
+                Removed.getTypeName = function (item) { return locale.map(item.type); };
+                Removed.getName = function (item) {
+                    if ("Tick" === item.type) {
+                        return item.task + ": " + Domain.timeLongStringFromTick(item.tick);
+                    }
+                    else {
+                        return item.name;
+                    }
+                };
             })(Removed = Storage.Removed || (Storage.Removed = {}));
         })(Storage = CyclicToDo.Storage || (CyclicToDo.Storage = {}));
         var Domain;
@@ -2808,6 +2825,44 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
+            Render.removedItem = function (item) { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, ({
+                            tag: "div",
+                            className: "removed-item flex-item",
+                            children: [
+                                {
+                                    tag: "div",
+                                    className: "item-header",
+                                    children: [
+                                        {
+                                            tag: "div",
+                                            className: "item-title",
+                                            children: Storage.Removed.getTypeName(item) + ": " + Storage.Removed.getName(item)
+                                        },
+                                        {
+                                            tag: "div",
+                                            className: "item-operator",
+                                            children: [
+                                                {
+                                                    tag: "button",
+                                                    className: "default-button main-button",
+                                                    children: "復元",
+                                                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        return __generator(this, function (_a) {
+                                                            return [2 /*return*/];
+                                                        });
+                                                    }); }
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        })];
+                });
+            }); };
             Render.removedScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e, _f;
                 var _this = this;
@@ -3229,11 +3284,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     tag: "div",
                                     className: "item-header",
                                     children: [
-                                        Render.internalLink({
+                                        {
+                                            tag: "div",
                                             className: "item-title",
-                                            href: { pass: list.pass, tag: "@overall", },
+                                            //href: { pass: list.pass, tag: "@overall", },
                                             children: "ToDo \u30EA\u30B9\u30C8 ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )"
-                                        }),
+                                        },
                                         {
                                             tag: "div",
                                             className: "item-operator",
@@ -3251,13 +3307,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                             }
                                                             return [2 /*return*/];
                                                         });
-                                                    }); }
+                                                    }); },
                                                 },
-                                            ]
-                                        }
-                                    ]
+                                            ],
+                                        },
+                                    ],
                                 },
-                            ]
+                            ],
                         })];
                 });
             }); };
