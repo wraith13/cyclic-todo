@@ -1082,13 +1082,16 @@ export module CyclicToDo
                 }
             }
         };
-        export const updateListProgress = (entry: ToDoTagEntry, list: ToDoEntry[], now: number = Domain.getTicks()) =>
+        export const updateListProgress = (list: ToDoEntry[], now: number = Domain.getTicks()) =>
         {
-            const tasks = JSON.stringify(list.map(i => i.task));
             list.forEach(item => updateProgress(item, now));
             //const sorted = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoComparer1(entry));
             // const defaultTodo = sorted.sort(todoComparer2(sorted))[0]?.task;
             // list.forEach(item => item.isDefault = defaultTodo === item.task);
+        };
+        export const sortList = (entry: ToDoTagEntry, list: ToDoEntry[]) =>
+        {
+            const tasks = JSON.stringify(list.map(i => i.task));
             list.sort(Domain.todoComparer1(entry));
             list.sort(Domain.todoComparer2(list));
             return tasks === JSON.stringify(list.map(i => i.task));
@@ -1847,12 +1850,14 @@ export module CyclicToDo
         {
             document.title = `${Domain.tagMap(entry.tag)} ${applicationTitle}`;
             const list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)));
-            Domain.updateListProgress(entry, list);
+            Domain.updateListProgress(list);
+            Domain.sortList(entry, list);
             let lastUpdate = Storage.lastUpdate;
             let isDirty = false;
             const updateWindow = async () =>
             {
-                isDirty = ( ! Domain.updateListProgress(entry, list)) || isDirty;
+                Domain.updateListProgress(list);
+                isDirty = ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[])) || isDirty;
                 if (lastUpdate !== Storage.lastUpdate || (isDirty && document.body.scrollTop <= 0))
                 {
                     await reload();

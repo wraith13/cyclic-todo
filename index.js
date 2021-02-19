@@ -885,7 +885,7 @@ define("lang.en", [], {
     "Tag": "Tag",
     "Sublist": "Sublist",
     "Task": "Task",
-    "Tick": "Tick"
+    "Tick": "Record"
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -1773,13 +1773,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 }
             };
-            Domain.updateListProgress = function (entry, list, now) {
+            Domain.updateListProgress = function (list, now) {
                 if (now === void 0) { now = Domain.getTicks(); }
-                var tasks = JSON.stringify(list.map(function (i) { return i.task; }));
                 list.forEach(function (item) { return Domain.updateProgress(item, now); });
                 //const sorted = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoComparer1(entry));
                 // const defaultTodo = sorted.sort(todoComparer2(sorted))[0]?.task;
                 // list.forEach(item => item.isDefault = defaultTodo === item.task);
+            };
+            Domain.sortList = function (entry, list) {
+                var tasks = JSON.stringify(list.map(function (i) { return i.task; }));
                 list.sort(Domain.todoComparer1(entry));
                 list.sort(Domain.todoComparer2(list));
                 return tasks === JSON.stringify(list.map(function (i) { return i.task; }));
@@ -2605,14 +2607,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         case 0:
                             document.title = Domain.tagMap(entry.tag) + " " + applicationTitle;
                             list = entry.todo.map(function (task) { return Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)); });
-                            Domain.updateListProgress(entry, list);
+                            Domain.updateListProgress(list);
+                            Domain.sortList(entry, list);
                             lastUpdate = Storage.lastUpdate;
                             isDirty = false;
                             updateWindow = function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
-                                            isDirty = (!Domain.updateListProgress(entry, list)) || isDirty;
+                                            Domain.updateListProgress(list);
+                                            isDirty = (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list))) || isDirty;
                                             if (!(lastUpdate !== Storage.lastUpdate || (isDirty && document.body.scrollTop <= 0))) return [3 /*break*/, 2];
                                             return [4 /*yield*/, CyclicToDo.reload()];
                                         case 1:
