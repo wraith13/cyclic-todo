@@ -3031,7 +3031,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         className: "button-list",
                                         children: {
                                             tag: "button",
-                                            className: "default-button main-button long-button",
+                                            className: item.isDefault ? "default-button main-button long-button" : "main-button long-button",
                                             children: locale.parallel("Done"),
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                 return __generator(this, function (_a) {
@@ -3326,7 +3326,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            document.title = locale.map("@deleted") + " " + document.title;
+                            document.title = locale.map("@deleted") + " " + applicationTitle;
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.removedListScreen()];
                         case 1:
@@ -3356,7 +3356,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             _f = [
                                 _d.apply(void 0, [(_e.children = _j.sent(),
                                         _e)]),
-                                "" + document.title
+                                "" + locale.map("@deleted")
                             ];
                             return [4 /*yield*/, Render.menuButton([
                                     Render.menuItem(locale.parallel("Back to Home"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {

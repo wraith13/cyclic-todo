@@ -2233,7 +2233,7 @@ export module CyclicToDo
                         children:
                         {
                             tag: "button",
-                            className: "default-button main-button long-button",
+                            className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
                             children: locale.parallel("Done"),
                             onclick: async () =>
                             {
@@ -2440,7 +2440,7 @@ export module CyclicToDo
         });
         export const showRemovedListScreen = async () =>
         {
-            document.title = `${locale.map("@deleted")} ${document.title}`;
+            document.title = `${locale.map("@deleted")} ${applicationTitle}`;
             showWindow(await removedListScreen());
         };
         export const removedListScreen = async () =>
@@ -2458,7 +2458,7 @@ export module CyclicToDo
                             href: { },
                             children: await applicationIcon(),
                         }),
-                        `${document.title}`,
+                        `${locale.map("@deleted")}`,
                         await menuButton
                         ([
                             menuItem
