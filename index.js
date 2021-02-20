@@ -3450,24 +3450,23 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 tag: "div",
                                 className: "item-operator"
                             };
-                            _e = [{
-                                    tag: "button",
-                                    className: "default-button main-button",
-                                    children: "開く",
-                                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                        return __generator(this, function (_a) {
-                                            CyclicToDo.showUrl({ pass: list.pass, tag: "@overall", });
-                                            return [2 /*return*/];
-                                        });
-                                    }); }
-                                }];
+                            _e = [Render.internalLink({
+                                    href: { pass: list.pass, tag: "@overall", },
+                                    children: {
+                                        tag: "button",
+                                        className: "default-button main-button",
+                                        children: "開く",
+                                    },
+                                })];
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem(locale.parallel("Export"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: list.pass, hash: "export", })];
-                                            case 1: return [2 /*return*/, _a.sent()];
-                                        }
-                                    }); }); }),
+                                    Render.internalLink({
+                                        href: { pass: list.pass, tag: "@overall", hash: "history" },
+                                        children: Render.menuItem(locale.parallel("History")),
+                                    }),
+                                    Render.internalLink({
+                                        href: { pass: list.pass, hash: "export", },
+                                        children: Render.menuItem(locale.parallel("Export")),
+                                    }),
                                     Render.menuItem(locale.parallel("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {

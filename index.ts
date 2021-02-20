@@ -2525,22 +2525,28 @@ export module CyclicToDo
                             className: "item-operator",
                             children:
                             [
-                                {
-                                    tag: "button",
-                                    className: "default-button main-button",
-                                    children: "開く",
-                                    onclick: async () =>
+                                internalLink
+                                ({
+                                    href: { pass: list.pass, tag: "@overall", },
+                                    children:
                                     {
-                                        showUrl({ pass: list.pass, tag: "@overall", });
-                                    }
-                                },
+                                        tag: "button",
+                                        className: "default-button main-button",
+                                        children: "開く",
+                                    },
+                                }),
                                 await menuButton
                                 ([
-                                    menuItem
-                                    (
-                                        locale.parallel("Export"),
-                                        async () => await showUrl({ pass: list.pass, hash: "export", })
-                                    ),
+                                    internalLink
+                                    ({
+                                        href: { pass: list.pass, tag: "@overall", hash: "history" },
+                                        children: menuItem(locale.parallel("History")),
+                                    }),
+                                    internalLink
+                                    ({
+                                        href: { pass: list.pass, hash: "export", },
+                                        children: menuItem(locale.parallel("Export")),
+                                    }),
                                     menuItem
                                     (
                                         locale.parallel("Delete"),
