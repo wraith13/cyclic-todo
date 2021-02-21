@@ -537,6 +537,35 @@ button.default-button:hover {
   opacity: 0.4;
   float: right;
 }
+.removed-item .item-header {
+  padding-bottom: 0.5rem;
+}
+.removed-item .item-information {
+  padding: 0.5rem;
+  margin: -0.5rem;
+  margin-top: 0rem;
+  background-color: rgba(128, 128, 128, 0.4);
+}
+.removed-item .item-information * {
+  line-height: 1.4em;
+}
+.removed-item .item-information .label {
+  font-size: 1rem;
+  opacity: 0.4;
+  margin-right: -50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: calc(100% - 180px);
+}
+.removed-item .item-information .label::after {
+  content: ":";
+}
+.removed-item .item-information .value {
+  font-size: 1rem;
+  opacity: 0.4;
+  float: right;
+}
 .locale-parallel-on .task-item .item-header .item-title {
   max-width: calc(100% - 180px);
 }

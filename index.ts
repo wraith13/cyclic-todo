@@ -2095,6 +2095,27 @@ export module CyclicToDo
                         },
                     ],
                 },
+                {
+                    tag: "div",
+                    className: "item-information",
+                    children:
+                    [
+                        {
+                            tag: "div",
+                            // className: "task-last-timestamp",
+                            children:
+                            [
+                                label("deletedAt"),
+                                {
+                                    tag: "span",
+                                    className: "value monospace",
+                                    children: Domain.dateStringFromTick(item.deteledAt),
+                                }
+                            ],
+                        },
+
+                    ],
+                }
             ],
         });
         export const removedScreen = async (pass: string) =>

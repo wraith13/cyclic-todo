@@ -885,7 +885,8 @@ define("lang.en", [], {
     "Tag": "Tag",
     "Sublist": "Sublist",
     "Task": "Task",
-    "Tick": "Record"
+    "Tick": "Record",
+    "deletedAt": "deleted at"
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -919,7 +920,8 @@ define("lang.ja", [], {
     "Tag": "タグ",
     "Sublist": "サブリスト",
     "Task": "タスク",
-    "Tick": "記録"
+    "Tick": "記録",
+    "deletedAt": "削除日時"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -2870,6 +2872,24 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         },
                                     ],
                                 },
+                                {
+                                    tag: "div",
+                                    className: "item-information",
+                                    children: [
+                                        {
+                                            tag: "div",
+                                            // className: "task-last-timestamp",
+                                            children: [
+                                                Render.label("deletedAt"),
+                                                {
+                                                    tag: "span",
+                                                    className: "value monospace",
+                                                    children: Domain.dateStringFromTick(item.deteledAt),
+                                                }
+                                            ],
+                                        },
+                                    ],
+                                }
                             ],
                         })];
                 });

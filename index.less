@@ -675,6 +675,44 @@ button.default-button
         }
     }
 }
+.removed-item
+{
+    .item-header
+    {
+        padding-bottom: 0.5rem;
+    }
+    .item-information
+    {
+        padding: 0.5rem;
+        margin: -0.5rem;
+        margin-top: 0rem;
+        background-color: rgba(128,128,128,0.4);
+        *
+        {
+            line-height: 1.4em;
+        }
+        .label
+        {
+            font-size: 1.0rem;
+            opacity: 0.4;
+            margin-right: -50%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: calc(100% - 180px);
+            &::after
+            {
+                content: ":";
+            }
+        }
+        .value
+        {
+            font-size: 1.0rem;
+            opacity: 0.4;
+            float: right;
+        }
+    }
+}
 .locale-parallel-on .task-item .item-header .item-title
 {
     max-width: calc(100% - 180px);

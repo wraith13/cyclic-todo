@@ -30,5 +30,6 @@
     "Tag": "Tag",
     "Sublist": "Sublist",
     "Task": "Task",
-    "Tick": "Record"
+    "Tick": "Record",
+    "deletedAt": "deleted at"
 }

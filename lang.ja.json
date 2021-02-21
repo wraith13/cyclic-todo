@@ -30,5 +30,6 @@
     "Tag": "タグ",
     "Sublist": "サブリスト",
     "Task": "タスク",
-    "Tick": "記録"
+    "Tick": "記録",
+    "deletedAt": "削除日時"
 }
