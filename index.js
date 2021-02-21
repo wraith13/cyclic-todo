@@ -1454,7 +1454,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 Removed.getTypeName = function (item) { return locale.map(item.type); };
                 Removed.getName = function (item) {
                     if ("Tick" === item.type) {
-                        return item.task + ": " + Domain.timeLongStringFromTick(item.tick);
+                        return item.task + ": " + Domain.dateStringFromTick(item.tick);
                     }
                     else {
                         return item.name;
@@ -2113,9 +2113,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
-                                    Storage.TagMember.add(pass, "@deleted", item.task);
+                                    Storage.Task.remove(pass, item.task);
+                                    //Storage.TagMember.add(pass, "@deleted", item.task);
                                     return [4 /*yield*/, CyclicToDo.reload()];
                                 case 1:
+                                    //Storage.TagMember.add(pass, "@deleted", item.task);
                                     _a.sent();
                                     return [2 /*return*/];
                             }
@@ -2856,7 +2858,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             children: [
                                                 {
                                                     tag: "button",
-                                                    className: "default-button main-button",
+                                                    className: "main-button",
                                                     children: "復元",
                                                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                         return __generator(this, function (_a) {

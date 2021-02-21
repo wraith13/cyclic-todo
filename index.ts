@@ -697,7 +697,7 @@ export module CyclicToDo
             {
                 if ("Tick" === item.type)
                 {
-                    return `${item.task}: ${Domain.timeLongStringFromTick(item.tick)}`;
+                    return `${item.task}: ${Domain.dateStringFromTick(item.tick)}`;
                 }
                 else
                 {
@@ -1407,7 +1407,8 @@ export module CyclicToDo
                     locale.parallel("Delete"),
                     async () =>
                     {
-                        Storage.TagMember.add(pass, "@deleted", item.task);
+                        Storage.Task.remove(pass, item.task);
+                        //Storage.TagMember.add(pass, "@deleted", item.task);
                         await reload();
                     }
                 );
@@ -2079,7 +2080,7 @@ export module CyclicToDo
                             [
                                 {
                                     tag: "button",
-                                    className: "default-button main-button",
+                                    className: "main-button",
                                     children: "復元",
                                     onclick: async () =>
                                     {

@@ -565,8 +565,27 @@ button.default-button
         color: @dark-main-color;
     }
 }
+.removed-item
+{
+    .item-title
+    {
+        cursor: inherit;
+        color: @main-color;
+    }
+}
+@media (prefers-color-scheme: dark)
+{
+    .removed-item
+    {
+        .item-title
+        {
+            color: @dark-main-color;
+        }
+    }
+}
 .list-item,
-.task-item
+.task-item,
+.removed-item
 {
     padding: 0.5rem;
     //min-width: calc((100vw / 8) + 1px);

@@ -452,12 +452,23 @@ button.default-button:hover {
     color: #FFFFFF;
   }
 }
+.removed-item .item-title {
+  cursor: inherit;
+  color: #000022;
+}
+@media (prefers-color-scheme: dark) {
+  .removed-item .item-title {
+    color: #FFFFFF;
+  }
+}
 .list-item,
-.task-item {
+.task-item,
+.removed-item {
   padding: 0.5rem;
 }
 .list-item .item-header,
-.task-item .item-header {
+.task-item .item-header,
+.removed-item .item-header {
   position: relative;
   display: flex;
   flex-direction: row;
@@ -465,7 +476,8 @@ button.default-button:hover {
   align-items: center;
 }
 .list-item .item-header .item-title,
-.task-item .item-header .item-title {
+.task-item .item-header .item-title,
+.removed-item .item-header .item-title {
   max-width: calc(100% - 180px);
 }
 .task-item .item-header {
