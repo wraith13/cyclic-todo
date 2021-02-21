@@ -686,10 +686,11 @@ export module CyclicToDo
             }
             export type Type = Tag | Sublist | Task | Tick;
             export const makeKey = (pass: string) => `pass:(${pass}).removed`;
-            export const get = (pass: string) => minamo.localStorage.getOrNull<string[]>(makeKey(pass)) ?? [];
+            export const getRaw = (pass: string) => minamo.localStorage.getOrNull<string[]>(makeKey(pass)) ?? [];
+            export const get = (pass: string) => getRaw(pass).map(i => JSON.parse(i) as Type);
             const set = (pass: string, list: string[]) => minamo.localStorage.set(makeKey(pass), list);
-            export const add = (pass: string, target: Type) => set(pass, get(pass).concat([ JSON.stringify(target) ]));
-            export const remove = (pass: string, target: string) => set(pass, get(pass).filter(i => target !== i));
+            export const add = (pass: string, target: Type) => set(pass, getRaw(pass).concat([ JSON.stringify(target) ]));
+            export const remove = (pass: string, target: string) => set(pass, getRaw(pass).filter(i => target !== i));
             export const clear = (pass: string) => set(pass, []);
             export const getTypeName = (item: Type) => locale.map(item.type);
             export const getName = (item: Type) =>
@@ -1730,6 +1731,11 @@ export module CyclicToDo
                                         }
                                     }
                                 ),
+                            internalLink
+                            ({
+                                href: { pass: entry.pass, hash: "removed" },
+                                children: menuItem(locale.parallel("@deleted")),
+                            }),
                             "@deleted" === entry.tag ?
                             [
                                 menuItem
@@ -2126,7 +2132,7 @@ export module CyclicToDo
                 {
                     tag: "div",
                     className: "column-flex-list removed-list",
-                    //children: await Promise.all(list.map(item => removedItem(entry, item))),
+                    children: await Promise.all(Storage.Removed.get(pass).map(item => removedItem(item))),
                 },
                 {
                     tag: "div",

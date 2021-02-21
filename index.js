@@ -1445,10 +1445,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             var Removed;
             (function (Removed) {
                 Removed.makeKey = function (pass) { return "pass:(" + pass + ").removed"; };
-                Removed.get = function (pass) { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Removed.makeKey(pass))) !== null && _a !== void 0 ? _a : []; };
+                Removed.getRaw = function (pass) { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Removed.makeKey(pass))) !== null && _a !== void 0 ? _a : []; };
+                Removed.get = function (pass) { return Removed.getRaw(pass).map(function (i) { return JSON.parse(i); }); };
                 var set = function (pass, list) { return minamo_js_1.minamo.localStorage.set(Removed.makeKey(pass), list); };
-                Removed.add = function (pass, target) { return set(pass, Removed.get(pass).concat([JSON.stringify(target)])); };
-                Removed.remove = function (pass, target) { return set(pass, Removed.get(pass).filter(function (i) { return target !== i; })); };
+                Removed.add = function (pass, target) { return set(pass, Removed.getRaw(pass).concat([JSON.stringify(target)])); };
+                Removed.remove = function (pass, target) { return set(pass, Removed.getRaw(pass).filter(function (i) { return target !== i; })); };
                 Removed.clear = function (pass) { return set(pass, []); };
                 Removed.getTypeName = function (item) { return locale.map(item.type); };
                 Removed.getName = function (item) {
@@ -2479,6 +2480,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 }
                                             });
                                         }); }),
+                                    Render.internalLink({
+                                        href: { pass: entry.pass, hash: "removed" },
+                                        children: Render.menuItem(locale.parallel("@deleted")),
+                                    }),
                                     "@deleted" === entry.tag ?
                                         [
                                             Render.menuItem("🚫 完全に削除", function () { return __awaiter(_this, void 0, void 0, function () {
@@ -2868,10 +2873,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
             }); };
             Render.removedScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e, _f;
+                var _a, _b, _c, _d, _e, _f, _g, _h;
                 var _this = this;
-                return __generator(this, function (_g) {
-                    switch (_g.label) {
+                return __generator(this, function (_j) {
+                    switch (_j.label) {
                         case 0:
                             _a = {
                                 tag: "div",
@@ -2886,7 +2891,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
                             _f = [
-                                _d.apply(void 0, [(_e.children = _g.sent(),
+                                _d.apply(void 0, [(_e.children = _j.sent(),
                                         _e)]),
                                 locale.map("@deleted")
                             ];
@@ -2903,14 +2908,20 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         });
                                     }); }),
                                 ])];
-                        case 2: return [2 /*return*/, (_a.children = [
+                        case 2:
+                            _g = [
                                 _b.apply(void 0, _c.concat([_f.concat([
-                                        _g.sent()
-                                    ])])),
-                                {
-                                    tag: "div",
-                                    className: "column-flex-list removed-list",
-                                },
+                                        _j.sent()
+                                    ])]))
+                            ];
+                            _h = {
+                                tag: "div",
+                                className: "column-flex-list removed-list"
+                            };
+                            return [4 /*yield*/, Promise.all(Storage.Removed.get(pass).map(function (item) { return Render.removedItem(item); }))];
+                        case 3: return [2 /*return*/, (_a.children = _g.concat([
+                                (_h.children = _j.sent(),
+                                    _h),
                                 {
                                     tag: "div",
                                     className: "button-list",
@@ -2926,7 +2937,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         }); }); }
                                     },
                                 }
-                            ],
+                            ]),
                                 _a)];
                     }
                 });
