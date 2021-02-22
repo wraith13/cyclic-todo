@@ -1199,6 +1199,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 var histories = {};
                 todos
                     .forEach(function (todo) { return histories[todo] = History.get(pass, todo); });
+                var removed = Removed.get(pass);
                 var result = {
                     specification: specification,
                     timeAccuracy: timeAccuracy,
@@ -1206,6 +1207,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     todos: todos,
                     tags: tags,
                     histories: histories,
+                    removed: removed,
                 };
                 return JSON.stringify(result);
             };
@@ -1224,6 +1226,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         Tag.set(data_1.pass, Object.keys(data_1.tags));
                         Object.keys(data_1.tags).forEach(function (tag) { return TagMember.set(data_1.pass, tag, data_1.tags[tag]); });
                         Object.keys(data_1.histories).forEach(function (todo) { return History.set(data_1.pass, todo, data_1.histories[todo]); });
+                        Removed.set(data_1.pass, data_1.removed.map(function (i) { return JSON.stringify(i); }));
                         return data_1.pass;
                     }
                 }
@@ -1449,10 +1452,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 Removed.makeKey = function (pass) { return "pass:(" + pass + ").removed"; };
                 Removed.getRaw = function (pass) { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Removed.makeKey(pass))) !== null && _a !== void 0 ? _a : []; };
                 Removed.get = function (pass) { return Removed.getRaw(pass).map(function (i) { return JSON.parse(i); }); };
-                var set = function (pass, list) { return minamo_js_1.minamo.localStorage.set(Removed.makeKey(pass), list); };
-                Removed.add = function (pass, target) { return set(pass, Removed.getRaw(pass).concat([JSON.stringify(target)])); };
-                Removed.remove = function (pass, target) { return set(pass, Removed.getRaw(pass).filter(function (i) { return target !== i; })); };
-                Removed.clear = function (pass) { return set(pass, []); };
+                Removed.set = function (pass, list) { return minamo_js_1.minamo.localStorage.set(Removed.makeKey(pass), list); };
+                Removed.add = function (pass, target) { return Removed.set(pass, Removed.getRaw(pass).concat([JSON.stringify(target)])); };
+                Removed.remove = function (pass, target) { return Removed.set(pass, Removed.getRaw(pass).filter(function (i) { return target !== i; })); };
+                Removed.clear = function (pass) { return Removed.set(pass, []); };
                 Removed.getTypeName = function (item) { return locale.map(item.type); };
                 Removed.getName = function (item) {
                     if ("Tick" === item.type) {

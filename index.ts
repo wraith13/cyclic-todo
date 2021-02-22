@@ -290,14 +290,12 @@ export module Calculate
 export module CyclicToDo
 {
     const applicationTitle = "Cyclic ToDo";
-
     export module locale
     {
         export type LocaleKeyType = localeParallel.LocaleKeyType;
         export const map = localeSingle.map;
         export const parallel = localeParallel.map;
     }
-    
     interface ToDoTagEntry
     {
         pass: string;
@@ -326,6 +324,7 @@ export module CyclicToDo
         todos: string[];
         tags: { [tag: string]: string[] };
         histories: { [todo: string]: number[] };
+        removed: Storage.Removed.Type[];
     }
     export module Storage
     {
@@ -354,6 +353,7 @@ export module CyclicToDo
             (
                 todo => histories[todo] = History.get(pass, todo)
             );
+            const removed = Removed.get(pass);
             const result: ToDoList =
             {
                 specification,
@@ -362,6 +362,7 @@ export module CyclicToDo
                 todos,
                 tags,
                 histories,
+                removed,
             };
             return JSON.stringify(result);
         };
@@ -386,6 +387,7 @@ export module CyclicToDo
                     Tag.set(data.pass, Object.keys(data.tags));
                     Object.keys(data.tags).forEach(tag => TagMember.set(data.pass, tag, data.tags[tag]));
                     Object.keys(data.histories).forEach(todo => History.set(data.pass, todo, data.histories[todo]));
+                    Removed.set(data.pass, data.removed.map(i => JSON.stringify(i)));
                     return data.pass;
                 }
             }
@@ -688,7 +690,7 @@ export module CyclicToDo
             export const makeKey = (pass: string) => `pass:(${pass}).removed`;
             export const getRaw = (pass: string) => minamo.localStorage.getOrNull<string[]>(makeKey(pass)) ?? [];
             export const get = (pass: string) => getRaw(pass).map(i => JSON.parse(i) as Type);
-            const set = (pass: string, list: string[]) => minamo.localStorage.set(makeKey(pass), list);
+            export const set = (pass: string, list: string[]) => minamo.localStorage.set(makeKey(pass), list);
             export const add = (pass: string, target: Type) => set(pass, getRaw(pass).concat([ JSON.stringify(target) ]));
             export const remove = (pass: string, target: string) => set(pass, getRaw(pass).filter(i => target !== i));
             export const clear = (pass: string) => set(pass, []);
