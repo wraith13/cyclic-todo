@@ -1256,9 +1256,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 Pass.remove = function (pass) {
                     Backup.add(Storage.exportJson(pass));
                     Pass.set(Pass.get().filter(function (i) { return pass !== i; }));
-                    TagMember.get(pass, "@overall").forEach(function (task) { return History.removeKey(pass, task); });
+                    TagMember.getRaw(pass, "@overall").forEach(function (task) { return History.removeKey(pass, task); });
                     Tag.get(pass).filter(function (tag) { return !Tag.isSystemTag(tag) && !Tag.isSublist(tag); }).forEach(function (tag) { return TagMember.removeKey(pass, tag); });
                     Tag.removeKey(pass);
+                    Removed.clear(pass);
                 };
                 Pass.generate = function (seed) {
                     if (seed === void 0) { seed = new Date().getTime(); }
@@ -1308,6 +1309,23 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             });
                         }
                     }
+                };
+                Tag.restore = function (pass, item) {
+                    var result = ("Tag" === item.type || "Sublist" === item.type) && !Tag.isSystemTag(item.name) && Tag.get(pass).indexOf(item.name) < 0;
+                    if (result) {
+                        switch (item.type) {
+                            case "Tag":
+                                Tag.add(pass, item.name);
+                                var allTasks_1 = TagMember.getRaw(pass, "@overall");
+                                TagMember.set(pass, item.name, item.tasks.filter(function (i) { return 0 <= allTasks_1.indexOf(i); }));
+                                break;
+                            case "Sublist":
+                                Tag.add(pass, item.name);
+                                item.tasks.forEach(function (task) { return Task.restore(pass, task); });
+                                break;
+                        }
+                    }
+                    return result;
                 };
                 Tag.getByTodo = function (pass, todo) { return ["@overall"].concat(Tag.get(pass)).concat(["@unoverall", "@untagged"]).filter(function (tag) { return 0 < TagMember.get(pass, tag).filter(function (i) { return todo === i; }).length; }); };
                 Tag.rename = function (pass, oldTag, newTag) {
@@ -1408,6 +1426,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     History.removeKey(pass, task);
                     Removed.add(pass, Task.serialize(pass, task));
                 };
+                Task.restore = function (pass, item) {
+                    var sublist = Task.getSublist(item.name);
+                    var result = TagMember.getRaw(pass, "@overall").indexOf(item.name) < 0 && (null === sublist || 0 <= Tag.get(pass).indexOf(sublist));
+                    if (result) {
+                        item.tags.map(function (tag) { return TagMember.add(pass, tag, item.name); });
+                        History.set(pass, item.name, item.ticks);
+                    }
+                    return result;
+                };
                 Task.serialize = function (pass, task) {
                     var tags = Tag.getByTodo(pass, task);
                     var ticks = History.get(pass, task);
@@ -1446,6 +1473,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             tick: tick,
                         });
                 };
+                History.restore = function (pass, item) {
+                    var result = History.get(pass, item.task).indexOf(item.tick) < 0;
+                    if (result) {
+                        History.add(pass, item.task, item.tick);
+                    }
+                    return result;
+                };
             })(History = Storage.History || (Storage.History = {}));
             var Removed;
             (function (Removed) {
@@ -1454,7 +1488,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 Removed.get = function (pass) { return Removed.getRaw(pass).map(function (i) { return JSON.parse(i); }); };
                 Removed.set = function (pass, list) { return minamo_js_1.minamo.localStorage.set(Removed.makeKey(pass), list); };
                 Removed.add = function (pass, target) { return Removed.set(pass, Removed.getRaw(pass).concat([JSON.stringify(target)])); };
-                Removed.remove = function (pass, target) { return Removed.set(pass, Removed.getRaw(pass).filter(function (i) { return target !== i; })); };
+                var remove = function (pass, target) { return Removed.set(pass, Removed.getRaw(pass).filter(function (i) { return target !== i; })); };
                 Removed.clear = function (pass) { return Removed.set(pass, []); };
                 Removed.getTypeName = function (item) { return locale.map(item.type); };
                 Removed.getName = function (item) {
@@ -1464,6 +1498,25 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     else {
                         return item.name;
                     }
+                };
+                Removed.restore = function (pass, item) {
+                    var result = false;
+                    switch (item.type) {
+                        case "Tag":
+                        case "Sublist":
+                            result = Tag.restore(pass, item);
+                            break;
+                        case "Task":
+                            result = Task.restore(pass, item);
+                            break;
+                        case "Tick":
+                            result = History.restore(pass, item);
+                            break;
+                    }
+                    if (result) {
+                        remove(pass, JSON.stringify(item));
+                    }
+                    return true;
                 };
             })(Removed = Storage.Removed || (Storage.Removed = {}));
         })(Storage = CyclicToDo.Storage || (CyclicToDo.Storage = {}));

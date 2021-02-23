@@ -420,9 +420,10 @@ export module CyclicToDo
             {
                 Backup.add(exportJson(pass));
                 set(get().filter(i => pass !== i));
-                TagMember.get(pass, "@overall").forEach(task => History.removeKey(pass, task));
+                TagMember.getRaw(pass, "@overall").forEach(task => History.removeKey(pass, task));
                 Tag.get(pass).filter(tag => ! Tag.isSystemTag(tag) && ! Tag.isSublist(tag)).forEach(tag => TagMember.removeKey(pass, tag));
                 Tag.removeKey(pass);
+                Removed.clear(pass);
             };
             export const generate = (seed: number = new Date().getTime()): string =>
             {
@@ -485,6 +486,26 @@ export module CyclicToDo
                         );
                     }
                 }
+            };
+            export const restore = (pass: string, item: Removed.Tag | Removed.Sublist) =>
+            {
+                let result = ("Tag" === item.type || "Sublist" === item.type) && ! isSystemTag(item.name) && get(pass).indexOf(item.name) < 0;
+                if (result)
+                {
+                    switch(item.type)
+                    {
+                    case "Tag":
+                        add(pass, item.name);
+                        const allTasks = TagMember.getRaw(pass, "@overall");
+                        TagMember.set(pass, item.name, item.tasks.filter(i => 0 <= allTasks.indexOf(i)));
+                        break;
+                    case "Sublist":
+                        add(pass, item.name);
+                        item.tasks.forEach(task => Task.restore(pass, task));
+                        break;
+                    }
+                }
+                return result;
             };
             export const getByTodo = (pass: string, todo: string) => ["@overall"].concat(get(pass)).concat(["@unoverall", "@untagged"]).filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length);
             export const rename = (pass: string, oldTag: string, newTag: string) =>
@@ -611,6 +632,17 @@ export module CyclicToDo
                     serialize(pass, task),
                 );
             };
+            export const restore = (pass: string, item: Removed.Task) =>
+            {
+                const sublist = Task.getSublist(item.name);
+                let result = TagMember.getRaw(pass, "@overall").indexOf(item.name) < 0 && (null === sublist || 0 <= Tag.get(pass).indexOf(sublist));
+                if (result)
+                {
+                    item.tags.map(tag => TagMember.add(pass, tag, item.name));
+                    History.set(pass, item.name, item.ticks);
+                }
+                return result;
+            };
             export const serialize = (pass: string, task: string) =>
             {
                 const tags = Tag.getByTodo(pass, task);
@@ -653,6 +685,15 @@ export module CyclicToDo
                     }
                 );
             };
+            export const restore = (pass: string, item: Removed.Tick) =>
+            {
+                let result = get(pass, item.task).indexOf(item.tick) < 0;
+                if (result)
+                {
+                    add(pass, item.task, item.tick);
+                }
+                return result;
+            };
         }
         export module Removed
         {
@@ -692,7 +733,7 @@ export module CyclicToDo
             export const get = (pass: string) => getRaw(pass).map(i => JSON.parse(i) as Type);
             export const set = (pass: string, list: string[]) => minamo.localStorage.set(makeKey(pass), list);
             export const add = (pass: string, target: Type) => set(pass, getRaw(pass).concat([ JSON.stringify(target) ]));
-            export const remove = (pass: string, target: string) => set(pass, getRaw(pass).filter(i => target !== i));
+            const remove = (pass: string, target: string) => set(pass, getRaw(pass).filter(i => target !== i));
             export const clear = (pass: string) => set(pass, []);
             export const getTypeName = (item: Type) => locale.map(item.type);
             export const getName = (item: Type) =>
@@ -705,6 +746,28 @@ export module CyclicToDo
                 {
                     return item.name;
                 }
+            };
+            export const restore = (pass: string, item: Type) =>
+            {
+                let result = false;
+                switch(item.type)
+                {
+                case "Tag":
+                case "Sublist":
+                    result = Tag.restore(pass, item);
+                    break;
+                case "Task":
+                    result = Task.restore(pass, item);
+                    break;
+                case "Tick":
+                    result = History.restore(pass, item);
+                    break;
+                }
+                if (result)
+                {
+                    remove(pass, JSON.stringify(item));
+                }
+                return true;
             };
         }
     }
