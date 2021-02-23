@@ -884,7 +884,7 @@ define("lang.en", [], {
     "Updating...": "Updating...",
     "Tag": "Tag",
     "Sublist": "Sublist",
-    "Task": "Task",
+    "Task": "ToDo",
     "Tick": "Record",
     "deletedAt": "deleted at"
 });
@@ -919,7 +919,7 @@ define("lang.ja", [], {
     "Updating...": "更新中...",
     "Tag": "タグ",
     "Sublist": "サブリスト",
-    "Task": "タスク",
+    "Task": "ToDo",
     "Tick": "記録",
     "deletedAt": "削除日時"
 });
@@ -1288,25 +1288,25 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     if (!Tag.isSystemTag(tag)) {
                         if (Tag.isSublist(tag)) {
                             var tasks = TagMember.getRaw(pass, tag).map(function (task) { return Task.serialize(pass, task); });
-                            Tag.removeRaw(pass, tag);
-                            TagMember.removeKey(pass, tag);
                             Removed.add(pass, {
                                 type: "Sublist",
                                 deteledAt: Domain.getTicks(),
                                 name: tag,
                                 tasks: tasks,
                             });
+                            Tag.removeRaw(pass, tag);
+                            TagMember.removeKey(pass, tag);
                         }
                         else {
                             var tasks = TagMember.getRaw(pass, tag);
-                            Tag.removeRaw(pass, tag);
-                            TagMember.removeKey(pass, tag);
                             Removed.add(pass, {
                                 type: "Tag",
                                 deteledAt: Domain.getTicks(),
                                 name: tag,
                                 tasks: tasks,
                             });
+                            Tag.removeRaw(pass, tag);
+                            TagMember.removeKey(pass, tag);
                         }
                     }
                 };
@@ -1328,6 +1328,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     return result;
                 };
                 Tag.getByTodo = function (pass, todo) { return ["@overall"].concat(Tag.get(pass)).concat(["@unoverall", "@untagged"]).filter(function (tag) { return 0 < TagMember.get(pass, tag).filter(function (i) { return todo === i; }).length; }); };
+                Tag.getByTodoRaw = function (pass, todo) { return ["@overall"].concat(Tag.get(pass)).concat(["@unoverall", "@untagged"]).filter(function (tag) { return 0 < TagMember.getRaw(pass, tag).filter(function (i) { return todo === i; }).length; }); };
                 Tag.rename = function (pass, oldTag, newTag) {
                     if (0 < newTag.length && !Tag.isSystemTag(oldTag) && !Tag.isSystemTag(newTag) && oldTag !== newTag && Tag.get(pass).indexOf(newTag) < 0) {
                         Tag.add(pass, newTag);
@@ -1410,7 +1411,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 };
                 Task.rename = function (pass, oldTask, newTask) {
                     if (0 < newTask.length && oldTask !== newTask && TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0) {
-                        Tag.getByTodo(pass, oldTask).forEach(function (tag) {
+                        Tag.getByTodoRaw(pass, oldTask).forEach(function (tag) {
                             TagMember.remove(pass, tag, oldTask);
                             TagMember.add(pass, tag, newTask);
                         });
@@ -1421,10 +1422,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     return false;
                 };
                 Task.remove = function (pass, task) {
-                    var tags = Tag.getByTodo(pass, task);
+                    Removed.add(pass, Task.serialize(pass, task));
+                    var tags = Tag.getByTodoRaw(pass, task);
                     tags.map(function (tag) { return Storage.TagMember.remove(pass, tag, task); });
                     History.removeKey(pass, task);
-                    Removed.add(pass, Task.serialize(pass, task));
                 };
                 Task.restore = function (pass, item) {
                     var sublist = Task.getSublist(item.name);
@@ -1436,7 +1437,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     return result;
                 };
                 Task.serialize = function (pass, task) {
-                    var tags = Tag.getByTodo(pass, task);
+                    var tags = Tag.getByTodoRaw(pass, task);
                     var ticks = History.get(pass, task);
                     var result = {
                         type: "Task",
@@ -1465,13 +1466,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     return History.set(pass, task, History.get(pass, task).filter(function (i) { return tick !== i; }).sort(exports.simpleReverseComparer));
                 };
                 History.remove = function (pass, task, tick) {
-                    History.removeRaw(pass, task, tick),
-                        Removed.add(pass, {
-                            type: "Tick",
-                            deteledAt: Domain.getTicks(),
-                            task: task,
-                            tick: tick,
-                        });
+                    Removed.add(pass, {
+                        type: "Tick",
+                        deteledAt: Domain.getTicks(),
+                        task: task,
+                        tick: tick,
+                    });
+                    History.removeRaw(pass, task, tick);
                 };
                 History.restore = function (pass, item) {
                     var result = History.get(pass, item.task).indexOf(item.tick) < 0;
@@ -2894,7 +2895,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
-            Render.removedItem = function (item) { return __awaiter(_this, void 0, void 0, function () {
+            Render.removedItem = function (pass, item) { return __awaiter(_this, void 0, void 0, function () {
                 var _this = this;
                 return __generator(this, function (_a) {
                     return [2 /*return*/, ({
@@ -2920,7 +2921,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     children: "復元",
                                                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                         return __generator(this, function (_a) {
-                                                            return [2 /*return*/];
+                                                            switch (_a.label) {
+                                                                case 0:
+                                                                    if (!Storage.Removed.restore(pass, item)) return [3 /*break*/, 2];
+                                                                    return [4 /*yield*/, CyclicToDo.reload()];
+                                                                case 1:
+                                                                    _a.sent();
+                                                                    return [3 /*break*/, 4];
+                                                                case 2: return [4 /*yield*/, Render.alert("復元できませんでした。( 同名の項目が存在すると復元できません。また、サブリスト内の ToDo の場合、元のサブリストが存在している必要があります。 )")];
+                                                                case 3:
+                                                                    _a.sent();
+                                                                    _a.label = 4;
+                                                                case 4: return [2 /*return*/];
+                                                            }
                                                         });
                                                     }); }
                                                 },
@@ -2980,9 +2993,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             case 1: return [2 /*return*/, _a.sent()];
                                         }
                                     }); }); }),
-                                    Render.menuItem("🚫 完全に削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                                    Render.menuItem("完全に削除", function () { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
-                                            return [2 /*return*/];
+                                            switch (_a.label) {
+                                                case 0:
+                                                    Storage.Removed.clear(pass);
+                                                    return [4 /*yield*/, CyclicToDo.reload()];
+                                                case 1:
+                                                    _a.sent();
+                                                    return [2 /*return*/];
+                                            }
                                         });
                                     }); }),
                                 ])];
@@ -2996,7 +3016,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 tag: "div",
                                 className: "column-flex-list removed-list"
                             };
-                            return [4 /*yield*/, Promise.all(Storage.Removed.get(pass).map(function (item) { return Render.removedItem(item); }))];
+                            return [4 /*yield*/, Promise.all(Storage.Removed.get(pass).map(function (item) { return Render.removedItem(pass, item); }))];
                         case 3: return [2 /*return*/, (_a.children = _g.concat([
                                 (_h.children = _j.sent(),
                                     _h),

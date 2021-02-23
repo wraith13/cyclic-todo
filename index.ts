@@ -456,8 +456,6 @@ export module CyclicToDo
                     if (isSublist(tag))
                     {
                         const tasks = TagMember.getRaw(pass, tag).map(task => Task.serialize(pass, task));
-                        removeRaw(pass, tag);
-                        TagMember.removeKey(pass, tag);
                         Removed.add
                         (
                             pass,
@@ -468,12 +466,12 @@ export module CyclicToDo
                                 tasks,
                             }
                         );
+                        removeRaw(pass, tag);
+                        TagMember.removeKey(pass, tag);
                     }
                     else
                     {
                         const tasks = TagMember.getRaw(pass, tag);
-                        removeRaw(pass, tag);
-                        TagMember.removeKey(pass, tag);
                         Removed.add
                         (
                             pass,
@@ -484,6 +482,8 @@ export module CyclicToDo
                                 tasks,
                             }
                         );
+                        removeRaw(pass, tag);
+                        TagMember.removeKey(pass, tag);
                     }
                 }
             };
@@ -508,6 +508,7 @@ export module CyclicToDo
                 return result;
             };
             export const getByTodo = (pass: string, todo: string) => ["@overall"].concat(get(pass)).concat(["@unoverall", "@untagged"]).filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length);
+            export const getByTodoRaw = (pass: string, todo: string) => ["@overall"].concat(get(pass)).concat(["@unoverall", "@untagged"]).filter(tag => 0 < TagMember.getRaw(pass, tag).filter(i => todo === i).length);
             export const rename = (pass: string, oldTag: string, newTag: string) =>
             {
                 if (0 < newTag.length && ! isSystemTag(oldTag) && ! isSystemTag(newTag) && oldTag !== newTag && get(pass).indexOf(newTag) < 0)
@@ -607,7 +608,7 @@ export module CyclicToDo
             {
                 if (0 < newTask.length && oldTask !== newTask && TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0)
                 {
-                    Tag.getByTodo(pass, oldTask).forEach
+                    Tag.getByTodoRaw(pass, oldTask).forEach
                     (
                         tag =>
                         {
@@ -623,14 +624,14 @@ export module CyclicToDo
             };
             export const remove = (pass: string, task: string) =>
             {
-                const tags = Tag.getByTodo(pass, task);
-                tags.map(tag => Storage.TagMember.remove(pass, tag, task));
-                History.removeKey(pass, task);
                 Removed.add
                 (
                     pass,
                     serialize(pass, task),
                 );
+                const tags = Tag.getByTodoRaw(pass, task);
+                tags.map(tag => Storage.TagMember.remove(pass, tag, task));
+                History.removeKey(pass, task);
             };
             export const restore = (pass: string, item: Removed.Task) =>
             {
@@ -645,7 +646,7 @@ export module CyclicToDo
             };
             export const serialize = (pass: string, task: string) =>
             {
-                const tags = Tag.getByTodo(pass, task);
+                const tags = Tag.getByTodoRaw(pass, task);
                 const ticks = History.get(pass, task);
                 const result: Removed.Task =
                 {
@@ -673,7 +674,6 @@ export module CyclicToDo
                 set(pass, task, get(pass, task).filter(i => tick !== i).sort(simpleReverseComparer));
             export const remove = (pass: string, task: string, tick: number) =>
             {
-                removeRaw(pass, task, tick),
                 Removed.add
                 (
                     pass,
@@ -684,6 +684,7 @@ export module CyclicToDo
                         tick,
                     }
                 );
+                removeRaw(pass, task, tick);
             };
             export const restore = (pass: string, item: Removed.Tick) =>
             {
@@ -2122,7 +2123,7 @@ export module CyclicToDo
             list = list.concat(entry.todo.filter(task => histories[task].length <= 0).map(task => ({ task, tick: null })));
             showWindow(await historyScreen(entry, list));
         };
-        export const removedItem = async (item: Storage.Removed.Type) =>
+        export const removedItem = async (pass: string, item: Storage.Removed.Type) =>
         ({
             tag: "div",
             className: "removed-item flex-item",
@@ -2149,11 +2150,14 @@ export module CyclicToDo
                                     children: "復元",
                                     onclick: async () =>
                                     {
-                                        // const pass = Storage.importJson(JSON.stringify(list));
-                                        // if (null !== pass)
-                                        // {
-                                        //     showUrl({ pass, tag: "@overall", });
-                                        // }
+                                        if (Storage.Removed.restore(pass, item))
+                                        {
+                                            await reload();
+                                        }
+                                        else
+                                        {
+                                            await alert("復元できませんでした。( 同名の項目が存在すると復元できません。また、サブリスト内の ToDo の場合、元のサブリストが存在している必要があります。 )");
+                                        }
                                     }
                                 },
                             ],
@@ -2208,9 +2212,11 @@ export module CyclicToDo
                             ),
                             menuItem
                             (
-                                "🚫 完全に削除",
+                                "完全に削除",
                                 async () =>
                                 {
+                                    Storage.Removed.clear(pass);
+                                    await reload();
                                 }
                             ),
                         ]),
@@ -2219,7 +2225,7 @@ export module CyclicToDo
                 {
                     tag: "div",
                     className: "column-flex-list removed-list",
-                    children: await Promise.all(Storage.Removed.get(pass).map(item => removedItem(item))),
+                    children: await Promise.all(Storage.Removed.get(pass).map(item => removedItem(pass, item))),
                 },
                 {
                     tag: "div",
