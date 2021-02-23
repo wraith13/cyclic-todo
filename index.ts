@@ -340,7 +340,7 @@ export module CyclicToDo
             [
                 //"@overall", todos でカバーされるのでここには含めない
                 "@unoverall",
-                "@deleted",
+                //"@deleted", 現状のヤツは廃止。ただ、別の形で復帰させるかも。
             ].concat(Tag.get(pass))
             .forEach
             (
@@ -530,26 +530,23 @@ export module CyclicToDo
                 getStorage(pass).getOrNull<string[]>(makeKey(pass, tag)) ?? [];
             export const get = (pass: string, tag: string): string[] =>
             {
-                const deleted = getRaw(pass, "@deleted");
                 switch(tag)
                 {
                 case "@overall":
                     {
-                        const unoverall = getRaw(pass, "@unoverall").concat(deleted);
+                        const unoverall = getRaw(pass, "@unoverall");
                         return getRaw(pass, "@overall").filter(i => unoverall.indexOf(i) < 0);
                     }
                 case "@untagged":
                     {
-                        const tagged = Tag.get(pass).map(tag => get(pass, tag)).reduce((a, b) => a.concat(b), []).concat(deleted);
+                        const tagged = Tag.get(pass).map(tag => get(pass, tag)).reduce((a, b) => a.concat(b), []);
                         return getRaw(pass, "@overall").filter(i => tagged.indexOf(i) < 0);
                     }
-                case "@deleted":
-                    return deleted;
                 case "@unoverall":
                 default:
                     return Tag.isSublist(tag) ?
                         getRaw(pass, "@overall").filter(i => tag === Task.getSublist(i)):
-                        getRaw(pass, tag).filter(i => deleted.indexOf(i) < 0);
+                        getRaw(pass, tag);
                 }
             };
             export const set = (pass: string, tag: string, list: string[]) =>
@@ -601,7 +598,6 @@ export module CyclicToDo
             };
             export const add = (pass: string, task: string) =>
             {
-                Storage.TagMember.remove(pass, "@deleted", task);
                 Storage.TagMember.add(pass, "@overall", task);
             };
             export const rename = (pass: string, oldTask: string, newTask: string) =>
@@ -881,7 +877,7 @@ export module CyclicToDo
             case "@overall":
             case "@unoverall":
             case "@untagged":
-            case "@deleted":
+            // case "@deleted":
             case "@new":
                 return locale.map(tag);
             default:
@@ -1457,27 +1453,16 @@ export module CyclicToDo
             {
             }
         );
-        export const todoDeleteMenu = (pass: string, item: ToDoEntry) =>
-            0 <= Storage.TagMember.get(pass, "@deleted").indexOf(item.task) ?
-                menuItem
-                (
-                    locale.parallel("Restore"),
-                    async () =>
-                    {
-                        Storage.TagMember.remove(pass, "@deleted", item.task);
-                        await reload();
-                    }
-                ):
-                menuItem
-                (
-                    locale.parallel("Delete"),
-                    async () =>
-                    {
-                        Storage.Task.remove(pass, item.task);
-                        //Storage.TagMember.add(pass, "@deleted", item.task);
-                        await reload();
-                    }
-                );
+        export const todoDeleteMenu = (pass: string, item: ToDoEntry) => menuItem
+        (
+            locale.parallel("Delete"),
+            async () =>
+            {
+                Storage.Task.remove(pass, item.task);
+                //Storage.TagMember.add(pass, "@deleted", item.task);
+                await reload();
+            }
+        );
         export const todoItem = async (entry: ToDoTagEntry, item: ToDoEntry) =>
         ({
             tag: "div",
@@ -1743,7 +1728,7 @@ export module CyclicToDo
                         ({
                             list: makeObject
                             (
-                                ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@deleted", "@new"])
+                                ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@new"])
                                 .map(i => ({ key:i, value: `${Domain.tagMap(i)} (${Storage.TagMember.get(entry.pass, i).length})`, }))
                             ),
                             value: entry.tag,
@@ -1803,36 +1788,24 @@ export module CyclicToDo
                                 href: { pass: entry.pass, hash: "removed" },
                                 children: menuItem(locale.parallel("@deleted")),
                             }),
-                            "@deleted" === entry.tag ?
-                            [
-                                menuItem
-                                (
-                                    "🚫 完全に削除",
-                                    async () =>
-                                    {
-                                    }
-                                ),
-                            ]:
-                            [
-                                menuItem
-                                (
-                                    locale.parallel("New ToDo"),
-                                    async () =>
-                                    {
-                                        const newTask = await prompt("ToDo の名前を入力してください");
-                                        if (null !== newTask)
-                                        {
-                                            Storage.Task.add(entry.pass, newTask);
-                                            Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                            await reload();
-                                        }
-                                    }
-                                ),
+                            menuItem
+                            (
+                                locale.parallel("New ToDo"),
+                                async () =>
                                 {
-                                    tag: "button",
-                                    children: "🚫 リストをシェア",
+                                    const newTask = await prompt("ToDo の名前を入力してください");
+                                    if (null !== newTask)
+                                    {
+                                        Storage.Task.add(entry.pass, newTask);
+                                        Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                                        await reload();
+                                    }
                                 }
-                            ],
+                            ),
+                            {
+                                tag: "button",
+                                children: "🚫 リストをシェア",
+                            },
                             internalLink
                             ({
                                 href: { pass: entry.pass, hash: "export" },
@@ -1865,58 +1838,38 @@ export module CyclicToDo
                     className: "column-flex-list todo-list",
                     children: await Promise.all(list.map(item => todoItem(entry, item))),
                 },
-                "@deleted" !== entry.tag ?
-                    {
-                        tag: "div",
-                        className: "button-list",
-                        children:
-                        [
-                            {
-                                tag: "button",
-                                className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
-                                children: locale.parallel("New ToDo"),
-                                onclick: async () =>
-                                {
-                                    const newTask = await prompt("ToDo の名前を入力してください");
-                                    if (null !== newTask)
-                                    {
-                                        Storage.Task.add(entry.pass, newTask);
-                                        Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                        await reload();
-                                    }
-                                }
-                            },
-                            internalLink
-                            ({
-                                href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                                children:
-                                {
-                                    tag: "button",
-                                    className: "main-button long-button",
-                                    children: locale.parallel("History"),
-                                },
-                            }),
-                        ]
-                    }:
-                    0 < list.length ?
+                {
+                    tag: "div",
+                    className: "button-list",
+                    children:
+                    [
                         {
-                            tag: "div",
-                            className: "button-list",
+                            tag: "button",
+                            className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
+                            children: locale.parallel("New ToDo"),
+                            onclick: async () =>
+                            {
+                                const newTask = await prompt("ToDo の名前を入力してください");
+                                if (null !== newTask)
+                                {
+                                    Storage.Task.add(entry.pass, newTask);
+                                    Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                                    await reload();
+                                }
+                            }
+                        },
+                        internalLink
+                        ({
+                            href: { pass: entry.pass, tag: entry.tag, hash: "history" },
                             children:
                             {
                                 tag: "button",
-                                className: "default-button main-button long-button",
-                                children: "🚫 完全に削除",
-                                onclick: async () =>
-                                {
-                                }
+                                className: "main-button long-button",
+                                children: locale.parallel("History"),
                             },
-                        }:
-                        {
-                            tag: "div",
-                            className: "button-list",
-                            children: locale.parallel("Recycle Bin is empty."),
-                        }
+                        }),
+                    ]
+                }
             ]
         });
         export const showListScreen = async (entry: ToDoTagEntry) =>
@@ -1981,7 +1934,7 @@ export module CyclicToDo
                         ({
                             list: makeObject
                             (
-                                ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@deleted", "@new"])
+                                ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@new"])
                                 .map(i => ({ key:i, value: `${Domain.tagMap(i)} (${Storage.TagMember.get(entry.pass, i).length})`, }))
                             ),
                             value: entry.tag,
@@ -2036,36 +1989,24 @@ export module CyclicToDo
                                         }
                                     }
                                 ),
-                            "@deleted" === entry.tag ?
-                            [
-                                menuItem
-                                (
-                                    "🚫 完全に削除",
-                                    async () =>
-                                    {
-                                    }
-                                ),
-                            ]:
-                            [
-                                menuItem
-                                (
-                                    locale.parallel("New ToDo"),
-                                    async () =>
-                                    {
-                                        const newTask = await prompt("ToDo の名前を入力してください");
-                                        if (null !== newTask)
-                                        {
-                                            Storage.Task.add(entry.pass, newTask);
-                                            Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                            await reload();
-                                        }
-                                    }
-                                ),
+                            menuItem
+                            (
+                                locale.parallel("New ToDo"),
+                                async () =>
                                 {
-                                    tag: "button",
-                                    children: "🚫 リストをシェア",
+                                    const newTask = await prompt("ToDo の名前を入力してください");
+                                    if (null !== newTask)
+                                    {
+                                        Storage.Task.add(entry.pass, newTask);
+                                        Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                                        await reload();
+                                    }
                                 }
-                            ],
+                            ),
+                            {
+                                tag: "button",
+                                children: "🚫 リストをシェア",
+                            },
                             menuItem
                             (
                                 locale.parallel("Export"),
@@ -2187,7 +2128,7 @@ export module CyclicToDo
                 }
             ],
         });
-        export const removedScreen = async (pass: string) =>
+        export const removedScreen = async (pass: string, list: Storage.Removed.Type[]) =>
         ({
             tag: "div",
             className: "removed-screen screen",
@@ -2222,11 +2163,17 @@ export module CyclicToDo
                         ]),
                     ]
                 ),
-                {
-                    tag: "div",
-                    className: "column-flex-list removed-list",
-                    children: await Promise.all(Storage.Removed.get(pass).map(item => removedItem(pass, item))),
-                },
+                0 < list.length ?
+                    {
+                        tag: "div",
+                        className: "column-flex-list removed-list",
+                        children: await Promise.all(list.map(item => removedItem(pass, item))),
+                    }:
+                    {
+                        tag: "div",
+                        className: "button-list",
+                        children: locale.parallel("Recycle Bin is empty."),
+                    },
                 {
                     tag: "div",
                     className: "button-list",
@@ -2243,7 +2190,7 @@ export module CyclicToDo
         export const showRemovedScreen = async (pass: string) =>
         {
             document.title = `${locale.map("@deleted")} ${applicationTitle}`;
-            showWindow(await removedScreen(pass));
+            showWindow(await removedScreen(pass, Storage.Removed.get(pass)));
         };
         export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[]) =>
         ({
@@ -2324,7 +2271,7 @@ export module CyclicToDo
                         )
                     ),
                 },
-                0 <= Storage.TagMember.get(pass, "@deleted").indexOf(item.task) || Storage.isSessionPass(pass) ?
+                Storage.isSessionPass(pass) ?
                     []:
                     {
                         tag: "div",
