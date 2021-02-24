@@ -397,6 +397,28 @@ button.default-button
     text-align: center;
     padding: 0.5rem;
 }
+.horizontal-list
+{
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100vw;
+    box-sizing: border-box;
+    // &:not(.empty-list)
+    // {
+    //     border-color: rgba(128,128,128,0.5);
+    //     border-style: solid;
+    //     border-width: 0px 0px 1px 0px;
+    // }
+}
+.history-bar
+{
+    font-size: 0.8rem;
+    padding: 0.4rem;
+    & > span + span
+    {
+        padding-left: 0.8rem;
+    }
+}
 .row-flex-list,
 .column-flex-list
 {

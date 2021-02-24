@@ -1709,6 +1709,36 @@ export module CyclicToDo
             };
             return result;
         };
+        export const historyBar = async (_entry: ToDoTagEntry, list: ToDoEntry[]) =>
+        ({
+            tag: "div",
+            className: "horizontal-list history-bar",
+            children:
+            [
+                {
+                    tag: "span",
+                    className: "history-bar-title",
+                    children: `${locale.map("History")}:`,
+                },
+                [].concat(list).sort(minamo.core.comparer.make(i => -i.previous ?? 0)).map
+                (
+                    i =>
+                    ({
+                        tag: "span",
+                        className: "history-bar-item",
+                        children:
+                        [
+                            i.task,
+                            {
+                                tag: "span",
+                                className: "monospace",
+                                children: `(${Domain.dateStringFromTick(i.previous)}),`
+                            }
+                        ],
+                    })
+                ),
+            ]
+        });
         export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         ({
             tag: "div",
@@ -1833,6 +1863,7 @@ export module CyclicToDo
                         ]),
                     ]
                 ),
+                await historyBar(entry, list),
                 {
                     tag: "div",
                     className: "column-flex-list todo-list",

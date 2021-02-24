@@ -2434,6 +2434,35 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 };
                 return result;
             };
+            Render.historyBar = function (_entry, list) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, ({
+                            tag: "div",
+                            className: "horizontal-list history-bar",
+                            children: [
+                                {
+                                    tag: "span",
+                                    className: "history-bar-title",
+                                    children: locale.map("History") + ":",
+                                },
+                                [].concat(list).sort(minamo_js_1.minamo.core.comparer.make(function (i) { var _a; return (_a = -i.previous) !== null && _a !== void 0 ? _a : 0; })).map(function (i) {
+                                    return ({
+                                        tag: "span",
+                                        className: "history-bar-item",
+                                        children: [
+                                            i.task,
+                                            {
+                                                tag: "span",
+                                                className: "monospace",
+                                                children: "(" + Domain.dateStringFromTick(i.previous) + "),"
+                                            }
+                                        ],
+                                    });
+                                }),
+                            ]
+                        })];
+                });
+            }); };
             Render.listScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e, _f, _g, _h;
                 var _this = this;
@@ -2564,12 +2593,17 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         _j.sent()
                                     ])]))
                             ];
+                            return [4 /*yield*/, Render.historyBar(entry, list)];
+                        case 3:
+                            _g = _g.concat([
+                                _j.sent()
+                            ]);
                             _h = {
                                 tag: "div",
                                 className: "column-flex-list todo-list"
                             };
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.todoItem(entry, item); }))];
-                        case 3: return [2 /*return*/, (_a.children = _g.concat([
+                        case 4: return [2 /*return*/, (_a.children = _g.concat([
                                 (_h.children = _j.sent(),
                                     _h),
                                 {
