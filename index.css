@@ -302,11 +302,22 @@ button.default-button:hover {
   box-sizing: border-box;
 }
 .history-bar {
-  font-size: 0.8rem;
-  padding: 0.4rem;
+  font-size: 1rem;
+  padding: 0.5rem;
+  background-color: #8884;
+  color: #000022;
+  opacity: 0.6;
 }
-.history-bar > span + span {
-  padding-left: 0.8rem;
+.history-bar > * + * {
+  padding-left: 1rem;
+}
+.history-bar:not(:hover) {
+  text-decoration: none;
+}
+@media (prefers-color-scheme: dark) {
+  .history-bar {
+    color: #FFFFFF;
+  }
 }
 .row-flex-list,
 .column-flex-list {

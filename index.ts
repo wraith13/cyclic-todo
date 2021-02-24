@@ -1722,17 +1722,17 @@ export module CyclicToDo
                 },
                 [].concat(list).sort(minamo.core.comparer.make(i => -i.previous ?? 0)).map
                 (
-                    i =>
+                    item =>
                     ({
                         tag: "span",
                         className: "history-bar-item",
                         children:
                         [
-                            i.task,
+                            item.task,
                             {
                                 tag: "span",
                                 className: "monospace",
-                                children: `(${Domain.dateStringFromTick(i.previous)}),`
+                                children: `(${Domain.timeLongStringFromTick(item.elapsed)}),`
                             }
                         ],
                     })

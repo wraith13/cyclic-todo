@@ -412,11 +412,22 @@ button.default-button
 }
 .history-bar
 {
-    font-size: 0.8rem;
-    padding: 0.4rem;
-    & > span + span
+    font-size: 1.0rem;
+    padding: 0.5rem;
+    & > * + *
     {
-        padding-left: 0.8rem;
+        padding-left: 1.0rem;
+    }
+    background-color: #8884;
+    color: @main-color;
+    opacity: 0.6;
+    &:not(:hover)
+    {
+        text-decoration: none;
+    }
+    @media (prefers-color-scheme: dark)
+    {
+        color: @dark-main-color;
     }
 }
 .row-flex-list,

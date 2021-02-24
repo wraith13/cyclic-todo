@@ -2445,16 +2445,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     className: "history-bar-title",
                                     children: locale.map("History") + ":",
                                 },
-                                [].concat(list).sort(minamo_js_1.minamo.core.comparer.make(function (i) { var _a; return (_a = -i.previous) !== null && _a !== void 0 ? _a : 0; })).map(function (i) {
+                                [].concat(list).sort(minamo_js_1.minamo.core.comparer.make(function (i) { var _a; return (_a = -i.previous) !== null && _a !== void 0 ? _a : 0; })).map(function (item) {
                                     return ({
                                         tag: "span",
                                         className: "history-bar-item",
                                         children: [
-                                            i.task,
+                                            item.task,
                                             {
                                                 tag: "span",
                                                 className: "monospace",
-                                                children: "(" + Domain.dateStringFromTick(i.previous) + "),"
+                                                children: "(" + Domain.timeLongStringFromTick(item.elapsed) + "),"
                                             }
                                         ],
                                     });
