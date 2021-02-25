@@ -2660,18 +2660,27 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             Domain.sortList(entry, list);
                             isDirty = false;
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
+                                var _a;
                                 var _this = this;
-                                return __generator(this, function (_a) {
-                                    switch (_a.label) {
+                                return __generator(this, function (_b) {
+                                    switch (_b.label) {
                                         case 0:
+                                            _a = event;
+                                            switch (_a) {
+                                                case "timer": return [3 /*break*/, 1];
+                                                case "scroll": return [3 /*break*/, 5];
+                                                case "storage": return [3 /*break*/, 8];
+                                            }
+                                            return [3 /*break*/, 10];
+                                        case 1:
                                             Domain.updateListProgress(list);
                                             isDirty = (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list))) || isDirty;
-                                            if (!("storage" === event || (isDirty && "scroll" === event))) return [3 /*break*/, 2];
+                                            if (!(isDirty && document.body.scrollTop <= 0)) return [3 /*break*/, 3];
                                             return [4 /*yield*/, CyclicToDo.reload()];
-                                        case 1:
-                                            _a.sent();
-                                            return [3 /*break*/, 3];
                                         case 2:
+                                            _b.sent();
+                                            return [3 /*break*/, 4];
+                                        case 3:
                                             Array.from(document
                                                 .getElementsByClassName("list-screen")[0]
                                                 .getElementsByClassName("todo-list")[0].childNodes).forEach(function (dom, index) {
@@ -2691,8 +2700,20 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     case 1: return [2 /*return*/, _b.apply(_a, _c.concat([(_d.sent()).children]))];
                                                 }
                                             }); }); });
-                                            _a.label = 3;
-                                        case 3: return [2 /*return*/];
+                                            _b.label = 4;
+                                        case 4: return [3 /*break*/, 10];
+                                        case 5:
+                                            if (!isDirty) return [3 /*break*/, 7];
+                                            return [4 /*yield*/, CyclicToDo.reload()];
+                                        case 6:
+                                            _b.sent();
+                                            _b.label = 7;
+                                        case 7: return [3 /*break*/, 10];
+                                        case 8: return [4 /*yield*/, CyclicToDo.reload()];
+                                        case 9:
+                                            _b.sent();
+                                            return [3 /*break*/, 10];
+                                        case 10: return [2 /*return*/];
                                     }
                                 });
                             }); };
@@ -3164,25 +3185,30 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
                             Domain.updateProgress(item);
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
-                                var dom, information_1;
-                                return __generator(this, function (_a) {
-                                    switch (_a.label) {
+                                var _a, dom, information_1;
+                                return __generator(this, function (_b) {
+                                    switch (_b.label) {
                                         case 0:
-                                            Domain.updateProgress(item);
-                                            if (!("storage" === event)) return [3 /*break*/, 2];
-                                            return [4 /*yield*/, CyclicToDo.reload()];
+                                            _a = event;
+                                            switch (_a) {
+                                                case "timer": return [3 /*break*/, 1];
+                                                case "storage": return [3 /*break*/, 2];
+                                            }
+                                            return [3 /*break*/, 4];
                                         case 1:
-                                            _a.sent();
-                                            return [3 /*break*/, 3];
-                                        case 2:
+                                            Domain.updateProgress(item);
                                             dom = document
                                                 .getElementsByClassName("todo-screen")[0]
                                                 .getElementsByClassName("task-item")[0];
                                             information_1 = dom.getElementsByClassName("item-information")[0];
                                             information_1.setAttribute("style", Render.progressStyle(item.progress));
                                             information_1.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
-                                            _a.label = 3;
-                                        case 3: return [2 /*return*/];
+                                            return [3 /*break*/, 4];
+                                        case 2: return [4 /*yield*/, CyclicToDo.reload()];
+                                        case 3:
+                                            _b.sent();
+                                            return [3 /*break*/, 4];
+                                        case 4: return [2 /*return*/];
                                     }
                                 });
                             }); };

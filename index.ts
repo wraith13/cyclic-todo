@@ -1912,39 +1912,53 @@ export module CyclicToDo
             let isDirty = false;
             const updateWindow = async (event: UpdateWindowEventEype) =>
             {
-                Domain.updateListProgress(list);
-                isDirty = ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[])) || isDirty;
-                if ("storage" === event|| (isDirty && "scroll" === event))
+                switch(event)
                 {
-                    await reload();
-                }
-                else
-                {
-                    (
-                        Array.from
-                        (
-                            (
-                                document
-                                    .getElementsByClassName("list-screen")[0]
-                                    .getElementsByClassName("todo-list")[0] as HTMLDivElement
-                            ).childNodes
-                        ) as HTMLDivElement[]
-                    ).forEach
-                    (
-                        (dom, index) =>
+                    case "timer":
+                        Domain.updateListProgress(list);
+                        isDirty = ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[])) || isDirty;
+                        if (isDirty && document.body.scrollTop <= 0)
                         {
-                            const item = list[index];
-                            const button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0] as HTMLButtonElement;
-                            button.classList.toggle("default-button", item.isDefault);
-                            const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
-                            information.setAttribute("style", Render.progressStyle(item.progress));
-                            (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
+                            await reload();
                         }
-                    );
-                    Array.from(document.getElementsByClassName("history-bar")).forEach
-                    (
-                        async dom => minamo.dom.replaceChildren(dom, (await historyBar(entry, list)).children)
-                    );
+                        else
+                        {
+                            (
+                                Array.from
+                                (
+                                    (
+                                        document
+                                            .getElementsByClassName("list-screen")[0]
+                                            .getElementsByClassName("todo-list")[0] as HTMLDivElement
+                                    ).childNodes
+                                ) as HTMLDivElement[]
+                            ).forEach
+                            (
+                                (dom, index) =>
+                                {
+                                    const item = list[index];
+                                    const button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0] as HTMLButtonElement;
+                                    button.classList.toggle("default-button", item.isDefault);
+                                    const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
+                                    information.setAttribute("style", Render.progressStyle(item.progress));
+                                    (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
+                                }
+                            );
+                            Array.from(document.getElementsByClassName("history-bar")).forEach
+                            (
+                                async dom => minamo.dom.replaceChildren(dom, (await historyBar(entry, list)).children)
+                            );
+                        }
+                        break;
+                    case "scroll":
+                        if (isDirty)
+                        {
+                            await reload();
+                        }
+                        break;
+                    case "storage":
+                        await reload();
+                        break;
                 }
             };
             showWindow(await listScreen(entry, list), updateWindow);
@@ -2331,19 +2345,20 @@ export module CyclicToDo
             Domain.updateProgress(item);
             const updateWindow = async (event: UpdateWindowEventEype) =>
             {
-                Domain.updateProgress(item);
-                if ("storage" === event)
+                switch(event)
                 {
-                    await reload();
-                }
-                else
-                {
-                    const dom = document
-                        .getElementsByClassName("todo-screen")[0]
-                        .getElementsByClassName("task-item")[0] as HTMLDivElement;
-                    const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
-                    information.setAttribute("style", Render.progressStyle(item.progress));
-                    (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
+                    case "timer":
+                        Domain.updateProgress(item);
+                        const dom = document
+                            .getElementsByClassName("todo-screen")[0]
+                            .getElementsByClassName("task-item")[0] as HTMLDivElement;
+                        const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
+                        information.setAttribute("style", Render.progressStyle(item.progress));
+                        (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
+                        break;
+                    case "storage":
+                        await reload();
+                        break;
                 }
             };
             showWindow(await todoScreen(pass, item, Storage.History.get(pass, task)), updateWindow);
