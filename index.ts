@@ -1909,13 +1909,12 @@ export module CyclicToDo
             const list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)));
             Domain.updateListProgress(list);
             Domain.sortList(entry, list);
-            let lastUpdate = Storage.lastUpdate;
             let isDirty = false;
-            const updateWindow = async () =>
+            const updateWindow = async (event: UpdateWindowEventEype) =>
             {
                 Domain.updateListProgress(list);
                 isDirty = ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[])) || isDirty;
-                if (lastUpdate !== Storage.lastUpdate || (isDirty && document.body.scrollTop <= 0))
+                if ("storage" === event|| (isDirty && "scroll" === event))
                 {
                     await reload();
                 }
@@ -1941,6 +1940,10 @@ export module CyclicToDo
                             information.setAttribute("style", Render.progressStyle(item.progress));
                             (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
                         }
+                    );
+                    Array.from(document.getElementsByClassName("history-bar")).forEach
+                    (
+                        async dom => minamo.dom.replaceChildren(dom, (await historyBar(entry, list)).children)
                     );
                 }
             };
@@ -2326,11 +2329,14 @@ export module CyclicToDo
             document.title = `${task} ${applicationTitle}`;
             const item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
             Domain.updateProgress(item);
-            let lastUpdate = Storage.lastUpdate;
-            const updateWindow = async () =>
+            const updateWindow = async (event: UpdateWindowEventEype) =>
             {
                 Domain.updateProgress(item);
-                if (lastUpdate === Storage.lastUpdate)
+                if ("storage" === event)
+                {
+                    await reload();
+                }
+                else
                 {
                     const dom = document
                         .getElementsByClassName("todo-screen")[0]
@@ -2338,10 +2344,6 @@ export module CyclicToDo
                     const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
                     information.setAttribute("style", Render.progressStyle(item.progress));
                     (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
-                }
-                else
-                {
-                    await reload();
                 }
             };
             showWindow(await todoScreen(pass, item, Storage.History.get(pass, task)), updateWindow);
@@ -2763,9 +2765,10 @@ export module CyclicToDo
             document.title = "Updating...";
             showWindow(await updatingScreen());
         };
-        export let updateWindow: () => unknown;
+        export type UpdateWindowEventEype = "timer" | "scroll" | "storage";
+        export let updateWindow: (event: UpdateWindowEventEype) => unknown;
         let updateWindowTimer = undefined;
-        export const showWindow = async (screen: minamo.dom.Source, updateWindow?: () => unknown) =>
+        export const showWindow = async (screen: minamo.dom.Source, updateWindow?: (event: UpdateWindowEventEype) => unknown) =>
         {
             if (undefined !== updateWindow)
             {
@@ -2773,10 +2776,9 @@ export module CyclicToDo
             }
             else
             {
-                let lastUpdate = Storage.lastUpdate;
-                Render.updateWindow = async () =>
+                Render.updateWindow = async (event: UpdateWindowEventEype) =>
                 {
-                    if (lastUpdate !== Storage.lastUpdate)
+                    if ("storage" === event)
                     {
                         await reload();
                     }
@@ -2786,7 +2788,7 @@ export module CyclicToDo
             {
                 updateWindowTimer = setInterval
                 (
-                    () => Render.updateWindow?.(),
+                    () => Render.updateWindow?.("timer"),
                     Domain.TimeAccuracy
                 );
                 document.addEventListener
@@ -2796,7 +2798,7 @@ export module CyclicToDo
                     {
                         if (document.body.scrollTop <= 0)
                         {
-                            Render.updateWindow?.();
+                            Render.updateWindow?.("scroll");
                         }
                     }
                 );
@@ -2905,7 +2907,7 @@ export module CyclicToDo
                 {
                     if (lastUpdate === Storage.lastUpdate && onUpdateStorageCountCopy === onUpdateStorageCount)
                     {
-                        updateWindow?.();
+                        updateWindow?.("storage");
                     }
                 },
                 50,
