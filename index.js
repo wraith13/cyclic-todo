@@ -1630,6 +1630,14 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Domain.todoComparer1 = function (entry) {
                 return function (a, b) {
                     var _a, _b, _c, _d;
+                    if (a.isDefault !== b.isDefault) {
+                        if (a.isDefault) {
+                            return -1;
+                        }
+                        else {
+                            return 1;
+                        }
+                    }
                     if (null !== a.progress && null !== b.progress) {
                         if (Math.abs(a.elapsed - b.elapsed) <= 12 * 60) {
                             var rate = Math.min(a.count, b.count) < 5 ? Domain.standardDeviationRate : 1.2;

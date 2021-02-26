@@ -904,6 +904,17 @@ export module CyclicToDo
         export const todoComparer1 = (entry: ToDoTagEntry) =>
         (a: ToDoEntry, b: ToDoEntry) =>
         {
+            if (a.isDefault !== b.isDefault)
+            {
+                if (a.isDefault)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
             if (null !== a.progress && null !== b.progress)
             {
                 if (Math.abs(a.elapsed -b.elapsed) <= 12 *60)
