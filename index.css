@@ -297,25 +297,30 @@ button.default-button:hover {
 }
 .horizontal-list {
   white-space: nowrap;
-  overflow: hidden;
+  overflow: scroll;
   width: 100vw;
   box-sizing: border-box;
+}
+.horizontal-list ::-webkit-scrollbar {
+  width: 0px;
 }
 .history-bar {
   font-size: 1rem;
   padding: 0.5rem;
   background-color: #8884;
-  color: #000022;
-  opacity: 0.6;
 }
 .history-bar > * + * {
   padding-left: 1rem;
 }
-.history-bar:not(:hover) {
+.history-bar a {
+  color: #000022;
+  opacity: 0.6;
+}
+.history-bar a:not(:hover) {
   text-decoration: none;
 }
 @media (prefers-color-scheme: dark) {
-  .history-bar {
+  .history-bar a {
     color: #FFFFFF;
   }
 }

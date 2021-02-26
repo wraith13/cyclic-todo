@@ -400,7 +400,7 @@ button.default-button
 .horizontal-list
 {
     white-space: nowrap;
-    overflow: hidden;
+    overflow: scroll;
     width: 100vw;
     box-sizing: border-box;
     // &:not(.empty-list)
@@ -409,6 +409,10 @@ button.default-button
     //     border-style: solid;
     //     border-width: 0px 0px 1px 0px;
     // }
+    ::-webkit-scrollbar
+    {
+        width: 0px;
+    }
 }
 .history-bar
 {
@@ -419,15 +423,18 @@ button.default-button
         padding-left: 1.0rem;
     }
     background-color: #8884;
-    color: @main-color;
-    opacity: 0.6;
-    &:not(:hover)
+    a
     {
-        text-decoration: none;
-    }
-    @media (prefers-color-scheme: dark)
-    {
-        color: @dark-main-color;
+        color: @main-color;
+        opacity: 0.6;
+        &:not(:hover)
+        {
+            text-decoration: none;
+        }
+        @media (prefers-color-scheme: dark)
+        {
+            color: @dark-main-color;
+        }
     }
 }
 .row-flex-list,

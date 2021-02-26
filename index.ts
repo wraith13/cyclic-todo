@@ -1720,33 +1720,42 @@ export module CyclicToDo
             };
             return result;
         };
-        export const historyBar = async (_entry: ToDoTagEntry, list: ToDoEntry[]) =>
+        export const historyBar = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         ({
             tag: "div",
             className: "horizontal-list history-bar",
             children:
             [
-                {
-                    tag: "span",
-                    className: "history-bar-title",
-                    children: `${locale.map("History")}:`,
-                },
+                internalLink
+                ({
+                    href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                    children:
+                    {
+                        tag: "span",
+                        className: "history-bar-title",
+                        children: `${locale.map("History")}:`,
+                    },
+                }),
                 [].concat(list).sort(minamo.core.comparer.make(i => -i.previous ?? 0)).map
                 (
-                    item =>
+                    item => internalLink
                     ({
-                        tag: "span",
-                        className: "history-bar-item",
+                        href: { pass: entry.pass, todo: item.task, },
                         children:
-                        [
-                            item.task,
-                            {
-                                tag: "span",
-                                className: "monospace",
-                                children: `(${Domain.timeLongStringFromTick(item.elapsed)}),`
-                            }
-                        ],
-                    })
+                        {
+                            tag: "span",
+                            className: "history-bar-item",
+                            children:
+                            [
+                                item.task,
+                                {
+                                    tag: "span",
+                                    className: "monospace",
+                                    children: `(${Domain.timeLongStringFromTick(item.elapsed)}),`
+                                }
+                            ],
+                        }
+                    }),
                 ),
             ]
         });
