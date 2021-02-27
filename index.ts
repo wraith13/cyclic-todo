@@ -1602,8 +1602,12 @@ export module CyclicToDo
                             ),
                             menuItem
                             (
-                                "🚫 削除",
-                                async () => { }
+                                locale.map("Delete"),
+                                async () =>
+                                {
+                                    Storage.History.remove(entry.pass, item.task, item.tick);
+                                    await reload();
+                                }
                             )
                         ]),
                     ]:
