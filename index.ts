@@ -901,6 +901,17 @@ export module CyclicToDo
         (
             tag => -Storage.TagMember.get(pass, tag).map(todo => Storage.History.get(pass, todo).length).reduce((a, b) => a +b, 0)
         );
+        export const todoComparer0 = (entry: ToDoTagEntry) => minamo.core.comparer.make<ToDoEntry>
+        ([
+            i => i.isDefault ? -1: 1,
+            i => i.isDefault ?
+                (i.RecentlySmartAverage +(i.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -i.elapsed:
+                -(i.progress ?? -1),
+            i => 1 < i.count ? -2: -i.count,
+            i => 1 < i.count ? i.elapsed: -(i.elapsed ?? 0),
+            i => entry.todo.indexOf(i.task),
+            i => i.task,
+        ]);
         export const todoComparer1 = (entry: ToDoTagEntry) =>
         (a: ToDoEntry, b: ToDoEntry) =>
         {
@@ -1166,8 +1177,9 @@ export module CyclicToDo
         export const sortList = (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         {
             const tasks = JSON.stringify(list.map(i => i.task));
-            list.sort(Domain.todoComparer1(entry));
-            list.sort(Domain.todoComparer2(list));
+            // list.sort(Domain.todoComparer1(entry));
+            // list.sort(Domain.todoComparer2(list));
+            list.sort(Domain.todoComparer0(entry));
             return tasks === JSON.stringify(list.map(i => i.task));
         };
     }
@@ -2769,7 +2781,7 @@ export module CyclicToDo
             document.title = applicationTitle;
             showWindow(await welcomeScreen());
         };
-        export const updatingScreen = async () =>
+        export const updatingScreen = async (url: string = location.href) =>
         ({
             tag: "div",
             className: "updating-screen screen",
@@ -2797,12 +2809,23 @@ export module CyclicToDo
                     className: "message",
                     children: locale.parallel("Updating..."),
                 },
+                {
+                    tag: "div",
+                    className: "button-list",
+                    children:
+                    {
+                        tag: "button",
+                        className: "default-button main-button long-button",
+                        children: "リロード",
+                        onclick: async () => await showPage(url),
+                    },
+                }
             ],
         });
-        export const showUpdatingScreen = async () =>
+        export const showUpdatingScreen = async (url: string = location.href) =>
         {
             document.title = "Updating...";
-            showWindow(await updatingScreen());
+            showWindow(await updatingScreen(url));
         };
         export type UpdateWindowEventEype = "timer" | "scroll" | "storage";
         export let updateWindow: (event: UpdateWindowEventEype) => unknown;
@@ -3012,7 +3035,7 @@ export module CyclicToDo
     export const showPage = async (url: string = location.href, wait: number = 100) =>
     {
         window.scrollTo(0,0);
-        Render.showUpdatingScreen();
+        Render.showUpdatingScreen(url);
         await minamo.core.timeout(wait);
         const urlParams = getUrlParams(url);
         const hash = getUrlHash(url);

@@ -1627,6 +1627,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return [2 /*return*/, Storage.History.add(pass, task, Domain.getDoneTicks(pass))];
             }); }); };
             Domain.tagComparer = function (pass) { return minamo_js_1.minamo.core.comparer.make(function (tag) { return -Storage.TagMember.get(pass, tag).map(function (todo) { return Storage.History.get(pass, todo).length; }).reduce(function (a, b) { return a + b; }, 0); }); };
+            Domain.todoComparer0 = function (entry) { return minamo_js_1.minamo.core.comparer.make([
+                function (i) { return i.isDefault ? -1 : 1; },
+                function (i) {
+                    var _a, _b;
+                    return i.isDefault ?
+                        (i.RecentlySmartAverage + ((_a = i.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationOverRate) - i.elapsed :
+                        -((_b = i.progress) !== null && _b !== void 0 ? _b : -1);
+                },
+                function (i) { return 1 < i.count ? -2 : -i.count; },
+                function (i) { var _a; return 1 < i.count ? i.elapsed : -((_a = i.elapsed) !== null && _a !== void 0 ? _a : 0); },
+                function (i) { return entry.todo.indexOf(i.task); },
+                function (i) { return i.task; },
+            ]); };
             Domain.todoComparer1 = function (entry) {
                 return function (a, b) {
                     var _a, _b, _c, _d;
@@ -1845,8 +1858,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             };
             Domain.sortList = function (entry, list) {
                 var tasks = JSON.stringify(list.map(function (i) { return i.task; }));
-                list.sort(Domain.todoComparer1(entry));
-                list.sort(Domain.todoComparer2(list));
+                // list.sort(Domain.todoComparer1(entry));
+                // list.sort(Domain.todoComparer2(list));
+                list.sort(Domain.todoComparer0(entry));
                 return tasks === JSON.stringify(list.map(function (i) { return i.task; }));
             };
         })(Domain = CyclicToDo.Domain || (CyclicToDo.Domain = {}));
@@ -3756,62 +3770,83 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
-            Render.updatingScreen = function () { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e;
-                var _this = this;
-                return __generator(this, function (_f) {
-                    switch (_f.label) {
-                        case 0:
-                            _a = {
-                                tag: "div",
-                                className: "updating-screen screen"
-                            };
-                            _b = Render.heading;
-                            _c = ["h1"];
-                            return [4 /*yield*/, Render.applicationIcon()];
-                        case 1:
-                            _d = [
-                                _f.sent(),
-                                "" + document.title
-                            ];
-                            return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem("GitHub", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        return [2 /*return*/, location.href = "https://github.com/wraith13/cyclic-todo/"];
-                                    }); }); }),
-                                ])];
-                        case 2:
-                            _e = [
-                                _b.apply(void 0, _c.concat([_d.concat([
-                                        _f.sent()
-                                    ])]))
-                            ];
-                            return [4 /*yield*/, Render.applicationIcon()];
-                        case 3: return [2 /*return*/, (_a.children = _e.concat([
-                                _f.sent(),
-                                {
+            Render.updatingScreen = function (url) {
+                if (url === void 0) { url = location.href; }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var _a, _b, _c, _d, _e;
+                    var _this = this;
+                    return __generator(this, function (_f) {
+                        switch (_f.label) {
+                            case 0:
+                                _a = {
                                     tag: "div",
-                                    className: "message",
-                                    children: locale.parallel("Updating..."),
-                                }
-                            ]),
-                                _a)];
-                    }
+                                    className: "updating-screen screen"
+                                };
+                                _b = Render.heading;
+                                _c = ["h1"];
+                                return [4 /*yield*/, Render.applicationIcon()];
+                            case 1:
+                                _d = [
+                                    _f.sent(),
+                                    "" + document.title
+                                ];
+                                return [4 /*yield*/, Render.menuButton([
+                                        Render.menuItem("GitHub", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            return [2 /*return*/, location.href = "https://github.com/wraith13/cyclic-todo/"];
+                                        }); }); }),
+                                    ])];
+                            case 2:
+                                _e = [
+                                    _b.apply(void 0, _c.concat([_d.concat([
+                                            _f.sent()
+                                        ])]))
+                                ];
+                                return [4 /*yield*/, Render.applicationIcon()];
+                            case 3: return [2 /*return*/, (_a.children = _e.concat([
+                                    _f.sent(),
+                                    {
+                                        tag: "div",
+                                        className: "message",
+                                        children: locale.parallel("Updating..."),
+                                    },
+                                    {
+                                        tag: "div",
+                                        className: "button-list",
+                                        children: {
+                                            tag: "button",
+                                            className: "default-button main-button long-button",
+                                            children: "リロード",
+                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0: return [4 /*yield*/, CyclicToDo.showPage(url)];
+                                                    case 1: return [2 /*return*/, _a.sent()];
+                                                }
+                                            }); }); },
+                                        },
+                                    }
+                                ]),
+                                    _a)];
+                        }
+                    });
                 });
-            }); };
-            Render.showUpdatingScreen = function () { return __awaiter(_this, void 0, void 0, function () {
-                var _a;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
-                        case 0:
-                            document.title = "Updating...";
-                            _a = Render.showWindow;
-                            return [4 /*yield*/, Render.updatingScreen()];
-                        case 1:
-                            _a.apply(void 0, [_b.sent()]);
-                            return [2 /*return*/];
-                    }
+            };
+            Render.showUpdatingScreen = function (url) {
+                if (url === void 0) { url = location.href; }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var _a;
+                    return __generator(this, function (_b) {
+                        switch (_b.label) {
+                            case 0:
+                                document.title = "Updating...";
+                                _a = Render.showWindow;
+                                return [4 /*yield*/, Render.updatingScreen(url)];
+                            case 1:
+                                _a.apply(void 0, [_b.sent()]);
+                                return [2 /*return*/];
+                        }
+                    });
                 });
-            }); };
+            };
             var updateWindowTimer = undefined;
             Render.showWindow = function (screen, updateWindow) { return __awaiter(_this, void 0, void 0, function () {
                 var _this = this;
@@ -3990,7 +4025,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     switch (_c.label) {
                         case 0:
                             window.scrollTo(0, 0);
-                            Render.showUpdatingScreen();
+                            Render.showUpdatingScreen(url);
                             return [4 /*yield*/, minamo_js_1.minamo.core.timeout(wait)];
                         case 1:
                             _c.sent();
