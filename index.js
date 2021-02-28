@@ -1628,17 +1628,18 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             }); }); };
             Domain.tagComparer = function (pass) { return minamo_js_1.minamo.core.comparer.make(function (tag) { return -Storage.TagMember.get(pass, tag).map(function (todo) { return Storage.History.get(pass, todo).length; }).reduce(function (a, b) { return a + b; }, 0); }); };
             Domain.todoComparer0 = function (entry) { return minamo_js_1.minamo.core.comparer.make([
-                function (i) { return i.isDefault ? -1 : 1; },
-                function (i) {
-                    var _a, _b;
-                    return i.isDefault ?
-                        (i.RecentlySmartAverage + ((_a = i.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationOverRate) - i.elapsed :
-                        -((_b = i.progress) !== null && _b !== void 0 ? _b : -1);
+                function (item) { return item.isDefault ? -1 : 1; },
+                function (item) {
+                    var _a;
+                    return item.isDefault ?
+                        item.smartRest :
+                        //(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -item.elapsed:
+                        -((_a = item.progress) !== null && _a !== void 0 ? _a : -1);
                 },
-                function (i) { return 1 < i.count ? -2 : -i.count; },
-                function (i) { var _a; return 1 < i.count ? i.elapsed : -((_a = i.elapsed) !== null && _a !== void 0 ? _a : 0); },
-                function (i) { return entry.todo.indexOf(i.task); },
-                function (i) { return i.task; },
+                function (item) { return 1 < item.count ? -2 : -item.count; },
+                function (item) { var _a; return 1 < item.count ? item.elapsed : -((_a = item.elapsed) !== null && _a !== void 0 ? _a : 0); },
+                function (item) { return entry.todo.indexOf(item.task); },
+                function (item) { return item.task; },
             ]); };
             Domain.todoComparer1 = function (entry) {
                 return function (a, b) {
@@ -1813,11 +1814,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     RecentlySmartAverage: history.recentries.length <= 1 ?
                         null :
                         Calculate.average(inflateRecentrly(Calculate.intervals(history.recentries))),
+                    RecentlyAverage: history.recentries.length <= 1 ?
+                        null :
+                        Calculate.average(Calculate.intervals(history.recentries.filter(function (_, ix) { return ix <= 15; }))),
+                    smartRest: null,
                 };
                 return result;
             };
             Domain.updateProgress = function (item, now) {
-                var _a, _b, _c;
+                var _a, _b, _c, _d;
                 if (now === void 0) { now = Domain.getTicks(); }
                 if (0 < item.count) {
                     // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
@@ -1836,15 +1841,17 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         else {
                             item.progress = 1.0 + ((item.elapsed - long) / item.RecentlySmartAverage);
                         }
+                        item.smartRest = (item.RecentlySmartAverage + (((_c = item.RecentlyStandardDeviation) !== null && _c !== void 0 ? _c : 0) * Domain.standardDeviationOverRate)) - item.elapsed;
                         //item.progress = item.elapsed /(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
                         //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
-                        var overrate = (item.elapsed - (item.RecentlySmartAverage + ((_c = item.RecentlyStandardDeviation) !== null && _c !== void 0 ? _c : 0) * Domain.standardDeviationOverRate)) / item.RecentlySmartAverage;
+                        var overrate = (item.elapsed - (item.RecentlySmartAverage + ((_d = item.RecentlyStandardDeviation) !== null && _d !== void 0 ? _d : 0) * Domain.standardDeviationOverRate)) / item.RecentlySmartAverage;
                         if (0.0 < overrate) {
                             //item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
                             item.progress = null;
                             item.RecentlySmartAverage = null;
                             item.RecentlyStandardDeviation = null;
                             item.isDefault = false;
+                            item.smartRest = null;
                         }
                     }
                 }
@@ -1852,6 +1859,28 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Domain.updateListProgress = function (list, now) {
                 if (now === void 0) { now = Domain.getTicks(); }
                 list.forEach(function (item) { return Domain.updateProgress(item, now); });
+                var groups = [];
+                list.forEach(function (item) {
+                    if (null !== item.RecentlyAverage && null !== item.progress) {
+                        var top_1 = item.RecentlyAverage * 1.1;
+                        var bottom_1 = item.RecentlyAverage * 0.9;
+                        var group = list.filter(function (i) { return null !== i.RecentlyAverage && bottom_1 < i.RecentlyAverage && i.RecentlyAverage < top_1; });
+                        if (2 <= group.length) {
+                            groups.push(group);
+                        }
+                    }
+                });
+                groups.sort(minamo_js_1.minamo.core.comparer.make(function (i) { return i.length; }));
+                groups = groups.filter(function (g, ix) { return groups.filter(function (g2, ix2) { return ix < ix2 && 0 <= g2.filter(function (i2) { return 0 <= g.indexOf(i2); })
+                    .length; })
+                    .length <= 0; });
+                groups.forEach(function (group) {
+                    var groupAverage = Calculate.average(group.map(function (item) { return item.RecentlySmartAverage; }));
+                    var groupStandardDeviation = Calculate.average(group.map(function (item) { var _a; return (_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : (item.RecentlySmartAverage * 0.1); }));
+                    group.forEach(function (item) {
+                        item.smartRest = (groupAverage + (groupStandardDeviation * Domain.standardDeviationOverRate)) - item.elapsed;
+                    });
+                });
                 //const sorted = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoComparer1(entry));
                 // const defaultTodo = sorted.sort(todoComparer2(sorted))[0]?.task;
                 // list.forEach(item => item.isDefault = defaultTodo === item.task);

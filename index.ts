@@ -314,6 +314,8 @@ export module CyclicToDo
         overallAverage: null | number;
         RecentlyStandardDeviation: null | number;
         RecentlySmartAverage: null | number;
+        RecentlyAverage: null | number;
+        smartRest: null | number;
         count: number;
     }
     export interface ToDoList
@@ -903,14 +905,15 @@ export module CyclicToDo
         );
         export const todoComparer0 = (entry: ToDoTagEntry) => minamo.core.comparer.make<ToDoEntry>
         ([
-            i => i.isDefault ? -1: 1,
-            i => i.isDefault ?
-                (i.RecentlySmartAverage +(i.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -i.elapsed:
-                -(i.progress ?? -1),
-            i => 1 < i.count ? -2: -i.count,
-            i => 1 < i.count ? i.elapsed: -(i.elapsed ?? 0),
-            i => entry.todo.indexOf(i.task),
-            i => i.task,
+            item => item.isDefault ? -1: 1,
+            item => item.isDefault ?
+                item.smartRest:
+                //(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -item.elapsed:
+                -(item.progress ?? -1),
+            item => 1 < item.count ? -2: -item.count,
+            item => 1 < item.count ? item.elapsed: -(item.elapsed ?? 0),
+            item => entry.todo.indexOf(item.task),
+            item => item.task,
         ]);
         export const todoComparer1 = (entry: ToDoTagEntry) =>
         (a: ToDoEntry, b: ToDoEntry) =>
@@ -1125,6 +1128,10 @@ export module CyclicToDo
                 RecentlySmartAverage: history.recentries.length <= 1 ?
                     null:
                     Calculate.average(inflateRecentrly(Calculate.intervals(history.recentries))),
+                RecentlyAverage: history.recentries.length <= 1 ?
+                    null:
+                    Calculate.average(Calculate.intervals(history.recentries.filter((_, ix) => ix <= 15))),
+                smartRest: null,
             };
             return result;
         };
@@ -1153,6 +1160,7 @@ export module CyclicToDo
                     {
                         item.progress = 1.0 +((item.elapsed -long) /item.RecentlySmartAverage);
                     }
+                    item.smartRest = (item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate)) -item.elapsed;
                     //item.progress = item.elapsed /(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
                     //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
                     const overrate = (item.elapsed -(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate)) / item.RecentlySmartAverage;
@@ -1163,6 +1171,7 @@ export module CyclicToDo
                         item.RecentlySmartAverage = null;
                         item.RecentlyStandardDeviation = null;
                         item.isDefault = false;
+                        item.smartRest = null;
                     }
                 }
             }
@@ -1170,6 +1179,51 @@ export module CyclicToDo
         export const updateListProgress = (list: ToDoEntry[], now: number = Domain.getTicks()) =>
         {
             list.forEach(item => updateProgress(item, now));
+            let groups: ToDoEntry[][] = [];
+            list.forEach
+            (
+                item =>
+                {
+                    if (null !== item.RecentlyAverage && null !== item.progress)
+                    {
+                        const top = item.RecentlyAverage *1.1;
+                        const bottom = item.RecentlyAverage *0.9;
+                        const group = list.filter(i => null !== i.RecentlyAverage && bottom < i.RecentlyAverage && i.RecentlyAverage < top);
+                        if (2 <= group.length)
+                        {
+                            groups.push(group);
+                        }
+                    }
+                }
+            );
+            groups.sort(minamo.core.comparer.make(i => i.length));
+            groups = groups.filter
+            (
+                (g, ix) => groups.filter
+                (
+                    (g2, ix2) => ix < ix2 && 0 <= g2.filter
+                    (
+                        i2 => 0 <= g.indexOf(i2)
+                    )
+                    .length
+                )
+                .length <= 0
+            );
+            groups.forEach
+            (
+                group =>
+                {
+                    const groupAverage = Calculate.average(group.map(item => item.RecentlySmartAverage));
+                    const groupStandardDeviation = Calculate.average(group.map(item => item.RecentlyStandardDeviation ?? (item.RecentlySmartAverage *0.1)));
+                    group.forEach
+                    (
+                        item =>
+                        {
+                            item.smartRest = (groupAverage +(groupStandardDeviation *Domain.standardDeviationOverRate)) -item.elapsed;
+                        }
+                    );
+                }
+            );
             //const sorted = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoComparer1(entry));
             // const defaultTodo = sorted.sort(todoComparer2(sorted))[0]?.task;
             // list.forEach(item => item.isDefault = defaultTodo === item.task);
