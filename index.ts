@@ -2305,7 +2305,12 @@ export module CyclicToDo
                     {
                         tag: "div",
                         className: "column-flex-list removed-list",
-                        children: await Promise.all(list.map(item => removedItem(pass, item))),
+                        children: await Promise.all
+                        (
+                            [].concat(list)
+                                .sort(minamo.core.comparer.make(item => -item.deteledAt))
+                                .map(item => removedItem(pass, item))
+                        ),
                     }:
                     {
                         tag: "div",

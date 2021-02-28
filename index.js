@@ -3084,7 +3084,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 tag: "div",
                                 className: "column-flex-list removed-list"
                             };
-                            return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.removedItem(pass, item); }))];
+                            return [4 /*yield*/, Promise.all([].concat(list)
+                                    .sort(minamo_js_1.minamo.core.comparer.make(function (item) { return -item.deteledAt; }))
+                                    .map(function (item) { return Render.removedItem(pass, item); }))];
                         case 3:
                             _h = (_j.children = _k.sent(),
                                 _j);
