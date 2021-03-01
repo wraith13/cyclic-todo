@@ -2692,6 +2692,13 @@ export module CyclicToDo
             className: "application-icon icon",
             children: await loadSvgOrCache("./cyclictodohex.1024.svg"),
         });
+        export const applicationColorIcon = async () =>
+        ({
+            tag: "img",
+            className: "application-icon icon",
+            alt: applicationTitle,
+            src: "./cyclictodohex.1024.png",
+        });
         export const listItem = async (list: ToDoList) =>
         ({
             tag: "div",
@@ -2794,7 +2801,7 @@ export module CyclicToDo
                     style: "text-align: center; padding: 0.5rem;",
                     children: "🚧 This static web application is under development. / この Static Web アプリは開発中です。",
                 },
-                await applicationIcon(),
+                await applicationColorIcon(),
                 {
                     tag: "div",
                     className: "row-flex-list list-list",
@@ -2862,7 +2869,7 @@ export module CyclicToDo
                         ]),
                     ]
                 ),
-                await applicationIcon(),
+                await applicationColorIcon(),
                 {
                     tag: "div",
                     className: "message",

@@ -3621,6 +3621,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
+            Render.applicationColorIcon = function () { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, ({
+                            tag: "img",
+                            className: "application-icon icon",
+                            alt: applicationTitle,
+                            src: "./cyclictodohex.1024.png",
+                        })];
+                });
+            }); };
             Render.listItem = function (list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e;
                 var _this = this;
@@ -3736,7 +3746,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     children: "🚧 This static web application is under development. / この Static Web アプリは開発中です。",
                                 }
                             ];
-                            return [4 /*yield*/, Render.applicationIcon()];
+                            return [4 /*yield*/, Render.applicationColorIcon()];
                         case 3:
                             _e = _e.concat([
                                 _g.sent()
@@ -3832,7 +3842,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             _f.sent()
                                         ])]))
                                 ];
-                                return [4 /*yield*/, Render.applicationIcon()];
+                                return [4 /*yield*/, Render.applicationColorIcon()];
                             case 3: return [2 /*return*/, (_a.children = _e.concat([
                                     _f.sent(),
                                     {
