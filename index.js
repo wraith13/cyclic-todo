@@ -886,7 +886,8 @@ define("lang.en", [], {
     "Sublist": "Sublist",
     "Task": "ToDo",
     "Tick": "Record",
-    "deletedAt": "deleted at"
+    "deletedAt": "deleted at",
+    "Reload": "Reload"
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -921,7 +922,8 @@ define("lang.ja", [], {
     "Sublist": "サブリスト",
     "Task": "ToDo",
     "Tick": "記録",
-    "deletedAt": "削除日時"
+    "deletedAt": "削除日時",
+    "Reload": "再読み込み"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -3698,10 +3700,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
             }); };
             Render.welcomeScreen = function () { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e, _f;
+                var _a, _b, _c, _d, _e, _f, _g, _h;
                 var _this = this;
-                return __generator(this, function (_g) {
-                    switch (_g.label) {
+                return __generator(this, function (_j) {
+                    switch (_j.label) {
                         case 0:
                             _a = {
                                 tag: "div",
@@ -3712,7 +3714,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
                             _d = [
-                                _g.sent(),
+                                _j.sent(),
                                 "" + document.title
                             ];
                             return [4 /*yield*/, Render.menuButton([
@@ -3738,7 +3740,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         case 2:
                             _e = [
                                 _b.apply(void 0, _c.concat([_d.concat([
-                                        _g.sent()
+                                        _j.sent()
                                     ])])),
                                 {
                                     tag: "div",
@@ -3749,49 +3751,48 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             return [4 /*yield*/, Render.applicationColorIcon()];
                         case 3:
                             _e = _e.concat([
-                                _g.sent()
+                                _j.sent()
                             ]);
                             _f = {
                                 tag: "div",
                                 className: "row-flex-list list-list"
                             };
                             return [4 /*yield*/, Promise.all(Storage.Pass.get().map(function (pass) { return Render.listItem(JSON.parse(Storage.exportJson(pass))); }))];
-                        case 4: return [2 /*return*/, (_a.children = _e.concat([
-                                (_f.children = _g.sent(),
-                                    _f),
-                                {
-                                    tag: "div",
-                                    className: "button-list",
-                                    children: [
-                                        {
-                                            tag: "button",
-                                            className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
-                                            children: locale.parallel("New ToDo List"),
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: Storage.Pass.generate(), tag: "@overall", })];
-                                                    case 1: return [2 /*return*/, _a.sent()];
-                                                }
-                                            }); }); },
-                                        },
-                                        Render.internalLink({
-                                            href: { hash: "import", },
-                                            children: {
-                                                tag: "button",
-                                                className: "main-button long-button",
-                                                children: locale.parallel("Import"),
-                                            },
-                                        }),
-                                        Render.internalLink({
-                                            href: { hash: "removed", },
-                                            children: {
-                                                tag: "button",
-                                                className: "main-button long-button",
-                                                children: locale.parallel("@deleted"),
-                                            },
-                                        }),
-                                    ]
-                                }
+                        case 4:
+                            _e = _e.concat([
+                                (_f.children = _j.sent(),
+                                    _f)
+                            ]);
+                            _g = {
+                                tag: "div",
+                                className: "button-line"
+                            };
+                            _h = [{
+                                    tag: "button",
+                                    className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
+                                    children: locale.parallel("New ToDo List"),
+                                    onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: Storage.Pass.generate(), tag: "@overall", })];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); },
+                                }];
+                            return [4 /*yield*/, Render.menuButton([
+                                    Render.internalLink({
+                                        href: { hash: "import", },
+                                        children: Render.menuItem(locale.parallel("Import List")),
+                                    }),
+                                    Render.internalLink({
+                                        href: { hash: "removed", },
+                                        children: Render.menuItem(locale.parallel("@deleted")),
+                                    }),
+                                ])];
+                        case 5: return [2 /*return*/, (_a.children = _e.concat([
+                                (_g.children = _h.concat([
+                                    _j.sent()
+                                ]),
+                                    _g)
                             ]),
                                 _a)];
                     }
@@ -3856,7 +3857,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         children: {
                                             tag: "button",
                                             className: "default-button main-button long-button",
-                                            children: "リロード",
+                                            children: locale.parallel("Reload"),
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0: return [4 /*yield*/, CyclicToDo.showPage(url)];

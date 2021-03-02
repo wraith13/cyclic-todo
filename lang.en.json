@@ -31,5 +31,6 @@
     "Sublist": "Sublist",
     "Task": "ToDo",
     "Tick": "Record",
-    "deletedAt": "deleted at"
+    "deletedAt": "deleted at",
+    "Reload": "Reload"
 }

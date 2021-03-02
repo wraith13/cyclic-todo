@@ -2809,7 +2809,7 @@ export module CyclicToDo
                 },
                 {
                     tag: "div",
-                    className: "button-list",
+                    className: "button-line",
                     children:
                     [
                         {
@@ -2818,26 +2818,19 @@ export module CyclicToDo
                             children: locale.parallel("New ToDo List"),
                             onclick: async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", }),
                         },
-                        internalLink
-                        ({
-                            href: { hash: "import", },
-                            children:
-                            {
-                                tag: "button",
-                                className: "main-button long-button",
-                                children: locale.parallel("Import"),
-                            },
-                        }),
-                        internalLink
-                        ({
-                            href: { hash: "removed", },
-                            children:
-                            {
-                                tag: "button",
-                                className: "main-button long-button",
-                                children: locale.parallel("@deleted"),
-                            },
-                        }),
+                        await menuButton
+                        ([
+                            internalLink
+                            ({
+                                href: { hash: "import", },
+                                children: menuItem(locale.parallel("Import List")),
+                            }),
+                            internalLink
+                            ({
+                                href: { hash: "removed", },
+                                children: menuItem(locale.parallel("@deleted")),
+                            }),
+                        ]),
                     ]
                 },
             ],
@@ -2882,7 +2875,7 @@ export module CyclicToDo
                     {
                         tag: "button",
                         className: "default-button main-button long-button",
-                        children: "リロード",
+                        children: locale.parallel("Reload"),
                         onclick: async () => await showPage(url),
                     },
                 }

@@ -295,6 +295,17 @@ button.default-button:hover {
   text-align: center;
   padding: 0.5rem;
 }
+.button-line {
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
+.button-line > button + .menu-button {
+  margin-left: -1rem;
+}
 .horizontal-list {
   white-space: nowrap;
   overflow: scroll;

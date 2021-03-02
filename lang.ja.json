@@ -31,5 +31,6 @@
     "Sublist": "サブリスト",
     "Task": "ToDo",
     "Tick": "記録",
-    "deletedAt": "削除日時"
+    "deletedAt": "削除日時",
+    "Reload": "再読み込み"
 }
