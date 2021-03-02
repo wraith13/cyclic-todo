@@ -405,9 +405,20 @@ button.default-button
     align-items: center;
     justify-content: center;
     flex-direction: row;
-    & > button + .menu-button
+    button + .menu-button
     {
         margin-left: -1rem;
+    }
+    .menu-popup
+    {
+        right: 4px;
+    }
+    @media (min-width: 640px)
+    {
+        .menu-popup
+        {
+            right: calc(50vw - 330px);
+        }
     }
 }
 .horizontal-list
@@ -910,6 +921,8 @@ button.default-button
         max-width: 90vw;
         max-height: 80vh;
         display: block;
+        .loading-spinner;
+        animation-iteration-count: 1;
     }
 }
 .updating-screen
@@ -928,6 +941,8 @@ button.default-button
         max-width: 60vw;
         max-height: 50vh;
         display: block;
+        .loading-spinner;
+        animation-iteration-count: infinite;
     }
     .message
     {
@@ -958,5 +973,29 @@ button.default-button
     {
         margin-left: calc(8em + 4px);
         width: 16em;
+    }
+}
+.loading-spinner
+{
+    animation-name: loading-spinner;
+    animation-direction: normal;
+    animation-delay: 0s;
+    animation-duration: 3.0s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: both;
+}
+@keyframes loading-spinner
+{
+    0%
+    {
+        transform: rotate(0deg);
+    }
+    10%
+    {
+        transform: rotate(360deg);
+    }
+    100%
+    {
+        transform: rotate(360deg);
     }
 }

@@ -303,8 +303,16 @@ button.default-button:hover {
   justify-content: center;
   flex-direction: row;
 }
-.button-line > button + .menu-button {
+.button-line button + .menu-button {
   margin-left: -1rem;
+}
+.button-line .menu-popup {
+  right: 4px;
+}
+@media (min-width: 640px) {
+  .button-line .menu-popup {
+    right: calc(50vw - 330px);
+  }
 }
 .horizontal-list {
   white-space: nowrap;
@@ -698,6 +706,13 @@ button.default-button:hover {
   max-width: 90vw;
   max-height: 80vh;
   display: block;
+  animation-name: loading-spinner;
+  animation-direction: normal;
+  animation-delay: 0s;
+  animation-duration: 3s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+  animation-iteration-count: 1;
 }
 .updating-screen h1 {
   margin-bottom: 1em;
@@ -711,6 +726,13 @@ button.default-button:hover {
   max-width: 60vw;
   max-height: 50vh;
   display: block;
+  animation-name: loading-spinner;
+  animation-direction: normal;
+  animation-delay: 0s;
+  animation-duration: 3s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+  animation-iteration-count: infinite;
 }
 .updating-screen .message {
   text-align: center;
@@ -728,4 +750,23 @@ button.default-button:hover {
 .application-form button {
   margin-left: calc(8em + 4px);
   width: 16em;
+}
+.loading-spinner {
+  animation-name: loading-spinner;
+  animation-direction: normal;
+  animation-delay: 0s;
+  animation-duration: 3s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+@keyframes loading-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

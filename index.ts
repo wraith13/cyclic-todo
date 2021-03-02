@@ -2831,7 +2831,7 @@ export module CyclicToDo
                                 children: menuItem(locale.parallel("@deleted")),
                             }),
                         ]),
-                    ]
+                    ],
                 },
             ],
         });
