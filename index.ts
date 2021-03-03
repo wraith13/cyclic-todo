@@ -1956,7 +1956,7 @@ export module CyclicToDo
                 await historyBar(entry, list),
                 {
                     tag: "div",
-                    className: "column-flex-list todo-list",
+                    className: "row-flex-list todo-list",
                     children: await Promise.all(list.map(item => todoItem(entry, item))),
                 },
                 {
@@ -2174,7 +2174,7 @@ export module CyclicToDo
                 ),
                 {
                     tag: "div",
-                    className: "column-flex-list history-list",
+                    className: "row-flex-list history-list",
                     children: await Promise.all(list.map(item => historyItem(entry, item))),
                 },
                 {
@@ -2304,7 +2304,7 @@ export module CyclicToDo
                 0 < list.length ?
                     {
                         tag: "div",
-                        className: "column-flex-list removed-list",
+                        className: "row-flex-list removed-list",
                         children: await Promise.all
                         (
                             [].concat(list)
@@ -2398,7 +2398,7 @@ export module CyclicToDo
                 },
                 {
                     tag: "div",
-                    className: "column-flex-list tick-list",
+                    className: "row-flex-list tick-list",
                     children: await Promise.all
                     (
                         ticks.map
@@ -2660,7 +2660,7 @@ export module CyclicToDo
                 ),
                 {
                     tag: "div",
-                    className: "column-flex-list removed-list-list",
+                    className: "row-flex-list removed-list-list",
                     children: await Promise.all(Storage.Backup.get().map(json => removedListItem(JSON.parse(json) as ToDoList))),
                 },
                 0 < Storage.Backup.get().length ?
@@ -2849,8 +2849,13 @@ export module CyclicToDo
                 (
                     "h1",
                     [
+                        internalLink
+                        ({
+                            href: { },
+                            children: await applicationIcon(),
+                        }),
                         await applicationIcon(),
-                        `${document.title}`,
+                        `...`,
                         await menuButton
                         ([
                             menuItem
@@ -2862,11 +2867,11 @@ export module CyclicToDo
                     ]
                 ),
                 await applicationColorIcon(),
-                {
-                    tag: "div",
-                    className: "message",
-                    children: locale.parallel("Updating..."),
-                },
+                // {
+                //     tag: "div",
+                //     className: "message",
+                //     children: locale.parallel("Updating..."),
+                // },
                 {
                     tag: "div",
                     className: "button-list",
@@ -2882,7 +2887,7 @@ export module CyclicToDo
         });
         export const showUpdatingScreen = async (url: string = location.href) =>
         {
-            document.title = "Updating...";
+            document.title = applicationTitle;
             showWindow(await updatingScreen(url));
         };
         export type UpdateWindowEventEype = "timer" | "scroll" | "storage";

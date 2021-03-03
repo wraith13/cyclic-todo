@@ -922,8 +922,8 @@ button.default-button
         max-width: 90vw;
         max-height: 80vh;
         display: block;
-        .loading-spinner;
-        animation-iteration-count: 1;
+        // .loading-spinner;
+        // animation-iteration-count: 1;
     }
 }
 .updating-screen
@@ -943,13 +943,38 @@ button.default-button
         max-height: 50vh;
         display: block;
         .loading-spinner;
-        animation-iteration-count: infinite;
+        // animation-iteration-count: infinite;
+        animation-iteration-count: 1;
     }
-    .message
+    // .message
+    // {
+    //     text-align: center;
+    //     padding: 0.5rem;
+    //     font-size: 2.5rem;
+    // }
+    .button-list
     {
-        text-align: center;
-        padding: 0.5rem;
-        font-size: 2.5rem;
+        animation-name: late-fade-in;
+        animation-direction: normal;
+        animation-delay: 0s;
+        animation-duration: 3.0s;
+        animation-timing-function: ease-in-out;
+        animation-fill-mode: both;
+    }
+}
+@keyframes late-fade-in
+{
+    0%
+    {
+        opacity: 0.0;
+    }
+    90%
+    {
+        opacity: 0.0;
+    }
+    100%
+    {
+        opacity: 1.0;
     }
 }
 .export-screen
@@ -981,7 +1006,7 @@ button.default-button
     animation-name: loading-spinner;
     animation-direction: normal;
     animation-delay: 0s;
-    animation-duration: 3.0s;
+    animation-duration: 0.3s;
     animation-timing-function: ease-in-out;
     animation-fill-mode: both;
 }
@@ -991,10 +1016,10 @@ button.default-button
     {
         transform: rotate(0deg);
     }
-    10%
-    {
-        transform: rotate(360deg);
-    }
+    // 10%
+    // {
+    //     transform: rotate(360deg);
+    // }
     100%
     {
         transform: rotate(360deg);

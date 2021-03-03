@@ -707,13 +707,6 @@ button.default-button:hover {
   max-width: 90vw;
   max-height: 80vh;
   display: block;
-  animation-name: loading-spinner;
-  animation-direction: normal;
-  animation-delay: 0s;
-  animation-duration: 3s;
-  animation-timing-function: ease-in-out;
-  animation-fill-mode: both;
-  animation-iteration-count: 1;
 }
 .updating-screen h1 {
   margin-bottom: 1em;
@@ -730,15 +723,29 @@ button.default-button:hover {
   animation-name: loading-spinner;
   animation-direction: normal;
   animation-delay: 0s;
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+  animation-iteration-count: 1;
+}
+.updating-screen .button-list {
+  animation-name: late-fade-in;
+  animation-direction: normal;
+  animation-delay: 0s;
   animation-duration: 3s;
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
-  animation-iteration-count: infinite;
 }
-.updating-screen .message {
-  text-align: center;
-  padding: 0.5rem;
-  font-size: 2.5rem;
+@keyframes late-fade-in {
+  0% {
+    opacity: 0;
+  }
+  90% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 .export-screen textarea {
   width: 100vw;
@@ -756,16 +763,13 @@ button.default-button:hover {
   animation-name: loading-spinner;
   animation-direction: normal;
   animation-delay: 0s;
-  animation-duration: 3s;
+  animation-duration: 0.3s;
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
 }
 @keyframes loading-spinner {
   0% {
     transform: rotate(0deg);
-  }
-  10% {
-    transform: rotate(360deg);
   }
   100% {
     transform: rotate(360deg);

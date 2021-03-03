@@ -2666,7 +2666,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             ]);
                             _h = {
                                 tag: "div",
-                                className: "column-flex-list todo-list"
+                                className: "row-flex-list todo-list"
                             };
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.todoItem(entry, item); }))];
                         case 4: return [2 /*return*/, (_a.children = _g.concat([
@@ -2923,7 +2923,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             ];
                             _h = {
                                 tag: "div",
-                                className: "column-flex-list history-list"
+                                className: "row-flex-list history-list"
                             };
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.historyItem(entry, item); }))];
                         case 3: return [2 /*return*/, (_a.children = _g.concat([
@@ -3084,7 +3084,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             if (!(0 < list.length)) return [3 /*break*/, 4];
                             _j = {
                                 tag: "div",
-                                className: "column-flex-list removed-list"
+                                className: "row-flex-list removed-list"
                             };
                             return [4 /*yield*/, Promise.all([].concat(list)
                                     .sort(minamo_js_1.minamo.core.comparer.make(function (item) { return -item.deteledAt; }))
@@ -3209,7 +3209,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             ];
                             _h = {
                                 tag: "div",
-                                className: "column-flex-list tick-list"
+                                className: "row-flex-list tick-list"
                             };
                             return [4 /*yield*/, Promise.all(ticks.map(function (tick, index) { return Render.tickItem(pass, item, tick, "number" === typeof ticks[index + 1] ? tick - ticks[index + 1] : null, ticks.length < 2 ? null : Math.max.apply(null, Calculate.intervals(ticks))); }))];
                         case 3: return [2 /*return*/, (_a.children = _g.concat([
@@ -3570,7 +3570,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             ];
                             _h = {
                                 tag: "div",
-                                className: "column-flex-list removed-list-list"
+                                className: "row-flex-list removed-list-list"
                             };
                             return [4 /*yield*/, Promise.all(Storage.Backup.get().map(function (json) { return Render.removedListItem(JSON.parse(json)); }))];
                         case 3: return [2 /*return*/, (_a.children = _g.concat([
@@ -3820,10 +3820,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Render.updatingScreen = function (url) {
                 if (url === void 0) { url = location.href; }
                 return __awaiter(_this, void 0, void 0, function () {
-                    var _a, _b, _c, _d, _e;
+                    var _a, _b, _c, _d, _e, _f, _g;
                     var _this = this;
-                    return __generator(this, function (_f) {
-                        switch (_f.label) {
+                    return __generator(this, function (_h) {
+                        switch (_h.label) {
                             case 0:
                                 _a = {
                                     tag: "div",
@@ -3831,31 +3831,41 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 };
                                 _b = Render.heading;
                                 _c = ["h1"];
+                                _d = Render.internalLink;
+                                _e = {
+                                    href: {}
+                                };
                                 return [4 /*yield*/, Render.applicationIcon()];
                             case 1:
-                                _d = [
-                                    _f.sent(),
-                                    "" + document.title
+                                _f = [
+                                    _d.apply(void 0, [(_e.children = _h.sent(),
+                                            _e)])
                                 ];
+                                return [4 /*yield*/, Render.applicationIcon()];
+                            case 2:
+                                _f = _f.concat([
+                                    _h.sent(),
+                                    "..."
+                                ]);
                                 return [4 /*yield*/, Render.menuButton([
                                         Render.menuItem("GitHub", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                             return [2 /*return*/, location.href = "https://github.com/wraith13/cyclic-todo/"];
                                         }); }); }),
                                     ])];
-                            case 2:
-                                _e = [
-                                    _b.apply(void 0, _c.concat([_d.concat([
-                                            _f.sent()
+                            case 3:
+                                _g = [
+                                    _b.apply(void 0, _c.concat([_f.concat([
+                                            _h.sent()
                                         ])]))
                                 ];
                                 return [4 /*yield*/, Render.applicationColorIcon()];
-                            case 3: return [2 /*return*/, (_a.children = _e.concat([
-                                    _f.sent(),
-                                    {
-                                        tag: "div",
-                                        className: "message",
-                                        children: locale.parallel("Updating..."),
-                                    },
+                            case 4: return [2 /*return*/, (_a.children = _g.concat([
+                                    _h.sent(),
+                                    // {
+                                    //     tag: "div",
+                                    //     className: "message",
+                                    //     children: locale.parallel("Updating..."),
+                                    // },
                                     {
                                         tag: "div",
                                         className: "button-list",
@@ -3884,7 +3894,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     return __generator(this, function (_b) {
                         switch (_b.label) {
                             case 0:
-                                document.title = "Updating...";
+                                document.title = applicationTitle;
                                 _a = Render.showWindow;
                                 return [4 /*yield*/, Render.updatingScreen(url)];
                             case 1:
