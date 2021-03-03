@@ -3624,13 +3624,18 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
             }); };
             Render.applicationColorIcon = function () { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    return [2 /*return*/, ({
-                            tag: "img",
-                            className: "application-icon icon",
-                            alt: applicationTitle,
-                            src: "./cyclictodohex.1024.png",
-                        })];
+                var _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "application-icon icon"
+                            };
+                            return [4 /*yield*/, loadSvgOrCache("./cyclictodohex.1024.color.svg")];
+                        case 1: return [2 /*return*/, (_a.children = _b.sent(),
+                                _a)];
+                    }
                 });
             }); };
             Render.listItem = function (list) { return __awaiter(_this, void 0, void 0, function () {

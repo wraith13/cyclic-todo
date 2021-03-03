@@ -2694,10 +2694,9 @@ export module CyclicToDo
         });
         export const applicationColorIcon = async () =>
         ({
-            tag: "img",
+            tag: "div",
             className: "application-icon icon",
-            alt: applicationTitle,
-            src: "./cyclictodohex.1024.png",
+            children: await loadSvgOrCache("./cyclictodohex.1024.color.svg"),
         });
         export const listItem = async (list: ToDoList) =>
         ({
