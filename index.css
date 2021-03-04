@@ -704,8 +704,9 @@ button.default-button:hover {
   margin-right: auto;
   width: 400px;
   height: 400px;
+  min-width: 25vw;
+  min-height: 25vw;
   max-width: 90vw;
-  max-height: 80vh;
   display: block;
 }
 .updating-screen h1 {
@@ -715,10 +716,11 @@ button.default-button:hover {
 .updating-screen > .application-icon {
   margin-left: auto;
   margin-right: auto;
-  width: 240px;
-  height: 240px;
-  max-width: 60vw;
-  max-height: 50vh;
+  width: 400px;
+  height: 400px;
+  min-width: 25vw;
+  min-height: 25vw;
+  max-width: 90vw;
   display: block;
   animation-name: loading-spinner;
   animation-direction: normal;
@@ -732,7 +734,7 @@ button.default-button:hover {
   animation-name: late-fade-in;
   animation-direction: normal;
   animation-delay: 0s;
-  animation-duration: 3s;
+  animation-duration: 1.5s;
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
 }

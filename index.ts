@@ -2854,7 +2854,6 @@ export module CyclicToDo
                             href: { },
                             children: await applicationIcon(),
                         }),
-                        await applicationIcon(),
                         `...`,
                         await menuButton
                         ([

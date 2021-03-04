@@ -3839,27 +3839,22 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             case 1:
                                 _f = [
                                     _d.apply(void 0, [(_e.children = _h.sent(),
-                                            _e)])
-                                ];
-                                return [4 /*yield*/, Render.applicationIcon()];
-                            case 2:
-                                _f = _f.concat([
-                                    _h.sent(),
+                                            _e)]),
                                     "..."
-                                ]);
+                                ];
                                 return [4 /*yield*/, Render.menuButton([
                                         Render.menuItem("GitHub", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                             return [2 /*return*/, location.href = "https://github.com/wraith13/cyclic-todo/"];
                                         }); }); }),
                                     ])];
-                            case 3:
+                            case 2:
                                 _g = [
                                     _b.apply(void 0, _c.concat([_f.concat([
                                             _h.sent()
                                         ])]))
                                 ];
                                 return [4 /*yield*/, Render.applicationColorIcon()];
-                            case 4: return [2 /*return*/, (_a.children = _g.concat([
+                            case 3: return [2 /*return*/, (_a.children = _g.concat([
                                     _h.sent(),
                                     // {
                                     //     tag: "div",
