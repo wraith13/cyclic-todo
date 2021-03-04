@@ -2992,7 +2992,11 @@ export module CyclicToDo
                             }
                         }
                     );
-                    const columns = Math.min(maxColumns, Math.max(1, length));
+                    // const columns = Math.min(maxColumns, Math.max(1, length));
+                    // list.classList.add(`max-column-${columns}`);
+                    const height = window.innerHeight -list.offsetTop;
+                    const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight;
+                    const columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                     list.classList.add(`max-column-${columns}`);
                     if (0 < length)
                     {
