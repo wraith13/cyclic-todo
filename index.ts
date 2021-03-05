@@ -1239,7 +1239,14 @@ export module CyclicToDo
     }
     export module Render
     {
-        export const internalLink = (data: { className?: string, href: { pass?:string, tag?:string, todo?: string, hash?: string}, children: minamo.dom.Source}) =>
+        export interface PageParams
+        {
+            pass?:string;
+            tag?:string;
+            todo?: string;
+            hash?: string;
+        }
+        export const internalLink = (data: { className?: string, href: PageParams, children: minamo.dom.Source}) =>
         ({
             tag: "a",
             className: data.className,
@@ -1829,128 +1836,133 @@ export module CyclicToDo
                 ),
             ]
         });
+        export const screenHader = async (href: PageParams, title: minamo.dom.Source, menu: minamo.dom.Source) => heading
+        (
+            "h1",
+            [
+                internalLink
+                ({
+                    href,
+                    children: await applicationIcon(),
+                }),
+                title,
+                await menuButton(menu),
+            ]
+        );
         export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         ({
             tag: "div",
             className: "list-screen screen",
             children:
             [
-                heading
+                await screenHader
                 (
-                    "h1",
+                    "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall" },
+                    dropDownLabel
+                    ({
+                        list: makeObject
+                        (
+                            ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@new"])
+                            .map(i => ({ key:i, value: `${Domain.tagMap(i)} (${Storage.TagMember.get(entry.pass, i).length})`, }))
+                        ),
+                        value: entry.tag,
+                        onChange: async (tag: string) =>
+                        {
+                            switch(tag)
+                            {
+                            case "@new":
+                                {
+                                    const newTag = await prompt("タグの名前を入力してください", "");
+                                    if (null === newTag || newTag.length <= 0)
+                                    {
+                                        await reload();
+                                    }
+                                    else
+                                    {
+                                        const tag = Storage.Tag.encode(newTag.trim());
+                                        Storage.Tag.add(entry.pass, tag);
+                                        await showUrl({ pass: entry.pass, tag: newTag, });
+                                    }
+                                }
+                                break;
+                            default:
+                                await showUrl({ pass: entry.pass, tag, });
+                            }
+                        },
+                    }),
                     [
                         internalLink
                         ({
-                            href: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall" },
-                            children: await applicationIcon(),
+                            href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                            children: menuItem(locale.parallel("History")),
                         }),
-                        dropDownLabel
-                        ({
-                            list: makeObject
+                        Storage.Tag.isSystemTag(entry.tag) ? []:
+                            menuItem
                             (
-                                ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@new"])
-                                .map(i => ({ key:i, value: `${Domain.tagMap(i)} (${Storage.TagMember.get(entry.pass, i).length})`, }))
-                            ),
-                            value: entry.tag,
-                            onChange: async (tag: string) =>
-                            {
-                                switch(tag)
+                                locale.parallel("Rename"),
+                                async () =>
                                 {
-                                case "@new":
+                                    const newTag = await prompt("タグの名前を入力してください", entry.tag);
+                                    if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
                                     {
-                                        const newTag = await prompt("タグの名前を入力してください", "");
-                                        if (null === newTag || newTag.length <= 0)
+                                        if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
                                         {
-                                            await reload();
+                                            await showUrl({ pass: entry.pass, tag: newTag });
                                         }
                                         else
                                         {
-                                            const tag = Storage.Tag.encode(newTag.trim());
-                                            Storage.Tag.add(entry.pass, tag);
-                                            await showUrl({ pass: entry.pass, tag: newTag, });
+                                            alert("その名前のタグは既に存在しています。");
                                         }
-                                    }
-                                    break;
-                                default:
-                                    await showUrl({ pass: entry.pass, tag, });
-                                }
-                            },
-                        }),
-                        await menuButton
-                        ([
-                            internalLink
-                            ({
-                                href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                                children: menuItem(locale.parallel("History")),
-                            }),
-                            Storage.Tag.isSystemTag(entry.tag) ? []:
-                                menuItem
-                                (
-                                    locale.parallel("Rename"),
-                                    async () =>
-                                    {
-                                        const newTag = await prompt("タグの名前を入力してください", entry.tag);
-                                        if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
-                                        {
-                                            if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
-                                            {
-                                                await showUrl({ pass: entry.pass, tag: newTag });
-                                            }
-                                            else
-                                            {
-                                                alert("その名前のタグは既に存在しています。");
-                                            }
-                                        }
-                                    }
-                                ),
-                            internalLink
-                            ({
-                                href: { pass: entry.pass, hash: "removed" },
-                                children: menuItem(locale.parallel("@deleted")),
-                            }),
-                            menuItem
-                            (
-                                locale.parallel("New ToDo"),
-                                async () =>
-                                {
-                                    const newTask = await prompt("ToDo の名前を入力してください");
-                                    if (null !== newTask)
-                                    {
-                                        Storage.Task.add(entry.pass, newTask);
-                                        Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                        await reload();
                                     }
                                 }
                             ),
+                        internalLink
+                        ({
+                            href: { pass: entry.pass, hash: "removed" },
+                            children: menuItem(locale.parallel("@deleted")),
+                        }),
+                        menuItem
+                        (
+                            locale.parallel("New ToDo"),
+                            async () =>
                             {
-                                tag: "button",
-                                children: "🚫 リストをシェア",
-                            },
-                            internalLink
-                            ({
-                                href: { pass: entry.pass, hash: "export" },
-                                children: menuItem(locale.parallel("Export")),
-                            }),
-                            Storage.Tag.isSystemTag(entry.tag) ? []:
-                                menuItem
-                                (
-                                    locale.parallel("Delete"),
-                                    async () =>
-                                    {
-                                    }
-                                ),
-                            // "@overall" === entry.tag ?
-                            //     menuItem
-                            //     (
-                            //         locale.parallel("Delete"),
-                            //         async () =>
-                            //         {
-                            //             Storage.Pass.remove(entry.pass);
-                            //             await showUrl({ });
-                            //         }
-                            //     ):
-                            //     [],
-                        ]),
+                                const newTask = await prompt("ToDo の名前を入力してください");
+                                if (null !== newTask)
+                                {
+                                    Storage.Task.add(entry.pass, newTask);
+                                    Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                                    await reload();
+                                }
+                            }
+                        ),
+                        {
+                            tag: "button",
+                            children: "🚫 リストをシェア",
+                        },
+                        internalLink
+                        ({
+                            href: { pass: entry.pass, hash: "export" },
+                            children: menuItem(locale.parallel("Export")),
+                        }),
+                        Storage.Tag.isSystemTag(entry.tag) ? []:
+                            menuItem
+                            (
+                                locale.parallel("Delete"),
+                                async () =>
+                                {
+                                }
+                            ),
+                        // "@overall" === entry.tag ?
+                        //     menuItem
+                        //     (
+                        //         locale.parallel("Delete"),
+                        //         async () =>
+                        //         {
+                        //             Storage.Pass.remove(entry.pass);
+                        //             await showUrl({ });
+                        //         }
+                        //     ):
+                        //     [],
                     ]
                 ),
                 await historyBar(entry, list),
@@ -2059,117 +2071,109 @@ export module CyclicToDo
             className: "history-screen screen",
             children:
             [
-                heading
+                await screenHader
                 (
-                    "h1",
-                    [
-                        internalLink
-                        ({
-                            href: { pass: entry.pass, tag: entry.tag, },
-                            children: await applicationIcon(),
-                        }),
-                        dropDownLabel
-                        ({
-                            list: makeObject
-                            (
-                                ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@new"])
-                                .map(i => ({ key:i, value: `${Domain.tagMap(i)} (${Storage.TagMember.get(entry.pass, i).length})`, }))
-                            ),
-                            value: entry.tag,
-                            onChange: async (tag: string) =>
+                    { pass: entry.pass, tag: entry.tag, },
+                    dropDownLabel
+                    ({
+                        list: makeObject
+                        (
+                            ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@new"])
+                            .map(i => ({ key:i, value: `${Domain.tagMap(i)} (${Storage.TagMember.get(entry.pass, i).length})`, }))
+                        ),
+                        value: entry.tag,
+                        onChange: async (tag: string) =>
+                        {
+                            switch(tag)
                             {
-                                switch(tag)
+                            case "@new":
                                 {
-                                case "@new":
+                                    const newTag = await prompt("タグの名前を入力してください", "");
+                                    if (null === newTag)
                                     {
-                                        const newTag = await prompt("タグの名前を入力してください", "");
-                                        if (null === newTag)
+                                        await reload();
+                                    }
+                                    else
+                                    {
+                                        const tag = Storage.Tag.encode(newTag.trim());
+                                        Storage.Tag.add(entry.pass, tag);
+                                        await showUrl({ pass: entry.pass, tag: newTag, hash: "history", });
+                                    }
+                                }
+                                break;
+                            default:
+                                await showUrl({ pass: entry.pass, tag, hash: "history", });
+                            }
+                        },
+                    }),
+                    [
+                        menuItem
+                        (
+                            locale.parallel("Back to List"),
+                            async () => await showUrl({ pass: entry.pass, tag: entry.tag, })
+                        ),
+                        Storage.Tag.isSystemTag(entry.tag) ? []:
+                            menuItem
+                            (
+                                locale.parallel("Rename"),
+                                async () =>
+                                {
+                                    const newTag = await prompt("タグの名前を入力してください", entry.tag);
+                                    if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
+                                    {
+                                        if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
                                         {
-                                            await reload();
+                                            await showUrl({ pass: entry.pass, tag: newTag, hash: "history", });
                                         }
                                         else
                                         {
-                                            const tag = Storage.Tag.encode(newTag.trim());
-                                            Storage.Tag.add(entry.pass, tag);
-                                            await showUrl({ pass: entry.pass, tag: newTag, hash: "history", });
+                                            alert("その名前のタグは既に存在しています。");
                                         }
                                     }
-                                    break;
-                                default:
-                                    await showUrl({ pass: entry.pass, tag, hash: "history", });
                                 }
-                            },
-                        }),
-                        await menuButton
-                        ([
-                            menuItem
-                            (
-                                locale.parallel("Back to List"),
-                                async () => await showUrl({ pass: entry.pass, tag: entry.tag, })
                             ),
-                            Storage.Tag.isSystemTag(entry.tag) ? []:
-                                menuItem
-                                (
-                                    locale.parallel("Rename"),
-                                    async () =>
-                                    {
-                                        const newTag = await prompt("タグの名前を入力してください", entry.tag);
-                                        if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
-                                        {
-                                            if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
-                                            {
-                                                await showUrl({ pass: entry.pass, tag: newTag, hash: "history", });
-                                            }
-                                            else
-                                            {
-                                                alert("その名前のタグは既に存在しています。");
-                                            }
-                                        }
-                                    }
-                                ),
+                        menuItem
+                        (
+                            locale.parallel("New ToDo"),
+                            async () =>
+                            {
+                                const newTask = await prompt("ToDo の名前を入力してください");
+                                if (null !== newTask)
+                                {
+                                    Storage.Task.add(entry.pass, newTask);
+                                    Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                                    await reload();
+                                }
+                            }
+                        ),
+                        {
+                            tag: "button",
+                            children: "🚫 リストをシェア",
+                        },
+                        menuItem
+                        (
+                            locale.parallel("Export"),
+                            async () => await showUrl({ pass: entry.pass, hash: "export", })
+                        ),
+                        Storage.Tag.isSystemTag(entry.tag) ? []:
                             menuItem
                             (
-                                locale.parallel("New ToDo"),
+                                locale.parallel("Delete"),
                                 async () =>
                                 {
-                                    const newTask = await prompt("ToDo の名前を入力してください");
-                                    if (null !== newTask)
-                                    {
-                                        Storage.Task.add(entry.pass, newTask);
-                                        Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                        await reload();
-                                    }
                                 }
                             ),
-                            {
-                                tag: "button",
-                                children: "🚫 リストをシェア",
-                            },
-                            menuItem
-                            (
-                                locale.parallel("Export"),
-                                async () => await showUrl({ pass: entry.pass, hash: "export", })
-                            ),
-                            Storage.Tag.isSystemTag(entry.tag) ? []:
-                                menuItem
-                                (
-                                    locale.parallel("Delete"),
-                                    async () =>
-                                    {
-                                    }
-                                ),
-                            // "@overall" === entry.tag ?
-                            //     menuItem
-                            //     (
-                            //         locale.parallel("Delete"),
-                            //         async () =>
-                            //         {
-                            //             Storage.Pass.remove(entry.pass);
-                            //             await showUrl({ });
-                            //         }
-                            //     ):
-                            //     [],
-                        ]),
+                        // "@overall" === entry.tag ?
+                        //     menuItem
+                        //     (
+                        //         locale.parallel("Delete"),
+                        //         async () =>
+                        //         {
+                        //             Storage.Pass.remove(entry.pass);
+                        //             await showUrl({ });
+                        //         }
+                        //     ):
+                        //     [],
                     ]
                 ),
                 {
@@ -2272,34 +2276,26 @@ export module CyclicToDo
             className: "removed-screen screen",
             children:
             [
-                heading
+                await screenHader
                 (
-                    "h1",
+                    { pass, tag: "@overall", },
+                    locale.map("@deleted"),
                     [
-                        internalLink
-                        ({
-                            href: { pass, tag: "@overall", },
-                            children: await applicationIcon(),
-                        }),
-                        locale.map("@deleted"),
-                        await menuButton
-                        ([
-                            menuItem
-                            (
-                                locale.parallel("Back to List"),
-                                async () => await showUrl({ pass, tag: "@overall", })
-                            ),
-                            menuItem
-                            (
-                                "完全に削除",
-                                async () =>
-                                {
-                                    Storage.Removed.clear(pass);
-                                    await reload();
-                                }
-                            ),
-                        ]),
-                    ]
+                        menuItem
+                        (
+                            locale.parallel("Back to List"),
+                            async () => await showUrl({ pass, tag: "@overall", })
+                        ),
+                        menuItem
+                        (
+                            "完全に削除",
+                            async () =>
+                            {
+                                Storage.Removed.clear(pass);
+                                await reload();
+                            }
+                        ),
+                    ],
                 ),
                 0 < list.length ?
                     {
@@ -2341,31 +2337,23 @@ export module CyclicToDo
             className: "todo-screen screen",
             children:
             [
-                heading
+                await screenHader
                 (
-                    "h1",
+                    { pass, tag: "@overall", },
+                    `${item.task}`,
                     [
-                        internalLink
-                        ({
-                            href: { pass, tag: "@overall", },
-                            children: await applicationIcon(),
-                        }),
-                        `${item.task}`,
-                        await menuButton
-                        ([
-                            todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
-                            todoTagMenu(pass, item),
-                            todoDeleteMenu(pass, item),
-                            {
-                                tag: "button",
-                                children: "🚫 ToDo をシェア",
-                            },
-                            menuItem
-                            (
-                                locale.parallel("Export"),
-                                async () => await showUrl({ pass, hash: "export", })
-                            ),
-                        ]),
+                        todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
+                        todoTagMenu(pass, item),
+                        todoDeleteMenu(pass, item),
+                        {
+                            tag: "button",
+                            children: "🚫 ToDo をシェア",
+                        },
+                        menuItem
+                        (
+                            locale.parallel("Export"),
+                            async () => await showUrl({ pass, hash: "export", })
+                        ),
                     ]
                 ),
                 {
@@ -2502,24 +2490,16 @@ export module CyclicToDo
             className: "export-screen screen",
             children:
             [
-                heading
+                await screenHader
                 (
-                    "h1",
+                    { pass, tag: "@overall", },
+                    `${document.title}`,
                     [
-                        internalLink
-                        ({
-                            href: { pass, tag: "@overall", },
-                            children: await applicationIcon(),
-                        }),
-                        `${document.title}`,
-                        await menuButton
-                        ([
-                            menuItem
-                            (
-                                locale.parallel("Back to List"),
-                                async () => async () => await showUrl({ pass, tag: "@overall", }),
-                            )
-                        ]),
+                        menuItem
+                        (
+                            locale.parallel("Back to List"),
+                            async () => async () => await showUrl({ pass, tag: "@overall", }),
+                        )
                     ]
                 ),
                 {
@@ -2540,24 +2520,16 @@ export module CyclicToDo
             className: "import-screen screen",
             children:
             [
-                heading
+                await screenHader
                 (
-                    "h1",
+                    { },
+                    `${document.title}`,
                     [
-                        internalLink
-                        ({
-                            href: { },
-                            children: await applicationIcon(),
-                        }),
-                        `${document.title}`,
-                        await menuButton
-                        ([
-                            menuItem
-                            (
-                                locale.parallel("Back to Home"),
-                                async () => await showUrl({ }),
-                            )
-                        ]),
+                        menuItem
+                        (
+                            locale.parallel("Back to Home"),
+                            async () => await showUrl({ }),
+                        )
                     ]
                 ),
                 {
@@ -2638,24 +2610,16 @@ export module CyclicToDo
             className: "remove-list-screen screen",
             children:
             [
-                heading
+                await screenHader
                 (
-                    "h1",
+                    { },
+                    `${locale.map("@deleted")}`,
                     [
-                        internalLink
-                        ({
-                            href: { },
-                            children: await applicationIcon(),
-                        }),
-                        `${locale.map("@deleted")}`,
-                        await menuButton
-                        ([
-                            menuItem
-                            (
-                                locale.parallel("Back to Home"),
-                                async () => await showUrl({ }),
-                            )
-                        ]),
+                        menuItem
+                        (
+                            locale.parallel("Back to Home"),
+                            async () => await showUrl({ }),
+                        )
                     ]
                 ),
                 {
@@ -2764,35 +2728,31 @@ export module CyclicToDo
             className: "welcome-screen screen",
             children:
             [
-                heading
+                await screenHader
                 (
-                    "h1",
+                    { },
+                    `${document.title}`,
                     [
-                        await applicationIcon(),
-                        `${document.title}`,
-                        await menuButton
-                        ([
-                            menuItem
-                            (
-                                locale.parallel("New ToDo List"),
-                                async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", }),
-                            ),
-                            internalLink
-                            ({
-                                href: { hash: "import", },
-                                children: menuItem(locale.parallel("Import List")),
-                            }),
-                            internalLink
-                            ({
-                                href: { hash: "removed", },
-                                children: menuItem(locale.parallel("@deleted")),
-                            }),
-                            externalLink
-                            ({
-                                href: "https://github.com/wraith13/cyclic-todo/",
-                                children: menuItem("GitHub"),
-                            }),
-                        ]),
+                        menuItem
+                        (
+                            locale.parallel("New ToDo List"),
+                            async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", }),
+                        ),
+                        internalLink
+                        ({
+                            href: { hash: "import", },
+                            children: menuItem(locale.parallel("Import List")),
+                        }),
+                        internalLink
+                        ({
+                            href: { hash: "removed", },
+                            children: menuItem(locale.parallel("@deleted")),
+                        }),
+                        externalLink
+                        ({
+                            href: "https://github.com/wraith13/cyclic-todo/",
+                            children: menuItem("GitHub"),
+                        }),
                     ]
                 ),
                 {
@@ -2845,25 +2805,17 @@ export module CyclicToDo
             className: "updating-screen screen",
             children:
             [
-                heading
+                await screenHader
                 (
-                    "h1",
+                    { },
+                    `...`,
                     [
-                        internalLink
-                        ({
-                            href: { },
-                            children: await applicationIcon(),
-                        }),
-                        `...`,
-                        await menuButton
-                        ([
-                            menuItem
-                            (
-                                "GitHub",
-                                async () => location.href = "https://github.com/wraith13/cyclic-todo/",
-                            ),
-                        ]),
-                    ]
+                        menuItem
+                        (
+                            "GitHub",
+                            async () => location.href = "https://github.com/wraith13/cyclic-todo/",
+                        ),
+                    ],
                 ),
                 await applicationColorIcon(),
                 // {
@@ -3057,7 +3009,7 @@ export module CyclicToDo
     export const getUrlHash = (url: string = location.href) => url.replace(/[^#]*#?/, "");
     export const makeUrl =
     (
-        args: {[key: string]: string},
+        args: {[key: string]: string} | Render.PageParams,
         href: string = location.href
     ) =>
         href
