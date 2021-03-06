@@ -1135,6 +1135,9 @@ export module CyclicToDo
             };
             return result;
         };
+        export const calcSmartRestCore = (span: number, elapsed: number) => Math.pow(span -elapsed, 2.0) /Math.pow(span, 1.5);
+        export const calcSmartRest = (item: { RecentlySmartAverage: number, RecentlyStandardDeviation: null | number, elapsed: number}) =>
+            calcSmartRestCore(item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate), item.elapsed);
         export const updateProgress = (item: ToDoEntry, now: number = Domain.getTicks()) =>
         {
             if (0 < item.count)
@@ -1160,7 +1163,7 @@ export module CyclicToDo
                     {
                         item.progress = 1.0 +((item.elapsed -long) /item.RecentlySmartAverage);
                     }
-                    item.smartRest = (item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate)) -item.elapsed;
+                    item.smartRest = calcSmartRest(item);
                     //item.progress = item.elapsed /(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
                     //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
                     const overrate = (item.elapsed -(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate)) / item.RecentlySmartAverage;
@@ -1219,7 +1222,7 @@ export module CyclicToDo
                     (
                         item =>
                         {
-                            item.smartRest = (groupAverage +(groupStandardDeviation *Domain.standardDeviationOverRate)) -item.elapsed;
+                            item.smartRest = calcSmartRest({ RecentlySmartAverage: groupAverage, RecentlyStandardDeviation: groupStandardDeviation, elapsed: item.elapsed });
                         }
                     );
                 }

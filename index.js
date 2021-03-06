@@ -1823,8 +1823,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 };
                 return result;
             };
+            Domain.calcSmartRestCore = function (span, elapsed) { return Math.pow(span - elapsed, 2.0) / Math.pow(span, 1.5); };
+            Domain.calcSmartRest = function (item) { var _a; return Domain.calcSmartRestCore(item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationOverRate), item.elapsed); };
             Domain.updateProgress = function (item, now) {
-                var _a, _b, _c, _d;
+                var _a, _b, _c;
                 if (now === void 0) { now = Domain.getTicks(); }
                 if (0 < item.count) {
                     // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
@@ -1843,10 +1845,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         else {
                             item.progress = 1.0 + ((item.elapsed - long) / item.RecentlySmartAverage);
                         }
-                        item.smartRest = (item.RecentlySmartAverage + (((_c = item.RecentlyStandardDeviation) !== null && _c !== void 0 ? _c : 0) * Domain.standardDeviationOverRate)) - item.elapsed;
+                        item.smartRest = Domain.calcSmartRest(item);
                         //item.progress = item.elapsed /(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
                         //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
-                        var overrate = (item.elapsed - (item.RecentlySmartAverage + ((_d = item.RecentlyStandardDeviation) !== null && _d !== void 0 ? _d : 0) * Domain.standardDeviationOverRate)) / item.RecentlySmartAverage;
+                        var overrate = (item.elapsed - (item.RecentlySmartAverage + ((_c = item.RecentlyStandardDeviation) !== null && _c !== void 0 ? _c : 0) * Domain.standardDeviationOverRate)) / item.RecentlySmartAverage;
                         if (0.0 < overrate) {
                             //item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
                             item.progress = null;
@@ -1880,7 +1882,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     var groupAverage = Calculate.average(group.map(function (item) { return item.RecentlySmartAverage; }));
                     var groupStandardDeviation = Calculate.average(group.map(function (item) { var _a; return (_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : (item.RecentlySmartAverage * 0.1); }));
                     group.forEach(function (item) {
-                        item.smartRest = (groupAverage + (groupStandardDeviation * Domain.standardDeviationOverRate)) - item.elapsed;
+                        item.smartRest = Domain.calcSmartRest({ RecentlySmartAverage: groupAverage, RecentlyStandardDeviation: groupStandardDeviation, elapsed: item.elapsed });
                     });
                 });
                 //const sorted = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoComparer1(entry));
