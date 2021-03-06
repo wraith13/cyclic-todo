@@ -905,8 +905,8 @@ export module CyclicToDo
         );
         export const todoComparer0 = (entry: ToDoTagEntry) => minamo.core.comparer.make<ToDoEntry>
         ([
-            item => item.isDefault ? -1: 1,
-            item => item.isDefault ?
+            item => item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
+            item => item.isDefault || (item.smartRest ?? 1) <= 0 ?
                 item.smartRest:
                 //(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -item.elapsed:
                 -(item.progress ?? -1),
@@ -1135,7 +1135,10 @@ export module CyclicToDo
             };
             return result;
         };
-        export const calcSmartRestCore = (span: number, elapsed: number) => Math.pow(span -elapsed, 2.0) /Math.pow(span, 1.5);
+        export const calcSmartRestCore = (span: number, elapsed: number) =>
+            elapsed < span ?
+                Math.pow(span -elapsed, 2.0) /Math.pow(span, 1.5):
+                span -elapsed;
         export const calcSmartRest = (item: { RecentlySmartAverage: number, RecentlyStandardDeviation: null | number, elapsed: number}) =>
             calcSmartRestCore(item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate), item.elapsed);
         export const updateProgress = (item: ToDoEntry, now: number = Domain.getTicks()) =>
@@ -1174,7 +1177,10 @@ export module CyclicToDo
                         item.RecentlySmartAverage = null;
                         item.RecentlyStandardDeviation = null;
                         item.isDefault = false;
-                        item.smartRest = null;
+                        if (24 *60 *60 *1000 < -(item.smartRest * Domain.TimeAccuracy))
+                        {
+                            item.smartRest = null;
+                        }
                     }
                 }
             }

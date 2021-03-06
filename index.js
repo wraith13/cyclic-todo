@@ -1630,13 +1630,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             }); }); };
             Domain.tagComparer = function (pass) { return minamo_js_1.minamo.core.comparer.make(function (tag) { return -Storage.TagMember.get(pass, tag).map(function (todo) { return Storage.History.get(pass, todo).length; }).reduce(function (a, b) { return a + b; }, 0); }); };
             Domain.todoComparer0 = function (entry) { return minamo_js_1.minamo.core.comparer.make([
-                function (item) { return item.isDefault ? -1 : 1; },
+                function (item) { var _a; return item.isDefault || ((_a = item.smartRest) !== null && _a !== void 0 ? _a : 1) <= 0 ? -1 : 1; },
                 function (item) {
-                    var _a;
-                    return item.isDefault ?
+                    var _a, _b;
+                    return item.isDefault || ((_a = item.smartRest) !== null && _a !== void 0 ? _a : 1) <= 0 ?
                         item.smartRest :
                         //(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -item.elapsed:
-                        -((_a = item.progress) !== null && _a !== void 0 ? _a : -1);
+                        -((_b = item.progress) !== null && _b !== void 0 ? _b : -1);
                 },
                 function (item) { return 1 < item.count ? -2 : -item.count; },
                 function (item) { var _a; return 1 < item.count ? item.elapsed : -((_a = item.elapsed) !== null && _a !== void 0 ? _a : 0); },
@@ -1823,7 +1823,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 };
                 return result;
             };
-            Domain.calcSmartRestCore = function (span, elapsed) { return Math.pow(span - elapsed, 2.0) / Math.pow(span, 1.5); };
+            Domain.calcSmartRestCore = function (span, elapsed) {
+                return elapsed < span ?
+                    Math.pow(span - elapsed, 2.0) / Math.pow(span, 1.5) :
+                    span - elapsed;
+            };
             Domain.calcSmartRest = function (item) { var _a; return Domain.calcSmartRestCore(item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationOverRate), item.elapsed); };
             Domain.updateProgress = function (item, now) {
                 var _a, _b, _c;
@@ -1855,7 +1859,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             item.RecentlySmartAverage = null;
                             item.RecentlyStandardDeviation = null;
                             item.isDefault = false;
-                            item.smartRest = null;
+                            if (24 * 60 * 60 * 1000 < -(item.smartRest * Domain.TimeAccuracy)) {
+                                item.smartRest = null;
+                            }
                         }
                     }
                 }
