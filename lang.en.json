@@ -31,5 +31,6 @@
     "Task": "ToDo",
     "Tick": "Record",
     "deletedAt": "deleted at",
-    "Reload": "Reload"
+    "Reload": "Reload",
+    "Delete this List": "Delete this List"
 }

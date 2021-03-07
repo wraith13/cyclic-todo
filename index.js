@@ -886,7 +886,8 @@ define("lang.en", [], {
     "Task": "ToDo",
     "Tick": "Record",
     "deletedAt": "deleted at",
-    "Reload": "Reload"
+    "Reload": "Reload",
+    "Delete this List": "Delete this List"
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -921,7 +922,8 @@ define("lang.ja", [], {
     "Task": "ToDo",
     "Tick": "記録",
     "deletedAt": "削除日時",
-    "Reload": "再読み込み"
+    "Reload": "再読み込み",
+    "Delete this List": "このリストを削除"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -2332,6 +2334,20 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                 return [2 /*return*/];
                                             });
                                         }); }),
+                                    "@overall" === entry.tag ?
+                                        Render.menuItem(locale.parallel("Delete this List"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        Storage.Pass.remove(entry.pass);
+                                                        return [4 /*yield*/, CyclicToDo.showUrl({})];
+                                                    case 1:
+                                                        _a.sent();
+                                                        return [2 /*return*/];
+                                                }
+                                            });
+                                        }); }) :
+                                        [],
                                 ])];
                         case 1:
                             _b = [

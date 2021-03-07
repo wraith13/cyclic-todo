@@ -1548,17 +1548,17 @@ export module CyclicToDo
                                 {
                                 }
                             ),
-                        // "@overall" === entry.tag ?
-                        //     menuItem
-                        //     (
-                        //         locale.parallel("Delete"),
-                        //         async () =>
-                        //         {
-                        //             Storage.Pass.remove(entry.pass);
-                        //             await showUrl({ });
-                        //         }
-                        //     ):
-                        //     [],
+                        "@overall" === entry.tag ?
+                            menuItem
+                            (
+                                locale.parallel("Delete this List"),
+                                async () =>
+                                {
+                                    Storage.Pass.remove(entry.pass);
+                                    await showUrl({ });
+                                }
+                            ):
+                            [],
                     ]
                 ),
                 await historyBar(entry, list),
