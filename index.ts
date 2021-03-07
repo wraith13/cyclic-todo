@@ -568,9 +568,11 @@ export module CyclicToDo
         //     // );
         //     // todo.forEach(task => Storage.History.add(pass, task, temp[task]));
         // };
-        export const standardDeviationRate = 1.5;
-        export const standardDeviationOverRate = 2.5;
         export const TimeAccuracy = 60 *1000;
+        export const standardDeviationRate = 1.5;
+        //export const standardDeviationOverRate = 2.0;
+        export const standardDeviationOverRate = standardDeviationRate;
+        export const granceTime = 24 *60 *60 *1000 / TimeAccuracy;
         export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / TimeAccuracy);
         export const dateStringFromTick = (tick: null | number) =>
         {
@@ -738,7 +740,9 @@ export module CyclicToDo
         };
         export const calcSmartRestCore = (span: number, elapsed: number) =>
             elapsed < span ?
-                Math.pow(span -elapsed, 2.0) /Math.pow(span, 1.5):
+                //Math.pow(span -elapsed, 2.0) /Math.pow(span, 1.5):
+                //Math.pow(span -elapsed, 1.0) *Math.pow((span -elapsed) /span, 1.0):
+                Math.pow(span -elapsed, 2.0) /span:
                 span -elapsed;
         export const calcSmartRest = (item: { RecentlySmartAverage: number, RecentlyStandardDeviation: null | number, elapsed: number}) =>
             calcSmartRestCore(item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate), item.elapsed);
@@ -778,7 +782,7 @@ export module CyclicToDo
                         item.RecentlySmartAverage = null;
                         item.RecentlyStandardDeviation = null;
                         item.isDefault = false;
-                        if (24 *60 *60 *1000 < -(item.smartRest * Domain.TimeAccuracy))
+                        if (Domain.granceTime < -item.smartRest)
                         {
                             item.smartRest = null;
                         }

@@ -1351,9 +1351,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             //     // );
             //     // todo.forEach(task => Storage.History.add(pass, task, temp[task]));
             // };
-            Domain.standardDeviationRate = 1.5;
-            Domain.standardDeviationOverRate = 2.5;
             Domain.TimeAccuracy = 60 * 1000;
+            Domain.standardDeviationRate = 1.5;
+            //export const standardDeviationOverRate = 2.0;
+            Domain.standardDeviationOverRate = Domain.standardDeviationRate;
+            Domain.granceTime = 24 * 60 * 60 * 1000 / Domain.TimeAccuracy;
             Domain.getTicks = function (date) {
                 if (date === void 0) { date = new Date(); }
                 return Math.floor(date.getTime() / Domain.TimeAccuracy);
@@ -1499,7 +1501,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             };
             Domain.calcSmartRestCore = function (span, elapsed) {
                 return elapsed < span ?
-                    Math.pow(span - elapsed, 2.0) / Math.pow(span, 1.5) :
+                    //Math.pow(span -elapsed, 2.0) /Math.pow(span, 1.5):
+                    //Math.pow(span -elapsed, 1.0) *Math.pow((span -elapsed) /span, 1.0):
+                    Math.pow(span - elapsed, 2.0) / span :
                     span - elapsed;
             };
             Domain.calcSmartRest = function (item) { var _a; return Domain.calcSmartRestCore(item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationOverRate), item.elapsed); };
@@ -1533,7 +1537,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             item.RecentlySmartAverage = null;
                             item.RecentlyStandardDeviation = null;
                             item.isDefault = false;
-                            if (24 * 60 * 60 * 1000 < -(item.smartRest * Domain.TimeAccuracy)) {
+                            if (Domain.granceTime < -item.smartRest) {
                                 item.smartRest = null;
                             }
                         }
