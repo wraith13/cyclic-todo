@@ -64,228 +64,6 @@ export module Calculate
         Math.sqrt(Calculate.average(ticks.map(i => (i -average) ** 2)));
     export const standardScore = (average: number, standardDeviation: number, target: number) =>
         (10 * (target -average) /standardDeviation) +50;
-    export const expectedNextByTransverseWare = (task: string, ticks: number[]) =>
-    {
-        const intervals: number[] = Calculate.intervals(ticks).reverse();
-        const average: number = Calculate.average(intervals);
-        const standardDeviation: number = Calculate.standardDeviation(intervals, average);
-        if (10 <= intervals.length && (average *0.1) < standardDeviation)
-        {
-            const waveLenghResolution = 50;
-            const angleResolution = 50;
-            const base = 2 *standardDeviation;
-            const regulatedIntervals = intervals.map(i => Math.min(1.0, Math.max(-1.0, (i -average) /base)));
-            // const regulatedAverage = Calculate.average(regulatedIntervals);
-            // const regulatedStandardDeviation = Calculate.standardDeviation(regulatedIntervals, regulatedAverage);
-            const primeWaveLength = Math.pow(Calculate.phi, Math.ceil(Math.log(regulatedIntervals.length) /Math.log(Calculate.phi)));
-            let diff = regulatedIntervals.map(i => i);
-            const rates: number[][] = [];
-            //const calcLevel = (_offset: number, waveLength: number, index: number) => Math.sin((index /waveLength) *(Math.PI *2));
-            //const calcLevel = (angle: number, waveLength: number, index: number) => Math.sin(((index /waveLength) +(angle /angleResolution)) *(Math.PI *2));
-            const calcLevel = (angle: number, waveLength: number, index: number) => 0 === Math.floor(((index /waveLength) +(angle /angleResolution)) *2) %2 ? 1.0: -1.0;
-            //const calcRate = (values: number[], offset: number, waveLength: number) => Math.min(1.0, Math.max(0.0, Calculate.average(values.map((value, index) => 1.0 - (calcLevel(offset, waveLength, index) -value)))));
-            const calcRate = (values: number[], offset: number, waveLength: number) => Calculate.average(values.map((value, index) => value *calcLevel(offset, waveLength, index)));
-            const calcAccuracy = (values: number[]) => Calculate.average(values.map(i => 1 -Math.abs(i)));
-            const calcWorstAccuracy = (values: number[]) => values.map(i => 1 -Math.abs(i)).reduce((a, b) => a < b ? a: b, 1);
-            const initAccuracy = calcAccuracy(diff);
-            const initWorstAccuracy = calcWorstAccuracy(diff);
-            console.log(diff);
-            let wave = 0;
-            //while(Math.pow(Calculate.phi, offset /resolution) <= primeWaveLength)
-            // let previousAccuracy = initAccuracy;
-            // let previousWorstAccuracy = initWorstAccuracy;
-            while(wave < waveLenghResolution)
-            {
-                const waveLength = primeWaveLength /Math.pow(Calculate.phi, wave /waveLenghResolution);
-                const currentRates: number[] = [];
-                // for(let angle = 0; angle < angleResolution; ++angle)
-                // {
-                //     const rate = calcRate(diff, angle, waveLength);
-                //     const nextDiff = diff.map((value, index) => value -(rate *calcLevel(angle, waveLength, index)));
-                //     //console.log(`rate: ${rate}, accuracy: ${calcAccuracy(diff).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}`);
-                //     //console.log({ waveLength, diff, });
-                //     // let nextAccuracy = calcAccuracy(nextDiff);
-                //     // let nextWorstAccuracy = calcWorstAccuracy(nextDiff);
-                //     // if (previousAccuracy < nextAccuracy && previousWorstAccuracy < nextWorstAccuracy)
-                //     if (0.001 < Math.abs(rate))
-                //     {
-                //         // previousAccuracy = nextAccuracy;
-                //         // previousWorstAccuracy = nextWorstAccuracy;
-                //         diff = nextDiff;
-                //         currentRates.push(rate);
-                //     }
-                //     else
-                //     {
-                //         currentRates.push(0);
-                //     }
-                // }
-
-                let maxRate = 0;
-                let maxAngle = -1;
-                for(let angle = 0; angle < angleResolution; ++angle)
-                {
-                    const rate = calcRate(diff, angle, waveLength);
-                    if (Math.abs(maxRate) < Math.abs(rate))
-                    {
-                        maxRate = rate;
-                        maxAngle = angle;
-                    }
-                }
-                for(let angle = 0; angle < angleResolution; ++angle)
-                {
-                    if (maxAngle === angle)
-                    {
-                        currentRates.push(maxRate);
-                    }
-                    else
-                    {
-                        currentRates.push(0);
-                    }
-                }
-                if (0 <= maxAngle)
-                {
-                    diff = diff.map((value, index) => value -(maxRate *calcLevel(maxAngle, waveLength, index)));
-                }
-
-                rates.push(currentRates);
-                ++wave;
-            }
-            const finalAccuracy = calcAccuracy(diff);
-            const finalWorstAccuracy = calcWorstAccuracy(diff);
-            console.log(diff);
-            console.log(rates);
-            console.log(`init accuracy: ${initAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}, ${initWorstAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}`);
-            console.log(`final accuracy: ${finalAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}, ${finalWorstAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}`);
-            if (initAccuracy < finalAccuracy)
-            {
-                const exptected = Calculate.sum
-                (
-                    rates.map
-                    (
-                        (currentRates, wave) =>
-                        Calculate.sum
-                        (
-                            currentRates.map
-                            (
-                                (rate, angle) => 0 === rate ? 0:
-                                    rate *calcLevel(angle, primeWaveLength /Math.pow(Calculate.phi, wave /waveLenghResolution), regulatedIntervals.length)
-                            )
-                        )
-                    )
-                );
-                console.log({ task, exptected });
-                const exptectedRate = 0.5;
-                const next = ticks[0] +average +(Math.pow(Math.abs(exptected), exptectedRate) *(exptected < 0 ? -base: base));
-                return next;
-            }
-// console.log({intervals, average});
-//             const checkPoints: number[] = [];
-//             let i = 0;
-//             let previousDiffAccumulation = (intervals[i] -average);
-//             while(++i < intervals.length /2)
-//             {
-//                 const diffAccumulation = previousDiffAccumulation +(intervals[i] -average);
-// console.log({diffAccumulation, previousDiffAccumulation, current: (intervals[i] -average)});
-//                 if (Math.abs(previousDiffAccumulation + diffAccumulation) < Math.abs(previousDiffAccumulation) +Math.abs(diffAccumulation))
-//                 {
-//                     checkPoints.push(intervals[i]);
-//                     if (10 <= checkPoints.length)
-//                     {
-//                         break;
-//                     }
-//                     previousDiffAccumulation = 0;
-//                 }
-//                 else
-//                 {
-//                     previousDiffAccumulation = diffAccumulation;
-//                 }
-//             }
-// console.log(`checkPoints.length: ${checkPoints.length}, intervals.length: ${intervals.length}`);
-//             if (3 <= checkPoints.length)
-//             {
-//                 const checkPointsAverage = Calculate.average(intervals);
-//                 const checkPointsstandardDeviation = Calculate.standardDeviation(checkPoints, checkPointsAverage);
-// console.log({checkPointsstandardDeviation, standardDeviation});
-//                 if (checkPointsstandardDeviation < standardDeviation)
-//                 {
-//                     return ticks[0] +checkPointsAverage +checkPointsstandardDeviation;
-//                 }
-//             }
-        }
-        return null;
-    };
-    export const expectedNextByLongitudinalWare = (task: string, ticks: number[]) =>
-    {
-        const intervals: number[] = Calculate.intervals(ticks).reverse();
-        const average: number = Calculate.average(intervals);
-        const standardDeviation: number = Calculate.standardDeviation(intervals, average);
-        if (5 <= intervals.length && (average *0.3) < standardDeviation)
-        {
-            const biasIntervals: number[][] = [];
-            let currentBias = sign(intervals[0]);
-            let currentGroup: number[] = [];
-            intervals.forEach
-            (
-                interval =>
-                {
-                    const bias = sign(interval -average);
-                    if (currentBias !== bias)
-                    {
-                        biasIntervals.push(currentGroup);
-                        currentBias = bias;
-                        currentGroup = [];
-                    }
-                    currentGroup.push(interval);
-                }
-            );
-            biasIntervals.push(currentGroup);
-            if (biasIntervals.length <= 0)
-            {
-                return null;
-            }
-            if (1 === biasIntervals.length)
-            {
-                return ticks[0] +average;
-            }
-            if (2 === biasIntervals.length)
-            {
-                return ticks[0] +Calculate.average(biasIntervals.filter((_, ix) => 1 === ix %2).reduce((a, b) => a.concat(b), []));
-            }
-            const biasTerms =
-            [
-                biasIntervals.filter((_, ix) => 0 === ix %2 && 0 < ix).map(i => sum(i)),
-                biasIntervals.filter((_, ix) => 1 === ix %2 && ix < biasIntervals.length -1).map(i => sum(i)),
-            ];
-            const biasTermAverage =
-            [
-                Calculate.average(biasTerms[0]),
-                Calculate.average(biasTerms[1]),
-            ];
-            const biasTermStandardDeviation =
-            [
-                Calculate.standardDeviation(biasTerms[0], biasTermAverage[0]),
-                Calculate.standardDeviation(biasTerms[1], biasTermAverage[1]),
-            ];
-            const biasIntervalAverage =
-            [
-                Calculate.average(biasIntervals.filter((_, ix) => 0 === ix %2).reduce((a, b) => a.concat(b), [])),
-                Calculate.average(biasIntervals.filter((_, ix) => 1 === ix %2).reduce((a, b) => a.concat(b), [])),
-            ];
-            const lastBiasIndex = (biasIntervals.length -1) %2;
-            const lastTerm = sum(biasIntervals[biasIntervals.length -1]);
-            const isTermContinue = lastTerm + biasIntervalAverage[lastBiasIndex] < biasTermAverage[lastBiasIndex] +(2 *biasTermStandardDeviation[lastBiasIndex]);
-            const curentIntervalAverage = biasIntervalAverage[lastBiasIndex];
-            const counterIntervalAverage = biasIntervalAverage[(lastBiasIndex +1) %2];
-            console.log({ task, ticks, intervals, average, lastTerm, isTermContinue, curentIntervalAverage, counterIntervalAverage, lastBiasIndex, biasIntervals, biasTerms, biasTermAverage, biasIntervalAverage, biasTermStandardDeviation, });
-            return ticks[0] +(isTermContinue ? curentIntervalAverage: counterIntervalAverage);
-        }
-        if (null !== average)
-        {
-            return ticks[0] +average;
-        }
-        return null;
-    };
-    export const expectedNext = expectedNextByLongitudinalWare;
 }
 export module CyclicToDo
 {
@@ -309,7 +87,6 @@ export module CyclicToDo
         progress: null | number;
         //decayedProgress: null | number;
         previous: null | number;
-        //expectedNext: null | number;
         elapsed: null | number;
         overallAverage: null | number;
         RecentlyStandardDeviation: null | number;
@@ -903,7 +680,7 @@ export module CyclicToDo
         (
             tag => -Storage.TagMember.get(pass, tag).map(todo => Storage.History.get(pass, todo).length).reduce((a, b) => a +b, 0)
         );
-        export const todoComparer0 = (entry: ToDoTagEntry) => minamo.core.comparer.make<ToDoEntry>
+        export const todoComparer = (entry: ToDoTagEntry) => minamo.core.comparer.make<ToDoEntry>
         ([
             item => item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
             item => item.isDefault || (item.smartRest ?? 1) <= 0 ?
@@ -915,181 +692,6 @@ export module CyclicToDo
             item => entry.todo.indexOf(item.task),
             item => item.task,
         ]);
-        export const todoComparer1 = (entry: ToDoTagEntry) =>
-        (a: ToDoEntry, b: ToDoEntry) =>
-        {
-            if (a.isDefault !== b.isDefault)
-            {
-                if (a.isDefault)
-                {
-                    return -1;
-                }
-                else
-                {
-                    return 1;
-                }
-            }
-            if (null !== a.progress && null !== b.progress)
-            {
-                if (Math.abs(a.elapsed -b.elapsed) <= 12 *60)
-                {
-                    const rate = Math.min(a.count, b.count) < 5 ? Domain.standardDeviationRate: 1.2;
-                    if (a.RecentlySmartAverage < b.RecentlySmartAverage *rate && b.RecentlySmartAverage < a.RecentlySmartAverage *rate)
-                    {
-                        if (a.elapsed < b.elapsed)
-                        {
-                            return 1;
-                        }
-                        if (b.elapsed < a.elapsed)
-                        {
-                            return -1;
-                        }
-                    }
-                }
-                if (Math.min(a.progress, b.progress) <= 1.0 / 3.0)
-                {
-                    if (a.progress < b.progress)
-                    {
-                        return 1;
-                    }
-                    if (b.progress < a.progress)
-                    {
-                        return -1;
-                    }
-                }
-                if (Math.min(a.progress, b.progress) <= 2.0 / 3.0)
-                {
-                    const a_restTime = (a.RecentlySmartAverage +(a.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate) -a.elapsed;
-                    const b_restTime = (b.RecentlySmartAverage +(b.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate) -b.elapsed;
-                    if (a_restTime < b_restTime)
-                    {
-                        return -1;
-                    }
-                    if (b_restTime < a_restTime)
-                    {
-                        return 1;
-                    }
-                }
-                const a_restTime = (a.RecentlySmartAverage +(a.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -a.elapsed;
-                const b_restTime = (b.RecentlySmartAverage +(b.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -b.elapsed;
-                if (a_restTime < b_restTime)
-                {
-                    return -1;
-                }
-                if (b_restTime < a_restTime)
-                {
-                    return 1;
-                }
-            }
-            if (null === a.progress && null !== b.progress)
-            {
-                return 1;
-            }
-            if (null !== a.progress && null === b.progress)
-            {
-                return -1;
-            }
-            if (1 < a.count && 1 < b.count)
-            {
-                if (null === a.progress && null === b.progress)
-                {
-                    if (null !== a.elapsed && null !== b.elapsed)
-                    {
-                        if (a.elapsed < b.elapsed)
-                        {
-                            return -1;
-                        }
-                        if (b.elapsed < a.elapsed)
-                        {
-                            return 1;
-                        }
-                    }
-                }
-            }
-            if (1 === a.count && 1 === b.count)
-            {
-                if (a.elapsed < b.elapsed)
-                {
-                    return 1;
-                }
-                if (b.elapsed < a.elapsed)
-                {
-                    return -1;
-                }
-            }
-            if (a.count < b.count)
-            {
-                return 1;
-            }
-            if (b.count < a.count)
-            {
-                return -1;
-            }
-            const aTodoIndex = entry.todo.indexOf(a.task);
-            const bTodoIndex = entry.todo.indexOf(a.task);
-            if (0 <= aTodoIndex && 0 <= bTodoIndex)
-            {
-                if (aTodoIndex < bTodoIndex)
-                {
-                    return 1;
-                }
-                if (bTodoIndex < aTodoIndex)
-                {
-                    return -1;
-                }
-            }
-            if (a.task < b.task)
-            {
-                return 1;
-            }
-            if (b.task < a.task)
-            {
-                return -1;
-            }
-            return 0;
-        };
-        export const todoComparer2 = (list: ToDoEntry[], todoList: string[] = list.map(i => i.task)) =>
-        (a: ToDoEntry, b: ToDoEntry) =>
-        {
-            if (null !== a.progress && null !== b.progress)
-            {
-                if (Math.abs(a.elapsed -b.elapsed) <= 12 *60)
-                {
-                    const rate = Math.min(a.count, b.count) < 5 ? 1.5: 1.2;
-                    if (a.RecentlySmartAverage < b.RecentlySmartAverage *rate && b.RecentlySmartAverage < a.RecentlySmartAverage *rate)
-                    {
-                        if (a.elapsed < b.elapsed)
-                        {
-                            return 1;
-                        }
-                        if (b.elapsed < a.elapsed)
-                        {
-                            return -1;
-                        }
-                    }
-                }
-            }
-            const aTodoIndex = todoList.indexOf(a.task);
-            const bTodoIndex = todoList.indexOf(a.task);
-            if (0 <= aTodoIndex && 0 <= bTodoIndex)
-            {
-                if (aTodoIndex < bTodoIndex)
-                {
-                    return 1;
-                }
-                if (bTodoIndex < aTodoIndex)
-                {
-                    return -1;
-                }
-            }
-            return 0;
-        };
-        // export const todoComparer2 = (list: ToDoEntry[], todoList: string[] = list.map(i => i.todo)) =>
-        // minamo.core.comparer.make<ToDoEntry>
-        // ([
-        //     { condition: (a, b) => null !== a.progress && null !== b.progress ......., getter: a => -a.elapsed },
-        //     { getter: a => todoList.indexOf(a.todo), valueCondition: (a, b) => 0 <= a && 0 <= b, }
-        // ]);
         export const getRecentlyHistory = (pass: string, task: string) =>
         {
             const full = Storage.History.get(pass, task);
@@ -1116,7 +718,6 @@ export module CyclicToDo
                 progress: null,
                 //decayedProgress: null,
                 previous: history.previous,
-                //expectedNext: Calculate.expectedNext(task, Storage.History.get(_pass, task)),
                 elapsed: null,
                 overallAverage: history.recentries.length <= 1 ? null: calcAverage(history.recentries),
                 RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -1233,16 +834,11 @@ export module CyclicToDo
                     );
                 }
             );
-            //const sorted = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoComparer1(entry));
-            // const defaultTodo = sorted.sort(todoComparer2(sorted))[0]?.task;
-            // list.forEach(item => item.isDefault = defaultTodo === item.task);
         };
         export const sortList = (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         {
             const tasks = JSON.stringify(list.map(i => i.task));
-            // list.sort(Domain.todoComparer1(entry));
-            // list.sort(Domain.todoComparer2(list));
-            list.sort(Domain.todoComparer0(entry));
+            list.sort(Domain.todoComparer(entry));
             return tasks === JSON.stringify(list.map(i => i.task));
         };
     }
@@ -1417,19 +1013,6 @@ export module CyclicToDo
                         }
                     ],
                 },
-                // {
-                //     tag: "div",
-                //     className: "task-expected-next",
-                //     children:
-                //     [
-                //         label("expected next"),
-                //         {
-                //             tag: "span",
-                //             className: "value  monospace",
-                //             children: Domain.dateStringFromTick(item.expectedNext),
-                //         }
-                //     ],
-                // },
                 {
                     tag: "div",
                     className: "task-interval-average",

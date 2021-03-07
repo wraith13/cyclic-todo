@@ -855,7 +855,6 @@ define("minamo.js/index", ["require", "exports"], function (require, exports) {
 });
 define("lang.en", [], {
     "previous": "previous",
-    "expected next": "expected next",
     "expected interval": "expected interval",
     "elapsed time": "elapsed time",
     "count": "count",
@@ -891,7 +890,6 @@ define("lang.en", [], {
 });
 define("lang.ja", [], {
     "previous": "前回",
-    "expected next": "次回予想",
     "expected interval": "予想間隔",
     "elapsed time": "経過時間",
     "count": "回数",
@@ -984,193 +982,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
         Calculate.standardScore = function (average, standardDeviation, target) {
             return (10 * (target - average) / standardDeviation) + 50;
         };
-        Calculate.expectedNextByTransverseWare = function (task, ticks) {
-            var intervals = Calculate.intervals(ticks).reverse();
-            var average = Calculate.average(intervals);
-            var standardDeviation = Calculate.standardDeviation(intervals, average);
-            if (10 <= intervals.length && (average * 0.1) < standardDeviation) {
-                var waveLenghResolution_1 = 50;
-                var angleResolution_1 = 50;
-                var base_1 = 2 * standardDeviation;
-                var regulatedIntervals_1 = intervals.map(function (i) { return Math.min(1.0, Math.max(-1.0, (i - average) / base_1)); });
-                // const regulatedAverage = Calculate.average(regulatedIntervals);
-                // const regulatedStandardDeviation = Calculate.standardDeviation(regulatedIntervals, regulatedAverage);
-                var primeWaveLength_1 = Math.pow(Calculate.phi, Math.ceil(Math.log(regulatedIntervals_1.length) / Math.log(Calculate.phi)));
-                var diff = regulatedIntervals_1.map(function (i) { return i; });
-                var rates = [];
-                //const calcLevel = (_offset: number, waveLength: number, index: number) => Math.sin((index /waveLength) *(Math.PI *2));
-                //const calcLevel = (angle: number, waveLength: number, index: number) => Math.sin(((index /waveLength) +(angle /angleResolution)) *(Math.PI *2));
-                var calcLevel_1 = function (angle, waveLength, index) { return 0 === Math.floor(((index / waveLength) + (angle / angleResolution_1)) * 2) % 2 ? 1.0 : -1.0; };
-                //const calcRate = (values: number[], offset: number, waveLength: number) => Math.min(1.0, Math.max(0.0, Calculate.average(values.map((value, index) => 1.0 - (calcLevel(offset, waveLength, index) -value)))));
-                var calcRate = function (values, offset, waveLength) { return Calculate.average(values.map(function (value, index) { return value * calcLevel_1(offset, waveLength, index); })); };
-                var calcAccuracy = function (values) { return Calculate.average(values.map(function (i) { return 1 - Math.abs(i); })); };
-                var calcWorstAccuracy = function (values) { return values.map(function (i) { return 1 - Math.abs(i); }).reduce(function (a, b) { return a < b ? a : b; }, 1); };
-                var initAccuracy = calcAccuracy(diff);
-                var initWorstAccuracy = calcWorstAccuracy(diff);
-                console.log(diff);
-                var wave = 0;
-                var _loop_1 = function () {
-                    var waveLength = primeWaveLength_1 / Math.pow(Calculate.phi, wave / waveLenghResolution_1);
-                    var currentRates = [];
-                    // for(let angle = 0; angle < angleResolution; ++angle)
-                    // {
-                    //     const rate = calcRate(diff, angle, waveLength);
-                    //     const nextDiff = diff.map((value, index) => value -(rate *calcLevel(angle, waveLength, index)));
-                    //     //console.log(`rate: ${rate}, accuracy: ${calcAccuracy(diff).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })}`);
-                    //     //console.log({ waveLength, diff, });
-                    //     // let nextAccuracy = calcAccuracy(nextDiff);
-                    //     // let nextWorstAccuracy = calcWorstAccuracy(nextDiff);
-                    //     // if (previousAccuracy < nextAccuracy && previousWorstAccuracy < nextWorstAccuracy)
-                    //     if (0.001 < Math.abs(rate))
-                    //     {
-                    //         // previousAccuracy = nextAccuracy;
-                    //         // previousWorstAccuracy = nextWorstAccuracy;
-                    //         diff = nextDiff;
-                    //         currentRates.push(rate);
-                    //     }
-                    //     else
-                    //     {
-                    //         currentRates.push(0);
-                    //     }
-                    // }
-                    var maxRate = 0;
-                    var maxAngle = -1;
-                    for (var angle = 0; angle < angleResolution_1; ++angle) {
-                        var rate = calcRate(diff, angle, waveLength);
-                        if (Math.abs(maxRate) < Math.abs(rate)) {
-                            maxRate = rate;
-                            maxAngle = angle;
-                        }
-                    }
-                    for (var angle = 0; angle < angleResolution_1; ++angle) {
-                        if (maxAngle === angle) {
-                            currentRates.push(maxRate);
-                        }
-                        else {
-                            currentRates.push(0);
-                        }
-                    }
-                    if (0 <= maxAngle) {
-                        diff = diff.map(function (value, index) { return value - (maxRate * calcLevel_1(maxAngle, waveLength, index)); });
-                    }
-                    rates.push(currentRates);
-                    ++wave;
-                };
-                //while(Math.pow(Calculate.phi, offset /resolution) <= primeWaveLength)
-                // let previousAccuracy = initAccuracy;
-                // let previousWorstAccuracy = initWorstAccuracy;
-                while (wave < waveLenghResolution_1) {
-                    _loop_1();
-                }
-                var finalAccuracy = calcAccuracy(diff);
-                var finalWorstAccuracy = calcWorstAccuracy(diff);
-                console.log(diff);
-                console.log(rates);
-                console.log("init accuracy: " + initAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }) + ", " + initWorstAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }));
-                console.log("final accuracy: " + finalAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }) + ", " + finalWorstAccuracy.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }));
-                if (initAccuracy < finalAccuracy) {
-                    var exptected = Calculate.sum(rates.map(function (currentRates, wave) {
-                        return Calculate.sum(currentRates.map(function (rate, angle) { return 0 === rate ? 0 :
-                            rate * calcLevel_1(angle, primeWaveLength_1 / Math.pow(Calculate.phi, wave / waveLenghResolution_1), regulatedIntervals_1.length); }));
-                    }));
-                    console.log({ task: task, exptected: exptected });
-                    var exptectedRate = 0.5;
-                    var next = ticks[0] + average + (Math.pow(Math.abs(exptected), exptectedRate) * (exptected < 0 ? -base_1 : base_1));
-                    return next;
-                }
-                // console.log({intervals, average});
-                //             const checkPoints: number[] = [];
-                //             let i = 0;
-                //             let previousDiffAccumulation = (intervals[i] -average);
-                //             while(++i < intervals.length /2)
-                //             {
-                //                 const diffAccumulation = previousDiffAccumulation +(intervals[i] -average);
-                // console.log({diffAccumulation, previousDiffAccumulation, current: (intervals[i] -average)});
-                //                 if (Math.abs(previousDiffAccumulation + diffAccumulation) < Math.abs(previousDiffAccumulation) +Math.abs(diffAccumulation))
-                //                 {
-                //                     checkPoints.push(intervals[i]);
-                //                     if (10 <= checkPoints.length)
-                //                     {
-                //                         break;
-                //                     }
-                //                     previousDiffAccumulation = 0;
-                //                 }
-                //                 else
-                //                 {
-                //                     previousDiffAccumulation = diffAccumulation;
-                //                 }
-                //             }
-                // console.log(`checkPoints.length: ${checkPoints.length}, intervals.length: ${intervals.length}`);
-                //             if (3 <= checkPoints.length)
-                //             {
-                //                 const checkPointsAverage = Calculate.average(intervals);
-                //                 const checkPointsstandardDeviation = Calculate.standardDeviation(checkPoints, checkPointsAverage);
-                // console.log({checkPointsstandardDeviation, standardDeviation});
-                //                 if (checkPointsstandardDeviation < standardDeviation)
-                //                 {
-                //                     return ticks[0] +checkPointsAverage +checkPointsstandardDeviation;
-                //                 }
-                //             }
-            }
-            return null;
-        };
-        Calculate.expectedNextByLongitudinalWare = function (task, ticks) {
-            var intervals = Calculate.intervals(ticks).reverse();
-            var average = Calculate.average(intervals);
-            var standardDeviation = Calculate.standardDeviation(intervals, average);
-            if (5 <= intervals.length && (average * 0.3) < standardDeviation) {
-                var biasIntervals_1 = [];
-                var currentBias_1 = Calculate.sign(intervals[0]);
-                var currentGroup_1 = [];
-                intervals.forEach(function (interval) {
-                    var bias = Calculate.sign(interval - average);
-                    if (currentBias_1 !== bias) {
-                        biasIntervals_1.push(currentGroup_1);
-                        currentBias_1 = bias;
-                        currentGroup_1 = [];
-                    }
-                    currentGroup_1.push(interval);
-                });
-                biasIntervals_1.push(currentGroup_1);
-                if (biasIntervals_1.length <= 0) {
-                    return null;
-                }
-                if (1 === biasIntervals_1.length) {
-                    return ticks[0] + average;
-                }
-                if (2 === biasIntervals_1.length) {
-                    return ticks[0] + Calculate.average(biasIntervals_1.filter(function (_, ix) { return 1 === ix % 2; }).reduce(function (a, b) { return a.concat(b); }, []));
-                }
-                var biasTerms = [
-                    biasIntervals_1.filter(function (_, ix) { return 0 === ix % 2 && 0 < ix; }).map(function (i) { return Calculate.sum(i); }),
-                    biasIntervals_1.filter(function (_, ix) { return 1 === ix % 2 && ix < biasIntervals_1.length - 1; }).map(function (i) { return Calculate.sum(i); }),
-                ];
-                var biasTermAverage = [
-                    Calculate.average(biasTerms[0]),
-                    Calculate.average(biasTerms[1]),
-                ];
-                var biasTermStandardDeviation = [
-                    Calculate.standardDeviation(biasTerms[0], biasTermAverage[0]),
-                    Calculate.standardDeviation(biasTerms[1], biasTermAverage[1]),
-                ];
-                var biasIntervalAverage = [
-                    Calculate.average(biasIntervals_1.filter(function (_, ix) { return 0 === ix % 2; }).reduce(function (a, b) { return a.concat(b); }, [])),
-                    Calculate.average(biasIntervals_1.filter(function (_, ix) { return 1 === ix % 2; }).reduce(function (a, b) { return a.concat(b); }, [])),
-                ];
-                var lastBiasIndex = (biasIntervals_1.length - 1) % 2;
-                var lastTerm = Calculate.sum(biasIntervals_1[biasIntervals_1.length - 1]);
-                var isTermContinue = lastTerm + biasIntervalAverage[lastBiasIndex] < biasTermAverage[lastBiasIndex] + (2 * biasTermStandardDeviation[lastBiasIndex]);
-                var curentIntervalAverage = biasIntervalAverage[lastBiasIndex];
-                var counterIntervalAverage = biasIntervalAverage[(lastBiasIndex + 1) % 2];
-                console.log({ task: task, ticks: ticks, intervals: intervals, average: average, lastTerm: lastTerm, isTermContinue: isTermContinue, curentIntervalAverage: curentIntervalAverage, counterIntervalAverage: counterIntervalAverage, lastBiasIndex: lastBiasIndex, biasIntervals: biasIntervals_1, biasTerms: biasTerms, biasTermAverage: biasTermAverage, biasIntervalAverage: biasIntervalAverage, biasTermStandardDeviation: biasTermStandardDeviation, });
-                return ticks[0] + (isTermContinue ? curentIntervalAverage : counterIntervalAverage);
-            }
-            if (null !== average) {
-                return ticks[0] + average;
-            }
-            return null;
-        };
-        Calculate.expectedNext = Calculate.expectedNextByLongitudinalWare;
     })(Calculate = exports.Calculate || (exports.Calculate = {}));
     var CyclicToDo;
     (function (CyclicToDo) {
@@ -1629,7 +1440,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return [2 /*return*/, Storage.History.add(pass, task, Domain.getDoneTicks(pass))];
             }); }); };
             Domain.tagComparer = function (pass) { return minamo_js_1.minamo.core.comparer.make(function (tag) { return -Storage.TagMember.get(pass, tag).map(function (todo) { return Storage.History.get(pass, todo).length; }).reduce(function (a, b) { return a + b; }, 0); }); };
-            Domain.todoComparer0 = function (entry) { return minamo_js_1.minamo.core.comparer.make([
+            Domain.todoComparer = function (entry) { return minamo_js_1.minamo.core.comparer.make([
                 function (item) { var _a; return item.isDefault || ((_a = item.smartRest) !== null && _a !== void 0 ? _a : 1) <= 0 ? -1 : 1; },
                 function (item) {
                     var _a, _b;
@@ -1643,142 +1454,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 function (item) { return entry.todo.indexOf(item.task); },
                 function (item) { return item.task; },
             ]); };
-            Domain.todoComparer1 = function (entry) {
-                return function (a, b) {
-                    var _a, _b, _c, _d;
-                    if (a.isDefault !== b.isDefault) {
-                        if (a.isDefault) {
-                            return -1;
-                        }
-                        else {
-                            return 1;
-                        }
-                    }
-                    if (null !== a.progress && null !== b.progress) {
-                        if (Math.abs(a.elapsed - b.elapsed) <= 12 * 60) {
-                            var rate = Math.min(a.count, b.count) < 5 ? Domain.standardDeviationRate : 1.2;
-                            if (a.RecentlySmartAverage < b.RecentlySmartAverage * rate && b.RecentlySmartAverage < a.RecentlySmartAverage * rate) {
-                                if (a.elapsed < b.elapsed) {
-                                    return 1;
-                                }
-                                if (b.elapsed < a.elapsed) {
-                                    return -1;
-                                }
-                            }
-                        }
-                        if (Math.min(a.progress, b.progress) <= 1.0 / 3.0) {
-                            if (a.progress < b.progress) {
-                                return 1;
-                            }
-                            if (b.progress < a.progress) {
-                                return -1;
-                            }
-                        }
-                        if (Math.min(a.progress, b.progress) <= 2.0 / 3.0) {
-                            var a_restTime_1 = (a.RecentlySmartAverage + ((_a = a.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate) - a.elapsed;
-                            var b_restTime_1 = (b.RecentlySmartAverage + ((_b = b.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * Domain.standardDeviationRate) - b.elapsed;
-                            if (a_restTime_1 < b_restTime_1) {
-                                return -1;
-                            }
-                            if (b_restTime_1 < a_restTime_1) {
-                                return 1;
-                            }
-                        }
-                        var a_restTime = (a.RecentlySmartAverage + ((_c = a.RecentlyStandardDeviation) !== null && _c !== void 0 ? _c : 0) * Domain.standardDeviationOverRate) - a.elapsed;
-                        var b_restTime = (b.RecentlySmartAverage + ((_d = b.RecentlyStandardDeviation) !== null && _d !== void 0 ? _d : 0) * Domain.standardDeviationOverRate) - b.elapsed;
-                        if (a_restTime < b_restTime) {
-                            return -1;
-                        }
-                        if (b_restTime < a_restTime) {
-                            return 1;
-                        }
-                    }
-                    if (null === a.progress && null !== b.progress) {
-                        return 1;
-                    }
-                    if (null !== a.progress && null === b.progress) {
-                        return -1;
-                    }
-                    if (1 < a.count && 1 < b.count) {
-                        if (null === a.progress && null === b.progress) {
-                            if (null !== a.elapsed && null !== b.elapsed) {
-                                if (a.elapsed < b.elapsed) {
-                                    return -1;
-                                }
-                                if (b.elapsed < a.elapsed) {
-                                    return 1;
-                                }
-                            }
-                        }
-                    }
-                    if (1 === a.count && 1 === b.count) {
-                        if (a.elapsed < b.elapsed) {
-                            return 1;
-                        }
-                        if (b.elapsed < a.elapsed) {
-                            return -1;
-                        }
-                    }
-                    if (a.count < b.count) {
-                        return 1;
-                    }
-                    if (b.count < a.count) {
-                        return -1;
-                    }
-                    var aTodoIndex = entry.todo.indexOf(a.task);
-                    var bTodoIndex = entry.todo.indexOf(a.task);
-                    if (0 <= aTodoIndex && 0 <= bTodoIndex) {
-                        if (aTodoIndex < bTodoIndex) {
-                            return 1;
-                        }
-                        if (bTodoIndex < aTodoIndex) {
-                            return -1;
-                        }
-                    }
-                    if (a.task < b.task) {
-                        return 1;
-                    }
-                    if (b.task < a.task) {
-                        return -1;
-                    }
-                    return 0;
-                };
-            };
-            Domain.todoComparer2 = function (list, todoList) {
-                if (todoList === void 0) { todoList = list.map(function (i) { return i.task; }); }
-                return function (a, b) {
-                    if (null !== a.progress && null !== b.progress) {
-                        if (Math.abs(a.elapsed - b.elapsed) <= 12 * 60) {
-                            var rate = Math.min(a.count, b.count) < 5 ? 1.5 : 1.2;
-                            if (a.RecentlySmartAverage < b.RecentlySmartAverage * rate && b.RecentlySmartAverage < a.RecentlySmartAverage * rate) {
-                                if (a.elapsed < b.elapsed) {
-                                    return 1;
-                                }
-                                if (b.elapsed < a.elapsed) {
-                                    return -1;
-                                }
-                            }
-                        }
-                    }
-                    var aTodoIndex = todoList.indexOf(a.task);
-                    var bTodoIndex = todoList.indexOf(a.task);
-                    if (0 <= aTodoIndex && 0 <= bTodoIndex) {
-                        if (aTodoIndex < bTodoIndex) {
-                            return 1;
-                        }
-                        if (bTodoIndex < aTodoIndex) {
-                            return -1;
-                        }
-                    }
-                    return 0;
-                };
-            };
-            // export const todoComparer2 = (list: ToDoEntry[], todoList: string[] = list.map(i => i.todo)) =>
-            // minamo.core.comparer.make<ToDoEntry>
-            // ([
-            //     { condition: (a, b) => null !== a.progress && null !== b.progress ......., getter: a => -a.elapsed },
-            //     { getter: a => todoList.indexOf(a.todo), valueCondition: (a, b) => 0 <= a && 0 <= b, }
-            // ]);
             Domain.getRecentlyHistory = function (pass, task) {
                 var full = Storage.History.get(pass, task);
                 var result = {
@@ -1804,7 +1479,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     progress: null,
                     //decayedProgress: null,
                     previous: history.previous,
-                    //expectedNext: Calculate.expectedNext(task, Storage.History.get(_pass, task)),
                     elapsed: null,
                     overallAverage: history.recentries.length <= 1 ? null : calcAverage(history.recentries),
                     RecentlyStandardDeviation: history.recentries.length <= 1 ?
@@ -1891,15 +1565,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         item.smartRest = Domain.calcSmartRest({ RecentlySmartAverage: groupAverage, RecentlyStandardDeviation: groupStandardDeviation, elapsed: item.elapsed });
                     });
                 });
-                //const sorted = (<ToDoEntry[]>JSON.parse(JSON.stringify(list))).sort(todoComparer1(entry));
-                // const defaultTodo = sorted.sort(todoComparer2(sorted))[0]?.task;
-                // list.forEach(item => item.isDefault = defaultTodo === item.task);
             };
             Domain.sortList = function (entry, list) {
                 var tasks = JSON.stringify(list.map(function (i) { return i.task; }));
-                // list.sort(Domain.todoComparer1(entry));
-                // list.sort(Domain.todoComparer2(list));
-                list.sort(Domain.todoComparer0(entry));
+                list.sort(Domain.todoComparer(entry));
                 return tasks === JSON.stringify(list.map(function (i) { return i.task; }));
             };
         })(Domain = CyclicToDo.Domain || (CyclicToDo.Domain = {}));
@@ -2087,19 +1756,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 }
                             ],
                         },
-                        // {
-                        //     tag: "div",
-                        //     className: "task-expected-next",
-                        //     children:
-                        //     [
-                        //         label("expected next"),
-                        //         {
-                        //             tag: "span",
-                        //             className: "value  monospace",
-                        //             children: Domain.dateStringFromTick(item.expectedNext),
-                        //         }
-                        //     ],
-                        // },
                         {
                             tag: "div",
                             className: "task-interval-average",
