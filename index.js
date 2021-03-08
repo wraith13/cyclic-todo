@@ -3551,13 +3551,13 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             list.classList.remove(i);
                         }
                     });
-                    // const columns = Math.min(maxColumns, Math.max(1, length));
-                    // list.classList.add(`max-column-${columns}`);
-                    var height = window.innerHeight - list.offsetTop;
-                    var itemHeight = list.childNodes[0].offsetHeight;
-                    var columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
-                    list.classList.add("max-column-" + columns);
                     if (0 < length) {
+                        // const columns = Math.min(maxColumns, Math.max(1, length));
+                        // list.classList.add(`max-column-${columns}`);
+                        var height = window.innerHeight - list.offsetTop;
+                        var itemHeight = list.childNodes[0].offsetHeight;
+                        var columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
+                        list.classList.add("max-column-" + columns);
                         var itemWidth = Math.min(window.innerWidth, list.childNodes[0].offsetWidth);
                         list.classList.toggle("locale-parallel-on", border < itemWidth);
                         list.classList.toggle("locale-parallel-off", itemWidth <= border);
