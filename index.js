@@ -2479,8 +2479,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             }); };
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.listScreen(entry, list)];
-                        case 1:
-                            _a.apply(void 0, [_b.sent(), updateWindow]);
+                        case 1: return [4 /*yield*/, _a.apply(void 0, [_b.sent(), updateWindow])];
+                        case 2:
+                            _b.sent();
                             return [2 /*return*/];
                     }
                 });
@@ -2637,8 +2638,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             list = list.concat(entry.todo.filter(function (task) { return histories[task].length <= 0; }).map(function (task) { return ({ task: task, tick: null }); }));
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.historyScreen(entry, list)];
-                        case 1:
-                            _a.apply(void 0, [_b.sent()]);
+                        case 1: return [4 /*yield*/, _a.apply(void 0, [_b.sent()])];
+                        case 2:
+                            _b.sent();
                             return [2 /*return*/];
                     }
                 });
@@ -2794,8 +2796,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             document.title = locale.map("@deleted") + " " + applicationTitle;
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.removedScreen(pass, Storage.Removed.get(pass))];
-                        case 1:
-                            _a.apply(void 0, [_b.sent()]);
+                        case 1: return [4 /*yield*/, _a.apply(void 0, [_b.sent()])];
+                        case 2:
+                            _b.sent();
                             return [2 /*return*/];
                     }
                 });
@@ -2931,8 +2934,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             }); };
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.todoScreen(pass, item, Storage.History.get(pass, task))];
-                        case 1:
-                            _a.apply(void 0, [_b.sent(), updateWindow]);
+                        case 1: return [4 /*yield*/, _a.apply(void 0, [_b.sent(), updateWindow])];
+                        case 2:
+                            _b.sent();
                             return [2 /*return*/];
                     }
                 });
@@ -2987,8 +2991,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             document.title = applicationTitle;
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.exportScreen(pass)];
-                        case 1:
-                            _a.apply(void 0, [_b.sent()]);
+                        case 1: return [4 /*yield*/, _a.apply(void 0, [_b.sent()])];
+                        case 2:
+                            _b.sent();
                             return [2 /*return*/];
                     }
                 });
@@ -3036,8 +3041,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             document.title = applicationTitle;
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.importScreen()];
-                        case 1:
-                            _a.apply(void 0, [_b.sent()]);
+                        case 1: return [4 /*yield*/, _a.apply(void 0, [_b.sent()])];
+                        case 2:
+                            _b.sent();
                             return [2 /*return*/];
                     }
                 });
@@ -3144,8 +3150,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             document.title = locale.map("@deleted") + " " + applicationTitle;
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.removedListScreen()];
-                        case 1:
-                            _a.apply(void 0, [_b.sent()]);
+                        case 1: return [4 /*yield*/, _a.apply(void 0, [_b.sent()])];
+                        case 2:
+                            _b.sent();
                             return [2 /*return*/];
                     }
                 });
@@ -3405,8 +3412,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             document.title = applicationTitle;
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.welcomeScreen()];
-                        case 1:
-                            _a.apply(void 0, [_b.sent()]);
+                        case 1: return [4 /*yield*/, _a.apply(void 0, [_b.sent()])];
+                        case 2:
+                            _b.sent();
                             return [2 /*return*/];
                     }
                 });
@@ -3471,8 +3479,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 document.title = applicationTitle;
                                 _a = Render.showWindow;
                                 return [4 /*yield*/, Render.updatingScreen(url)];
-                            case 1:
-                                _a.apply(void 0, [_b.sent()]);
+                            case 1: return [4 /*yield*/, _a.apply(void 0, [_b.sent()])];
+                            case 2:
+                                _b.sent();
                                 return [2 /*return*/];
                         }
                     });
@@ -3660,9 +3669,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     switch (_c.label) {
                         case 0:
                             window.scrollTo(0, 0);
-                            Render.showUpdatingScreen(url);
-                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(wait)];
+                            return [4 /*yield*/, Render.showUpdatingScreen(url)];
                         case 1:
+                            _c.sent();
+                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(wait)];
+                        case 2:
                             _c.sent();
                             urlParams = CyclicToDo.getUrlParams(url);
                             hash = CyclicToDo.getUrlHash(url);
@@ -3673,36 +3684,36 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
                             window.addEventListener('resize', Render.onWindowResize);
                             window.addEventListener('storage', Render.onUpdateStorage);
-                            if (!(pass && todo)) return [3 /*break*/, 3];
+                            if (!(pass && todo)) return [3 /*break*/, 4];
                             console.log("show todo screen");
                             return [4 /*yield*/, Render.showTodoScreen(pass, todo)];
-                        case 2:
-                            _c.sent();
-                            return [3 /*break*/, 10];
                         case 3:
-                            if (!(Storage.isSessionPass(pass) && !tag)) return [3 /*break*/, 9];
+                            _c.sent();
+                            return [3 /*break*/, 11];
+                        case 4:
+                            if (!(Storage.isSessionPass(pass) && !tag)) return [3 /*break*/, 10];
                             _a = hash;
                             switch (_a) {
-                                case "import": return [3 /*break*/, 4];
-                                case "removed": return [3 /*break*/, 5];
+                                case "import": return [3 /*break*/, 5];
+                                case "removed": return [3 /*break*/, 6];
                             }
-                            return [3 /*break*/, 6];
-                        case 4:
+                            return [3 /*break*/, 7];
+                        case 5:
                             console.log("show import screen");
                             Render.showImportScreen();
-                            return [3 /*break*/, 8];
-                        case 5:
+                            return [3 /*break*/, 9];
+                        case 6:
                             console.log("show removed-list screen");
                             Render.showRemovedListScreen();
-                            return [3 /*break*/, 8];
-                        case 6:
+                            return [3 /*break*/, 9];
+                        case 7:
                             console.log("show welcome screen");
                             return [4 /*yield*/, Render.showWelcomeScreen()];
-                        case 7:
+                        case 8:
                             _c.sent();
-                            return [3 /*break*/, 8];
-                        case 8: return [3 /*break*/, 10];
-                        case 9:
+                            return [3 /*break*/, 9];
+                        case 9: return [3 /*break*/, 11];
+                        case 10:
                             //Domain.merge(pass, tag, todo, history);
                             switch (hash) {
                                 case "history":
@@ -3729,8 +3740,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     Render.showListScreen({ tag: tag !== null && tag !== void 0 ? tag : "@overall", pass: pass, todo: Storage.TagMember.get(pass, tag) });
                                     break;
                             }
-                            _c.label = 10;
-                        case 10: return [2 /*return*/];
+                            _c.label = 11;
+                        case 11: return [2 /*return*/];
                     }
                 });
             });

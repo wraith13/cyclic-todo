@@ -1659,7 +1659,7 @@ export module CyclicToDo
                         break;
                 }
             };
-            showWindow(await listScreen(entry, list), updateWindow);
+            await showWindow(await listScreen(entry, list), updateWindow);
         };
         export const historyScreen = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[]) =>
         ({
@@ -1800,7 +1800,7 @@ export module CyclicToDo
             let list = entry.todo.map(task => (histories[task] = Storage.History.get(entry.pass, task)).map(tick => ({ task, tick }))).reduce((a, b) => a.concat(b), []);
             list.sort(minamo.core.comparer.make(a => -a.tick));
             list = list.concat(entry.todo.filter(task => histories[task].length <= 0).map(task => ({ task, tick: null })));
-            showWindow(await historyScreen(entry, list));
+            await showWindow(await historyScreen(entry, list));
         };
         export const removedItem = async (pass: string, item: Storage.Removed.Type) =>
         ({
@@ -1925,7 +1925,7 @@ export module CyclicToDo
         export const showRemovedScreen = async (pass: string) =>
         {
             document.title = `${locale.map("@deleted")} ${applicationTitle}`;
-            showWindow(await removedScreen(pass, Storage.Removed.get(pass)));
+            await showWindow(await removedScreen(pass, Storage.Removed.get(pass)));
         };
         export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[]) =>
         ({
@@ -2040,7 +2040,7 @@ export module CyclicToDo
                         break;
                 }
             };
-            showWindow(await todoScreen(pass, item, Storage.History.get(pass, task)), updateWindow);
+            await showWindow(await todoScreen(pass, item, Storage.History.get(pass, task)), updateWindow);
         };
         const loadSvg = async (path : string): Promise<string> => new Promise<string>
         (
@@ -2078,7 +2078,7 @@ export module CyclicToDo
         export const showExportScreen = async (pass: string) =>
         {
             document.title = applicationTitle;
-            showWindow(await exportScreen(pass));
+            await showWindow(await exportScreen(pass));
         };
         export const exportScreen = async (pass: string) =>
         ({
@@ -2108,7 +2108,7 @@ export module CyclicToDo
         export const showImportScreen = async () =>
         {
             document.title = applicationTitle;
-            showWindow(await importScreen());
+            await showWindow(await importScreen());
         };
         export const importScreen = async () =>
         ({
@@ -2198,7 +2198,7 @@ export module CyclicToDo
         export const showRemovedListScreen = async () =>
         {
             document.title = `${locale.map("@deleted")} ${applicationTitle}`;
-            showWindow(await removedListScreen());
+            await showWindow(await removedListScreen());
         };
         export const removedListScreen = async () =>
         ({
@@ -2393,7 +2393,7 @@ export module CyclicToDo
         export const showWelcomeScreen = async () =>
         {
             document.title = applicationTitle;
-            showWindow(await welcomeScreen());
+            await showWindow(await welcomeScreen());
         };
         export const updatingScreen = async (url: string = location.href) =>
         ({
@@ -2435,7 +2435,7 @@ export module CyclicToDo
         export const showUpdatingScreen = async (url: string = location.href) =>
         {
             document.title = applicationTitle;
-            showWindow(await updatingScreen(url));
+            await showWindow(await updatingScreen(url));
         };
         export type UpdateWindowEventEype = "timer" | "scroll" | "storage";
         export let updateWindow: (event: UpdateWindowEventEype) => unknown;
@@ -2649,7 +2649,7 @@ export module CyclicToDo
     export const showPage = async (url: string = location.href, wait: number = 100) =>
     {
         window.scrollTo(0,0);
-        Render.showUpdatingScreen(url);
+        await Render.showUpdatingScreen(url);
         await minamo.core.timeout(wait);
         const urlParams = getUrlParams(url);
         const hash = getUrlHash(url);
