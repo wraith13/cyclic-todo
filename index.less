@@ -11,6 +11,7 @@
     font-family: ui-sans-serif, "ヒラギノ角ゴ Pro w4", Roboto, Meiryo;
     font: -apple-system-body;
     outline:none;
+    content-visibility: auto;
 }
 .monospace
 {
@@ -931,6 +932,10 @@ button.default-button
 }
 .updating-screen
 {
+    &, *
+    {
+        content-visibility: initial;
+    }
     h1
     {
         margin-bottom: 1em;

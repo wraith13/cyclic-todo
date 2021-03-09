@@ -3491,36 +3491,42 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             Render.showWindow = function (screen, updateWindow) { return __awaiter(_this, void 0, void 0, function () {
                 var _this = this;
                 return __generator(this, function (_a) {
-                    if (undefined !== updateWindow) {
-                        Render.updateWindow = updateWindow;
-                    }
-                    else {
-                        Render.updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0:
-                                        if (!("storage" === event)) return [3 /*break*/, 2];
-                                        return [4 /*yield*/, CyclicToDo.reload()];
-                                    case 1:
-                                        _a.sent();
-                                        _a.label = 2;
-                                    case 2: return [2 /*return*/];
-                                }
-                            });
-                        }); };
-                    }
-                    if (undefined === updateWindowTimer) {
-                        updateWindowTimer = setInterval(function () { var _a; return (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render, "timer"); }, Domain.TimeAccuracy);
-                        document.addEventListener("scroll", function () {
-                            var _a;
-                            if (document.body.scrollTop <= 0) {
-                                (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render, "scroll");
+                    switch (_a.label) {
+                        case 0:
+                            if (undefined !== updateWindow) {
+                                Render.updateWindow = updateWindow;
                             }
-                        });
+                            else {
+                                Render.updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                if (!("storage" === event)) return [3 /*break*/, 2];
+                                                return [4 /*yield*/, CyclicToDo.reload()];
+                                            case 1:
+                                                _a.sent();
+                                                _a.label = 2;
+                                            case 2: return [2 /*return*/];
+                                        }
+                                    });
+                                }); };
+                            }
+                            if (undefined === updateWindowTimer) {
+                                updateWindowTimer = setInterval(function () { var _a; return (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render, "timer"); }, Domain.TimeAccuracy);
+                                document.addEventListener("scroll", function () {
+                                    var _a;
+                                    if (document.body.scrollTop <= 0) {
+                                        (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render, "scroll");
+                                    }
+                                });
+                            }
+                            minamo_js_1.minamo.dom.replaceChildren(document.getElementById("body"), screen);
+                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(100)];
+                        case 1:
+                            _a.sent();
+                            Render.resizeFlexList();
+                            return [2 /*return*/];
                     }
-                    minamo_js_1.minamo.dom.replaceChildren(document.getElementById("body"), screen);
-                    Render.resizeFlexList();
-                    return [2 /*return*/];
                 });
             }); };
             Render.resizeFlexList = function () {
