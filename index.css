@@ -2,7 +2,6 @@
   font-family: ui-sans-serif, "ヒラギノ角ゴ Pro w4", Roboto, Meiryo;
   font: -apple-system-body;
   outline: none;
-  content-visibility: auto;
 }
 .monospace {
   font-family: monospace;
@@ -710,10 +709,6 @@ button.default-button:hover {
   min-height: 25vw;
   max-width: 90vw;
   display: block;
-}
-.updating-screen,
-.updating-screen * {
-  content-visibility: initial;
 }
 .updating-screen h1 {
   margin-bottom: 1em;

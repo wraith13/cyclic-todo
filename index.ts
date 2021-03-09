@@ -2480,7 +2480,7 @@ export module CyclicToDo
                 document.getElementById("body"),
                 screen
             );
-            await minamo.core.timeout(100);
+            //minamo.core.timeout(100);
             resizeFlexList();
         };
         export const resizeFlexList = () =>
