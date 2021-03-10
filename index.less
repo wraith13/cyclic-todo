@@ -348,6 +348,15 @@ button.default-button
 {
     display: none;
 }
+.popup
+{
+    border-radius: 1rem;
+    background-color: @base-color;
+    @media (prefers-color-scheme: dark)
+    {
+        background-color: @dark-base-color;
+    }
+}
 .screen-cover
 {
     position: fixed;
@@ -355,6 +364,9 @@ button.default-button
     right: 0px;
     bottom: 0px;
     left: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: @main-color;
     z-index: 88888;
     &.fade-in

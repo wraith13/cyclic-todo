@@ -910,25 +910,67 @@ export module CyclicToDo
                 }
             ],
         });
-        export const prompt = async (message?: string, _default?: string): Promise<string | null> =>
+        export const systemPrompt = async (message?: string, _default?: string): Promise<string | null> =>
         {
             await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが window.prompt が表示されてる間、ずっと表示される事になる。
             return await new Promise(resolve => resolve(window.prompt(message, _default)?.trim() ?? null));
         };
+        export const customPrompt = async (message?: string, _default?: string): Promise<string | null> =>
+        {
+            await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
+            return await new Promise
+            (
+                resolve =>
+                {
+                    let result: string | null = null;
+                    popup
+                    ({
+                        children:
+                        {
+                            tag: "div",
+                            children:
+                            [
+                                {
+                                    tag: "span",
+                                    children: message,
+                                },
+                                {
+                                    tag: "input",
+                                    type: "text",
+                                    value: _default,
+                                },
+                                {
+                                    tag: "button",
+                                    children: "キャンセル",
+                                },
+                                {
+                                    tag: "button",
+                                    children: "OK"
+                                }
+                            ],
+                        },
+                        onClose: async () => resolve(result),
+                    });
+                }
+            );
+        };
+        export const prompt = systemPrompt;
+        // export const prompt = customPrompt;
         export const alert = (message: string) => window.alert(message);
-        export const screenCover = (onclick: () => unknown) =>
+        export const screenCover = (data: { children?: minamo.dom.Source, onclick: () => unknown, }) =>
         {
             const dom = minamo.dom.make(HTMLDivElement)
             ({
                 tag: "div",
                 className: "screen-cover fade-in",
+                children: data.children,
                 onclick: async () =>
                 {
                     console.log("screen-cover.click!");
                     dom.onclick = undefined;
                     dom.classList.remove("fade-in");
                     dom.classList.add("fade-out");
-                    onclick();
+                    data.onclick();
                     await minamo.core.timeout(500);
                     minamo.dom.remove(dom);
                 }
@@ -948,15 +990,16 @@ export module CyclicToDo
                     (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[]).forEach(i => i.click());
                 },
             });
-            minamo.dom.appendChildren(document.body, dom);
+            // minamo.dom.appendChildren(document.body, dom);
             screenCover
-            (
-                async () =>
+            ({
+                children: dom,
+                onclick: async () =>
                 {
                     await data?.onClose();
                     minamo.dom.remove(dom);
-                }
-            );
+                },
+            });
         };
         export const menuButton = async (menu: minamo.dom.Source) =>
         {
@@ -983,7 +1026,7 @@ export module CyclicToDo
                 {
                     console.log("menu-button.click!");
                     popup.classList.add("show");
-                    screenCover(() => popup.classList.remove("show"));
+                    screenCover({ onclick: () => popup.classList.remove("show"), });
                 },
             });
             return [ button, popup, ];

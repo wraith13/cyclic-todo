@@ -256,12 +256,24 @@ button.default-button:hover {
 .hide {
   display: none;
 }
+.popup {
+  border-radius: 1rem;
+  background-color: #FFFFFF;
+}
+@media (prefers-color-scheme: dark) {
+  .popup {
+    background-color: #000022;
+  }
+}
 .screen-cover {
   position: fixed;
   top: 0px;
   right: 0px;
   bottom: 0px;
   left: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: #000022;
   z-index: 88888;
   animation-direction: normal;

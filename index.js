@@ -1634,7 +1634,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     ],
                 });
             };
-            Render.prompt = function (message, _default) { return __awaiter(_this, void 0, void 0, function () {
+            Render.systemPrompt = function (message, _default) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(100)];
@@ -1646,11 +1646,56 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
+            Render.customPrompt = function (message, _default) { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(100)];
+                        case 1:
+                            _a.sent(); // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
+                            return [4 /*yield*/, new Promise(function (resolve) {
+                                    var result = null;
+                                    Render.popup({
+                                        children: {
+                                            tag: "div",
+                                            children: [
+                                                {
+                                                    tag: "span",
+                                                    children: message,
+                                                },
+                                                {
+                                                    tag: "input",
+                                                    type: "text",
+                                                    value: _default,
+                                                },
+                                                {
+                                                    tag: "button",
+                                                    children: "キャンセル",
+                                                },
+                                                {
+                                                    tag: "button",
+                                                    children: "OK"
+                                                }
+                                            ],
+                                        },
+                                        onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            return [2 /*return*/, resolve(result)];
+                                        }); }); },
+                                    });
+                                })];
+                        case 2: // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
+                        return [2 /*return*/, _a.sent()];
+                    }
+                });
+            }); };
+            Render.prompt = Render.systemPrompt;
+            // export const prompt = customPrompt;
             Render.alert = function (message) { return window.alert(message); };
-            Render.screenCover = function (onclick) {
+            Render.screenCover = function (data) {
                 var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
                     tag: "div",
                     className: "screen-cover fade-in",
+                    children: data.children,
                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
                             switch (_a.label) {
@@ -1659,7 +1704,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     dom.onclick = undefined;
                                     dom.classList.remove("fade-in");
                                     dom.classList.add("fade-out");
-                                    onclick();
+                                    data.onclick();
                                     return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
                                 case 1:
                                     _a.sent();
@@ -1684,18 +1729,21 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         });
                     }); },
                 });
-                minamo_js_1.minamo.dom.appendChildren(document.body, dom);
-                Render.screenCover(function () { return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, (data === null || data === void 0 ? void 0 : data.onClose())];
-                            case 1:
-                                _a.sent();
-                                minamo_js_1.minamo.dom.remove(dom);
-                                return [2 /*return*/];
-                        }
-                    });
-                }); });
+                // minamo.dom.appendChildren(document.body, dom);
+                Render.screenCover({
+                    children: dom,
+                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, (data === null || data === void 0 ? void 0 : data.onClose())];
+                                case 1:
+                                    _a.sent();
+                                    minamo_js_1.minamo.dom.remove(dom);
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); },
+                });
             };
             Render.menuButton = function (menu) { return __awaiter(_this, void 0, void 0, function () {
                 var popup, button, _a, _b;
@@ -1728,7 +1776,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     _b.onclick = function () {
                                         console.log("menu-button.click!");
                                         popup.classList.add("show");
-                                        Render.screenCover(function () { return popup.classList.remove("show"); });
+                                        Render.screenCover({ onclick: function () { return popup.classList.remove("show"); }, });
                                     },
                                     _b)]);
                             return [2 /*return*/, [button, popup,]];
