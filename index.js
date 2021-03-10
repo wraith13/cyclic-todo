@@ -1505,7 +1505,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return elapsed < span ?
                     //Math.pow(span -elapsed, 2.0) /Math.pow(span, 1.5):
                     //Math.pow(span -elapsed, 1.0) *Math.pow((span -elapsed) /span, 1.0):
-                    Math.pow(span - elapsed, 2.0) / span :
+                    //Math.pow(span -elapsed, 2.0) /span:
+                    (span - elapsed) * Math.max(Math.log(((span - elapsed) / span) * 100), 0.1) :
                     span - elapsed;
             };
             Domain.calcSmartRest = function (item) { var _a; return Domain.calcSmartRestCore(item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationOverRate), item.elapsed); };

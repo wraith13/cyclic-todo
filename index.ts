@@ -742,7 +742,8 @@ export module CyclicToDo
             elapsed < span ?
                 //Math.pow(span -elapsed, 2.0) /Math.pow(span, 1.5):
                 //Math.pow(span -elapsed, 1.0) *Math.pow((span -elapsed) /span, 1.0):
-                Math.pow(span -elapsed, 2.0) /span:
+                //Math.pow(span -elapsed, 2.0) /span:
+                (span -elapsed) *Math.max(Math.log(((span -elapsed) /span) *100), 0.1):
                 span -elapsed;
         export const calcSmartRest = (item: { RecentlySmartAverage: number, RecentlyStandardDeviation: null | number, elapsed: number}) =>
             calcSmartRestCore(item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate), item.elapsed);
