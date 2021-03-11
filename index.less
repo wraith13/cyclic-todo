@@ -60,10 +60,7 @@ body, input, textarea
 }
 h1
 {
-    margin: 0rem;
     padding: 0.25rem;
-    color: @base-color;
-    background-color: @accent-color;
     font-size: 1.2rem;
     font-weight: normal;
     max-width: 100vw;
@@ -128,11 +125,21 @@ h1
         right: 0.5rem;
     }
 }
+h2
+{
+    padding: 0.25rem 0.5rem;
+    font-size: 1.0rem;
+}
+h1, h2
+{
+    margin: 0rem;
+    color: @base-color;
+    background-color: @accent-color;
+}
 @media (prefers-color-scheme: dark)
 {
     h1
     {
-        color: @dark-base-color;
         .icon svg
         {
             fill: @dark-base-color;
@@ -154,6 +161,10 @@ h1
                 fill: @dark-base-color;
             }
         }
+    }
+    h1, h2
+    {
+        color: @dark-base-color;
     }
 }
 label
@@ -350,8 +361,9 @@ button.default-button
 }
 .popup
 {
-    border-radius: 32px;
+    border-radius: 16px;
     background-color: @base-color;
+    overflow: auto;
     @media (prefers-color-scheme: dark)
     {
         background-color: @dark-base-color;

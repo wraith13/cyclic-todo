@@ -1501,15 +1501,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 };
                 return result;
             };
-            Domain.calcSmartRestCore = function (span, elapsed) {
+            Domain.calcSmartRestCore = function (span, standardDeviation, elapsed) {
                 return elapsed < span ?
                     //Math.pow(span -elapsed, 2.0) /Math.pow(span, 1.5):
                     //Math.pow(span -elapsed, 1.0) *Math.pow((span -elapsed) /span, 1.0):
                     //Math.pow(span -elapsed, 2.0) /span:
-                    (span - elapsed) * Math.max(Math.log(((span - elapsed) / span) * 100), 0.1) :
+                    //(span -elapsed) *Math.max(Math.log(((span -elapsed) /span) *100), 0.1):
+                    (span - elapsed) * Math.max(Math.log(((span - elapsed) / standardDeviation) * 100), 0.1) :
                     span - elapsed;
             };
-            Domain.calcSmartRest = function (item) { var _a; return Domain.calcSmartRestCore(item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationOverRate), item.elapsed); };
+            Domain.calcSmartRest = function (item) {
+                var _a, _b;
+                return Domain.calcSmartRestCore(item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationOverRate), (_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : (item.RecentlySmartAverage * 0.1), item.elapsed);
+            };
             Domain.updateProgress = function (item, now) {
                 var _a, _b, _c;
                 if (now === void 0) { now = Domain.getTicks(); }
@@ -1661,27 +1665,31 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             });
                             return [4 /*yield*/, new Promise(function (resolve) {
                                     var result = null;
-                                    Render.popup({
-                                        children: {
-                                            tag: "div",
-                                            children: [
-                                                {
-                                                    tag: "span",
-                                                    children: message,
+                                    var ui = Render.popup({
+                                        children: [
+                                            {
+                                                tag: "h2",
+                                                children: message,
+                                            },
+                                            input,
+                                            {
+                                                tag: "button",
+                                                children: "キャンセル",
+                                                onclick: function () {
+                                                    result = null;
+                                                    ui.close();
                                                 },
-                                                input,
-                                                {
-                                                    tag: "button",
-                                                    children: "キャンセル",
+                                            },
+                                            {
+                                                tag: "button",
+                                                className: "default-button",
+                                                children: "OK",
+                                                onclick: function () {
+                                                    result = input.value;
+                                                    ui.close();
                                                 },
-                                                {
-                                                    tag: "button",
-                                                    className: "default-button",
-                                                    children: "OK",
-                                                    onclick: function () { return result = input.value; },
-                                                }
-                                            ],
-                                        },
+                                            }
+                                        ],
                                         onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                             return [2 /*return*/, resolve(result)];
                                         }); }); },
@@ -1691,8 +1699,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     }
                 });
             }); };
-            Render.prompt = Render.systemPrompt;
-            // export const prompt = customPrompt;
+            // export const prompt = systemPrompt;
+            Render.prompt = Render.customPrompt;
             Render.alert = function (message) { return window.alert(message); };
             Render.screenCover = function (data) {
                 var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
@@ -1701,23 +1709,34 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     children: data.children,
                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    console.log("screen-cover.click!");
-                                    dom.onclick = undefined;
-                                    dom.classList.remove("fade-in");
-                                    dom.classList.add("fade-out");
-                                    data.onclick();
-                                    return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
-                                case 1:
-                                    _a.sent();
-                                    minamo_js_1.minamo.dom.remove(dom);
-                                    return [2 /*return*/];
-                            }
+                            console.log("screen-cover.click!");
+                            dom.onclick = undefined;
+                            data.onclick();
+                            close();
+                            return [2 /*return*/];
                         });
                     }); }
                 });
+                var close = function () { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                dom.classList.remove("fade-in");
+                                dom.classList.add("fade-out");
+                                return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                            case 1:
+                                _a.sent();
+                                minamo_js_1.minamo.dom.remove(dom);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); };
                 minamo_js_1.minamo.dom.appendChildren(document.body, dom);
+                var result = {
+                    dom: dom,
+                    close: close,
+                };
+                return result;
             };
             Render.popup = function (data) {
                 var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
@@ -1732,8 +1751,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                         });
                     }); },
                 });
+                var close = function () { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, (data === null || data === void 0 ? void 0 : data.onClose())];
+                            case 1:
+                                _a.sent();
+                                cover.close();
+                                return [2 /*return*/];
+                        }
+                    });
+                }); };
                 // minamo.dom.appendChildren(document.body, dom);
-                Render.screenCover({
+                var cover = Render.screenCover({
                     children: dom,
                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
@@ -1741,12 +1771,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 case 0: return [4 /*yield*/, (data === null || data === void 0 ? void 0 : data.onClose())];
                                 case 1:
                                     _a.sent();
-                                    minamo_js_1.minamo.dom.remove(dom);
                                     return [2 /*return*/];
                             }
                         });
                     }); },
                 });
+                var result = {
+                    dom: dom,
+                    close: close,
+                };
+                return result;
             };
             Render.menuButton = function (menu) { return __awaiter(_this, void 0, void 0, function () {
                 var popup, button, _a, _b;

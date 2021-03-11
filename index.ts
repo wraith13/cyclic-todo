@@ -738,15 +738,21 @@ export module CyclicToDo
             };
             return result;
         };
-        export const calcSmartRestCore = (span: number, elapsed: number) =>
+        export const calcSmartRestCore = (span: number, standardDeviation: number, elapsed: number) =>
             elapsed < span ?
                 //Math.pow(span -elapsed, 2.0) /Math.pow(span, 1.5):
                 //Math.pow(span -elapsed, 1.0) *Math.pow((span -elapsed) /span, 1.0):
                 //Math.pow(span -elapsed, 2.0) /span:
-                (span -elapsed) *Math.max(Math.log(((span -elapsed) /span) *100), 0.1):
+                //(span -elapsed) *Math.max(Math.log(((span -elapsed) /span) *100), 0.1):
+                (span -elapsed) *Math.max(Math.log(((span -elapsed) /standardDeviation) *100), 0.1):
                 span -elapsed;
         export const calcSmartRest = (item: { RecentlySmartAverage: number, RecentlyStandardDeviation: null | number, elapsed: number}) =>
-            calcSmartRestCore(item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate), item.elapsed);
+            calcSmartRestCore
+            (
+                item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate),
+                item.RecentlyStandardDeviation ?? (item.RecentlySmartAverage *0.1),
+                item.elapsed
+            );
         export const updateProgress = (item: ToDoEntry, now: number = Domain.getTicks()) =>
         {
             if (0 < item.count)
@@ -929,37 +935,42 @@ export module CyclicToDo
                 resolve =>
                 {
                     let result: string | null = null;
-                    popup
+                    const ui = popup
                     ({
                         children:
-                        {
-                            tag: "div",
-                            children:
-                            [
+                        [
+                            {
+                                tag: "h2",
+                                children: message,
+                            },
+                            input,
+                            {
+                                tag: "button",
+                                children: "キャンセル",
+                                onclick: () =>
                                 {
-                                    tag: "span",
-                                    children: message,
+                                    result = null;
+                                    ui.close();
                                 },
-                                input,
+                            },
+                            {
+                                tag: "button",
+                                className: "default-button",
+                                children: "OK",
+                                onclick: () =>
                                 {
-                                    tag: "button",
-                                    children: "キャンセル",
+                                    result = input.value;
+                                    ui.close();
                                 },
-                                {
-                                    tag: "button",
-                                    className: "default-button",
-                                    children: "OK",
-                                    onclick: () => result = input.value,
-                                }
-                            ],
-                        },
+                            }
+                        ],
                         onClose: async () => resolve(result),
                     });
                 }
             );
         };
-        export const prompt = systemPrompt;
-        // export const prompt = customPrompt;
+        // export const prompt = systemPrompt;
+        export const prompt = customPrompt;
         export const alert = (message: string) => window.alert(message);
         export const screenCover = (data: { children?: minamo.dom.Source, onclick: () => unknown, }) =>
         {
@@ -972,14 +983,24 @@ export module CyclicToDo
                 {
                     console.log("screen-cover.click!");
                     dom.onclick = undefined;
-                    dom.classList.remove("fade-in");
-                    dom.classList.add("fade-out");
                     data.onclick();
-                    await minamo.core.timeout(500);
-                    minamo.dom.remove(dom);
+                    close();
                 }
             });
+            const close = async () =>
+            {
+                dom.classList.remove("fade-in");
+                dom.classList.add("fade-out");
+                await minamo.core.timeout(500);
+                minamo.dom.remove(dom);
+            };
             minamo.dom.appendChildren(document.body, dom);
+            const result =
+            {
+                dom,
+                close,
+            };
+            return result;
         };
         export const popup = (data: { children: minamo.dom.Source, onClose?: () => Promise<unknown>}) =>
         {
@@ -995,16 +1016,27 @@ export module CyclicToDo
                     //(Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[]).forEach(i => i.click());
                 },
             });
+            const close = async () =>
+            {
+                await data?.onClose();
+                cover.close();
+            };
             // minamo.dom.appendChildren(document.body, dom);
-            screenCover
+            const cover = screenCover
             ({
                 children: dom,
                 onclick: async () =>
                 {
                     await data?.onClose();
-                    minamo.dom.remove(dom);
+                    //minamo.dom.remove(dom);
                 },
             });
+            const result =
+            {
+                dom,
+                close,
+            };
+            return result;
         };
         export const menuButton = async (menu: minamo.dom.Source) =>
         {
