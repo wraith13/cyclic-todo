@@ -350,7 +350,7 @@ button.default-button
 }
 .popup
 {
-    border-radius: 1rem;
+    border-radius: 32px;
     background-color: @base-color;
     @media (prefers-color-scheme: dark)
     {
@@ -367,7 +367,7 @@ button.default-button
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: @main-color;
+    background-color: fade(@main-color, 61.8%);
     z-index: 88888;
     &.fade-in
     {
@@ -391,14 +391,14 @@ button.default-button
     }
     100%
     {
-        opacity: 0.618;
+        opacity: 1.0;
     }
 }
 @keyframes fade-out
 {
     0%
     {
-        opacity: 0.618;
+        opacity: 1.0;
     }
     100%
     {

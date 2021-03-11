@@ -1647,12 +1647,18 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 });
             }); };
             Render.customPrompt = function (message, _default) { return __awaiter(_this, void 0, void 0, function () {
+                var input;
                 var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(100)];
                         case 1:
                             _a.sent(); // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
+                            input = minamo_js_1.minamo.dom.make(HTMLInputElement)({
+                                tag: "input",
+                                type: "text",
+                                value: _default,
+                            });
                             return [4 /*yield*/, new Promise(function (resolve) {
                                     var result = null;
                                     Render.popup({
@@ -1663,18 +1669,16 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     tag: "span",
                                                     children: message,
                                                 },
-                                                {
-                                                    tag: "input",
-                                                    type: "text",
-                                                    value: _default,
-                                                },
+                                                input,
                                                 {
                                                     tag: "button",
                                                     children: "キャンセル",
                                                 },
                                                 {
                                                     tag: "button",
-                                                    children: "OK"
+                                                    className: "default-button",
+                                                    children: "OK",
+                                                    onclick: function () { return result = input.value; },
                                                 }
                                             ],
                                         },
@@ -1683,8 +1687,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         }); }); },
                                     });
                                 })];
-                        case 2: // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
-                        return [2 /*return*/, _a.sent()];
+                        case 2: return [2 /*return*/, _a.sent()];
                     }
                 });
             }); };
@@ -1721,10 +1724,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     tag: "div",
                     className: "popup",
                     children: data.children,
-                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                    onclick: function (event) { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
                             console.log("popup.click!");
-                            Array.from(document.getElementsByClassName("screen-cover")).forEach(function (i) { return i.click(); });
+                            event.stopPropagation();
                             return [2 /*return*/];
                         });
                     }); },

@@ -918,6 +918,12 @@ export module CyclicToDo
         export const customPrompt = async (message?: string, _default?: string): Promise<string | null> =>
         {
             await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
+            const input = minamo.dom.make(HTMLInputElement)
+            ({
+                tag: "input",
+                type: "text",
+                value: _default,
+            });
             return await new Promise
             (
                 resolve =>
@@ -934,18 +940,16 @@ export module CyclicToDo
                                     tag: "span",
                                     children: message,
                                 },
-                                {
-                                    tag: "input",
-                                    type: "text",
-                                    value: _default,
-                                },
+                                input,
                                 {
                                     tag: "button",
                                     children: "キャンセル",
                                 },
                                 {
                                     tag: "button",
-                                    children: "OK"
+                                    className: "default-button",
+                                    children: "OK",
+                                    onclick: () => result = input.value,
                                 }
                             ],
                         },
@@ -984,10 +988,11 @@ export module CyclicToDo
                 tag: "div",
                 className: "popup",
                 children: data.children,
-                onclick: async () =>
+                onclick: async (event: MouseEvent) =>
                 {
                     console.log("popup.click!");
-                    (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[]).forEach(i => i.click());
+                    event.stopPropagation();
+                    //(Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[]).forEach(i => i.click());
                 },
             });
             // minamo.dom.appendChildren(document.body, dom);

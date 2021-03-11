@@ -257,7 +257,7 @@ button.default-button:hover {
   display: none;
 }
 .popup {
-  border-radius: 1rem;
+  border-radius: 32px;
   background-color: #FFFFFF;
 }
 @media (prefers-color-scheme: dark) {
@@ -274,7 +274,7 @@ button.default-button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #000022;
+  background-color: rgba(0, 0, 34, 0.618);
   z-index: 88888;
   animation-direction: normal;
   animation-delay: 0s;
@@ -293,12 +293,12 @@ button.default-button:hover {
     opacity: 0;
   }
   100% {
-    opacity: 0.618;
+    opacity: 1;
   }
 }
 @keyframes fade-out {
   0% {
-    opacity: 0.618;
+    opacity: 1;
   }
   100% {
     opacity: 0;
