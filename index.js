@@ -1366,9 +1366,24 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 if (date === void 0) { date = new Date(); }
                 return Math.floor(date.getTime() / Domain.TimeAccuracy);
             };
-            Domain.dateStringFromTick = function (tick) {
+            Domain.dateCoreStringFromTick = function (tick) {
                 if (null === tick) {
                     return "N/A";
+                }
+                else {
+                    var date = new Date(tick * Domain.TimeAccuracy);
+                    return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).substr(-2) + "-" + ("0" + date.getDate()).substr(-2);
+                }
+            };
+            Domain.getTime = function (tick) {
+                if (null === tick) {
+                    return null;
+                }
+                else if (tick < 0) {
+                    return -Domain.getTime(tick);
+                }
+                else if (tick * Domain.TimeAccuracy < 24 * 60 * 60 * 1000) {
+                    return tick;
                 }
                 else {
                     var date = new Date(tick * Domain.TimeAccuracy);
@@ -1376,7 +1391,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     date.setMinutes(0);
                     date.setSeconds(0);
                     date.setMilliseconds(0);
-                    return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).substr(-2) + "-" + ("0" + date.getDate()).substr(-2) + " " + Domain.timeCoreStringFromTick(tick - Domain.getTicks(date));
+                    return tick - Domain.getTicks(date);
+                }
+            };
+            Domain.dateStringFromTick = function (tick) {
+                if (null === tick) {
+                    return "N/A";
+                }
+                else {
+                    return Domain.dateCoreStringFromTick(tick) + " " + Domain.timeCoreStringFromTick(Domain.getTime(tick));
                 }
             };
             Domain.timeCoreStringFromTick = function (tick) {
@@ -1674,7 +1697,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         children: [
                                             {
                                                 tag: "h2",
-                                                children: message,
+                                                children: message !== null && message !== void 0 ? message : "入力してください。",
                                             },
                                             input,
                                             {
@@ -1716,6 +1739,70 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             // export const prompt = systemPrompt;
             Render.prompt = Render.customPrompt;
             Render.alert = function (message) { return window.alert(message); };
+            Render.dateTimePrompt = function (message, _default) { return __awaiter(_this, void 0, void 0, function () {
+                var inputDate, inputTime;
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(100)];
+                        case 1:
+                            _a.sent(); // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
+                            inputDate = minamo_js_1.minamo.dom.make(HTMLInputElement)({
+                                tag: "input",
+                                type: "date",
+                                value: Domain.dateCoreStringFromTick(_default),
+                                required: "",
+                            });
+                            inputTime = minamo_js_1.minamo.dom.make(HTMLInputElement)({
+                                tag: "input",
+                                type: "time",
+                                value: Domain.timeCoreStringFromTick(Domain.getTime(_default)),
+                                required: "",
+                            });
+                            return [4 /*yield*/, new Promise(function (resolve) {
+                                    var result = null;
+                                    var ui = Render.popup({
+                                        children: [
+                                            {
+                                                tag: "h2",
+                                                children: message,
+                                            },
+                                            inputDate,
+                                            inputTime,
+                                            {
+                                                tag: "div",
+                                                className: "popup-operator",
+                                                children: [
+                                                    {
+                                                        tag: "button",
+                                                        className: "cancel-button",
+                                                        children: locale.map("Cancel"),
+                                                        onclick: function () {
+                                                            result = null;
+                                                            ui.close();
+                                                        },
+                                                    },
+                                                    {
+                                                        tag: "button",
+                                                        className: "default-button",
+                                                        children: locale.map("OK"),
+                                                        onclick: function () {
+                                                            result = inputDate.value + " " + inputTime.value;
+                                                            ui.close();
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        ],
+                                        onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            return [2 /*return*/, resolve(result)];
+                                        }); }); },
+                                    });
+                                })];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            }); };
             Render.screenCover = function (data) {
                 var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
                     tag: "div",
@@ -2112,9 +2199,19 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             //     onclick: async () => { }
                             // },
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem("🚫 編集", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        return [2 /*return*/];
-                                    }); }); }),
+                                    Render.menuItem("🚫 編集", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        var _a, _b;
+                                        return __generator(this, function (_c) {
+                                            switch (_c.label) {
+                                                case 0:
+                                                    _b = (_a = console).log;
+                                                    return [4 /*yield*/, Render.dateTimePrompt("編集", item.tick)];
+                                                case 1:
+                                                    _b.apply(_a, [_c.sent()]);
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }),
                                     Render.menuItem(locale.map("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {

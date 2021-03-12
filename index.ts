@@ -574,7 +574,7 @@ export module CyclicToDo
         export const standardDeviationOverRate = standardDeviationRate;
         export const granceTime = 24 *60 *60 *1000 / TimeAccuracy;
         export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / TimeAccuracy);
-        export const dateStringFromTick = (tick: null | number) =>
+        export const dateCoreStringFromTick = (tick: null | number) =>
         {
             if (null === tick)
             {
@@ -583,11 +583,44 @@ export module CyclicToDo
             else
             {
                 const date = new Date(tick *TimeAccuracy);
+                return `${date.getFullYear()}-${("0" +(date.getMonth() +1)).substr(-2)}-${("0" +date.getDate()).substr(-2)}`;
+            }
+        };
+        export const getTime = (tick: null | number): null | number =>
+        {
+            if (null === tick)
+            {
+                return null;
+            }
+            else
+            if (tick < 0)
+            {
+                return -getTime(tick);
+            }
+            else
+            if (tick *TimeAccuracy < 24 *60 *60 *1000)
+            {
+                return tick;
+            }
+            else
+            {
+                const date = new Date(tick *TimeAccuracy);
                 date.setHours(0);
                 date.setMinutes(0);
                 date.setSeconds(0);
                 date.setMilliseconds(0);
-                return `${date.getFullYear()}-${("0" +(date.getMonth() +1)).substr(-2)}-${("0" +date.getDate()).substr(-2)} ${timeCoreStringFromTick(tick -getTicks(date))}`;
+                return tick -getTicks(date);
+            }
+        };
+        export const dateStringFromTick = (tick: null | number) =>
+        {
+            if (null === tick)
+            {
+                return "N/A";
+            }
+            else
+            {
+                return `${dateCoreStringFromTick(tick)} ${timeCoreStringFromTick(getTime(tick))}`;
             }
         };
         export const timeCoreStringFromTick = (tick: null | number) =>
@@ -941,7 +974,7 @@ export module CyclicToDo
                         [
                             {
                                 tag: "h2",
-                                children: message,
+                                children: message ?? "入力してください。",
                             },
                             input,
                             {
@@ -982,6 +1015,71 @@ export module CyclicToDo
         // export const prompt = systemPrompt;
         export const prompt = customPrompt;
         export const alert = (message: string) => window.alert(message);
+        export const dateTimePrompt = async (message: string, _default: number): Promise<string | null> =>
+        {
+            await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
+            const inputDate = minamo.dom.make(HTMLInputElement)
+            ({
+                tag: "input",
+                type: "date",
+                value: Domain.dateCoreStringFromTick(_default),
+                required: "",
+            });
+            const inputTime = minamo.dom.make(HTMLInputElement)
+            ({
+                tag: "input",
+                type: "time",
+                value: Domain.timeCoreStringFromTick(Domain.getTime(_default)),
+                required: "",
+            });
+            return await new Promise
+            (
+                resolve =>
+                {
+                    let result: string | null = null;
+                    const ui = popup
+                    ({
+                        children:
+                        [
+                            {
+                                tag: "h2",
+                                children: message,
+                            },
+                            inputDate,
+                            inputTime,
+                            {
+                                tag: "div",
+                                className: "popup-operator",
+                                children:
+                                [
+                                    {
+                                        tag: "button",
+                                        className: "cancel-button",
+                                        children: locale.map("Cancel"),
+                                        onclick: () =>
+                                        {
+                                            result = null;
+                                            ui.close();
+                                        },
+                                    },
+                                    {
+                                        tag: "button",
+                                        className: "default-button",
+                                        children: locale.map("OK"),
+                                        onclick: () =>
+                                        {
+                                            result = `${inputDate.value} ${inputTime.value}`;
+                                            ui.close();
+                                        },
+                                    },
+                                ],
+                            },
+                        ],
+                        onClose: async () => resolve(result),
+                    });
+                }
+            );
+        };
         export const screenCover = (data: { children?: minamo.dom.Source, onclick: () => unknown, }) =>
         {
             const dom = minamo.dom.make(HTMLDivElement)
@@ -1358,7 +1456,10 @@ export module CyclicToDo
                             menuItem
                             (
                                 "🚫 編集",
-                                async () => { }
+                                async () =>
+                                {
+                                    console.log(await dateTimePrompt("編集", item.tick));
+                                }
                             ),
                             menuItem
                             (
