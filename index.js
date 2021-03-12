@@ -887,7 +887,9 @@ define("lang.en", [], {
     "Tick": "Record",
     "deletedAt": "deleted at",
     "Reload": "Reload",
-    "Delete this List": "Delete this List"
+    "Delete this List": "Delete this List",
+    "OK": "OK",
+    "Cancel": "Cancel"
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -923,7 +925,9 @@ define("lang.ja", [], {
     "Tick": "記録",
     "deletedAt": "削除日時",
     "Reload": "再読み込み",
-    "Delete this List": "このリストを削除"
+    "Delete this List": "このリストを削除",
+    "OK": "OK",
+    "Cancel": "キャンセル"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -1664,6 +1668,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 value: _default,
                             });
                             return [4 /*yield*/, new Promise(function (resolve) {
+                                    var _a;
                                     var result = null;
                                     var ui = Render.popup({
                                         children: [
@@ -1673,27 +1678,36 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                             },
                                             input,
                                             {
-                                                tag: "button",
-                                                children: "キャンセル",
-                                                onclick: function () {
-                                                    result = null;
-                                                    ui.close();
-                                                },
+                                                tag: "div",
+                                                className: "popup-operator",
+                                                children: [
+                                                    {
+                                                        tag: "button",
+                                                        className: "cancel-button",
+                                                        children: locale.map("Cancel"),
+                                                        onclick: function () {
+                                                            result = null;
+                                                            ui.close();
+                                                        },
+                                                    },
+                                                    {
+                                                        tag: "button",
+                                                        className: "default-button",
+                                                        children: locale.map("OK"),
+                                                        onclick: function () {
+                                                            result = input.value;
+                                                            ui.close();
+                                                        },
+                                                    },
+                                                ],
                                             },
-                                            {
-                                                tag: "button",
-                                                className: "default-button",
-                                                children: "OK",
-                                                onclick: function () {
-                                                    result = input.value;
-                                                    ui.close();
-                                                },
-                                            }
                                         ],
                                         onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                             return [2 /*return*/, resolve(result)];
                                         }); }); },
                                     });
+                                    input.setSelectionRange(0, (_a = _default === null || _default === void 0 ? void 0 : _default.length) !== null && _a !== void 0 ? _a : 0);
+                                    input.focus();
                                 })];
                         case 2: return [2 /*return*/, _a.sent()];
                     }

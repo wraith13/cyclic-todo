@@ -32,5 +32,7 @@
     "Tick": "記録",
     "deletedAt": "削除日時",
     "Reload": "再読み込み",
-    "Delete this List": "このリストを削除"
+    "Delete this List": "このリストを削除",
+    "OK": "OK",
+    "Cancel": "キャンセル"
 }

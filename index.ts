@@ -945,27 +945,37 @@ export module CyclicToDo
                             },
                             input,
                             {
-                                tag: "button",
-                                children: "キャンセル",
-                                onclick: () =>
-                                {
-                                    result = null;
-                                    ui.close();
-                                },
+                                tag: "div",
+                                className: "popup-operator",
+                                children:
+                                [
+                                    {
+                                        tag: "button",
+                                        className: "cancel-button",
+                                        children: locale.map("Cancel"),
+                                        onclick: () =>
+                                        {
+                                            result = null;
+                                            ui.close();
+                                        },
+                                    },
+                                    {
+                                        tag: "button",
+                                        className: "default-button",
+                                        children: locale.map("OK"),
+                                        onclick: () =>
+                                        {
+                                            result = input.value;
+                                            ui.close();
+                                        },
+                                    },
+                                ],
                             },
-                            {
-                                tag: "button",
-                                className: "default-button",
-                                children: "OK",
-                                onclick: () =>
-                                {
-                                    result = input.value;
-                                    ui.close();
-                                },
-                            }
                         ],
                         onClose: async () => resolve(result),
                     });
+                    input.setSelectionRange(0, _default?.length ?? 0);
+                    input.focus();
                 }
             );
         };

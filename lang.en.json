@@ -32,5 +32,7 @@
     "Tick": "Record",
     "deletedAt": "deleted at",
     "Reload": "Reload",
-    "Delete this List": "Delete this List"
+    "Delete this List": "Delete this List",
+    "OK": "OK",
+    "Cancel": "Cancel"
 }

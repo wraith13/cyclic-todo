@@ -268,11 +268,27 @@ button.default-button:hover {
   border-radius: 16px;
   background-color: #FFFFFF;
   overflow: auto;
+  min-width: 360px;
+  max-width: calc(100vw - 16px);
 }
 @media (prefers-color-scheme: dark) {
   .popup {
     background-color: #000022;
   }
+}
+.popup input {
+  width: calc(100% - 8px);
+}
+.popup .popup-operator {
+  width: 100%;
+}
+.popup .popup-operator .cancel-button {
+  float: left;
+  border-color: transparent;
+}
+.popup .popup-operator .default-button {
+  float: right;
+  min-width: 120px;
 }
 .screen-cover {
   position: fixed;
