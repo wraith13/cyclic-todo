@@ -444,7 +444,7 @@ export module CyclicToDo
             export const removeKey = (pass: string, task: string) =>
                 getStorage(pass).remove(makeKey(pass, task));
             export const add = (pass: string, task: string, tick: number | number[]) =>
-                set(pass, task, get(pass, task).concat(tick).filter(uniqueFilter).sort(simpleReverseComparer));
+                set(pass, task, get(pass, task).concat(tick).sort(simpleReverseComparer));
             export const removeRaw = (pass: string, task: string, tick: number | number[]) =>
                 set(pass, task, get(pass, task).filter(i => tick !== i).sort(simpleReverseComparer));
             export const remove = (pass: string, task: string, tick: number) =>
@@ -684,6 +684,21 @@ export module CyclicToDo
         };
         export const timeRangeStringFromTick = (a: null | number, b: null | number) =>
             `${Domain.timeShortStringFromTick(a)} 〜 ${Domain.timeShortStringFromTick(b)}`;
+        export const parseDate = (date: string | null): Date | null =>
+        {
+            if (null !== date)
+            {
+                try
+                {
+                    return new Date(Date.parse(date));
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            return null;
+        };
         export const tagMap = (tag: string) =>
         {
             switch(tag)
@@ -1068,7 +1083,7 @@ export module CyclicToDo
                                         children: locale.map("OK"),
                                         onclick: () =>
                                         {
-                                            result = `${inputDate.value} ${inputTime.value}`;
+                                            result = `${inputDate.value}T${inputTime.value}`;
                                             ui.close();
                                         },
                                     },
@@ -1455,10 +1470,16 @@ export module CyclicToDo
                         ([
                             menuItem
                             (
-                                "🚫 編集",
+                                locale.map("Edit"),
                                 async () =>
                                 {
-                                    console.log(await dateTimePrompt("編集", item.tick));
+                                    const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), item.tick));
+                                    if (null !== result && item.tick !== Domain.getTicks(result))
+                                    {
+                                        Storage.History.removeRaw(entry.pass, item.task, item.tick);
+                                        Storage.History.add(entry.pass, item.task, Domain.getTicks(result));
+                                        await reload();
+                                    }
                                 }
                             ),
                             menuItem
@@ -1531,8 +1552,17 @@ export module CyclicToDo
                         ([
                             menuItem
                             (
-                                "🚫 編集",
-                                async () => { }
+                                locale.map("Edit"),
+                                async () =>
+                                {
+                                    const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), tick));
+                                    if (null !== result && tick !== Domain.getTicks(result))
+                                    {
+                                        Storage.History.removeRaw(pass, item.task, tick);
+                                        Storage.History.add(pass, item.task, Domain.getTicks(result));
+                                        await reload();
+                                    }
+                                }
                             ),
                             menuItem
                             (

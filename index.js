@@ -889,7 +889,8 @@ define("lang.en", [], {
     "Reload": "Reload",
     "Delete this List": "Delete this List",
     "OK": "OK",
-    "Cancel": "Cancel"
+    "Cancel": "Cancel",
+    "Edit": "Edit"
 });
 define("lang.ja", [], {
     "previous": "前回",
@@ -927,7 +928,8 @@ define("lang.ja", [], {
     "Reload": "再読み込み",
     "Delete this List": "このリストを削除",
     "OK": "OK",
-    "Cancel": "キャンセル"
+    "Cancel": "キャンセル",
+    "Edit": "編集"
 });
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -1274,7 +1276,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     return Storage.getStorage(pass).remove(History.makeKey(pass, task));
                 };
                 History.add = function (pass, task, tick) {
-                    return History.set(pass, task, History.get(pass, task).concat(tick).filter(exports.uniqueFilter).sort(exports.simpleReverseComparer));
+                    return History.set(pass, task, History.get(pass, task).concat(tick).sort(exports.simpleReverseComparer));
                 };
                 History.removeRaw = function (pass, task, tick) {
                     return History.set(pass, task, History.get(pass, task).filter(function (i) { return tick !== i; }).sort(exports.simpleReverseComparer));
@@ -1448,6 +1450,17 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             };
             Domain.timeRangeStringFromTick = function (a, b) {
                 return Domain.timeShortStringFromTick(a) + " \u301C " + Domain.timeShortStringFromTick(b);
+            };
+            Domain.parseDate = function (date) {
+                if (null !== date) {
+                    try {
+                        return new Date(Date.parse(date));
+                    }
+                    catch (_a) {
+                        return null;
+                    }
+                }
+                return null;
             };
             Domain.tagMap = function (tag) {
                 switch (tag) {
@@ -1787,7 +1800,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                         className: "default-button",
                                                         children: locale.map("OK"),
                                                         onclick: function () {
-                                                            result = inputDate.value + " " + inputTime.value;
+                                                            result = inputDate.value + "T" + inputTime.value;
                                                             ui.close();
                                                         },
                                                     },
@@ -2199,16 +2212,23 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             //     onclick: async () => { }
                             // },
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem("🚫 編集", function () { return __awaiter(_this, void 0, void 0, function () {
-                                        var _a, _b;
+                                    Render.menuItem(locale.map("Edit"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                        var result, _a, _b;
                                         return __generator(this, function (_c) {
                                             switch (_c.label) {
                                                 case 0:
-                                                    _b = (_a = console).log;
-                                                    return [4 /*yield*/, Render.dateTimePrompt("編集", item.tick)];
+                                                    _b = (_a = Domain).parseDate;
+                                                    return [4 /*yield*/, Render.dateTimePrompt(locale.map("Edit"), item.tick)];
                                                 case 1:
-                                                    _b.apply(_a, [_c.sent()]);
-                                                    return [2 /*return*/];
+                                                    result = _b.apply(_a, [_c.sent()]);
+                                                    if (!(null !== result && item.tick !== Domain.getTicks(result))) return [3 /*break*/, 3];
+                                                    Storage.History.removeRaw(entry.pass, item.task, item.tick);
+                                                    Storage.History.add(entry.pass, item.task, Domain.getTicks(result));
+                                                    return [4 /*yield*/, CyclicToDo.reload()];
+                                                case 2:
+                                                    _c.sent();
+                                                    _c.label = 3;
+                                                case 3: return [2 /*return*/];
                                             }
                                         });
                                     }); }),
@@ -2299,9 +2319,26 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             //     onclick: async () => { }
                             // },
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem("🚫 編集", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        return [2 /*return*/];
-                                    }); }); }),
+                                    Render.menuItem(locale.map("Edit"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                        var result, _a, _b;
+                                        return __generator(this, function (_c) {
+                                            switch (_c.label) {
+                                                case 0:
+                                                    _b = (_a = Domain).parseDate;
+                                                    return [4 /*yield*/, Render.dateTimePrompt(locale.map("Edit"), tick)];
+                                                case 1:
+                                                    result = _b.apply(_a, [_c.sent()]);
+                                                    if (!(null !== result && tick !== Domain.getTicks(result))) return [3 /*break*/, 3];
+                                                    Storage.History.removeRaw(pass, item.task, tick);
+                                                    Storage.History.add(pass, item.task, Domain.getTicks(result));
+                                                    return [4 /*yield*/, CyclicToDo.reload()];
+                                                case 2:
+                                                    _c.sent();
+                                                    _c.label = 3;
+                                                case 3: return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }),
                                     Render.menuItem(locale.map("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
