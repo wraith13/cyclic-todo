@@ -1474,7 +1474,7 @@ export module CyclicToDo
                                 async () =>
                                 {
                                     const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), item.tick));
-                                    if (null !== result && item.tick !== Domain.getTicks(result))
+                                    if (null !== result && item.tick !== Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
                                     {
                                         Storage.History.removeRaw(entry.pass, item.task, item.tick);
                                         Storage.History.add(entry.pass, item.task, Domain.getTicks(result));
@@ -1556,7 +1556,7 @@ export module CyclicToDo
                                 async () =>
                                 {
                                     const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), tick));
-                                    if (null !== result && tick !== Domain.getTicks(result))
+                                    if (null !== result && tick !== Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
                                     {
                                         Storage.History.removeRaw(pass, item.task, tick);
                                         Storage.History.add(pass, item.task, Domain.getTicks(result));

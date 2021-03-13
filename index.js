@@ -2221,7 +2221,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     return [4 /*yield*/, Render.dateTimePrompt(locale.map("Edit"), item.tick)];
                                                 case 1:
                                                     result = _b.apply(_a, [_c.sent()]);
-                                                    if (!(null !== result && item.tick !== Domain.getTicks(result))) return [3 /*break*/, 3];
+                                                    if (!(null !== result && item.tick !== Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())) return [3 /*break*/, 3];
                                                     Storage.History.removeRaw(entry.pass, item.task, item.tick);
                                                     Storage.History.add(entry.pass, item.task, Domain.getTicks(result));
                                                     return [4 /*yield*/, CyclicToDo.reload()];
@@ -2328,7 +2328,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                                     return [4 /*yield*/, Render.dateTimePrompt(locale.map("Edit"), tick)];
                                                 case 1:
                                                     result = _b.apply(_a, [_c.sent()]);
-                                                    if (!(null !== result && tick !== Domain.getTicks(result))) return [3 /*break*/, 3];
+                                                    if (!(null !== result && tick !== Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())) return [3 /*break*/, 3];
                                                     Storage.History.removeRaw(pass, item.task, tick);
                                                     Storage.History.add(pass, item.task, Domain.getTicks(result));
                                                     return [4 /*yield*/, CyclicToDo.reload()];
