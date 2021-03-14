@@ -2039,6 +2039,33 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     ],
                 });
             };
+            Render.todoDoneMenu = function (pass, item, onDone) {
+                if (onDone === void 0) { onDone = function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, CyclicToDo.reload()];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                }); }); }; }
+                return Render.menuItem("日時やメモを指定して完了", function () { return __awaiter(_this, void 0, void 0, function () {
+                    var result, _a, _b;
+                    return __generator(this, function (_c) {
+                        switch (_c.label) {
+                            case 0:
+                                _b = (_a = Domain).parseDate;
+                                return [4 /*yield*/, Render.dateTimePrompt(item.task, Domain.getTicks())];
+                            case 1:
+                                result = _b.apply(_a, [_c.sent()]);
+                                if (!(null !== result && Domain.getTicks(result) <= Domain.getTicks())) return [3 /*break*/, 3];
+                                Storage.History.add(pass, item.task, Domain.getTicks(result));
+                                return [4 /*yield*/, onDone()];
+                            case 2:
+                                _c.sent();
+                                _c.label = 3;
+                            case 3: return [2 /*return*/];
+                        }
+                    });
+                }); });
+            };
             Render.todoRenameMenu = function (pass, item, onRename) {
                 if (onRename === void 0) { onRename = function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                     switch (_a.label) {
@@ -2147,6 +2174,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     }); }
                                 }];
                             return [4 /*yield*/, Render.menuButton([
+                                    Render.todoDoneMenu(entry.pass, item),
                                     Render.todoRenameMenu(entry.pass, item),
                                     Render.todoTagMenu(entry.pass, item),
                                     Render.todoDeleteMenu(entry.pass, item),
@@ -3048,6 +3076,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 className: "todo-screen screen"
                             };
                             return [4 /*yield*/, Render.screenHader({ pass: pass, tag: "@overall", }, "" + item.task, [
+                                    Render.todoDoneMenu(pass, item),
                                     Render.todoRenameMenu(pass, item, function (newTask) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: newTask, })];

@@ -1304,6 +1304,25 @@ export module CyclicToDo
                 },
             ],
         });
+        export const todoDoneMenu =
+        (
+            pass: string,
+            item: ToDoEntry,
+            onDone: () => Promise<unknown> = async () => await reload()
+        ) =>
+        menuItem
+        (
+            "日時やメモを指定して完了",
+            async () =>
+            {
+                const result = Domain.parseDate(await dateTimePrompt(item.task, Domain.getTicks()));
+                if (null !== result && Domain.getTicks(result) <= Domain.getTicks())
+                {
+                    Storage.History.add(pass, item.task, Domain.getTicks(result));
+                    await onDone();
+                }
+            }
+        );
         export const todoRenameMenu =
         (
             pass: string,
@@ -1407,6 +1426,7 @@ export module CyclicToDo
                                 },
                                 await menuButton
                                 ([
+                                    todoDoneMenu(entry.pass, item),
                                     todoRenameMenu(entry.pass, item),
                                     todoTagMenu(entry.pass, item),
                                     todoDeleteMenu(entry.pass, item),
@@ -2160,6 +2180,7 @@ export module CyclicToDo
                     { pass, tag: "@overall", },
                     `${item.task}`,
                     [
+                        todoDoneMenu(pass, item),
                         todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
                         todoTagMenu(pass, item),
                         todoDeleteMenu(pass, item),
