@@ -1695,9 +1695,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(100)];
-                        case 1:
-                            _a.sent(); // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
+                        case 0:
                             input = minamo_js_1.minamo.dom.make(HTMLInputElement)({
                                 tag: "input",
                                 type: "text",
@@ -1745,7 +1743,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     input.setSelectionRange(0, (_a = _default === null || _default === void 0 ? void 0 : _default.length) !== null && _a !== void 0 ? _a : 0);
                                     input.focus();
                                 })];
-                        case 2: return [2 /*return*/, _a.sent()];
+                        case 1: return [2 /*return*/, _a.sent()];
                     }
                 });
             }); };
@@ -1757,9 +1755,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(100)];
-                        case 1:
-                            _a.sent(); // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
+                        case 0:
                             inputDate = minamo_js_1.minamo.dom.make(HTMLInputElement)({
                                 tag: "input",
                                 type: "date",
@@ -1812,10 +1808,49 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                         }); }); },
                                     });
                                 })];
-                        case 2: return [2 /*return*/, _a.sent()];
+                        case 1: return [2 /*return*/, _a.sent()];
                     }
                 });
             }); };
+            // export const AddRemoveTagsPopup = async (item: ToDoEntry, tags: string[], currentTags: string[]): Promise<string[]> =>
+            // {
+            //     await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
+            //     return await new Promise
+            //     (
+            //         resolve =>
+            //         {
+            //             let result: string[] = null;
+            //             const ui = popup
+            //             ({
+            //                 children:
+            //                 [
+            //                     {
+            //                         tag: "h2",
+            //                         children: item.task,
+            //                     },
+            //                     {
+            //                         tag: "div",
+            //                         className: "popup-operator",
+            //                         children:
+            //                         [
+            //                             {
+            //                                 tag: "button",
+            //                                 className: "default-button",
+            //                                 children: "閉じる",
+            //                                 onclick: () =>
+            //                                 {
+            //                                     // result = `${inputDate.value}T${inputTime.value}`;
+            //                                     ui.close();
+            //                                 },
+            //                             },
+            //                         ],
+            //                     },
+            //                 ],
+            //                 onClose: async () => resolve(result),
+            //             });
+            //         }
+            //     );
+            // };
             Render.screenCover = function (data) {
                 var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
                     tag: "div",
@@ -1897,11 +1932,15 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                 return result;
             };
             Render.menuButton = function (menu) { return __awaiter(_this, void 0, void 0, function () {
-                var popup, button, _a, _b;
+                var cover, close, popup, button, _a, _b;
                 var _this = this;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
+                            close = function () {
+                                popup.classList.remove("show");
+                                cover = null;
+                            };
                             popup = minamo_js_1.minamo.dom.make(HTMLDivElement)({
                                 tag: "div",
                                 className: "menu-popup",
@@ -1909,7 +1948,8 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         console.log("menu-popup.click!");
-                                        Array.from(document.getElementsByClassName("screen-cover")).forEach(function (i) { return i.click(); });
+                                        cover === null || cover === void 0 ? void 0 : cover.close();
+                                        close();
                                         return [2 /*return*/];
                                     });
                                 }); },
@@ -1927,7 +1967,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                     _b.onclick = function () {
                                         console.log("menu-button.click!");
                                         popup.classList.add("show");
-                                        Render.screenCover({ onclick: function () { return popup.classList.remove("show"); }, });
+                                        cover = Render.screenCover({
+                                            onclick: close,
+                                        });
                                     },
                                     _b)]);
                             return [2 /*return*/, [button, popup,]];

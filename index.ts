@@ -105,6 +105,7 @@ export module CyclicToDo
         histories: { [todo: string]: number[] };
         removed: Storage.Removed.Type[];
     }
+    export type HistoryEntry = number | { tick: number; memo: string; };
     export module Storage
     {
         export const sessionPassPrefix = "@Session";
@@ -971,7 +972,6 @@ export module CyclicToDo
         };
         export const customPrompt = async (message?: string, _default?: string): Promise<string | null> =>
         {
-            await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
             const input = minamo.dom.make(HTMLInputElement)
             ({
                 tag: "input",
@@ -1032,7 +1032,6 @@ export module CyclicToDo
         export const alert = (message: string) => window.alert(message);
         export const dateTimePrompt = async (message: string, _default: number): Promise<string | null> =>
         {
-            await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
             const inputDate = minamo.dom.make(HTMLInputElement)
             ({
                 tag: "input",
@@ -1095,6 +1094,45 @@ export module CyclicToDo
                 }
             );
         };
+        // export const AddRemoveTagsPopup = async (item: ToDoEntry, tags: string[], currentTags: string[]): Promise<string[]> =>
+        // {
+        //     await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
+        //     return await new Promise
+        //     (
+        //         resolve =>
+        //         {
+        //             let result: string[] = null;
+        //             const ui = popup
+        //             ({
+        //                 children:
+        //                 [
+        //                     {
+        //                         tag: "h2",
+        //                         children: item.task,
+        //                     },
+        //                     {
+        //                         tag: "div",
+        //                         className: "popup-operator",
+        //                         children:
+        //                         [
+        //                             {
+        //                                 tag: "button",
+        //                                 className: "default-button",
+        //                                 children: "閉じる",
+        //                                 onclick: () =>
+        //                                 {
+        //                                     // result = `${inputDate.value}T${inputTime.value}`;
+        //                                     ui.close();
+        //                                 },
+        //                             },
+        //                         ],
+        //                     },
+        //                 ],
+        //                 onClose: async () => resolve(result),
+        //             });
+        //         }
+        //     );
+        // };
         export const screenCover = (data: { children?: minamo.dom.Source, onclick: () => unknown, }) =>
         {
             const dom = minamo.dom.make(HTMLDivElement)
@@ -1163,6 +1201,12 @@ export module CyclicToDo
         };
         export const menuButton = async (menu: minamo.dom.Source) =>
         {
+            let cover: { dom: HTMLDivElement, close: () => Promise<unknown> };
+            const close = () =>
+            {
+                popup.classList.remove("show");
+                cover = null;
+            };
             const popup = minamo.dom.make(HTMLDivElement)
             ({
                 tag: "div",
@@ -1171,7 +1215,8 @@ export module CyclicToDo
                 onclick: async () =>
                 {
                     console.log("menu-popup.click!");
-                    (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[]).forEach(i => i.click());
+                    cover?.close();
+                    close();
                 },
             });
             const button = minamo.dom.make(HTMLButtonElement)
@@ -1186,7 +1231,10 @@ export module CyclicToDo
                 {
                     console.log("menu-button.click!");
                     popup.classList.add("show");
-                    screenCover({ onclick: () => popup.classList.remove("show"), });
+                    cover = screenCover
+                    ({
+                        onclick: close,
+                    });
                 },
             });
             return [ button, popup, ];
