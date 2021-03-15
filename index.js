@@ -1485,13 +1485,18 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             }); }); };
             Domain.tagComparer = function (pass) { return minamo_js_1.minamo.core.comparer.make(function (tag) { return -Storage.TagMember.get(pass, tag).map(function (todo) { return Storage.History.get(pass, todo).length; }).reduce(function (a, b) { return a + b; }, 0); }); };
             Domain.todoComparer = function (entry) { return minamo_js_1.minamo.core.comparer.make([
-                function (item) { var _a; return item.isDefault || ((_a = item.smartRest) !== null && _a !== void 0 ? _a : 1) <= 0 ? -1 : 1; },
+                // item => item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
+                // item => item.isDefault || (item.smartRest ?? 1) <= 0 ?
+                //     item.smartRest:
+                //     //(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -item.elapsed:
+                //     -(item.progress ?? -1),
+                function (item) { var _a, _b; return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ? -1 : 1; },
                 function (item) {
-                    var _a, _b;
-                    return item.isDefault || ((_a = item.smartRest) !== null && _a !== void 0 ? _a : 1) <= 0 ?
+                    var _a, _b, _c;
+                    return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ?
                         item.smartRest :
                         //(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -item.elapsed:
-                        -((_b = item.progress) !== null && _b !== void 0 ? _b : -1);
+                        -((_c = item.progress) !== null && _c !== void 0 ? _c : -1);
                 },
                 function (item) { return 1 < item.count ? -2 : -item.count; },
                 function (item) { var _a; return 1 < item.count ? item.elapsed : -((_a = item.elapsed) !== null && _a !== void 0 ? _a : 0); },

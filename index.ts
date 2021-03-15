@@ -733,8 +733,13 @@ export module CyclicToDo
         );
         export const todoComparer = (entry: ToDoTagEntry) => minamo.core.comparer.make<ToDoEntry>
         ([
-            item => item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
-            item => item.isDefault || (item.smartRest ?? 1) <= 0 ?
+            // item => item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
+            // item => item.isDefault || (item.smartRest ?? 1) <= 0 ?
+            //     item.smartRest:
+            //     //(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -item.elapsed:
+            //     -(item.progress ?? -1),
+            item => (2.0 /3.0) <= (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
+            item => (2.0 /3.0) <= (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
                 item.smartRest:
                 //(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -item.elapsed:
                 -(item.progress ?? -1),
