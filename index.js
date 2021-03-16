@@ -1361,8 +1361,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             // };
             Domain.TimeAccuracy = 60 * 1000;
             Domain.standardDeviationRate = 1.5;
-            //export const standardDeviationOverRate = 2.0;
-            Domain.standardDeviationOverRate = Domain.standardDeviationRate;
             Domain.granceTime = 24 * 60 * 60 * 1000 / Domain.TimeAccuracy;
             Domain.getTicks = function (date) {
                 if (date === void 0) { date = new Date(); }
@@ -1485,17 +1483,11 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             }); }); };
             Domain.tagComparer = function (pass) { return minamo_js_1.minamo.core.comparer.make(function (tag) { return -Storage.TagMember.get(pass, tag).map(function (todo) { return Storage.History.get(pass, todo).length; }).reduce(function (a, b) { return a + b; }, 0); }); };
             Domain.todoComparer = function (entry) { return minamo_js_1.minamo.core.comparer.make([
-                // item => item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
-                // item => item.isDefault || (item.smartRest ?? 1) <= 0 ?
-                //     item.smartRest:
-                //     //(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -item.elapsed:
-                //     -(item.progress ?? -1),
                 function (item) { var _a, _b; return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ? -1 : 1; },
                 function (item) {
                     var _a, _b, _c;
                     return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ?
                         item.smartRest :
-                        //(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -item.elapsed:
                         -((_c = item.progress) !== null && _c !== void 0 ? _c : -1);
                 },
                 function (item) { return 1 < item.count ? -2 : -item.count; },
@@ -1526,7 +1518,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     task: task,
                     isDefault: false,
                     progress: null,
-                    //decayedProgress: null,
                     previous: history.previous,
                     elapsed: null,
                     overallAverage: history.recentries.length <= 1 ? null : calcAverage(history.recentries),
@@ -1557,10 +1548,10 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             };
             Domain.calcSmartRest = function (item) {
                 var _a, _b;
-                return Domain.calcSmartRestCore(item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationOverRate), (_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : (item.RecentlySmartAverage * 0.1), item.elapsed);
+                return Domain.calcSmartRestCore(item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate), (_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : (item.RecentlySmartAverage * 0.1), item.elapsed);
             };
             Domain.updateProgress = function (item, now) {
-                var _a, _b, _c;
+                var _a, _b;
                 if (now === void 0) { now = Domain.getTicks(); }
                 if (0 < item.count) {
                     // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
@@ -1580,16 +1571,12 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                             item.progress = 1.0 + ((item.elapsed - long) / item.RecentlySmartAverage);
                         }
                         item.smartRest = Domain.calcSmartRest(item);
-                        //item.progress = item.elapsed /(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
-                        //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
-                        var overrate = (item.elapsed - (item.RecentlySmartAverage + ((_c = item.RecentlyStandardDeviation) !== null && _c !== void 0 ? _c : 0) * Domain.standardDeviationOverRate)) / item.RecentlySmartAverage;
-                        if (0.0 < overrate) {
-                            //item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
+                        if (item.smartRest < 0) {
                             item.progress = null;
-                            item.RecentlySmartAverage = null;
-                            item.RecentlyStandardDeviation = null;
                             item.isDefault = false;
                             if (Domain.granceTime < -item.smartRest) {
+                                item.RecentlySmartAverage = null;
+                                item.RecentlyStandardDeviation = null;
                                 item.smartRest = null;
                             }
                         }
@@ -1604,7 +1591,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     if (null !== item.RecentlyAverage && null !== item.progress) {
                         var top_1 = item.RecentlyAverage * 1.1;
                         var bottom_1 = item.RecentlyAverage * 0.9;
-                        var group = list.filter(function (i) { return null !== i.RecentlyAverage && bottom_1 < i.RecentlyAverage && i.RecentlyAverage < top_1; });
+                        var group = list.filter(function (i) { return null !== i.RecentlyAverage && null !== i.progress && bottom_1 < i.RecentlyAverage && i.RecentlyAverage < top_1; });
                         if (2 <= group.length) {
                             groups.push(group);
                         }

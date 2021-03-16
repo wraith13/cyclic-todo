@@ -85,7 +85,6 @@ export module CyclicToDo
         task: string;
         isDefault: boolean;
         progress: null | number;
-        //decayedProgress: null | number;
         previous: null | number;
         elapsed: null | number;
         overallAverage: null | number;
@@ -571,8 +570,6 @@ export module CyclicToDo
         // };
         export const TimeAccuracy = 60 *1000;
         export const standardDeviationRate = 1.5;
-        //export const standardDeviationOverRate = 2.0;
-        export const standardDeviationOverRate = standardDeviationRate;
         export const granceTime = 24 *60 *60 *1000 / TimeAccuracy;
         export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / TimeAccuracy);
         export const dateCoreStringFromTick = (tick: null | number) =>
@@ -733,15 +730,9 @@ export module CyclicToDo
         );
         export const todoComparer = (entry: ToDoTagEntry) => minamo.core.comparer.make<ToDoEntry>
         ([
-            // item => item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
-            // item => item.isDefault || (item.smartRest ?? 1) <= 0 ?
-            //     item.smartRest:
-            //     //(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -item.elapsed:
-            //     -(item.progress ?? -1),
             item => (2.0 /3.0) <= (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
             item => (2.0 /3.0) <= (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
                 item.smartRest:
-                //(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate) -item.elapsed:
                 -(item.progress ?? -1),
             item => 1 < item.count ? -2: -item.count,
             item => 1 < item.count ? item.elapsed: -(item.elapsed ?? 0),
@@ -772,7 +763,6 @@ export module CyclicToDo
                 task,
                 isDefault: false,
                 progress: null,
-                //decayedProgress: null,
                 previous: history.previous,
                 elapsed: null,
                 overallAverage: history.recentries.length <= 1 ? null: calcAverage(history.recentries),
@@ -803,7 +793,7 @@ export module CyclicToDo
         export const calcSmartRest = (item: { RecentlySmartAverage: number, RecentlyStandardDeviation: null | number, elapsed: number}) =>
             calcSmartRestCore
             (
-                item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate),
+                item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate),
                 item.RecentlyStandardDeviation ?? (item.RecentlySmartAverage *0.1),
                 item.elapsed
             );
@@ -833,18 +823,14 @@ export module CyclicToDo
                         item.progress = 1.0 +((item.elapsed -long) /item.RecentlySmartAverage);
                     }
                     item.smartRest = calcSmartRest(item);
-                    //item.progress = item.elapsed /(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
-                    //item.decayedProgress = item.elapsed /(item.smartAverage +(item.standardDeviation ?? 0) *2.0);
-                    const overrate = (item.elapsed -(item.RecentlySmartAverage +(item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationOverRate)) / item.RecentlySmartAverage;
-                    if (0.0 < overrate)
+                    if (item.smartRest < 0)
                     {
-                        //item.decayedProgress = 1.0 / (1.0 +Math.log2(1.0 +overrate));
                         item.progress = null;
-                        item.RecentlySmartAverage = null;
-                        item.RecentlyStandardDeviation = null;
                         item.isDefault = false;
                         if (Domain.granceTime < -item.smartRest)
                         {
+                            item.RecentlySmartAverage = null;
+                            item.RecentlyStandardDeviation = null;
                             item.smartRest = null;
                         }
                     }
@@ -863,7 +849,7 @@ export module CyclicToDo
                     {
                         const top = item.RecentlyAverage *1.1;
                         const bottom = item.RecentlyAverage *0.9;
-                        const group = list.filter(i => null !== i.RecentlyAverage && bottom < i.RecentlyAverage && i.RecentlyAverage < top);
+                        const group = list.filter(i => null !== i.RecentlyAverage && null !== i.progress && bottom < i.RecentlyAverage && i.RecentlyAverage < top);
                         if (2 <= group.length)
                         {
                             groups.push(group);
@@ -1355,6 +1341,19 @@ export module CyclicToDo
                         }
                     ],
                 },
+                // {
+                //     tag: "div",
+                //     className: "task-count",
+                //     children:
+                //     [
+                //         "smartRest",
+                //         {
+                //             tag: "span",
+                //             className: "value monospace",
+                //             children: null === item.smartRest ? "N/A": item.smartRest.toLocaleString(),
+                //         }
+                //     ],
+                // },
             ],
         });
         export const todoDoneMenu =
