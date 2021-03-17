@@ -1951,7 +1951,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 tag: "button",
                                 className: "menu-button"
                             };
-                            return [4 /*yield*/, loadSvgOrCache("./ellipsis.1024.svg")];
+                            return [4 /*yield*/, loadSvgOrCache("./images/ellipsis.1024.svg")];
                         case 1:
                             button = _a.apply(void 0, [(_b.children = [
                                     _c.sent()
@@ -3525,7 +3525,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 tag: "div",
                                 className: "application-icon icon"
                             };
-                            return [4 /*yield*/, loadSvgOrCache("./cyclictodohex.1024.svg")];
+                            return [4 /*yield*/, loadSvgOrCache("./images/cyclictodohex.1024.svg")];
                         case 1: return [2 /*return*/, (_a.children = _b.sent(),
                                 _a)];
                     }
@@ -3540,7 +3540,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                                 tag: "div",
                                 className: "application-icon icon"
                             };
-                            return [4 /*yield*/, loadSvgOrCache("./cyclictodohex.1024.color.svg")];
+                            return [4 /*yield*/, loadSvgOrCache("./images/cyclictodohex.1024.color.svg")];
                         case 1: return [2 /*return*/, (_a.children = _b.sent(),
                                 _a)];
                     }

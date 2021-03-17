@@ -1216,7 +1216,7 @@ export module CyclicToDo
                 className: "menu-button",
                 children:
                 [
-                    await loadSvgOrCache("./ellipsis.1024.svg"),
+                    await loadSvgOrCache("./images/ellipsis.1024.svg"),
                 ],
                 onclick: () =>
                 {
@@ -2545,13 +2545,13 @@ export module CyclicToDo
         ({
             tag: "div",
             className: "application-icon icon",
-            children: await loadSvgOrCache("./cyclictodohex.1024.svg"),
+            children: await loadSvgOrCache("./images/cyclictodohex.1024.svg"),
         });
         export const applicationColorIcon = async () =>
         ({
             tag: "div",
             className: "application-icon icon",
-            children: await loadSvgOrCache("./cyclictodohex.1024.color.svg"),
+            children: await loadSvgOrCache("./images/cyclictodohex.1024.color.svg"),
         });
         export const listItem = async (list: ToDoList) =>
         ({
