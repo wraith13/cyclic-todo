@@ -1216,7 +1216,7 @@ export module CyclicToDo
                 className: "menu-button",
                 children:
                 [
-                    await loadSvgOrCache("./images/ellipsis.1024.svg"),
+                    await Resource.loadSvgOrCache("ellipsis"),
                 ],
                 onclick: () =>
                 {
@@ -2337,39 +2337,51 @@ export module CyclicToDo
             };
             await showWindow(await todoScreen(pass, item, Storage.History.get(pass, task)), updateWindow);
         };
-        const loadSvg = async (path : string): Promise<string> => new Promise<string>
-        (
-            (resolve, reject) =>
-            {
-                const request = new XMLHttpRequest();
-                request.open('GET', path, true);
-                request.onreadystatechange = function()
+        export module Resource
+        {
+            const icons = Object.freeze
+            ({
+                "application": "./images/cyclictodohex.1024.svg",
+                "application-color": "./images/cyclictodohex.1024.color.svg",
+                "ellipsis": "./images/ellipsis.1024.svg",
+                "check": "./images/check.1024.svg"
+            });
+            export type IconKey = keyof typeof icons;
+            export const loadSvg = async (key: IconKey): Promise<string> => new Promise<string>
+            (
+                (resolve, reject) =>
                 {
-                    if (4 === request.readyState)
+                    const request = new XMLHttpRequest();
+                    request.open('GET', icons[key], true);
+                    request.onreadystatechange = function()
                     {
-                        if (200 <= request.status && request.status < 300)
+                        if (4 === request.readyState)
                         {
-                            try
+                            if (200 <= request.status && request.status < 300)
                             {
-                                resolve(request.responseText);
+                                try
+                                {
+                                    resolve(request.responseText);
+                                }
+                                catch(err)
+                                {
+                                    reject(err);
+                                }
                             }
-                            catch(err)
+                            else
                             {
-                                reject(err);
+                                reject(request);
                             }
                         }
-                        else
-                        {
-                            reject(request);
-                        }
-                    }
-                };
-                request.send(null);
-            }
-        );
-        const svgCache: { [path: string]: string} = { };
-        const loadSvgOrCache = async (path : string): Promise<SVGElement> =>
-            new DOMParser().parseFromString(svgCache[path] ?? (svgCache[path] = await loadSvg(path)), "image/svg+xml").documentElement as any;
+                    };
+                    request.send(null);
+                }
+            );
+            export const svgCache: { [key: string]: string} = { };
+            export const loadSvgOrCache = async (key: IconKey): Promise<SVGElement> =>
+                new DOMParser().parseFromString(svgCache[key] ?? (svgCache[key] = await loadSvg(key)), "image/svg+xml").documentElement as any;
+            export const preload = () => Object.keys(icons).forEach(i => loadSvgOrCache(i as IconKey));
+        }
         export const showExportScreen = async (pass: string) =>
         {
             document.title = applicationTitle;
@@ -2545,13 +2557,13 @@ export module CyclicToDo
         ({
             tag: "div",
             className: "application-icon icon",
-            children: await loadSvgOrCache("./images/cyclictodohex.1024.svg"),
+            children: await Resource.loadSvgOrCache("application"),
         });
         export const applicationColorIcon = async () =>
         ({
             tag: "div",
             className: "application-icon icon",
-            children: await loadSvgOrCache("./images/cyclictodohex.1024.color.svg"),
+            children: await Resource.loadSvgOrCache("application-color"),
         });
         export const listItem = async (list: ToDoList) =>
         ({
@@ -2940,6 +2952,7 @@ export module CyclicToDo
     {
         console.log("start!!!");
         window.onpopstate = () => showPage();
+        Render.Resource.preload();
         await showPage();
     };
     export const showPage = async (url: string = location.href, wait: number = 100) =>
