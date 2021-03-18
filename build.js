@@ -1,5 +1,12 @@
 'use strict';
 const fs = require("fs");
-fs.writeFileSync("./index.html", fs.readFileSync("./index.template.html", { encoding: "utf-8" }).replace(/__TICK__/g, new Date().getTime()));
+const fget = path => fs.readFileSync(path, { encoding: "utf-8" });
+fs.writeFileSync
+(
+    "./index.html",
+    fget("./index.template.html")
+        .replace(/__STYLE__/g, fget("./css/index.css"))
+        .replace(/__SCRIPT__/g, fget("./index.js"))
+);
 
 // how to run: node ./build.js
