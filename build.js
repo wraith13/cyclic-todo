@@ -6,6 +6,7 @@ fs.writeFileSync
     "./index.html",
     fget("./index.template.html")
         .replace(/__STYLE__/g, fget("./css/index.css"))
+        .replace(/__EVIL_COMMONJS__/g, fget("./evil-commonjs/index.js"))
         .replace(/__SCRIPT__/g, fget("./index.js"))
 );
 

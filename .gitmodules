@@ -1,0 +1,3 @@
+[submodule "evil-commonjs"]
+	path = evil-commonjs
+	url = https://github.com/wraith13/evil-commonjs
