@@ -931,6 +931,12 @@ define("lang.ja", [], {
     "Cancel": "キャンセル",
     "Edit": "編集"
 });
+define("resource", [], {
+    "application": "./images/cyclictodohex.1024.svg",
+    "application-color": "./images/cyclictodohex.1024.color.svg",
+    "ellipsis": "./images/ellipsis.1024.svg",
+    "check": "./images/check.1024.svg"
+});
 define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -3241,55 +3247,9 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
             var Resource;
             (function (Resource) {
                 var _this = this;
-                var icons = Object.freeze({
-                    "application": "./images/cyclictodohex.1024.svg",
-                    "application-color": "./images/cyclictodohex.1024.color.svg",
-                    "ellipsis": "./images/ellipsis.1024.svg",
-                    "check": "./images/check.1024.svg"
-                });
-                Resource.loadSvg = function (key) { return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        return [2 /*return*/, new Promise(function (resolve, reject) {
-                                var request = new XMLHttpRequest();
-                                request.open('GET', icons[key], true);
-                                request.onreadystatechange = function () {
-                                    if (4 === request.readyState) {
-                                        if (200 <= request.status && request.status < 300) {
-                                            try {
-                                                resolve(request.responseText);
-                                            }
-                                            catch (err) {
-                                                reject(err);
-                                            }
-                                        }
-                                        else {
-                                            reject(request);
-                                        }
-                                    }
-                                };
-                                request.send(null);
-                            })];
-                    });
-                }); };
-                Resource.svgCache = {};
-                Resource.loadSvgOrCache = function (key) { return __awaiter(_this, void 0, void 0, function () { var _a, _b, _c, _d, _e; var _f; return __generator(this, function (_g) {
-                    switch (_g.label) {
-                        case 0:
-                            _b = (_a = new DOMParser()).parseFromString;
-                            if (!((_f = Resource.svgCache[key]) !== null && _f !== void 0)) return [3 /*break*/, 1];
-                            _c = _f;
-                            return [3 /*break*/, 3];
-                        case 1:
-                            _d = Resource.svgCache;
-                            _e = key;
-                            return [4 /*yield*/, Resource.loadSvg(key)];
-                        case 2:
-                            _c = (_d[_e] = _g.sent());
-                            _g.label = 3;
-                        case 3: return [2 /*return*/, _b.apply(_a, [_c, "image/svg+xml"]).documentElement];
-                    }
+                Resource.loadSvgOrCache = function (key) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                    return [2 /*return*/, new DOMParser().parseFromString(document.getElementById(key).innerHTML, "image/svg+xml").documentElement];
                 }); }); };
-                Resource.preload = function () { return Object.keys(icons).forEach(function (i) { return Resource.loadSvgOrCache(i); }); };
             })(Resource = Render.Resource || (Render.Resource = {}));
             Render.showExportScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
                 var _a;
@@ -3961,7 +3921,6 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
                     case 0:
                         console.log("start!!!");
                         window.onpopstate = function () { return CyclicToDo.showPage(); };
-                        Render.Resource.preload();
                         return [4 /*yield*/, CyclicToDo.showPage()];
                     case 1:
                         _a.sent();
@@ -3971,7 +3930,7 @@ define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"],
         }); };
         CyclicToDo.showPage = function (url, wait) {
             if (url === void 0) { url = location.href; }
-            if (wait === void 0) { wait = 100; }
+            if (wait === void 0) { wait = 0; }
             return __awaiter(_this, void 0, void 0, function () {
                 var urlParams, hash, tag, todo, pass, _a;
                 var _b;

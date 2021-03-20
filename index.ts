@@ -1,6 +1,7 @@
 import { minamo } from "./minamo.js";
 import localeEn from "./lang.en.json";
 import localeJa from "./lang.ja.json";
+import resource from "./resource.json";
 export const makeObject = <T>(items: { key: string, value: T}[]) =>
 {
     const result: { [key: string]: T} = { };
@@ -2339,48 +2340,9 @@ export module CyclicToDo
         };
         export module Resource
         {
-            const icons = Object.freeze
-            ({
-                "application": "./images/cyclictodohex.1024.svg",
-                "application-color": "./images/cyclictodohex.1024.color.svg",
-                "ellipsis": "./images/ellipsis.1024.svg",
-                "check": "./images/check.1024.svg"
-            });
-            export type IconKey = keyof typeof icons;
-            export const loadSvg = async (key: IconKey): Promise<string> => new Promise<string>
-            (
-                (resolve, reject) =>
-                {
-                    const request = new XMLHttpRequest();
-                    request.open('GET', icons[key], true);
-                    request.onreadystatechange = function()
-                    {
-                        if (4 === request.readyState)
-                        {
-                            if (200 <= request.status && request.status < 300)
-                            {
-                                try
-                                {
-                                    resolve(request.responseText);
-                                }
-                                catch(err)
-                                {
-                                    reject(err);
-                                }
-                            }
-                            else
-                            {
-                                reject(request);
-                            }
-                        }
-                    };
-                    request.send(null);
-                }
-            );
-            export const svgCache: { [key: string]: string} = { };
-            export const loadSvgOrCache = async (key: IconKey): Promise<SVGElement> =>
-                new DOMParser().parseFromString(svgCache[key] ?? (svgCache[key] = await loadSvg(key)), "image/svg+xml").documentElement as any;
-            export const preload = () => Object.keys(icons).forEach(i => loadSvgOrCache(i as IconKey));
+            export type KeyType = keyof typeof resource;
+            export const loadSvgOrCache = async (key: KeyType): Promise<SVGElement> =>
+                new DOMParser().parseFromString(document.getElementById(key).innerHTML, "image/svg+xml").documentElement as any;
         }
         export const showExportScreen = async (pass: string) =>
         {
@@ -2952,10 +2914,9 @@ export module CyclicToDo
     {
         console.log("start!!!");
         window.onpopstate = () => showPage();
-        Render.Resource.preload();
         await showPage();
     };
-    export const showPage = async (url: string = location.href, wait: number = 100) =>
+    export const showPage = async (url: string = location.href, wait: number = 0) =>
     {
         window.scrollTo(0,0);
         await Render.showUpdatingScreen(url);

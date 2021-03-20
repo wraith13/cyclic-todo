@@ -685,6 +685,9 @@ button.default-button:hover {
   white-space: nowrap;
   height: 3.8rem;
 }
+.history-list .history-item .item-title {
+  max-width: calc(100% - 150px);
+}
 .history-list .history-item .item-information {
   width: 100%;
   line-height: 1.4em;
