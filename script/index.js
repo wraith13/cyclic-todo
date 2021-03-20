@@ -853,7 +853,7 @@ define("minamo.js/index", ["require", "exports"], function (require, exports) {
         })(dom = minamo.dom || (minamo.dom = {}));
     })(minamo = exports.minamo || (exports.minamo = {}));
 });
-define("lang.en", [], {
+define("resource/lang.en", [], {
     "previous": "previous",
     "expected interval": "expected interval",
     "elapsed time": "elapsed time",
@@ -892,7 +892,7 @@ define("lang.en", [], {
     "Cancel": "Cancel",
     "Edit": "Edit"
 });
-define("lang.ja", [], {
+define("resource/lang.ja", [], {
     "previous": "前回",
     "expected interval": "予想間隔",
     "elapsed time": "経過時間",
@@ -931,13 +931,13 @@ define("lang.ja", [], {
     "Cancel": "キャンセル",
     "Edit": "編集"
 });
-define("resource", [], {
+define("resource/images", [], {
     "application": "./images/cyclictodohex.1024.svg",
     "application-color": "./images/cyclictodohex.1024.color.svg",
     "ellipsis": "./images/ellipsis.1024.svg",
     "check": "./images/check.1024.svg"
 });
-define("index", ["require", "exports", "minamo.js/index", "lang.en", "lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
+define("script/index", ["require", "exports", "minamo.js/index", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CyclicToDo = exports.Calculate = exports.localeParallel = exports.localeSingle = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.makeObject = void 0;

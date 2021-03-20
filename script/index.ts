@@ -1,7 +1,7 @@
-import { minamo } from "./minamo.js";
-import localeEn from "./lang.en.json";
-import localeJa from "./lang.ja.json";
-import resource from "./resource.json";
+import { minamo } from "../minamo.js";
+import localeEn from "../resource/lang.en.json";
+import localeJa from "../resource/lang.ja.json";
+import resource from "../resource/images.json";
 export const makeObject = <T>(items: { key: string, value: T}[]) =>
 {
     const result: { [key: string]: T} = { };
