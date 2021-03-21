@@ -932,10 +932,10 @@ define("resource/lang.ja", [], {
     "Edit": "編集"
 });
 define("resource/images", [], {
-    "application": "./images/cyclictodohex.1024.svg",
-    "application-color": "./images/cyclictodohex.1024.color.svg",
-    "ellipsis": "./images/ellipsis.1024.svg",
-    "check": "./images/check.1024.svg"
+    "application": "./image/cyclictodohex.1024.svg",
+    "application-color": "./image/cyclictodohex.1024.color.svg",
+    "ellipsis": "./image/ellipsis.1024.svg",
+    "check": "./image/check.1024.svg"
 });
 define("script/index", ["require", "exports", "minamo.js/index", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
