@@ -50,7 +50,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-define("minamo.js/index", ["require", "exports"], function (require, exports) {
+define("script/minamo.js/index", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.minamo = void 0;
@@ -937,7 +937,7 @@ define("resource/images", [], {
     "ellipsis": "./image/ellipsis.1024.svg",
     "check": "./image/check.1024.svg"
 });
-define("script/index", ["require", "exports", "minamo.js/index", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
+define("script/index", ["require", "exports", "script/minamo.js/index", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CyclicToDo = exports.Calculate = exports.localeParallel = exports.localeSingle = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.makeObject = void 0;

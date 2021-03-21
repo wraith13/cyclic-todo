@@ -19,7 +19,7 @@ fs.writeFileSync
         .replace
         (
             /__EVIL_COMMONJS__/g,
-            fget("./evil-commonjs/index.js")
+            fget("./script/evil-commonjs/index.js")
         )
         .replace
         (

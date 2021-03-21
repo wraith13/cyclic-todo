@@ -1,4 +1,4 @@
-import { minamo } from "../minamo.js";
+import { minamo } from "./minamo.js";
 import localeEn from "../resource/lang.en.json";
 import localeJa from "../resource/lang.ja.json";
 import resource from "../resource/images.json";
