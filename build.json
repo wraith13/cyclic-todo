@@ -5,7 +5,7 @@
     {
         "__BUILD_MESSAGE__": "This file is genereted by build.js. このファイルは build.js によって生成されました。",
         "__BUILD_TIMESTAMP__": { "call": "timestamp" },
-        "__STYLE__": { "path": "./css/index.css" },
+        "__STYLE__": { "path": "./style/index.css" },
         "__EVIL_COMMONJS__": { "path": "./script/evil-commonjs/index.js" },
         "__SCRIPT__": { "path": "./script/index.js" },
         "__IMAGES__": { "resource": "./resource/images.json" }
