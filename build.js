@@ -1,4 +1,5 @@
 'use strict';
+const child_process = require("child_process");
 const fs = require("fs");
 const fget = path => fs.readFileSync(path, { encoding: "utf-8" });
 const evalValue = (value) =>
@@ -39,6 +40,14 @@ const evalValue = (value) =>
     return null;
 };
 const json = require("./build.json");
+json.preprocesses.forEach
+(
+    command =>
+    {
+        console.log(command);
+        child_process.execSync(command);
+    }
+);
 const template = evalValue(json.template);
 Object.keys(json.parameters).forEach
 (
