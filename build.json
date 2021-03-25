@@ -1,10 +1,20 @@
 {
     "template": { "path": "./index.template.html" },
     "output": { "path": "./index.html" },
-    "preprocesses": [
-        "npm run-script \"build style\"",
-        "npm run-script \"build script\""
-    ],
+    "preprocesses":
+    {
+        "none": [ ],
+        "release":
+        [
+            "npm run-script \"build style\"",
+            "npm run-script \"build script\""
+        ],
+        "debug":
+        [
+            "npm run-script \"debug build style\"",
+            "npm run-script \"debug build script\""
+        ]
+    },
     "parameters":
     {
         "__BUILD_MESSAGE__": "This file is genereted by build.js. このファイルは build.js によって生成されました。",

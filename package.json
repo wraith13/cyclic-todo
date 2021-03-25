@@ -3,10 +3,14 @@
   "version": "1.0.0",
   "description": "Cyclic ToDo Static Web Application",
   "scripts": {
-    "build all": "node ./build.js",
+    "build all": "node ./build.js release",
+    "build html": "node ./build.js none",
     "build style": "lessc ./style/index.less ./style/index.css",
     "build script": "tsc -p ./script/tsconfig.json",
-    "watch script": "tsc --watch -p ./script/tsconfig.json"
+    "debug build all": "node ./build.js debug",
+    "debug build style": "lessc --source-map-map-inline ./style/index.less ./style/index.css",
+    "debug build script": "tsc --inlineSourceMap -p ./script/tsconfig.json",
+    "watch script": "tsc --watch --inlineSourceMap -p ./script/tsconfig.json"
   },
   "repository": {
     "type": "git",

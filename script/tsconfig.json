@@ -17,7 +17,6 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noImplicitUseStrict": false,
-        "inlineSourceMap": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "forceConsistentCasingInFileNames": true,

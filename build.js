@@ -1,4 +1,5 @@
 'use strict';
+const process = require("process");
 const child_process = require("child_process");
 const fs = require("fs");
 const fget = path => fs.readFileSync(path, { encoding: "utf-8" });
@@ -40,7 +41,7 @@ const evalValue = (value) =>
     return null;
 };
 const json = require("./build.json");
-json.preprocesses.forEach
+(json.preprocesses[process.argv[2] || "default"] || [ ]).forEach
 (
     command =>
     {
