@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Fri Mar 26 2021 06:13:20 GMT+0900 (GMT+09:00) -->
+<!-- build at: Fri Mar 26 2021 19:06:42 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -2961,6 +2961,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 };
                 return result;
             };
+            Render.hasScreenCover = function () { return 0 < document.getElementsByClassName("screen-cover").length; };
             Render.popup = function (data) {
                 var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
                     tag: "div",
@@ -3832,7 +3833,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         case 1:
                                             Domain.updateListProgress(list);
                                             isDirty = (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list))) || isDirty;
-                                            if (!(isDirty && document.body.scrollTop <= 0)) return [3 /*break*/, 3];
+                                            if (!(isDirty && document.body.scrollTop <= 0 && !Render.hasScreenCover())) return [3 /*break*/, 3];
                                             return [4 /*yield*/, CyclicToDo.reload()];
                                         case 2:
                                             _b.sent();

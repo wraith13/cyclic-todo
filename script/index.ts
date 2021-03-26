@@ -1155,6 +1155,7 @@ export module CyclicToDo
             };
             return result;
         };
+        export const hasScreenCover = () => 0 < document.getElementsByClassName("screen-cover").length;
         export const popup = (data: { children: minamo.dom.Source, onClose?: () => Promise<unknown>}) =>
         {
             const dom = minamo.dom.make(HTMLDivElement)
@@ -1910,7 +1911,7 @@ export module CyclicToDo
                     case "timer":
                         Domain.updateListProgress(list);
                         isDirty = ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[])) || isDirty;
-                        if (isDirty && document.body.scrollTop <= 0)
+                        if (isDirty && document.body.scrollTop <= 0 && ! hasScreenCover())
                         {
                             await reload();
                         }
