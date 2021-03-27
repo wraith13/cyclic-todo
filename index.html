@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Fri Mar 26 2021 19:06:42 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sat Mar 27 2021 18:56:17 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -277,6 +277,12 @@ button.default-button:hover {
 }
 .hide {
   display: none;
+}
+.check-button {
+  text-align: left;
+}
+.check-button:not(.checked) svg {
+  visibility: hidden;
 }
 .popup {
   border-radius: 16px;
@@ -2886,45 +2892,67 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
-            // export const AddRemoveTagsPopup = async (item: ToDoEntry, tags: string[], currentTags: string[]): Promise<string[]> =>
-            // {
-            //     await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
-            //     return await new Promise
-            //     (
-            //         resolve =>
-            //         {
-            //             let result: string[] = null;
-            //             const ui = popup
-            //             ({
-            //                 children:
-            //                 [
-            //                     {
-            //                         tag: "h2",
-            //                         children: item.task,
-            //                     },
-            //                     {
-            //                         tag: "div",
-            //                         className: "popup-operator",
-            //                         children:
-            //                         [
-            //                             {
-            //                                 tag: "button",
-            //                                 className: "default-button",
-            //                                 children: "閉じる",
-            //                                 onclick: () =>
-            //                                 {
-            //                                     // result = `${inputDate.value}T${inputTime.value}`;
-            //                                     ui.close();
-            //                                 },
-            //                             },
-            //                         ],
-            //                     },
-            //                 ],
-            //                 onClose: async () => resolve(result),
-            //             });
-            //         }
-            //     );
-            // };
+            Render.AddRemoveTagsPopup = function (item, tags, currentTags) { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, new Promise(function (resolve) {
+                                var result = [].concat(currentTags);
+                                var ui = Render.popup({
+                                    children: [
+                                        {
+                                            tag: "h2",
+                                            children: item.task,
+                                        },
+                                        tags.map(function (tag) {
+                                            var dom = minamo_js_1.minamo.dom.make(HTMLButtonElement)({
+                                                tag: "button",
+                                                className: "check-button",
+                                                children: [
+                                                    Resource.loadSvgOrCache("check"),
+                                                    tag,
+                                                ],
+                                                onclick: function () {
+                                                    if (0 <= result.indexOf(tag)) {
+                                                        result = result.filter(function (i) { return tag !== i; });
+                                                    }
+                                                    else {
+                                                        result.push(tag);
+                                                    }
+                                                    update();
+                                                }
+                                            });
+                                            var update = function () {
+                                                dom.classList.toggle("checked", 0 <= result.indexOf(tag));
+                                            };
+                                            update();
+                                            return dom;
+                                        }),
+                                        {
+                                            tag: "div",
+                                            className: "popup-operator",
+                                            children: [
+                                                {
+                                                    tag: "button",
+                                                    className: "default-button",
+                                                    children: "閉じる",
+                                                    onclick: function () {
+                                                        // result = `${inputDate.value}T${inputTime.value}`;
+                                                        ui.close();
+                                                    },
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        return [2 /*return*/, resolve(result)];
+                                    }); }); },
+                                });
+                            })];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            }); };
             Render.screenCover = function (data) {
                 var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
                     tag: "div",
@@ -3225,9 +3253,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     });
                 }); });
             };
-            Render.todoTagMenu = function (_pass, _item) { return Render.menuItem(locale.parallel("Add/Remove Tag"), function () { return __awaiter(_this, void 0, void 0, function () {
+            Render.todoTagMenu = function (pass, item) { return Render.menuItem(locale.parallel("Add/Remove Tag"), function () { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    return [2 /*return*/];
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, Render.AddRemoveTagsPopup(item, Storage.Tag.get(pass), Storage.Tag.getByTodo(pass, item.task))];
+                        case 1:
+                            _a.sent();
+                            return [2 /*return*/];
+                    }
                 });
             }); }); };
             Render.todoDeleteMenu = function (pass, item) { return Render.menuItem(locale.parallel("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {

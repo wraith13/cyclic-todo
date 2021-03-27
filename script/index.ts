@@ -1086,45 +1086,78 @@ export module CyclicToDo
                 }
             );
         };
-        // export const AddRemoveTagsPopup = async (item: ToDoEntry, tags: string[], currentTags: string[]): Promise<string[]> =>
-        // {
-        //     await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが展開してた screen cover を閉じる動作に巻き込まれてしまう。
-        //     return await new Promise
-        //     (
-        //         resolve =>
-        //         {
-        //             let result: string[] = null;
-        //             const ui = popup
-        //             ({
-        //                 children:
-        //                 [
-        //                     {
-        //                         tag: "h2",
-        //                         children: item.task,
-        //                     },
-        //                     {
-        //                         tag: "div",
-        //                         className: "popup-operator",
-        //                         children:
-        //                         [
-        //                             {
-        //                                 tag: "button",
-        //                                 className: "default-button",
-        //                                 children: "閉じる",
-        //                                 onclick: () =>
-        //                                 {
-        //                                     // result = `${inputDate.value}T${inputTime.value}`;
-        //                                     ui.close();
-        //                                 },
-        //                             },
-        //                         ],
-        //                     },
-        //                 ],
-        //                 onClose: async () => resolve(result),
-        //             });
-        //         }
-        //     );
-        // };
+        export const AddRemoveTagsPopup = async (item: ToDoEntry, tags: string[], currentTags: string[]): Promise<string[]> =>
+        {
+            return await new Promise
+            (
+                resolve =>
+                {
+                    let result: string[] = [].concat(currentTags);
+                    const ui = popup
+                    ({
+                        children:
+                        [
+                            {
+                                tag: "h2",
+                                children: item.task,
+                            },
+                            tags.map
+                            (
+                                tag =>
+                                {
+                                    const dom = minamo.dom.make(HTMLButtonElement)
+                                    ({
+                                        tag: "button",
+                                        className: "check-button",
+                                        children:
+                                        [
+                                            Resource.loadSvgOrCache("check"),
+                                            tag,
+                                        ],
+                                        onclick: () =>
+                                        {
+                                            if (0 <= result.indexOf(tag))
+                                            {
+                                                result = result.filter(i => tag !== i);
+                                            }
+                                            else
+                                            {
+                                                result.push(tag);
+                                            }
+                                            update();
+                                        }
+                                    });
+                                    const update = () =>
+                                    {
+                                        dom.classList.toggle("checked", 0 <= result.indexOf(tag));
+                                    };
+                                    update();
+                                    return dom;
+                                },
+                            ),
+                            {
+                                tag: "div",
+                                className: "popup-operator",
+                                children:
+                                [
+                                    {
+                                        tag: "button",
+                                        className: "default-button",
+                                        children: "閉じる",
+                                        onclick: () =>
+                                        {
+                                            // result = `${inputDate.value}T${inputTime.value}`;
+                                            ui.close();
+                                        },
+                                    },
+                                ],
+                            },
+                        ],
+                        onClose: async () => resolve(result),
+                    });
+                }
+            );
+        };
         export const screenCover = (data: { children?: minamo.dom.Source, onclick: () => unknown, }) =>
         {
             const dom = minamo.dom.make(HTMLDivElement)
@@ -1403,11 +1436,12 @@ export module CyclicToDo
                 }
             }
         );
-        export const todoTagMenu = (_pass: string, _item: ToDoEntry) => menuItem
+        export const todoTagMenu = (pass: string, item: ToDoEntry) => menuItem
         (
             locale.parallel("Add/Remove Tag"),
             async () =>
             {
+                await AddRemoveTagsPopup(item, Storage.Tag.get(pass), Storage.Tag.getByTodo(pass, item.task));
             }
         );
         export const todoDeleteMenu = (pass: string, item: ToDoEntry) => menuItem
