@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun Mar 28 2021 11:30:03 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sun Mar 28 2021 21:58:31 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -279,15 +279,32 @@ button.default-button:hover {
   display: none;
 }
 .check-button {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: stretch;
+  flex-direction: row;
   text-align: left;
+  padding: 4px;
+  margin: 0px;
   border-radius: 0px;
   border-style: none;
   border-width: 0px;
 }
 .check-button svg {
-  width: 1em;
-  height: 1em;
+  width: 1.5em;
+  height: 1.5em;
+  margin-right: 0.5em;
   fill: #228844;
+}
+.check-button:hover svg {
+  fill: #FFFFFF;
+}
+@media (prefers-color-scheme: dark) {
+  .check-button:hover svg {
+    fill: #000022;
+  }
 }
 .check-button:not(.checked) svg {
   visibility: hidden;
@@ -364,6 +381,11 @@ button.default-button:hover {
   align-items: stretch;
   justify-content: stretch;
   flex-direction: column;
+}
+.add-remove-tags-popup button {
+  border-color: rgba(128, 128, 128, 0.5);
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
 }
 .button-list {
   text-align: center;
@@ -2908,17 +2930,18 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
-            Render.AddRemoveTagsPopup = function (item, tags, currentTags) { return __awaiter(_this, void 0, void 0, function () {
+            Render.AddRemoveTagsPopup = function (pass, item, tags, currentTags) { return __awaiter(_this, void 0, void 0, function () {
                 var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
-                                var result, ui, _a, _b;
+                                var hasNewTag, result, ui, _a, _b;
                                 var _c, _d;
                                 var _this = this;
                                 return __generator(this, function (_e) {
                                     switch (_e.label) {
                                         case 0:
+                                            hasNewTag = false;
                                             result = [].concat(currentTags);
                                             _a = Render.popup;
                                             _c = {
@@ -2928,7 +2951,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     tag: "h2",
                                                     children: item.task,
                                                 }];
-                                            return [4 /*yield*/, Promise.all(tags.map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
+                                            return [4 /*yield*/, Promise.all(tags.sort(Domain.tagComparer(pass)).concat("@unoverall").map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                                     var dom, _a, update;
                                                     var _b;
                                                     return __generator(this, function (_c) {
@@ -2943,14 +2966,19 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                             case 1:
                                                                 dom = _a.apply(void 0, [(_b.children = [
                                                                         _c.sent(),
-                                                                        tag
+                                                                        {
+                                                                            tag: "span",
+                                                                            children: Domain.tagMap(tag),
+                                                                        }
                                                                     ],
                                                                         _b.onclick = function () {
                                                                             if (0 <= result.indexOf(tag)) {
                                                                                 result = result.filter(function (i) { return tag !== i; });
+                                                                                Storage.TagMember.remove(pass, tag, item.task);
                                                                             }
                                                                             else {
                                                                                 result.push(tag);
+                                                                                Storage.TagMember.add(pass, tag, item.task);
                                                                             }
                                                                             update();
                                                                         },
@@ -2997,9 +3025,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                         ],
                                                     }
                                                 ]),
-                                                    _c.onClose = function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                        return [2 /*return*/, resolve(result)];
-                                                    }); }); },
+                                                    _c.onClose = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        return __generator(this, function (_a) {
+                                                            return [2 /*return*/, resolve(JSON.stringify(result.sort()) !== JSON.stringify([].concat(currentTags).sort()) || hasNewTag)];
+                                                        });
+                                                    }); },
                                                     _c)]);
                                             return [2 /*return*/];
                                     }
@@ -3313,10 +3343,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Render.todoTagMenu = function (pass, item) { return Render.menuItem(locale.parallel("Add/Remove Tag"), function () { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, Render.AddRemoveTagsPopup(item, Storage.Tag.get(pass), Storage.Tag.getByTodo(pass, item.task))];
+                        case 0: return [4 /*yield*/, Render.AddRemoveTagsPopup(pass, item, Storage.Tag.get(pass), Storage.Tag.getByTodo(pass, item.task))];
                         case 1:
+                            if (!_a.sent()) return [3 /*break*/, 3];
+                            return [4 /*yield*/, CyclicToDo.reload()];
+                        case 2:
                             _a.sent();
-                            return [2 /*return*/];
+                            _a.label = 3;
+                        case 3: return [2 /*return*/];
                     }
                 });
             }); }); };

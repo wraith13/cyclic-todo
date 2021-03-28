@@ -365,15 +365,34 @@ button.default-button
 }
 .check-button
 {
+    display: flex;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: stretch;
+    flex-direction: row;
     text-align: left;
+    padding: 4px;
+    margin: 0px;
     border-radius: 0px;
     border-style: none;
     border-width: 0px;
+
     svg
     {
-        width: 1em;
-        height: 1em;
+        width: 1.5em;
+        height: 1.5em;
+        margin-right: 0.5em;
         fill: @accent-color;
+    }
+    &:hover svg
+    {
+        fill: @base-color;
+        @media (prefers-color-scheme: dark)
+        {
+            fill: @dark-base-color;
+        }
     }
     &:not(.checked) svg
     {
@@ -467,6 +486,13 @@ button.default-button
     align-items: stretch;
     justify-content: stretch;
     flex-direction: column;
+
+    button
+    {
+        border-color: rgba(128,128,128,0.5);
+        border-style: solid;
+        border-width: 0px 0px 1px 0px;
+    }
 }
 .button-list
 {

@@ -1086,12 +1086,13 @@ export module CyclicToDo
                 }
             );
         };
-        export const AddRemoveTagsPopup = async (item: ToDoEntry, tags: string[], currentTags: string[]): Promise<string[]> =>
+        export const AddRemoveTagsPopup = async (pass: string, item: ToDoEntry, tags: string[], currentTags: string[]): Promise<boolean> =>
         {
             return await new Promise
             (
                 async resolve =>
                 {
+                    let hasNewTag = false;
                     let result: string[] = [].concat(currentTags);
                     const ui = popup
                     ({
@@ -1104,7 +1105,7 @@ export module CyclicToDo
                             },
                             await Promise.all
                             (
-                                tags.map
+                                tags.sort(Domain.tagComparer(pass)).concat("@unoverall").map
                                 (
                                     async tag =>
                                     {
@@ -1115,17 +1116,22 @@ export module CyclicToDo
                                             children:
                                             [
                                                 await Resource.loadSvgOrCache("check"),
-                                                tag,
+                                                {
+                                                    tag: "span",
+                                                    children: Domain.tagMap(tag),
+                                                },
                                             ],
                                             onclick: () =>
                                             {
                                                 if (0 <= result.indexOf(tag))
                                                 {
                                                     result = result.filter(i => tag !== i);
+                                                    Storage.TagMember.remove(pass, tag, item.task);
                                                 }
                                                 else
                                                 {
                                                     result.push(tag);
+                                                    Storage.TagMember.add(pass, tag, item.task);
                                                 }
                                                 update();
                                             }
@@ -1170,7 +1176,10 @@ export module CyclicToDo
                                 ],
                             },
                         ],
-                        onClose: async () => resolve(result),
+                        onClose: async () => resolve
+                        (
+                            JSON.stringify(result.sort()) !== JSON.stringify([].concat(currentTags).sort()) || hasNewTag
+                        ),
                     });
                 }
             );
@@ -1466,7 +1475,10 @@ export module CyclicToDo
             locale.parallel("Add/Remove Tag"),
             async () =>
             {
-                await AddRemoveTagsPopup(item, Storage.Tag.get(pass), Storage.Tag.getByTodo(pass, item.task));
+                if (await AddRemoveTagsPopup(pass, item, Storage.Tag.get(pass), Storage.Tag.getByTodo(pass, item.task)))
+                {
+                    await reload();
+                }
             }
         );
         export const todoDeleteMenu = (pass: string, item: ToDoEntry) => menuItem
