@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sat Mar 27 2021 18:56:17 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sun Mar 28 2021 11:30:03 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -280,6 +280,14 @@ button.default-button:hover {
 }
 .check-button {
   text-align: left;
+  border-radius: 0px;
+  border-style: none;
+  border-width: 0px;
+}
+.check-button svg {
+  width: 1em;
+  height: 1em;
+  fill: #228844;
 }
 .check-button:not(.checked) svg {
   visibility: hidden;
@@ -348,6 +356,14 @@ button.default-button:hover {
   100% {
     opacity: 0;
   }
+}
+.add-remove-tags-popup {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: stretch;
+  flex-direction: column;
 }
 .button-list {
   text-align: center;
@@ -2896,59 +2912,99 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, new Promise(function (resolve) {
-                                var result = [].concat(currentTags);
-                                var ui = Render.popup({
-                                    children: [
-                                        {
-                                            tag: "h2",
-                                            children: item.task,
-                                        },
-                                        tags.map(function (tag) {
-                                            var dom = minamo_js_1.minamo.dom.make(HTMLButtonElement)({
-                                                tag: "button",
-                                                className: "check-button",
-                                                children: [
-                                                    Resource.loadSvgOrCache("check"),
-                                                    tag,
-                                                ],
-                                                onclick: function () {
-                                                    if (0 <= result.indexOf(tag)) {
-                                                        result = result.filter(function (i) { return tag !== i; });
-                                                    }
-                                                    else {
-                                                        result.push(tag);
-                                                    }
-                                                    update();
-                                                }
-                                            });
-                                            var update = function () {
-                                                dom.classList.toggle("checked", 0 <= result.indexOf(tag));
+                        case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                var result, ui, _a, _b;
+                                var _c, _d;
+                                var _this = this;
+                                return __generator(this, function (_e) {
+                                    switch (_e.label) {
+                                        case 0:
+                                            result = [].concat(currentTags);
+                                            _a = Render.popup;
+                                            _c = {
+                                                className: "add-remove-tags-popup"
                                             };
-                                            update();
-                                            return dom;
-                                        }),
-                                        {
-                                            tag: "div",
-                                            className: "popup-operator",
-                                            children: [
-                                                {
-                                                    tag: "button",
-                                                    className: "default-button",
-                                                    children: "閉じる",
-                                                    onclick: function () {
-                                                        // result = `${inputDate.value}T${inputTime.value}`;
-                                                        ui.close();
-                                                    },
-                                                },
-                                            ],
-                                        },
-                                    ],
-                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        return [2 /*return*/, resolve(result)];
-                                    }); }); },
+                                            _b = [{
+                                                    tag: "h2",
+                                                    children: item.task,
+                                                }];
+                                            return [4 /*yield*/, Promise.all(tags.map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
+                                                    var dom, _a, update;
+                                                    var _b;
+                                                    return __generator(this, function (_c) {
+                                                        switch (_c.label) {
+                                                            case 0:
+                                                                _a = minamo_js_1.minamo.dom.make(HTMLButtonElement);
+                                                                _b = {
+                                                                    tag: "button",
+                                                                    className: "check-button"
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check")];
+                                                            case 1:
+                                                                dom = _a.apply(void 0, [(_b.children = [
+                                                                        _c.sent(),
+                                                                        tag
+                                                                    ],
+                                                                        _b.onclick = function () {
+                                                                            if (0 <= result.indexOf(tag)) {
+                                                                                result = result.filter(function (i) { return tag !== i; });
+                                                                            }
+                                                                            else {
+                                                                                result.push(tag);
+                                                                            }
+                                                                            update();
+                                                                        },
+                                                                        _b)]);
+                                                                update = function () {
+                                                                    dom.classList.toggle("checked", 0 <= result.indexOf(tag));
+                                                                };
+                                                                update();
+                                                                return [2 /*return*/, dom];
+                                                        }
+                                                    });
+                                                }); }))];
+                                        case 1:
+                                            _b = _b.concat([
+                                                _e.sent()
+                                            ]);
+                                            _d = {
+                                                tag: "button",
+                                                className: "check-button"
+                                            };
+                                            return [4 /*yield*/, Resource.loadSvgOrCache("check")];
+                                        case 2:
+                                            ui = _a.apply(void 0, [(_c.children = _b.concat([
+                                                    (_d.children = [
+                                                        _e.sent(),
+                                                        "新しいタグ"
+                                                    ],
+                                                        _d.onclick = function () {
+                                                        },
+                                                        _d),
+                                                    {
+                                                        tag: "div",
+                                                        className: "popup-operator",
+                                                        children: [
+                                                            {
+                                                                tag: "button",
+                                                                className: "default-button",
+                                                                children: "閉じる",
+                                                                onclick: function () {
+                                                                    // result = `${inputDate.value}T${inputTime.value}`;
+                                                                    ui.close();
+                                                                },
+                                                            },
+                                                        ],
+                                                    }
+                                                ]),
+                                                    _c.onClose = function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                        return [2 /*return*/, resolve(result)];
+                                                    }); }); },
+                                                    _c)]);
+                                            return [2 /*return*/];
+                                    }
                                 });
-                            })];
+                            }); })];
                         case 1: return [2 /*return*/, _a.sent()];
                     }
                 });
@@ -2991,9 +3047,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             };
             Render.hasScreenCover = function () { return 0 < document.getElementsByClassName("screen-cover").length; };
             Render.popup = function (data) {
+                var _a;
                 var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
                     tag: "div",
-                    className: "popup",
+                    className: "popup " + ((_a = data.className) !== null && _a !== void 0 ? _a : ""),
                     children: data.children,
                     onclick: function (event) { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {

@@ -1090,51 +1090,68 @@ export module CyclicToDo
         {
             return await new Promise
             (
-                resolve =>
+                async resolve =>
                 {
                     let result: string[] = [].concat(currentTags);
                     const ui = popup
                     ({
+                        className: "add-remove-tags-popup",
                         children:
                         [
                             {
                                 tag: "h2",
                                 children: item.task,
                             },
-                            tags.map
+                            await Promise.all
                             (
-                                tag =>
-                                {
-                                    const dom = minamo.dom.make(HTMLButtonElement)
-                                    ({
-                                        tag: "button",
-                                        className: "check-button",
-                                        children:
-                                        [
-                                            Resource.loadSvgOrCache("check"),
-                                            tag,
-                                        ],
-                                        onclick: () =>
-                                        {
-                                            if (0 <= result.indexOf(tag))
-                                            {
-                                                result = result.filter(i => tag !== i);
-                                            }
-                                            else
-                                            {
-                                                result.push(tag);
-                                            }
-                                            update();
-                                        }
-                                    });
-                                    const update = () =>
+                                tags.map
+                                (
+                                    async tag =>
                                     {
-                                        dom.classList.toggle("checked", 0 <= result.indexOf(tag));
-                                    };
-                                    update();
-                                    return dom;
-                                },
+                                        const dom = minamo.dom.make(HTMLButtonElement)
+                                        ({
+                                            tag: "button",
+                                            className: "check-button",
+                                            children:
+                                            [
+                                                await Resource.loadSvgOrCache("check"),
+                                                tag,
+                                            ],
+                                            onclick: () =>
+                                            {
+                                                if (0 <= result.indexOf(tag))
+                                                {
+                                                    result = result.filter(i => tag !== i);
+                                                }
+                                                else
+                                                {
+                                                    result.push(tag);
+                                                }
+                                                update();
+                                            }
+                                        });
+                                        const update = () =>
+                                        {
+                                            dom.classList.toggle("checked", 0 <= result.indexOf(tag));
+                                        };
+                                        update();
+                                        return dom;
+                                    },
+                                )
                             ),
+                            {
+                                tag: "button",
+                                className: "check-button",
+                                children:
+                                [
+                                    await Resource.loadSvgOrCache("check"),
+                                    "新しいタグ",
+                                ],
+                                onclick: () =>
+                                {
+                                    
+                                }
+                        },
                             {
                                 tag: "div",
                                 className: "popup-operator",
@@ -1189,12 +1206,20 @@ export module CyclicToDo
             return result;
         };
         export const hasScreenCover = () => 0 < document.getElementsByClassName("screen-cover").length;
-        export const popup = (data: { children: minamo.dom.Source, onClose?: () => Promise<unknown>}) =>
+        export const popup =
+        (
+            data:
+            {
+                className?: string,
+                children: minamo.dom.Source,
+                onClose?: () => Promise<unknown>
+            }
+        ) =>
         {
             const dom = minamo.dom.make(HTMLDivElement)
             ({
                 tag: "div",
-                className: "popup",
+                className: `popup ${data.className ?? ""}`,
                 children: data.children,
                 onclick: async (event: MouseEvent) =>
                 {

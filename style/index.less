@@ -365,11 +365,20 @@ button.default-button
 }
 .check-button
 {
+    text-align: left;
+    border-radius: 0px;
+    border-style: none;
+    border-width: 0px;
+    svg
+    {
+        width: 1em;
+        height: 1em;
+        fill: @accent-color;
+    }
     &:not(.checked) svg
     {
         visibility: hidden;
     }
-    text-align: left;
 }
 .popup
 {
@@ -448,6 +457,16 @@ button.default-button
     {
         opacity: 0.0;
     }
+}
+.add-remove-tags-popup
+{
+    display: flex;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: stretch;
+    flex-direction: column;
 }
 .button-list
 {
