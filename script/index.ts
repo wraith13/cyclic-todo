@@ -295,7 +295,7 @@ export module CyclicToDo
                 {
                     add(pass, newTag);
                     TagMember.set(pass, newTag, TagMember.getRaw(pass, oldTag));
-                    remove(pass, oldTag);
+                    removeRaw(pass, oldTag);
                     TagMember.removeKey(pass, oldTag);
                     return true;
                 }
@@ -1934,6 +1934,8 @@ export module CyclicToDo
                                 locale.parallel("Delete"),
                                 async () =>
                                 {
+                                    Storage.Tag.remove(entry.pass, entry.tag);
+                                    await showUrl({ pass: entry.pass, tag: "@overall" });
                                 }
                             ),
                         "@overall" === entry.tag ?
@@ -2139,14 +2141,14 @@ export module CyclicToDo
                             locale.parallel("Export"),
                             async () => await showUrl({ pass: entry.pass, hash: "export", })
                         ),
-                        Storage.Tag.isSystemTag(entry.tag) ? []:
-                            menuItem
-                            (
-                                locale.parallel("Delete"),
-                                async () =>
-                                {
-                                }
-                            ),
+                        // Storage.Tag.isSystemTag(entry.tag) ? []:
+                        //     menuItem
+                        //     (
+                        //         locale.parallel("Delete"),
+                        //         async () =>
+                        //         {
+                        //         }
+                        //     ),
                         // "@overall" === entry.tag ?
                         //     menuItem
                         //     (
