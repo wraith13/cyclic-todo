@@ -1086,7 +1086,7 @@ export module CyclicToDo
                 }
             );
         };
-        export const AddRemoveTagsPopup = async (pass: string, item: ToDoEntry, tags: string[], currentTags: string[]): Promise<boolean> =>
+        export const AddRemoveTagsPopup = async (pass: string, item: ToDoEntry, currentTags: string[]): Promise<boolean> =>
         {
             return await new Promise
             (
@@ -1094,18 +1094,14 @@ export module CyclicToDo
                 {
                     let hasNewTag = false;
                     let result: string[] = [].concat(currentTags);
-                    const ui = popup
-                    ({
-                        className: "add-remove-tags-popup",
-                        children:
+                    const tagButtonList = minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                    const tagButtonListUpdate = async () => minamo.dom.replaceChildren
+                    (
+                        tagButtonList,
                         [
-                            {
-                                tag: "h2",
-                                children: item.task,
-                            },
                             await Promise.all
                             (
-                                tags.sort(Domain.tagComparer(pass)).concat("@unoverall").map
+                                Storage.Tag.get(pass).sort(Domain.tagComparer(pass)).concat("@unoverall").map
                                 (
                                     async tag =>
                                     {
@@ -1151,13 +1147,38 @@ export module CyclicToDo
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check"),
-                                    "新しいタグ",
+                                    {
+                                        tag: "span",
+                                        children: Domain.tagMap("@new"),
+                                    },
                                 ],
-                                onclick: () =>
+                                onclick: async () =>
                                 {
-                                    
+                                    const newTag = await prompt("タグの名前を入力してください", "");
+                                    if (null !== newTag)
+                                    {
+                                        const tag = Storage.Tag.encode(newTag.trim());
+                                        result.push(tag);
+                                        Storage.Tag.add(pass, tag);
+                                        Storage.TagMember.add(pass, tag, item.task);
+                                        hasNewTag = true;
+                                        await tagButtonListUpdate();
+                                    }
                                 }
-                        },
+                            },
+                        ]
+                    );
+                    await tagButtonListUpdate();
+                    const ui = popup
+                    ({
+                        className: "add-remove-tags-popup",
+                        children:
+                        [
+                            {
+                                tag: "h2",
+                                children: item.task,
+                            },
+                            tagButtonList,
                             {
                                 tag: "div",
                                 className: "popup-operator",
@@ -1475,7 +1496,7 @@ export module CyclicToDo
             locale.parallel("Add/Remove Tag"),
             async () =>
             {
-                if (await AddRemoveTagsPopup(pass, item, Storage.Tag.get(pass), Storage.Tag.getByTodo(pass, item.task)))
+                if (await AddRemoveTagsPopup(pass, item, Storage.Tag.getByTodo(pass, item.task)))
                 {
                     await reload();
                 }

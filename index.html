@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun Mar 28 2021 21:58:31 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon Mar 29 2021 01:11:50 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -374,7 +374,7 @@ button.default-button:hover {
     opacity: 0;
   }
 }
-.add-remove-tags-popup {
+.add-remove-tags-popup .check-button-list {
   position: relative;
   display: flex;
   flex-wrap: wrap;
@@ -382,7 +382,7 @@ button.default-button:hover {
   justify-content: stretch;
   flex-direction: column;
 }
-.add-remove-tags-popup button {
+.add-remove-tags-popup .check-button-list button {
   border-color: rgba(128, 128, 128, 0.5);
   border-style: solid;
   border-width: 0px 0px 1px 0px;
@@ -2930,85 +2930,122 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
-            Render.AddRemoveTagsPopup = function (pass, item, tags, currentTags) { return __awaiter(_this, void 0, void 0, function () {
+            Render.AddRemoveTagsPopup = function (pass, item, currentTags) { return __awaiter(_this, void 0, void 0, function () {
                 var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
-                                var hasNewTag, result, ui, _a, _b;
-                                var _c, _d;
+                                var hasNewTag, result, tagButtonList, tagButtonListUpdate, ui;
                                 var _this = this;
-                                return __generator(this, function (_e) {
-                                    switch (_e.label) {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
                                         case 0:
                                             hasNewTag = false;
                                             result = [].concat(currentTags);
-                                            _a = Render.popup;
-                                            _c = {
-                                                className: "add-remove-tags-popup"
-                                            };
-                                            _b = [{
-                                                    tag: "h2",
-                                                    children: item.task,
-                                                }];
-                                            return [4 /*yield*/, Promise.all(tags.sort(Domain.tagComparer(pass)).concat("@unoverall").map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
-                                                    var dom, _a, update;
-                                                    var _b;
-                                                    return __generator(this, function (_c) {
-                                                        switch (_c.label) {
-                                                            case 0:
-                                                                _a = minamo_js_1.minamo.dom.make(HTMLButtonElement);
-                                                                _b = {
-                                                                    tag: "button",
-                                                                    className: "check-button"
-                                                                };
-                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check")];
-                                                            case 1:
-                                                                dom = _a.apply(void 0, [(_b.children = [
-                                                                        _c.sent(),
+                                            tagButtonList = minamo_js_1.minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                                            tagButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                var _a, _b, _c, _d;
+                                                var _e;
+                                                var _this = this;
+                                                return __generator(this, function (_f) {
+                                                    switch (_f.label) {
+                                                        case 0:
+                                                            _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                            _c = [tagButtonList];
+                                                            return [4 /*yield*/, Promise.all(Storage.Tag.get(pass).sort(Domain.tagComparer(pass)).concat("@unoverall").map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
+                                                                    var dom, _a, update;
+                                                                    var _b;
+                                                                    return __generator(this, function (_c) {
+                                                                        switch (_c.label) {
+                                                                            case 0:
+                                                                                _a = minamo_js_1.minamo.dom.make(HTMLButtonElement);
+                                                                                _b = {
+                                                                                    tag: "button",
+                                                                                    className: "check-button"
+                                                                                };
+                                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check")];
+                                                                            case 1:
+                                                                                dom = _a.apply(void 0, [(_b.children = [
+                                                                                        _c.sent(),
+                                                                                        {
+                                                                                            tag: "span",
+                                                                                            children: Domain.tagMap(tag),
+                                                                                        }
+                                                                                    ],
+                                                                                        _b.onclick = function () {
+                                                                                            if (0 <= result.indexOf(tag)) {
+                                                                                                result = result.filter(function (i) { return tag !== i; });
+                                                                                                Storage.TagMember.remove(pass, tag, item.task);
+                                                                                            }
+                                                                                            else {
+                                                                                                result.push(tag);
+                                                                                                Storage.TagMember.add(pass, tag, item.task);
+                                                                                            }
+                                                                                            update();
+                                                                                        },
+                                                                                        _b)]);
+                                                                                update = function () {
+                                                                                    dom.classList.toggle("checked", 0 <= result.indexOf(tag));
+                                                                                };
+                                                                                update();
+                                                                                return [2 /*return*/, dom];
+                                                                        }
+                                                                    });
+                                                                }); }))];
+                                                        case 1:
+                                                            _d = [
+                                                                _f.sent()
+                                                            ];
+                                                            _e = {
+                                                                tag: "button",
+                                                                className: "check-button"
+                                                            };
+                                                            return [4 /*yield*/, Resource.loadSvgOrCache("check")];
+                                                        case 2: return [2 /*return*/, _b.apply(_a, _c.concat([_d.concat([
+                                                                    (_e.children = [
+                                                                        _f.sent(),
                                                                         {
                                                                             tag: "span",
-                                                                            children: Domain.tagMap(tag),
+                                                                            children: Domain.tagMap("@new"),
                                                                         }
                                                                     ],
-                                                                        _b.onclick = function () {
-                                                                            if (0 <= result.indexOf(tag)) {
-                                                                                result = result.filter(function (i) { return tag !== i; });
-                                                                                Storage.TagMember.remove(pass, tag, item.task);
-                                                                            }
-                                                                            else {
-                                                                                result.push(tag);
-                                                                                Storage.TagMember.add(pass, tag, item.task);
-                                                                            }
-                                                                            update();
-                                                                        },
-                                                                        _b)]);
-                                                                update = function () {
-                                                                    dom.classList.toggle("checked", 0 <= result.indexOf(tag));
-                                                                };
-                                                                update();
-                                                                return [2 /*return*/, dom];
-                                                        }
-                                                    });
-                                                }); }))];
+                                                                        _e.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            var newTag, tag;
+                                                                            return __generator(this, function (_a) {
+                                                                                switch (_a.label) {
+                                                                                    case 0: return [4 /*yield*/, Render.prompt("タグの名前を入力してください", "")];
+                                                                                    case 1:
+                                                                                        newTag = _a.sent();
+                                                                                        if (!(null !== newTag)) return [3 /*break*/, 3];
+                                                                                        tag = Storage.Tag.encode(newTag.trim());
+                                                                                        result.push(tag);
+                                                                                        Storage.Tag.add(pass, tag);
+                                                                                        Storage.TagMember.add(pass, tag, item.task);
+                                                                                        hasNewTag = true;
+                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                    case 2:
+                                                                                        _a.sent();
+                                                                                        _a.label = 3;
+                                                                                    case 3: return [2 /*return*/];
+                                                                                }
+                                                                            });
+                                                                        }); },
+                                                                        _e)
+                                                                ])]))];
+                                                    }
+                                                });
+                                            }); };
+                                            return [4 /*yield*/, tagButtonListUpdate()];
                                         case 1:
-                                            _b = _b.concat([
-                                                _e.sent()
-                                            ]);
-                                            _d = {
-                                                tag: "button",
-                                                className: "check-button"
-                                            };
-                                            return [4 /*yield*/, Resource.loadSvgOrCache("check")];
-                                        case 2:
-                                            ui = _a.apply(void 0, [(_c.children = _b.concat([
-                                                    (_d.children = [
-                                                        _e.sent(),
-                                                        "新しいタグ"
-                                                    ],
-                                                        _d.onclick = function () {
-                                                        },
-                                                        _d),
+                                            _a.sent();
+                                            ui = Render.popup({
+                                                className: "add-remove-tags-popup",
+                                                children: [
+                                                    {
+                                                        tag: "h2",
+                                                        children: item.task,
+                                                    },
+                                                    tagButtonList,
                                                     {
                                                         tag: "div",
                                                         className: "popup-operator",
@@ -3023,14 +3060,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                 },
                                                             },
                                                         ],
-                                                    }
-                                                ]),
-                                                    _c.onClose = function () { return __awaiter(_this, void 0, void 0, function () {
-                                                        return __generator(this, function (_a) {
-                                                            return [2 /*return*/, resolve(JSON.stringify(result.sort()) !== JSON.stringify([].concat(currentTags).sort()) || hasNewTag)];
-                                                        });
-                                                    }); },
-                                                    _c)]);
+                                                    },
+                                                ],
+                                                onClose: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    return __generator(this, function (_a) {
+                                                        return [2 /*return*/, resolve(JSON.stringify(result.sort()) !== JSON.stringify([].concat(currentTags).sort()) || hasNewTag)];
+                                                    });
+                                                }); },
+                                            });
                                             return [2 /*return*/];
                                     }
                                 });
@@ -3343,7 +3380,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Render.todoTagMenu = function (pass, item) { return Render.menuItem(locale.parallel("Add/Remove Tag"), function () { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, Render.AddRemoveTagsPopup(pass, item, Storage.Tag.get(pass), Storage.Tag.getByTodo(pass, item.task))];
+                        case 0: return [4 /*yield*/, Render.AddRemoveTagsPopup(pass, item, Storage.Tag.getByTodo(pass, item.task))];
                         case 1:
                             if (!_a.sent()) return [3 /*break*/, 3];
                             return [4 /*yield*/, CyclicToDo.reload()];
