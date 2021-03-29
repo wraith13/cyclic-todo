@@ -1086,7 +1086,7 @@ export module CyclicToDo
                 }
             );
         };
-        export const AddRemoveTagsPopup = async (pass: string, item: ToDoEntry, currentTags: string[]): Promise<boolean> =>
+        export const addRemoveTagsPopup = async (pass: string, item: ToDoEntry, currentTags: string[]): Promise<boolean> =>
         {
             return await new Promise
             (
@@ -1190,7 +1190,6 @@ export module CyclicToDo
                                         children: "閉じる",
                                         onclick: () =>
                                         {
-                                            // result = `${inputDate.value}T${inputTime.value}`;
                                             ui.close();
                                         },
                                     },
@@ -1201,6 +1200,101 @@ export module CyclicToDo
                         (
                             JSON.stringify(result.sort()) !== JSON.stringify([].concat(currentTags).sort()) || hasNewTag
                         ),
+                    });
+                }
+            );
+        };
+        export const moveToSublistPopup = async (pass: string, item: ToDoEntry): Promise<boolean> =>
+        {
+            return await new Promise
+            (
+                async resolve =>
+                {
+                    let result = false;
+                    const tagButtonList = minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                    minamo.dom.replaceChildren
+                    (
+                        tagButtonList,
+                        [
+                            await Promise.all
+                            (
+                                ["@root"].concat(Storage.Tag.get(pass).filter(tag => Storage.Tag.isSublist(tag)).sort(Domain.tagComparer(pass))).map
+                                (
+                                    async sublist =>
+                                    ({
+                                        tag: "button",
+                                        className: `check-button ${sublist === (Storage.Task.getSublist(item.task) ?? "@root") ? "checked": ""}`,
+                                        children:
+                                        [
+                                            await Resource.loadSvgOrCache("check"),
+                                            {
+                                                tag: "span",
+                                                children: Domain.tagMap(sublist),
+                                            },
+                                        ],
+                                        onclick: () =>
+                                        {
+                                            Storage.TagMember.add(pass, sublist, item.task);
+                                            result = true;
+                                            ui.close();
+                                        }
+                                    }),
+                                )
+                            ),
+                            {
+                                tag: "button",
+                                className: "check-button",
+                                children:
+                                [
+                                    await Resource.loadSvgOrCache("check"),
+                                    {
+                                        tag: "span",
+                                        children: Domain.tagMap("@new"),
+                                    },
+                                ],
+                                onclick: async () =>
+                                {
+                                    const sublist = await prompt("サブリストの名前を入力してください", "");
+                                    if (null !== sublist)
+                                    {
+                                        const tag = Storage.Tag.encode(sublist.trim());
+                                        Storage.Tag.add(pass, tag);
+                                        Storage.TagMember.add(pass, tag, item.task);
+                                        result = true;
+                                        ui.close();
+                                    }
+                                }
+                            },
+                        ]
+                    );
+                    const ui = popup
+                    ({
+                        className: "add-remove-tags-popup",
+                        children:
+                        [
+                            {
+                                tag: "h2",
+                                children: item.task,
+                            },
+                            tagButtonList,
+                            {
+                                tag: "div",
+                                className: "popup-operator",
+                                children:
+                                [
+                                    {
+                                        tag: "button",
+                                        className: "default-button",
+                                        children: "閉じる",
+                                        onclick: () =>
+                                        {
+                                            ui.close();
+                                        },
+                                    },
+                                ],
+                            },
+                        ],
+                        onClose: async () => resolve(result),
                     });
                 }
             );
@@ -1496,7 +1590,7 @@ export module CyclicToDo
             locale.parallel("Add/Remove Tag"),
             async () =>
             {
-                if (await AddRemoveTagsPopup(pass, item, Storage.Tag.getByTodo(pass, item.task)))
+                if (await addRemoveTagsPopup(pass, item, Storage.Tag.getByTodo(pass, item.task)))
                 {
                     await reload();
                 }
