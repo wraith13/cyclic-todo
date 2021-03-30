@@ -1956,33 +1956,11 @@ export module CyclicToDo
                     ({
                         list: makeObject
                         (
-                            ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@new"])
+                            ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged"])
                             .map(i => ({ key:i, value: `${Domain.tagMap(i)} (${Storage.TagMember.get(entry.pass, i).length})`, }))
                         ),
                         value: entry.tag,
-                        onChange: async (tag: string) =>
-                        {
-                            switch(tag)
-                            {
-                            case "@new":
-                                {
-                                    const newTag = await prompt("タグの名前を入力してください", "");
-                                    if (null === newTag || newTag.length <= 0)
-                                    {
-                                        await reload();
-                                    }
-                                    else
-                                    {
-                                        const tag = Storage.Tag.encode(newTag.trim());
-                                        Storage.Tag.add(entry.pass, tag);
-                                        await showUrl({ pass: entry.pass, tag: newTag, });
-                                    }
-                                }
-                                break;
-                            default:
-                                await showUrl({ pass: entry.pass, tag, });
-                            }
-                        },
+                        onChange: async (tag: string) => await showUrl({ pass: entry.pass, tag, }),
                     }),
                     [
                         internalLink
@@ -2174,33 +2152,11 @@ export module CyclicToDo
                     ({
                         list: makeObject
                         (
-                            ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@new"])
+                            ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged"])
                             .map(i => ({ key:i, value: `${Domain.tagMap(i)} (${Storage.TagMember.get(entry.pass, i).length})`, }))
                         ),
                         value: entry.tag,
-                        onChange: async (tag: string) =>
-                        {
-                            switch(tag)
-                            {
-                            case "@new":
-                                {
-                                    const newTag = await prompt("タグの名前を入力してください", "");
-                                    if (null === newTag)
-                                    {
-                                        await reload();
-                                    }
-                                    else
-                                    {
-                                        const tag = Storage.Tag.encode(newTag.trim());
-                                        Storage.Tag.add(entry.pass, tag);
-                                        await showUrl({ pass: entry.pass, tag: newTag, hash: "history", });
-                                    }
-                                }
-                                break;
-                            default:
-                                await showUrl({ pass: entry.pass, tag, hash: "history", });
-                            }
-                        },
+                        onChange: async (tag: string) => await showUrl({ pass: entry.pass, tag, hash: "history", }),
                     }),
                     [
                         menuItem

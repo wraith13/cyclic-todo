@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue Mar 30 2021 20:16:10 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Mar 30 2021 20:28:44 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -3937,43 +3937,15 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "list-screen screen"
                             };
                             return [4 /*yield*/, Render.screenHader("@overall" === entry.tag ? {} : { pass: entry.pass, tag: "@overall" }, Render.dropDownLabel({
-                                    list: exports.makeObject(["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@new"])
+                                    list: exports.makeObject(["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged"])
                                         .map(function (i) { return ({ key: i, value: Domain.tagMap(i) + " (" + Storage.TagMember.get(entry.pass, i).length + ")", }); })),
                                     value: entry.tag,
-                                    onChange: function (tag) { return __awaiter(_this, void 0, void 0, function () {
-                                        var _a, newTag, tag_2;
-                                        return __generator(this, function (_b) {
-                                            switch (_b.label) {
-                                                case 0:
-                                                    _a = tag;
-                                                    switch (_a) {
-                                                        case "@new": return [3 /*break*/, 1];
-                                                    }
-                                                    return [3 /*break*/, 7];
-                                                case 1: return [4 /*yield*/, Render.prompt("タグの名前を入力してください", "")];
-                                                case 2:
-                                                    newTag = _b.sent();
-                                                    if (!(null === newTag || newTag.length <= 0)) return [3 /*break*/, 4];
-                                                    return [4 /*yield*/, CyclicToDo.reload()];
-                                                case 3:
-                                                    _b.sent();
-                                                    return [3 /*break*/, 6];
-                                                case 4:
-                                                    tag_2 = Storage.Tag.encode(newTag.trim());
-                                                    Storage.Tag.add(entry.pass, tag_2);
-                                                    return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: newTag, })];
-                                                case 5:
-                                                    _b.sent();
-                                                    _b.label = 6;
-                                                case 6: return [3 /*break*/, 9];
-                                                case 7: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: tag, })];
-                                                case 8:
-                                                    _b.sent();
-                                                    _b.label = 9;
-                                                case 9: return [2 /*return*/];
-                                            }
-                                        });
-                                    }); },
+                                    onChange: function (tag) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: tag, })];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); },
                                 }), [
                                     Render.internalLink({
                                         href: { pass: entry.pass, tag: entry.tag, hash: "history" },
@@ -4207,43 +4179,15 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "history-screen screen"
                             };
                             return [4 /*yield*/, Render.screenHader({ pass: entry.pass, tag: entry.tag, }, Render.dropDownLabel({
-                                    list: exports.makeObject(["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged", "@new"])
+                                    list: exports.makeObject(["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged"])
                                         .map(function (i) { return ({ key: i, value: Domain.tagMap(i) + " (" + Storage.TagMember.get(entry.pass, i).length + ")", }); })),
                                     value: entry.tag,
-                                    onChange: function (tag) { return __awaiter(_this, void 0, void 0, function () {
-                                        var _a, newTag, tag_3;
-                                        return __generator(this, function (_b) {
-                                            switch (_b.label) {
-                                                case 0:
-                                                    _a = tag;
-                                                    switch (_a) {
-                                                        case "@new": return [3 /*break*/, 1];
-                                                    }
-                                                    return [3 /*break*/, 7];
-                                                case 1: return [4 /*yield*/, Render.prompt("タグの名前を入力してください", "")];
-                                                case 2:
-                                                    newTag = _b.sent();
-                                                    if (!(null === newTag)) return [3 /*break*/, 4];
-                                                    return [4 /*yield*/, CyclicToDo.reload()];
-                                                case 3:
-                                                    _b.sent();
-                                                    return [3 /*break*/, 6];
-                                                case 4:
-                                                    tag_3 = Storage.Tag.encode(newTag.trim());
-                                                    Storage.Tag.add(entry.pass, tag_3);
-                                                    return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: newTag, hash: "history", })];
-                                                case 5:
-                                                    _b.sent();
-                                                    _b.label = 6;
-                                                case 6: return [3 /*break*/, 9];
-                                                case 7: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: tag, hash: "history", })];
-                                                case 8:
-                                                    _b.sent();
-                                                    _b.label = 9;
-                                                case 9: return [2 /*return*/];
-                                            }
-                                        });
-                                    }); },
+                                    onChange: function (tag) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: tag, hash: "history", })];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); },
                                 }), [
                                     Render.menuItem(locale.parallel("Back to List"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
