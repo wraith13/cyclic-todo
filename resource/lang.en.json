@@ -9,7 +9,9 @@
     "@unoverall": "Excluded in the Overall",
     "@untagged": "Untagged",
     "@deleted": "Recycle Bin",
-    "@new": "New tag",
+    "@new": "New Tag",
+    "@new-sublist": "New Sublist",
+    "@root": "Root",
     "New ToDo": "New ToDo",
     "New ToDo List": "New ToDo List",
     "Import List": "Import List",
@@ -35,5 +37,6 @@
     "Delete this List": "Delete this List",
     "OK": "OK",
     "Cancel": "Cancel",
-    "Edit": "Edit"
+    "Edit": "Edit",
+    "Move to Sublist": "Move to Sublist"
 }

@@ -10,6 +10,8 @@
     "@untagged": "タグ付けされてない",
     "@deleted": "ごみ箱",
     "@new": "新しいタグ",
+    "@new-sublist": "新しいサブリスト",
+    "@root": "ルート",
     "New ToDo": "新しい ToDo",
     "New ToDo List": "新しい ToDo リスト",
     "Import List": "リストをインポート",
@@ -35,5 +37,6 @@
     "Delete this List": "このリストを削除",
     "OK": "OK",
     "Cancel": "キャンセル",
-    "Edit": "編集"
+    "Edit": "編集",
+    "Move to Sublist": "サブリストへ移動"
 }

@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon Mar 29 2021 19:58:23 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Mar 30 2021 20:16:10 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -1983,7 +1983,9 @@ define("resource/lang.en", [], {
     "@unoverall": "Excluded in the Overall",
     "@untagged": "Untagged",
     "@deleted": "Recycle Bin",
-    "@new": "New tag",
+    "@new": "New Tag",
+    "@new-sublist": "New Sublist",
+    "@root": "Root",
     "New ToDo": "New ToDo",
     "New ToDo List": "New ToDo List",
     "Import List": "Import List",
@@ -2009,7 +2011,8 @@ define("resource/lang.en", [], {
     "Delete this List": "Delete this List",
     "OK": "OK",
     "Cancel": "Cancel",
-    "Edit": "Edit"
+    "Edit": "Edit",
+    "Move to Sublist": "Move to Sublist"
 });
 define("resource/lang.ja", [], {
     "previous": "前回",
@@ -2023,6 +2026,8 @@ define("resource/lang.ja", [], {
     "@untagged": "タグ付けされてない",
     "@deleted": "ごみ箱",
     "@new": "新しいタグ",
+    "@new-sublist": "新しいサブリスト",
+    "@root": "ルート",
     "New ToDo": "新しい ToDo",
     "New ToDo List": "新しい ToDo リスト",
     "Import List": "リストをインポート",
@@ -2048,7 +2053,8 @@ define("resource/lang.ja", [], {
     "Delete this List": "このリストを削除",
     "OK": "OK",
     "Cancel": "キャンセル",
-    "Edit": "編集"
+    "Edit": "編集",
+    "Move to Sublist": "サブリストへ移動"
 });
 define("resource/images", [], {
     "application": "./image/cyclictodohex.1024.svg",
@@ -2591,11 +2597,13 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             };
             Domain.tagMap = function (tag) {
                 switch (tag) {
+                    case "@root":
                     case "@overall":
                     case "@unoverall":
                     case "@untagged":
                     // case "@deleted":
                     case "@new":
+                    case "@new-sublist":
                         return locale.map(tag);
                     default:
                         return Storage.Tag.decode(tag);
@@ -2933,7 +2941,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
-            Render.AddRemoveTagsPopup = function (pass, item, currentTags) { return __awaiter(_this, void 0, void 0, function () {
+            Render.addRemoveTagsPopup = function (pass, item, currentTags) { return __awaiter(_this, void 0, void 0, function () {
                 var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
@@ -3058,7 +3066,6 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                 className: "default-button",
                                                                 children: "閉じる",
                                                                 onclick: function () {
-                                                                    // result = `${inputDate.value}T${inputTime.value}`;
                                                                     ui.close();
                                                                 },
                                                             },
@@ -3070,6 +3077,121 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                         return [2 /*return*/, resolve(JSON.stringify(result.sort()) !== JSON.stringify([].concat(currentTags).sort()) || hasNewTag)];
                                                     });
                                                 }); },
+                                            });
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); })];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            }); };
+            Render.moveToSublistPopup = function (pass, item) { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                var result, tagButtonList, _a, _b, _c, _d, ui;
+                                var _e;
+                                var _this = this;
+                                return __generator(this, function (_f) {
+                                    switch (_f.label) {
+                                        case 0:
+                                            result = false;
+                                            tagButtonList = minamo_js_1.minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                                            _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                            _c = [tagButtonList];
+                                            return [4 /*yield*/, Promise.all(["@root"].concat(Storage.Tag.get(pass).filter(function (tag) { return Storage.Tag.isSublist(tag); }).sort(Domain.tagComparer(pass))).map(function (sublist) { return __awaiter(_this, void 0, void 0, function () {
+                                                    var _a;
+                                                    var _b;
+                                                    return __generator(this, function (_c) {
+                                                        switch (_c.label) {
+                                                            case 0:
+                                                                _a = {
+                                                                    tag: "button",
+                                                                    className: "check-button " + (sublist === ((_b = Storage.Task.getSublist(item.task)) !== null && _b !== void 0 ? _b : "@root") ? "checked" : "")
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check")];
+                                                            case 1: return [2 /*return*/, (_a.children = [
+                                                                    _c.sent(),
+                                                                    {
+                                                                        tag: "span",
+                                                                        children: Domain.tagMap(sublist),
+                                                                    }
+                                                                ],
+                                                                    _a.onclick = function () {
+                                                                        Storage.TagMember.add(pass, sublist, item.task);
+                                                                        result = true;
+                                                                        ui.close();
+                                                                    },
+                                                                    _a)];
+                                                        }
+                                                    });
+                                                }); }))];
+                                        case 1:
+                                            _d = [
+                                                _f.sent()
+                                            ];
+                                            _e = {
+                                                tag: "button",
+                                                className: "check-button"
+                                            };
+                                            return [4 /*yield*/, Resource.loadSvgOrCache("check")];
+                                        case 2:
+                                            _b.apply(_a, _c.concat([_d.concat([
+                                                    (_e.children = [
+                                                        _f.sent(),
+                                                        {
+                                                            tag: "span",
+                                                            children: Domain.tagMap("@new-sublist"),
+                                                        }
+                                                    ],
+                                                        _e.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            var sublist, tag;
+                                                            return __generator(this, function (_a) {
+                                                                switch (_a.label) {
+                                                                    case 0: return [4 /*yield*/, Render.prompt("サブリストの名前を入力してください", "")];
+                                                                    case 1:
+                                                                        sublist = _a.sent();
+                                                                        if (null !== sublist) {
+                                                                            tag = Storage.Tag.encode(sublist.trim());
+                                                                            Storage.Tag.add(pass, tag);
+                                                                            Storage.TagMember.add(pass, tag, item.task);
+                                                                            result = true;
+                                                                            ui.close();
+                                                                        }
+                                                                        return [2 /*return*/];
+                                                                }
+                                                            });
+                                                        }); },
+                                                        _e)
+                                                ])]));
+                                            ui = Render.popup({
+                                                className: "add-remove-tags-popup",
+                                                children: [
+                                                    {
+                                                        tag: "h2",
+                                                        children: item.task,
+                                                    },
+                                                    tagButtonList,
+                                                    {
+                                                        tag: "div",
+                                                        className: "popup-operator",
+                                                        children: [
+                                                            {
+                                                                tag: "button",
+                                                                className: "default-button",
+                                                                children: "閉じる",
+                                                                onclick: function () {
+                                                                    ui.close();
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                                onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                    return [2 /*return*/, resolve(result)];
+                                                }); }); },
                                             });
                                             return [2 /*return*/];
                                     }
@@ -3380,20 +3502,38 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     });
                 }); });
             };
-            Render.todoTagMenu = function (pass, item) { return Render.menuItem(locale.parallel("Add/Remove Tag"), function () { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, Render.AddRemoveTagsPopup(pass, item, Storage.Tag.getByTodo(pass, item.task))];
-                        case 1:
-                            if (!_a.sent()) return [3 /*break*/, 3];
-                            return [4 /*yield*/, CyclicToDo.reload()];
-                        case 2:
-                            _a.sent();
-                            _a.label = 3;
-                        case 3: return [2 /*return*/];
-                    }
-                });
-            }); }); };
+            Render.todoTagMenu = function (pass, item) {
+                return [
+                    Render.menuItem(locale.parallel("Add/Remove Tag"), function () { return __awaiter(_this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, Render.addRemoveTagsPopup(pass, item, Storage.Tag.getByTodo(pass, item.task))];
+                                case 1:
+                                    if (!_a.sent()) return [3 /*break*/, 3];
+                                    return [4 /*yield*/, CyclicToDo.reload()];
+                                case 2:
+                                    _a.sent();
+                                    _a.label = 3;
+                                case 3: return [2 /*return*/];
+                            }
+                        });
+                    }); }),
+                    Render.menuItem(locale.parallel("Move to Sublist"), function () { return __awaiter(_this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, Render.moveToSublistPopup(pass, item)];
+                                case 1:
+                                    if (!_a.sent()) return [3 /*break*/, 3];
+                                    return [4 /*yield*/, CyclicToDo.reload()];
+                                case 2:
+                                    _a.sent();
+                                    _a.label = 3;
+                                case 3: return [2 /*return*/];
+                            }
+                        });
+                    }); })
+                ];
+            };
             Render.todoDeleteMenu = function (pass, item) { return Render.menuItem(locale.parallel("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     switch (_a.label) {

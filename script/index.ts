@@ -702,11 +702,13 @@ export module CyclicToDo
         {
             switch(tag)
             {
+            case "@root":
             case "@overall":
             case "@unoverall":
             case "@untagged":
             // case "@deleted":
             case "@new":
+            case "@new-sublist":
                 return locale.map(tag);
             default:
                 return Storage.Tag.decode(tag);
@@ -1249,7 +1251,7 @@ export module CyclicToDo
                                     await Resource.loadSvgOrCache("check"),
                                     {
                                         tag: "span",
-                                        children: Domain.tagMap("@new"),
+                                        children: Domain.tagMap("@new-sublist"),
                                     },
                                 ],
                                 onclick: async () =>
@@ -1585,17 +1587,31 @@ export module CyclicToDo
                 }
             }
         );
-        export const todoTagMenu = (pass: string, item: ToDoEntry) => menuItem
-        (
-            locale.parallel("Add/Remove Tag"),
-            async () =>
-            {
-                if (await addRemoveTagsPopup(pass, item, Storage.Tag.getByTodo(pass, item.task)))
+        export const todoTagMenu = (pass: string, item: ToDoEntry) =>
+        [
+            menuItem
+            (
+                locale.parallel("Add/Remove Tag"),
+                async () =>
                 {
-                    await reload();
+                    if (await addRemoveTagsPopup(pass, item, Storage.Tag.getByTodo(pass, item.task)))
+                    {
+                        await reload();
+                    }
                 }
-            }
-        );
+            ),
+            menuItem
+            (
+                locale.parallel("Move to Sublist"),
+                async () =>
+                {
+                    if (await moveToSublistPopup(pass, item))
+                    {
+                        await reload();
+                    }
+                }
+            )
+        ];
         export const todoDeleteMenu = (pass: string, item: ToDoEntry) => menuItem
         (
             locale.parallel("Delete"),
