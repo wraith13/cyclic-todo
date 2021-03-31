@@ -218,10 +218,13 @@ export module CyclicToDo
         }
         export module Tag
         {
+            export const symbol = "🏷";
+            export const sublistSymbol = "📁";
             export const isSystemTag = (tag: string) => tag.startsWith("@") && ! tag.startsWith("@=") && ! isSublist(tag);
             export const isSublist = (tag: string) => tag.endsWith("@:");
-            export const encode = (tag: string) => tag.replace(/@/, "@=");
-            export const decode = (tag: string) => tag.replace(/@=/, "@");
+            export const encode = (tag: string) => tag.replace(/@/g, "@=");
+            export const encodeSublist = (tag: string) => encode(tag) +"@:";
+            export const decode = (tag: string) => tag.replace(/@\:/g, ": ").replace(/@=/g, "@");
             export const makeKey = (pass: string) => `pass:(${pass}).tag.list`;
             export const get = (pass: string) =>
                 getStorage(pass).getOrNull<string[]>(makeKey(pass)) ?? [];
@@ -338,7 +341,8 @@ export module CyclicToDo
                 {
                     if (tag !== Task.getSublist(todo))
                     {
-                        Task.rename(pass, todo, `${tag}@:${Task.getBody(todo)}`);
+                        console.log(`Task.rename(${pass}, ${todo}, "${tag}${Task.getBody(todo)}")`);
+                        Task.rename(pass, todo, `${tag}${Task.getBody(todo)}`);
                     }
                 }
                 else
@@ -384,14 +388,23 @@ export module CyclicToDo
             {
                 if (0 < newTask.length && oldTask !== newTask && TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0)
                 {
+                    const oldSublist = getSublist(oldTask);
+                    const newSublist = getSublist(newTask);
                     Tag.getByTodoRaw(pass, oldTask).forEach
                     (
                         tag =>
                         {
                             TagMember.remove(pass, tag, oldTask);
-                            TagMember.add(pass, tag, newTask);
+                            if ( ! Tag.isSublist(tag) || oldSublist === newSublist)
+                            {
+                                TagMember.add(pass, tag, newTask);
+                            }
                         }
                     );
+                    if (null !== newSublist && oldSublist !== newSublist)
+                    {
+                        TagMember.add(pass, newSublist, newTask);
+                    }
                     History.set(pass, newTask, History.get(pass, oldTask));
                     History.removeKey(pass, oldTask);
                     return true;
@@ -1259,7 +1272,7 @@ export module CyclicToDo
                                     const sublist = await prompt("サブリストの名前を入力してください", "");
                                     if (null !== sublist)
                                     {
-                                        const tag = Storage.Tag.encode(sublist.trim());
+                                        const tag = Storage.Tag.encodeSublist(sublist.trim());
                                         Storage.Tag.add(pass, tag);
                                         Storage.TagMember.add(pass, tag, item.task);
                                         result = true;
@@ -1637,7 +1650,7 @@ export module CyclicToDo
                         ({
                             className: "item-title",
                             href: { pass: entry.pass, todo: item.task, },
-                            children: item.task
+                            children: Storage.Tag.decode(item.task)
                         }),
                         {
                             tag: "div",
@@ -1700,7 +1713,7 @@ export module CyclicToDo
                         ({
                             className: "tag",
                             href: { pass: entry.pass, tag, },
-                            children: Domain.tagMap(tag),
+                            children: `${Storage.Tag.isSublist(tag) ? Storage.Tag.sublistSymbol: Storage.Tag.symbol } ${Domain.tagMap(tag)}`,
                         })
                     )
                 },
@@ -1722,7 +1735,7 @@ export module CyclicToDo
                         ({
                             className: "item-title",
                             href: { pass: entry.pass, todo: item.task, },
-                            children: item.task
+                            children: Storage.Tag.decode(item.task)
                         }),
                         {
                             tag: "span",
@@ -2392,7 +2405,7 @@ export module CyclicToDo
                 await screenHader
                 (
                     { pass, tag: "@overall", },
-                    `${item.task}`,
+                    `${Storage.Tag.decode(item.task)}`,
                     [
                         todoDoneMenu(pass, item),
                         todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
@@ -2428,7 +2441,7 @@ export module CyclicToDo
                                         ({
                                             className: "tag",
                                             href: { pass, tag, },
-                                            children: Domain.tagMap(tag),
+                                            children: `${Storage.Tag.isSublist(tag) ? Storage.Tag.sublistSymbol: Storage.Tag.symbol } ${Domain.tagMap(tag)}`,
                                         })
                                     )
                                 },

@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue Mar 30 2021 20:28:44 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed Mar 31 2021 18:23:31 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -2228,10 +2228,13 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             })(Pass = Storage.Pass || (Storage.Pass = {}));
             var Tag;
             (function (Tag) {
+                Tag.symbol = "🏷";
+                Tag.sublistSymbol = "📁";
                 Tag.isSystemTag = function (tag) { return tag.startsWith("@") && !tag.startsWith("@=") && !Tag.isSublist(tag); };
                 Tag.isSublist = function (tag) { return tag.endsWith("@:"); };
-                Tag.encode = function (tag) { return tag.replace(/@/, "@="); };
-                Tag.decode = function (tag) { return tag.replace(/@=/, "@"); };
+                Tag.encode = function (tag) { return tag.replace(/@/g, "@="); };
+                Tag.encodeSublist = function (tag) { return Tag.encode(tag) + "@:"; };
+                Tag.decode = function (tag) { return tag.replace(/@\:/g, ": ").replace(/@=/g, "@"); };
                 Tag.makeKey = function (pass) { return "pass:(" + pass + ").tag.list"; };
                 Tag.get = function (pass) { var _a; return (_a = Storage.getStorage(pass).getOrNull(Tag.makeKey(pass))) !== null && _a !== void 0 ? _a : []; };
                 Tag.set = function (pass, list) {
@@ -2326,7 +2329,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 TagMember.add = function (pass, tag, todo) {
                     if (Tag.isSublist(tag)) {
                         if (tag !== Task.getSublist(todo)) {
-                            Task.rename(pass, todo, tag + "@:" + Task.getBody(todo));
+                            console.log("Task.rename(" + pass + ", " + todo + ", \"" + tag + Task.getBody(todo) + "\")");
+                            Task.rename(pass, todo, "" + tag + Task.getBody(todo));
                         }
                     }
                     else {
@@ -2362,10 +2366,17 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 };
                 Task.rename = function (pass, oldTask, newTask) {
                     if (0 < newTask.length && oldTask !== newTask && TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0) {
+                        var oldSublist_1 = Task.getSublist(oldTask);
+                        var newSublist_1 = Task.getSublist(newTask);
                         Tag.getByTodoRaw(pass, oldTask).forEach(function (tag) {
                             TagMember.remove(pass, tag, oldTask);
-                            TagMember.add(pass, tag, newTask);
+                            if (!Tag.isSublist(tag) || oldSublist_1 === newSublist_1) {
+                                TagMember.add(pass, tag, newTask);
+                            }
                         });
+                        if (null !== newSublist_1 && oldSublist_1 !== newSublist_1) {
+                            TagMember.add(pass, newSublist_1, newTask);
+                        }
                         History.set(pass, newTask, History.get(pass, oldTask));
                         History.removeKey(pass, oldTask);
                         return true;
@@ -3154,7 +3165,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                     case 1:
                                                                         sublist = _a.sent();
                                                                         if (null !== sublist) {
-                                                                            tag = Storage.Tag.encode(sublist.trim());
+                                                                            tag = Storage.Tag.encodeSublist(sublist.trim());
                                                                             Storage.Tag.add(pass, tag);
                                                                             Storage.TagMember.add(pass, tag, item.task);
                                                                             result = true;
@@ -3566,7 +3577,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _a = [Render.internalLink({
                                     className: "item-title",
                                     href: { pass: entry.pass, todo: item.task, },
-                                    children: item.task
+                                    children: Storage.Tag.decode(item.task)
                                 })];
                             _e = {
                                 tag: "div",
@@ -3629,7 +3640,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     children: Storage.Tag.getByTodo(entry.pass, item.task).map(function (tag) { return Render.internalLink({
                                         className: "tag",
                                         href: { pass: entry.pass, tag: tag, },
-                                        children: Domain.tagMap(tag),
+                                        children: (Storage.Tag.isSublist(tag) ? Storage.Tag.sublistSymbol : Storage.Tag.symbol) + " " + Domain.tagMap(tag),
                                     }); })
                                 },
                                 Render.information(item)
@@ -3656,7 +3667,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         Render.internalLink({
                                             className: "item-title",
                                             href: { pass: entry.pass, todo: item.task, },
-                                            children: item.task
+                                            children: Storage.Tag.decode(item.task)
                                         }),
                                         {
                                             tag: "span",
@@ -4482,7 +4493,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 tag: "div",
                                 className: "todo-screen screen"
                             };
-                            return [4 /*yield*/, Render.screenHader({ pass: pass, tag: "@overall", }, "" + item.task, [
+                            return [4 /*yield*/, Render.screenHader({ pass: pass, tag: "@overall", }, "" + Storage.Tag.decode(item.task), [
                                     Render.todoDoneMenu(pass, item),
                                     Render.todoRenameMenu(pass, item, function (newTask) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
@@ -4520,7 +4531,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     children: Storage.Tag.getByTodo(pass, item.task).map(function (tag) { return Render.internalLink({
                                                         className: "tag",
                                                         href: { pass: pass, tag: tag, },
-                                                        children: Domain.tagMap(tag),
+                                                        children: (Storage.Tag.isSublist(tag) ? Storage.Tag.sublistSymbol : Storage.Tag.symbol) + " " + Domain.tagMap(tag),
                                                     }); })
                                                 },
                                                 Render.information(item),
