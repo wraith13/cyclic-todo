@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed Mar 31 2021 18:23:31 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed Mar 31 2021 21:06:05 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -577,27 +577,44 @@ button.default-button:hover {
   max-width: calc((100% - 1px) / 12);
 }
 .item-title {
-  display: inline-block;
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
   font-size: 1.2rem;
-  line-height: 1em;
+  line-height: 1.4em;
   box-sizing: border-box;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  height: 1em;
+  height: 1.4em;
   margin-right: -120px;
   cursor: pointer;
 }
+.item-title svg {
+  width: 1.4em;
+  height: 1.4em;
+  margin-right: 4px;
+}
 .item-title:hover {
   color: #21788B;
+}
+.item-title:hover svg {
+  fill: #21788B;
 }
 .item-title:not(:hover) {
   color: #000022;
   text-decoration: none;
 }
+.item-title:not(:hover) svg {
+  fill: #000022;
+}
 @media (prefers-color-scheme: dark) {
   .item-title:not(:hover) {
     color: #FFFFFF;
+  }
+  .item-title:not(:hover) svg {
+    fill: #FFFFFF;
   }
 }
 .removed-item .item-title {
@@ -2060,7 +2077,8 @@ define("resource/images", [], {
     "application": "./image/cyclictodohex.1024.svg",
     "application-color": "./image/cyclictodohex.1024.color.svg",
     "ellipsis": "./image/ellipsis.1024.svg",
-    "check": "./image/check.1024.svg"
+    "check": "./image/check.1024.svg",
+    "task": "./image/task.1024.svg"
 });
 define("script/index", ["require", "exports", "script/minamo.js/index", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -3560,30 +3578,39 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); }); };
             Render.todoItem = function (entry, item) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b;
-                var _c, _d, _e;
+                var _a, _b, _c;
+                var _d, _e, _f, _g;
                 var _this = this;
-                return __generator(this, function (_f) {
-                    switch (_f.label) {
+                return __generator(this, function (_h) {
+                    switch (_h.label) {
                         case 0:
-                            _c = {
+                            _d = {
                                 tag: "div",
                                 className: "task-item flex-item"
                             };
-                            _d = {
+                            _e = {
                                 tag: "div",
                                 className: "item-header"
                             };
-                            _a = [Render.internalLink({
-                                    className: "item-title",
-                                    href: { pass: entry.pass, todo: item.task, },
-                                    children: Storage.Tag.decode(item.task)
-                                })];
-                            _e = {
+                            _a = Render.internalLink;
+                            _f = {
+                                className: "item-title",
+                                href: { pass: entry.pass, todo: item.task, }
+                            };
+                            return [4 /*yield*/, Resource.loadSvgOrCache("task")];
+                        case 1:
+                            _b = [
+                                _a.apply(void 0, [(_f.children = [
+                                        _h.sent(),
+                                        Storage.Tag.decode(item.task)
+                                    ],
+                                        _f)])
+                            ];
+                            _g = {
                                 tag: "div",
                                 className: "item-operator"
                             };
-                            _b = [{
+                            _c = [{
                                     tag: "button",
                                     className: item.isDefault ? "default-button main-button" : "main-button",
                                     children: [
@@ -3626,14 +3653,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     Render.todoTagMenu(entry.pass, item),
                                     Render.todoDeleteMenu(entry.pass, item),
                                 ])];
-                        case 1: return [2 /*return*/, (_c.children = [
-                                (_d.children = _a.concat([
-                                    (_e.children = _b.concat([
-                                        _f.sent()
+                        case 2: return [2 /*return*/, (_d.children = [
+                                (_e.children = _b.concat([
+                                    (_g.children = _c.concat([
+                                        _h.sent()
                                     ]),
-                                        _e)
+                                        _g)
                                 ]),
-                                    _d),
+                                    _e),
                                 {
                                     tag: "div",
                                     className: "item-tags",
@@ -3645,7 +3672,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 },
                                 Render.information(item)
                             ],
-                                _c)];
+                                _d)];
                     }
                 });
             }); };
@@ -5447,6 +5474,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
 </svg>
 </div><div id="check"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M397.173,601.266L245.487,448.854C228.743,432.031 201.491,431.966 184.667,448.709L123.702,509.384C106.879,526.128 106.814,553.38 123.557,570.204L366.256,814.062C382.999,830.886 410.252,830.951 427.075,814.207L874.15,369.261C890.973,352.517 891.038,325.265 874.295,308.441L813.62,247.476C796.877,230.653 769.624,230.588 752.8,247.331L397.173,601.266Z"/>
+</svg>
+</div><div id="task"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M512,81.124C749.807,81.124 942.876,274.193 942.876,512C942.876,749.807 749.807,942.876 512,942.876C274.193,942.876 81.124,749.807 81.124,512C81.124,274.193 274.193,81.124 512,81.124ZM469.52,578.24L366.174,474.4C354.766,462.938 336.199,462.894 324.737,474.301L283.201,515.639C271.738,527.047 271.694,545.615 283.102,557.077L448.455,723.221C459.863,734.683 478.43,734.727 489.892,723.32L794.49,420.172C805.952,408.764 805.996,390.197 794.589,378.734L753.25,337.198C741.843,325.736 723.275,325.692 711.813,337.1L469.52,578.24Z"/>
 </svg>
 </div></div></body>
 </html>

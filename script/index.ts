@@ -1650,7 +1650,11 @@ export module CyclicToDo
                         ({
                             className: "item-title",
                             href: { pass: entry.pass, todo: item.task, },
-                            children: Storage.Tag.decode(item.task)
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("task"),
+                                Storage.Tag.decode(item.task)
+                            ]
                         }),
                         {
                             tag: "div",

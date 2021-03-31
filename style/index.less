@@ -713,24 +713,41 @@ button.default-button
 }
 .item-title
 {
-    display: inline-block;
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
     font-size: 1.2rem;
-    line-height: 1.0em;
+    line-height: 1.4em;
     box-sizing: border-box;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    height: 1em;
+    height: 1.4em;
     margin-right: -120px;
     cursor: pointer;
+    svg
+    {
+        width: 1.4em;
+        height: 1.4em;
+        margin-right: 4px;
+    }
     &:hover
     {
         color: @active-color;
+        svg
+        {
+            fill: @active-color;
+        }
     }
     &:not(:hover)
     {
         color: @main-color;
         text-decoration: none;
+        svg
+        {
+            fill: @main-color;
+        }
     }
 }
 @media (prefers-color-scheme: dark)
@@ -738,6 +755,10 @@ button.default-button
     .item-title:not(:hover)
     {
         color: @dark-main-color;
+        svg
+        {
+            fill: @dark-main-color;
+        }
     }
 }
 .removed-item
