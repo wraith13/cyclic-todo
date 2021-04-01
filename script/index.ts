@@ -1653,7 +1653,7 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache("task"),
-                                Storage.Tag.decode(item.task)
+                                Storage.Tag.decode(item.task),
                             ]
                         }),
                         {
@@ -2720,7 +2720,11 @@ export module CyclicToDo
                         ({
                             className: "item-title",
                             href: { pass: list.pass, tag: "@overall", },
-                            children: `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("list"),
+                                `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
+                            ]
                         }),
                         {
                             tag: "div",

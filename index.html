@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed Mar 31 2021 21:06:05 GMT+0900 (GMT+09:00) -->
+<!-- build at: Fri Apr 02 2021 06:24:07 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -2078,6 +2078,7 @@ define("resource/images", [], {
     "application-color": "./image/cyclictodohex.1024.color.svg",
     "ellipsis": "./image/ellipsis.1024.svg",
     "check": "./image/check.1024.svg",
+    "list": "./image/list.1024.svg",
     "task": "./image/task.1024.svg"
 });
 define("script/index", ["require", "exports", "script/minamo.js/index", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
@@ -4924,30 +4925,39 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             Render.listItem = function (list) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b;
-                var _c, _d, _e;
+                var _a, _b, _c;
+                var _d, _e, _f, _g;
                 var _this = this;
-                return __generator(this, function (_f) {
-                    switch (_f.label) {
+                return __generator(this, function (_h) {
+                    switch (_h.label) {
                         case 0:
-                            _c = {
+                            _d = {
                                 tag: "div",
                                 className: "list-item flex-item"
                             };
-                            _d = {
+                            _e = {
                                 tag: "div",
                                 className: "item-header"
                             };
-                            _a = [Render.internalLink({
-                                    className: "item-title",
-                                    href: { pass: list.pass, tag: "@overall", },
-                                    children: "ToDo \u30EA\u30B9\u30C8 ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )"
-                                })];
-                            _e = {
+                            _a = Render.internalLink;
+                            _f = {
+                                className: "item-title",
+                                href: { pass: list.pass, tag: "@overall", }
+                            };
+                            return [4 /*yield*/, Resource.loadSvgOrCache("list")];
+                        case 1:
+                            _b = [
+                                _a.apply(void 0, [(_f.children = [
+                                        _h.sent(),
+                                        "ToDo \u30EA\u30B9\u30C8 ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )"
+                                    ],
+                                        _f)])
+                            ];
+                            _g = {
                                 tag: "div",
                                 className: "item-operator"
                             };
-                            _b = [Render.internalLink({
+                            _c = [Render.internalLink({
                                     href: { pass: list.pass, tag: "@overall", },
                                     children: {
                                         tag: "button",
@@ -4977,16 +4987,16 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         });
                                     }); })
                                 ])];
-                        case 1: return [2 /*return*/, (_c.children = [
-                                (_d.children = _a.concat([
-                                    (_e.children = _b.concat([
-                                        _f.sent()
+                        case 2: return [2 /*return*/, (_d.children = [
+                                (_e.children = _b.concat([
+                                    (_g.children = _c.concat([
+                                        _h.sent()
                                     ]),
-                                        _e)
+                                        _g)
                                 ]),
-                                    _d)
+                                    _e)
                             ],
-                                _c)];
+                                _d)];
                     }
                 });
             }); };
@@ -5474,6 +5484,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
 </svg>
 </div><div id="check"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M397.173,601.266L245.487,448.854C228.743,432.031 201.491,431.966 184.667,448.709L123.702,509.384C106.879,526.128 106.814,553.38 123.557,570.204L366.256,814.062C382.999,830.886 410.252,830.951 427.075,814.207L874.15,369.261C890.973,352.517 891.038,325.265 874.295,308.441L813.62,247.476C796.877,230.653 769.624,230.588 752.8,247.331L397.173,601.266Z"/>
+</svg>
+</div><div id="list"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M448,832C412.677,832 384,803.323 384,768C384,732.677 412.677,704 448,704L768,704C803.323,704 832,732.677 832,768C832,803.323 803.323,832 768,832L448,832ZM256,704C291.323,704 320,732.677 320,768C320,803.323 291.323,832 256,832C220.677,832 192,803.323 192,768C192,732.677 220.677,704 256,704ZM448,576C412.677,576 384,547.323 384,512C384,476.677 412.677,448 448,448L768,448C803.323,448 832,476.677 832,512C832,547.323 803.323,576 768,576L448,576ZM256,448C291.323,448 320,476.677 320,512C320,547.323 291.323,576 256,576C220.677,576 192,547.323 192,512C192,476.677 220.677,448 256,448ZM448,320C412.677,320 384,291.323 384,256C384,220.677 412.677,192 448,192L768,192C803.323,192 832,220.677 832,256C832,291.323 803.323,320 768,320L448,320ZM256,192C291.323,192 320,220.677 320,256C320,291.323 291.323,320 256,320C220.677,320 192,291.323 192,256C192,220.677 220.677,192 256,192Z"/>
 </svg>
 </div><div id="task"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M512,81.124C749.807,81.124 942.876,274.193 942.876,512C942.876,749.807 749.807,942.876 512,942.876C274.193,942.876 81.124,749.807 81.124,512C81.124,274.193 274.193,81.124 512,81.124ZM469.52,578.24L366.174,474.4C354.766,462.938 336.199,462.894 324.737,474.301L283.201,515.639C271.738,527.047 271.694,545.615 283.102,557.077L448.455,723.221C459.863,734.683 478.43,734.727 489.892,723.32L794.49,420.172C805.952,408.764 805.996,390.197 794.589,378.734L753.25,337.198C741.843,325.736 723.275,325.692 711.813,337.1L469.52,578.24Z"/>

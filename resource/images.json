@@ -3,5 +3,6 @@
     "application-color": "./image/cyclictodohex.1024.color.svg",
     "ellipsis": "./image/ellipsis.1024.svg",
     "check": "./image/check.1024.svg",
+    "list": "./image/list.1024.svg",
     "task": "./image/task.1024.svg"
 }
