@@ -290,7 +290,12 @@ export module CyclicToDo
                 }
                 return result;
             };
-            export const getByTodo = (pass: string, todo: string) => ["@overall"].concat(get(pass)).concat(["@unoverall", "@untagged"]).filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length);
+            export const getByTodo = (pass: string, todo: string) =>
+                ["@overall"]
+                    .concat(get(pass))
+                    .concat(["@unoverall", "@untagged"])
+                    .filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length)
+                    .sort(minamo.core.comparer.make(tag => isSublist(tag) ? 0: 1));
             export const getByTodoRaw = (pass: string, todo: string) => ["@overall"].concat(get(pass)).concat(["@unoverall", "@untagged"]).filter(tag => 0 < TagMember.getRaw(pass, tag).filter(i => todo === i).length);
             export const rename = (pass: string, oldTag: string, newTag: string) =>
             {
@@ -3045,6 +3050,11 @@ export module CyclicToDo
         {
             switch(event.key)
             {
+                case "Enter":
+                    (Array.from(document.getElementsByClassName("popup")) as HTMLDivElement[])
+                        .filter((_i, ix, list) => (ix +1) === list.length)
+                        .forEach(popup => (Array.from(popup.getElementsByClassName("default-button")) as HTMLButtonElement[])?.[0]?.click());
+                    break;
                 case "Escape":
                     (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[])
                         .filter((_i, ix, list) => (ix +1) === list.length)
