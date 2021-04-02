@@ -3041,6 +3041,17 @@ export module CyclicToDo
                 50,
             );
         };
+        export const onKeydown = (event: KeyboardEvent) =>
+        {
+            switch(event.key)
+            {
+                case "Escape":
+                    (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[])
+                        .filter((_i, ix, list) => (ix +1) === list.length)
+                        .forEach(i => i.click());
+                    break;
+            }
+        };
     }
     export const getUrlParams = (url: string = location.href) =>
     {
@@ -3112,6 +3123,7 @@ export module CyclicToDo
         // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
         window.addEventListener('resize', Render.onWindowResize);
         window.addEventListener('storage', Render.onUpdateStorage);
+        window.addEventListener('keydown', Render.onKeydown);
         if (pass && todo)
         {
             console.log("show todo screen");
