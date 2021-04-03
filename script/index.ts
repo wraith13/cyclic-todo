@@ -1952,7 +1952,7 @@ export module CyclicToDo
                 ),
             ]
         });
-        export const screenHader = async (href: PageParams, title: minamo.dom.Source, menu: minamo.dom.Source) => heading
+        export const screenHeader = async (href: PageParams, title: minamo.dom.Source, menu: minamo.dom.Source) => heading
         (
             "h1",
             [
