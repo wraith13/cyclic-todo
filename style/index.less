@@ -113,6 +113,16 @@ h1
             background-color: @active-color;
         }
     }
+    .segment
+    {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        //justify-content: start;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.2rem;
+    }
     button.menu-button:not(:hover)
     {
         color: @base-color;
@@ -137,8 +147,15 @@ h2
 h1, h2
 {
     margin: 0rem;
-    color: @base-color;
+    &, & a
+    {
+        color: @base-color;
+    }
     background-color: @accent-color;
+    a:not(:hover)
+    {
+        text-decoration: none;
+    }
 }
 @media (prefers-color-scheme: dark)
 {
@@ -168,7 +185,10 @@ h1, h2
     }
     h1, h2
     {
-        color: @dark-base-color;
+        &, & a
+        {
+            color: @dark-base-color;
+        }
     }
 }
 label

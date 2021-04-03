@@ -1965,7 +1965,7 @@ export module CyclicToDo
                 await menuButton(menu),
             ]
         );
-        export const screenSegmentedHeader = async (items: {icon: Resource.KeyType, href: PageParams | (() => unknown)[], title: string}, menu: minamo.dom.Source) => heading
+        export const screenSegmentedHeader = async (items: {icon: Resource.KeyType, href: PageParams | (() => unknown), title: string}[], menu: minamo.dom.Source) => heading
         (
             "h1",
             [
@@ -1985,7 +1985,11 @@ export module CyclicToDo
                             className: "segment",
                             children:
                             [
-                                await Resource.loadSvgOrCache(item.icon),
+                                {
+                                    tag: "div",
+                                    className: "icon",
+                                    children: await Resource.loadSvgOrCache(item.icon),
+                                },
                                 {
                                     tag: "div",
                                     className: "segment-title",
@@ -1997,10 +2001,14 @@ export module CyclicToDo
                         internalLink
                         ({
                             className: "segment",
-                            href: items.href as PageParams,
+                            href: item.href as PageParams,
                             children:
                             [
-                                await Resource.loadSvgOrCache(item.icon),
+                                {
+                                    tag: "div",
+                                    className: "icon",
+                                    children: await Resource.loadSvgOrCache(item.icon),
+                                },
                                 {
                                     tag: "div",
                                     className: "segment-title",
@@ -2828,10 +2836,9 @@ export module CyclicToDo
             className: "welcome-screen screen",
             children:
             [
-                await screenHeader
+                await screenSegmentedHeader
                 (
-                    { },
-                    `${document.title}`,
+                    [ ],
                     [
                         menuItem
                         (
