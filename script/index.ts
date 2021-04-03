@@ -68,7 +68,7 @@ export module Calculate
 }
 export module CyclicToDo
 {
-    const applicationTitle = "Cyclic ToDo";
+    export const applicationTitle = "Cyclic ToDo";
     export module locale
     {
         export type LocaleKeyType = localeParallel.LocaleKeyType;
@@ -1965,13 +1965,61 @@ export module CyclicToDo
                 await menuButton(menu),
             ]
         );
+        export const screenSegmentedHeader = async (items: {icon: Resource.KeyType, href: PageParams | (() => unknown)[], title: string}, menu: minamo.dom.Source) => heading
+        (
+            "h1",
+            [
+                await Promise.all
+                (
+                    [{
+                        icon: "application" as Resource.KeyType,
+                        href: { },
+                        title: CyclicToDo.applicationTitle
+                    }]
+                    .concat(items)
+                    .map
+                    (
+                        async item => "function" === typeof item.href ?
+                        {
+                            tag: "div",
+                            className: "segment",
+                            children:
+                            [
+                                await Resource.loadSvgOrCache(item.icon),
+                                {
+                                    tag: "div",
+                                    className: "segment-title",
+                                    children:item.title,
+                                },
+                            ],
+                            onclick: item.href,
+                        }:
+                        internalLink
+                        ({
+                            className: "segment",
+                            href: items.href as PageParams,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache(item.icon),
+                                {
+                                    tag: "div",
+                                    className: "segment-title",
+                                    children:item.title,
+                                },
+                            ],
+                        }),
+                    )
+                ),
+                await menuButton(menu),
+            ]
+        );
         export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         ({
             tag: "div",
             className: "list-screen screen",
             children:
             [
-                await screenHader
+                await screenHeader
                 (
                     "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall" },
                     dropDownLabel
@@ -2167,7 +2215,7 @@ export module CyclicToDo
             className: "history-screen screen",
             children:
             [
-                await screenHader
+                await screenHeader
                 (
                     { pass: entry.pass, tag: entry.tag, },
                     dropDownLabel
@@ -2350,7 +2398,7 @@ export module CyclicToDo
             className: "removed-screen screen",
             children:
             [
-                await screenHader
+                await screenHeader
                 (
                     { pass, tag: "@overall", },
                     locale.map("@deleted"),
@@ -2411,7 +2459,7 @@ export module CyclicToDo
             className: "todo-screen screen",
             children:
             [
-                await screenHader
+                await screenHeader
                 (
                     { pass, tag: "@overall", },
                     `${Storage.Tag.decode(item.task)}`,
@@ -2538,7 +2586,7 @@ export module CyclicToDo
             className: "export-screen screen",
             children:
             [
-                await screenHader
+                await screenHeader
                 (
                     { pass, tag: "@overall", },
                     `${document.title}`,
@@ -2568,7 +2616,7 @@ export module CyclicToDo
             className: "import-screen screen",
             children:
             [
-                await screenHader
+                await screenHeader
                 (
                     { },
                     `${document.title}`,
@@ -2658,7 +2706,7 @@ export module CyclicToDo
             className: "remove-list-screen screen",
             children:
             [
-                await screenHader
+                await screenHeader
                 (
                     { },
                     `${locale.map("@deleted")}`,
@@ -2780,7 +2828,7 @@ export module CyclicToDo
             className: "welcome-screen screen",
             children:
             [
-                await screenHader
+                await screenHeader
                 (
                     { },
                     `${document.title}`,
@@ -2857,7 +2905,7 @@ export module CyclicToDo
             className: "updating-screen screen",
             children:
             [
-                await screenHader
+                await screenHeader
                 (
                     { },
                     `...`,
