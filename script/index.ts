@@ -2714,10 +2714,13 @@ export module CyclicToDo
             className: "remove-list-screen screen",
             children:
             [
-                await screenHeader
+                await screenSegmentedHeader
                 (
-                    { },
-                    `${locale.map("@deleted")}`,
+                    [{
+                        icon: "list", // 本来は recycle-bin だけど、まだ作ってない
+                        href: { hash: "removed" },
+                        title: locale.map("@deleted"),
+                    }],
                     [
                         menuItem
                         (
