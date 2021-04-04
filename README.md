@@ -45,13 +45,13 @@ Debug builds embed map files.
 |---|---|
 |[`./build.js`](./build.js)|build command script.|
 |[`./build.json`](./build.json)|build settings.|
-|[`./index.html`](./index.html)|TBD|
-|[`./index.template.html`](./index.template.html)|TBD|
-|[`./resource/images.json`](./resource/images.json)|TBD|
-|[`./resource/lang.en.json`](./resource/lang.en.json)|TBD|
-|[`./resource/lang.ja.json`](./resource/lang.ja.json)|TBD|
-|[`./style/index.less`](./style/index.less)|TBD|
-|[`./script/index.ts`](./script/index.ts)|TBD|
+|[`./index.html`](./index.html)|This file is genereted by build.js|
+|[`./index.template.html`](./index.template.html)|HTML template|
+|[`./resource/images.json`](./resource/images.json)|define image files.|
+|[`./resource/lang.en.json`](./resource/lang.en.json)|English language data.|
+|[`./resource/lang.ja.json`](./resource/lang.ja.json)|Japanese language data.|
+|[`./style/index.less`](./style/index.less)|style source file|
+|[`./script/index.ts`](./script/index.ts)|script source file|
 
 ## How to publish
 
