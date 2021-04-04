@@ -1441,6 +1441,18 @@ export module CyclicToDo
             children,
             onclick,
         });
+        export const menuLinkItem = (children: minamo.dom.Source, href: PageParams, className?: string) => menuItem
+        (
+            children,
+            () => showUrl(href),
+            className,
+        );
+        // export const menuLinkItem = (children: minamo.dom.Source, href: PageParams, className?: string) => internalLink
+        // ({
+        //     className,
+        //     href,
+        //     children,
+        // });
         export const information = (item: ToDoEntry) =>
         ({
             tag: "div",
@@ -1965,62 +1977,154 @@ export module CyclicToDo
                 await menuButton(menu),
             ]
         );
-        export const screenSegmentedHeader = async (items: {icon: Resource.KeyType, href: PageParams | (() => unknown), title: string}[], menu: minamo.dom.Source) => heading
+        export interface HeaderSegmentSource
+        {
+            icon: Resource.KeyType;
+            title: string;
+            href?: PageParams;
+            menu?: minamo.dom.Source;
+        }
+        export const screenSegmentedHeader = async (items: HeaderSegmentSource[], menu: minamo.dom.Source) => heading
         (
             "h1",
             [
-                await Promise.all
                 (
-                    [{
-                        icon: "application" as Resource.KeyType,
-                        href: { },
-                        title: CyclicToDo.applicationTitle
-                    }]
-                    .concat(items)
-                    .map
+                    await Promise.all
                     (
-                        async item => "function" === typeof item.href ?
-                        {
-                            tag: "div",
-                            className: "segment",
-                            children:
-                            [
-                                {
-                                    tag: "div",
-                                    className: "icon",
-                                    children: await Resource.loadSvgOrCache(item.icon),
-                                },
-                                {
-                                    tag: "div",
-                                    className: "segment-title",
-                                    children:item.title,
-                                },
-                            ],
-                            onclick: item.href,
-                        }:
-                        internalLink
-                        ({
-                            className: "segment",
-                            href: item.href as PageParams,
-                            children:
-                            [
-                                {
-                                    tag: "div",
-                                    className: "icon",
-                                    children: await Resource.loadSvgOrCache(item.icon),
-                                },
-                                {
-                                    tag: "div",
-                                    className: "segment-title",
-                                    children:item.title,
-                                },
-                            ],
-                        }),
+                        [
+                            {
+                                icon: "application" as Resource.KeyType,
+                                href: { },
+                                title: CyclicToDo.applicationTitle,
+                            } as HeaderSegmentSource
+                        ]
+                        .concat(items)
+                        .map
+                        (
+                            async item => item.href ?
+                                screenHeaderLinkSegment(item):
+                                screenHeaderPopupSegment(item)
+                        )
                     )
-                ),
+                ).reduce((a, b) => (a as any[]).concat(b), []),
                 await menuButton(menu),
             ]
         );
+        export const screenHeaderLinkSegment = async (item: HeaderSegmentSource) => internalLink
+        ({
+            className: "segment",
+            href: item.href,
+            children:
+            [
+                {
+                    tag: "div",
+                    className: "icon",
+                    children: await Resource.loadSvgOrCache(item.icon),
+                },
+                {
+                    tag: "div",
+                    className: "segment-title",
+                    children:item.title,
+                },
+            ],
+        });
+        export const screenHeaderPopupSegment = async (item: HeaderSegmentSource) =>
+        {
+            let cover: { dom: HTMLDivElement, close: () => Promise<unknown> };
+            const close = () =>
+            {
+                popup.classList.remove("show");
+                cover = null;
+            };
+            const popup = minamo.dom.make(HTMLDivElement)
+            ({
+                tag: "div",
+                className: "menu-popup segment-popup",
+                children: item.menu,
+                onclick: async () =>
+                {
+                    console.log("menu-popup.click!");
+                    cover?.close();
+                    close();
+                },
+            });
+            const segment = minamo.dom.make(HTMLDivElement)
+            ({
+                tag: "div",
+                className: "segment",
+                children:
+                [
+                    {
+                        tag: "div",
+                        className: "icon",
+                        children: await Resource.loadSvgOrCache(item.icon),
+                    },
+                    {
+                        tag: "div",
+                        className: "segment-title",
+                        children:item.title,
+                    },
+                    //popup
+                ],
+                onclick: () =>
+                {
+                    console.log("menu-button.click!");
+                    popup.classList.add("show");
+                    popup.style.height = `${popup.offsetHeight}px`;
+                    popup.style.width = `${popup.offsetWidth}px`;
+                    popup.style.top = `${segment.offsetTop +segment.offsetHeight}px`;
+                    popup.style.left = `${segment.offsetLeft}px`;
+                    cover = screenCover
+                    ({
+                        onclick: close,
+                    });
+                },
+            });
+            return [ segment, popup, ];
+        };
+        export const screenHeaderListSegment = async (pass: string): Promise<HeaderSegmentSource> =>
+        ({
+            icon: "@removed" === pass ?
+                "list": // 本来は recycle-bin だけど、まだ作ってない
+                "list",
+            title: "@removed" === pass ?
+                locale.map("@deleted"):
+                `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
+            menu:
+                (
+                    (
+                        await Promise.all
+                        (
+                            Storage.Pass.get().map
+                            (
+                                async i => menuLinkItem
+                                (
+                                    [
+                                        await Resource.loadSvgOrCache("list"),
+                                        `ToDo リスト ( pass: ${i.substr(0, 2)}****${i.substr(-2)} )`
+                                    ],
+                                    { pass: i, tag: "@overall", },
+                                    pass === i ? "current-item": undefined
+                                )
+                            )
+                        )
+                    ) as minamo.dom.Source[]
+                )
+                .concat
+                ([
+                    menuItem
+                    (
+                        locale.parallel("New ToDo List"),
+                        async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", })
+                    ),
+                    menuLinkItem
+                    (
+                        locale.map("@deleted"),
+                        { hash: "removed" },
+                        pass === "@removed" ? "current-item": undefined
+                    )
+                ])
+        });
         export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         ({
             tag: "div",
@@ -2716,11 +2820,7 @@ export module CyclicToDo
             [
                 await screenSegmentedHeader
                 (
-                    [{
-                        icon: "list", // 本来は recycle-bin だけど、まだ作ってない
-                        href: { hash: "removed" },
-                        title: locale.map("@deleted"),
-                    }],
+                    [await screenHeaderListSegment("@removed")],
                     [
                         menuItem
                         (
