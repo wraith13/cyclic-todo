@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun Apr 04 2021 01:27:12 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon Apr 05 2021 18:27:54 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -53,7 +53,7 @@ textarea {
   }
 }
 h1 {
-  padding: 0.25rem;
+  padding: 0rem;
   font-size: 1.2rem;
   font-weight: normal;
   max-width: 100vw;
@@ -98,9 +98,29 @@ h1 .segment {
   position: relative;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: start;
   align-items: center;
   font-size: 1.2rem;
+  padding-left: 1rem;
+  padding-right: 4rem;
+}
+h1 .segment:hover {
+  background-color: #21788B;
+}
+h1 .segment:not(:hover) {
+  background-color: #228844;
+}
+h1 .segment + .segment,
+h1 .segment + .menu-popup + .segment {
+  margin-left: -2rem;
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-left-color: #FFFFFF;
+  transform: skewX(150deg);
+}
+h1 .segment + .segment > *,
+h1 .segment + .menu-popup + .segment > * {
+  transform: skewX(-150deg);
 }
 h1 button.menu-button:not(:hover) {
   color: #FFFFFF;
@@ -109,7 +129,7 @@ h1 button.menu-button:not(:hover) {
 h1 button.menu-button:not(:hover) svg {
   fill: #FFFFFF;
 }
-h1 .menu-popup {
+h1 .menu-popup:not(.segment-popup) {
   top: calc(10px + 2rem);
   right: 0.5rem;
 }
@@ -145,6 +165,9 @@ h2 a:not(:hover) {
   }
   h1 button.menu-button:not(:hover) svg {
     fill: #000022;
+  }
+  h1 .segment + .segment {
+    border-left-color: #000022;
   }
   h1,
   h2,
@@ -288,6 +311,11 @@ button.default-button:hover {
   font-size: 1.2rem;
   text-align: left;
   text-decoration: none;
+}
+.menu-popup svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: #228844;
 }
 @media (prefers-color-scheme: dark) {
   .menu-popup {
@@ -2729,14 +2757,13 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 };
                 return result;
             };
-            Domain.calcSmartRestCore = function (span, standardDeviation, elapsed) {
-                return elapsed < span ?
-                    //Math.pow(span -elapsed, 2.0) /Math.pow(span, 1.5):
-                    //Math.pow(span -elapsed, 1.0) *Math.pow((span -elapsed) /span, 1.0):
-                    //Math.pow(span -elapsed, 2.0) /span:
-                    //(span -elapsed) *Math.max(Math.log(((span -elapsed) /span) *100), 0.1):
-                    (span - elapsed) * Math.max(Math.log(((span - elapsed) / standardDeviation) * 100), 0.1) :
-                    span - elapsed;
+            Domain.calcSmartRestCore = function (span, standardDeviation, elapsed, rest, delta, advancedRest) {
+                if (rest === void 0) { rest = span - elapsed; }
+                if (delta === void 0) { delta = Math.min(60, Math.max(rest / 2, 0)); }
+                if (advancedRest === void 0) { advancedRest = rest - delta; }
+                return 0 < rest ?
+                    advancedRest * Math.max(Math.log((advancedRest / standardDeviation) * 100), 0.1) :
+                    rest;
             };
             Domain.calcSmartRest = function (item) {
                 var _a, _b;
@@ -3392,6 +3419,13 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     onclick: onclick,
                 });
             };
+            Render.menuLinkItem = function (children, href, className) { return Render.menuItem(children, function () { return CyclicToDo.showUrl(href); }, className); };
+            // export const menuLinkItem = (children: minamo.dom.Source, href: PageParams, className?: string) => internalLink
+            // ({
+            //     className,
+            //     href,
+            //     children,
+            // });
             Render.information = function (item) {
                 return ({
                     tag: "div",
@@ -3997,76 +4031,161 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 0:
                             _a = Render.heading;
                             _b = ["h1"];
-                            return [4 /*yield*/, Promise.all([{
+                            return [4 /*yield*/, Promise.all([
+                                    {
                                         icon: "application",
                                         href: {},
-                                        title: CyclicToDo.applicationTitle
-                                    }]
+                                        title: CyclicToDo.applicationTitle,
+                                    }
+                                ]
                                     .concat(items)
                                     .map(function (item) { return __awaiter(_this, void 0, void 0, function () {
-                                    var _a, _b;
-                                    var _c, _d, _e, _f;
-                                    return __generator(this, function (_g) {
-                                        switch (_g.label) {
-                                            case 0:
-                                                if (!("function" === typeof item.href)) return [3 /*break*/, 2];
-                                                _c = {
-                                                    tag: "div",
-                                                    className: "segment"
-                                                };
-                                                _d = {
-                                                    tag: "div",
-                                                    className: "icon"
-                                                };
-                                                return [4 /*yield*/, Resource.loadSvgOrCache(item.icon)];
-                                            case 1:
-                                                _a = (_c.children = [
-                                                    (_d.children = _g.sent(),
-                                                        _d),
-                                                    {
-                                                        tag: "div",
-                                                        className: "segment-title",
-                                                        children: item.title,
-                                                    }
-                                                ],
-                                                    _c.onclick = item.href,
-                                                    _c);
-                                                return [3 /*break*/, 4];
-                                            case 2:
-                                                _b = Render.internalLink;
-                                                _e = {
-                                                    className: "segment",
-                                                    href: item.href
-                                                };
-                                                _f = {
-                                                    tag: "div",
-                                                    className: "icon"
-                                                };
-                                                return [4 /*yield*/, Resource.loadSvgOrCache(item.icon)];
-                                            case 3:
-                                                _a = _b.apply(void 0, [(_e.children = [
-                                                        (_f.children = _g.sent(),
-                                                            _f),
-                                                        {
-                                                            tag: "div",
-                                                            className: "segment-title",
-                                                            children: item.title,
-                                                        }
-                                                    ],
-                                                        _e)]);
-                                                _g.label = 4;
-                                            case 4: return [2 /*return*/, _a];
-                                        }
+                                    return __generator(this, function (_a) {
+                                        return [2 /*return*/, item.href ?
+                                                Render.screenHeaderLinkSegment(item) :
+                                                Render.screenHeaderPopupSegment(item)];
                                     });
                                 }); }))];
                         case 1:
                             _c = [
-                                _d.sent()
+                                (_d.sent()).reduce(function (a, b) { return a.concat(b); }, [])
                             ];
                             return [4 /*yield*/, Render.menuButton(menu)];
                         case 2: return [2 /*return*/, _a.apply(void 0, _b.concat([_c.concat([
                                     _d.sent()
                                 ])]))];
+                    }
+                });
+            }); };
+            Render.screenHeaderLinkSegment = function (item) { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
+                var _b, _c;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            _a = Render.internalLink;
+                            _b = {
+                                className: "segment",
+                                href: item.href
+                            };
+                            _c = {
+                                tag: "div",
+                                className: "icon"
+                            };
+                            return [4 /*yield*/, Resource.loadSvgOrCache(item.icon)];
+                        case 1: return [2 /*return*/, _a.apply(void 0, [(_b.children = [
+                                    (_c.children = _d.sent(),
+                                        _c),
+                                    {
+                                        tag: "div",
+                                        className: "segment-title",
+                                        children: item.title,
+                                    }
+                                ],
+                                    _b)])];
+                    }
+                });
+            }); };
+            Render.screenHeaderPopupSegment = function (item) { return __awaiter(_this, void 0, void 0, function () {
+                var cover, close, popup, segment, _a;
+                var _b, _c;
+                var _this = this;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            close = function () {
+                                popup.classList.remove("show");
+                                cover = null;
+                            };
+                            popup = minamo_js_1.minamo.dom.make(HTMLDivElement)({
+                                tag: "div",
+                                className: "menu-popup segment-popup",
+                                children: item.menu,
+                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        console.log("menu-popup.click!");
+                                        cover === null || cover === void 0 ? void 0 : cover.close();
+                                        close();
+                                        return [2 /*return*/];
+                                    });
+                                }); },
+                            });
+                            _a = minamo_js_1.minamo.dom.make(HTMLDivElement);
+                            _b = {
+                                tag: "div",
+                                className: "segment"
+                            };
+                            _c = {
+                                tag: "div",
+                                className: "icon"
+                            };
+                            return [4 /*yield*/, Resource.loadSvgOrCache(item.icon)];
+                        case 1:
+                            segment = _a.apply(void 0, [(_b.children = [
+                                    (_c.children = _d.sent(),
+                                        _c),
+                                    {
+                                        tag: "div",
+                                        className: "segment-title",
+                                        children: item.title,
+                                    }
+                                ],
+                                    _b.onclick = function () {
+                                        console.log("menu-button.click!");
+                                        popup.classList.add("show");
+                                        popup.style.height = popup.offsetHeight + "px";
+                                        popup.style.width = popup.offsetWidth + "px";
+                                        popup.style.top = segment.offsetTop + segment.offsetHeight + "px";
+                                        popup.style.left = segment.offsetLeft + "px";
+                                        cover = Render.screenCover({
+                                            onclick: close,
+                                        });
+                                    },
+                                    _b)]);
+                            return [2 /*return*/, [segment, popup,]];
+                    }
+                });
+            }); };
+            Render.screenHeaderListSegment = function (pass) { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
+                var _this = this;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            _a = {
+                                icon: "@removed" === pass ?
+                                    "list" : // 本来は recycle-bin だけど、まだ作ってない
+                                    "list",
+                                title: "@removed" === pass ?
+                                    locale.map("@deleted") :
+                                    "ToDo \u30EA\u30B9\u30C8 ( pass: " + pass.substr(0, 2) + "****" + pass.substr(-2) + " )"
+                            };
+                            return [4 /*yield*/, Promise.all(Storage.Pass.get().map(function (i) { return __awaiter(_this, void 0, void 0, function () {
+                                    var _a;
+                                    return __generator(this, function (_b) {
+                                        switch (_b.label) {
+                                            case 0:
+                                                _a = Render.menuLinkItem;
+                                                return [4 /*yield*/, Resource.loadSvgOrCache("list")];
+                                            case 1: return [2 /*return*/, _a.apply(void 0, [[
+                                                        _b.sent(),
+                                                        "ToDo \u30EA\u30B9\u30C8 ( pass: " + i.substr(0, 2) + "****" + i.substr(-2) + " )"
+                                                    ], { pass: i, tag: "@overall", },
+                                                    pass === i ? "current-item" : undefined])];
+                                        }
+                                    });
+                                }); }))];
+                        case 1: return [2 /*return*/, (_a.menu = (_b.sent())
+                                .concat([
+                                Render.menuItem(locale.parallel("New ToDo List"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: Storage.Pass.generate(), tag: "@overall", })];
+                                        case 1: return [2 /*return*/, _a.sent()];
+                                    }
+                                }); }); }),
+                                Render.menuLinkItem(locale.map("@deleted"), { hash: "removed" }, pass === "@removed" ? "current-item" : undefined)
+                            ]),
+                                _a)];
                     }
                 });
             }); };
@@ -4938,36 +5057,38 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             Render.removedListScreen = function () { return __awaiter(_this, void 0, void 0, function () {
-                var _a;
-                var _b, _c;
+                var _a, _b;
+                var _c, _d;
                 var _this = this;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
                         case 0:
-                            _b = {
+                            _c = {
                                 tag: "div",
                                 className: "remove-list-screen screen"
                             };
-                            return [4 /*yield*/, Render.screenHeader({}, "" + locale.map("@deleted"), [
+                            _a = Render.screenSegmentedHeader;
+                            return [4 /*yield*/, Render.screenHeaderListSegment("@removed")];
+                        case 1: return [4 /*yield*/, _a.apply(void 0, [[_e.sent()], [
                                     Render.menuItem(locale.parallel("Back to Home"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, CyclicToDo.showUrl({})];
                                             case 1: return [2 /*return*/, _a.sent()];
                                         }
                                     }); }); })
-                                ])];
-                        case 1:
-                            _a = [
-                                _d.sent()
+                                ]])];
+                        case 2:
+                            _b = [
+                                _e.sent()
                             ];
-                            _c = {
+                            _d = {
                                 tag: "div",
                                 className: "row-flex-list removed-list-list"
                             };
                             return [4 /*yield*/, Promise.all(Storage.Backup.get().map(function (json) { return Render.removedListItem(JSON.parse(json)); }))];
-                        case 2: return [2 /*return*/, (_b.children = _a.concat([
-                                (_c.children = _d.sent(),
-                                    _c),
+                        case 3: return [2 /*return*/, (_c.children = _b.concat([
+                                (_d.children = _e.sent(),
+                                    _d),
                                 0 < Storage.Backup.get().length ?
                                     {
                                         tag: "div",
@@ -4996,7 +5117,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         children: locale.parallel("Recycle Bin is empty."),
                                     }
                             ]),
-                                _b)];
+                                _c)];
                     }
                 });
             }); };
