@@ -72,8 +72,16 @@ h1
     position: static;
     display: flex;
     flex-direction: row;
-    //justify-content: start;
-    //justify-content: space-between;
+    justify-content: space-between;
+    &.segmented
+    {
+        justify-content: start;
+        button.menu-button
+        {
+            right: 0.25rem;
+            position: absolute;
+        }
+    }
     align-items: center;
 
     .icon
@@ -121,8 +129,9 @@ h1
         justify-content: start;
         align-items: center;
         font-size: 1.2rem;
-        padding-left: 1rem;
-        padding-right: 4rem;
+        padding-left: 0.25rem;
+        padding-right: 3rem;
+        cursor: pointer;
         &:hover
         {
             background-color: @active-color;
@@ -139,20 +148,27 @@ h1
         border-left-style: solid;
         border-left-width: 1px;
         border-left-color: @base-color;
+        overflow-x: hidden;
         transform: skewX(150deg);
         & > *
         {
             transform: skewX(-150deg);
         }
+        padding-left: 0.5rem;
     }
-    button.menu-button:not(:hover)
+    button.menu-button
     {
-        color: @base-color;
-        //border-color: @base-color;
-        background-color: @accent-color;
-        svg
+        margin: 0px;
+        margin-right: 0.25rem;
+        &:not(:hover)
         {
-            fill: @base-color;
+            color: @base-color;
+            //border-color: @base-color;
+            background-color: @accent-color;
+            svg
+            {
+                fill: @base-color;
+            }
         }
     }
     .menu-popup:not(.segment-popup)
@@ -396,12 +412,51 @@ button.default-button
         font-size: 1.2rem;
         text-align: left;
         text-decoration: none;
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+        svg
+        {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+        &:not(:hover)
+        {
+            &.current-item
+            {
+                color: @base-color;
+                background-color: @accent-color;
+                @media (prefers-color-scheme: dark)
+                {
+                    color: @dark-base-color;
+                }
+            }
+            &:not(.current-item)
+            {
+                fill: @accent-color;
+                &.current-item
+                {
+                    fill: @base-color;
+                }
+            }
+        }
+        &.current-item,
+        &:hover
+        {
+            svg
+            {
+                fill: @base-color;
+                @media (prefers-color-scheme: dark)
+                {
+                    fill: @dark-base-color;
+                }
+            }
+        }
     }
-    svg
+    a button
     {
-        width: 1.5rem;
-        height: 1.5rem;
-        fill: @accent-color;
+        width: 100%;
     }
 }
 @media (prefers-color-scheme: dark)

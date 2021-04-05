@@ -946,10 +946,11 @@ export module CyclicToDo
             href: data.href,
             children: data.children,
         });
-        export const heading = (tag: string, text: minamo.dom.Source) =>
+        export const heading = (tag: string, text: minamo.dom.Source, className?: string) =>
         ({
             tag,
             children: text,
+            className,
         });
         export const backgroundLinerGradient = (leftPercent: string, leftColor: string, rightColor: string) =>
             `background: linear-gradient(to right, ${leftColor} ${leftPercent}, ${rightColor} ${leftPercent});`;
@@ -963,24 +964,25 @@ export module CyclicToDo
                     "#22884466",
                     "rgba(128,128,128,0.2)"
                 );
-        export const label = (label: locale.LocaleKeyType) =>
+        export const labelSpan = (children: minamo.dom.Source) =>
         ({
             tag: "span",
             className: "label",
-            children:
-            [
-                {
-                    tag: "span",
-                    className: "locale-parallel",
-                    children: locale.parallel(label),
-                },
-                {
-                    tag: "span",
-                    className: "locale-map",
-                    children: locale.map(label),
-                }
-            ],
+            children,
         });
+        export const label = (label: locale.LocaleKeyType) => labelSpan
+        ([
+            {
+                tag: "span",
+                className: "locale-parallel",
+                children: locale.parallel(label),
+            },
+            {
+                tag: "span",
+                className: "locale-map",
+                children: locale.map(label),
+            }
+        ]);
         export const systemPrompt = async (message?: string, _default?: string): Promise<string | null> =>
         {
             await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが window.prompt が表示されてる間、ずっと表示される事になる。
@@ -1603,7 +1605,7 @@ export module CyclicToDo
         ) =>
         menuItem
         (
-            locale.parallel("Rename"),
+            label("Rename"),
             async () =>
             {
                 const newTask = await prompt("ToDo の名前を入力してください。", item.task);
@@ -1625,7 +1627,7 @@ export module CyclicToDo
         [
             menuItem
             (
-                locale.parallel("Add/Remove Tag"),
+                label("Add/Remove Tag"),
                 async () =>
                 {
                     if (await addRemoveTagsPopup(pass, item, Storage.Tag.getByTodo(pass, item.task)))
@@ -1636,7 +1638,7 @@ export module CyclicToDo
             ),
             menuItem
             (
-                locale.parallel("Move to Sublist"),
+                label("Move to Sublist"),
                 async () =>
                 {
                     if (await moveToSublistPopup(pass, item))
@@ -1648,7 +1650,7 @@ export module CyclicToDo
         ];
         export const todoDeleteMenu = (pass: string, item: ToDoEntry) => menuItem
         (
-            locale.parallel("Delete"),
+            label("Delete"),
             async () =>
             {
                 Storage.Task.remove(pass, item.task);
@@ -2012,7 +2014,8 @@ export module CyclicToDo
                     )
                 ).reduce((a, b) => (a as any[]).concat(b), []),
                 await menuButton(menu),
-            ]
+            ],
+            "segmented"
         );
         export const screenHeaderLinkSegment = async (item: HeaderSegmentSource) => internalLink
         ({
@@ -2074,10 +2077,11 @@ export module CyclicToDo
                 {
                     console.log("menu-button.click!");
                     popup.classList.add("show");
-                    popup.style.height = `${popup.offsetHeight}px`;
-                    popup.style.width = `${popup.offsetWidth}px`;
+                    //popup.style.height = `${popup.offsetHeight -2}px`;
+                    popup.style.width = `${popup.offsetWidth -2}px`;
                     popup.style.top = `${segment.offsetTop +segment.offsetHeight}px`;
                     popup.style.left = `${segment.offsetLeft}px`;
+                    popup.style.whiteSpace = "nowrap";
                     cover = screenCover
                     ({
                         onclick: close,
@@ -2088,12 +2092,16 @@ export module CyclicToDo
         };
         export const screenHeaderListSegment = async (pass: string): Promise<HeaderSegmentSource> =>
         ({
-            icon: "@removed" === pass ?
-                "list": // 本来は recycle-bin だけど、まだ作ってない
-                "list",
-            title: "@removed" === pass ?
-                locale.map("@deleted"):
-                `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
+            icon:
+            {
+                "@removed": "list" as Resource.KeyType, // 本来は recycle-bin だけど、まだ作ってない
+                "@import": "list" as Resource.KeyType, // 本来は import だけど、まだ作ってない
+            }[pass] ?? "list",
+            title:
+            {
+                "@removed": locale.map("@deleted"),
+                "@import": locale.map("Import List"),
+            }[pass] ?? `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
             menu:
                 (
                     (
@@ -2105,7 +2113,7 @@ export module CyclicToDo
                                 (
                                     [
                                         await Resource.loadSvgOrCache("list"),
-                                        `ToDo リスト ( pass: ${i.substr(0, 2)}****${i.substr(-2)} )`
+                                        labelSpan(`ToDo リスト ( pass: ${i.substr(0, 2)}****${i.substr(-2)} )`)
                                     ],
                                     { pass: i, tag: "@overall", },
                                     pass === i ? "current-item": undefined
@@ -2118,12 +2126,27 @@ export module CyclicToDo
                 ([
                     menuItem
                     (
-                        locale.parallel("New ToDo List"),
+                        [
+                            await Resource.loadSvgOrCache("list"),
+                            label("New ToDo List"),
+                        ],
                         async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", })
+                    ),
+                    menuItem
+                    (
+                        [
+                            await Resource.loadSvgOrCache("list"),
+                            label("Import List"),
+                        ],
+                        async () => await showUrl({ hash: "import", }),
+                        pass === "@import" ? "current-item": undefined
                     ),
                     menuLinkItem
                     (
-                        locale.map("@deleted"),
+                        [
+                            await Resource.loadSvgOrCache("list"),
+                            label("@deleted"),
+                        ],
                         { hash: "removed" },
                         pass === "@removed" ? "current-item": undefined
                     )
@@ -2152,12 +2175,12 @@ export module CyclicToDo
                         internalLink
                         ({
                             href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                            children: menuItem(locale.parallel("History")),
+                            children: menuItem(label("History")),
                         }),
                         Storage.Tag.isSystemTag(entry.tag) ? []:
                             menuItem
                             (
-                                locale.parallel("Rename"),
+                                label("Rename"),
                                 async () =>
                                 {
                                     const newTag = await prompt("タグの名前を入力してください", entry.tag);
@@ -2177,11 +2200,11 @@ export module CyclicToDo
                         internalLink
                         ({
                             href: { pass: entry.pass, hash: "removed" },
-                            children: menuItem(locale.parallel("@deleted")),
+                            children: menuItem(label("@deleted")),
                         }),
                         menuItem
                         (
-                            locale.parallel("New ToDo"),
+                            label("New ToDo"),
                             async () =>
                             {
                                 const newTask = await prompt("ToDo の名前を入力してください");
@@ -2200,12 +2223,12 @@ export module CyclicToDo
                         internalLink
                         ({
                             href: { pass: entry.pass, hash: "export" },
-                            children: menuItem(locale.parallel("Export")),
+                            children: menuItem(label("Export")),
                         }),
                         Storage.Tag.isSystemTag(entry.tag) ? []:
                             menuItem
                             (
-                                locale.parallel("Delete"),
+                                label("Delete"),
                                 async () =>
                                 {
                                     Storage.Tag.remove(entry.pass, entry.tag);
@@ -2215,7 +2238,7 @@ export module CyclicToDo
                         "@overall" === entry.tag ?
                             menuItem
                             (
-                                locale.parallel("Delete this List"),
+                                label("Delete this List"),
                                 async () =>
                                 {
                                     Storage.Pass.remove(entry.pass);
@@ -2239,7 +2262,7 @@ export module CyclicToDo
                         {
                             tag: "button",
                             className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
-                            children: locale.parallel("New ToDo"),
+                            children: label("New ToDo"),
                             onclick: async () =>
                             {
                                 const newTask = await prompt("ToDo の名前を入力してください");
@@ -2258,7 +2281,7 @@ export module CyclicToDo
                             {
                                 tag: "button",
                                 className: "main-button long-button",
-                                children: locale.parallel("History"),
+                                children: label("History"),
                             },
                         }),
                     ]
@@ -2347,13 +2370,13 @@ export module CyclicToDo
                     [
                         menuItem
                         (
-                            locale.parallel("Back to List"),
+                            label("Back to List"),
                             async () => await showUrl({ pass: entry.pass, tag: entry.tag, })
                         ),
                         Storage.Tag.isSystemTag(entry.tag) ? []:
                             menuItem
                             (
-                                locale.parallel("Rename"),
+                                label("Rename"),
                                 async () =>
                                 {
                                     const newTag = await prompt("タグの名前を入力してください", entry.tag);
@@ -2372,7 +2395,7 @@ export module CyclicToDo
                             ),
                         menuItem
                         (
-                            locale.parallel("New ToDo"),
+                            label("New ToDo"),
                             async () =>
                             {
                                 const newTask = await prompt("ToDo の名前を入力してください");
@@ -2390,13 +2413,13 @@ export module CyclicToDo
                         },
                         menuItem
                         (
-                            locale.parallel("Export"),
+                            label("Export"),
                             async () => await showUrl({ pass: entry.pass, hash: "export", })
                         ),
                         // Storage.Tag.isSystemTag(entry.tag) ? []:
                         //     menuItem
                         //     (
-                        //         locale.parallel("Delete"),
+                        //         label("Delete"),
                         //         async () =>
                         //         {
                         //         }
@@ -2404,7 +2427,7 @@ export module CyclicToDo
                         // "@overall" === entry.tag ?
                         //     menuItem
                         //     (
-                        //         locale.parallel("Delete"),
+                        //         label("Delete"),
                         //         async () =>
                         //         {
                         //             Storage.Pass.remove(entry.pass);
@@ -2429,7 +2452,7 @@ export module CyclicToDo
                         {
                             tag: "button",
                             className: "default-button main-button long-button",
-                            children: locale.parallel("Back to List"),
+                            children: label("Back to List"),
                         },
                     }),
                 },
@@ -2521,7 +2544,7 @@ export module CyclicToDo
                     [
                         menuItem
                         (
-                            locale.parallel("Back to List"),
+                            label("Back to List"),
                             async () => await showUrl({ pass, tag: "@overall", })
                         ),
                         menuItem
@@ -2549,7 +2572,7 @@ export module CyclicToDo
                     {
                         tag: "div",
                         className: "button-list",
-                        children: locale.parallel("Recycle Bin is empty."),
+                        children: label("Recycle Bin is empty."),
                     },
                 {
                     tag: "div",
@@ -2558,7 +2581,7 @@ export module CyclicToDo
                     {
                         tag: "button",
                         className: "default-button main-button long-button",
-                        children: locale.parallel("Back to List"),
+                        children: label("Back to List"),
                         onclick: async () => await showUrl({ pass: pass, tag: "@overall", })
                     },
                 },
@@ -2590,7 +2613,7 @@ export module CyclicToDo
                         },
                         menuItem
                         (
-                            locale.parallel("Export"),
+                            label("Export"),
                             async () => await showUrl({ pass, hash: "export", })
                         ),
                     ]
@@ -2650,7 +2673,7 @@ export module CyclicToDo
                         {
                             tag: "button",
                             className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
-                            children: locale.parallel("Done"),
+                            children: label("Done"),
                             onclick: async () =>
                             {
                                 Domain.done(pass, item.task);
@@ -2709,7 +2732,7 @@ export module CyclicToDo
                     [
                         menuItem
                         (
-                            locale.parallel("Back to List"),
+                            label("Back to List"),
                             async () => async () => await showUrl({ pass, tag: "@overall", }),
                         )
                     ]
@@ -2732,14 +2755,13 @@ export module CyclicToDo
             className: "import-screen screen",
             children:
             [
-                await screenHeader
+                await screenSegmentedHeader
                 (
-                    { },
-                    `${document.title}`,
+                    [await screenHeaderListSegment("@import")],
                     [
                         menuItem
                         (
-                            locale.parallel("Back to Home"),
+                            label("Back to Home"),
                             async () => await showUrl({ }),
                         )
                     ]
@@ -2756,7 +2778,7 @@ export module CyclicToDo
                     {
                         tag: "button",
                         className: "default-button main-button long-button",
-                        children: locale.parallel("Import"),
+                        children: label("Import"),
                         onclick: async () =>
                         {
                             const textarea = document.getElementsByClassName("json")[0] as HTMLTextAreaElement;
@@ -2828,7 +2850,7 @@ export module CyclicToDo
                     [
                         menuItem
                         (
-                            locale.parallel("Back to Home"),
+                            label("Back to Home"),
                             async () => await showUrl({ }),
                         )
                     ]
@@ -2857,7 +2879,7 @@ export module CyclicToDo
                 {
                     tag: "div",
                     className: "button-list",
-                    children: locale.parallel("Recycle Bin is empty."),
+                    children: label("Recycle Bin is empty."),
                 }
         ],
         });
@@ -2914,16 +2936,16 @@ export module CyclicToDo
                                     internalLink
                                     ({
                                         href: { pass: list.pass, tag: "@overall", hash: "history" },
-                                        children: menuItem(locale.parallel("History")),
+                                        children: menuItem(label("History")),
                                     }),
                                     internalLink
                                     ({
                                         href: { pass: list.pass, hash: "export", },
-                                        children: menuItem(locale.parallel("Export")),
+                                        children: menuItem(label("Export")),
                                     }),
                                     menuItem
                                     (
-                                        locale.parallel("Delete"),
+                                        label("Delete"),
                                         async () =>
                                         {
                                             Storage.Pass.remove(list.pass);
@@ -2949,18 +2971,18 @@ export module CyclicToDo
                     [
                         menuItem
                         (
-                            locale.parallel("New ToDo List"),
+                            label("New ToDo List"),
                             async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", }),
                         ),
                         internalLink
                         ({
                             href: { hash: "import", },
-                            children: menuItem(locale.parallel("Import List")),
+                            children: menuItem(label("Import List")),
                         }),
                         internalLink
                         ({
                             href: { hash: "removed", },
-                            children: menuItem(locale.parallel("@deleted")),
+                            children: menuItem(label("@deleted")),
                         }),
                         externalLink
                         ({
@@ -3035,7 +3057,7 @@ export module CyclicToDo
                 // {
                 //     tag: "div",
                 //     className: "message",
-                //     children: locale.parallel("Updating..."),
+                //     children: label("Updating..."),
                 // },
                 {
                     tag: "div",
@@ -3044,7 +3066,7 @@ export module CyclicToDo
                     {
                         tag: "button",
                         className: "default-button main-button long-button",
-                        children: locale.parallel("Reload"),
+                        children: label("Reload"),
                         onclick: async () => await showPage(url),
                     },
                 }
@@ -3107,6 +3129,14 @@ export module CyclicToDo
             const maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 450)));
             const FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
             const border = FontRemUnit *26 +10;
+            (Array.from(document.getElementsByTagName("h1")) as HTMLDivElement[]).forEach
+            (
+                header =>
+                {
+                    header.classList.toggle("locale-parallel-on", 2 <= minColumns);
+                    header.classList.toggle("locale-parallel-off", minColumns < 2);
+                }
+            );
             (Array.from(document.getElementsByClassName("column-flex-list")) as HTMLDivElement[]).forEach
             (
                 list =>
