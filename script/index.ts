@@ -2987,7 +2987,7 @@ export module CyclicToDo
                         externalLink
                         ({
                             href: "https://github.com/wraith13/cyclic-todo/",
-                            children: menuItem("GitHub"),
+                            children: menuItem(labelSpan("GitHub")),
                         }),
                     ]
                 ),

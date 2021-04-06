@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon Apr 05 2021 23:09:58 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Apr 06 2021 18:09:00 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -99,7 +99,7 @@ h1 label select + span {
   color: #FFFFFF;
 }
 h1 label:hover {
-  background-color: #21788B;
+  background-color: #6F7F00;
 }
 h1 .segment {
   position: relative;
@@ -113,7 +113,7 @@ h1 .segment {
   cursor: pointer;
 }
 h1 .segment:hover {
-  background-color: #21788B;
+  background-color: #6F7F00;
 }
 h1 .segment:not(:hover) {
   background-color: #228844;
@@ -194,7 +194,7 @@ label {
   cursor: pointer;
 }
 label:hover {
-  color: #21788B;
+  color: #6F7F00;
 }
 label select {
   position: absolute;
@@ -252,7 +252,8 @@ button.menu-button svg {
 }
 button:hover {
   color: #FFFFFF;
-  background-color: #21788B;
+  background-color: #6F7F00;
+  border-color: #6F7F00;
 }
 button:hover.menu-button svg {
   fill: #FFFFFF;
@@ -278,16 +279,16 @@ button.default-button {
   border-color: #228844;
 }
 button.default-button:hover {
-  background-color: #21788B;
-  border-color: #21788B;
+  background-color: #6F7F00;
+  border-color: #6F7F00;
 }
 @media (prefers-color-scheme: dark) {
   button.default-button {
     color: #000022;
   }
   button.default-button:hover {
-    background-color: #21788B;
-    border-color: #21788B;
+    background-color: #6F7F00;
+    border-color: #6F7F00;
   }
 }
 .menu-popup {
@@ -698,10 +699,10 @@ button.default-button:hover {
   margin-right: 4px;
 }
 .item-title:hover {
-  color: #21788B;
+  color: #6F7F00;
 }
 .item-title:hover svg {
-  fill: #21788B;
+  fill: #6F7F00;
 }
 .item-title:not(:hover) {
   color: #000022;
@@ -763,17 +764,18 @@ button.default-button:hover {
   flex-direction: row;
   align-items: center;
 }
-.task-item .item-tags a {
-  color: #000022;
-  opacity: 0.6;
-}
 .task-item .item-tags a:not(:hover) {
+  opacity: 0.6;
   text-decoration: none;
+  color: #000022;
 }
 @media (prefers-color-scheme: dark) {
-  .task-item .item-tags a {
+  .task-item .item-tags a:not(:hover) {
     color: #FFFFFF;
   }
+}
+.task-item .item-tags a:hover {
+  color: #6F7F00;
 }
 .task-item .item-tags a + a {
   margin-left: 1rem;
@@ -5349,7 +5351,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     }),
                                     Render.externalLink({
                                         href: "https://github.com/wraith13/cyclic-todo/",
-                                        children: Render.menuItem("GitHub"),
+                                        children: Render.menuItem(Render.labelSpan("GitHub")),
                                     }),
                                 ])];
                         case 1:

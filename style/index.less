@@ -1,7 +1,8 @@
 @main-color: #000022;
 @base-color: #FFFFFF;
 @accent-color: #228844;
-@active-color: #21788B;
+//@active-color: #21788B;
+@active-color: #6F7F00;
 @delete-color: #831B50;
 @dark-main-color: @base-color;
 @dark-base-color: @main-color;
@@ -316,7 +317,7 @@ button
     {
         color: @base-color;
         background-color: @active-color;
-        // border-color: @active-color;
+        border-color: @active-color;
         &.menu-button
         {
             svg
@@ -931,15 +932,20 @@ button.default-button
         align-items: center;
         a
         {
-            color: @main-color;
-            opacity: 0.6;
             &:not(:hover)
             {
+                opacity: 0.6;
                 text-decoration: none;
+                color: @main-color;
+                @media (prefers-color-scheme: dark)
+                {
+                    color: @dark-main-color;
+                }
             }
-            @media (prefers-color-scheme: dark)
+            &:hover
             {
-                color: @dark-main-color;
+                color: @active-color; // 本来はこっちなんだけど、これだと流石に視認し辛い・・・
+                //color: @accent-color;
             }
         }
         a + a
