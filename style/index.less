@@ -76,6 +76,7 @@ h1
     justify-content: space-between;
     &.segmented
     {
+        white-space: nowrap;
         justify-content: start;
         button.menu-button
         {
@@ -141,6 +142,11 @@ h1
         {
             background-color: @accent-color;
         }
+        &.last-segment
+        {
+            flex-grow: 1;
+            margin-right: -3rem;
+        }
     }
     .segment + .segment,
     .segment +.menu-popup + .segment
@@ -156,6 +162,17 @@ h1
             transform: skewX(-150deg);
         }
         padding-left: 0.5rem;
+    }
+    &.locale-parallel-off
+    {
+        .segment:not(.last-segment):not(:hover)
+        {
+            padding-right: 2.25rem;
+            .segment-title
+            {
+                display: none;
+            }
+        }
     }
     button.menu-button
     {
@@ -221,7 +238,8 @@ h1, h2
                 fill: @dark-base-color;
             }
         }
-        .segment + .segment
+        .segment + .segment,
+        .segment +.menu-popup + .segment
         {
             border-left-color: @dark-base-color;
         }

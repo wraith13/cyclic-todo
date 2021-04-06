@@ -2007,9 +2007,9 @@ export module CyclicToDo
                         .concat(items)
                         .map
                         (
-                            async item => item.href ?
-                                screenHeaderLinkSegment(item):
-                                screenHeaderPopupSegment(item)
+                            async (item, ix, list) => item.href ?
+                                screenHeaderLinkSegment(item, ix === list.length -1 ? "last-segment": undefined):
+                                screenHeaderPopupSegment(item, ix === list.length -1 ? "last-segment": undefined)
                         )
                     )
                 ).reduce((a, b) => (a as any[]).concat(b), []),
@@ -2017,9 +2017,9 @@ export module CyclicToDo
             ],
             "segmented"
         );
-        export const screenHeaderLinkSegment = async (item: HeaderSegmentSource) => internalLink
+        export const screenHeaderLinkSegment = async (item: HeaderSegmentSource, className: string = "") => internalLink
         ({
-            className: "segment",
+            className: `segment ${className}`,
             href: item.href,
             children:
             [
@@ -2035,7 +2035,7 @@ export module CyclicToDo
                 },
             ],
         });
-        export const screenHeaderPopupSegment = async (item: HeaderSegmentSource) =>
+        export const screenHeaderPopupSegment = async (item: HeaderSegmentSource, className: string = "") =>
         {
             let cover: { dom: HTMLDivElement, close: () => Promise<unknown> };
             const close = () =>
@@ -2058,7 +2058,7 @@ export module CyclicToDo
             const segment = minamo.dom.make(HTMLDivElement)
             ({
                 tag: "div",
-                className: "segment",
+                className: `segment ${className}`,
                 children:
                 [
                     {
@@ -2144,12 +2144,90 @@ export module CyclicToDo
                     menuLinkItem
                     (
                         [
-                            await Resource.loadSvgOrCache("list"),
-                            label("@deleted"),
+                            await Resource.loadSvgOrCache("list"), // 本来は recycle-bin だけど、まだ作ってない
+                            labelSpan(`${locale.map("@deleted")} (${Storage.Backup.get().length})`),
                         ],
                         { hash: "removed" },
                         pass === "@removed" ? "current-item": undefined
                     )
+                ])
+        });
+        export const screenHeaderTagSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
+        ({
+            icon: Storage.Tag.isSublist(current) ?
+                "list": // 本来は sublist だけど、まだ作ってない
+                "list", // 本来は tag だけど、まだ作ってない
+            title: Domain.tagMap(current),
+            menu:
+                (
+                    (
+                        await Promise.all
+                        (
+                            ["@overall"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@untagged"])
+                            .map
+                            (
+                                async tag => menuLinkItem
+                                (
+                                    [
+                                        await Resource.loadSvgOrCache
+                                        (
+                                            Storage.Tag.isSublist(tag) ?
+                                                "list": // 本来は sublist だけど、まだ作ってない
+                                                "list" // 本来は tag だけど、まだ作ってない
+                                        ),
+                                        labelSpan(`${Domain.tagMap(tag)} (${Storage.TagMember.get(pass, tag).length})`),
+                                    ],
+                                    { pass, tag, },
+                                    current === tag ? "current-item": undefined
+                                )
+                            )
+                        )
+                    ) as minamo.dom.Source[]
+                )
+                .concat
+                ([
+                    menuItem
+                    (
+                        [
+                            await Resource.loadSvgOrCache("list"), // 本来は sublist だけど、まだ作ってない
+                            label("@new-sublist"),
+                        ],
+                        async () =>
+                        {
+                            const sublist = await prompt("サブリストの名前を入力してください", "");
+                            if (null !== sublist)
+                            {
+                                const tag = Storage.Tag.encodeSublist(sublist.trim());
+                                Storage.Tag.add(pass, tag);
+                                await showUrl({ pass, tag, });
+                            }
+                        }
+                    ),
+                    menuItem
+                    (
+                        [
+                            await Resource.loadSvgOrCache("list"), // 本来は tag だけど、まだ作ってない
+                            label("@new"),
+                        ],
+                        async () =>
+                        {
+                            const newTag = await prompt("タグの名前を入力してください", "");
+                            if (null !== newTag)
+                            {
+                                const tag = Storage.Tag.encode(newTag.trim());
+                                Storage.Tag.add(pass, tag);
+                                await showUrl({ pass, tag, });
+                            }
+                        }
+                    ),
+                    menuLinkItem
+                    (
+                        [
+                            await Resource.loadSvgOrCache("list"), // 本来は recycle-bin だけど、まだ作ってない
+                            labelSpan(`${locale.map("@deleted")} (${Storage.Removed.get(pass).length})`),
+                        ],
+                        { pass, hash: "removed" }
+                    ),
                 ])
         });
         export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
@@ -2158,19 +2236,12 @@ export module CyclicToDo
             className: "list-screen screen",
             children:
             [
-                await screenHeader
+                await screenSegmentedHeader
                 (
-                    "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall" },
-                    dropDownLabel
-                    ({
-                        list: makeObject
-                        (
-                            ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged"])
-                            .map(i => ({ key:i, value: `${Domain.tagMap(i)} (${Storage.TagMember.get(entry.pass, i).length})`, }))
-                        ),
-                        value: entry.tag,
-                        onChange: async (tag: string) => await showUrl({ pass: entry.pass, tag, }),
-                    }),
+                    [
+                        await screenHeaderListSegment(entry.pass),
+                        await screenHeaderTagSegment(entry.pass, entry.tag),
+                    ],
                     [
                         internalLink
                         ({
