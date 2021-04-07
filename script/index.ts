@@ -724,7 +724,7 @@ export module CyclicToDo
             case "@overall":
             case "@unoverall":
             case "@untagged":
-            // case "@deleted":
+            case "@deleted":
             case "@new":
             case "@new-sublist":
                 return locale.map(tag);
@@ -1997,19 +1997,13 @@ export module CyclicToDo
                 (
                     await Promise.all
                     (
-                        [
-                            {
-                                icon: "application" as Resource.KeyType,
-                                href: { },
-                                title: CyclicToDo.applicationTitle,
-                            } as HeaderSegmentSource
-                        ]
-                        .concat(items)
+                        items
                         .map
                         (
-                            async (item, ix, list) => item.href ?
-                                screenHeaderLinkSegment(item, ix === list.length -1 ? "last-segment": undefined):
-                                screenHeaderPopupSegment(item, ix === list.length -1 ? "last-segment": undefined)
+                            async (item, ix, list) =>
+                                (item.href && screenHeaderLinkSegment(item, ix === list.length -1 ? "last-segment": undefined)) ||
+                                (item.menu && screenHeaderPopupSegment(item, ix === list.length -1 ? "last-segment": undefined)) ||
+                                (true && screenHeaderLabelSegment(item, ix === list.length -1 ? "last-segment": undefined))
                         )
                     )
                 ).reduce((a, b) => (a as any[]).concat(b), []),
@@ -2017,6 +2011,24 @@ export module CyclicToDo
             ],
             "segmented"
         );
+        export const screenHeaderLabelSegment = async (item: HeaderSegmentSource, className: string = "") =>
+        ({
+            tag: "div",
+            className: `segment label-segment ${className}`,
+            children:
+            [
+                {
+                    tag: "div",
+                    className: "icon",
+                    children: await Resource.loadSvgOrCache(item.icon),
+                },
+                {
+                    tag: "div",
+                    className: "segment-title",
+                    children:item.title,
+                },
+            ],
+        });
         export const screenHeaderLinkSegment = async (item: HeaderSegmentSource, className: string = "") => internalLink
         ({
             className: `segment ${className}`,
@@ -2081,7 +2093,6 @@ export module CyclicToDo
                     popup.style.width = `${popup.offsetWidth -2}px`;
                     popup.style.top = `${segment.offsetTop +segment.offsetHeight}px`;
                     popup.style.left = `${segment.offsetLeft}px`;
-                    popup.style.whiteSpace = "nowrap";
                     cover = screenCover
                     ({
                         onclick: close,
@@ -2090,6 +2101,12 @@ export module CyclicToDo
             });
             return [ segment, popup, ];
         };
+        export const screenHeaderHomeSegment = (): HeaderSegmentSource =>
+        ({
+            icon: "application" as Resource.KeyType,
+            href: { },
+            title: CyclicToDo.applicationTitle,
+        });
         export const screenHeaderListSegment = async (pass: string): Promise<HeaderSegmentSource> =>
         ({
             icon:
@@ -2154,8 +2171,9 @@ export module CyclicToDo
         });
         export const screenHeaderTagSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
         ({
-            icon: Storage.Tag.isSublist(current) ?
-                "list": // 本来は sublist だけど、まだ作ってない
+            icon:
+                ("@deleted" === current && "list") || // 本来は recycle bin だけど、まだ作ってない
+                (Storage.Tag.isSublist(current) && "list") || // 本来は sublist だけど、まだ作ってない
                 "list", // 本来は tag だけど、まだ作ってない
             title: Domain.tagMap(current),
             menu:
@@ -2226,7 +2244,8 @@ export module CyclicToDo
                             await Resource.loadSvgOrCache("list"), // 本来は recycle-bin だけど、まだ作ってない
                             labelSpan(`${locale.map("@deleted")} (${Storage.Removed.get(pass).length})`),
                         ],
-                        { pass, hash: "removed" }
+                        { pass, hash: "removed" },
+                    current === "@deleted" ? "current-item": undefined
                     ),
                 ])
         });
@@ -2239,6 +2258,7 @@ export module CyclicToDo
                 await screenSegmentedHeader
                 (
                     [
+                        screenHeaderHomeSegment(),
                         await screenHeaderListSegment(entry.pass),
                         await screenHeaderTagSegment(entry.pass, entry.tag),
                     ],
@@ -2608,10 +2628,13 @@ export module CyclicToDo
             className: "removed-screen screen",
             children:
             [
-                await screenHeader
+                await screenSegmentedHeader
                 (
-                    { pass, tag: "@overall", },
-                    locale.map("@deleted"),
+                    [
+                        screenHeaderHomeSegment(),
+                        await screenHeaderListSegment(pass),
+                        await screenHeaderTagSegment(pass, "@deleted"),
+                    ],
                     [
                         menuItem
                         (
@@ -2828,7 +2851,10 @@ export module CyclicToDo
             [
                 await screenSegmentedHeader
                 (
-                    [await screenHeaderListSegment("@import")],
+                    [
+                        screenHeaderHomeSegment(),
+                        await screenHeaderListSegment("@import")
+                    ],
                     [
                         menuItem
                         (
@@ -2917,7 +2943,10 @@ export module CyclicToDo
             [
                 await screenSegmentedHeader
                 (
-                    [await screenHeaderListSegment("@removed")],
+                    [
+                        screenHeaderHomeSegment(),
+                        await screenHeaderListSegment("@removed")
+                    ],
                     [
                         menuItem
                         (
@@ -3038,7 +3067,10 @@ export module CyclicToDo
             [
                 await screenSegmentedHeader
                 (
-                    [ ],
+                    [{
+                        icon: "application" as Resource.KeyType,
+                        title: CyclicToDo.applicationTitle,
+                    }],
                     [
                         menuItem
                         (

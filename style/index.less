@@ -133,8 +133,11 @@ h1
         font-size: 1.2rem;
         padding-left: 0.25rem;
         padding-right: 3rem;
-        cursor: pointer;
-        &:hover
+        &:not(.label-segment)
+        {
+            cursor: pointer;
+        }
+        &:hover:not(.label-segment)
         {
             background-color: @active-color;
         }
@@ -162,6 +165,10 @@ h1
             transform: skewX(-150deg);
         }
         padding-left: 0.5rem;
+    }
+    .segment +.menu-popup
+    {
+        white-space: nowrap;
     }
     &.locale-parallel-off
     {
