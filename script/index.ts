@@ -2445,19 +2445,17 @@ export module CyclicToDo
             className: "history-screen screen",
             children:
             [
-                await screenHeader
+                await screenSegmentedHeader
                 (
-                    { pass: entry.pass, tag: entry.tag, },
-                    dropDownLabel
-                    ({
-                        list: makeObject
-                        (
-                            ["@overall"].concat(Storage.Tag.get(entry.pass).sort(Domain.tagComparer(entry.pass))).concat(["@unoverall", "@untagged"])
-                            .map(i => ({ key:i, value: `${Domain.tagMap(i)} (${Storage.TagMember.get(entry.pass, i).length})`, }))
-                        ),
-                        value: entry.tag,
-                        onChange: async (tag: string) => await showUrl({ pass: entry.pass, tag, hash: "history", }),
-                    }),
+                    [
+                        screenHeaderHomeSegment(),
+                        await screenHeaderListSegment(entry.pass),
+                        await screenHeaderTagSegment(entry.pass, entry.tag),
+                        {
+                            icon: "list", // 本来は history だけど、まだ作ってない
+                            title: locale.map("History"),
+                        }
+                    ],
                     [
                         menuItem
                         (
@@ -2692,10 +2690,17 @@ export module CyclicToDo
             className: "todo-screen screen",
             children:
             [
-                await screenHeader
+                await screenSegmentedHeader
                 (
-                    { pass, tag: "@overall", },
-                    `${Storage.Tag.decode(item.task)}`,
+                    [
+                        screenHeaderHomeSegment(),
+                        await screenHeaderListSegment(pass),
+                        await screenHeaderTagSegment(pass, Storage.Tag.getByTodo(pass, item.task)[0]),
+                        {
+                            icon: "task",
+                            title: Storage.Tag.decode(item.task),
+                        }
+                    ],
                     [
                         todoDoneMenu(pass, item),
                         todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
@@ -2819,10 +2824,16 @@ export module CyclicToDo
             className: "export-screen screen",
             children:
             [
-                await screenHeader
+                await screenSegmentedHeader
                 (
-                    { pass, tag: "@overall", },
-                    `${document.title}`,
+                    [
+                        screenHeaderHomeSegment(),
+                        await screenHeaderListSegment(pass),
+                        {
+                            icon: "list", // 本来は export だけど、まだ作ってない
+                            title: locale.map("Export"),
+                        }
+                    ],
                     [
                         menuItem
                         (
@@ -3096,14 +3107,14 @@ export module CyclicToDo
                 ),
                 {
                     tag: "div",
-                    style: "text-align: center; padding: 0.5rem;",
-                    children: "🚧 This static web application is under development. / この Static Web アプリは開発中です。",
+                    className: "row-flex-list list-list",
+                    children: await Promise.all(Storage.Pass.get().map(pass => listItem(JSON.parse(Storage.exportJson(pass)) as ToDoList))),
                 },
                 await applicationColorIcon(),
                 {
                     tag: "div",
-                    className: "row-flex-list list-list",
-                    children: await Promise.all(Storage.Pass.get().map(pass => listItem(JSON.parse(Storage.exportJson(pass)) as ToDoList))),
+                    style: "text-align: center; padding: 0.5rem;",
+                    children: "🚧 This static web application is under development. / この Static Web アプリは開発中です。",
                 },
                 {
                     tag: "div",
