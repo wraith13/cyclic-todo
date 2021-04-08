@@ -2103,7 +2103,7 @@ export module CyclicToDo
         };
         export const screenHeaderHomeSegment = (): HeaderSegmentSource =>
         ({
-            icon: "application" as Resource.KeyType,
+            icon: "application-icon",
             href: { },
             title: CyclicToDo.applicationTitle,
         });
@@ -2853,7 +2853,17 @@ export module CyclicToDo
         {
             export type KeyType = keyof typeof resource;
             export const loadSvgOrCache = async (key: KeyType): Promise<SVGElement> =>
-                new DOMParser().parseFromString(document.getElementById(key).innerHTML, "image/svg+xml").documentElement as any;
+            {
+                try
+                {
+                    return new DOMParser().parseFromString(document.getElementById(key).innerHTML, "image/svg+xml").documentElement as any;
+                }
+                catch(error)
+                {
+                    console.log({key});
+                    throw error;
+                }
+            };
         }
         export const showExportScreen = async (pass: string) =>
         {
@@ -3121,7 +3131,7 @@ export module CyclicToDo
                 await screenSegmentedHeader
                 (
                     [{
-                        icon: "application" as Resource.KeyType,
+                        icon: "application-icon",
                         title: CyclicToDo.applicationTitle,
                     }],
                     [

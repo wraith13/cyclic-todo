@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Fri Apr 09 2021 04:24:08 GMT+0900 (GMT+09:00) -->
+<!-- build at: Fri Apr 09 2021 06:21:26 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -4257,7 +4257,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             };
             Render.screenHeaderHomeSegment = function () {
                 return ({
-                    icon: "application",
+                    icon: "application-icon",
                     href: {},
                     title: CyclicToDo.applicationTitle,
                 });
@@ -5215,9 +5215,18 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             var Resource;
             (function (Resource) {
                 var _this = this;
-                Resource.loadSvgOrCache = function (key) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                    return [2 /*return*/, new DOMParser().parseFromString(document.getElementById(key).innerHTML, "image/svg+xml").documentElement];
-                }); }); };
+                Resource.loadSvgOrCache = function (key) { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        try {
+                            return [2 /*return*/, new DOMParser().parseFromString(document.getElementById(key).innerHTML, "image/svg+xml").documentElement];
+                        }
+                        catch (error) {
+                            console.log({ key: key });
+                            throw error;
+                        }
+                        return [2 /*return*/];
+                    });
+                }); };
             })(Resource = Render.Resource || (Render.Resource = {}));
             Render.showExportScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () {
                 var _a;
@@ -5595,7 +5604,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "welcome-screen screen"
                             };
                             return [4 /*yield*/, Render.screenSegmentedHeader([{
-                                        icon: "application",
+                                        icon: "application-icon",
                                         title: CyclicToDo.applicationTitle,
                                     }], [
                                     Render.menuItem(Render.label("New ToDo List"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
