@@ -1137,7 +1137,7 @@ export module CyclicToDo
                                             className: "check-button",
                                             children:
                                             [
-                                                await Resource.loadSvgOrCache("check"),
+                                                await Resource.loadSvgOrCache("check-icon"),
                                                 {
                                                     tag: "span",
                                                     children: Domain.tagMap(tag),
@@ -1172,7 +1172,7 @@ export module CyclicToDo
                                 className: "check-button",
                                 children:
                                 [
-                                    await Resource.loadSvgOrCache("check"),
+                                    await Resource.loadSvgOrCache("check-icon"),
                                     {
                                         tag: "span",
                                         children: Domain.tagMap("@new"),
@@ -1252,7 +1252,7 @@ export module CyclicToDo
                                         className: `check-button ${sublist === (Storage.Task.getSublist(item.task) ?? "@root") ? "checked": ""}`,
                                         children:
                                         [
-                                            await Resource.loadSvgOrCache("check"),
+                                            await Resource.loadSvgOrCache("check-icon"),
                                             {
                                                 tag: "span",
                                                 children: Domain.tagMap(sublist),
@@ -1272,7 +1272,7 @@ export module CyclicToDo
                                 className: "check-button",
                                 children:
                                 [
-                                    await Resource.loadSvgOrCache("check"),
+                                    await Resource.loadSvgOrCache("check-icon"),
                                     {
                                         tag: "span",
                                         children: Domain.tagMap("@new-sublist"),
@@ -1426,7 +1426,7 @@ export module CyclicToDo
                 className: "menu-button",
                 children:
                 [
-                    await Resource.loadSvgOrCache("ellipsis"),
+                    await Resource.loadSvgOrCache("ellipsis-icon"),
                 ],
                 onclick: () =>
                 {
@@ -1675,7 +1675,7 @@ export module CyclicToDo
                             href: { pass: entry.pass, todo: item.task, },
                             children:
                             [
-                                await Resource.loadSvgOrCache("task"),
+                                await Resource.loadSvgOrCache("task-icon"),
                                 Storage.Tag.decode(item.task),
                             ]
                         }),
@@ -2111,9 +2111,9 @@ export module CyclicToDo
         ({
             icon:
             {
-                "@removed": "list" as Resource.KeyType, // 本来は recycle-bin だけど、まだ作ってない
-                "@import": "list" as Resource.KeyType, // 本来は import だけど、まだ作ってない
-            }[pass] ?? "list",
+                "@removed": "list-icon" as Resource.KeyType, // 本来は recycle-bin だけど、まだ作ってない
+                "@import": "list-icon" as Resource.KeyType, // 本来は import だけど、まだ作ってない
+            }[pass] ?? "list-icon",
             title:
             {
                 "@removed": locale.map("@deleted"),
@@ -2129,7 +2129,7 @@ export module CyclicToDo
                                 async i => menuLinkItem
                                 (
                                     [
-                                        await Resource.loadSvgOrCache("list"),
+                                        await Resource.loadSvgOrCache("list-icon"),
                                         labelSpan(`ToDo リスト ( pass: ${i.substr(0, 2)}****${i.substr(-2)} )`)
                                     ],
                                     { pass: i, tag: "@overall", },
@@ -2144,7 +2144,7 @@ export module CyclicToDo
                     menuItem
                     (
                         [
-                            await Resource.loadSvgOrCache("list"),
+                            await Resource.loadSvgOrCache("list-icon"),
                             label("New ToDo List"),
                         ],
                         async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", })
@@ -2152,7 +2152,7 @@ export module CyclicToDo
                     menuItem
                     (
                         [
-                            await Resource.loadSvgOrCache("list"),
+                            await Resource.loadSvgOrCache("list-icon"),
                             label("Import List"),
                         ],
                         async () => await showUrl({ hash: "import", }),
@@ -2161,7 +2161,7 @@ export module CyclicToDo
                     menuLinkItem
                     (
                         [
-                            await Resource.loadSvgOrCache("list"), // 本来は recycle-bin だけど、まだ作ってない
+                            await Resource.loadSvgOrCache("list-icon"), // 本来は recycle-bin だけど、まだ作ってない
                             labelSpan(`${locale.map("@deleted")} (${Storage.Backup.get().length})`),
                         ],
                         { hash: "removed" },
@@ -2172,9 +2172,9 @@ export module CyclicToDo
         export const screenHeaderTagSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
         ({
             icon:
-                ("@deleted" === current && "list") || // 本来は recycle bin だけど、まだ作ってない
-                (Storage.Tag.isSublist(current) && "list") || // 本来は sublist だけど、まだ作ってない
-                "list", // 本来は tag だけど、まだ作ってない
+                ("@deleted" === current && "list-icon") || // 本来は recycle bin だけど、まだ作ってない
+                (Storage.Tag.isSublist(current) && "list-icon") || // 本来は sublist だけど、まだ作ってない
+                "list-icon", // 本来は tag だけど、まだ作ってない
             title: Domain.tagMap(current),
             menu:
                 (
@@ -2190,8 +2190,8 @@ export module CyclicToDo
                                         await Resource.loadSvgOrCache
                                         (
                                             Storage.Tag.isSublist(tag) ?
-                                                "list": // 本来は sublist だけど、まだ作ってない
-                                                "list" // 本来は tag だけど、まだ作ってない
+                                                "list-icon": // 本来は sublist だけど、まだ作ってない
+                                                "list-icon" // 本来は tag だけど、まだ作ってない
                                         ),
                                         labelSpan(`${Domain.tagMap(tag)} (${Storage.TagMember.get(pass, tag).length})`),
                                     ],
@@ -2207,7 +2207,7 @@ export module CyclicToDo
                     menuItem
                     (
                         [
-                            await Resource.loadSvgOrCache("list"), // 本来は sublist だけど、まだ作ってない
+                            await Resource.loadSvgOrCache("list-icon"), // 本来は sublist だけど、まだ作ってない
                             label("@new-sublist"),
                         ],
                         async () =>
@@ -2224,7 +2224,7 @@ export module CyclicToDo
                     menuItem
                     (
                         [
-                            await Resource.loadSvgOrCache("list"), // 本来は tag だけど、まだ作ってない
+                            await Resource.loadSvgOrCache("list-icon"), // 本来は tag だけど、まだ作ってない
                             label("@new"),
                         ],
                         async () =>
@@ -2241,7 +2241,7 @@ export module CyclicToDo
                     menuLinkItem
                     (
                         [
-                            await Resource.loadSvgOrCache("list"), // 本来は recycle-bin だけど、まだ作ってない
+                            await Resource.loadSvgOrCache("list-icon"), // 本来は recycle-bin だけど、まだ作ってない
                             labelSpan(`${locale.map("@deleted")} (${Storage.Removed.get(pass).length})`),
                         ],
                         { pass, hash: "removed" },
@@ -2251,7 +2251,7 @@ export module CyclicToDo
         });
         export const screenHeaderTaskSegment = async (pass: string, tag: string, current: string): Promise<HeaderSegmentSource> =>
         ({
-            icon:"task",
+            icon:"task-icon",
             title: Storage.Tag.decode(current),
             menu:
                 (
@@ -2263,7 +2263,7 @@ export module CyclicToDo
                                 async task => menuLinkItem
                                 (
                                     [
-                                        await Resource.loadSvgOrCache("task"),
+                                        await Resource.loadSvgOrCache("task-icon"),
                                         labelSpan(Storage.Tag.decode(task)),
                                     ],
                                     { pass, todo: task, },
@@ -2278,7 +2278,7 @@ export module CyclicToDo
                     menuItem
                     (
                         [
-                            await Resource.loadSvgOrCache("task"), // 本来は plus だけど、まだ作ってない
+                            await Resource.loadSvgOrCache("task-icon"), // 本来は plus だけど、まだ作ってない
                             label("New ToDo"),
                         ],
                         async () =>
@@ -2497,7 +2497,7 @@ export module CyclicToDo
                         await screenHeaderListSegment(entry.pass),
                         await screenHeaderTagSegment(entry.pass, entry.tag),
                         {
-                            icon: "list", // 本来は history だけど、まだ作ってない
+                            icon: "list-icon", // 本来は history だけど、まだ作ってない
                             title: locale.map("History"),
                         }
                     ],
@@ -2872,7 +2872,7 @@ export module CyclicToDo
                         screenHeaderHomeSegment(),
                         await screenHeaderListSegment(pass),
                         {
-                            icon: "list", // 本来は export だけど、まだ作ってない
+                            icon: "list-icon", // 本来は export だけど、まだ作ってない
                             title: locale.map("Export"),
                         }
                     ],
@@ -3040,13 +3040,13 @@ export module CyclicToDo
         ({
             tag: "div",
             className: "application-icon icon",
-            children: await Resource.loadSvgOrCache("application"),
+            children: await Resource.loadSvgOrCache("application-icon"),
         });
         export const applicationColorIcon = async () =>
         ({
             tag: "div",
             className: "application-icon icon",
-            children: await Resource.loadSvgOrCache("application-color"),
+            children: await Resource.loadSvgOrCache("application-color-icon"),
         });
         export const listItem = async (list: ToDoList) =>
         ({
@@ -3065,7 +3065,7 @@ export module CyclicToDo
                             href: { pass: list.pass, tag: "@overall", },
                             children:
                             [
-                                await Resource.loadSvgOrCache("list"),
+                                await Resource.loadSvgOrCache("list-icon"),
                                 `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
                             ]
                         }),
