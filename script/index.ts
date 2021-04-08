@@ -2249,6 +2249,51 @@ export module CyclicToDo
                     ),
                 ])
         });
+        export const screenHeaderTaskSegment = async (pass: string, tag: string, current: string): Promise<HeaderSegmentSource> =>
+        ({
+            icon:"task",
+            title: Storage.Tag.decode(current),
+            menu:
+                (
+                    (
+                        await Promise.all
+                        (
+                            Storage.TagMember.get(pass, tag).map
+                            (
+                                async task => menuLinkItem
+                                (
+                                    [
+                                        await Resource.loadSvgOrCache("task"),
+                                        labelSpan(Storage.Tag.decode(task)),
+                                    ],
+                                    { pass, todo: task, },
+                                    current === task ? "current-item": undefined
+                                )
+                            )
+                        )
+                    ) as minamo.dom.Source[]
+                )
+                .concat
+                ([
+                    menuItem
+                    (
+                        [
+                            await Resource.loadSvgOrCache("task"), // 本来は plus だけど、まだ作ってない
+                            label("New ToDo"),
+                        ],
+                        async () =>
+                        {
+                            const newTask = await prompt("ToDo の名前を入力してください");
+                            if (null !== newTask)
+                            {
+                                Storage.Task.add(pass, newTask);
+                                Storage.TagMember.add(pass, tag, newTask);
+                                await showUrl({ pass, todo: newTask, });
+                            }
+                    }
+                    ),
+                ])
+        });
         export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         ({
             tag: "div",
@@ -2684,7 +2729,7 @@ export module CyclicToDo
             document.title = `${locale.map("@deleted")} ${applicationTitle}`;
             await showWindow(await removedScreen(pass, Storage.Removed.get(pass)));
         };
-        export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[]) =>
+        export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[], tag: string = Storage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0]) =>
         ({
             tag: "div",
             className: "todo-screen screen",
@@ -2695,11 +2740,8 @@ export module CyclicToDo
                     [
                         screenHeaderHomeSegment(),
                         await screenHeaderListSegment(pass),
-                        await screenHeaderTagSegment(pass, Storage.Tag.getByTodo(pass, item.task)[0]),
-                        {
-                            icon: "task",
-                            title: Storage.Tag.decode(item.task),
-                        }
+                        await screenHeaderTagSegment(pass, tag),
+                        await screenHeaderTaskSegment(pass, tag, item.task),
                     ],
                     [
                         todoDoneMenu(pass, item),

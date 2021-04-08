@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu Apr 08 2021 05:43:46 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu Apr 08 2021 18:22:21 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -141,16 +141,12 @@ h1 .segment + .menu-popup + .segment > * {
 }
 h1 .segment + .segment .icon,
 h1 .segment + .menu-popup + .segment .icon {
-  padding: 0.5rem;
+  padding: 0.5rem 0.25rem;
 }
 h1 .segment + .segment .icon svg,
 h1 .segment + .menu-popup + .segment .icon svg {
   width: 1.5rem;
   height: 1.5rem;
-}
-h1 .segment + .segment .segment-title,
-h1 .segment + .menu-popup + .segment .segment-title {
-  margin-left: -0.25rem;
 }
 h1 .segment + .menu-popup {
   white-space: nowrap;
@@ -4441,6 +4437,63 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
+            Render.screenHeaderTaskSegment = function (pass, tag, current) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c;
+                var _d;
+                var _this = this;
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
+                        case 0:
+                            _d = {
+                                icon: "task",
+                                title: Storage.Tag.decode(current)
+                            };
+                            return [4 /*yield*/, Promise.all(Storage.TagMember.get(pass, tag).map(function (task) { return __awaiter(_this, void 0, void 0, function () {
+                                    var _a;
+                                    return __generator(this, function (_b) {
+                                        switch (_b.label) {
+                                            case 0:
+                                                _a = Render.menuLinkItem;
+                                                return [4 /*yield*/, Resource.loadSvgOrCache("task")];
+                                            case 1: return [2 /*return*/, _a.apply(void 0, [[
+                                                        _b.sent(),
+                                                        Render.labelSpan(Storage.Tag.decode(task))
+                                                    ], { pass: pass, todo: task, }, current === task ? "current-item" : undefined])];
+                                        }
+                                    });
+                                }); }))];
+                        case 1:
+                            _b = (_a = (_e.sent()))
+                                .concat;
+                            _c = Render.menuItem;
+                            return [4 /*yield*/, Resource.loadSvgOrCache("task")];
+                        case 2: return [2 /*return*/, (_d.menu = _b.apply(_a, [[
+                                    _c.apply(void 0, [[
+                                            _e.sent(),
+                                            Render.label("New ToDo")
+                                        ], function () { return __awaiter(_this, void 0, void 0, function () {
+                                            var newTask;
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
+                                                    case 1:
+                                                        newTask = _a.sent();
+                                                        if (!(null !== newTask)) return [3 /*break*/, 3];
+                                                        Storage.Task.add(pass, newTask);
+                                                        Storage.TagMember.add(pass, tag, newTask);
+                                                        return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: newTask, })];
+                                                    case 2:
+                                                        _a.sent();
+                                                        _a.label = 3;
+                                                    case 3: return [2 /*return*/];
+                                                }
+                                            });
+                                        }); }])
+                                ]]),
+                                _d)];
+                    }
+                });
+            }); };
             Render.listScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c;
                 var _d, _e;
@@ -5001,114 +5054,118 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
-            Render.todoScreen = function (pass, item, ticks) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c;
-                var _d, _e;
-                var _this = this;
-                return __generator(this, function (_f) {
-                    switch (_f.label) {
-                        case 0:
-                            _d = {
-                                tag: "div",
-                                className: "todo-screen screen"
-                            };
-                            _a = Render.screenSegmentedHeader;
-                            _b = [Render.screenHeaderHomeSegment()];
-                            return [4 /*yield*/, Render.screenHeaderListSegment(pass)];
-                        case 1:
-                            _b = _b.concat([
-                                _f.sent()
-                            ]);
-                            return [4 /*yield*/, Render.screenHeaderTagSegment(pass, Storage.Tag.getByTodo(pass, item.task)[0])];
-                        case 2: return [4 /*yield*/, _a.apply(void 0, [_b.concat([
+            Render.todoScreen = function (pass, item, ticks, tag) {
+                if (tag === void 0) { tag = Storage.Tag.getByTodo(pass, item.task).filter(function (tag) { return "@overall" !== tag; }).concat("@overall")[0]; }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var _a, _b, _c;
+                    var _d, _e;
+                    var _this = this;
+                    return __generator(this, function (_f) {
+                        switch (_f.label) {
+                            case 0:
+                                _d = {
+                                    tag: "div",
+                                    className: "todo-screen screen"
+                                };
+                                _a = Render.screenSegmentedHeader;
+                                _b = [Render.screenHeaderHomeSegment()];
+                                return [4 /*yield*/, Render.screenHeaderListSegment(pass)];
+                            case 1:
+                                _b = _b.concat([
+                                    _f.sent()
+                                ]);
+                                return [4 /*yield*/, Render.screenHeaderTagSegment(pass, tag)];
+                            case 2:
+                                _b = _b.concat([
+                                    _f.sent()
+                                ]);
+                                return [4 /*yield*/, Render.screenHeaderTaskSegment(pass, tag, item.task)];
+                            case 3: return [4 /*yield*/, _a.apply(void 0, [_b.concat([
+                                        _f.sent()
+                                    ]), [
+                                        Render.todoDoneMenu(pass, item),
+                                        Render.todoRenameMenu(pass, item, function (newTask) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: newTask, })];
+                                                case 1: return [2 /*return*/, _a.sent()];
+                                            }
+                                        }); }); }),
+                                        Render.todoTagMenu(pass, item),
+                                        Render.todoDeleteMenu(pass, item),
+                                        {
+                                            tag: "button",
+                                            children: "🚫 ToDo をシェア",
+                                        },
+                                        Render.menuItem(Render.label("Export"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, hash: "export", })];
+                                                case 1: return [2 /*return*/, _a.sent()];
+                                            }
+                                        }); }); }),
+                                    ]])];
+                            case 4:
+                                _c = [
                                     _f.sent(),
                                     {
-                                        icon: "task",
-                                        title: Storage.Tag.decode(item.task),
+                                        tag: "div",
+                                        className: "row-flex-list todo-list",
+                                        children: [
+                                            {
+                                                tag: "div",
+                                                className: "task-item flex-item",
+                                                children: [
+                                                    {
+                                                        tag: "div",
+                                                        className: "item-tags",
+                                                        children: Storage.Tag.getByTodo(pass, item.task).map(function (tag) { return Render.internalLink({
+                                                            className: "tag",
+                                                            href: { pass: pass, tag: tag, },
+                                                            children: (Storage.Tag.isSublist(tag) ? Storage.Tag.sublistSymbol : Storage.Tag.symbol) + " " + Domain.tagMap(tag),
+                                                        }); })
+                                                    },
+                                                    Render.information(item),
+                                                ],
+                                            },
+                                        ],
                                     }
-                                ]), [
-                                    Render.todoDoneMenu(pass, item),
-                                    Render.todoRenameMenu(pass, item, function (newTask) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: newTask, })];
-                                            case 1: return [2 /*return*/, _a.sent()];
-                                        }
-                                    }); }); }),
-                                    Render.todoTagMenu(pass, item),
-                                    Render.todoDeleteMenu(pass, item),
-                                    {
-                                        tag: "button",
-                                        children: "🚫 ToDo をシェア",
-                                    },
-                                    Render.menuItem(Render.label("Export"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, hash: "export", })];
-                                            case 1: return [2 /*return*/, _a.sent()];
-                                        }
-                                    }); }); }),
-                                ]])];
-                        case 3:
-                            _c = [
-                                _f.sent(),
-                                {
+                                ];
+                                _e = {
                                     tag: "div",
-                                    className: "row-flex-list todo-list",
-                                    children: [
+                                    className: "row-flex-list tick-list"
+                                };
+                                return [4 /*yield*/, Promise.all(ticks.map(function (tick, index) { return Render.tickItem(pass, item, tick, "number" === typeof ticks[index + 1] ? tick - ticks[index + 1] : null, ticks.length < 2 ? null : Math.max.apply(null, Calculate.intervals(ticks))); }))];
+                            case 5: return [2 /*return*/, (_d.children = _c.concat([
+                                    (_e.children = _f.sent(),
+                                        _e),
+                                    Storage.isSessionPass(pass) ?
+                                        [] :
                                         {
                                             tag: "div",
-                                            className: "task-item flex-item",
-                                            children: [
-                                                {
-                                                    tag: "div",
-                                                    className: "item-tags",
-                                                    children: Storage.Tag.getByTodo(pass, item.task).map(function (tag) { return Render.internalLink({
-                                                        className: "tag",
-                                                        href: { pass: pass, tag: tag, },
-                                                        children: (Storage.Tag.isSublist(tag) ? Storage.Tag.sublistSymbol : Storage.Tag.symbol) + " " + Domain.tagMap(tag),
-                                                    }); })
-                                                },
-                                                Render.information(item),
-                                            ],
-                                        },
-                                    ],
-                                }
-                            ];
-                            _e = {
-                                tag: "div",
-                                className: "row-flex-list tick-list"
-                            };
-                            return [4 /*yield*/, Promise.all(ticks.map(function (tick, index) { return Render.tickItem(pass, item, tick, "number" === typeof ticks[index + 1] ? tick - ticks[index + 1] : null, ticks.length < 2 ? null : Math.max.apply(null, Calculate.intervals(ticks))); }))];
-                        case 4: return [2 /*return*/, (_d.children = _c.concat([
-                                (_e.children = _f.sent(),
-                                    _e),
-                                Storage.isSessionPass(pass) ?
-                                    [] :
-                                    {
-                                        tag: "div",
-                                        className: "button-list",
-                                        children: {
-                                            tag: "button",
-                                            className: item.isDefault ? "default-button main-button long-button" : "main-button long-button",
-                                            children: Render.label("Done"),
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0:
-                                                            Domain.done(pass, item.task);
-                                                            return [4 /*yield*/, CyclicToDo.reload()];
-                                                        case 1:
-                                                            _a.sent();
-                                                            return [2 /*return*/];
-                                                    }
-                                                });
-                                            }); }
-                                        },
-                                    }
-                            ]),
-                                _d)];
-                    }
+                                            className: "button-list",
+                                            children: {
+                                                tag: "button",
+                                                className: item.isDefault ? "default-button main-button long-button" : "main-button long-button",
+                                                children: Render.label("Done"),
+                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    return __generator(this, function (_a) {
+                                                        switch (_a.label) {
+                                                            case 0:
+                                                                Domain.done(pass, item.task);
+                                                                return [4 /*yield*/, CyclicToDo.reload()];
+                                                            case 1:
+                                                                _a.sent();
+                                                                return [2 /*return*/];
+                                                        }
+                                                    });
+                                                }); }
+                                            },
+                                        }
+                                ]),
+                                    _d)];
+                        }
+                    });
                 });
-            }); };
+            };
             Render.showTodoScreen = function (pass, task) { return __awaiter(_this, void 0, void 0, function () {
                 var item, updateWindow, _a;
                 var _this = this;
