@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Fri Apr 09 2021 06:21:26 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sat Apr 10 2021 01:28:08 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -552,6 +552,10 @@ button.default-button:hover {
   width: 0px;
 }
 .history-bar {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
   font-size: 1rem;
   padding: 0.5rem;
   background-color: #8884;
@@ -559,16 +563,30 @@ button.default-button:hover {
 .history-bar > * + * {
   padding-left: 1rem;
 }
-.history-bar a {
-  color: #000022;
-  opacity: 0.6;
-}
 .history-bar a:not(:hover) {
   text-decoration: none;
 }
+.history-bar a .history-bar-title,
+.history-bar a .history-bar-item {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  color: #000022;
+  fill: #000022;
+  opacity: 0.6;
+}
+.history-bar a .history-bar-title svg,
+.history-bar a .history-bar-item svg {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 4px;
+}
 @media (prefers-color-scheme: dark) {
-  .history-bar a {
+  .history-bar a .history-bar-title,
+  .history-bar a .history-bar-item {
     color: #FFFFFF;
+    fill: #FFFFFF;
   }
 }
 .row-flex-list,
@@ -789,19 +807,34 @@ button.default-button:hover {
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: start;
+}
+.task-item .item-tags a {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+}
+.task-item .item-tags a svg {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 4px;
 }
 .task-item .item-tags a:not(:hover) {
   opacity: 0.6;
   text-decoration: none;
   color: #000022;
+  fill: #000022;
 }
 @media (prefers-color-scheme: dark) {
   .task-item .item-tags a:not(:hover) {
     color: #FFFFFF;
+    fill: #FFFFFF;
   }
 }
 .task-item .item-tags a:hover {
   color: #6F7F00;
+  fill: #6F7F00;
 }
 .task-item .item-tags a + a {
   margin-left: 1rem;
@@ -2121,9 +2154,9 @@ define("resource/lang.en", [], {
     "count": "count",
     "Done": "Done",
     "days": "days",
-    "@overall": "Overall",
-    "@unoverall": "Excluded in the Overall",
-    "@untagged": "Untagged",
+    "@overall": "Home",
+    "@unoverall": "Excluded in Home",
+    "@untagged": "Uncategorized",
     "@deleted": "Recycle Bin",
     "@new": "New Tag",
     "@new-sublist": "New Sublist",
@@ -2134,7 +2167,7 @@ define("resource/lang.en", [], {
     "timestamp": "timestamp",
     "interval": "interval",
     "Rename": "Rename",
-    "Delete": "Delete",
+    "Delete": "Move to Recycle bin",
     "Restore": "Restore",
     "History": "History",
     "Back to List": "Back to List",
@@ -2163,9 +2196,9 @@ define("resource/lang.ja", [], {
     "count": "回数",
     "Done": "完了",
     "days": "日",
-    "@overall": "総合",
-    "@unoverall": "総合から除外",
-    "@untagged": "タグ付けされてない",
+    "@overall": "ホーム",
+    "@unoverall": "ホームから除外",
+    "@untagged": "未分類",
     "@deleted": "ごみ箱",
     "@new": "新しいタグ",
     "@new-sublist": "新しいサブリスト",
@@ -2176,7 +2209,7 @@ define("resource/lang.ja", [], {
     "timestamp": "日時",
     "interval": "間隔",
     "Rename": "名前を変更",
-    "Delete": "削除",
+    "Delete": "ごみ箱へ入れる",
     "Restore": "復元",
     "History": "履歴",
     "Back to List": "リストに戻る",
@@ -2204,6 +2237,7 @@ define("resource/images", [], {
     "ellipsis-icon": "./image/ellipsis.1024.svg",
     "check-icon": "./image/check.1024.svg",
     "list-icon": "./image/list.1024.svg",
+    "tag-icon": "./image/tag.1024.svg",
     "task-icon": "./image/task.1024.svg"
 });
 define("script/index", ["require", "exports", "script/minamo.js/index", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
@@ -3718,35 +3752,35 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); }); };
             Render.todoItem = function (entry, item) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c;
-                var _d, _e, _f, _g;
+                var _a, _b, _c, _d;
+                var _e, _f, _g, _h, _j;
                 var _this = this;
-                return __generator(this, function (_h) {
-                    switch (_h.label) {
+                return __generator(this, function (_k) {
+                    switch (_k.label) {
                         case 0:
-                            _d = {
+                            _e = {
                                 tag: "div",
                                 className: "task-item flex-item"
                             };
-                            _e = {
+                            _f = {
                                 tag: "div",
                                 className: "item-header"
                             };
                             _a = Render.internalLink;
-                            _f = {
+                            _g = {
                                 className: "item-title",
                                 href: { pass: entry.pass, todo: item.task, }
                             };
                             return [4 /*yield*/, Resource.loadSvgOrCache("task-icon")];
                         case 1:
                             _b = [
-                                _a.apply(void 0, [(_f.children = [
-                                        _h.sent(),
+                                _a.apply(void 0, [(_g.children = [
+                                        _k.sent(),
                                         Storage.Tag.decode(item.task)
                                     ],
-                                        _f)])
+                                        _g)])
                             ];
-                            _g = {
+                            _h = {
                                 tag: "div",
                                 className: "item-operator"
                             };
@@ -3793,26 +3827,52 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     Render.todoTagMenu(entry.pass, item),
                                     Render.todoDeleteMenu(entry.pass, item),
                                 ])];
-                        case 2: return [2 /*return*/, (_d.children = [
-                                (_e.children = _b.concat([
-                                    (_g.children = _c.concat([
-                                        _h.sent()
+                        case 2:
+                            _d = [
+                                (_f.children = _b.concat([
+                                    (_h.children = _c.concat([
+                                        _k.sent()
                                     ]),
-                                        _g)
+                                        _h)
                                 ]),
-                                    _e),
-                                {
-                                    tag: "div",
-                                    className: "item-tags",
-                                    children: Storage.Tag.getByTodo(entry.pass, item.task).map(function (tag) { return Render.internalLink({
-                                        className: "tag",
-                                        href: { pass: entry.pass, tag: tag, },
-                                        children: (Storage.Tag.isSublist(tag) ? Storage.Tag.sublistSymbol : Storage.Tag.symbol) + " " + Domain.tagMap(tag),
-                                    }); })
-                                },
+                                    _f)
+                            ];
+                            _j = {
+                                tag: "div",
+                                className: "item-tags"
+                            };
+                            return [4 /*yield*/, Promise.all(Storage.Tag.getByTodo(entry.pass, item.task).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
+                                    var _a, _b;
+                                    var _c;
+                                    return __generator(this, function (_d) {
+                                        switch (_d.label) {
+                                            case 0:
+                                                _a = Render.internalLink;
+                                                _c = {
+                                                    className: "tag",
+                                                    href: { pass: entry.pass, tag: tag, }
+                                                };
+                                                if (!Storage.Tag.isSublist(tag)) return [3 /*break*/, 1];
+                                                _b = Storage.Tag.sublistSymbol;
+                                                return [3 /*break*/, 3];
+                                            case 1: return [4 /*yield*/, Resource.loadSvgOrCache("tag-icon")];
+                                            case 2:
+                                                _b = _d.sent();
+                                                _d.label = 3;
+                                            case 3: return [2 /*return*/, _a.apply(void 0, [(_c.children = [
+                                                        _b,
+                                                        Domain.tagMap(tag)
+                                                    ],
+                                                        _c)])];
+                                        }
+                                    });
+                                }); }))];
+                        case 3: return [2 /*return*/, (_e.children = _d.concat([
+                                (_j.children = _k.sent(),
+                                    _j),
                                 Render.information(item)
-                            ],
-                                _d)];
+                            ]),
+                                _e)];
                     }
                 });
             }); };
@@ -4045,36 +4105,58 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 return result;
             };
             Render.historyBar = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    return [2 /*return*/, ({
-                            tag: "div",
-                            className: "horizontal-list history-bar",
-                            children: [
-                                Render.internalLink({
+                var _a;
+                var _b;
+                var _this = this;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            _b = {
+                                tag: "div",
+                                className: "horizontal-list history-bar"
+                            };
+                            _a = [Render.internalLink({
                                     href: { pass: entry.pass, tag: entry.tag, hash: "history" },
                                     children: {
                                         tag: "span",
                                         className: "history-bar-title",
                                         children: locale.map("History") + ":",
                                     },
-                                }),
-                                [].concat(list).sort(minamo_js_1.minamo.core.comparer.make(function (i) { var _a; return (_a = -i.previous) !== null && _a !== void 0 ? _a : 0; })).map(function (item) { return Render.internalLink({
-                                    href: { pass: entry.pass, todo: item.task, },
-                                    children: {
-                                        tag: "span",
-                                        className: "history-bar-item",
-                                        children: [
-                                            item.task,
-                                            {
-                                                tag: "span",
-                                                className: "monospace",
-                                                children: "(" + Domain.timeLongStringFromTick(item.elapsed) + "),"
-                                            }
-                                        ],
-                                    }
-                                }); }),
-                            ]
-                        })];
+                                })];
+                            return [4 /*yield*/, Promise.all([].concat(list).sort(minamo_js_1.minamo.core.comparer.make(function (i) { var _a; return (_a = -i.previous) !== null && _a !== void 0 ? _a : 0; })).map(function (item) { return __awaiter(_this, void 0, void 0, function () {
+                                    var _a;
+                                    var _b, _c;
+                                    return __generator(this, function (_d) {
+                                        switch (_d.label) {
+                                            case 0:
+                                                _a = Render.internalLink;
+                                                _b = {
+                                                    href: { pass: entry.pass, todo: item.task, }
+                                                };
+                                                _c = {
+                                                    tag: "span",
+                                                    className: "history-bar-item"
+                                                };
+                                                return [4 /*yield*/, Resource.loadSvgOrCache("task-icon")];
+                                            case 1: return [2 /*return*/, _a.apply(void 0, [(_b.children = (_c.children = [
+                                                        _d.sent(),
+                                                        item.task,
+                                                        {
+                                                            tag: "span",
+                                                            className: "monospace",
+                                                            children: "(" + Domain.timeLongStringFromTick(item.elapsed) + "),"
+                                                        }
+                                                    ],
+                                                        _c),
+                                                        _b)])];
+                                        }
+                                    });
+                                }); }))];
+                        case 1: return [2 /*return*/, (_b.children = _a.concat([
+                                _c.sent()
+                            ]),
+                                _b)];
+                    }
                 });
             }); };
             Render.screenHeader = function (href, title, menu) { return __awaiter(_this, void 0, void 0, function () {
@@ -4349,7 +4431,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _g = {
                                 icon: ("@deleted" === current && "list-icon") || // 本来は recycle bin だけど、まだ作ってない
                                     (Storage.Tag.isSublist(current) && "list-icon") || // 本来は sublist だけど、まだ作ってない
-                                    "list-icon",
+                                    "tag-icon",
                                 title: Domain.tagMap(current)
                             };
                             return [4 /*yield*/, Promise.all(["@overall"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@untagged"])
@@ -4361,8 +4443,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 _a = Render.menuLinkItem;
                                                 return [4 /*yield*/, Resource.loadSvgOrCache(Storage.Tag.isSublist(tag) ?
                                                         "list-icon" : // 本来は sublist だけど、まだ作ってない
-                                                        "list-icon" // 本来は tag だけど、まだ作ってない
-                                                    )];
+                                                        "tag-icon")];
                                             case 1: return [2 /*return*/, _a.apply(void 0, [[
                                                         _b.sent(),
                                                         Render.labelSpan(Domain.tagMap(tag) + " (" + Storage.TagMember.get(pass, tag).length + ")")
@@ -4400,7 +4481,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     }); }])
                             ];
                             _e = Render.menuItem;
-                            return [4 /*yield*/, Resource.loadSvgOrCache("list-icon")];
+                            return [4 /*yield*/, Resource.loadSvgOrCache("tag-icon")];
                         case 3:
                             _d = _d.concat([
                                 _e.apply(void 0, [[
@@ -5058,10 +5139,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 if (tag === void 0) { tag = Storage.Tag.getByTodo(pass, item.task).filter(function (tag) { return "@overall" !== tag; }).concat("@overall")[0]; }
                 return __awaiter(_this, void 0, void 0, function () {
                     var _a, _b, _c;
-                    var _d, _e;
+                    var _d, _e, _f, _g, _h;
                     var _this = this;
-                    return __generator(this, function (_f) {
-                        switch (_f.label) {
+                    return __generator(this, function (_j) {
+                        switch (_j.label) {
                             case 0:
                                 _d = {
                                     tag: "div",
@@ -5072,16 +5153,16 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 return [4 /*yield*/, Render.screenHeaderListSegment(pass)];
                             case 1:
                                 _b = _b.concat([
-                                    _f.sent()
+                                    _j.sent()
                                 ]);
                                 return [4 /*yield*/, Render.screenHeaderTagSegment(pass, tag)];
                             case 2:
                                 _b = _b.concat([
-                                    _f.sent()
+                                    _j.sent()
                                 ]);
                                 return [4 /*yield*/, Render.screenHeaderTaskSegment(pass, tag, item.task)];
                             case 3: return [4 /*yield*/, _a.apply(void 0, [_b.concat([
-                                        _f.sent()
+                                        _j.sent()
                                     ]), [
                                         Render.todoDoneMenu(pass, item),
                                         Render.todoRenameMenu(pass, item, function (newTask) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
@@ -5105,38 +5186,66 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     ]])];
                             case 4:
                                 _c = [
-                                    _f.sent(),
-                                    {
-                                        tag: "div",
-                                        className: "row-flex-list todo-list",
-                                        children: [
-                                            {
-                                                tag: "div",
-                                                className: "task-item flex-item",
-                                                children: [
-                                                    {
-                                                        tag: "div",
-                                                        className: "item-tags",
-                                                        children: Storage.Tag.getByTodo(pass, item.task).map(function (tag) { return Render.internalLink({
-                                                            className: "tag",
-                                                            href: { pass: pass, tag: tag, },
-                                                            children: (Storage.Tag.isSublist(tag) ? Storage.Tag.sublistSymbol : Storage.Tag.symbol) + " " + Domain.tagMap(tag),
-                                                        }); })
-                                                    },
-                                                    Render.information(item),
-                                                ],
-                                            },
-                                        ],
-                                    }
+                                    _j.sent()
                                 ];
                                 _e = {
+                                    tag: "div",
+                                    className: "row-flex-list todo-list"
+                                };
+                                _f = {
+                                    tag: "div",
+                                    className: "task-item flex-item"
+                                };
+                                _g = {
+                                    tag: "div",
+                                    className: "item-tags"
+                                };
+                                return [4 /*yield*/, Promise.all(Storage.Tag.getByTodo(pass, item.task).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
+                                        var _a, _b;
+                                        var _c;
+                                        return __generator(this, function (_d) {
+                                            switch (_d.label) {
+                                                case 0:
+                                                    _a = Render.internalLink;
+                                                    _c = {
+                                                        className: "tag",
+                                                        href: { pass: pass, tag: tag, }
+                                                    };
+                                                    if (!Storage.Tag.isSublist(tag)) return [3 /*break*/, 1];
+                                                    _b = Storage.Tag.sublistSymbol;
+                                                    return [3 /*break*/, 3];
+                                                case 1: return [4 /*yield*/, Resource.loadSvgOrCache("tag-icon")];
+                                                case 2:
+                                                    _b = _d.sent();
+                                                    _d.label = 3;
+                                                case 3: return [2 /*return*/, _a.apply(void 0, [(_c.children = [
+                                                            _b,
+                                                            Domain.tagMap(tag)
+                                                        ],
+                                                            _c)])];
+                                            }
+                                        });
+                                    }); }))];
+                            case 5:
+                                _c = _c.concat([
+                                    (_e.children = [
+                                        (_f.children = [
+                                            (_g.children = _j.sent(),
+                                                _g),
+                                            Render.information(item)
+                                        ],
+                                            _f)
+                                    ],
+                                        _e)
+                                ]);
+                                _h = {
                                     tag: "div",
                                     className: "row-flex-list tick-list"
                                 };
                                 return [4 /*yield*/, Promise.all(ticks.map(function (tick, index) { return Render.tickItem(pass, item, tick, "number" === typeof ticks[index + 1] ? tick - ticks[index + 1] : null, ticks.length < 2 ? null : Math.max.apply(null, Calculate.intervals(ticks))); }))];
-                            case 5: return [2 /*return*/, (_d.children = _c.concat([
-                                    (_e.children = _f.sent(),
-                                        _e),
+                            case 6: return [2 /*return*/, (_d.children = _c.concat([
+                                    (_h.children = _j.sent(),
+                                        _h),
                                     Storage.isSessionPass(pass) ?
                                         [] :
                                         {
@@ -6100,7 +6209,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
     <path d="M397.173,601.266L245.487,448.854C228.743,432.031 201.491,431.966 184.667,448.709L123.702,509.384C106.879,526.128 106.814,553.38 123.557,570.204L366.256,814.062C382.999,830.886 410.252,830.951 427.075,814.207L874.15,369.261C890.973,352.517 891.038,325.265 874.295,308.441L813.62,247.476C796.877,230.653 769.624,230.588 752.8,247.331L397.173,601.266Z"/>
 </svg>
 </div><div id="list-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <path d="M256,696C295.738,696 328,728.262 328,768C328,807.738 295.738,840 256,840C216.262,840 184,807.738 184,768C184,728.262 216.262,696 256,696ZM448,832C412.677,832 384,803.323 384,768C384,732.677 412.677,704 448,704L768,704C803.323,704 832,732.677 832,768C832,803.323 803.323,832 768,832L448,832ZM256,440C295.738,440 328,472.262 328,512C328,551.738 295.738,584 256,584C216.262,584 184,551.738 184,512C184,472.262 216.262,440 256,440ZM448,576C412.677,576 384,547.323 384,512C384,476.677 412.677,448 448,448L768,448C803.323,448 832,476.677 832,512C832,547.323 803.323,576 768,576L448,576ZM256,184C295.738,184 328,216.262 328,256C328,295.738 295.738,328 256,328C216.262,328 184,295.738 184,256C184,216.262 216.262,184 256,184ZM448,320C412.677,320 384,291.323 384,256C384,220.677 412.677,192 448,192L768,192C803.323,192 832,220.677 832,256C832,291.323 803.323,320 768,320L448,320Z"/>
+    <path d="M256,688C300.153,688 336,723.847 336,768C336,812.153 300.153,848 256,848C211.847,848 176,812.153 176,768C176,723.847 211.847,688 256,688ZM448,832C412.677,832 384,803.323 384,768C384,732.677 412.677,704 448,704L768,704C803.323,704 832,732.677 832,768C832,803.323 803.323,832 768,832L448,832ZM256,432C300.153,432 336,467.847 336,512C336,556.153 300.153,592 256,592C211.847,592 176,556.153 176,512C176,467.847 211.847,432 256,432ZM448,576C412.677,576 384,547.323 384,512C384,476.677 412.677,448 448,448L768,448C803.323,448 832,476.677 832,512C832,547.323 803.323,576 768,576L448,576ZM256,176C300.153,176 336,211.847 336,256C336,300.153 300.153,336 256,336C211.847,336 176,300.153 176,256C176,211.847 211.847,176 256,176ZM448,320C412.677,320 384,291.323 384,256C384,220.677 412.677,192 448,192L768,192C803.323,192 832,220.677 832,256C832,291.323 803.323,320 768,320L448,320Z"/>
+</svg>
+</div><div id="tag-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M439.853,144L180.038,144C160.148,144 144,160.148 144,180.038L144,442.842C144,444.569 144.122,446.267 144.357,447.926C145.247,458.772 149.837,469.373 158.129,477.665L606.338,925.908C624.916,944.488 655.085,944.489 673.665,925.91L926.308,673.286C944.888,654.707 944.89,624.539 926.311,605.959L478.102,157.716C467.646,147.259 453.519,142.687 439.853,144ZM288,216C327.738,216 360,248.262 360,288C360,327.738 327.738,360 288,360C248.262,360 216,327.738 216,288C216,248.262 248.262,216 288,216Z"/>
 </svg>
 </div><div id="task-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M512,81.124C749.807,81.124 942.876,274.193 942.876,512C942.876,749.807 749.807,942.876 512,942.876C274.193,942.876 81.124,749.807 81.124,512C81.124,274.193 274.193,81.124 512,81.124ZM469.52,578.24L366.174,474.4C354.766,462.938 336.199,462.894 324.737,474.301L283.201,515.639C271.738,527.047 271.694,545.615 283.102,557.077L448.455,723.221C459.863,734.683 478.43,734.727 489.892,723.32L794.49,420.172C805.952,408.764 805.996,390.197 794.589,378.734L753.25,337.198C741.843,325.736 723.275,325.692 711.813,337.1L469.52,578.24Z"/>

@@ -692,6 +692,10 @@ button.default-button
 }
 .history-bar
 {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
     font-size: 1.0rem;
     padding: 0.5rem;
     & > * + *
@@ -701,15 +705,31 @@ button.default-button
     background-color: #8884;
     a
     {
-        color: @main-color;
-        opacity: 0.6;
         &:not(:hover)
         {
             text-decoration: none;
         }
-        @media (prefers-color-scheme: dark)
+        .history-bar-title,
+        .history-bar-item
         {
-            color: @dark-main-color;
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: start;
+            svg
+            {
+                width: 1rem;
+                height: 1rem;
+                margin-right: 4px;
+            }
+            color: @main-color;
+            fill: @main-color;
+            opacity: 0.6;
+            @media (prefers-color-scheme: dark)
+            {
+                color: @dark-main-color;
+                fill: @dark-main-color;
+            }
         }
     }
 }
@@ -964,22 +984,35 @@ button.default-button
         display: flex;
         flex-direction: row;
         align-items: center;
+        justify-content: start;
         a
         {
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: start;
+            svg
+            {
+                width: 1rem;
+                height: 1rem;
+                margin-right: 4px;
+            }
             &:not(:hover)
             {
                 opacity: 0.6;
                 text-decoration: none;
                 color: @main-color;
+                fill: @main-color;
                 @media (prefers-color-scheme: dark)
                 {
                     color: @dark-main-color;
+                    fill: @dark-main-color;
                 }
             }
             &:hover
             {
-                color: @active-color; // 本来はこっちなんだけど、これだと流石に視認し辛い・・・
-                //color: @accent-color;
+                color: @active-color;
+                fill: @active-color;
             }
         }
         a + a

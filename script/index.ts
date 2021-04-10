@@ -1734,15 +1734,24 @@ export module CyclicToDo
                 {
                     tag: "div",
                     className: "item-tags",
-                    children: Storage.Tag.getByTodo(entry.pass, item.task).map
+                    children: await Promise.all
                     (
-                        tag => internalLink
-                        ({
-                            className: "tag",
-                            href: { pass: entry.pass, tag, },
-                            children: `${Storage.Tag.isSublist(tag) ? Storage.Tag.sublistSymbol: Storage.Tag.symbol } ${Domain.tagMap(tag)}`,
-                        })
-                    )
+                        Storage.Tag.getByTodo(entry.pass, item.task).map
+                        (
+                            async tag => internalLink
+                            ({
+                                className: "tag",
+                                href: { pass: entry.pass, tag, },
+                                children:
+                                [
+                                    Storage.Tag.isSublist(tag) ?
+                                        Storage.Tag.sublistSymbol:
+                                        await Resource.loadSvgOrCache("tag-icon"),
+                                    Domain.tagMap(tag)
+                                ],
+                            })
+                        )
+                    ),
                 },
                 information(item),
             ],
@@ -1947,26 +1956,30 @@ export module CyclicToDo
                         children: `${locale.map("History")}:`,
                     },
                 }),
-                [].concat(list).sort(minamo.core.comparer.make(i => -i.previous ?? 0)).map
+                await Promise.all
                 (
-                    item => internalLink
-                    ({
-                        href: { pass: entry.pass, todo: item.task, },
-                        children:
-                        {
-                            tag: "span",
-                            className: "history-bar-item",
+                    [].concat(list).sort(minamo.core.comparer.make(i => -i.previous ?? 0)).map
+                    (
+                        async item => internalLink
+                        ({
+                            href: { pass: entry.pass, todo: item.task, },
                             children:
-                            [
-                                item.task,
-                                {
-                                    tag: "span",
-                                    className: "monospace",
-                                    children: `(${Domain.timeLongStringFromTick(item.elapsed)}),`
-                                }
-                            ],
-                        }
-                    }),
+                            {
+                                tag: "span",
+                                className: "history-bar-item",
+                                children:
+                                [
+                                    await Resource.loadSvgOrCache("task-icon"),
+                                    item.task,
+                                    {
+                                        tag: "span",
+                                        className: "monospace",
+                                        children: `(${Domain.timeLongStringFromTick(item.elapsed)}),`
+                                    }
+                                ],
+                            }
+                        }),
+                    )
                 ),
             ]
         });
@@ -2174,7 +2187,7 @@ export module CyclicToDo
             icon:
                 ("@deleted" === current && "list-icon") || // 本来は recycle bin だけど、まだ作ってない
                 (Storage.Tag.isSublist(current) && "list-icon") || // 本来は sublist だけど、まだ作ってない
-                "list-icon", // 本来は tag だけど、まだ作ってない
+                "tag-icon",
             title: Domain.tagMap(current),
             menu:
                 (
@@ -2191,7 +2204,7 @@ export module CyclicToDo
                                         (
                                             Storage.Tag.isSublist(tag) ?
                                                 "list-icon": // 本来は sublist だけど、まだ作ってない
-                                                "list-icon" // 本来は tag だけど、まだ作ってない
+                                                "tag-icon"
                                         ),
                                         labelSpan(`${Domain.tagMap(tag)} (${Storage.TagMember.get(pass, tag).length})`),
                                     ],
@@ -2224,7 +2237,7 @@ export module CyclicToDo
                     menuItem
                     (
                         [
-                            await Resource.loadSvgOrCache("list-icon"), // 本来は tag だけど、まだ作ってない
+                            await Resource.loadSvgOrCache("tag-icon"),
                             label("@new"),
                         ],
                         async () =>
@@ -2772,15 +2785,24 @@ export module CyclicToDo
                                 {
                                     tag: "div",
                                     className: "item-tags",
-                                    children: Storage.Tag.getByTodo(pass, item.task).map
+                                    children: await Promise.all
                                     (
-                                        tag => internalLink
-                                        ({
-                                            className: "tag",
-                                            href: { pass, tag, },
-                                            children: `${Storage.Tag.isSublist(tag) ? Storage.Tag.sublistSymbol: Storage.Tag.symbol } ${Domain.tagMap(tag)}`,
-                                        })
-                                    )
+                                        Storage.Tag.getByTodo(pass, item.task).map
+                                        (
+                                            async tag => internalLink
+                                            ({
+                                                className: "tag",
+                                                href: { pass, tag, },
+                                                children:
+                                                [
+                                                    Storage.Tag.isSublist(tag) ?
+                                                        Storage.Tag.sublistSymbol:
+                                                        await Resource.loadSvgOrCache("tag-icon"),
+                                                    Domain.tagMap(tag)
+                                                ],
+                                            })
+                                        )
+                                    ),
                                 },
                                 information(item),
                             ],

@@ -4,5 +4,6 @@
     "ellipsis-icon": "./image/ellipsis.1024.svg",
     "check-icon": "./image/check.1024.svg",
     "list-icon": "./image/list.1024.svg",
+    "tag-icon": "./image/tag.1024.svg",
     "task-icon": "./image/task.1024.svg"
 }
