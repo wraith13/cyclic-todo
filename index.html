@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sat Apr 10 2021 01:28:08 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sat Apr 10 2021 20:29:15 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -2238,6 +2238,7 @@ define("resource/images", [], {
     "check-icon": "./image/check.1024.svg",
     "list-icon": "./image/list.1024.svg",
     "tag-icon": "./image/tag.1024.svg",
+    "folder-icon": "./image/folder.1024.svg",
     "task-icon": "./image/task.1024.svg"
 });
 define("script/index", ["require", "exports", "script/minamo.js/index", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
@@ -3842,28 +3843,24 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "item-tags"
                             };
                             return [4 /*yield*/, Promise.all(Storage.Tag.getByTodo(entry.pass, item.task).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
-                                    var _a, _b;
-                                    var _c;
-                                    return __generator(this, function (_d) {
-                                        switch (_d.label) {
+                                    var _a;
+                                    var _b;
+                                    return __generator(this, function (_c) {
+                                        switch (_c.label) {
                                             case 0:
                                                 _a = Render.internalLink;
-                                                _c = {
+                                                _b = {
                                                     className: "tag",
                                                     href: { pass: entry.pass, tag: tag, }
                                                 };
-                                                if (!Storage.Tag.isSublist(tag)) return [3 /*break*/, 1];
-                                                _b = Storage.Tag.sublistSymbol;
-                                                return [3 /*break*/, 3];
-                                            case 1: return [4 /*yield*/, Resource.loadSvgOrCache("tag-icon")];
-                                            case 2:
-                                                _b = _d.sent();
-                                                _d.label = 3;
-                                            case 3: return [2 /*return*/, _a.apply(void 0, [(_c.children = [
-                                                        _b,
+                                                return [4 /*yield*/, Resource.loadSvgOrCache(Storage.Tag.isSublist(tag) ?
+                                                        "folder-icon" :
+                                                        "tag-icon")];
+                                            case 1: return [2 /*return*/, _a.apply(void 0, [(_b.children = [
+                                                        _c.sent(),
                                                         Domain.tagMap(tag)
                                                     ],
-                                                        _c)])];
+                                                        _b)])];
                                         }
                                     });
                                 }); }))];
@@ -4430,7 +4427,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 0:
                             _g = {
                                 icon: ("@deleted" === current && "list-icon") || // 本来は recycle bin だけど、まだ作ってない
-                                    (Storage.Tag.isSublist(current) && "list-icon") || // 本来は sublist だけど、まだ作ってない
+                                    (Storage.Tag.isSublist(current) && "folder-icon") ||
                                     "tag-icon",
                                 title: Domain.tagMap(current)
                             };
@@ -4442,7 +4439,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             case 0:
                                                 _a = Render.menuLinkItem;
                                                 return [4 /*yield*/, Resource.loadSvgOrCache(Storage.Tag.isSublist(tag) ?
-                                                        "list-icon" : // 本来は sublist だけど、まだ作ってない
+                                                        "folder-icon" :
                                                         "tag-icon")];
                                             case 1: return [2 /*return*/, _a.apply(void 0, [[
                                                         _b.sent(),
@@ -4455,7 +4452,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _b = (_a = (_h.sent()))
                                 .concat;
                             _c = Render.menuItem;
-                            return [4 /*yield*/, Resource.loadSvgOrCache("list-icon")];
+                            return [4 /*yield*/, Resource.loadSvgOrCache("folder-icon")];
                         case 2:
                             _d = [
                                 _c.apply(void 0, [[
@@ -5201,28 +5198,24 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     className: "item-tags"
                                 };
                                 return [4 /*yield*/, Promise.all(Storage.Tag.getByTodo(pass, item.task).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
-                                        var _a, _b;
-                                        var _c;
-                                        return __generator(this, function (_d) {
-                                            switch (_d.label) {
+                                        var _a;
+                                        var _b;
+                                        return __generator(this, function (_c) {
+                                            switch (_c.label) {
                                                 case 0:
                                                     _a = Render.internalLink;
-                                                    _c = {
+                                                    _b = {
                                                         className: "tag",
                                                         href: { pass: pass, tag: tag, }
                                                     };
-                                                    if (!Storage.Tag.isSublist(tag)) return [3 /*break*/, 1];
-                                                    _b = Storage.Tag.sublistSymbol;
-                                                    return [3 /*break*/, 3];
-                                                case 1: return [4 /*yield*/, Resource.loadSvgOrCache("tag-icon")];
-                                                case 2:
-                                                    _b = _d.sent();
-                                                    _d.label = 3;
-                                                case 3: return [2 /*return*/, _a.apply(void 0, [(_c.children = [
-                                                            _b,
+                                                    return [4 /*yield*/, Resource.loadSvgOrCache(Storage.Tag.isSublist(tag) ?
+                                                            "folder-icon" :
+                                                            "tag-icon")];
+                                                case 1: return [2 /*return*/, _a.apply(void 0, [(_b.children = [
+                                                            _c.sent(),
                                                             Domain.tagMap(tag)
                                                         ],
-                                                            _c)])];
+                                                            _b)])];
                                             }
                                         });
                                     }); }))];
@@ -6213,6 +6206,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
 </svg>
 </div><div id="tag-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M439.853,144L180.038,144C160.148,144 144,160.148 144,180.038L144,442.842C144,444.569 144.122,446.267 144.357,447.926C145.247,458.772 149.837,469.373 158.129,477.665L606.338,925.908C624.916,944.488 655.085,944.489 673.665,925.91L926.308,673.286C944.888,654.707 944.89,624.539 926.311,605.959L478.102,157.716C467.646,147.259 453.519,142.687 439.853,144ZM288,216C327.738,216 360,248.262 360,288C360,327.738 327.738,360 288,360C248.262,360 216,327.738 216,288C216,248.262 248.262,216 288,216Z"/>
+</svg>
+</div><div id="folder-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M100.493,396.202C99.598,390.158 99.899,383.838 101.584,377.566L151.216,192.802C157.803,168.283 183.056,153.725 207.575,160.311L208.739,160.624L456,160.624L456,160.714C477.392,159.366 497.51,173.205 503.284,194.699L528.347,288L784,288C863.476,288 928,352.524 928,432L928,720C928,799.476 863.476,864 784,864L240,864C160.524,864 96,799.476 96,720L96,432C96,419.642 97.56,407.645 100.493,396.202Z"/>
 </svg>
 </div><div id="task-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M512,81.124C749.807,81.124 942.876,274.193 942.876,512C942.876,749.807 749.807,942.876 512,942.876C274.193,942.876 81.124,749.807 81.124,512C81.124,274.193 274.193,81.124 512,81.124ZM469.52,578.24L366.174,474.4C354.766,462.938 336.199,462.894 324.737,474.301L283.201,515.639C271.738,527.047 271.694,545.615 283.102,557.077L448.455,723.221C459.863,734.683 478.43,734.727 489.892,723.32L794.49,420.172C805.952,408.764 805.996,390.197 794.589,378.734L753.25,337.198C741.843,325.736 723.275,325.692 711.813,337.1L469.52,578.24Z"/>

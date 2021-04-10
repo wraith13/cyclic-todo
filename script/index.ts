@@ -1744,9 +1744,12 @@ export module CyclicToDo
                                 href: { pass: entry.pass, tag, },
                                 children:
                                 [
-                                    Storage.Tag.isSublist(tag) ?
-                                        Storage.Tag.sublistSymbol:
-                                        await Resource.loadSvgOrCache("tag-icon"),
+                                    await Resource.loadSvgOrCache
+                                    (
+                                        Storage.Tag.isSublist(tag) ?
+                                            "folder-icon":
+                                            "tag-icon",
+                                    ),
                                     Domain.tagMap(tag)
                                 ],
                             })
@@ -2186,7 +2189,7 @@ export module CyclicToDo
         ({
             icon:
                 ("@deleted" === current && "list-icon") || // 本来は recycle bin だけど、まだ作ってない
-                (Storage.Tag.isSublist(current) && "list-icon") || // 本来は sublist だけど、まだ作ってない
+                (Storage.Tag.isSublist(current) && "folder-icon") ||
                 "tag-icon",
             title: Domain.tagMap(current),
             menu:
@@ -2203,8 +2206,8 @@ export module CyclicToDo
                                         await Resource.loadSvgOrCache
                                         (
                                             Storage.Tag.isSublist(tag) ?
-                                                "list-icon": // 本来は sublist だけど、まだ作ってない
-                                                "tag-icon"
+                                                "folder-icon":
+                                                "tag-icon",
                                         ),
                                         labelSpan(`${Domain.tagMap(tag)} (${Storage.TagMember.get(pass, tag).length})`),
                                     ],
@@ -2220,7 +2223,7 @@ export module CyclicToDo
                     menuItem
                     (
                         [
-                            await Resource.loadSvgOrCache("list-icon"), // 本来は sublist だけど、まだ作ってない
+                            await Resource.loadSvgOrCache("folder-icon"),
                             label("@new-sublist"),
                         ],
                         async () =>
@@ -2795,9 +2798,12 @@ export module CyclicToDo
                                                 href: { pass, tag, },
                                                 children:
                                                 [
-                                                    Storage.Tag.isSublist(tag) ?
-                                                        Storage.Tag.sublistSymbol:
-                                                        await Resource.loadSvgOrCache("tag-icon"),
+                                                    await Resource.loadSvgOrCache
+                                                    (
+                                                        Storage.Tag.isSublist(tag) ?
+                                                            "folder-icon":
+                                                            "tag-icon",
+                                                    ),
                                                     Domain.tagMap(tag)
                                                 ],
                                             })
