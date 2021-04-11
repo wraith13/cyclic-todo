@@ -1965,7 +1965,11 @@ export module CyclicToDo
                     {
                         tag: "span",
                         className: "history-bar-title",
-                        children: `${locale.map("History")}:`,
+                        children:
+                        [
+                            await Resource.loadSvgOrCache("history-icon"),
+                            `${locale.map("History")}:`,
+                        ],
                     },
                 }),
                 await Promise.all
@@ -1982,7 +1986,7 @@ export module CyclicToDo
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("task-icon"),
-                                    item.task,
+                                    Storage.Tag.decode(item.task),
                                     {
                                         tag: "span",
                                         className: "monospace",
@@ -2514,7 +2518,7 @@ export module CyclicToDo
                         await screenHeaderListSegment(entry.pass),
                         await screenHeaderTagSegment(entry.pass, entry.tag),
                         {
-                            icon: "list-icon", // 本来は history だけど、まだ作ってない
+                            icon: "history-icon",
                             title: locale.map("History"),
                         }
                     ],
