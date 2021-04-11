@@ -222,6 +222,20 @@ export module CyclicToDo
             export const sublistSymbol = "📁";
             export const isSystemTag = (tag: string) => tag.startsWith("@") && ! tag.startsWith("@=") && ! isSublist(tag);
             export const isSublist = (tag: string) => tag.endsWith("@:");
+            export const getIcon = (tag: string): keyof typeof resource =>
+            {
+                switch(tag)
+                {
+                    case "@overall":
+                        return "home-icon";
+                    case "@deleted":
+                        return "list-icon"; // 本来は recycle bin だけど、まだ作ってない
+                    default:
+                        return isSublist(tag) ?
+                            "folder-icon":
+                            "tag-icon";
+                }
+            };
             export const encode = (tag: string) => tag.replace(/@/g, "@=");
             export const encodeSublist = (tag: string) => encode(tag) +"@:";
             export const decode = (tag: string) => tag.replace(/@\:/g, ": ").replace(/@=/g, "@");
@@ -1744,12 +1758,7 @@ export module CyclicToDo
                                 href: { pass: entry.pass, tag, },
                                 children:
                                 [
-                                    await Resource.loadSvgOrCache
-                                    (
-                                        Storage.Tag.isSublist(tag) ?
-                                            "folder-icon":
-                                            "tag-icon",
-                                    ),
+                                    await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
                                     Domain.tagMap(tag)
                                 ],
                             })
@@ -2187,10 +2196,7 @@ export module CyclicToDo
         });
         export const screenHeaderTagSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
         ({
-            icon:
-                ("@deleted" === current && "list-icon") || // 本来は recycle bin だけど、まだ作ってない
-                (Storage.Tag.isSublist(current) && "folder-icon") ||
-                "tag-icon",
+            icon: Storage.Tag.getIcon(current),
             title: Domain.tagMap(current),
             menu:
                 (
@@ -2203,12 +2209,7 @@ export module CyclicToDo
                                 async tag => menuLinkItem
                                 (
                                     [
-                                        await Resource.loadSvgOrCache
-                                        (
-                                            Storage.Tag.isSublist(tag) ?
-                                                "folder-icon":
-                                                "tag-icon",
-                                        ),
+                                        await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
                                         labelSpan(`${Domain.tagMap(tag)} (${Storage.TagMember.get(pass, tag).length})`),
                                     ],
                                     { pass, tag, },
@@ -2798,12 +2799,7 @@ export module CyclicToDo
                                                 href: { pass, tag, },
                                                 children:
                                                 [
-                                                    await Resource.loadSvgOrCache
-                                                    (
-                                                        Storage.Tag.isSublist(tag) ?
-                                                            "folder-icon":
-                                                            "tag-icon",
-                                                    ),
+                                                    await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
                                                     Domain.tagMap(tag)
                                                 ],
                                             })

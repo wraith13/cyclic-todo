@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sat Apr 10 2021 20:29:15 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sun Apr 11 2021 11:17:12 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -2237,6 +2237,7 @@ define("resource/images", [], {
     "ellipsis-icon": "./image/ellipsis.1024.svg",
     "check-icon": "./image/check.1024.svg",
     "list-icon": "./image/list.1024.svg",
+    "home-icon": "./image/home.1024.svg",
     "tag-icon": "./image/tag.1024.svg",
     "folder-icon": "./image/folder.1024.svg",
     "task-icon": "./image/task.1024.svg"
@@ -2411,6 +2412,18 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 Tag.sublistSymbol = "📁";
                 Tag.isSystemTag = function (tag) { return tag.startsWith("@") && !tag.startsWith("@=") && !Tag.isSublist(tag); };
                 Tag.isSublist = function (tag) { return tag.endsWith("@:"); };
+                Tag.getIcon = function (tag) {
+                    switch (tag) {
+                        case "@overall":
+                            return "home-icon";
+                        case "@deleted":
+                            return "list-icon"; // 本来は recycle bin だけど、まだ作ってない
+                        default:
+                            return Tag.isSublist(tag) ?
+                                "folder-icon" :
+                                "tag-icon";
+                    }
+                };
                 Tag.encode = function (tag) { return tag.replace(/@/g, "@="); };
                 Tag.encodeSublist = function (tag) { return Tag.encode(tag) + "@:"; };
                 Tag.decode = function (tag) { return tag.replace(/@\:/g, ": ").replace(/@=/g, "@"); };
@@ -3853,9 +3866,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     className: "tag",
                                                     href: { pass: entry.pass, tag: tag, }
                                                 };
-                                                return [4 /*yield*/, Resource.loadSvgOrCache(Storage.Tag.isSublist(tag) ?
-                                                        "folder-icon" :
-                                                        "tag-icon")];
+                                                return [4 /*yield*/, Resource.loadSvgOrCache(Storage.Tag.getIcon(tag))];
                                             case 1: return [2 /*return*/, _a.apply(void 0, [(_b.children = [
                                                         _c.sent(),
                                                         Domain.tagMap(tag)
@@ -4426,9 +4437,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     switch (_h.label) {
                         case 0:
                             _g = {
-                                icon: ("@deleted" === current && "list-icon") || // 本来は recycle bin だけど、まだ作ってない
-                                    (Storage.Tag.isSublist(current) && "folder-icon") ||
-                                    "tag-icon",
+                                icon: Storage.Tag.getIcon(current),
                                 title: Domain.tagMap(current)
                             };
                             return [4 /*yield*/, Promise.all(["@overall"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@untagged"])
@@ -4438,9 +4447,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         switch (_b.label) {
                                             case 0:
                                                 _a = Render.menuLinkItem;
-                                                return [4 /*yield*/, Resource.loadSvgOrCache(Storage.Tag.isSublist(tag) ?
-                                                        "folder-icon" :
-                                                        "tag-icon")];
+                                                return [4 /*yield*/, Resource.loadSvgOrCache(Storage.Tag.getIcon(tag))];
                                             case 1: return [2 /*return*/, _a.apply(void 0, [[
                                                         _b.sent(),
                                                         Render.labelSpan(Domain.tagMap(tag) + " (" + Storage.TagMember.get(pass, tag).length + ")")
@@ -5208,9 +5215,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                         className: "tag",
                                                         href: { pass: pass, tag: tag, }
                                                     };
-                                                    return [4 /*yield*/, Resource.loadSvgOrCache(Storage.Tag.isSublist(tag) ?
-                                                            "folder-icon" :
-                                                            "tag-icon")];
+                                                    return [4 /*yield*/, Resource.loadSvgOrCache(Storage.Tag.getIcon(tag))];
                                                 case 1: return [2 /*return*/, _a.apply(void 0, [(_b.children = [
                                                             _c.sent(),
                                                             Domain.tagMap(tag)
@@ -6204,11 +6209,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
 </div><div id="list-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M256,688C300.153,688 336,723.847 336,768C336,812.153 300.153,848 256,848C211.847,848 176,812.153 176,768C176,723.847 211.847,688 256,688ZM448,832C412.677,832 384,803.323 384,768C384,732.677 412.677,704 448,704L768,704C803.323,704 832,732.677 832,768C832,803.323 803.323,832 768,832L448,832ZM256,432C300.153,432 336,467.847 336,512C336,556.153 300.153,592 256,592C211.847,592 176,556.153 176,512C176,467.847 211.847,432 256,432ZM448,576C412.677,576 384,547.323 384,512C384,476.677 412.677,448 448,448L768,448C803.323,448 832,476.677 832,512C832,547.323 803.323,576 768,576L448,576ZM256,176C300.153,176 336,211.847 336,256C336,300.153 300.153,336 256,336C211.847,336 176,300.153 176,256C176,211.847 211.847,176 256,176ZM448,320C412.677,320 384,291.323 384,256C384,220.677 412.677,192 448,192L768,192C803.323,192 832,220.677 832,256C832,291.323 803.323,320 768,320L448,320Z"/>
 </svg>
+</div><div id="home-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M416,896L256,896L256,575.212L127.957,575.161C110.313,575.154 95.993,560.823 96,543.178L96,543.118C96.004,531.972 101.725,522.153 110.384,516.435L488.893,137.781C497.729,128.942 510.514,126.431 521.592,130.25C526.842,131.623 531.806,134.365 535.916,138.477L914.935,517.641C922.873,523.464 928.028,532.859 928.024,543.448L928.024,543.508C928.024,543.939 928.015,544.367 927.998,544.792C927.762,552.561 924.68,560.261 918.754,566.186L918.712,566.228C912.312,572.625 903.844,575.704 895.455,575.465L768,575.415L768,896L416,896L608,896L608,608L416,608L416,896Z"/>
+</svg>
 </div><div id="tag-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M439.853,144L180.038,144C160.148,144 144,160.148 144,180.038L144,442.842C144,444.569 144.122,446.267 144.357,447.926C145.247,458.772 149.837,469.373 158.129,477.665L606.338,925.908C624.916,944.488 655.085,944.489 673.665,925.91L926.308,673.286C944.888,654.707 944.89,624.539 926.311,605.959L478.102,157.716C467.646,147.259 453.519,142.687 439.853,144ZM288,216C327.738,216 360,248.262 360,288C360,327.738 327.738,360 288,360C248.262,360 216,327.738 216,288C216,248.262 248.262,216 288,216Z"/>
 </svg>
 </div><div id="folder-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <path d="M100.493,396.202C99.598,390.158 99.899,383.838 101.584,377.566L151.216,192.802C157.803,168.283 183.056,153.725 207.575,160.311L208.739,160.624L456,160.624L456,160.714C477.392,159.366 497.51,173.205 503.284,194.699L528.347,288L784,288C863.476,288 928,352.524 928,432L928,720C928,799.476 863.476,864 784,864L240,864C160.524,864 96,799.476 96,720L96,432C96,419.642 97.56,407.645 100.493,396.202Z"/>
+    <path d="M100.943,330.8L138.114,192.425C144.701,167.906 169.954,153.347 194.473,159.934L197.041,160.624L456,160.624L456,160.714C477.392,159.366 497.51,173.205 503.284,194.699L528.347,288L859.65,288C897.374,288 928,318.626 928,356.35L928,795.65C928,833.374 897.374,864 859.65,864L164.35,864C126.626,864 96,833.374 96,795.65L96,356.35C96,347.319 97.755,338.695 100.943,330.8Z"/>
 </svg>
 </div><div id="task-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M512,81.124C749.807,81.124 942.876,274.193 942.876,512C942.876,749.807 749.807,942.876 512,942.876C274.193,942.876 81.124,749.807 81.124,512C81.124,274.193 274.193,81.124 512,81.124ZM469.52,578.24L366.174,474.4C354.766,462.938 336.199,462.894 324.737,474.301L283.201,515.639C271.738,527.047 271.694,545.615 283.102,557.077L448.455,723.221C459.863,734.683 478.43,734.727 489.892,723.32L794.49,420.172C805.952,408.764 805.996,390.197 794.589,378.734L753.25,337.198C741.843,325.736 723.275,325.692 711.813,337.1L469.52,578.24Z"/>
