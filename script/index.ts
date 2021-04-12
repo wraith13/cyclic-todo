@@ -98,6 +98,7 @@ export module CyclicToDo
     export interface ToDoList
     {
         specification: "https://github.com/wraith13/cyclic-todo/README.md";
+        title: string;
         timeAccuracy: number;
         pass: string;
         todos: string[];
@@ -115,6 +116,7 @@ export module CyclicToDo
         export const exportJson = (pass: string) =>
         {
             const specification = "https://github.com/wraith13/cyclic-todo/README.md";
+            const title = Title.get(pass);
             const timeAccuracy = Domain.TimeAccuracy;
             const tags: { [tag: string]: string[] } = { };
             [
@@ -137,6 +139,7 @@ export module CyclicToDo
             const result: ToDoList =
             {
                 specification,
+                title,
                 timeAccuracy,
                 pass,
                 todos,
@@ -154,6 +157,7 @@ export module CyclicToDo
                 if
                 (
                     "https://github.com/wraith13/cyclic-todo/README.md" === data.specification &&
+                    "string" === typeof data.title &&
                     "number" === typeof data.timeAccuracy &&
                     "string" === typeof data.pass &&
                     Array.isArray(data.todos) &&
@@ -163,6 +167,7 @@ export module CyclicToDo
                 )
                 {
                     Pass.add(data.pass);
+                    Title.set(data.pass, data.title);
                     TagMember.set(data.pass, "@overall", data.todos);
                     Tag.set(data.pass, Object.keys(data.tags));
                     Object.keys(data.tags).forEach(tag => TagMember.set(data.pass, tag, data.tags[tag]));
@@ -216,10 +221,16 @@ export module CyclicToDo
                 return result;
             };
         }
+        export module Title
+        {
+            export const makeKey = (pass: string) => `pass:(${pass}).title`;
+            export const get = (pass: string) =>
+                getStorage(pass).getOrNull<string>(makeKey(pass)) ?? "ToDo リスト";
+            export const set = (pass: string, title: string) =>
+                getStorage(pass).set(makeKey(pass), title);
+        }
         export module Tag
         {
-            export const symbol = "🏷";
-            export const sublistSymbol = "📁";
             export const isSystemTag = (tag: string) => tag.startsWith("@") && ! tag.startsWith("@=") && ! isSublist(tag);
             export const isSublist = (tag: string) => tag.endsWith("@:");
             export const getIcon = (tag: string): keyof typeof resource =>
@@ -228,6 +239,8 @@ export module CyclicToDo
                 {
                     case "@overall":
                         return "home-icon";
+                    case "@unoverall":
+                        return "anti-home-icon";
                     case "@deleted":
                         return "recycle-bin-icon";
                     default:
@@ -2743,6 +2756,7 @@ export module CyclicToDo
                     ],
                 ),
                 0 < list.length ?
+                [
                     {
                         tag: "div",
                         className: "row-flex-list removed-list",
@@ -2752,23 +2766,30 @@ export module CyclicToDo
                                 .sort(minamo.core.comparer.make(item => -item.deteledAt))
                                 .map(item => removedItem(pass, item))
                         ),
-                    }:
+                    },
+                    {
+                        tag: "div",
+                        className: "button-list",
+                        children:
+                        {
+                            tag: "button",
+                            className: "main-button long-button delete-button",
+                            children: "完全に削除",
+                            onclick: async () =>
+                            {
+                                Storage.Removed.clear(pass);
+                                await reload();
+                            },
+                        },
+                    }
+                ]:
+                [
                     {
                         tag: "div",
                         className: "button-list",
                         children: label("Recycle Bin is empty."),
                     },
-                {
-                    tag: "div",
-                    className: "button-list",
-                    children:
-                    {
-                        tag: "button",
-                        className: "default-button main-button long-button",
-                        children: label("Back to List"),
-                        onclick: async () => await showUrl({ pass: pass, tag: "@overall", })
-                    },
-                },
+                ]
             ]
         });
         export const showRemovedScreen = async (pass: string) =>

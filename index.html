@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon Apr 12 2021 20:26:11 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Apr 13 2021 06:36:26 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -2372,6 +2372,7 @@ define("resource/images", [], {
     "check-icon": "./image/check.1024.svg",
     "list-icon": "./image/list.1024.svg",
     "home-icon": "./image/home.1024.svg",
+    "anti-home-icon": "./image/anti-home.1024.svg",
     "tag-icon": "./image/tag.1024.svg",
     "folder-icon": "./image/folder.1024.svg",
     "history-icon": "./image/history.1024.svg",
@@ -2459,6 +2460,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Storage.lastUpdate = 0;
             Storage.exportJson = function (pass) {
                 var specification = "https://github.com/wraith13/cyclic-todo/README.md";
+                var title = Title.get(pass);
                 var timeAccuracy = Domain.TimeAccuracy;
                 var tags = {};
                 [
@@ -2474,6 +2476,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var removed = Removed.get(pass);
                 var result = {
                     specification: specification,
+                    title: title,
                     timeAccuracy: timeAccuracy,
                     pass: pass,
                     todos: todos,
@@ -2487,6 +2490,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 try {
                     var data_1 = JSON.parse(json);
                     if ("https://github.com/wraith13/cyclic-todo/README.md" === data_1.specification &&
+                        "string" === typeof data_1.title &&
                         "number" === typeof data_1.timeAccuracy &&
                         "string" === typeof data_1.pass &&
                         Array.isArray(data_1.todos) &&
@@ -2494,6 +2498,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         "object" === typeof data_1.tags &&
                         "object" === typeof data_1.histories) {
                         Pass.add(data_1.pass);
+                        Title.set(data_1.pass, data_1.title);
                         TagMember.set(data_1.pass, "@overall", data_1.todos);
                         Tag.set(data_1.pass, Object.keys(data_1.tags));
                         Object.keys(data_1.tags).forEach(function (tag) { return TagMember.set(data_1.pass, tag, data_1.tags[tag]); });
@@ -2543,16 +2548,24 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     return result;
                 };
             })(Pass = Storage.Pass || (Storage.Pass = {}));
+            var Title;
+            (function (Title) {
+                Title.makeKey = function (pass) { return "pass:(" + pass + ").title"; };
+                Title.get = function (pass) { var _a; return (_a = Storage.getStorage(pass).getOrNull(Title.makeKey(pass))) !== null && _a !== void 0 ? _a : "ToDo リスト"; };
+                Title.set = function (pass, title) {
+                    return Storage.getStorage(pass).set(Title.makeKey(pass), title);
+                };
+            })(Title = Storage.Title || (Storage.Title = {}));
             var Tag;
             (function (Tag) {
-                Tag.symbol = "🏷";
-                Tag.sublistSymbol = "📁";
                 Tag.isSystemTag = function (tag) { return tag.startsWith("@") && !tag.startsWith("@=") && !Tag.isSublist(tag); };
                 Tag.isSublist = function (tag) { return tag.endsWith("@:"); };
                 Tag.getIcon = function (tag) {
                     switch (tag) {
                         case "@overall":
                             return "home-icon";
+                        case "@unoverall":
+                            return "anti-home-icon";
                         case "@deleted":
                             return "recycle-bin-icon";
                         default:
@@ -5264,33 +5277,43 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     .sort(minamo_js_1.minamo.core.comparer.make(function (item) { return -item.deteledAt; }))
                                     .map(function (item) { return Render.removedItem(pass, item); }))];
                         case 4:
-                            _d = (_f.children = _g.sent(),
-                                _f);
-                            return [3 /*break*/, 6];
-                        case 5:
-                            _d = {
-                                tag: "div",
-                                className: "button-list",
-                                children: Render.label("Recycle Bin is empty."),
-                            };
-                            _g.label = 6;
-                        case 6: return [2 /*return*/, (_e.children = _c.concat([
-                                _d,
+                            _d = [
+                                (_f.children = _g.sent(),
+                                    _f),
                                 {
                                     tag: "div",
                                     className: "button-list",
                                     children: {
                                         tag: "button",
-                                        className: "default-button main-button long-button",
-                                        children: Render.label("Back to List"),
-                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, tag: "@overall", })];
-                                                case 1: return [2 /*return*/, _a.sent()];
-                                            }
-                                        }); }); }
+                                        className: "main-button long-button delete-button",
+                                        children: "完全に削除",
+                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        Storage.Removed.clear(pass);
+                                                        return [4 /*yield*/, CyclicToDo.reload()];
+                                                    case 1:
+                                                        _a.sent();
+                                                        return [2 /*return*/];
+                                                }
+                                            });
+                                        }); },
                                     },
                                 }
+                            ];
+                            return [3 /*break*/, 6];
+                        case 5:
+                            _d = [
+                                {
+                                    tag: "div",
+                                    className: "button-list",
+                                    children: Render.label("Recycle Bin is empty."),
+                                },
+                            ];
+                            _g.label = 6;
+                        case 6: return [2 /*return*/, (_e.children = _c.concat([
+                                _d
                             ]),
                                 _e)];
                     }
@@ -6394,11 +6417,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
 </div><div id="home-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M416,896L256,896L256,575.212L127.957,575.161C110.313,575.154 95.993,560.823 96,543.178L96,543.118C96.004,531.972 101.725,522.153 110.384,516.435L488.893,137.781C497.729,128.942 510.514,126.431 521.592,130.25C526.842,131.623 531.806,134.365 535.916,138.477L914.935,517.641C922.873,523.464 928.028,532.859 928.024,543.448L928.024,543.508C928.024,543.939 928.015,544.367 927.998,544.792C927.762,552.561 924.68,560.261 918.754,566.186L918.712,566.228C912.312,572.625 903.844,575.704 895.455,575.465L768,575.415L768,896L416,896L608,896L608,608L416,608L416,896Z"/>
 </svg>
+</div><div id="anti-home-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M752,511.161C884.46,511.161 992,618.889 992,751.58C992,884.272 884.46,992 752,992C619.54,992 512,884.272 512,751.58C512,618.889 619.54,511.161 752,511.161ZM607.037,652.218L851.698,897.022C823.348,916.558 789,928 752,928C654.863,928 576,849.137 576,752C576,714.962 587.466,680.58 607.037,652.218ZM416,896L256,896L256,575.212L127.957,575.161C110.313,575.154 95.993,560.823 96,543.178L96,543.118C96.004,531.972 101.725,522.153 110.384,516.435L488.893,137.781C497.729,128.942 510.514,126.431 521.592,130.25C526.842,131.623 531.806,134.365 535.916,138.477L868.448,471.136C832.575,456.23 793.241,448 752,448C636.297,448 535.605,512.778 484.251,608L416,608L416,896ZM896.965,851.78L652.305,606.976C680.652,587.442 715,576 752,576C849.137,576 928,654.863 928,752C928,789.038 916.534,823.42 896.965,851.78Z"/>
+</svg>
 </div><div id="tag-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M439.853,144L180.038,144C160.148,144 144,160.148 144,180.038L144,442.842C144,444.569 144.122,446.267 144.357,447.926C145.247,458.772 149.837,469.373 158.129,477.665L606.338,925.908C624.916,944.488 655.085,944.489 673.665,925.91L926.308,673.286C944.888,654.707 944.89,624.539 926.311,605.959L478.102,157.716C467.646,147.259 453.519,142.687 439.853,144ZM288,216C327.738,216 360,248.262 360,288C360,327.738 327.738,360 288,360C248.262,360 216,327.738 216,288C216,248.262 248.262,216 288,216Z"/>
 </svg>
 </div><div id="folder-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <path d="M100.943,330.8L138.114,192.425C144.701,167.906 169.954,153.347 194.473,159.934L197.041,160.624L456,160.624L456,160.714C477.392,159.366 497.51,173.205 503.284,194.699L528.347,288L859.65,288C897.374,288 928,318.626 928,356.35L928,795.65C928,833.374 897.374,864 859.65,864L164.35,864C126.626,864 96,833.374 96,795.65L96,356.35C96,347.319 97.755,338.695 100.943,330.8Z"/>
+    <path d="M436,193.081C448.777,195.441 460.484,203.165 467.492,215.283L527.873,319.688L867.245,319.688C900.776,319.688 928,346.912 928,380.444L928,770.933C928,804.465 900.776,831.688 867.245,831.688L156.755,831.688C123.224,831.688 96,804.465 96,770.933L96,380.444C96,378.757 96.069,377.086 96.204,375.432C95.339,366.266 97.206,356.757 102.149,348.183L178.734,215.338C186.774,201.391 201.035,193.247 216,192.388L216,192.312L436,192.312L436,193.081Z"/>
 </svg>
 </div><div id="history-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M561.152,59.236C579.856,43.119 608.157,43.938 625.887,61.686L626.43,62.231C637.182,72.994 641.705,87.638 640,101.665L640,148.097C807.056,202.145 928,359.06 928,544C928,773.597 741.597,960 512,960C282.403,960 96,773.597 96,544C96,517.508 117.508,496 144,496C170.492,496 192,517.508 192,544C192,720.613 335.387,864 512,864C688.613,864 832,720.613 832,544C832,412.9 752.992,300.108 640.041,250.684C641.629,264.605 637.093,279.096 626.43,289.769L625.887,290.314C608.157,308.062 579.856,308.881 561.152,292.764C559.536,291.407 558.011,289.945 556.587,288.389L477.954,209.837C468.634,200.526 463.982,188.3 464,176.078L464,176L464,175.922C463.982,163.7 468.634,151.474 477.954,142.163L556.587,63.611C558.011,62.055 559.536,60.593 561.152,59.236ZM489.624,621.751C482.539,619.505 475.871,615.575 470.254,609.961L284.062,423.882C265.324,405.155 265.315,374.738 284.042,356C302.769,337.262 333.186,337.253 351.924,355.979L504.164,508.127L598.486,413.917C617.079,395.345 647.253,395.363 665.824,413.957L666.368,414.501C684.939,433.095 684.921,463.268 666.328,481.839L539.524,608.493C539.075,608.981 538.611,609.464 538.136,609.94C531.085,616.995 522.377,621.395 513.26,623.14L513.085,623.173L513.002,623.189L512.962,623.196L512.893,623.209L512.801,623.226L512.744,623.236L512.667,623.25L512.556,623.269L512.516,623.276L512.487,623.281L512.372,623.302L512.23,623.326C510.638,623.595 509.019,623.786 507.378,623.894L507.256,623.903L507.113,623.911L507.077,623.913L507.049,623.915L506.95,623.921L506.84,623.927L506.79,623.93L506.738,623.932L506.644,623.937L506.561,623.941L506.502,623.944L506.425,623.948L506.337,623.952L506.276,623.955L506.214,623.957L506.108,623.962L506.029,623.965L505.987,623.966L505.927,623.969L505.788,623.973L505.721,623.976L505.695,623.976L505.639,623.978L505.462,623.983L505.413,623.984L505.399,623.985L505.351,623.986L505.126,623.991L505.1,623.991C504.795,623.997 504.491,624 504.186,624L504.175,624L504.043,624L503.911,623.999L503.899,623.999L503.865,623.999L503.653,623.997L503.618,623.997C498.806,623.942 494.164,623.178 489.792,621.804L489.696,621.774L489.624,621.751Z"/>
