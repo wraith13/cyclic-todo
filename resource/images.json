@@ -9,5 +9,6 @@
     "folder-icon": "./image/folder.1024.svg",
     "history-icon": "./image/history.1024.svg",
     "task-icon": "./image/task.1024.svg",
+    "tick-icon": "./image/tick.1024.svg",
     "recycle-bin-icon": "./image/recycle-bin.1024.svg"
 }

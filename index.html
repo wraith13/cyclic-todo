@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon Apr 12 2021 08:59:45 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon Apr 12 2021 20:26:11 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -316,6 +316,11 @@ button.menu-button svg {
   width: 1.5rem;
   height: 1.5rem;
   fill: #228844;
+}
+button.delete-button {
+  fill: #831B50;
+  color: #831B50;
+  border-color: #831B50;
 }
 @media (hover: hover) {
   button:hover {
@@ -2371,6 +2376,7 @@ define("resource/images", [], {
     "folder-icon": "./image/folder.1024.svg",
     "history-icon": "./image/history.1024.svg",
     "task-icon": "./image/task.1024.svg",
+    "tick-icon": "./image/tick.1024.svg",
     "recycle-bin-icon": "./image/recycle-bin.1024.svg"
 });
 define("script/index", ["require", "exports", "script/minamo.js/index", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
@@ -2783,6 +2789,18 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var remove = function (pass, target) { return Removed.set(pass, Removed.getRaw(pass).filter(function (i) { return target !== i; })); };
                 Removed.clear = function (pass) { return Removed.set(pass, []); };
                 Removed.getTypeName = function (item) { return locale.map(item.type); };
+                Removed.getIcon = function (item) {
+                    switch (item.type) {
+                        case "Tag":
+                            return "tag-icon";
+                        case "Sublist":
+                            return "folder-icon";
+                        case "Task":
+                            return "task-icon";
+                        case "Tick":
+                            return "tick-icon";
+                    }
+                };
                 Removed.getName = function (item) {
                     if ("Tick" === item.type) {
                         return item.task + ": " + Domain.dateStringFromTick(item.tick);
@@ -3895,7 +3913,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             return [2 /*return*/];
                     }
                 });
-            }); }); };
+            }); }, "delete-button"); };
             Render.todoItem = function (entry, item) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d;
                 var _e, _f, _g, _h, _j;
@@ -4085,7 +4103,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     return [2 /*return*/];
                                             }
                                         });
-                                    }); })
+                                    }); }, "delete-button")
                                 ])];
                         case 1:
                             _b = [
@@ -4193,7 +4211,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     return [2 /*return*/];
                                             }
                                         });
-                                    }); })
+                                    }); }, "delete-button")
                                 ])];
                         case 1: return [2 /*return*/, (_b.children = _a.concat([
                                 (_c.children = [
@@ -4809,7 +4827,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                         return [2 /*return*/];
                                                 }
                                             });
-                                        }); }),
+                                        }); }, "delete-button"),
                                     "@overall" === entry.tag ?
                                         Render.menuItem(Render.label("Delete this List"), function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
@@ -4822,7 +4840,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                         return [2 /*return*/];
                                                 }
                                             });
-                                        }); }) :
+                                        }); }, "delete-button") :
                                         [],
                                 ]])];
                         case 3:
@@ -5049,7 +5067,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     //         label("Delete"),
                                     //         async () =>
                                     //         {
-                                    //         }
+                                    //         },
+                                    //         "delete-button"
                                     //     ),
                                     // "@overall" === entry.tag ?
                                     //     menuItem
@@ -5059,7 +5078,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     //         {
                                     //             Storage.Pass.remove(entry.pass);
                                     //             await showUrl({ });
-                                    //         }
+                                    //         },
+                                    //         "delete-button"
                                     //     ):
                                     //     [],
                                 ]])];
@@ -5112,51 +5132,61 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             Render.removedItem = function (pass, item) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c;
                 var _this = this;
-                return __generator(this, function (_a) {
-                    return [2 /*return*/, ({
-                            tag: "div",
-                            className: "removed-item flex-item",
-                            children: [
-                                {
-                                    tag: "div",
-                                    className: "item-header",
-                                    children: [
-                                        {
-                                            tag: "div",
-                                            className: "item-title",
-                                            children: Storage.Removed.getTypeName(item) + ": " + Storage.Removed.getName(item)
-                                        },
-                                        {
-                                            tag: "div",
-                                            className: "item-operator",
-                                            children: [
-                                                {
-                                                    tag: "button",
-                                                    className: "main-button",
-                                                    children: "復元",
-                                                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                        return __generator(this, function (_a) {
-                                                            switch (_a.label) {
-                                                                case 0:
-                                                                    if (!Storage.Removed.restore(pass, item)) return [3 /*break*/, 2];
-                                                                    return [4 /*yield*/, CyclicToDo.reload()];
-                                                                case 1:
-                                                                    _a.sent();
-                                                                    return [3 /*break*/, 4];
-                                                                case 2: return [4 /*yield*/, Render.alert("復元できませんでした。( 同名の項目が存在すると復元できません。また、サブリスト内の ToDo の場合、元のサブリストが存在している必要があります。 )")];
-                                                                case 3:
-                                                                    _a.sent();
-                                                                    _a.label = 4;
-                                                                case 4: return [2 /*return*/];
-                                                            }
-                                                        });
-                                                    }); }
-                                                },
-                                            ],
-                                        },
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "removed-item flex-item"
+                            };
+                            _b = {
+                                tag: "div",
+                                className: "item-header"
+                            };
+                            _c = {
+                                tag: "div",
+                                className: "item-title"
+                            };
+                            return [4 /*yield*/, Resource.loadSvgOrCache(Storage.Removed.getIcon(item))];
+                        case 1: return [2 /*return*/, (_a.children = [
+                                (_b.children = [
+                                    (_c.children = [
+                                        _d.sent(),
+                                        Storage.Removed.getTypeName(item) + ": " + Storage.Removed.getName(item)
                                     ],
-                                },
+                                        _c),
+                                    {
+                                        tag: "div",
+                                        className: "item-operator",
+                                        children: [
+                                            {
+                                                tag: "button",
+                                                className: "main-button",
+                                                children: "復元",
+                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    return __generator(this, function (_a) {
+                                                        switch (_a.label) {
+                                                            case 0:
+                                                                if (!Storage.Removed.restore(pass, item)) return [3 /*break*/, 2];
+                                                                return [4 /*yield*/, CyclicToDo.reload()];
+                                                            case 1:
+                                                                _a.sent();
+                                                                return [3 /*break*/, 4];
+                                                            case 2: return [4 /*yield*/, Render.alert("復元できませんでした。( 同名の項目が存在すると復元できません。また、サブリスト内の ToDo の場合、元のサブリストが存在している必要があります。 )")];
+                                                            case 3:
+                                                                _a.sent();
+                                                                _a.label = 4;
+                                                            case 4: return [2 /*return*/];
+                                                        }
+                                                    });
+                                                }); }
+                                            },
+                                        ],
+                                    }
+                                ],
+                                    _b),
                                 {
                                     tag: "div",
                                     className: "item-information",
@@ -5176,7 +5206,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     ],
                                 }
                             ],
-                        })];
+                                _a)];
+                    }
                 });
             }); };
             Render.removedScreen = function (pass, list) { return __awaiter(_this, void 0, void 0, function () {
@@ -5218,7 +5249,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     return [2 /*return*/];
                                             }
                                         });
-                                    }); }),
+                                    }); }, "delete-button"),
                                 ]])];
                         case 3:
                             _c = [
@@ -5608,47 +5639,57 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             Render.removedListItem = function (list) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c;
                 var _this = this;
-                return __generator(this, function (_a) {
-                    return [2 /*return*/, ({
-                            tag: "div",
-                            className: "list-item flex-item",
-                            children: [
-                                {
-                                    tag: "div",
-                                    className: "item-header",
-                                    children: [
-                                        {
-                                            tag: "div",
-                                            className: "item-title",
-                                            //href: { pass: list.pass, tag: "@overall", },
-                                            children: "ToDo \u30EA\u30B9\u30C8 ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )"
-                                        },
-                                        {
-                                            tag: "div",
-                                            className: "item-operator",
-                                            children: [
-                                                {
-                                                    tag: "button",
-                                                    className: "default-button main-button",
-                                                    children: "復元",
-                                                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                        var pass;
-                                                        return __generator(this, function (_a) {
-                                                            pass = Storage.importJson(JSON.stringify(list));
-                                                            if (null !== pass) {
-                                                                CyclicToDo.showUrl({ pass: pass, tag: "@overall", });
-                                                            }
-                                                            return [2 /*return*/];
-                                                        });
-                                                    }); },
-                                                },
-                                            ],
-                                        },
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "list-item flex-item"
+                            };
+                            _b = {
+                                tag: "div",
+                                className: "item-header"
+                            };
+                            _c = {
+                                tag: "div",
+                                className: "item-title"
+                            };
+                            return [4 /*yield*/, Resource.loadSvgOrCache("list-icon")];
+                        case 1: return [2 /*return*/, (_a.children = [
+                                (_b.children = [
+                                    (_c.children = [
+                                        _d.sent(),
+                                        "ToDo \u30EA\u30B9\u30C8 ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )"
                                     ],
-                                },
+                                        _c),
+                                    {
+                                        tag: "div",
+                                        className: "item-operator",
+                                        children: [
+                                            {
+                                                tag: "button",
+                                                className: "default-button main-button",
+                                                children: "復元",
+                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    var pass;
+                                                    return __generator(this, function (_a) {
+                                                        pass = Storage.importJson(JSON.stringify(list));
+                                                        if (null !== pass) {
+                                                            CyclicToDo.showUrl({ pass: pass, tag: "@overall", });
+                                                        }
+                                                        return [2 /*return*/];
+                                                    });
+                                                }); },
+                                            },
+                                        ],
+                                    }
+                                ],
+                                    _b)
                             ],
-                        })];
+                                _a)];
+                    }
                 });
             }); };
             Render.showRemovedListScreen = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -5708,7 +5749,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         className: "button-list",
                                         children: {
                                             tag: "button",
-                                            className: "default-button main-button long-button",
+                                            className: "main-button long-button delete-button",
                                             children: "完全に削除",
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                 return __generator(this, function (_a) {
@@ -5721,7 +5762,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                             return [2 /*return*/];
                                                     }
                                                 });
-                                            }); }
+                                            }); },
                                         },
                                     } :
                                     {
@@ -5825,7 +5866,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     return [2 /*return*/];
                                             }
                                         });
-                                    }); })
+                                    }); }, "delete-button")
                                 ])];
                         case 2: return [2 /*return*/, (_d.children = [
                                 (_e.children = _b.concat([
@@ -6364,6 +6405,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
 </svg>
 </div><div id="task-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M512,81.124C749.807,81.124 942.876,274.193 942.876,512C942.876,749.807 749.807,942.876 512,942.876C274.193,942.876 81.124,749.807 81.124,512C81.124,274.193 274.193,81.124 512,81.124ZM469.52,578.24L366.174,474.4C354.766,462.938 336.199,462.894 324.737,474.301L283.201,515.639C271.738,527.047 271.694,545.615 283.102,557.077L448.455,723.221C459.863,734.683 478.43,734.727 489.892,723.32L794.49,420.172C805.952,408.764 805.996,390.197 794.589,378.734L753.25,337.198C741.843,325.736 723.275,325.692 711.813,337.1L469.52,578.24Z"/>
+</svg>
+</div><div id="tick-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M512,96C741.597,96 928,282.403 928,512C928,741.597 741.597,928 512,928C282.403,928 96,741.597 96,512C96,282.403 282.403,96 512,96ZM512,192C688.613,192 832,335.387 832,512C832,688.613 688.613,832 512,832C335.387,832 192,688.613 192,512C192,335.387 335.387,192 512,192ZM503.806,508.395L662.473,349.917C681.066,331.345 711.239,331.363 729.811,349.957L730.354,350.501C748.926,369.095 748.908,399.268 730.314,417.839L539.166,608.761C538.717,609.249 538.254,609.732 537.778,610.208C530.727,617.263 522.02,621.663 512.902,623.408L512.727,623.441L512.644,623.456L512.605,623.464L512.535,623.476L512.443,623.493L512.386,623.504L512.31,623.518L512.198,623.537L512.159,623.544L512.129,623.549L512.014,623.569L511.872,623.593C510.28,623.863 508.661,624.054 507.02,624.162L506.898,624.17L506.756,624.179L506.72,624.181L506.691,624.183L506.592,624.189L506.483,624.195L506.432,624.198L506.381,624.2L506.286,624.205L506.203,624.209L506.144,624.212L506.067,624.216L505.979,624.22L505.919,624.222L505.857,624.225L505.751,624.229L505.672,624.233L505.63,624.234L505.569,624.236L505.43,624.241L505.364,624.243L505.337,624.244L505.281,624.246L505.104,624.251L505.055,624.252L505.041,624.252L504.993,624.254L504.768,624.258L504.742,624.259C504.438,624.265 504.133,624.268 503.829,624.268L503.817,624.268L503.685,624.267L503.553,624.267L503.541,624.267L503.507,624.267L503.295,624.265L503.26,624.264C498.449,624.21 493.806,623.446 489.434,622.072L489.338,622.042L489.266,622.019C482.181,619.773 475.514,615.843 469.896,610.229L341.788,482.199C323.05,463.472 323.041,433.055 341.768,414.316C360.495,395.578 390.912,395.569 409.65,414.296L503.806,508.395Z"/>
 </svg>
 </div><div id="recycle-bin-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M656.066,112L656.151,112L656.266,112.001L656.31,112.001L656.342,112.001L656.447,112.002L656.601,112.004L656.743,112.005L656.919,112.009L657.039,112.011L657.218,112.015L657.334,112.018L657.497,112.023L657.546,112.024L657.572,112.025L657.63,112.027L657.751,112.032L657.854,112.035L657.902,112.037L657.925,112.038L657.977,112.04C668.507,112.468 678.167,116.294 685.891,122.452C692.474,127.679 697.739,134.666 700.878,142.947C701.489,144.553 702.017,146.201 702.455,147.886L702.488,148.01L702.496,148.042L744.289,304L880,304C906.492,304 928,325.508 928,352C928,378.492 906.492,400 880,400L862.369,400L734.373,877.636C727.668,902.657 702.334,917.752 677.292,912L336,912C335.666,912 335.333,911.997 335,911.99C334.667,911.997 334.334,912 334,912L330,912L329.933,912L329.84,912L329.713,911.999L329.69,911.999L329.673,911.999C328.967,911.994 328.263,911.974 327.56,911.939L327.477,911.935L327.348,911.928L327.225,911.921L327.178,911.918C317.903,911.379 309.332,908.202 302.206,903.128C293.396,896.886 286.628,887.652 283.617,876.415L155.948,400L144,400C117.508,400 96,378.492 96,352C96,325.508 117.508,304 144,304L280.681,304L320.098,156.908C321.694,131.855 342.547,112 368,112L656,112L656.066,112ZM762.982,400L255.336,400L366.814,816L651.503,816L762.982,400ZM450.142,784.613C468.623,781.362 480.989,763.718 477.738,745.236L427.491,459.595C424.24,441.114 406.596,428.749 388.114,432C369.633,435.251 357.268,452.895 360.519,471.376L410.766,757.017C414.017,775.499 431.661,787.864 450.142,784.613ZM573.858,783.481C555.377,780.23 543.011,762.586 546.262,744.105L596.509,458.464C599.76,439.982 617.404,427.617 635.886,430.868C654.367,434.12 666.732,451.763 663.481,470.245L613.234,755.886C609.983,774.367 592.339,786.732 573.858,783.481ZM405.794,208L380.068,304L644.902,304L619.176,208L405.794,208Z"/>

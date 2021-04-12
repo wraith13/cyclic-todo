@@ -545,6 +545,20 @@ export module CyclicToDo
             const remove = (pass: string, target: string) => set(pass, getRaw(pass).filter(i => target !== i));
             export const clear = (pass: string) => set(pass, []);
             export const getTypeName = (item: Type) => locale.map(item.type);
+            export const getIcon = (item: Type): keyof typeof resource =>
+            {
+                switch(item.type)
+                {
+                case "Tag":
+                    return "tag-icon";
+                case "Sublist":
+                    return "folder-icon";
+                case "Task":
+                    return "task-icon";
+                case "Tick":
+                    return "tick-icon";
+                }
+            };
             export const getName = (item: Type) =>
             {
                 if ("Tick" === item.type)
@@ -1670,7 +1684,8 @@ export module CyclicToDo
                 Storage.Task.remove(pass, item.task);
                 //Storage.TagMember.add(pass, "@deleted", item.task);
                 await reload();
-            }
+            },
+            "delete-button"
         );
         export const todoItem = async (entry: ToDoTagEntry, item: ToDoEntry) =>
         ({
@@ -1826,7 +1841,8 @@ export module CyclicToDo
                                 {
                                     Storage.History.remove(entry.pass, item.task, item.tick);
                                     await reload();
-                                }
+                                },
+                                "delete-button"
                             )
                         ]),
                     ]:
@@ -1908,7 +1924,8 @@ export module CyclicToDo
                                 {
                                     Storage.History.remove(pass, item.task, tick);
                                     await reload();
-                                }
+                                },
+                                "delete-button"
                             )
                         ]),
                     ]
@@ -2266,7 +2283,7 @@ export module CyclicToDo
                             labelSpan(`${locale.map("@deleted")} (${Storage.Removed.get(pass).length})`),
                         ],
                         { pass, hash: "removed" },
-                    current === "@deleted" ? "current-item": undefined
+                        current === "@deleted" ? "current-item": undefined
                     ),
                 ])
         });
@@ -2390,7 +2407,8 @@ export module CyclicToDo
                                 {
                                     Storage.Tag.remove(entry.pass, entry.tag);
                                     await showUrl({ pass: entry.pass, tag: "@overall" });
-                                }
+                                },
+                                "delete-button"
                             ),
                         "@overall" === entry.tag ?
                             menuItem
@@ -2400,7 +2418,8 @@ export module CyclicToDo
                                 {
                                     Storage.Pass.remove(entry.pass);
                                     await showUrl({ });
-                                }
+                                },
+                                "delete-button"
                             ):
                             [],
                     ]
@@ -2577,7 +2596,8 @@ export module CyclicToDo
                         //         label("Delete"),
                         //         async () =>
                         //         {
-                        //         }
+                        //         },
+                        //         "delete-button"
                         //     ),
                         // "@overall" === entry.tag ?
                         //     menuItem
@@ -2587,7 +2607,8 @@ export module CyclicToDo
                         //         {
                         //             Storage.Pass.remove(entry.pass);
                         //             await showUrl({ });
-                        //         }
+                        //         },
+                        //         "delete-button"
                         //     ):
                         //     [],
                     ]
@@ -2636,7 +2657,11 @@ export module CyclicToDo
                         {
                             tag: "div",
                             className: "item-title",
-                            children: `${Storage.Removed.getTypeName(item)}: ${Storage.Removed.getName(item)}`
+                            children:
+                            [
+                                await Resource.loadSvgOrCache(Storage.Removed.getIcon(item)),
+                                `${Storage.Removed.getTypeName(item)}: ${Storage.Removed.getName(item)}`,
+                            ],
                         },
                         {
                             tag: "div",
@@ -2712,7 +2737,8 @@ export module CyclicToDo
                             {
                                 Storage.Removed.clear(pass);
                                 await reload();
-                            }
+                            },
+                            "delete-button"
                         ),
                     ],
                 ),
@@ -2994,8 +3020,11 @@ export module CyclicToDo
                         {
                             tag: "div",
                             className: "item-title",
-                            //href: { pass: list.pass, tag: "@overall", },
-                            children: `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("list-icon"),
+                                `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
+                            ],
                         },
                         {
                             tag: "div",
@@ -3058,13 +3087,13 @@ export module CyclicToDo
                     children:
                     {
                         tag: "button",
-                        className: "default-button main-button long-button",
+                        className: "main-button long-button delete-button",
                         children: "完全に削除",
                         onclick: async () =>
                         {
                             Storage.Backup.clear();
                             await reload();
-                        }
+                        },
                     },
                 }:
                 {
@@ -3141,7 +3170,8 @@ export module CyclicToDo
                                         {
                                             Storage.Pass.remove(list.pass);
                                             await reload();
-                                        }
+                                        },
+                                        "delete-button"
                                     )
                                 ]),
                             ]
