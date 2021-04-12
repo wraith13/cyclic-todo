@@ -229,7 +229,7 @@ export module CyclicToDo
                     case "@overall":
                         return "home-icon";
                     case "@deleted":
-                        return "list-icon"; // 本来は recycle bin だけど、まだ作ってない
+                        return "recycle-bin-icon";
                     default:
                         return isSublist(tag) ?
                             "folder-icon":
@@ -2140,7 +2140,7 @@ export module CyclicToDo
         ({
             icon:
             {
-                "@removed": "list-icon" as Resource.KeyType, // 本来は recycle-bin だけど、まだ作ってない
+                "@removed": "recycle-bin-icon" as Resource.KeyType,
                 "@import": "list-icon" as Resource.KeyType, // 本来は import だけど、まだ作ってない
             }[pass] ?? "list-icon",
             title:
@@ -2190,7 +2190,7 @@ export module CyclicToDo
                     menuLinkItem
                     (
                         [
-                            await Resource.loadSvgOrCache("list-icon"), // 本来は recycle-bin だけど、まだ作ってない
+                            await Resource.loadSvgOrCache("recycle-bin-icon"),
                             labelSpan(`${locale.map("@deleted")} (${Storage.Backup.get().length})`),
                         ],
                         { hash: "removed" },
@@ -2262,7 +2262,7 @@ export module CyclicToDo
                     menuLinkItem
                     (
                         [
-                            await Resource.loadSvgOrCache("list-icon"), // 本来は recycle-bin だけど、まだ作ってない
+                            await Resource.loadSvgOrCache("recycle-bin-icon"),
                             labelSpan(`${locale.map("@deleted")} (${Storage.Removed.get(pass).length})`),
                         ],
                         { pass, hash: "removed" },

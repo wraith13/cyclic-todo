@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun Apr 11 2021 21:25:25 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon Apr 12 2021 08:59:45 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -99,8 +99,10 @@ h1 label select {
 h1 label select + span {
   color: #FFFFFF;
 }
-h1 label:hover {
-  background-color: #6F7F00;
+@media (hover: hover) {
+  h1 label:hover {
+    background-color: #6F7F00;
+  }
 }
 h1 .segment {
   position: relative;
@@ -115,11 +117,18 @@ h1 .segment {
 h1 .segment:not(.label-segment) {
   cursor: pointer;
 }
-h1 .segment:hover:not(.label-segment) {
-  background-color: #6F7F00;
+@media (hover: hover) {
+  h1 .segment:hover:not(.label-segment) {
+    background-color: #6F7F00;
+  }
+  h1 .segment:not(:hover) {
+    background-color: #228844;
+  }
 }
-h1 .segment:not(:hover) {
-  background-color: #228844;
+@media (hover: none) {
+  h1 .segment {
+    background-color: #228844;
+  }
 }
 h1 .segment.last-segment {
   flex-grow: 1;
@@ -161,12 +170,23 @@ h1 button.menu-button {
   margin: 0px;
   margin-right: 0.25rem;
 }
-h1 button.menu-button:not(:hover) {
-  color: #FFFFFF;
-  background-color: #228844;
+@media (hover: hover) {
+  h1 button.menu-button:not(:hover) {
+    color: #FFFFFF;
+    background-color: #228844;
+  }
+  h1 button.menu-button:not(:hover) svg {
+    fill: #FFFFFF;
+  }
 }
-h1 button.menu-button:not(:hover) svg {
-  fill: #FFFFFF;
+@media (hover: none) {
+  h1 button.menu-button {
+    color: #FFFFFF;
+    background-color: #228844;
+  }
+  h1 button.menu-button svg {
+    fill: #FFFFFF;
+  }
 }
 h1 .menu-popup:not(.segment-popup) {
   top: calc(10px + 2rem);
@@ -187,9 +207,17 @@ h1 a,
 h2 a {
   color: #FFFFFF;
 }
-h1 a:not(:hover),
-h2 a:not(:hover) {
-  text-decoration: none;
+@media (hover: hover) {
+  h1 a:not(:hover),
+  h2 a:not(:hover) {
+    text-decoration: none;
+  }
+}
+@media (hover: none) {
+  h1 a,
+  h2 a {
+    text-decoration: none;
+  }
 }
 @media (prefers-color-scheme: dark) {
   h1 .icon svg {
@@ -197,13 +225,6 @@ h2 a:not(:hover) {
   }
   h1 label select + span {
     color: #000022;
-  }
-  h1 button.menu-button:not(:hover) {
-    float: right;
-    color: #000022;
-  }
-  h1 button.menu-button:not(:hover) svg {
-    fill: #000022;
   }
   h1 .segment + .segment,
   h1 .segment + .menu-popup + .segment {
@@ -216,11 +237,31 @@ h2 a:not(:hover) {
     color: #000022;
   }
 }
+@media (prefers-color-scheme: dark) and (hover: hover) {
+  h1 button.menu-button:not(:hover) {
+    float: right;
+    color: #000022;
+  }
+  h1 button.menu-button:not(:hover) svg {
+    fill: #000022;
+  }
+}
+@media (prefers-color-scheme: dark) and (hover: none) {
+  h1 button.menu-button {
+    float: right;
+    color: #000022;
+  }
+  h1 button.menu-button svg {
+    fill: #000022;
+  }
+}
 label {
   cursor: pointer;
 }
-label:hover {
-  color: #6F7F00;
+@media (hover: hover) {
+  label:hover {
+    color: #6F7F00;
+  }
 }
 label select {
   position: absolute;
@@ -276,15 +317,17 @@ button.menu-button svg {
   height: 1.5rem;
   fill: #228844;
 }
-button:hover {
-  color: #FFFFFF;
-  background-color: #6F7F00;
-  border-color: #6F7F00;
+@media (hover: hover) {
+  button:hover {
+    color: #FFFFFF;
+    background-color: #6F7F00;
+    border-color: #6F7F00;
+  }
+  button:hover.menu-button svg {
+    fill: #FFFFFF;
+  }
 }
-button:hover.menu-button svg {
-  fill: #FFFFFF;
-}
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) and (hover: hover) {
   button:hover {
     color: #000022;
   }
@@ -304,14 +347,18 @@ button.default-button {
   background-color: #228844;
   border-color: #228844;
 }
-button.default-button:hover {
-  background-color: #6F7F00;
-  border-color: #6F7F00;
+@media (hover: hover) {
+  button.default-button:hover {
+    background-color: #6F7F00;
+    border-color: #6F7F00;
+  }
 }
 @media (prefers-color-scheme: dark) {
   button.default-button {
     color: #000022;
   }
+}
+@media (prefers-color-scheme: dark) and (hover: hover) {
   button.default-button:hover {
     background-color: #6F7F00;
     border-color: #6F7F00;
@@ -362,36 +409,69 @@ button.default-button:hover {
   width: 1.5rem;
   height: 1.5rem;
 }
-.menu-popup a:not(:hover).current-item,
-.menu-popup button:not(:hover).current-item {
-  color: #FFFFFF;
-  background-color: #228844;
+@media (hover: hover) {
+  .menu-popup a:not(:hover).current-item,
+  .menu-popup button:not(:hover).current-item {
+    color: #FFFFFF;
+    background-color: #228844;
+  }
+  .menu-popup a:not(:hover):not(.current-item),
+  .menu-popup button:not(:hover):not(.current-item) {
+    fill: #228844;
+  }
+  .menu-popup a:not(:hover):not(.current-item).current-item,
+  .menu-popup button:not(:hover):not(.current-item).current-item {
+    fill: #FFFFFF;
+  }
+  .menu-popup a.current-item svg,
+  .menu-popup button.current-item svg,
+  .menu-popup a:hover svg,
+  .menu-popup button:hover svg {
+    fill: #FFFFFF;
+  }
 }
-@media (prefers-color-scheme: dark) {
+@media (hover: hover) and (prefers-color-scheme: dark) {
   .menu-popup a:not(:hover).current-item,
   .menu-popup button:not(:hover).current-item {
     color: #000022;
   }
 }
-.menu-popup a:not(:hover):not(.current-item),
-.menu-popup button:not(:hover):not(.current-item) {
-  fill: #228844;
-}
-.menu-popup a:not(:hover):not(.current-item).current-item,
-.menu-popup button:not(:hover):not(.current-item).current-item {
-  fill: #FFFFFF;
-}
-.menu-popup a.current-item svg,
-.menu-popup button.current-item svg,
-.menu-popup a:hover svg,
-.menu-popup button:hover svg {
-  fill: #FFFFFF;
-}
-@media (prefers-color-scheme: dark) {
+@media (hover: hover) and (prefers-color-scheme: dark) {
   .menu-popup a.current-item svg,
   .menu-popup button.current-item svg,
   .menu-popup a:hover svg,
   .menu-popup button:hover svg {
+    fill: #000022;
+  }
+}
+@media (hover: none) {
+  .menu-popup a.current-item,
+  .menu-popup button.current-item {
+    color: #FFFFFF;
+    background-color: #228844;
+  }
+  .menu-popup a:not(.current-item),
+  .menu-popup button:not(.current-item) {
+    fill: #228844;
+  }
+  .menu-popup a:not(.current-item).current-item,
+  .menu-popup button:not(.current-item).current-item {
+    fill: #FFFFFF;
+  }
+  .menu-popup a.current-item svg,
+  .menu-popup button.current-item svg {
+    fill: #FFFFFF;
+  }
+}
+@media (hover: none) and (prefers-color-scheme: dark) {
+  .menu-popup a.current-item,
+  .menu-popup button.current-item {
+    color: #000022;
+  }
+}
+@media (hover: none) and (prefers-color-scheme: dark) {
+  .menu-popup a.current-item svg,
+  .menu-popup button.current-item svg {
     fill: #000022;
   }
 }
@@ -426,10 +506,12 @@ button.default-button:hover {
   margin-right: 4px;
   fill: #228844;
 }
-.check-button:hover svg {
-  fill: #FFFFFF;
+@media (hover: hover) {
+  .check-button:hover svg {
+    fill: #FFFFFF;
+  }
 }
-@media (prefers-color-scheme: dark) {
+@media (hover: hover) and (prefers-color-scheme: dark) {
   .check-button:hover svg {
     fill: #000022;
   }
@@ -563,8 +645,15 @@ button.default-button:hover {
 .history-bar > * + * {
   padding-left: 1rem;
 }
-.history-bar a:not(:hover) {
-  text-decoration: none;
+@media (hover: hover) {
+  .history-bar a:not(:hover) {
+    text-decoration: none;
+  }
+}
+@media (hover: none) {
+  .history-bar a {
+    text-decoration: none;
+  }
 }
 .history-bar a .history-bar-title,
 .history-bar a .history-bar-item {
@@ -742,24 +831,43 @@ button.default-button:hover {
   height: 1.4em;
   margin-right: 4px;
 }
-.item-title:hover {
-  color: #6F7F00;
+@media (hover: hover) {
+  .item-title:hover {
+    color: #6F7F00;
+  }
+  .item-title:hover svg {
+    fill: #6F7F00;
+  }
+  .item-title:not(:hover) {
+    color: #000022;
+    text-decoration: none;
+  }
+  .item-title:not(:hover) svg {
+    fill: #000022;
+  }
 }
-.item-title:hover svg {
-  fill: #6F7F00;
+@media (hover: none) {
+  .item-title {
+    color: #000022;
+    text-decoration: none;
+  }
+  .item-title svg {
+    fill: #000022;
+  }
 }
-.item-title:not(:hover) {
-  color: #000022;
-  text-decoration: none;
-}
-.item-title:not(:hover) svg {
-  fill: #000022;
-}
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) and (hover: hover) {
   .item-title:not(:hover) {
     color: #FFFFFF;
   }
   .item-title:not(:hover) svg {
+    fill: #FFFFFF;
+  }
+}
+@media (prefers-color-scheme: dark) and (hover: none) {
+  .item-title {
+    color: #FFFFFF;
+  }
+  .item-title svg {
     fill: #FFFFFF;
   }
 }
@@ -820,21 +928,37 @@ button.default-button:hover {
   height: 1rem;
   margin-right: 4px;
 }
-.task-item .item-tags a:not(:hover) {
-  opacity: 0.6;
-  text-decoration: none;
-  color: #000022;
-  fill: #000022;
+@media (hover: hover) {
+  .task-item .item-tags a:not(:hover) {
+    opacity: 0.6;
+    text-decoration: none;
+    color: #000022;
+    fill: #000022;
+  }
+  .task-item .item-tags a:hover {
+    color: #6F7F00;
+    fill: #6F7F00;
+  }
 }
-@media (prefers-color-scheme: dark) {
+@media (hover: hover) and (prefers-color-scheme: dark) {
   .task-item .item-tags a:not(:hover) {
     color: #FFFFFF;
     fill: #FFFFFF;
   }
 }
-.task-item .item-tags a:hover {
-  color: #6F7F00;
-  fill: #6F7F00;
+@media (hover: none) {
+  .task-item .item-tags a {
+    opacity: 0.6;
+    text-decoration: none;
+    color: #000022;
+    fill: #000022;
+  }
+}
+@media (hover: none) and (prefers-color-scheme: dark) {
+  .task-item .item-tags a {
+    color: #FFFFFF;
+    fill: #FFFFFF;
+  }
 }
 .task-item .item-tags a + a {
   margin-left: 1rem;
@@ -942,8 +1066,13 @@ button.default-button:hover {
 .history-list .history-item .item-operator {
   padding-left: 0.5rem;
 }
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) and (hover: hover) {
   .history-list .history-item .item-title:not(:hover) {
+    color: #FFFFFF;
+  }
+}
+@media (prefers-color-scheme: dark) and (hover: none) {
+  .history-list .history-item .item-title {
     color: #FFFFFF;
   }
 }
@@ -2241,7 +2370,8 @@ define("resource/images", [], {
     "tag-icon": "./image/tag.1024.svg",
     "folder-icon": "./image/folder.1024.svg",
     "history-icon": "./image/history.1024.svg",
-    "task-icon": "./image/task.1024.svg"
+    "task-icon": "./image/task.1024.svg",
+    "recycle-bin-icon": "./image/recycle-bin.1024.svg"
 });
 define("script/index", ["require", "exports", "script/minamo.js/index", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -2418,7 +2548,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case "@overall":
                             return "home-icon";
                         case "@deleted":
-                            return "list-icon"; // 本来は recycle bin だけど、まだ作ってない
+                            return "recycle-bin-icon";
                         default:
                             return Tag.isSublist(tag) ?
                                 "folder-icon" :
@@ -4373,7 +4503,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 0:
                             _g = {
                                 icon: (_h = {
-                                    "@removed": "list-icon",
+                                    "@removed": "recycle-bin-icon",
                                     "@import": "list-icon", // 本来は import だけど、まだ作ってない
                                 }[pass]) !== null && _h !== void 0 ? _h : "list-icon",
                                 title: (_j = {
@@ -4428,7 +4558,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     }); }); }, pass === "@import" ? "current-item" : undefined])
                             ]);
                             _f = Render.menuLinkItem;
-                            return [4 /*yield*/, Resource.loadSvgOrCache("list-icon")];
+                            return [4 /*yield*/, Resource.loadSvgOrCache("recycle-bin-icon")];
                         case 4: return [2 /*return*/, (_g.menu = _b.apply(_a, [_d.concat([
                                     _f.apply(void 0, [[
                                             _k.sent(),
@@ -4522,7 +4652,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     }); }])
                             ]);
                             _f = Render.menuLinkItem;
-                            return [4 /*yield*/, Resource.loadSvgOrCache("list-icon")];
+                            return [4 /*yield*/, Resource.loadSvgOrCache("recycle-bin-icon")];
                         case 4: return [2 /*return*/, (_g.menu = _b.apply(_a, [_d.concat([
                                     _f.apply(void 0, [[
                                             _h.sent(),
@@ -6234,6 +6364,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
 </svg>
 </div><div id="task-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M512,81.124C749.807,81.124 942.876,274.193 942.876,512C942.876,749.807 749.807,942.876 512,942.876C274.193,942.876 81.124,749.807 81.124,512C81.124,274.193 274.193,81.124 512,81.124ZM469.52,578.24L366.174,474.4C354.766,462.938 336.199,462.894 324.737,474.301L283.201,515.639C271.738,527.047 271.694,545.615 283.102,557.077L448.455,723.221C459.863,734.683 478.43,734.727 489.892,723.32L794.49,420.172C805.952,408.764 805.996,390.197 794.589,378.734L753.25,337.198C741.843,325.736 723.275,325.692 711.813,337.1L469.52,578.24Z"/>
+</svg>
+</div><div id="recycle-bin-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M656.066,112L656.151,112L656.266,112.001L656.31,112.001L656.342,112.001L656.447,112.002L656.601,112.004L656.743,112.005L656.919,112.009L657.039,112.011L657.218,112.015L657.334,112.018L657.497,112.023L657.546,112.024L657.572,112.025L657.63,112.027L657.751,112.032L657.854,112.035L657.902,112.037L657.925,112.038L657.977,112.04C668.507,112.468 678.167,116.294 685.891,122.452C692.474,127.679 697.739,134.666 700.878,142.947C701.489,144.553 702.017,146.201 702.455,147.886L702.488,148.01L702.496,148.042L744.289,304L880,304C906.492,304 928,325.508 928,352C928,378.492 906.492,400 880,400L862.369,400L734.373,877.636C727.668,902.657 702.334,917.752 677.292,912L336,912C335.666,912 335.333,911.997 335,911.99C334.667,911.997 334.334,912 334,912L330,912L329.933,912L329.84,912L329.713,911.999L329.69,911.999L329.673,911.999C328.967,911.994 328.263,911.974 327.56,911.939L327.477,911.935L327.348,911.928L327.225,911.921L327.178,911.918C317.903,911.379 309.332,908.202 302.206,903.128C293.396,896.886 286.628,887.652 283.617,876.415L155.948,400L144,400C117.508,400 96,378.492 96,352C96,325.508 117.508,304 144,304L280.681,304L320.098,156.908C321.694,131.855 342.547,112 368,112L656,112L656.066,112ZM762.982,400L255.336,400L366.814,816L651.503,816L762.982,400ZM450.142,784.613C468.623,781.362 480.989,763.718 477.738,745.236L427.491,459.595C424.24,441.114 406.596,428.749 388.114,432C369.633,435.251 357.268,452.895 360.519,471.376L410.766,757.017C414.017,775.499 431.661,787.864 450.142,784.613ZM573.858,783.481C555.377,780.23 543.011,762.586 546.262,744.105L596.509,458.464C599.76,439.982 617.404,427.617 635.886,430.868C654.367,434.12 666.732,451.763 663.481,470.245L613.234,755.886C609.983,774.367 592.339,786.732 573.858,783.481ZM405.794,208L380.068,304L644.902,304L619.176,208L405.794,208Z"/>
 </svg>
 </div></div></body>
 </html>

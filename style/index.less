@@ -118,9 +118,12 @@ h1
         {
             color: @base-color;
         }
-        &:hover
+        @media (hover: hover)
         {
-            background-color: @active-color;
+            &:hover
+            {
+                background-color: @active-color;
+            }
         }
     }
     .segment
@@ -137,13 +140,23 @@ h1
         {
             cursor: pointer;
         }
-        &:hover:not(.label-segment)
+        @media (hover: hover)
         {
-            background-color: @active-color;
+            &:hover:not(.label-segment)
+            {
+                background-color: @active-color;
+            }
+            &:not(:hover)
+            {
+                background-color: @accent-color;
+            }
         }
-        &:not(:hover)
+        @media (hover: none)
         {
-            background-color: @accent-color;
+            &
+            {
+                background-color: @accent-color;
+            }
         }
         &.last-segment
         {
@@ -194,14 +207,30 @@ h1
     {
         margin: 0px;
         margin-right: 0.25rem;
-        &:not(:hover)
+        @media (hover: hover)
         {
-            color: @base-color;
-            //border-color: @base-color;
-            background-color: @accent-color;
-            svg
+            &:not(:hover)
             {
-                fill: @base-color;
+                color: @base-color;
+                //border-color: @base-color;
+                background-color: @accent-color;
+                svg
+                {
+                    fill: @base-color;
+                }
+            }
+        }
+        @media (hover: none)
+        {
+            &
+            {
+                color: @base-color;
+                //border-color: @base-color;
+                background-color: @accent-color;
+                svg
+                {
+                    fill: @base-color;
+                }
             }
         }
     }
@@ -224,9 +253,19 @@ h1, h2
         color: @base-color;
     }
     background-color: @accent-color;
-    a:not(:hover)
+    @media (hover: hover)
     {
-        text-decoration: none;
+        a:not(:hover)
+        {
+            text-decoration: none;
+        }
+    }
+    @media (hover: none)
+    {
+        a
+        {
+            text-decoration: none;
+        }
     }
 }
 @media (prefers-color-scheme: dark)
@@ -244,14 +283,30 @@ h1, h2
                 color: @dark-base-color;
             }
         }
-        button.menu-button:not(:hover)
+        @media (hover: hover)
         {
-            float: right;
-            color: @dark-base-color;
-            //border-color: @dark-base-color;
-            svg
+            button.menu-button:not(:hover)
             {
-                fill: @dark-base-color;
+                float: right;
+                color: @dark-base-color;
+                //border-color: @dark-base-color;
+                svg
+                {
+                    fill: @dark-base-color;
+                }
+            }
+            }
+        @media (hover: none)
+        {
+            button.menu-button
+            {
+                float: right;
+                color: @dark-base-color;
+                //border-color: @dark-base-color;
+                svg
+                {
+                    fill: @dark-base-color;
+                }
             }
         }
         .segment + .segment,
@@ -275,9 +330,12 @@ label
     // display: flex;
     // flex-direction: column;
     // align-items: stretch;
-    &:hover
+    @media (hover: hover)
     {
-        color: @active-color;
+        &:hover
+        {
+            color: @active-color;
+        }
     }
     select
     {
@@ -347,16 +405,19 @@ button
             fill: @accent-color;
         }
     }
-    &:hover
+    @media (hover: hover)
     {
-        color: @base-color;
-        background-color: @active-color;
-        border-color: @active-color;
-        &.menu-button
+        &:hover
         {
-            svg
+            color: @base-color;
+            background-color: @active-color;
+            border-color: @active-color;
+            &.menu-button
             {
-                fill: @base-color;
+                svg
+                {
+                    fill: @base-color;
+                }
             }
         }
     }
@@ -366,14 +427,17 @@ button
     button
     {
         // background-color: @dark-base-color;
-        &:hover
+        @media (hover: hover)
         {
-            color: @dark-base-color;
-            &.menu-button
+            &:hover
             {
-                svg
+                color: @dark-base-color;
+                &.menu-button
                 {
-                    fill: @dark-base-color;
+                    svg
+                    {
+                        fill: @dark-base-color;
+                    }
                 }
             }
         }
@@ -392,10 +456,13 @@ button.default-button
     color: @base-color;
     background-color: @accent-color;
     border-color: @accent-color;
-    &:hover
+    @media (hover: hover)
     {
-        background-color: @active-color;
-        border-color: @active-color;
+        &:hover
+        {
+            background-color: @active-color;
+            border-color: @active-color;
+        }
     }
 }
 @media (prefers-color-scheme: dark)
@@ -403,10 +470,13 @@ button.default-button
     button.default-button
     {
         color: @dark-base-color;
-        &:hover
+        @media (hover: hover)
         {
-            background-color: @active-color;
-            border-color: @active-color;
+            &:hover
+            {
+                background-color: @active-color;
+                border-color: @active-color;
+            }
         }
     }
 }
@@ -456,7 +526,42 @@ button.default-button
             width: 1.5rem;
             height: 1.5rem;
         }
-        &:not(:hover)
+        @media (hover: hover)
+        {
+            &:not(:hover)
+            {
+                &.current-item
+                {
+                    color: @base-color;
+                    background-color: @accent-color;
+                    @media (prefers-color-scheme: dark)
+                    {
+                        color: @dark-base-color;
+                    }
+                }
+                &:not(.current-item)
+                {
+                    fill: @accent-color;
+                    &.current-item
+                    {
+                        fill: @base-color;
+                    }
+                }
+            }
+            &.current-item,
+            &:hover
+            {
+                svg
+                {
+                    fill: @base-color;
+                    @media (prefers-color-scheme: dark)
+                    {
+                        fill: @dark-base-color;
+                    }
+                }
+            }
+        }
+        @media (hover: none)
         {
             &.current-item
             {
@@ -475,16 +580,15 @@ button.default-button
                     fill: @base-color;
                 }
             }
-        }
-        &.current-item,
-        &:hover
-        {
-            svg
+            &.current-item
             {
-                fill: @base-color;
-                @media (prefers-color-scheme: dark)
+                svg
                 {
-                    fill: @dark-base-color;
+                    fill: @base-color;
+                    @media (prefers-color-scheme: dark)
+                    {
+                        fill: @dark-base-color;
+                    }
                 }
             }
         }
@@ -528,12 +632,15 @@ button.default-button
         margin-right: 4px;
         fill: @accent-color;
     }
-    &:hover svg
+    @media (hover: hover)
     {
-        fill: @base-color;
-        @media (prefers-color-scheme: dark)
+        &:hover svg
         {
-            fill: @dark-base-color;
+            fill: @base-color;
+            @media (prefers-color-scheme: dark)
+            {
+                fill: @dark-base-color;
+            }
         }
     }
     &:not(.checked) svg
@@ -705,7 +812,14 @@ button.default-button
     background-color: #8884;
     a
     {
-        &:not(:hover)
+        @media (hover: hover)
+        {
+            &:not(:hover)
+            {
+                text-decoration: none;
+            }
+        }
+        @media (hover: none)
         {
             text-decoration: none;
         }
@@ -894,15 +1008,27 @@ button.default-button
         height: 1.4em;
         margin-right: 4px;
     }
-    &:hover
+    @media (hover: hover)
     {
-        color: @active-color;
-        svg
+        &:hover
         {
-            fill: @active-color;
+            color: @active-color;
+            svg
+            {
+                fill: @active-color;
+            }
+        }
+        &:not(:hover)
+        {
+            color: @main-color;
+            text-decoration: none;
+            svg
+            {
+                fill: @main-color;
+            }
         }
     }
-    &:not(:hover)
+    @media (hover: none)
     {
         color: @main-color;
         text-decoration: none;
@@ -914,12 +1040,26 @@ button.default-button
 }
 @media (prefers-color-scheme: dark)
 {
-    .item-title:not(:hover)
+    @media (hover: hover)
     {
-        color: @dark-main-color;
-        svg
+        .item-title:not(:hover)
         {
-            fill: @dark-main-color;
+            color: @dark-main-color;
+            svg
+            {
+                fill: @dark-main-color;
+            }
+        }
+    }
+    @media (hover: none)
+    {
+        .item-title
+        {
+            color: @dark-main-color;
+            svg
+            {
+                fill: @dark-main-color;
+            }
         }
     }
 }
@@ -997,7 +1137,27 @@ button.default-button
                 height: 1rem;
                 margin-right: 4px;
             }
-            &:not(:hover)
+            @media (hover: hover)
+            {
+                &:not(:hover)
+                {
+                    opacity: 0.6;
+                    text-decoration: none;
+                    color: @main-color;
+                    fill: @main-color;
+                    @media (prefers-color-scheme: dark)
+                    {
+                        color: @dark-main-color;
+                        fill: @dark-main-color;
+                    }
+                }
+                &:hover
+                {
+                    color: @active-color;
+                    fill: @active-color;
+                }
+            }
+            @media (hover: none)
             {
                 opacity: 0.6;
                 text-decoration: none;
@@ -1008,11 +1168,6 @@ button.default-button
                     color: @dark-main-color;
                     fill: @dark-main-color;
                 }
-            }
-            &:hover
-            {
-                color: @active-color;
-                fill: @active-color;
             }
         }
         a + a
@@ -1172,9 +1327,19 @@ button.default-button
 }
 @media (prefers-color-scheme: dark)
 {
-    .history-list .history-item .item-title:not(:hover)
+    @media (hover: hover)
     {
-        color: @dark-main-color;
+        .history-list .history-item .item-title:not(:hover)
+        {
+            color: @dark-main-color;
+        }
+    }
+    @media (hover: none)
+    {
+        .history-list .history-item .item-title
+        {
+            color: @dark-main-color;
+        }
     }
 }
 .todo-screen
