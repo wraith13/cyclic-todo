@@ -1089,6 +1089,7 @@ export module CyclicToDo
         // export const prompt = systemPrompt;
         export const prompt = customPrompt;
         export const alert = (message: string) => window.alert(message);
+        export const confirm = (message: string) => window.confirm(message);
         export const dateTimePrompt = async (message: string, _default: number): Promise<string | null> =>
         {
             const inputDate = minamo.dom.make(HTMLInputElement)
@@ -2029,19 +2030,6 @@ export module CyclicToDo
                 ),
             ]
         });
-        export const screenHeader = async (href: PageParams, title: minamo.dom.Source, menu: minamo.dom.Source) => heading
-        (
-            "h1",
-            [
-                internalLink
-                ({
-                    href,
-                    children: await applicationIcon(),
-                }),
-                title,
-                await menuButton(menu),
-            ]
-        );
         export interface HeaderSegmentSource
         {
             icon: Resource.KeyType;
@@ -2448,6 +2436,18 @@ export module CyclicToDo
                     className: "button-list",
                     children:
                     [
+                        "@overall" !== entry.tag ?
+                            internalLink
+                            ({
+                                href: { pass: entry.pass, tag: "@overall", },
+                                children:
+                                {
+                                    tag: "button",
+                                    className: list.length <= 0 ? "main-button long-button": "default-button main-button long-button",
+                                    children: label("Back to Home"),
+                                },
+                            }):
+                            [],
                         {
                             tag: "button",
                             className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
@@ -2756,7 +2756,6 @@ export module CyclicToDo
                     ],
                 ),
                 0 < list.length ?
-                [
                     {
                         tag: "div",
                         className: "row-flex-list removed-list",
@@ -2766,30 +2765,44 @@ export module CyclicToDo
                                 .sort(minamo.core.comparer.make(item => -item.deteledAt))
                                 .map(item => removedItem(pass, item))
                         ),
-                    },
-                    {
-                        tag: "div",
-                        className: "button-list",
-                        children:
-                        {
-                            tag: "button",
-                            className: "main-button long-button delete-button",
-                            children: "完全に削除",
-                            onclick: async () =>
-                            {
-                                Storage.Removed.clear(pass);
-                                await reload();
-                            },
-                        },
-                    }
-                ]:
-                [
+                    }:
                     {
                         tag: "div",
                         className: "button-list",
                         children: label("Recycle Bin is empty."),
                     },
-                ]
+                {
+                    tag: "div",
+                    className: "button-list",
+                    children:
+                    [
+                        internalLink
+                        ({
+                            href: { pass, tag: "@overall", },
+                            children:
+                            {
+                                tag: "button",
+                                className: "default-button main-button long-button",
+                                children: label("Back to Home"),
+                            },
+                        }),
+                        0 < list.length ?
+                            {
+                                tag: "button",
+                                className: "main-button long-button delete-button",
+                                children: "完全に削除",
+                                onclick: async () =>
+                                {
+                                    if (confirm("この操作は取り消せません。続行しますか？"))
+                                    {
+                                        Storage.Removed.clear(pass);
+                                        await reload();
+                                    }
+                                },
+                            }:
+                            [],
+                    ],
+                }
             ]
         });
         export const showRemovedScreen = async (pass: string) =>
@@ -2996,7 +3009,7 @@ export module CyclicToDo
                     [
                         menuItem
                         (
-                            label("Back to Home"),
+                            label("Back to Top"),
                             async () => await showUrl({ }),
                         )
                     ]
@@ -3074,9 +3087,9 @@ export module CyclicToDo
         export const showRemovedListScreen = async () =>
         {
             document.title = `${locale.map("@deleted")} ${applicationTitle}`;
-            await showWindow(await removedListScreen());
+            await showWindow(await removedListScreen(Storage.Backup.get().map(json => JSON.parse(json) as ToDoList)));
         };
-        export const removedListScreen = async () =>
+        export const removedListScreen = async (list: ToDoList[]) =>
         ({
             tag: "div",
             className: "remove-list-screen screen",
@@ -3091,36 +3104,53 @@ export module CyclicToDo
                     [
                         menuItem
                         (
-                            label("Back to Home"),
+                            label("Back to Top"),
                             async () => await showUrl({ }),
                         )
                     ]
                 ),
-                {
-                    tag: "div",
-                    className: "row-flex-list removed-list-list",
-                    children: await Promise.all(Storage.Backup.get().map(json => removedListItem(JSON.parse(json) as ToDoList))),
-                },
-                0 < Storage.Backup.get().length ?
+                0 < list.length ?
+                    {
+                        tag: "div",
+                        className: "row-flex-list removed-list-list",
+                        children: await Promise.all(list.map(item => removedListItem(item))),
+                    }:
+                    {
+                        tag: "div",
+                        className: "button-list",
+                        children: label("Recycle Bin is empty."),
+                    },
                 {
                     tag: "div",
                     className: "button-list",
                     children:
-                    {
-                        tag: "button",
-                        className: "main-button long-button delete-button",
-                        children: "完全に削除",
-                        onclick: async () =>
-                        {
-                            Storage.Backup.clear();
-                            await reload();
-                        },
-                    },
-                }:
-                {
-                    tag: "div",
-                    className: "button-list",
-                    children: label("Recycle Bin is empty."),
+                    [
+                        internalLink
+                        ({
+                            href: {  },
+                            children:
+                            {
+                                tag: "button",
+                                className: "default-button main-button long-button",
+                                children: label("Back to Top"),
+                            },
+                        }),
+                        0 < list.length ?
+                            {
+                                tag: "button",
+                                className: "main-button long-button delete-button",
+                                children: "完全に削除",
+                                onclick: async () =>
+                                {
+                                    if (confirm("この操作は取り消せません。続行しますか？"))
+                                    {
+                                        Storage.Backup.clear();
+                                        await reload();
+                                    }
+                                },
+                            }:
+                            [],
+                    ],
                 }
         ],
         });
@@ -3286,17 +3316,27 @@ export module CyclicToDo
             className: "updating-screen screen",
             children:
             [
-                await screenHeader
+                await screenSegmentedHeader
                 (
-                    { },
-                    `...`,
                     [
+                        screenHeaderHomeSegment(),
+                        {
+                            icon: "list-icon",
+                            title: "loading...",
+                        },
+                    ],
+                    [
+                        menuItem
+                        (
+                            label("Back to Top"),
+                            async () => await showUrl({ }),
+                        ),
                         menuItem
                         (
                             "GitHub",
                             async () => location.href = "https://github.com/wraith13/cyclic-todo/",
                         ),
-                    ],
+                    ]
                 ),
                 await applicationColorIcon(),
                 // {
@@ -3380,6 +3420,14 @@ export module CyclicToDo
                 {
                     header.classList.toggle("locale-parallel-on", 2 <= minColumns);
                     header.classList.toggle("locale-parallel-off", minColumns < 2);
+                }
+            );
+            (Array.from(document.getElementsByClassName("button-list")) as HTMLDivElement[]).forEach
+            (
+                header =>
+                {
+                    header.classList.toggle("locale-parallel-on", true);
+                    header.classList.toggle("locale-parallel-off", false);
                 }
             );
             (Array.from(document.getElementsByClassName("column-flex-list")) as HTMLDivElement[]).forEach

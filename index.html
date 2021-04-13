@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue Apr 13 2021 06:36:26 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Apr 13 2021 18:07:01 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -2309,6 +2309,7 @@ define("resource/lang.en", [], {
     "Export": "Export",
     "Import": "Import",
     "Recycle Bin is empty.": "Recycle Bin is empty.",
+    "Back to Top": "Back to Top screen",
     "Back to Home": "Back to Home",
     "Updating...": "Updating...",
     "Tag": "Tag",
@@ -2351,6 +2352,7 @@ define("resource/lang.ja", [], {
     "Export": "エクスポート",
     "Import": "インポート",
     "Recycle Bin is empty.": "ごみ箱は空です。",
+    "Back to Top": "トップ画面に戻る",
     "Back to Home": "ホーム画面に戻る",
     "Updating...": "更新中...",
     "Tag": "タグ",
@@ -3251,6 +3253,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             // export const prompt = systemPrompt;
             Render.prompt = Render.customPrompt;
             Render.alert = function (message) { return window.alert(message); };
+            Render.confirm = function (message) { return window.confirm(message); };
             Render.dateTimePrompt = function (message, _default) { return __awaiter(_this, void 0, void 0, function () {
                 var inputDate, inputTime;
                 var _this = this;
@@ -4339,32 +4342,6 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
-            Render.screenHeader = function (href, title, menu) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d;
-                var _e;
-                return __generator(this, function (_f) {
-                    switch (_f.label) {
-                        case 0:
-                            _a = Render.heading;
-                            _b = ["h1"];
-                            _c = Render.internalLink;
-                            _e = {
-                                href: href
-                            };
-                            return [4 /*yield*/, Render.applicationIcon()];
-                        case 1:
-                            _d = [
-                                _c.apply(void 0, [(_e.children = _f.sent(),
-                                        _e)]),
-                                title
-                            ];
-                            return [4 /*yield*/, Render.menuButton(menu)];
-                        case 2: return [2 /*return*/, _a.apply(void 0, _b.concat([_d.concat([
-                                    _f.sent()
-                                ])]))];
-                    }
-                });
-            }); };
             Render.screenSegmentedHeader = function (items, menu) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c;
                 var _this = this;
@@ -4877,6 +4854,16 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     tag: "div",
                                     className: "button-list",
                                     children: [
+                                        "@overall" !== entry.tag ?
+                                            Render.internalLink({
+                                                href: { pass: entry.pass, tag: "@overall", },
+                                                children: {
+                                                    tag: "button",
+                                                    className: list.length <= 0 ? "main-button long-button" : "default-button main-button long-button",
+                                                    children: Render.label("Back to Home"),
+                                                },
+                                            }) :
+                                            [],
                                         {
                                             tag: "button",
                                             className: list.length <= 0 ? "default-button main-button long-button" : "main-button long-button",
@@ -5277,43 +5264,53 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     .sort(minamo_js_1.minamo.core.comparer.make(function (item) { return -item.deteledAt; }))
                                     .map(function (item) { return Render.removedItem(pass, item); }))];
                         case 4:
-                            _d = [
-                                (_f.children = _g.sent(),
-                                    _f),
-                                {
-                                    tag: "div",
-                                    className: "button-list",
-                                    children: {
-                                        tag: "button",
-                                        className: "main-button long-button delete-button",
-                                        children: "完全に削除",
-                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                            return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0:
-                                                        Storage.Removed.clear(pass);
-                                                        return [4 /*yield*/, CyclicToDo.reload()];
-                                                    case 1:
-                                                        _a.sent();
-                                                        return [2 /*return*/];
-                                                }
-                                            });
-                                        }); },
-                                    },
-                                }
-                            ];
+                            _d = (_f.children = _g.sent(),
+                                _f);
                             return [3 /*break*/, 6];
                         case 5:
-                            _d = [
+                            _d = {
+                                tag: "div",
+                                className: "button-list",
+                                children: Render.label("Recycle Bin is empty."),
+                            };
+                            _g.label = 6;
+                        case 6: return [2 /*return*/, (_e.children = _c.concat([
+                                _d,
                                 {
                                     tag: "div",
                                     className: "button-list",
-                                    children: Render.label("Recycle Bin is empty."),
-                                },
-                            ];
-                            _g.label = 6;
-                        case 6: return [2 /*return*/, (_e.children = _c.concat([
-                                _d
+                                    children: [
+                                        Render.internalLink({
+                                            href: { pass: pass, tag: "@overall", },
+                                            children: {
+                                                tag: "button",
+                                                className: "default-button main-button long-button",
+                                                children: Render.label("Back to Home"),
+                                            },
+                                        }),
+                                        0 < list.length ?
+                                            {
+                                                tag: "button",
+                                                className: "main-button long-button delete-button",
+                                                children: "完全に削除",
+                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    return __generator(this, function (_a) {
+                                                        switch (_a.label) {
+                                                            case 0:
+                                                                if (!Render.confirm("この操作は取り消せません。続行しますか？")) return [3 /*break*/, 2];
+                                                                Storage.Removed.clear(pass);
+                                                                return [4 /*yield*/, CyclicToDo.reload()];
+                                                            case 1:
+                                                                _a.sent();
+                                                                _a.label = 2;
+                                                            case 2: return [2 /*return*/];
+                                                        }
+                                                    });
+                                                }); },
+                                            } :
+                                            [],
+                                    ],
+                                }
                             ]),
                                 _e)];
                     }
@@ -5622,7 +5619,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 1: return [4 /*yield*/, _a.apply(void 0, [_b.concat([
                                     _d.sent()
                                 ]), [
-                                    Render.menuItem(Render.label("Back to Home"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    Render.menuItem(Render.label("Back to Top"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, CyclicToDo.showUrl({})];
                                             case 1: return [2 /*return*/, _a.sent()];
@@ -5722,7 +5719,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 0:
                             document.title = locale.map("@deleted") + " " + CyclicToDo.applicationTitle;
                             _a = Render.showWindow;
-                            return [4 /*yield*/, Render.removedListScreen()];
+                            return [4 /*yield*/, Render.removedListScreen(Storage.Backup.get().map(function (json) { return JSON.parse(json); }))];
                         case 1: return [4 /*yield*/, _a.apply(void 0, [_b.sent()])];
                         case 2:
                             _b.sent();
@@ -5730,14 +5727,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
-            Render.removedListScreen = function () { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c;
-                var _d, _e;
+            Render.removedListScreen = function (list) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c, _d;
+                var _e, _f;
                 var _this = this;
-                return __generator(this, function (_f) {
-                    switch (_f.label) {
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            _d = {
+                            _e = {
                                 tag: "div",
                                 className: "remove-list-screen screen"
                             };
@@ -5745,9 +5742,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _b = [Render.screenHeaderHomeSegment()];
                             return [4 /*yield*/, Render.screenHeaderListSegment("@removed")];
                         case 1: return [4 /*yield*/, _a.apply(void 0, [_b.concat([
-                                    _f.sent()
+                                    _g.sent()
                                 ]), [
-                                    Render.menuItem(Render.label("Back to Home"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    Render.menuItem(Render.label("Back to Top"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, CyclicToDo.showUrl({})];
                                             case 1: return [2 /*return*/, _a.sent()];
@@ -5756,45 +5753,64 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 ]])];
                         case 2:
                             _c = [
-                                _f.sent()
+                                _g.sent()
                             ];
-                            _e = {
+                            if (!(0 < list.length)) return [3 /*break*/, 4];
+                            _f = {
                                 tag: "div",
                                 className: "row-flex-list removed-list-list"
                             };
-                            return [4 /*yield*/, Promise.all(Storage.Backup.get().map(function (json) { return Render.removedListItem(JSON.parse(json)); }))];
-                        case 3: return [2 /*return*/, (_d.children = _c.concat([
-                                (_e.children = _f.sent(),
-                                    _e),
-                                0 < Storage.Backup.get().length ?
-                                    {
-                                        tag: "div",
-                                        className: "button-list",
-                                        children: {
-                                            tag: "button",
-                                            className: "main-button long-button delete-button",
-                                            children: "完全に削除",
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0:
-                                                            Storage.Backup.clear();
-                                                            return [4 /*yield*/, CyclicToDo.reload()];
-                                                        case 1:
-                                                            _a.sent();
-                                                            return [2 /*return*/];
-                                                    }
-                                                });
-                                            }); },
-                                        },
-                                    } :
-                                    {
-                                        tag: "div",
-                                        className: "button-list",
-                                        children: Render.label("Recycle Bin is empty."),
-                                    }
+                            return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.removedListItem(item); }))];
+                        case 3:
+                            _d = (_f.children = _g.sent(),
+                                _f);
+                            return [3 /*break*/, 5];
+                        case 4:
+                            _d = {
+                                tag: "div",
+                                className: "button-list",
+                                children: Render.label("Recycle Bin is empty."),
+                            };
+                            _g.label = 5;
+                        case 5: return [2 /*return*/, (_e.children = _c.concat([
+                                _d,
+                                {
+                                    tag: "div",
+                                    className: "button-list",
+                                    children: [
+                                        Render.internalLink({
+                                            href: {},
+                                            children: {
+                                                tag: "button",
+                                                className: "default-button main-button long-button",
+                                                children: Render.label("Back to Top"),
+                                            },
+                                        }),
+                                        0 < list.length ?
+                                            {
+                                                tag: "button",
+                                                className: "main-button long-button delete-button",
+                                                children: "完全に削除",
+                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    return __generator(this, function (_a) {
+                                                        switch (_a.label) {
+                                                            case 0:
+                                                                if (!Render.confirm("この操作は取り消せません。続行しますか？")) return [3 /*break*/, 2];
+                                                                Storage.Backup.clear();
+                                                                return [4 /*yield*/, CyclicToDo.reload()];
+                                                            case 1:
+                                                                _a.sent();
+                                                                _a.label = 2;
+                                                            case 2: return [2 /*return*/];
+                                                        }
+                                                    });
+                                                }); },
+                                            } :
+                                            [],
+                                    ],
+                                }
                             ]),
-                                _d)];
+                                _e)];
                     }
                 });
             }); };
@@ -6025,7 +6041,19 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     tag: "div",
                                     className: "updating-screen screen"
                                 };
-                                return [4 /*yield*/, Render.screenHeader({}, "...", [
+                                return [4 /*yield*/, Render.screenSegmentedHeader([
+                                        Render.screenHeaderHomeSegment(),
+                                        {
+                                            icon: "list-icon",
+                                            title: "loading...",
+                                        },
+                                    ], [
+                                        Render.menuItem(Render.label("Back to Top"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, CyclicToDo.showUrl({})];
+                                                case 1: return [2 /*return*/, _a.sent()];
+                                            }
+                                        }); }); }),
                                         Render.menuItem("GitHub", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                             return [2 /*return*/, location.href = "https://github.com/wraith13/cyclic-todo/"];
                                         }); }); }),
@@ -6126,6 +6154,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 Array.from(document.getElementsByTagName("h1")).forEach(function (header) {
                     header.classList.toggle("locale-parallel-on", 2 <= minColumns);
                     header.classList.toggle("locale-parallel-off", minColumns < 2);
+                });
+                Array.from(document.getElementsByClassName("button-list")).forEach(function (header) {
+                    header.classList.toggle("locale-parallel-on", true);
+                    header.classList.toggle("locale-parallel-off", false);
                 });
                 Array.from(document.getElementsByClassName("column-flex-list")).forEach(function (list) {
                     var length = list.childNodes.length;
