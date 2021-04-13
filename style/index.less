@@ -1011,7 +1011,9 @@ button.default-button
     svg
     {
         width: 1.4em;
+        min-width: 1.4em;
         height: 1.4em;
+        min-height: 1.4em;
         margin-right: 4px;
     }
     @media (hover: hover)
@@ -1365,6 +1367,18 @@ button.default-button
             align-items: center;
             white-space: nowrap;
             height: 3.8rem;
+            & > svg
+            {
+                width: 2.5rem;
+                height: 2.5rem;
+                margin-right: 0.5rem;
+                opacity: 0.6;
+                fill: @main-color;
+                @media (prefers-color-scheme: dark)
+                {
+                    fill: @dark-main-color;
+                }
+            }
             .item-information
             {
                 width: 100%;

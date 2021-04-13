@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue Apr 13 2021 18:07:01 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Apr 13 2021 19:13:35 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -833,7 +833,9 @@ button.default-button {
 }
 .item-title svg {
   width: 1.4em;
+  min-width: 1.4em;
   height: 1.4em;
+  min-height: 1.4em;
   margin-right: 4px;
 }
 @media (hover: hover) {
@@ -1092,6 +1094,18 @@ button.default-button {
   align-items: center;
   white-space: nowrap;
   height: 3.8rem;
+}
+.todo-screen .tick-list .tick-item > svg {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-right: 0.5rem;
+  opacity: 0.6;
+  fill: #000022;
+}
+@media (prefers-color-scheme: dark) {
+  .todo-screen .tick-list .tick-item > svg {
+    fill: #FFFFFF;
+  }
 }
 .todo-screen .tick-list .tick-item .item-information {
   width: 100%;
@@ -2376,6 +2390,7 @@ define("resource/images", [], {
     "home-icon": "./image/home.1024.svg",
     "anti-home-icon": "./image/anti-home.1024.svg",
     "tag-icon": "./image/tag.1024.svg",
+    "ghost-tag-icon": "./image/ghost-tag.1024.svg",
     "folder-icon": "./image/folder.1024.svg",
     "history-icon": "./image/history.1024.svg",
     "task-icon": "./image/task.1024.svg",
@@ -2568,6 +2583,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             return "home-icon";
                         case "@unoverall":
                             return "anti-home-icon";
+                        case "@untagged":
+                            return "ghost-tag-icon";
                         case "@deleted":
                             return "recycle-bin-icon";
                         default:
@@ -4155,7 +4172,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "tick-item flex-item ",
                                 style: Render.progressStyle(null === interval ? null : interval / max)
                             };
-                            _a = [{
+                            return [4 /*yield*/, Resource.loadSvgOrCache("tick-icon")];
+                        case 1:
+                            _a = [
+                                _d.sent(),
+                                {
                                     tag: "div",
                                     className: "item-information",
                                     children: [
@@ -4184,7 +4205,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             ],
                                         },
                                     ],
-                                }];
+                                }
+                            ];
                             _c = {
                                 tag: "div",
                                 className: "item-operator"
@@ -4229,7 +4251,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         });
                                     }); }, "delete-button")
                                 ])];
-                        case 1: return [2 /*return*/, (_b.children = _a.concat([
+                        case 2: return [2 /*return*/, (_b.children = _a.concat([
                                 (_c.children = [
                                     // {
                                     //     tag: "button",
@@ -4844,7 +4866,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             ]);
                             _e = {
                                 tag: "div",
-                                className: "row-flex-list todo-list"
+                                className: "column-flex-list todo-list"
                             };
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.todoItem(entry, item); }))];
                         case 5: return [2 /*return*/, (_d.children = _c.concat([
@@ -5089,7 +5111,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             ];
                             _e = {
                                 tag: "div",
-                                className: "row-flex-list history-list"
+                                className: "column-flex-list history-list"
                             };
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.historyItem(entry, item); }))];
                         case 4: return [2 /*return*/, (_d.children = _c.concat([
@@ -5258,7 +5280,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             if (!(0 < list.length)) return [3 /*break*/, 5];
                             _f = {
                                 tag: "div",
-                                className: "row-flex-list removed-list"
+                                className: "column-flex-list removed-list"
                             };
                             return [4 /*yield*/, Promise.all([].concat(list)
                                     .sort(minamo_js_1.minamo.core.comparer.make(function (item) { return -item.deteledAt; }))
@@ -5430,7 +5452,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 ]);
                                 _h = {
                                     tag: "div",
-                                    className: "row-flex-list tick-list"
+                                    className: "column-flex-list tick-list"
                                 };
                                 return [4 /*yield*/, Promise.all(ticks.map(function (tick, index) { return Render.tickItem(pass, item, tick, "number" === typeof ticks[index + 1] ? tick - ticks[index + 1] : null, ticks.length < 2 ? null : Math.max.apply(null, Calculate.intervals(ticks))); }))];
                             case 6: return [2 /*return*/, (_d.children = _c.concat([
@@ -5758,7 +5780,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             if (!(0 < list.length)) return [3 /*break*/, 4];
                             _f = {
                                 tag: "div",
-                                className: "row-flex-list removed-list-list"
+                                className: "column-flex-list removed-list-list"
                             };
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.removedListItem(item); }))];
                         case 3:
@@ -5960,7 +5982,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             ];
                             _d = {
                                 tag: "div",
-                                className: "row-flex-list list-list"
+                                className: "column-flex-list list-list"
                             };
                             return [4 /*yield*/, Promise.all(Storage.Pass.get().map(function (pass) { return Render.listItem(JSON.parse(Storage.exportJson(pass))); }))];
                         case 2:
@@ -6171,7 +6193,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                     else {
                         var height = window.innerHeight - list.offsetTop;
-                        var itemHeight = list.childNodes[0].offsetHeight;
+                        var itemHeight = list.childNodes[0].offsetHeight + 1;
                         var columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         var row = Math.max(Math.ceil(length / columns), Math.min(length, Math.floor(height / itemHeight)));
                         list.style.height = row * itemHeight + "px";
@@ -6454,6 +6476,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
 </svg>
 </div><div id="tag-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M439.853,144L180.038,144C160.148,144 144,160.148 144,180.038L144,442.842C144,444.569 144.122,446.267 144.357,447.926C145.247,458.772 149.837,469.373 158.129,477.665L606.338,925.908C624.916,944.488 655.085,944.489 673.665,925.91L926.308,673.286C944.888,654.707 944.89,624.539 926.311,605.959L478.102,157.716C467.646,147.259 453.519,142.687 439.853,144ZM288,216C327.738,216 360,248.262 360,288C360,327.738 327.738,360 288,360C248.262,360 216,327.738 216,288C216,248.262 248.262,216 288,216Z"/>
+</svg>
+</div><div id="ghost-tag-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M160.055,479.814C150.205,471.02 144,458.229 144,444L144,191.78C144,165.288 165.508,143.78 192,143.78C193.558,143.78 195.098,143.855 196.617,144L448,144C465.188,144 480.278,153.054 488.758,166.649L926.194,604.064C935.813,613.683 940.493,626.383 940.234,638.998C940.493,651.614 935.813,664.314 926.194,673.933L678.078,922.036C676.918,923.507 675.66,924.924 674.304,926.28C655.572,945.013 625.155,945.014 606.422,926.282L162.05,481.933C161.359,481.241 160.693,480.534 160.055,479.814ZM240,240L240,424.117L640.127,824.224L825.362,638.998L426.345,240L240,240Z"/>
 </svg>
 </div><div id="folder-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M436,193.081C448.777,195.441 460.484,203.165 467.492,215.283L527.873,319.688L867.245,319.688C900.776,319.688 928,346.912 928,380.444L928,770.933C928,804.465 900.776,831.688 867.245,831.688L156.755,831.688C123.224,831.688 96,804.465 96,770.933L96,380.444C96,378.757 96.069,377.086 96.204,375.432C95.339,366.266 97.206,356.757 102.149,348.183L178.734,215.338C186.774,201.391 201.035,193.247 216,192.388L216,192.312L436,192.312L436,193.081Z"/>

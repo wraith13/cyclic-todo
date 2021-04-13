@@ -241,6 +241,8 @@ export module CyclicToDo
                         return "home-icon";
                     case "@unoverall":
                         return "anti-home-icon";
+                    case "@untagged":
+                        return "ghost-tag-icon";
                     case "@deleted":
                         return "recycle-bin-icon";
                     default:
@@ -1871,6 +1873,7 @@ export module CyclicToDo
             style: Render.progressStyle(null === interval ? null: interval /max),
             children:
             [
+                await Resource.loadSvgOrCache("tick-icon"),
                 {
                     tag: "div",
                     className: "item-information",
@@ -2428,7 +2431,7 @@ export module CyclicToDo
                 await historyBar(entry, list),
                 {
                     tag: "div",
-                    className: "row-flex-list todo-list",
+                    className: "column-flex-list todo-list",
                     children: await Promise.all(list.map(item => todoItem(entry, item))),
                 },
                 {
@@ -2628,7 +2631,7 @@ export module CyclicToDo
                 ),
                 {
                     tag: "div",
-                    className: "row-flex-list history-list",
+                    className: "column-flex-list history-list",
                     children: await Promise.all(list.map(item => historyItem(entry, item))),
                 },
                 {
@@ -2758,7 +2761,7 @@ export module CyclicToDo
                 0 < list.length ?
                     {
                         tag: "div",
-                        className: "row-flex-list removed-list",
+                        className: "column-flex-list removed-list",
                         children: await Promise.all
                         (
                             [].concat(list)
@@ -2877,7 +2880,7 @@ export module CyclicToDo
                 },
                 {
                     tag: "div",
-                    className: "row-flex-list tick-list",
+                    className: "column-flex-list tick-list",
                     children: await Promise.all
                     (
                         ticks.map
@@ -3112,7 +3115,7 @@ export module CyclicToDo
                 0 < list.length ?
                     {
                         tag: "div",
-                        className: "row-flex-list removed-list-list",
+                        className: "column-flex-list removed-list-list",
                         children: await Promise.all(list.map(item => removedListItem(item))),
                     }:
                     {
@@ -3268,7 +3271,7 @@ export module CyclicToDo
                 ),
                 {
                     tag: "div",
-                    className: "row-flex-list list-list",
+                    className: "column-flex-list list-list",
                     children: await Promise.all(Storage.Pass.get().map(pass => listItem(JSON.parse(Storage.exportJson(pass)) as ToDoList))),
                 },
                 await applicationColorIcon(),
@@ -3452,7 +3455,7 @@ export module CyclicToDo
                     else
                     {
                         const height = window.innerHeight -list.offsetTop;
-                        const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight;
+                        const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight +1;
                         const columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         const row = Math.max(Math.ceil(length /columns), Math.min(length, Math.floor(height / itemHeight)));
                         list.style.height = `${row *itemHeight}px`;
