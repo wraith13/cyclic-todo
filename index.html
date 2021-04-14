@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue Apr 13 2021 19:13:35 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed Apr 14 2021 18:27:42 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -2395,6 +2395,10 @@ define("resource/images", [], {
     "history-icon": "./image/history.1024.svg",
     "task-icon": "./image/task.1024.svg",
     "tick-icon": "./image/tick.1024.svg",
+    "add-list-icon": "./image/add-list.1024.svg",
+    "add-tag-icon": "./image/add-tag.1024.svg",
+    "add-folder-icon": "./image/add-folder.1024.svg",
+    "add-task-icon": "./image/add-task.1024.svg",
     "recycle-bin-icon": "./image/recycle-bin.1024.svg"
 });
 define("script/index", ["require", "exports", "script/minamo.js/index", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, lang_en_json_1, lang_ja_json_1) {
@@ -4539,7 +4543,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 title: (_j = {
                                     "@removed": locale.map("@deleted"),
                                     "@import": locale.map("Import List"),
-                                }[pass]) !== null && _j !== void 0 ? _j : "ToDo \u30EA\u30B9\u30C8 ( pass: " + pass.substr(0, 2) + "****" + pass.substr(-2) + " )"
+                                }[pass]) !== null && _j !== void 0 ? _j : Storage.Title.get(pass)
                             };
                             return [4 /*yield*/, Promise.all(Storage.Pass.get().map(function (i) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
@@ -4550,7 +4554,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 return [4 /*yield*/, Resource.loadSvgOrCache("list-icon")];
                                             case 1: return [2 /*return*/, _a.apply(void 0, [[
                                                         _b.sent(),
-                                                        Render.labelSpan("ToDo \u30EA\u30B9\u30C8 ( pass: " + i.substr(0, 2) + "****" + i.substr(-2) + " )")
+                                                        Storage.Title.get(i)
                                                     ], { pass: i, tag: "@overall", },
                                                     pass === i ? "current-item" : undefined])];
                                         }
@@ -4560,7 +4564,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _b = (_a = (_k.sent()))
                                 .concat;
                             _c = Render.menuItem;
-                            return [4 /*yield*/, Resource.loadSvgOrCache("list-icon")];
+                            return [4 /*yield*/, Resource.loadSvgOrCache("add-list-icon")];
                         case 2:
                             _d = [
                                 _c.apply(void 0, [[
@@ -4630,36 +4634,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _b = (_a = (_h.sent()))
                                 .concat;
                             _c = Render.menuItem;
-                            return [4 /*yield*/, Resource.loadSvgOrCache("folder-icon")];
+                            return [4 /*yield*/, Resource.loadSvgOrCache("add-tag-icon")];
                         case 2:
                             _d = [
                                 _c.apply(void 0, [[
-                                        _h.sent(),
-                                        Render.label("@new-sublist")
-                                    ], function () { return __awaiter(_this, void 0, void 0, function () {
-                                        var sublist, tag;
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, Render.prompt("サブリストの名前を入力してください", "")];
-                                                case 1:
-                                                    sublist = _a.sent();
-                                                    if (!(null !== sublist)) return [3 /*break*/, 3];
-                                                    tag = Storage.Tag.encodeSublist(sublist.trim());
-                                                    Storage.Tag.add(pass, tag);
-                                                    return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, tag: tag, })];
-                                                case 2:
-                                                    _a.sent();
-                                                    _a.label = 3;
-                                                case 3: return [2 /*return*/];
-                                            }
-                                        });
-                                    }); }])
-                            ];
-                            _e = Render.menuItem;
-                            return [4 /*yield*/, Resource.loadSvgOrCache("tag-icon")];
-                        case 3:
-                            _d = _d.concat([
-                                _e.apply(void 0, [[
                                         _h.sent(),
                                         Render.label("@new")
                                     ], function () { return __awaiter(_this, void 0, void 0, function () {
@@ -4671,6 +4649,32 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     newTag = _a.sent();
                                                     if (!(null !== newTag)) return [3 /*break*/, 3];
                                                     tag = Storage.Tag.encode(newTag.trim());
+                                                    Storage.Tag.add(pass, tag);
+                                                    return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, tag: tag, })];
+                                                case 2:
+                                                    _a.sent();
+                                                    _a.label = 3;
+                                                case 3: return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }])
+                            ];
+                            _e = Render.menuItem;
+                            return [4 /*yield*/, Resource.loadSvgOrCache("add-folder-icon")];
+                        case 3:
+                            _d = _d.concat([
+                                _e.apply(void 0, [[
+                                        _h.sent(),
+                                        Render.label("@new-sublist")
+                                    ], function () { return __awaiter(_this, void 0, void 0, function () {
+                                        var sublist, tag;
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, Render.prompt("サブリストの名前を入力してください", "")];
+                                                case 1:
+                                                    sublist = _a.sent();
+                                                    if (!(null !== sublist)) return [3 /*break*/, 3];
+                                                    tag = Storage.Tag.encodeSublist(sublist.trim());
                                                     Storage.Tag.add(pass, tag);
                                                     return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, tag: tag, })];
                                                 case 2:
@@ -4722,7 +4726,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _b = (_a = (_e.sent()))
                                 .concat;
                             _c = Render.menuItem;
-                            return [4 /*yield*/, Resource.loadSvgOrCache("task-icon")];
+                            return [4 /*yield*/, Resource.loadSvgOrCache("add-task-icon")];
                         case 2: return [2 /*return*/, (_d.menu = _b.apply(_a, [[
                                     _c.apply(void 0, [[
                                             _e.sent(),
@@ -4750,6 +4754,33 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
+            Render.listRenameMenu = function (pass, onRename) {
+                if (onRename === void 0) { onRename = function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, CyclicToDo.reload()];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                }); }); }; }
+                return Render.menuItem(Render.label("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
+                    var oldTitle, newTitle;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                oldTitle = Storage.Title.get(pass);
+                                return [4 /*yield*/, Render.prompt("ToDoリストの名前を入力してください。", oldTitle)];
+                            case 1:
+                                newTitle = _a.sent();
+                                if (!(null !== newTitle && 0 < newTitle.length && newTitle !== oldTitle)) return [3 /*break*/, 3];
+                                Storage.Title.set(pass, newTitle);
+                                return [4 /*yield*/, onRename(newTitle)];
+                            case 2:
+                                _a.sent();
+                                _a.label = 3;
+                            case 3: return [2 /*return*/];
+                        }
+                    });
+                }); });
+            };
             Render.listScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c;
                 var _d, _e;
@@ -4776,6 +4807,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         href: { pass: entry.pass, tag: entry.tag, hash: "history" },
                                         children: Render.menuItem(Render.label("History")),
                                     }),
+                                    "@overall" === entry.tag ? Render.listRenameMenu(entry.pass) : [],
                                     Storage.Tag.isSystemTag(entry.tag) ? [] :
                                         Render.menuItem(Render.label("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
                                             var newTag;
@@ -5683,8 +5715,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Render.removedListItem = function (list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c;
                 var _this = this;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                var _d;
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
                         case 0:
                             _a = {
                                 tag: "div",
@@ -5702,8 +5735,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 1: return [2 /*return*/, (_a.children = [
                                 (_b.children = [
                                     (_c.children = [
-                                        _d.sent(),
-                                        "ToDo \u30EA\u30B9\u30C8 ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )"
+                                        _e.sent(),
+                                        (_d = list.title) !== null && _d !== void 0 ? _d : "ToDo \u30EA\u30B9\u30C8 ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )"
                                     ],
                                         _c),
                                     {
@@ -5891,7 +5924,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _b = [
                                 _a.apply(void 0, [(_f.children = [
                                         _h.sent(),
-                                        "ToDo \u30EA\u30B9\u30C8 ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )"
+                                        list.title
                                     ],
                                         _f)])
                             ];
@@ -5908,6 +5941,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     },
                                 })];
                             return [4 /*yield*/, Render.menuButton([
+                                    Render.listRenameMenu(list.pass),
                                     Render.internalLink({
                                         href: { pass: list.pass, tag: "@overall", hash: "history" },
                                         children: Render.menuItem(Render.label("History")),
@@ -6491,6 +6525,18 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
 </svg>
 </div><div id="tick-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M512,96C741.597,96 928,282.403 928,512C928,741.597 741.597,928 512,928C282.403,928 96,741.597 96,512C96,282.403 282.403,96 512,96ZM512,192C688.613,192 832,335.387 832,512C832,688.613 688.613,832 512,832C335.387,832 192,688.613 192,512C192,335.387 335.387,192 512,192ZM503.806,508.395L662.473,349.917C681.066,331.345 711.239,331.363 729.811,349.957L730.354,350.501C748.926,369.095 748.908,399.268 730.314,417.839L539.166,608.761C538.717,609.249 538.254,609.732 537.778,610.208C530.727,617.263 522.02,621.663 512.902,623.408L512.727,623.441L512.644,623.456L512.605,623.464L512.535,623.476L512.443,623.493L512.386,623.504L512.31,623.518L512.198,623.537L512.159,623.544L512.129,623.549L512.014,623.569L511.872,623.593C510.28,623.863 508.661,624.054 507.02,624.162L506.898,624.17L506.756,624.179L506.72,624.181L506.691,624.183L506.592,624.189L506.483,624.195L506.432,624.198L506.381,624.2L506.286,624.205L506.203,624.209L506.144,624.212L506.067,624.216L505.979,624.22L505.919,624.222L505.857,624.225L505.751,624.229L505.672,624.233L505.63,624.234L505.569,624.236L505.43,624.241L505.364,624.243L505.337,624.244L505.281,624.246L505.104,624.251L505.055,624.252L505.041,624.252L504.993,624.254L504.768,624.258L504.742,624.259C504.438,624.265 504.133,624.268 503.829,624.268L503.817,624.268L503.685,624.267L503.553,624.267L503.541,624.267L503.507,624.267L503.295,624.265L503.26,624.264C498.449,624.21 493.806,623.446 489.434,622.072L489.338,622.042L489.266,622.019C482.181,619.773 475.514,615.843 469.896,610.229L341.788,482.199C323.05,463.472 323.041,433.055 341.768,414.316C360.495,395.578 390.912,395.569 409.65,414.296L503.806,508.395Z"/>
+</svg>
+</div><div id="add-list-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M752,511.161C884.46,511.161 992,618.889 992,751.58C992,884.272 884.46,992 752,992C619.54,992 512,884.272 512,751.58C512,618.889 619.54,511.161 752,511.161ZM720,720L607.904,720C590.296,720 576,734.296 576,751.904L576,752.096C576,769.704 590.296,784 607.904,784L720,784L720,896.096C720,913.704 734.296,928 751.904,928L752.096,928C769.704,928 784,913.704 784,896.096L784,784L896.096,784C913.704,784 928,769.704 928,752.096L928,751.904C928,734.296 913.704,720 896.096,720L784,720L784,607.904C784,590.296 769.704,576 752.096,576L751.904,576C734.296,576 720,590.296 720,607.904L720,720ZM256,688C300.153,688 336,723.847 336,768C336,812.153 300.153,848 256,848C211.847,848 176,812.153 176,768C176,723.847 211.847,688 256,688ZM451.775,704C449.29,719.648 448,735.675 448,752C448,779.684 451.709,806.509 458.655,832L448,832C412.677,832 384,803.323 384,768C384,732.677 412.677,704 448,704L451.775,704ZM256,432C300.153,432 336,467.847 336,512C336,556.153 300.153,592 256,592C211.847,592 176,556.153 176,512C176,467.847 211.847,432 256,432ZM752,448C649.787,448 559.289,498.554 504.166,576L448,576C412.677,576 384,547.323 384,512C384,476.677 412.677,448 448,448L752,448ZM752,448L768,448C772.592,448 777.072,448.485 781.388,449.405C771.722,448.476 761.916,448 752,448ZM256,176C300.153,176 336,211.847 336,256C336,300.153 300.153,336 256,336C211.847,336 176,300.153 176,256C176,211.847 211.847,176 256,176ZM448,320C412.677,320 384,291.323 384,256C384,220.677 412.677,192 448,192L768,192C803.323,192 832,220.677 832,256C832,291.323 803.323,320 768,320L448,320Z"/>
+</svg>
+</div><div id="add-tag-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M752,511.161C884.46,511.161 992,618.889 992,751.58C992,884.272 884.46,992 752,992C619.54,992 512,884.272 512,751.58C512,618.889 619.54,511.161 752,511.161ZM720,720L607.904,720C590.296,720 576,734.296 576,751.904L576,752.096C576,769.704 590.296,784 607.904,784L720,784L720,896.096C720,913.704 734.296,928 751.904,928L752.096,928C769.704,928 784,913.704 784,896.096L784,784L896.096,784C913.704,784 928,769.704 928,752.096L928,751.904C928,734.296 913.704,720 896.096,720L784,720L784,607.904C784,590.296 769.704,576 752.096,576L751.904,576C734.296,576 720,590.296 720,607.904L720,720ZM448.414,767.972L158.129,477.665C149.837,469.373 145.247,458.772 144.357,447.926C144.122,446.267 144,444.569 144,442.842L144,180.038C144,160.148 160.148,144 180.038,144L439.853,144C453.519,142.687 467.646,147.259 478.102,157.716L768.823,448.459C763.239,448.154 757.637,448 752,448C584.218,448 448,584.218 448,752C448,757.352 448.139,762.672 448.414,767.972ZM288,216C327.738,216 360,248.262 360,288C360,327.738 327.738,360 288,360C248.262,360 216,327.738 216,288C216,248.262 248.262,216 288,216Z"/>
+</svg>
+</div><div id="add-folder-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M752,511.161C884.46,511.161 992,618.889 992,751.58C992,884.272 884.46,992 752,992C619.54,992 512,884.272 512,751.58C512,618.889 619.54,511.161 752,511.161ZM720,720L607.904,720C590.296,720 576,734.296 576,751.904L576,752.096C576,769.704 590.296,784 607.904,784L720,784L720,896.096C720,913.704 734.296,928 751.904,928L752.096,928C769.704,928 784,913.704 784,896.096L784,784L896.096,784C913.704,784 928,769.704 928,752.096L928,751.904C928,734.296 913.704,720 896.096,720L784,720L784,607.904C784,590.296 769.704,576 752.096,576L751.904,576C734.296,576 720,590.296 720,607.904L720,720ZM458.57,831.688L156.755,831.688C123.224,831.688 96,804.465 96,770.933L96,380.444C96,378.757 96.069,377.086 96.204,375.432C95.339,366.266 97.206,356.757 102.149,348.183L178.734,215.338C186.774,201.391 201.035,193.247 216,192.388L216,192.312L436,192.312L436,193.081C448.777,195.441 460.484,203.165 467.492,215.283L527.873,319.688L867.245,319.688C900.776,319.688 928,346.912 928,380.444L928,504.166C878.318,468.804 817.569,448 752,448C584.218,448 448,584.218 448,752C448,779.567 451.677,806.281 458.57,831.688Z"/>
+</svg>
+</div><div id="add-task-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M752,511.161C884.46,511.161 992,618.889 992,751.58C992,884.272 884.46,992 752,992C619.54,992 512,884.272 512,751.58C512,618.889 619.54,511.161 752,511.161ZM515.444,942.862C514.282,942.872 513.141,942.876 512,942.876C274.193,942.876 81.124,749.807 81.124,512C81.124,274.193 274.193,81.124 512,81.124C749.807,81.124 942.876,274.193 942.876,512C942.876,513.141 942.872,514.282 942.862,515.446C894.12,476.055 832.957,451.406 766.2,448.327L794.49,420.172C805.952,408.764 805.996,390.197 794.589,378.734L753.25,337.198C741.843,325.736 723.275,325.692 711.813,337.1L469.52,578.24L366.174,474.4C354.766,462.938 336.199,462.894 324.737,474.301L283.201,515.639C271.738,527.047 271.694,545.615 283.102,557.077L448.455,723.221C448.725,723.491 448.998,723.755 449.274,724.012C448.43,733.241 448,742.571 448,752C448,824.264 473.269,890.672 515.444,942.862ZM720,720L607.904,720C590.296,720 576,734.296 576,751.904L576,752.096C576,769.704 590.296,784 607.904,784L720,784L720,896.096C720,913.704 734.296,928 751.904,928L752.096,928C769.704,928 784,913.704 784,896.096L784,784L896.096,784C913.704,784 928,769.704 928,752.096L928,751.904C928,734.296 913.704,720 896.096,720L784,720L784,607.904C784,590.296 769.704,576 752.096,576L751.904,576C734.296,576 720,590.296 720,607.904L720,720Z"/>
 </svg>
 </div><div id="recycle-bin-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M656.066,112L656.151,112L656.266,112.001L656.31,112.001L656.342,112.001L656.447,112.002L656.601,112.004L656.743,112.005L656.919,112.009L657.039,112.011L657.218,112.015L657.334,112.018L657.497,112.023L657.546,112.024L657.572,112.025L657.63,112.027L657.751,112.032L657.854,112.035L657.902,112.037L657.925,112.038L657.977,112.04C668.507,112.468 678.167,116.294 685.891,122.452C692.474,127.679 697.739,134.666 700.878,142.947C701.489,144.553 702.017,146.201 702.455,147.886L702.488,148.01L702.496,148.042L744.289,304L880,304C906.492,304 928,325.508 928,352C928,378.492 906.492,400 880,400L862.369,400L734.373,877.636C727.668,902.657 702.334,917.752 677.292,912L336,912C335.666,912 335.333,911.997 335,911.99C334.667,911.997 334.334,912 334,912L330,912L329.933,912L329.84,912L329.713,911.999L329.69,911.999L329.673,911.999C328.967,911.994 328.263,911.974 327.56,911.939L327.477,911.935L327.348,911.928L327.225,911.921L327.178,911.918C317.903,911.379 309.332,908.202 302.206,903.128C293.396,896.886 286.628,887.652 283.617,876.415L155.948,400L144,400C117.508,400 96,378.492 96,352C96,325.508 117.508,304 144,304L280.681,304L320.098,156.908C321.694,131.855 342.547,112 368,112L656,112L656.066,112ZM762.982,400L255.336,400L366.814,816L651.503,816L762.982,400ZM450.142,784.613C468.623,781.362 480.989,763.718 477.738,745.236L427.491,459.595C424.24,441.114 406.596,428.749 388.114,432C369.633,435.251 357.268,452.895 360.519,471.376L410.766,757.017C414.017,775.499 431.661,787.864 450.142,784.613ZM573.858,783.481C555.377,780.23 543.011,762.586 546.262,744.105L596.509,458.464C599.76,439.982 617.404,427.617 635.886,430.868C654.367,434.12 666.732,451.763 663.481,470.245L613.234,755.886C609.983,774.367 592.339,786.732 573.858,783.481ZM405.794,208L380.068,304L644.902,304L619.176,208L405.794,208Z"/>

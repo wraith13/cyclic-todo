@@ -2168,7 +2168,7 @@ export module CyclicToDo
             {
                 "@removed": locale.map("@deleted"),
                 "@import": locale.map("Import List"),
-            }[pass] ?? `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
+            }[pass] ?? Storage.Title.get(pass), // `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
             menu:
                 (
                     (
@@ -2180,7 +2180,8 @@ export module CyclicToDo
                                 (
                                     [
                                         await Resource.loadSvgOrCache("list-icon"),
-                                        labelSpan(`ToDo リスト ( pass: ${i.substr(0, 2)}****${i.substr(-2)} )`)
+                                        Storage.Title.get(i),
+                                        // labelSpan(`ToDo リスト ( pass: ${i.substr(0, 2)}****${i.substr(-2)} )`)
                                     ],
                                     { pass: i, tag: "@overall", },
                                     pass === i ? "current-item": undefined
@@ -2194,7 +2195,7 @@ export module CyclicToDo
                     menuItem
                     (
                         [
-                            await Resource.loadSvgOrCache("list-icon"),
+                            await Resource.loadSvgOrCache("add-list-icon"),
                             label("New ToDo List"),
                         ],
                         async () => await showUrl({ pass: Storage.Pass.generate(), tag: "@overall", })
@@ -2249,24 +2250,7 @@ export module CyclicToDo
                     menuItem
                     (
                         [
-                            await Resource.loadSvgOrCache("folder-icon"),
-                            label("@new-sublist"),
-                        ],
-                        async () =>
-                        {
-                            const sublist = await prompt("サブリストの名前を入力してください", "");
-                            if (null !== sublist)
-                            {
-                                const tag = Storage.Tag.encodeSublist(sublist.trim());
-                                Storage.Tag.add(pass, tag);
-                                await showUrl({ pass, tag, });
-                            }
-                        }
-                    ),
-                    menuItem
-                    (
-                        [
-                            await Resource.loadSvgOrCache("tag-icon"),
+                            await Resource.loadSvgOrCache("add-tag-icon"),
                             label("@new"),
                         ],
                         async () =>
@@ -2275,6 +2259,23 @@ export module CyclicToDo
                             if (null !== newTag)
                             {
                                 const tag = Storage.Tag.encode(newTag.trim());
+                                Storage.Tag.add(pass, tag);
+                                await showUrl({ pass, tag, });
+                            }
+                        }
+                    ),
+                    menuItem
+                    (
+                        [
+                            await Resource.loadSvgOrCache("add-folder-icon"),
+                            label("@new-sublist"),
+                        ],
+                        async () =>
+                        {
+                            const sublist = await prompt("サブリストの名前を入力してください", "");
+                            if (null !== sublist)
+                            {
+                                const tag = Storage.Tag.encodeSublist(sublist.trim());
                                 Storage.Tag.add(pass, tag);
                                 await showUrl({ pass, tag, });
                             }
@@ -2320,7 +2321,7 @@ export module CyclicToDo
                     menuItem
                     (
                         [
-                            await Resource.loadSvgOrCache("task-icon"), // 本来は plus だけど、まだ作ってない
+                            await Resource.loadSvgOrCache("add-task-icon"), // 本来は plus だけど、まだ作ってない
                             label("New ToDo"),
                         ],
                         async () =>
@@ -2336,6 +2337,25 @@ export module CyclicToDo
                     ),
                 ])
         });
+        export const listRenameMenu =
+        (
+            pass: string,
+            onRename: (newName: string) => Promise<unknown> = async () => await reload()
+        ) =>
+        menuItem
+        (
+            label("Rename"),
+            async () =>
+            {
+                const oldTitle = Storage.Title.get(pass);
+                const newTitle = await prompt("ToDoリストの名前を入力してください。", oldTitle);
+                if (null !== newTitle && 0 < newTitle.length && newTitle !== oldTitle)
+                {
+                    Storage.Title.set(pass, newTitle);
+                    await onRename(newTitle);
+                }
+            }
+        );
         export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         ({
             tag: "div",
@@ -2355,6 +2375,7 @@ export module CyclicToDo
                             href: { pass: entry.pass, tag: entry.tag, hash: "history" },
                             children: menuItem(label("History")),
                         }),
+                        "@overall" === entry.tag ? listRenameMenu(entry.pass): [],
                         Storage.Tag.isSystemTag(entry.tag) ? []:
                             menuItem
                             (
@@ -3060,7 +3081,7 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache("list-icon"),
-                                `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
+                                list.title ?? `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
                             ],
                         },
                         {
@@ -3187,7 +3208,9 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache("list-icon"),
-                                `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
+                                list.title,
+                                // Storage.Title.get(list.pass),
+                                // `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
                             ]
                         }),
                         {
@@ -3207,6 +3230,7 @@ export module CyclicToDo
                                 }),
                                 await menuButton
                                 ([
+                                    listRenameMenu(list.pass),
                                     internalLink
                                     ({
                                         href: { pass: list.pass, tag: "@overall", hash: "history" },
