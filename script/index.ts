@@ -1092,6 +1092,27 @@ export module CyclicToDo
         export const prompt = customPrompt;
         export const alert = (message: string) => window.alert(message);
         export const confirm = (message: string) => window.confirm(message);
+        export const newListPrompt = async () =>
+        {
+            const newList = await prompt("ToDoリストの名前を入力してください", "ToDo リスト");
+            if (null !== newList)
+            {
+                const pass = Storage.Pass.generate();
+                Storage.Title.set(pass, newList);
+                await showUrl({ pass, tag: "@overall", });
+            }
+        };
+        export const newTagPrompt = async (pass: string) =>
+        {
+            const newTag = await prompt("タグの名前を入力してください", "");
+            if (null !== newTag)
+            {
+                const tag = Storage.Tag.encode(newTag.trim());
+                Storage.Tag.add(pass, tag);
+                return tag;
+            }
+            return null;
+        };
         export const dateTimePrompt = async (message: string, _default: number): Promise<string | null> =>
         {
             const inputDate = minamo.dom.make(HTMLInputElement)
@@ -1224,12 +1245,10 @@ export module CyclicToDo
                                 ],
                                 onclick: async () =>
                                 {
-                                    const newTag = await prompt("タグの名前を入力してください", "");
-                                    if (null !== newTag)
+                                    const tag = await newTagPrompt(pass);
+                                    if (null !== tag)
                                     {
-                                        const tag = Storage.Tag.encode(newTag.trim());
                                         result.push(tag);
-                                        Storage.Tag.add(pass, tag);
                                         Storage.TagMember.add(pass, tag, item.task);
                                         hasNewTag = true;
                                         await tagButtonListUpdate();
@@ -2198,16 +2217,7 @@ export module CyclicToDo
                             await Resource.loadSvgOrCache("add-list-icon"),
                             label("New ToDo List"),
                         ],
-                        async () =>
-                        {
-                            const newList = await prompt("ToDoリストの名前を入力してください", "ToDo リスト");
-                            if (null !== newList)
-                            {
-                                const pass = Storage.Pass.generate();
-                                Storage.Title.set(pass, newList);
-                                await showUrl({ pass, tag: "@overall", });
-                            }
-                        }
+                        newListPrompt,
                     ),
                     menuItem
                     (
@@ -2264,11 +2274,9 @@ export module CyclicToDo
                         ],
                         async () =>
                         {
-                            const newTag = await prompt("タグの名前を入力してください", "");
-                            if (null !== newTag)
+                            const tag = await newTagPrompt(pass);
+                            if (null !== tag)
                             {
-                                const tag = Storage.Tag.encode(newTag.trim());
-                                Storage.Tag.add(pass, tag);
                                 await showUrl({ pass, tag, });
                             }
                         }
@@ -3283,16 +3291,7 @@ export module CyclicToDo
                         menuItem
                         (
                             label("New ToDo List"),
-                            async () =>
-                            {
-                                const newList = await prompt("ToDoリストの名前を入力してください", "ToDo リスト");
-                                if (null !== newList)
-                                {
-                                    const pass = Storage.Pass.generate();
-                                    Storage.Title.set(pass, newList);
-                                    await showUrl({ pass, tag: "@overall", });
-                                }
-                            }
+                            newListPrompt,
                         ),
                         internalLink
                         ({
@@ -3331,16 +3330,7 @@ export module CyclicToDo
                             tag: "button",
                             className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
                             children: locale.parallel("New ToDo List"),
-                            onclick: async () =>
-                            {
-                                const newList = await prompt("ToDoリストの名前を入力してください", "ToDo リスト");
-                                if (null !== newList)
-                                {
-                                    const pass = Storage.Pass.generate();
-                                    Storage.Title.set(pass, newList);
-                                    await showUrl({ pass, tag: "@overall", });
-                                }
-                            },
+                            onclick: newListPrompt,
                         },
                         await menuButton
                         ([
