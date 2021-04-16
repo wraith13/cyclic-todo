@@ -1449,7 +1449,11 @@ export module CyclicToDo
             // minamo.dom.appendChildren(document.body, dom);
             const cover = screenCover
             ({
-                children: dom,
+                children:
+                [
+                    dom,
+                    { tag: "div", }, // レイアウト調整用のダミー要素 ( この調整がないとポップアップが小さく且つ入力要素がある場合に iPad でキーボードの下に dom が隠れてしまう。 )
+                ],
                 onclick: async () =>
                 {
                     await data?.onClose();

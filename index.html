@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu Apr 15 2021 19:46:53 GMT+0900 (GMT+09:00) -->
+<!-- build at: Fri Apr 16 2021 10:39:12 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -562,7 +562,8 @@ button.default-button {
   bottom: 0px;
   left: 0px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-around;
   align-items: center;
   background-color: rgba(0, 0, 34, 0.618);
   z-index: 88888;
@@ -3695,7 +3696,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 }); };
                 // minamo.dom.appendChildren(document.body, dom);
                 var cover = Render.screenCover({
-                    children: dom,
+                    children: [
+                        dom,
+                        { tag: "div", }, // レイアウト調整用のダミー要素 ( この調整がないとポップアップが小さく且つ入力要素がある場合に iPad でキーボードの下に dom が隠れてしまう。 )
+                    ],
                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
                             switch (_a.label) {
