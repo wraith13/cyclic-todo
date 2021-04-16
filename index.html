@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Fri Apr 16 2021 10:39:12 GMT+0900 (GMT+09:00) -->
+<!-- build at: Fri Apr 16 2021 23:45:18 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -17,6 +17,111 @@
 .monospace {
   font-family: monospace;
 }
+.positive-foreground-coloring {
+  color: #000022;
+  fill: #000022;
+}
+@media (prefers-color-scheme: dark) {
+  .positive-foreground-coloring {
+    color: #FFFFFF;
+    fill: #FFFFFF;
+  }
+}
+.positive-background-coloring {
+  background-color: #FFFFFF;
+}
+@media (prefers-color-scheme: dark) {
+  .positive-background-coloring {
+    background-color: #000022;
+  }
+}
+.negative-foreground-coloring {
+  color: #FFFFFF;
+  fill: #FFFFFF;
+}
+@media (prefers-color-scheme: dark) {
+  .negative-foreground-coloring {
+    color: #000022;
+    fill: #000022;
+  }
+}
+.primary-operator-coloring {
+  cursor: pointer;
+  color: #FFFFFF;
+  fill: #FFFFFF;
+}
+@media (prefers-color-scheme: dark) {
+  .primary-operator-coloring {
+    color: #000022;
+    fill: #000022;
+  }
+}
+@media (hover: hover) {
+  .primary-operator-coloring:not(:hover) {
+    border-color: #228844;
+    background-color: #228844;
+  }
+  .primary-operator-coloring:hover {
+    border-color: #6F7F00;
+    background-color: #6F7F00;
+  }
+}
+@media (hover: none) {
+  .primary-operator-coloring {
+    border-color: #228844;
+    background-color: #228844;
+  }
+}
+.secondary-operator-coloring {
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .secondary-operator-coloring:not(:hover) {
+    color: #228844;
+    fill: #228844;
+    border-color: #228844;
+    background-color: #FFFFFF;
+  }
+  .secondary-operator-coloring:hover {
+    color: #FFFFFF;
+    fill: #FFFFFF;
+    border-color: #6F7F00;
+    background-color: #6F7F00;
+  }
+}
+@media (hover: hover) and (prefers-color-scheme: dark) {
+  .secondary-operator-coloring:not(:hover) {
+    background-color: #000022;
+  }
+}
+@media (hover: hover) and (prefers-color-scheme: dark) {
+  .secondary-operator-coloring:hover {
+    color: #000022;
+    fill: #000022;
+  }
+}
+@media (hover: none) {
+  .secondary-operator-coloring {
+    color: #228844;
+    fill: #228844;
+    border-color: #228844;
+    background-color: #FFFFFF;
+  }
+}
+@media (hover: none) and (prefers-color-scheme: dark) {
+  .secondary-operator-coloring {
+    background-color: #000022;
+  }
+}
+.tertiary-operator-coloring {
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .tertiary-operator-coloring:hover {
+    color: #6F7F00;
+    fill: #6F7F00;
+  }
+}
 body {
   margin: 0px;
   margin-bottom: 5rem;
@@ -27,7 +132,23 @@ body,
 input,
 textarea {
   color: #000022;
+  fill: #000022;
   background-color: #FFFFFF;
+}
+@media (prefers-color-scheme: dark) {
+  body,
+  input,
+  textarea {
+    color: #FFFFFF;
+    fill: #FFFFFF;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  body,
+  input,
+  textarea {
+    background-color: #000022;
+  }
 }
 .locale-parallel-on .locale-map {
   display: none !important;
@@ -35,19 +156,7 @@ textarea {
 .locale-parallel-off .locale-parallel {
   display: none !important;
 }
-.icon svg {
-  fill: #000022;
-}
 @media (prefers-color-scheme: dark) {
-  body,
-  input,
-  textarea {
-    color: #FFFFFF;
-    background-color: #000022;
-  }
-  .icon svg {
-    fill: #FFFFFF;
-  }
   ::-webkit-calendar-picker-indicator {
     filter: invert(1);
   }
@@ -79,30 +188,6 @@ h1 .icon {
 h1 .icon svg {
   width: 2.5rem;
   height: 2.5rem;
-  fill: #FFFFFF;
-}
-h1 label {
-  border-radius: 32px;
-  padding: 4px 16px;
-}
-h1 label select,
-h1 label select + span {
-  border-radius: 32px;
-  padding: 4px 16px;
-  font-size: 1.2rem;
-  font-weight: normal;
-}
-h1 label select {
-  margin-left: -16px;
-  padding-left: 32px;
-}
-h1 label select + span {
-  color: #FFFFFF;
-}
-@media (hover: hover) {
-  h1 label:hover {
-    background-color: #6F7F00;
-  }
 }
 h1 .segment {
   position: relative;
@@ -114,19 +199,34 @@ h1 .segment {
   padding-left: 0.25rem;
   padding-right: 3rem;
 }
+h1 .segment.label-segment {
+  cursor: default;
+  background-color: #228844;
+}
 h1 .segment:not(.label-segment) {
   cursor: pointer;
+  color: #FFFFFF;
+  fill: #FFFFFF;
+}
+@media (prefers-color-scheme: dark) {
+  h1 .segment:not(.label-segment) {
+    color: #000022;
+    fill: #000022;
+  }
 }
 @media (hover: hover) {
-  h1 .segment:hover:not(.label-segment) {
-    background-color: #6F7F00;
-  }
-  h1 .segment:not(:hover) {
+  h1 .segment:not(.label-segment):not(:hover) {
+    border-color: #228844;
     background-color: #228844;
+  }
+  h1 .segment:not(.label-segment):hover {
+    border-color: #6F7F00;
+    background-color: #6F7F00;
   }
 }
 @media (hover: none) {
-  h1 .segment {
+  h1 .segment:not(.label-segment) {
+    border-color: #228844;
     background-color: #228844;
   }
 }
