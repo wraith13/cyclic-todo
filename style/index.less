@@ -237,6 +237,7 @@ h1
         &.label-segment
         {
             cursor: default;
+            .negative-foreground-coloring;
             background-color: @accent-color;
         }
         &:not(.label-segment)
@@ -278,6 +279,10 @@ h1
         border-left-style: solid;
         border-left-width: 1px;
         border-left-color: @base-color;
+        @media (prefers-color-scheme: dark)
+        {
+            border-left-color: @dark-base-color;
+        }
         overflow-x: hidden;
         transform: skewX(150deg);
         & > *
@@ -314,32 +319,33 @@ h1
     {
         margin: 0px;
         margin-right: 0.25rem;
-        @media (hover: hover)
-        {
-            &:not(:hover)
-            {
-                color: @base-color;
-                //border-color: @base-color;
-                background-color: @accent-color;
-                svg
-                {
-                    fill: @base-color;
-                }
-            }
-        }
-        @media (hover: none)
-        {
-            &
-            {
-                color: @base-color;
-                //border-color: @base-color;
-                background-color: @accent-color;
-                svg
-                {
-                    fill: @base-color;
-                }
-            }
-        }
+        // @media (hover: hover)
+        // {
+        //     &:not(:hover)
+        //     {
+        //         color: @base-color;
+        //         //border-color: @base-color;
+        //         background-color: @accent-color;
+        //         svg
+        //         {
+        //             fill: @base-color;
+        //         }
+        //     }
+        // }
+        // @media (hover: none)
+        // {
+        //     &
+        //     {
+        //         color: @base-color;
+        //         //border-color: @base-color;
+        //         background-color: @accent-color;
+        //         svg
+        //         {
+        //             fill: @base-color;
+        //         }
+        //     }
+        // }
+        .secondary-operator-coloring;
     }
     .menu-popup:not(.segment-popup)
     {
@@ -375,61 +381,61 @@ h1, h2
         }
     }
 }
-@media (prefers-color-scheme: dark)
-{
-    h1
-    {
-        .icon svg
-        {
-            fill: @dark-base-color;
-        }
-        label
-        {
-            select + span
-            {
-                color: @dark-base-color;
-            }
-        }
-        @media (hover: hover)
-        {
-            button.menu-button:not(:hover)
-            {
-                float: right;
-                color: @dark-base-color;
-                //border-color: @dark-base-color;
-                svg
-                {
-                    fill: @dark-base-color;
-                }
-            }
-            }
-        @media (hover: none)
-        {
-            button.menu-button
-            {
-                float: right;
-                color: @dark-base-color;
-                //border-color: @dark-base-color;
-                svg
-                {
-                    fill: @dark-base-color;
-                }
-            }
-        }
-        .segment + .segment,
-        .segment +.menu-popup + .segment
-        {
-            border-left-color: @dark-base-color;
-        }
-        }
-    h1, h2
-    {
-        &, & a
-        {
-            color: @dark-base-color;
-        }
-    }
-}
+// @media (prefers-color-scheme: dark)
+// {
+//     h1
+//     {
+//         .icon svg
+//         {
+//             fill: @dark-base-color;
+//         }
+//         label
+//         {
+//             select + span
+//             {
+//                 color: @dark-base-color;
+//             }
+//         }
+//         @media (hover: hover)
+//         {
+//             button.menu-button:not(:hover)
+//             {
+//                 float: right;
+//                 color: @dark-base-color;
+//                 //border-color: @dark-base-color;
+//                 svg
+//                 {
+//                     fill: @dark-base-color;
+//                 }
+//             }
+//             }
+//         @media (hover: none)
+//         {
+//             button.menu-button
+//             {
+//                 float: right;
+//                 color: @dark-base-color;
+//                 //border-color: @dark-base-color;
+//                 svg
+//                 {
+//                     fill: @dark-base-color;
+//                 }
+//             }
+//         }
+//         .segment + .segment,
+//         .segment +.menu-popup + .segment
+//         {
+//             border-left-color: @dark-base-color;
+//         }
+//         }
+//     h1, h2
+//     {
+//         &, & a
+//         {
+//             color: @dark-base-color;
+//         }
+//     }
+// }
 label
 {
     cursor: pointer;

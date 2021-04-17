@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Fri Apr 16 2021 23:45:18 GMT+0900 (GMT+09:00) -->
+<!-- build at: Fri Apr 16 2021 23:49:22 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -201,7 +201,15 @@ h1 .segment {
 }
 h1 .segment.label-segment {
   cursor: default;
+  color: #FFFFFF;
+  fill: #FFFFFF;
   background-color: #228844;
+}
+@media (prefers-color-scheme: dark) {
+  h1 .segment.label-segment {
+    color: #000022;
+    fill: #000022;
+  }
 }
 h1 .segment:not(.label-segment) {
   cursor: pointer;
@@ -244,6 +252,12 @@ h1 .segment + .menu-popup + .segment {
   transform: skewX(150deg);
   padding-left: 0.5rem;
 }
+@media (prefers-color-scheme: dark) {
+  h1 .segment + .segment,
+  h1 .segment + .menu-popup + .segment {
+    border-left-color: #000022;
+  }
+}
 h1 .segment + .segment > *,
 h1 .segment + .menu-popup + .segment > * {
   transform: skewX(-150deg);
@@ -269,23 +283,44 @@ h1.locale-parallel-off .segment:not(.last-segment):not(:hover) .segment-title {
 h1 button.menu-button {
   margin: 0px;
   margin-right: 0.25rem;
+  cursor: pointer;
 }
 @media (hover: hover) {
   h1 button.menu-button:not(:hover) {
-    color: #FFFFFF;
-    background-color: #228844;
+    color: #228844;
+    fill: #228844;
+    border-color: #228844;
+    background-color: #FFFFFF;
   }
-  h1 button.menu-button:not(:hover) svg {
+  h1 button.menu-button:hover {
+    color: #FFFFFF;
     fill: #FFFFFF;
+    border-color: #6F7F00;
+    background-color: #6F7F00;
+  }
+}
+@media (hover: hover) and (prefers-color-scheme: dark) {
+  h1 button.menu-button:not(:hover) {
+    background-color: #000022;
+  }
+}
+@media (hover: hover) and (prefers-color-scheme: dark) {
+  h1 button.menu-button:hover {
+    color: #000022;
+    fill: #000022;
   }
 }
 @media (hover: none) {
   h1 button.menu-button {
-    color: #FFFFFF;
-    background-color: #228844;
+    color: #228844;
+    fill: #228844;
+    border-color: #228844;
+    background-color: #FFFFFF;
   }
-  h1 button.menu-button svg {
-    fill: #FFFFFF;
+}
+@media (hover: none) and (prefers-color-scheme: dark) {
+  h1 button.menu-button {
+    background-color: #000022;
   }
 }
 h1 .menu-popup:not(.segment-popup) {
@@ -317,42 +352,6 @@ h2 a {
   h1 a,
   h2 a {
     text-decoration: none;
-  }
-}
-@media (prefers-color-scheme: dark) {
-  h1 .icon svg {
-    fill: #000022;
-  }
-  h1 label select + span {
-    color: #000022;
-  }
-  h1 .segment + .segment,
-  h1 .segment + .menu-popup + .segment {
-    border-left-color: #000022;
-  }
-  h1,
-  h2,
-  h1 a,
-  h2 a {
-    color: #000022;
-  }
-}
-@media (prefers-color-scheme: dark) and (hover: hover) {
-  h1 button.menu-button:not(:hover) {
-    float: right;
-    color: #000022;
-  }
-  h1 button.menu-button:not(:hover) svg {
-    fill: #000022;
-  }
-}
-@media (prefers-color-scheme: dark) and (hover: none) {
-  h1 button.menu-button {
-    float: right;
-    color: #000022;
-  }
-  h1 button.menu-button svg {
-    fill: #000022;
   }
 }
 label {
