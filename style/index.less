@@ -113,6 +113,54 @@
         }
     }
 }
+.delete-operator-coloring
+{
+    cursor: pointer;
+    @media (hover: hover)
+    {
+        &:not(:hover)
+        {
+            color: @delete-color;
+            fill: @delete-color;
+            border-color: @delete-color;
+            .positive-background-coloring;
+        }
+        &:hover
+        {
+            .negative-foreground-coloring;
+            border-color: @delete-color;
+            background-color: @delete-color;
+        }
+    }
+    @media (hover: none)
+    {
+        &
+        {
+            color: @delete-color;
+            fill: @delete-color;
+            border-color: @delete-color;
+            .positive-background-coloring;
+        }
+    }
+}
+.hover-underline
+{
+    @media (hover: hover)
+    {
+        &:hover
+        {
+            text-decoration: underline;
+        }
+        &:not(:hover)
+        {
+            text-decoration: none;
+        }
+    }
+    @media (hover: none)
+    {
+        text-decoration: none;
+    }
+}
 body
 {
     margin: 0px;
@@ -122,8 +170,6 @@ body
 }
 body, input, textarea
 {
-    // color: @main-color;
-    // background-color: @base-color;
     .positive-foreground-coloring;
     .positive-background-coloring;
 }
@@ -141,21 +187,8 @@ body, input, textarea
         display: none !important;
     }
 }
-// .icon svg
-// {
-//     fill: @main-color;
-// }
 @media (prefers-color-scheme: dark)
 {
-    // body, input, textarea
-    // {
-    //     color: @dark-main-color;
-    //     background-color: @dark-base-color;
-    // }
-    // .icon svg
-    // {
-    //     fill: @dark-main-color;
-    // }
     ::-webkit-calendar-picker-indicator
     {
         filter: invert(1);
@@ -183,7 +216,6 @@ h1
         }
     }
     align-items: center;
-
     .icon
     {
         display: inline-block;
@@ -191,39 +223,9 @@ h1
         {
             width: 2.5rem;
             height: 2.5rem;
-            // fill: @base-color;
         }
         margin-right: 0.25rem;
     }
-    // label
-    // {
-    //     border-radius: 32px;
-    //     padding: 4px 16px;
-    //     select,
-    //     select + span
-    //     {
-    //         border-radius: 32px;
-    //         padding: 4px 16px;
-    //         font-size: 1.2rem;
-    //         font-weight: normal;
-    //     }
-    //     select
-    //     {
-    //         margin-left: -16px;
-    //         padding-left: 32px;
-    //     }
-    //     select + span
-    //     {
-    //         color: @base-color;
-    //     }
-    //     @media (hover: hover)
-    //     {
-    //         &:hover
-    //         {
-    //             background-color: @active-color;
-    //         }
-    //     }
-    // }
     .segment
     {
         position: relative;
@@ -244,28 +246,6 @@ h1
         {
             .primary-operator-coloring;
         }
-        // &:not(.label-segment)
-        // {
-        //     cursor: pointer;
-        // }
-        // @media (hover: hover)
-        // {
-        //     &:hover:not(.label-segment)
-        //     {
-        //         background-color: @active-color;
-        //     }
-        //     &:not(:hover)
-        //     {
-        //         background-color: @accent-color;
-        //     }
-        // }
-        // @media (hover: none)
-        // {
-        //     &
-        //     {
-        //         background-color: @accent-color;
-        //     }
-        // }
         &.last-segment
         {
             flex-grow: 1;
@@ -319,33 +299,7 @@ h1
     {
         margin: 0px;
         margin-right: 0.25rem;
-        // @media (hover: hover)
-        // {
-        //     &:not(:hover)
-        //     {
-        //         color: @base-color;
-        //         //border-color: @base-color;
-        //         background-color: @accent-color;
-        //         svg
-        //         {
-        //             fill: @base-color;
-        //         }
-        //     }
-        // }
-        // @media (hover: none)
-        // {
-        //     &
-        //     {
-        //         color: @base-color;
-        //         //border-color: @base-color;
-        //         background-color: @accent-color;
-        //         svg
-        //         {
-        //             fill: @base-color;
-        //         }
-        //     }
-        // }
-        .secondary-operator-coloring;
+        .primary-operator-coloring;
     }
     .menu-popup:not(.segment-popup)
     {
@@ -361,11 +315,7 @@ h2
 h1, h2
 {
     margin: 0rem;
-    &, & a
-    {
-        color: @base-color;
-    }
-    background-color: @accent-color;
+    .primary-operator-coloring;
     @media (hover: hover)
     {
         a:not(:hover)
@@ -381,61 +331,6 @@ h1, h2
         }
     }
 }
-// @media (prefers-color-scheme: dark)
-// {
-//     h1
-//     {
-//         .icon svg
-//         {
-//             fill: @dark-base-color;
-//         }
-//         label
-//         {
-//             select + span
-//             {
-//                 color: @dark-base-color;
-//             }
-//         }
-//         @media (hover: hover)
-//         {
-//             button.menu-button:not(:hover)
-//             {
-//                 float: right;
-//                 color: @dark-base-color;
-//                 //border-color: @dark-base-color;
-//                 svg
-//                 {
-//                     fill: @dark-base-color;
-//                 }
-//             }
-//             }
-//         @media (hover: none)
-//         {
-//             button.menu-button
-//             {
-//                 float: right;
-//                 color: @dark-base-color;
-//                 //border-color: @dark-base-color;
-//                 svg
-//                 {
-//                     fill: @dark-base-color;
-//                 }
-//             }
-//         }
-//         .segment + .segment,
-//         .segment +.menu-popup + .segment
-//         {
-//             border-left-color: @dark-base-color;
-//         }
-//         }
-//     h1, h2
-//     {
-//         &, & a
-//         {
-//             color: @dark-base-color;
-//         }
-//     }
-// }
 label
 {
     cursor: pointer;
@@ -449,36 +344,6 @@ label
         {
             color: @active-color;
         }
-    }
-    select
-    {
-        position: absolute;
-        color: transparent;
-        background-color: transparent;
-        pointer-events: auto;
-        // width: calc(100% - 10px);
-        // min-width: calc(100% - 10px);
-        // max-width: calc(100% - 10px);
-        // margin-left: calc(10px - 100%);
-        // text-align: right;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow-x: hidden;
-        cursor: pointer;
-        border-width: 0px;
-        border-style: none;
-        outline: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        option
-        {
-            color: initial;
-        }
-    }
-    select + span
-    {
-        text-align: center;
-        pointer-events: none;
     }
 }
 input
@@ -494,72 +359,48 @@ input
 }
 button
 {
+    .secondary-operator-coloring;
+    &.default-button
+    {
+        .primary-operator-coloring;
+    }
     margin: 4px;
-    // background-color: @base-color;
-    background-color: transparent;
-    color: @accent-color;
-    border-color: @accent-color;
     padding: 4px 16px;
     border-radius: 32px;
     border-style: solid;
     border-width: 1px;
     font-weight: bold;
     font-size: 1.0rem;
-    cursor: pointer;
+    // cursor: pointer;
     &.menu-button
     {
-        // background-color: transparent;
-        border-color: transparent;
+        @media (hover: hover)
+        {
+            &:not(:hover)
+            {
+                background-color: transparent;
+                border-color: transparent;
+            }
+        }
+        @media (hover: none)
+        {
+            &
+            {
+                background-color: transparent;
+                border-color: transparent;
+            }
+        }
+    
         padding: 4px;
         svg
         {
             width: 1.5rem;
             height: 1.5rem;
-            fill: @accent-color;
         }
     }
     &.delete-button
     {
-        fill: @delete-color;
-        color: @delete-color;
-        border-color: @delete-color;
-    }
-    @media (hover: hover)
-    {
-        &:hover
-        {
-            color: @base-color;
-            background-color: @active-color;
-            border-color: @active-color;
-            &.menu-button
-            {
-                svg
-                {
-                    fill: @base-color;
-                }
-            }
-        }
-    }
-}
-@media (prefers-color-scheme: dark)
-{
-    button
-    {
-        // background-color: @dark-base-color;
-        @media (hover: hover)
-        {
-            &:hover
-            {
-                color: @dark-base-color;
-                &.menu-button
-                {
-                    svg
-                    {
-                        fill: @dark-base-color;
-                    }
-                }
-            }
-        }
+        .delete-operator-coloring;
     }
 }
 .long-button
@@ -569,35 +410,6 @@ button
     width: calc(100% - (2rem + 2px));
     max-width: 640px;
     float: center;
-}
-button.default-button
-{
-    color: @base-color;
-    background-color: @accent-color;
-    border-color: @accent-color;
-    @media (hover: hover)
-    {
-        &:hover
-        {
-            background-color: @active-color;
-            border-color: @active-color;
-        }
-    }
-}
-@media (prefers-color-scheme: dark)
-{
-    button.default-button
-    {
-        color: @dark-base-color;
-        @media (hover: hover)
-        {
-            &:hover
-            {
-                background-color: @active-color;
-                border-color: @active-color;
-            }
-        }
-    }
 }
 .menu-popup
 {
@@ -618,8 +430,6 @@ button.default-button
         flex-direction: column;
     }
     color: @accent-color;
-    background-color: @base-color;
-    border-color: @accent-color;
     border-style: solid;
     border-width: 1px;
     border-radius: 0.5rem;
@@ -628,7 +438,6 @@ button.default-button
     overflow: hidden;
     a, button
     {
-        // display: block !important;
         border-radius: 0px;
         margin: 0px !important;
         border-style: none;
@@ -647,71 +456,9 @@ button.default-button
             margin-left: -0.25rem;
             margin-right: 0.5rem;
         }
-        @media (hover: hover)
+        &.current-item
         {
-            &:not(:hover)
-            {
-                &.current-item
-                {
-                    color: @base-color;
-                    background-color: @accent-color;
-                    @media (prefers-color-scheme: dark)
-                    {
-                        color: @dark-base-color;
-                    }
-                }
-                &:not(.current-item)
-                {
-                    fill: @accent-color;
-                    &.current-item
-                    {
-                        fill: @base-color;
-                    }
-                }
-            }
-            &.current-item,
-            &:hover
-            {
-                svg
-                {
-                    fill: @base-color;
-                    @media (prefers-color-scheme: dark)
-                    {
-                        fill: @dark-base-color;
-                    }
-                }
-            }
-        }
-        @media (hover: none)
-        {
-            &.current-item
-            {
-                color: @base-color;
-                background-color: @accent-color;
-                @media (prefers-color-scheme: dark)
-                {
-                    color: @dark-base-color;
-                }
-            }
-            &:not(.current-item)
-            {
-                fill: @accent-color;
-                &.current-item
-                {
-                    fill: @base-color;
-                }
-            }
-            &.current-item
-            {
-                svg
-                {
-                    fill: @base-color;
-                    @media (prefers-color-scheme: dark)
-                    {
-                        fill: @dark-base-color;
-                    }
-                }
-            }
+            .primary-operator-coloring;
         }
     }
     a button
@@ -751,18 +498,6 @@ button.default-button
         width: 1.5em;
         height: 1.5em;
         margin-right: 4px;
-        fill: @accent-color;
-    }
-    @media (hover: hover)
-    {
-        &:hover svg
-        {
-            fill: @base-color;
-            @media (prefers-color-scheme: dark)
-            {
-                fill: @dark-base-color;
-            }
-        }
     }
     &:not(.checked) svg
     {
@@ -773,16 +508,12 @@ button.default-button
 {
     border-style: solid;
     border-width: 1px;
-    border-color: @accent-color;
     border-radius: 16px;
-    background-color: @base-color;
+    border-color: @accent-color;
+    .positive-background-coloring;
     overflow: auto;
     min-width: 360px;
     max-width: calc(100vw - 16px);
-    @media (prefers-color-scheme: dark)
-    {
-        background-color: @dark-base-color;
-    }
     input
     {
         width: calc(100% - 8px);
@@ -1133,79 +864,84 @@ button.default-button
         min-height: 1.4em;
         margin-right: 4px;
     }
-    @media (hover: hover)
-    {
-        &:hover
-        {
-            color: @active-color;
-            svg
-            {
-                fill: @active-color;
-            }
-        }
-        &:not(:hover)
-        {
-            color: @main-color;
-            text-decoration: none;
-            svg
-            {
-                fill: @main-color;
-            }
-        }
-    }
-    @media (hover: none)
-    {
-        color: @main-color;
-        text-decoration: none;
-        svg
-        {
-            fill: @main-color;
-        }
-    }
+    .positive-foreground-coloring;
+    .tertiary-operator-coloring;
+    .hover-underline;
+    // @media (hover: hover)
+    // {
+    //     &:hover
+    //     {
+    //         color: @active-color;
+    //         svg
+    //         {
+    //             fill: @active-color;
+    //         }
+    //     }
+    //     &:not(:hover)
+    //     {
+    //         color: @main-color;
+    //         text-decoration: none;
+    //         svg
+    //         {
+    //             fill: @main-color;
+    //         }
+    //     }
+    // }
+    // @media (hover: none)
+    // {
+    //     color: @main-color;
+    //     text-decoration: none;
+    //     svg
+    //     {
+    //         fill: @main-color;
+    //     }
+    // }
 }
-@media (prefers-color-scheme: dark)
-{
-    @media (hover: hover)
-    {
-        .item-title:not(:hover)
-        {
-            color: @dark-main-color;
-            svg
-            {
-                fill: @dark-main-color;
-            }
-        }
-    }
-    @media (hover: none)
-    {
-        .item-title
-        {
-            color: @dark-main-color;
-            svg
-            {
-                fill: @dark-main-color;
-            }
-        }
-    }
-}
+// @media (prefers-color-scheme: dark)
+// {
+//     @media (hover: hover)
+//     {
+//         .item-title:not(:hover)
+//         {
+//             color: @dark-main-color;
+//             svg
+//             {
+//                 fill: @dark-main-color;
+//             }
+//         }
+//     }
+//     @media (hover: none)
+//     {
+//         .item-title
+//         {
+//             color: @dark-main-color;
+//             svg
+//             {
+//                 fill: @dark-main-color;
+//             }
+//         }
+//     }
+// }
 .removed-item
 {
     .item-title
     {
         cursor: inherit;
-        color: @main-color;
+        .positive-foreground-coloring;
+        text-decoration: none;
+        // color: @main-color;
     }
 }
-@media (prefers-color-scheme: dark)
-{
-    .removed-item
-    {
-        .item-title
-        {
-            color: @dark-main-color;
-        }
-    }
-}
+// @media (prefers-color-scheme: dark)
+// {
+//     .removed-item
+//     {
+//         .item-title
+//         {
+//             color: @dark-main-color;
+//         }
+//     }
+// }
 .list-item,
 .task-item,
 .removed-item

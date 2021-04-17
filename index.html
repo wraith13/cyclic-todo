@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Fri Apr 16 2021 23:49:22 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sat Apr 17 2021 19:26:38 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -120,6 +120,60 @@
   .tertiary-operator-coloring:hover {
     color: #6F7F00;
     fill: #6F7F00;
+  }
+}
+.delete-operator-coloring {
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .delete-operator-coloring:not(:hover) {
+    color: #831B50;
+    fill: #831B50;
+    border-color: #831B50;
+    background-color: #FFFFFF;
+  }
+  .delete-operator-coloring:hover {
+    color: #FFFFFF;
+    fill: #FFFFFF;
+    border-color: #831B50;
+    background-color: #831B50;
+  }
+}
+@media (hover: hover) and (prefers-color-scheme: dark) {
+  .delete-operator-coloring:not(:hover) {
+    background-color: #000022;
+  }
+}
+@media (hover: hover) and (prefers-color-scheme: dark) {
+  .delete-operator-coloring:hover {
+    color: #000022;
+    fill: #000022;
+  }
+}
+@media (hover: none) {
+  .delete-operator-coloring {
+    color: #831B50;
+    fill: #831B50;
+    border-color: #831B50;
+    background-color: #FFFFFF;
+  }
+}
+@media (hover: none) and (prefers-color-scheme: dark) {
+  .delete-operator-coloring {
+    background-color: #000022;
+  }
+}
+@media (hover: hover) {
+  .hover-underline:hover {
+    text-decoration: underline;
+  }
+  .hover-underline:not(:hover) {
+    text-decoration: none;
+  }
+}
+@media (hover: none) {
+  .hover-underline {
+    text-decoration: none;
   }
 }
 body {
@@ -284,43 +338,29 @@ h1 button.menu-button {
   margin: 0px;
   margin-right: 0.25rem;
   cursor: pointer;
+  color: #FFFFFF;
+  fill: #FFFFFF;
 }
-@media (hover: hover) {
-  h1 button.menu-button:not(:hover) {
-    color: #228844;
-    fill: #228844;
-    border-color: #228844;
-    background-color: #FFFFFF;
-  }
-  h1 button.menu-button:hover {
-    color: #FFFFFF;
-    fill: #FFFFFF;
-    border-color: #6F7F00;
-    background-color: #6F7F00;
-  }
-}
-@media (hover: hover) and (prefers-color-scheme: dark) {
-  h1 button.menu-button:not(:hover) {
-    background-color: #000022;
-  }
-}
-@media (hover: hover) and (prefers-color-scheme: dark) {
-  h1 button.menu-button:hover {
+@media (prefers-color-scheme: dark) {
+  h1 button.menu-button {
     color: #000022;
     fill: #000022;
   }
 }
-@media (hover: none) {
-  h1 button.menu-button {
-    color: #228844;
-    fill: #228844;
+@media (hover: hover) {
+  h1 button.menu-button:not(:hover) {
     border-color: #228844;
-    background-color: #FFFFFF;
+    background-color: #228844;
+  }
+  h1 button.menu-button:hover {
+    border-color: #6F7F00;
+    background-color: #6F7F00;
   }
 }
-@media (hover: none) and (prefers-color-scheme: dark) {
+@media (hover: none) {
   h1 button.menu-button {
-    background-color: #000022;
+    border-color: #228844;
+    background-color: #228844;
   }
 }
 h1 .menu-popup:not(.segment-popup) {
@@ -334,13 +374,35 @@ h2 {
 h1,
 h2 {
   margin: 0rem;
-  background-color: #228844;
-}
-h1,
-h2,
-h1 a,
-h2 a {
+  cursor: pointer;
   color: #FFFFFF;
+  fill: #FFFFFF;
+}
+@media (prefers-color-scheme: dark) {
+  h1,
+  h2 {
+    color: #000022;
+    fill: #000022;
+  }
+}
+@media (hover: hover) {
+  h1:not(:hover),
+  h2:not(:hover) {
+    border-color: #228844;
+    background-color: #228844;
+  }
+  h1:hover,
+  h2:hover {
+    border-color: #6F7F00;
+    background-color: #6F7F00;
+  }
+}
+@media (hover: none) {
+  h1,
+  h2 {
+    border-color: #228844;
+    background-color: #228844;
+  }
 }
 @media (hover: hover) {
   h1 a:not(:hover),
@@ -362,28 +424,6 @@ label {
     color: #6F7F00;
   }
 }
-label select {
-  position: absolute;
-  color: transparent;
-  background-color: transparent;
-  pointer-events: auto;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow-x: hidden;
-  cursor: pointer;
-  border-width: 0px;
-  border-style: none;
-  outline: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
-label select option {
-  color: initial;
-}
-label select + span {
-  text-align: center;
-  pointer-events: none;
-}
 input {
   margin: 4px;
   padding: 4px 16px;
@@ -395,48 +435,138 @@ input {
   min-width: 120px;
 }
 button {
+  cursor: pointer;
   margin: 4px;
-  background-color: transparent;
-  color: #228844;
-  border-color: #228844;
   padding: 4px 16px;
   border-radius: 32px;
   border-style: solid;
   border-width: 1px;
   font-weight: bold;
   font-size: 1rem;
+}
+@media (hover: hover) {
+  button:not(:hover) {
+    color: #228844;
+    fill: #228844;
+    border-color: #228844;
+    background-color: #FFFFFF;
+  }
+  button:hover {
+    color: #FFFFFF;
+    fill: #FFFFFF;
+    border-color: #6F7F00;
+    background-color: #6F7F00;
+  }
+}
+@media (hover: hover) and (prefers-color-scheme: dark) {
+  button:not(:hover) {
+    background-color: #000022;
+  }
+}
+@media (hover: hover) and (prefers-color-scheme: dark) {
+  button:hover {
+    color: #000022;
+    fill: #000022;
+  }
+}
+@media (hover: none) {
+  button {
+    color: #228844;
+    fill: #228844;
+    border-color: #228844;
+    background-color: #FFFFFF;
+  }
+}
+@media (hover: none) and (prefers-color-scheme: dark) {
+  button {
+    background-color: #000022;
+  }
+}
+button.default-button {
   cursor: pointer;
+  color: #FFFFFF;
+  fill: #FFFFFF;
+}
+@media (prefers-color-scheme: dark) {
+  button.default-button {
+    color: #000022;
+    fill: #000022;
+  }
+}
+@media (hover: hover) {
+  button.default-button:not(:hover) {
+    border-color: #228844;
+    background-color: #228844;
+  }
+  button.default-button:hover {
+    border-color: #6F7F00;
+    background-color: #6F7F00;
+  }
+}
+@media (hover: none) {
+  button.default-button {
+    border-color: #228844;
+    background-color: #228844;
+  }
 }
 button.menu-button {
-  border-color: transparent;
   padding: 4px;
+}
+@media (hover: hover) {
+  button.menu-button:not(:hover) {
+    background-color: transparent;
+    border-color: transparent;
+  }
+}
+@media (hover: none) {
+  button.menu-button {
+    background-color: transparent;
+    border-color: transparent;
+  }
 }
 button.menu-button svg {
   width: 1.5rem;
   height: 1.5rem;
-  fill: #228844;
 }
 button.delete-button {
-  fill: #831B50;
-  color: #831B50;
-  border-color: #831B50;
+  cursor: pointer;
 }
 @media (hover: hover) {
-  button:hover {
-    color: #FFFFFF;
-    background-color: #6F7F00;
-    border-color: #6F7F00;
+  button.delete-button:not(:hover) {
+    color: #831B50;
+    fill: #831B50;
+    border-color: #831B50;
+    background-color: #FFFFFF;
   }
-  button:hover.menu-button svg {
+  button.delete-button:hover {
+    color: #FFFFFF;
     fill: #FFFFFF;
+    border-color: #831B50;
+    background-color: #831B50;
   }
 }
-@media (prefers-color-scheme: dark) and (hover: hover) {
-  button:hover {
-    color: #000022;
+@media (hover: hover) and (prefers-color-scheme: dark) {
+  button.delete-button:not(:hover) {
+    background-color: #000022;
   }
-  button:hover.menu-button svg {
+}
+@media (hover: hover) and (prefers-color-scheme: dark) {
+  button.delete-button:hover {
+    color: #000022;
     fill: #000022;
+  }
+}
+@media (hover: none) {
+  button.delete-button {
+    color: #831B50;
+    fill: #831B50;
+    border-color: #831B50;
+    background-color: #FFFFFF;
+  }
+}
+@media (hover: none) and (prefers-color-scheme: dark) {
+  button.delete-button {
+    background-color: #000022;
   }
 }
 .long-button {
@@ -446,36 +576,12 @@ button.delete-button {
   max-width: 640px;
   float: center;
 }
-button.default-button {
-  color: #FFFFFF;
-  background-color: #228844;
-  border-color: #228844;
-}
-@media (hover: hover) {
-  button.default-button:hover {
-    background-color: #6F7F00;
-    border-color: #6F7F00;
-  }
-}
-@media (prefers-color-scheme: dark) {
-  button.default-button {
-    color: #000022;
-  }
-}
-@media (prefers-color-scheme: dark) and (hover: hover) {
-  button.default-button:hover {
-    background-color: #6F7F00;
-    border-color: #6F7F00;
-  }
-}
 .menu-popup {
   position: absolute;
   top: calc(10px + 1.5rem);
   right: 0rem;
   z-index: 99999;
   color: #228844;
-  background-color: #FFFFFF;
-  border-color: #228844;
   border-style: solid;
   border-width: 1px;
   border-radius: 0.5rem;
@@ -515,70 +621,36 @@ button.default-button {
   margin-left: -0.25rem;
   margin-right: 0.5rem;
 }
+.menu-popup a.current-item,
+.menu-popup button.current-item {
+  cursor: pointer;
+  color: #FFFFFF;
+  fill: #FFFFFF;
+}
+@media (prefers-color-scheme: dark) {
+  .menu-popup a.current-item,
+  .menu-popup button.current-item {
+    color: #000022;
+    fill: #000022;
+  }
+}
 @media (hover: hover) {
-  .menu-popup a:not(:hover).current-item,
-  .menu-popup button:not(:hover).current-item {
-    color: #FFFFFF;
+  .menu-popup a.current-item:not(:hover),
+  .menu-popup button.current-item:not(:hover) {
+    border-color: #228844;
     background-color: #228844;
   }
-  .menu-popup a:not(:hover):not(.current-item),
-  .menu-popup button:not(:hover):not(.current-item) {
-    fill: #228844;
-  }
-  .menu-popup a:not(:hover):not(.current-item).current-item,
-  .menu-popup button:not(:hover):not(.current-item).current-item {
-    fill: #FFFFFF;
-  }
-  .menu-popup a.current-item svg,
-  .menu-popup button.current-item svg,
-  .menu-popup a:hover svg,
-  .menu-popup button:hover svg {
-    fill: #FFFFFF;
-  }
-}
-@media (hover: hover) and (prefers-color-scheme: dark) {
-  .menu-popup a:not(:hover).current-item,
-  .menu-popup button:not(:hover).current-item {
-    color: #000022;
-  }
-}
-@media (hover: hover) and (prefers-color-scheme: dark) {
-  .menu-popup a.current-item svg,
-  .menu-popup button.current-item svg,
-  .menu-popup a:hover svg,
-  .menu-popup button:hover svg {
-    fill: #000022;
+  .menu-popup a.current-item:hover,
+  .menu-popup button.current-item:hover {
+    border-color: #6F7F00;
+    background-color: #6F7F00;
   }
 }
 @media (hover: none) {
   .menu-popup a.current-item,
   .menu-popup button.current-item {
-    color: #FFFFFF;
+    border-color: #228844;
     background-color: #228844;
-  }
-  .menu-popup a:not(.current-item),
-  .menu-popup button:not(.current-item) {
-    fill: #228844;
-  }
-  .menu-popup a:not(.current-item).current-item,
-  .menu-popup button:not(.current-item).current-item {
-    fill: #FFFFFF;
-  }
-  .menu-popup a.current-item svg,
-  .menu-popup button.current-item svg {
-    fill: #FFFFFF;
-  }
-}
-@media (hover: none) and (prefers-color-scheme: dark) {
-  .menu-popup a.current-item,
-  .menu-popup button.current-item {
-    color: #000022;
-  }
-}
-@media (hover: none) and (prefers-color-scheme: dark) {
-  .menu-popup a.current-item svg,
-  .menu-popup button.current-item svg {
-    fill: #000022;
   }
 }
 .menu-popup a button {
@@ -610,17 +682,6 @@ button.default-button {
   width: 1.5em;
   height: 1.5em;
   margin-right: 4px;
-  fill: #228844;
-}
-@media (hover: hover) {
-  .check-button:hover svg {
-    fill: #FFFFFF;
-  }
-}
-@media (hover: hover) and (prefers-color-scheme: dark) {
-  .check-button:hover svg {
-    fill: #000022;
-  }
 }
 .check-button:not(.checked) svg {
   visibility: hidden;
@@ -628,8 +689,8 @@ button.default-button {
 .popup {
   border-style: solid;
   border-width: 1px;
-  border-color: #228844;
   border-radius: 16px;
+  border-color: #228844;
   background-color: #FFFFFF;
   overflow: auto;
   min-width: 360px;
@@ -931,6 +992,8 @@ button.default-button {
   white-space: nowrap;
   height: 1.4em;
   margin-right: -120px;
+  color: #000022;
+  fill: #000022;
   cursor: pointer;
 }
 .item-title svg {
@@ -940,53 +1003,41 @@ button.default-button {
   min-height: 1.4em;
   margin-right: 4px;
 }
+@media (prefers-color-scheme: dark) {
+  .item-title {
+    color: #FFFFFF;
+    fill: #FFFFFF;
+  }
+}
 @media (hover: hover) {
   .item-title:hover {
     color: #6F7F00;
-  }
-  .item-title:hover svg {
     fill: #6F7F00;
   }
-  .item-title:not(:hover) {
-    color: #000022;
-    text-decoration: none;
+}
+@media (hover: hover) {
+  .item-title:hover {
+    text-decoration: underline;
   }
-  .item-title:not(:hover) svg {
-    fill: #000022;
+  .item-title:not(:hover) {
+    text-decoration: none;
   }
 }
 @media (hover: none) {
   .item-title {
-    color: #000022;
     text-decoration: none;
-  }
-  .item-title svg {
-    fill: #000022;
-  }
-}
-@media (prefers-color-scheme: dark) and (hover: hover) {
-  .item-title:not(:hover) {
-    color: #FFFFFF;
-  }
-  .item-title:not(:hover) svg {
-    fill: #FFFFFF;
-  }
-}
-@media (prefers-color-scheme: dark) and (hover: none) {
-  .item-title {
-    color: #FFFFFF;
-  }
-  .item-title svg {
-    fill: #FFFFFF;
   }
 }
 .removed-item .item-title {
   cursor: inherit;
   color: #000022;
+  fill: #000022;
+  text-decoration: none;
 }
 @media (prefers-color-scheme: dark) {
   .removed-item .item-title {
     color: #FFFFFF;
+    fill: #FFFFFF;
   }
 }
 .list-item,
