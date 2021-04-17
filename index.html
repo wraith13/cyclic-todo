@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sat Apr 17 2021 19:26:38 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sun Apr 18 2021 03:36:56 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -9,80 +9,75 @@
 <link id="favicon" rel="shortcut icon" href="./image/cyclictodohex.1024.png">
 <link rel="apple-touch-icon" href="./image/cyclictodohex.1024.png">
 <style type="text/css">
-* {
-  font-family: ui-sans-serif, "ヒラギノ角ゴ Pro w4", Roboto, Meiryo;
-  font: -apple-system-body;
-  outline: none;
-}
-.monospace {
+.monospace-trait {
   font-family: monospace;
 }
-.positive-foreground-coloring {
+.positive-foreground-coloring-trait {
   color: #000022;
   fill: #000022;
 }
 @media (prefers-color-scheme: dark) {
-  .positive-foreground-coloring {
+  .positive-foreground-coloring-trait {
     color: #FFFFFF;
     fill: #FFFFFF;
   }
 }
-.positive-background-coloring {
+.positive-background-coloring-trait {
   background-color: #FFFFFF;
 }
 @media (prefers-color-scheme: dark) {
-  .positive-background-coloring {
+  .positive-background-coloring-trait {
     background-color: #000022;
   }
 }
-.negative-foreground-coloring {
+.negative-foreground-coloring-trait {
   color: #FFFFFF;
   fill: #FFFFFF;
 }
 @media (prefers-color-scheme: dark) {
-  .negative-foreground-coloring {
+  .negative-foreground-coloring-trait {
     color: #000022;
     fill: #000022;
   }
 }
-.primary-operator-coloring {
+.primary-operator-coloring-trait {
   cursor: pointer;
   color: #FFFFFF;
   fill: #FFFFFF;
 }
 @media (prefers-color-scheme: dark) {
-  .primary-operator-coloring {
+  .primary-operator-coloring-trait {
     color: #000022;
     fill: #000022;
   }
 }
 @media (hover: hover) {
-  .primary-operator-coloring:not(:hover) {
+  .primary-operator-coloring-trait:not(:hover) {
     border-color: #228844;
     background-color: #228844;
   }
-  .primary-operator-coloring:hover {
+  .primary-operator-coloring-trait:hover {
     border-color: #6F7F00;
     background-color: #6F7F00;
   }
 }
 @media (hover: none) {
-  .primary-operator-coloring {
+  .primary-operator-coloring-trait {
     border-color: #228844;
     background-color: #228844;
   }
 }
-.secondary-operator-coloring {
+.secondary-operator-coloring-trait {
   cursor: pointer;
 }
 @media (hover: hover) {
-  .secondary-operator-coloring:not(:hover) {
+  .secondary-operator-coloring-trait:not(:hover) {
     color: #228844;
     fill: #228844;
     border-color: #228844;
     background-color: #FFFFFF;
   }
-  .secondary-operator-coloring:hover {
+  .secondary-operator-coloring-trait:hover {
     color: #FFFFFF;
     fill: #FFFFFF;
     border-color: #6F7F00;
@@ -90,18 +85,18 @@
   }
 }
 @media (hover: hover) and (prefers-color-scheme: dark) {
-  .secondary-operator-coloring:not(:hover) {
+  .secondary-operator-coloring-trait:not(:hover) {
     background-color: #000022;
   }
 }
 @media (hover: hover) and (prefers-color-scheme: dark) {
-  .secondary-operator-coloring:hover {
+  .secondary-operator-coloring-trait:hover {
     color: #000022;
     fill: #000022;
   }
 }
 @media (hover: none) {
-  .secondary-operator-coloring {
+  .secondary-operator-coloring-trait {
     color: #228844;
     fill: #228844;
     border-color: #228844;
@@ -109,30 +104,30 @@
   }
 }
 @media (hover: none) and (prefers-color-scheme: dark) {
-  .secondary-operator-coloring {
+  .secondary-operator-coloring-trait {
     background-color: #000022;
   }
 }
-.tertiary-operator-coloring {
+.tertiary-operator-coloring-trait {
   cursor: pointer;
 }
 @media (hover: hover) {
-  .tertiary-operator-coloring:hover {
+  .tertiary-operator-coloring-trait:hover {
     color: #6F7F00;
     fill: #6F7F00;
   }
 }
-.delete-operator-coloring {
+.delete-operator-coloring-trait {
   cursor: pointer;
 }
 @media (hover: hover) {
-  .delete-operator-coloring:not(:hover) {
+  .delete-operator-coloring-trait:not(:hover) {
     color: #831B50;
     fill: #831B50;
     border-color: #831B50;
     background-color: #FFFFFF;
   }
-  .delete-operator-coloring:hover {
+  .delete-operator-coloring-trait:hover {
     color: #FFFFFF;
     fill: #FFFFFF;
     border-color: #831B50;
@@ -140,18 +135,18 @@
   }
 }
 @media (hover: hover) and (prefers-color-scheme: dark) {
-  .delete-operator-coloring:not(:hover) {
+  .delete-operator-coloring-trait:not(:hover) {
     background-color: #000022;
   }
 }
 @media (hover: hover) and (prefers-color-scheme: dark) {
-  .delete-operator-coloring:hover {
+  .delete-operator-coloring-trait:hover {
     color: #000022;
     fill: #000022;
   }
 }
 @media (hover: none) {
-  .delete-operator-coloring {
+  .delete-operator-coloring-trait {
     color: #831B50;
     fill: #831B50;
     border-color: #831B50;
@@ -159,22 +154,27 @@
   }
 }
 @media (hover: none) and (prefers-color-scheme: dark) {
-  .delete-operator-coloring {
+  .delete-operator-coloring-trait {
     background-color: #000022;
   }
 }
 @media (hover: hover) {
-  .hover-underline:hover {
+  .hover-underline-trait:hover {
     text-decoration: underline;
   }
-  .hover-underline:not(:hover) {
+  .hover-underline-trait:not(:hover) {
     text-decoration: none;
   }
 }
 @media (hover: none) {
-  .hover-underline {
+  .hover-underline-trait {
     text-decoration: none;
   }
+}
+* {
+  font-family: ui-sans-serif, "ヒラギノ角ゴ Pro w4", Roboto, Meiryo;
+  font: -apple-system-body;
+  outline: none;
 }
 body {
   margin: 0px;
@@ -204,16 +204,19 @@ textarea {
     background-color: #000022;
   }
 }
+@media (prefers-color-scheme: dark) {
+  ::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
+}
+.monospace {
+  font-family: monospace;
+}
 .locale-parallel-on .locale-map {
   display: none !important;
 }
 .locale-parallel-off .locale-parallel {
   display: none !important;
-}
-@media (prefers-color-scheme: dark) {
-  ::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-  }
 }
 h1 {
   padding: 0rem;
@@ -1253,12 +1256,6 @@ button.delete-button {
   height: 2.5rem;
   margin-right: 0.5rem;
   opacity: 0.6;
-  fill: #000022;
-}
-@media (prefers-color-scheme: dark) {
-  .todo-screen .tick-list .tick-item > svg {
-    fill: #FFFFFF;
-  }
 }
 .todo-screen .tick-list .tick-item .item-information {
   width: 100%;

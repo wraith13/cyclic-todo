@@ -1,0 +1,150 @@
+@import "params.less";
+
+.monospace-trait
+{
+    font-family: monospace;
+}
+.positive-foreground-coloring-trait
+{
+    color: @main-color;
+    fill: @main-color;
+    @media (prefers-color-scheme: dark)
+    {
+        color: @dark-main-color;
+        fill: @dark-main-color;
+    }
+}
+.positive-background-coloring-trait
+{
+    background-color: @base-color;
+    @media (prefers-color-scheme: dark)
+    {
+        background-color: @dark-base-color;
+    }
+}
+.negative-foreground-coloring-trait
+{
+    color: @base-color;
+    fill: @base-color;
+    @media (prefers-color-scheme: dark)
+    {
+        color: @dark-base-color;
+        fill: @dark-base-color;
+    }
+}
+.primary-operator-coloring-trait
+{
+    cursor: pointer;
+    .negative-foreground-coloring-trait;
+    @media (hover: hover)
+    {
+        &:not(:hover)
+        {
+            border-color: @accent-color;
+            background-color: @accent-color;
+        }
+        &:hover
+        {
+            border-color: @active-color;
+            background-color: @active-color;
+        }
+    }
+    @media (hover: none)
+    {
+        &
+        {
+            border-color: @accent-color;
+            background-color: @accent-color;
+        }
+    }
+}
+.secondary-operator-coloring-trait
+{
+    cursor: pointer;
+    @media (hover: hover)
+    {
+        &:not(:hover)
+        {
+            color: @accent-color;
+            fill: @accent-color;
+            border-color: @accent-color;
+            .positive-background-coloring-trait;
+        }
+        &:hover
+        {
+            .negative-foreground-coloring-trait;
+            border-color: @active-color;
+            background-color: @active-color;
+        }
+    }
+    @media (hover: none)
+    {
+        &
+        {
+            color: @accent-color;
+            fill: @accent-color;
+            border-color: @accent-color;
+            .positive-background-coloring-trait;
+        }
+    }
+}
+.tertiary-operator-coloring-trait
+{
+    cursor: pointer;
+    @media (hover: hover)
+    {
+        &:hover
+        {
+            color: @active-color;
+            fill: @active-color;
+        }
+    }
+}
+.delete-operator-coloring-trait
+{
+    cursor: pointer;
+    @media (hover: hover)
+    {
+        &:not(:hover)
+        {
+            color: @delete-color;
+            fill: @delete-color;
+            border-color: @delete-color;
+            .positive-background-coloring-trait;
+        }
+        &:hover
+        {
+            .negative-foreground-coloring-trait;
+            border-color: @delete-color;
+            background-color: @delete-color;
+        }
+    }
+    @media (hover: none)
+    {
+        &
+        {
+            color: @delete-color;
+            fill: @delete-color;
+            border-color: @delete-color;
+            .positive-background-coloring-trait;
+        }
+    }
+}
+.hover-underline-trait
+{
+    @media (hover: hover)
+    {
+        &:hover
+        {
+            text-decoration: underline;
+        }
+        &:not(:hover)
+        {
+            text-decoration: none;
+        }
+    }
+    @media (hover: none)
+    {
+        text-decoration: none;
+    }
+}

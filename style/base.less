@@ -1,0 +1,28 @@
+@import "params.less";
+@import "traits.less";
+
+*
+{
+    font-family: ui-sans-serif, "ヒラギノ角ゴ Pro w4", Roboto, Meiryo;
+    font: -apple-system-body;
+    outline:none;
+}
+body
+{
+    margin: 0px;
+    margin-bottom: 5rem; // for iOS Safari
+    line-height: 100%;
+    overflow-x: hidden;
+}
+body, input, textarea
+{
+    .positive-foreground-coloring-trait;
+    .positive-background-coloring-trait;
+}
+@media (prefers-color-scheme: dark)
+{
+    ::-webkit-calendar-picker-indicator
+    {
+        filter: invert(1);
+    }
+}

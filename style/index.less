@@ -1,177 +1,10 @@
-@main-color: #000022;
-@base-color: #FFFFFF;
-@accent-color: #228844;
-//@active-color: #21788B;
-@active-color: #6F7F00;
-@delete-color: #831B50;
-@dark-main-color: @base-color;
-@dark-base-color: @main-color;
+@import "params.less";
+@import "traits.less";
+@import "base.less";
 
-*
-{
-    font-family: ui-sans-serif, "ヒラギノ角ゴ Pro w4", Roboto, Meiryo;
-    font: -apple-system-body;
-    outline:none;
-}
 .monospace
 {
-    font-family: monospace;
-}
-.positive-foreground-coloring
-{
-    color: @main-color;
-    fill: @main-color;
-    @media (prefers-color-scheme: dark)
-    {
-        color: @dark-main-color;
-        fill: @dark-main-color;
-    }
-}
-.positive-background-coloring
-{
-    background-color: @base-color;
-    @media (prefers-color-scheme: dark)
-    {
-        background-color: @dark-base-color;
-    }
-}
-.negative-foreground-coloring
-{
-    color: @base-color;
-    fill: @base-color;
-    @media (prefers-color-scheme: dark)
-    {
-        color: @dark-base-color;
-        fill: @dark-base-color;
-    }
-}
-.primary-operator-coloring
-{
-    cursor: pointer;
-    .negative-foreground-coloring;
-    @media (hover: hover)
-    {
-        &:not(:hover)
-        {
-            border-color: @accent-color;
-            background-color: @accent-color;
-        }
-        &:hover
-        {
-            border-color: @active-color;
-            background-color: @active-color;
-        }
-    }
-    @media (hover: none)
-    {
-        &
-        {
-            border-color: @accent-color;
-            background-color: @accent-color;
-        }
-    }
-}
-.secondary-operator-coloring
-{
-    cursor: pointer;
-    @media (hover: hover)
-    {
-        &:not(:hover)
-        {
-            color: @accent-color;
-            fill: @accent-color;
-            border-color: @accent-color;
-            .positive-background-coloring;
-        }
-        &:hover
-        {
-            .negative-foreground-coloring;
-            border-color: @active-color;
-            background-color: @active-color;
-        }
-    }
-    @media (hover: none)
-    {
-        &
-        {
-            color: @accent-color;
-            fill: @accent-color;
-            border-color: @accent-color;
-            .positive-background-coloring;
-        }
-    }
-}
-.tertiary-operator-coloring
-{
-    cursor: pointer;
-    @media (hover: hover)
-    {
-        &:hover
-        {
-            color: @active-color;
-            fill: @active-color;
-        }
-    }
-}
-.delete-operator-coloring
-{
-    cursor: pointer;
-    @media (hover: hover)
-    {
-        &:not(:hover)
-        {
-            color: @delete-color;
-            fill: @delete-color;
-            border-color: @delete-color;
-            .positive-background-coloring;
-        }
-        &:hover
-        {
-            .negative-foreground-coloring;
-            border-color: @delete-color;
-            background-color: @delete-color;
-        }
-    }
-    @media (hover: none)
-    {
-        &
-        {
-            color: @delete-color;
-            fill: @delete-color;
-            border-color: @delete-color;
-            .positive-background-coloring;
-        }
-    }
-}
-.hover-underline
-{
-    @media (hover: hover)
-    {
-        &:hover
-        {
-            text-decoration: underline;
-        }
-        &:not(:hover)
-        {
-            text-decoration: none;
-        }
-    }
-    @media (hover: none)
-    {
-        text-decoration: none;
-    }
-}
-body
-{
-    margin: 0px;
-    margin-bottom: 5rem; // for iOS Safari
-    line-height: 100%;
-    overflow-x: hidden;
-}
-body, input, textarea
-{
-    .positive-foreground-coloring;
-    .positive-background-coloring;
+    .monospace-trait;
 }
 .locale-parallel-on
 {
@@ -185,13 +18,6 @@ body, input, textarea
     .locale-parallel
     {
         display: none !important;
-    }
-}
-@media (prefers-color-scheme: dark)
-{
-    ::-webkit-calendar-picker-indicator
-    {
-        filter: invert(1);
     }
 }
 h1
@@ -239,12 +65,12 @@ h1
         &.label-segment
         {
             cursor: default;
-            .negative-foreground-coloring;
+            .negative-foreground-coloring-trait;
             background-color: @accent-color;
         }
         &:not(.label-segment)
         {
-            .primary-operator-coloring;
+            .primary-operator-coloring-trait;
         }
         &.last-segment
         {
@@ -299,7 +125,7 @@ h1
     {
         margin: 0px;
         margin-right: 0.25rem;
-        .primary-operator-coloring;
+        .primary-operator-coloring-trait;
     }
     .menu-popup:not(.segment-popup)
     {
@@ -315,7 +141,7 @@ h2
 h1, h2
 {
     margin: 0rem;
-    .primary-operator-coloring;
+    .primary-operator-coloring-trait;
     @media (hover: hover)
     {
         a:not(:hover)
@@ -359,10 +185,10 @@ input
 }
 button
 {
-    .secondary-operator-coloring;
+    .secondary-operator-coloring-trait;
     &.default-button
     {
-        .primary-operator-coloring;
+        .primary-operator-coloring-trait;
     }
     margin: 4px;
     padding: 4px 16px;
@@ -400,7 +226,7 @@ button
     }
     &.delete-button
     {
-        .delete-operator-coloring;
+        .delete-operator-coloring-trait;
     }
 }
 .long-button
@@ -458,7 +284,7 @@ button
         }
         &.current-item
         {
-            .primary-operator-coloring;
+            .primary-operator-coloring-trait;
         }
     }
     a button
@@ -510,7 +336,7 @@ button
     border-width: 1px;
     border-radius: 16px;
     border-color: @accent-color;
-    .positive-background-coloring;
+    .positive-background-coloring-trait;
     overflow: auto;
     min-width: 360px;
     max-width: calc(100vw - 16px);
@@ -864,84 +690,19 @@ button
         min-height: 1.4em;
         margin-right: 4px;
     }
-    .positive-foreground-coloring;
-    .tertiary-operator-coloring;
-    .hover-underline;
-    // @media (hover: hover)
-    // {
-    //     &:hover
-    //     {
-    //         color: @active-color;
-    //         svg
-    //         {
-    //             fill: @active-color;
-    //         }
-    //     }
-    //     &:not(:hover)
-    //     {
-    //         color: @main-color;
-    //         text-decoration: none;
-    //         svg
-    //         {
-    //             fill: @main-color;
-    //         }
-    //     }
-    // }
-    // @media (hover: none)
-    // {
-    //     color: @main-color;
-    //     text-decoration: none;
-    //     svg
-    //     {
-    //         fill: @main-color;
-    //     }
-    // }
+    .positive-foreground-coloring-trait;
+    .tertiary-operator-coloring-trait;
+    .hover-underline-trait;
 }
-// @media (prefers-color-scheme: dark)
-// {
-//     @media (hover: hover)
-//     {
-//         .item-title:not(:hover)
-//         {
-//             color: @dark-main-color;
-//             svg
-//             {
-//                 fill: @dark-main-color;
-//             }
-//         }
-//     }
-//     @media (hover: none)
-//     {
-//         .item-title
-//         {
-//             color: @dark-main-color;
-//             svg
-//             {
-//                 fill: @dark-main-color;
-//             }
-//         }
-//     }
-// }
 .removed-item
 {
     .item-title
     {
         cursor: inherit;
-        .positive-foreground-coloring;
+        .positive-foreground-coloring-trait;
         text-decoration: none;
-        // color: @main-color;
     }
 }
-// @media (prefers-color-scheme: dark)
-// {
-//     .removed-item
-//     {
-//         .item-title
-//         {
-//             color: @dark-main-color;
-//         }
-//     }
-// }
 .list-item,
 .task-item,
 .removed-item
@@ -1226,11 +987,6 @@ button
                 height: 2.5rem;
                 margin-right: 0.5rem;
                 opacity: 0.6;
-                fill: @main-color;
-                @media (prefers-color-scheme: dark)
-                {
-                    fill: @dark-main-color;
-                }
             }
             .item-information
             {
