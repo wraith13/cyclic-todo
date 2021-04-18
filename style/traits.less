@@ -1,5 +1,28 @@
 @import "params.less";
 
+.clickable-trait
+{
+    cursor: pointer;
+}
+.link-trait
+{
+    .clickable-trait;
+    @media (hover: hover)
+    {
+        &:hover
+        {
+            text-decoration: underline;
+        }
+        &:not(:hover)
+        {
+            text-decoration: none;
+        }
+    }
+    @media (hover: none)
+    {
+        text-decoration: none;
+    }
+}
 .monospace-trait
 {
     font-family: monospace;
@@ -34,7 +57,7 @@
 }
 .primary-operator-coloring-trait
 {
-    cursor: pointer;
+    .clickable-trait;
     .negative-foreground-coloring-trait;
     @media (hover: hover)
     {
@@ -60,7 +83,7 @@
 }
 .secondary-operator-coloring-trait
 {
-    cursor: pointer;
+    .clickable-trait;
     @media (hover: hover)
     {
         &:not(:hover)
@@ -90,7 +113,7 @@
 }
 .tertiary-operator-coloring-trait
 {
-    cursor: pointer;
+    .clickable-trait;
     @media (hover: hover)
     {
         &:hover
@@ -102,7 +125,7 @@
 }
 .delete-operator-coloring-trait
 {
-    cursor: pointer;
+    .clickable-trait;
     @media (hover: hover)
     {
         &:not(:hover)
@@ -128,23 +151,5 @@
             border-color: @delete-color;
             .positive-background-coloring-trait;
         }
-    }
-}
-.hover-underline-trait
-{
-    @media (hover: hover)
-    {
-        &:hover
-        {
-            text-decoration: underline;
-        }
-        &:not(:hover)
-        {
-            text-decoration: none;
-        }
-    }
-    @media (hover: none)
-    {
-        text-decoration: none;
     }
 }

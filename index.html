@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun Apr 18 2021 03:36:56 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon Apr 19 2021 08:37:06 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -9,6 +9,25 @@
 <link id="favicon" rel="shortcut icon" href="./image/cyclictodohex.1024.png">
 <link rel="apple-touch-icon" href="./image/cyclictodohex.1024.png">
 <style type="text/css">
+.clickable-trait {
+  cursor: pointer;
+}
+.link-trait {
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .link-trait:hover {
+    text-decoration: underline;
+  }
+  .link-trait:not(:hover) {
+    text-decoration: none;
+  }
+}
+@media (hover: none) {
+  .link-trait {
+    text-decoration: none;
+  }
+}
 .monospace-trait {
   font-family: monospace;
 }
@@ -158,19 +177,6 @@
     background-color: #000022;
   }
 }
-@media (hover: hover) {
-  .hover-underline-trait:hover {
-    text-decoration: underline;
-  }
-  .hover-underline-trait:not(:hover) {
-    text-decoration: none;
-  }
-}
-@media (hover: none) {
-  .hover-underline-trait {
-    text-decoration: none;
-  }
-}
 * {
   font-family: ui-sans-serif, "ヒラギノ角ゴ Pro w4", Roboto, Meiryo;
   font: -apple-system-body;
@@ -207,6 +213,22 @@ textarea {
 @media (prefers-color-scheme: dark) {
   ::-webkit-calendar-picker-indicator {
     filter: invert(1);
+  }
+}
+a {
+  cursor: pointer;
+}
+@media (hover: hover) {
+  a:hover {
+    text-decoration: underline;
+  }
+  a:not(:hover) {
+    text-decoration: none;
+  }
+}
+@media (hover: none) {
+  a {
+    text-decoration: none;
   }
 }
 .monospace {
