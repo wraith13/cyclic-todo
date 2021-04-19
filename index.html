@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon Apr 19 2021 20:47:40 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Apr 20 2021 06:09:21 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -4602,31 +4602,41 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
+            Render.screenHeaderSegmentCore = function (item) { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            _a = {
+                                tag: "div",
+                                className: "icon"
+                            };
+                            return [4 /*yield*/, Resource.loadSvgOrCache(item.icon)];
+                        case 1: return [2 /*return*/, [
+                                (_a.children = _b.sent(),
+                                    _a),
+                                {
+                                    tag: "div",
+                                    className: "segment-title",
+                                    children: item.title,
+                                }
+                            ]];
+                    }
+                });
+            }); };
             Render.screenHeaderLabelSegment = function (item, className) {
                 if (className === void 0) { className = ""; }
                 return __awaiter(_this, void 0, void 0, function () {
-                    var _a, _b;
-                    return __generator(this, function (_c) {
-                        switch (_c.label) {
+                    var _a;
+                    return __generator(this, function (_b) {
+                        switch (_b.label) {
                             case 0:
                                 _a = {
                                     tag: "div",
                                     className: "segment label-segment " + className
                                 };
-                                _b = {
-                                    tag: "div",
-                                    className: "icon"
-                                };
-                                return [4 /*yield*/, Resource.loadSvgOrCache(item.icon)];
-                            case 1: return [2 /*return*/, (_a.children = [
-                                    (_b.children = _c.sent(),
-                                        _b),
-                                    {
-                                        tag: "div",
-                                        className: "segment-title",
-                                        children: item.title,
-                                    }
-                                ],
+                                return [4 /*yield*/, Render.screenHeaderSegmentCore(item)];
+                            case 1: return [2 /*return*/, (_a.children = _b.sent(),
                                     _a)];
                         }
                     });
@@ -4636,29 +4646,17 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 if (className === void 0) { className = ""; }
                 return __awaiter(_this, void 0, void 0, function () {
                     var _a;
-                    var _b, _c;
-                    return __generator(this, function (_d) {
-                        switch (_d.label) {
+                    var _b;
+                    return __generator(this, function (_c) {
+                        switch (_c.label) {
                             case 0:
                                 _a = Render.internalLink;
                                 _b = {
                                     className: "segment " + className,
                                     href: item.href
                                 };
-                                _c = {
-                                    tag: "div",
-                                    className: "icon"
-                                };
-                                return [4 /*yield*/, Resource.loadSvgOrCache(item.icon)];
-                            case 1: return [2 /*return*/, _a.apply(void 0, [(_b.children = [
-                                        (_c.children = _d.sent(),
-                                            _c),
-                                        {
-                                            tag: "div",
-                                            className: "segment-title",
-                                            children: item.title,
-                                        }
-                                    ],
+                                return [4 /*yield*/, Render.screenHeaderSegmentCore(item)];
+                            case 1: return [2 /*return*/, _a.apply(void 0, [(_b.children = _c.sent(),
                                         _b)])];
                         }
                     });
@@ -4668,10 +4666,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 if (className === void 0) { className = ""; }
                 return __awaiter(_this, void 0, void 0, function () {
                     var cover, close, popup, segment, _a;
-                    var _b, _c;
+                    var _b;
                     var _this = this;
-                    return __generator(this, function (_d) {
-                        switch (_d.label) {
+                    return __generator(this, function (_c) {
+                        switch (_c.label) {
                             case 0:
                                 close = function () {
                                     popup.classList.remove("show");
@@ -4695,21 +4693,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     tag: "div",
                                     className: "segment " + className
                                 };
-                                _c = {
-                                    tag: "div",
-                                    className: "icon"
-                                };
-                                return [4 /*yield*/, Resource.loadSvgOrCache(item.icon)];
+                                return [4 /*yield*/, Render.screenHeaderSegmentCore(item)];
                             case 1:
-                                segment = _a.apply(void 0, [(_b.children = [
-                                        (_c.children = _d.sent(),
-                                            _c),
-                                        {
-                                            tag: "div",
-                                            className: "segment-title",
-                                            children: item.title,
-                                        }
-                                    ],
+                                segment = _a.apply(void 0, [(_b.children = _c.sent(),
                                         _b.onclick = function () {
                                             console.log("menu-button.click!");
                                             popup.classList.add("show");

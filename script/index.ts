@@ -2084,41 +2084,30 @@ export module CyclicToDo
             ],
             "segmented"
         );
+        export const screenHeaderSegmentCore = async (item: HeaderSegmentSource) =>
+        [
+            {
+                tag: "div",
+                className: "icon",
+                children: await Resource.loadSvgOrCache(item.icon),
+            },
+            {
+                tag: "div",
+                className: "segment-title",
+                children:item.title,
+            },
+        ];
         export const screenHeaderLabelSegment = async (item: HeaderSegmentSource, className: string = "") =>
         ({
             tag: "div",
             className: `segment label-segment ${className}`,
-            children:
-            [
-                {
-                    tag: "div",
-                    className: "icon",
-                    children: await Resource.loadSvgOrCache(item.icon),
-                },
-                {
-                    tag: "div",
-                    className: "segment-title",
-                    children:item.title,
-                },
-            ],
+            children: await screenHeaderSegmentCore(item),
         });
         export const screenHeaderLinkSegment = async (item: HeaderSegmentSource, className: string = "") => internalLink
         ({
             className: `segment ${className}`,
             href: item.href,
-            children:
-            [
-                {
-                    tag: "div",
-                    className: "icon",
-                    children: await Resource.loadSvgOrCache(item.icon),
-                },
-                {
-                    tag: "div",
-                    className: "segment-title",
-                    children:item.title,
-                },
-            ],
+            children: await screenHeaderSegmentCore(item),
         });
         export const screenHeaderPopupSegment = async (item: HeaderSegmentSource, className: string = "") =>
         {
@@ -2144,20 +2133,7 @@ export module CyclicToDo
             ({
                 tag: "div",
                 className: `segment ${className}`,
-                children:
-                [
-                    {
-                        tag: "div",
-                        className: "icon",
-                        children: await Resource.loadSvgOrCache(item.icon),
-                    },
-                    {
-                        tag: "div",
-                        className: "segment-title",
-                        children:item.title,
-                    },
-                    //popup
-                ],
+                children: await screenHeaderSegmentCore(item),
                 onclick: () =>
                 {
                     console.log("menu-button.click!");
