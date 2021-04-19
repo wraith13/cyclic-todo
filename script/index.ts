@@ -2524,7 +2524,6 @@ export module CyclicToDo
         });
         export const showListScreen = async (entry: ToDoTagEntry) =>
         {
-            document.title = `${Domain.tagMap(entry.tag)} ${applicationTitle}`;
             const list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)));
             Domain.updateListProgress(list);
             Domain.sortList(entry, list);
@@ -2694,7 +2693,6 @@ export module CyclicToDo
         });
         export const showHistoryScreen = async (entry: ToDoTagEntry) =>
         {
-            document.title = `${locale.map("History")}: ${Domain.tagMap(entry.tag)} ${applicationTitle}`;
             const histories: { [task:string]:number[] } = { };
             let list = entry.todo.map(task => (histories[task] = Storage.History.get(entry.pass, task)).map(tick => ({ task, tick }))).reduce((a, b) => a.concat(b), []);
             list.sort(minamo.core.comparer.make(a => -a.tick));
@@ -2851,10 +2849,7 @@ export module CyclicToDo
             ]
         });
         export const showRemovedScreen = async (pass: string) =>
-        {
-            document.title = `${locale.map("@deleted")} ${applicationTitle}`;
             await showWindow(await removedScreen(pass, Storage.Removed.get(pass)));
-        };
         export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[], tag: string = Storage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0]) =>
         ({
             tag: "div",
@@ -2959,7 +2954,6 @@ export module CyclicToDo
         });
         export const showTodoScreen = async (pass: string, task: string) =>
         {
-            document.title = `${task} ${applicationTitle}`;
             const item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
             Domain.updateProgress(item);
             const updateWindow = async (event: UpdateWindowEventEype) =>
@@ -2999,10 +2993,7 @@ export module CyclicToDo
             };
         }
         export const showExportScreen = async (pass: string) =>
-        {
-            document.title = applicationTitle;
             await showWindow(await exportScreen(pass));
-        };
         export const exportScreen = async (pass: string) =>
         ({
             tag: "div",
@@ -3035,10 +3026,7 @@ export module CyclicToDo
             ],
         });
         export const showImportScreen = async () =>
-        {
-            document.title = applicationTitle;
             await showWindow(await importScreen());
-        };
         export const importScreen = async () =>
         ({
             tag: "div",
@@ -3130,10 +3118,7 @@ export module CyclicToDo
             ],
         });
         export const showRemovedListScreen = async () =>
-        {
-            document.title = `${locale.map("@deleted")} ${applicationTitle}`;
             await showWindow(await removedListScreen(Storage.Backup.get().map(json => JSON.parse(json) as ToDoList)));
-        };
         export const removedListScreen = async (list: ToDoList[]) =>
         ({
             tag: "div",
@@ -3354,10 +3339,7 @@ export module CyclicToDo
             ],
         });
         export const showWelcomeScreen = async () =>
-        {
-            document.title = applicationTitle;
             await showWindow(await welcomeScreen());
-        };
         export const updatingScreen = async (url: string = location.href) =>
         ({
             tag: "div",
@@ -3406,9 +3388,14 @@ export module CyclicToDo
             ],
         });
         export const showUpdatingScreen = async (url: string = location.href) =>
-        {
-            document.title = applicationTitle;
             await showWindow(await updatingScreen(url));
+        export const updateTitle = () =>
+        {
+            document.title = Array.from(Array.from(document.getElementsByTagName("h1"))[0]?.getElementsByClassName("segment-title"))
+                ?.map((div: HTMLDivElement) => div.innerText)
+                ?.reverse()
+                ?.join(" - ")
+                ?? applicationTitle;
         };
         export type UpdateWindowEventEype = "timer" | "scroll" | "storage";
         export let updateWindow: (event: UpdateWindowEventEype) => unknown;
@@ -3453,6 +3440,7 @@ export module CyclicToDo
                 document.getElementById("body"),
                 screen
             );
+            updateTitle();
             //minamo.core.timeout(100);
             resizeFlexList();
         };
