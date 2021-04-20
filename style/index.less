@@ -492,17 +492,26 @@ button
     background-color: #8884;
     a
     {
-        @media (hover: hover)
+        color: @main-color;
+        fill: @main-color;
+        opacity: 0.6;
+        @media (prefers-color-scheme: dark)
         {
-            &:not(:hover)
-            {
-                text-decoration: none;
-            }
+            color: @dark-main-color;
+            fill: @dark-main-color;
         }
-        @media (hover: none)
-        {
-            text-decoration: none;
-        }
+        .link-trait;
+        // @media (hover: hover)
+        // {
+        //     &:not(:hover)
+        //     {
+        //         text-decoration: none;
+        //     }
+        // }
+        // @media (hover: none)
+        // {
+        //     text-decoration: none;
+        // }
         .history-bar-title,
         .history-bar-item
         {
@@ -515,14 +524,6 @@ button
                 width: 1rem;
                 height: 1rem;
                 margin-right: 4px;
-            }
-            color: @main-color;
-            fill: @main-color;
-            opacity: 0.6;
-            @media (prefers-color-scheme: dark)
-            {
-                color: @dark-main-color;
-                fill: @dark-main-color;
             }
         }
     }

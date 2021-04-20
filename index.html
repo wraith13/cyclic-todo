@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue Apr 20 2021 20:32:04 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed Apr 21 2021 05:47:00 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -17,6 +17,9 @@
 }
 @media (hover: hover) {
   .link-trait:hover {
+    opacity: 1;
+    color: #6F7F00;
+    fill: #6F7F00;
     text-decoration: underline;
   }
   .link-trait:not(:hover) {
@@ -220,6 +223,9 @@ a {
 }
 @media (hover: hover) {
   a:hover {
+    opacity: 1;
+    color: #6F7F00;
+    fill: #6F7F00;
     text-decoration: underline;
   }
   a:not(:hover) {
@@ -838,7 +844,25 @@ button.delete-button {
 .history-bar > * + * {
   padding-left: 1rem;
 }
+.history-bar a {
+  color: #000022;
+  fill: #000022;
+  opacity: 0.6;
+  cursor: pointer;
+}
+@media (prefers-color-scheme: dark) {
+  .history-bar a {
+    color: #FFFFFF;
+    fill: #FFFFFF;
+  }
+}
 @media (hover: hover) {
+  .history-bar a:hover {
+    opacity: 1;
+    color: #6F7F00;
+    fill: #6F7F00;
+    text-decoration: underline;
+  }
   .history-bar a:not(:hover) {
     text-decoration: none;
   }
@@ -854,22 +878,12 @@ button.delete-button {
   flex-direction: row;
   align-items: center;
   justify-content: start;
-  color: #000022;
-  fill: #000022;
-  opacity: 0.6;
 }
 .history-bar a .history-bar-title svg,
 .history-bar a .history-bar-item svg {
   width: 1rem;
   height: 1rem;
   margin-right: 4px;
-}
-@media (prefers-color-scheme: dark) {
-  .history-bar a .history-bar-title,
-  .history-bar a .history-bar-item {
-    color: #FFFFFF;
-    fill: #FFFFFF;
-  }
 }
 .row-flex-list,
 .column-flex-list {
@@ -1042,6 +1056,9 @@ button.delete-button {
 }
 @media (hover: hover) {
   .item-title:hover {
+    opacity: 1;
+    color: #6F7F00;
+    fill: #6F7F00;
     text-decoration: underline;
   }
   .item-title:not(:hover) {
