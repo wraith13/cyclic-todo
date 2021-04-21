@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed Apr 21 2021 18:43:08 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu Apr 22 2021 04:31:27 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -6447,18 +6447,32 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 }, 50);
             };
+            var isInComposeSession = false;
+            var lastestCompositionEndAt = 0;
+            Render.onCompositionStart = function (_event) {
+                isInComposeSession = true;
+            };
+            Render.onCompositionEnd = function (_event) {
+                isInComposeSession = false;
+                lastestCompositionEndAt = new Date().getTime();
+            };
+            Render.isComposing = function (event) {
+                return event.isComposing || isInComposeSession || new Date().getTime() < lastestCompositionEndAt + 100;
+            };
             Render.onKeydown = function (event) {
-                switch (event.key) {
-                    case "Enter":
-                        Array.from(document.getElementsByClassName("popup"))
-                            .filter(function (_i, ix, list) { return (ix + 1) === list.length; })
-                            .forEach(function (popup) { var _a, _b; return (_b = (_a = Array.from(popup.getElementsByClassName("default-button"))) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.click(); });
-                        break;
-                    case "Escape":
-                        Array.from(document.getElementsByClassName("screen-cover"))
-                            .filter(function (_i, ix, list) { return (ix + 1) === list.length; })
-                            .forEach(function (i) { return i.click(); });
-                        break;
+                if (!Render.isComposing(event)) {
+                    switch (event.key) {
+                        case "Enter":
+                            Array.from(document.getElementsByClassName("popup"))
+                                .filter(function (_i, ix, list) { return (ix + 1) === list.length; })
+                                .forEach(function (popup) { var _a, _b; return (_b = (_a = Array.from(popup.getElementsByClassName("default-button"))) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.click(); });
+                            break;
+                        case "Escape":
+                            Array.from(document.getElementsByClassName("screen-cover"))
+                                .filter(function (_i, ix, list) { return (ix + 1) === list.length; })
+                                .forEach(function (i) { return i.click(); });
+                            break;
+                    }
                 }
             };
         })(Render = CyclicToDo.Render || (CyclicToDo.Render = {}));
@@ -6552,6 +6566,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
                             window.addEventListener('resize', Render.onWindowResize);
                             window.addEventListener('storage', Render.onUpdateStorage);
+                            window.addEventListener('compositionstart', Render.onCompositionStart);
+                            window.addEventListener('compositionend', Render.onCompositionEnd);
                             window.addEventListener('keydown', Render.onKeydown);
                             if (!(pass && todo)) return [3 /*break*/, 4];
                             console.log("show todo screen");

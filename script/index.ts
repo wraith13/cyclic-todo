@@ -3545,20 +3545,38 @@ export module CyclicToDo
                 50,
             );
         };
+        let isInComposeSession: boolean = false;
+        let lastestCompositionEndAt = 0;
+        export const onCompositionStart = (_event: CompositionEvent) =>
+        {
+            isInComposeSession = true;
+        };
+        export const onCompositionEnd = (_event: CompositionEvent) =>
+        {
+            isInComposeSession = false;
+            lastestCompositionEndAt = new Date().getTime();
+        };
+        export const isComposing = (event: KeyboardEvent) =>
+        {
+            return event.isComposing || isInComposeSession || new Date().getTime() < lastestCompositionEndAt +100;
+        };
         export const onKeydown = (event: KeyboardEvent) =>
         {
-            switch(event.key)
+            if ( ! isComposing(event))
             {
-                case "Enter":
-                    (Array.from(document.getElementsByClassName("popup")) as HTMLDivElement[])
-                        .filter((_i, ix, list) => (ix +1) === list.length)
-                        .forEach(popup => (Array.from(popup.getElementsByClassName("default-button")) as HTMLButtonElement[])?.[0]?.click());
-                    break;
-                case "Escape":
-                    (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[])
-                        .filter((_i, ix, list) => (ix +1) === list.length)
-                        .forEach(i => i.click());
-                    break;
+                switch(event.key)
+                {
+                    case "Enter":
+                        (Array.from(document.getElementsByClassName("popup")) as HTMLDivElement[])
+                            .filter((_i, ix, list) => (ix +1) === list.length)
+                            .forEach(popup => (Array.from(popup.getElementsByClassName("default-button")) as HTMLButtonElement[])?.[0]?.click());
+                        break;
+                    case "Escape":
+                        (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[])
+                            .filter((_i, ix, list) => (ix +1) === list.length)
+                            .forEach(i => i.click());
+                        break;
+                }
             }
         };
     }
@@ -3632,6 +3650,8 @@ export module CyclicToDo
         // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
         window.addEventListener('resize', Render.onWindowResize);
         window.addEventListener('storage', Render.onUpdateStorage);
+        window.addEventListener('compositionstart', Render.onCompositionStart);
+        window.addEventListener('compositionend', Render.onCompositionEnd);
         window.addEventListener('keydown', Render.onKeydown);
         if (pass && todo)
         {
