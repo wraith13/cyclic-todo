@@ -1,4 +1,5 @@
 import { minamo } from "./minamo.js";
+import config from "../resource/config.json";
 import localeEn from "../resource/lang.en.json";
 import localeJa from "../resource/lang.ja.json";
 import resource from "../resource/images.json";
@@ -68,7 +69,7 @@ export module Calculate
 }
 export module CyclicToDo
 {
-    export const applicationTitle = "Cyclic ToDo";
+    export const applicationTitle = config.applicationTitle;
     export module locale
     {
         export type LocaleKeyType = localeParallel.LocaleKeyType;
@@ -117,7 +118,7 @@ export module CyclicToDo
         {
             const specification = "https://github.com/wraith13/cyclic-todo/README.md";
             const title = Title.get(pass);
-            const timeAccuracy = Domain.TimeAccuracy;
+            const timeAccuracy = Domain.timeAccuracy;
             const tags: { [tag: string]: string[] } = { };
             [
                 //"@overall", todos でカバーされるのでここには含めない
@@ -630,10 +631,11 @@ export module CyclicToDo
         //     // );
         //     // todo.forEach(task => Storage.History.add(pass, task, temp[task]));
         // };
-        export const TimeAccuracy = 60 *1000;
-        export const standardDeviationRate = 1.5;
-        export const granceTime = 24 *60 *60 *1000 / TimeAccuracy;
-        export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / TimeAccuracy);
+        export const timeAccuracy = config.timeAccuracy;
+        export const standardDeviationRate = config.standardDeviationRate;
+        export const granceTime = (config.granceMinutes *60 *1000) / timeAccuracy;
+        export const maxRestAdjustTime = (config.maxRestAdjustMinutes *60 *1000) / timeAccuracy;
+        export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / timeAccuracy);
         export const dateCoreStringFromTick = (tick: null | number) =>
         {
             if (null === tick)
@@ -642,7 +644,7 @@ export module CyclicToDo
             }
             else
             {
-                const date = new Date(tick *TimeAccuracy);
+                const date = new Date(tick *timeAccuracy);
                 return `${date.getFullYear()}-${("0" +(date.getMonth() +1)).substr(-2)}-${("0" +date.getDate()).substr(-2)}`;
             }
         };
@@ -658,13 +660,13 @@ export module CyclicToDo
                 return -getTime(tick);
             }
             else
-            if (tick *TimeAccuracy < 24 *60 *60 *1000)
+            if (tick *timeAccuracy < 24 *60 *60 *1000)
             {
                 return tick;
             }
             else
             {
-                const date = new Date(tick *TimeAccuracy);
+                const date = new Date(tick *timeAccuracy);
                 date.setHours(0);
                 date.setMinutes(0);
                 date.setSeconds(0);
@@ -852,7 +854,7 @@ export module CyclicToDo
             standardDeviation: number,
             elapsed: number,
             rest: number = span -elapsed,
-            delta: number = Math.min(60, Math.max(rest /2, 0)),
+            delta: number = Math.min(maxRestAdjustTime, Math.max(rest /2, 0)),
             advancedRest: number = rest -delta,
         ) =>
             0 < rest ?
@@ -3397,7 +3399,7 @@ export module CyclicToDo
                 updateWindowTimer = setInterval
                 (
                     () => Render.updateWindow?.("timer"),
-                    Domain.TimeAccuracy
+                    Domain.timeAccuracy
                 );
                 document.addEventListener
                 (

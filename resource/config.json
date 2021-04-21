@@ -1,0 +1,7 @@
+{
+    "applicationTitle": "Cyclic ToDo",
+    "timeAccuracy": 60000,
+    "standardDeviationRate": 1.5,
+    "granceMinutes": 1440,
+    "maxRestAdjustMinutes": 60
+}
