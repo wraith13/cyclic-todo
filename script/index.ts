@@ -2027,7 +2027,7 @@ export module CyclicToDo
                         children:
                         [
                             await Resource.loadSvgOrCache("history-icon"),
-                            `${locale.map("History")}:`,
+                            locale.map("History"),
                         ],
                     },
                 }),
@@ -2049,7 +2049,7 @@ export module CyclicToDo
                                     {
                                         tag: "span",
                                         className: "monospace",
-                                        children: `(${Domain.timeLongStringFromTick(item.elapsed)}),`
+                                        children: `(${Domain.timeLongStringFromTick(item.elapsed)})`
                                     }
                                 ],
                             }
