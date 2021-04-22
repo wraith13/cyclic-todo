@@ -1093,7 +1093,8 @@ export module CyclicToDo
         // export const prompt = systemPrompt;
         export const prompt = customPrompt;
         export const alert = (message: string) => window.alert(message);
-        export const confirm = (message: string) => window.confirm(message);
+        export const systemConfirm = (message: string) => window.confirm(message);
+        export const confirm = systemConfirm;
         export const newListPrompt = async () =>
         {
             const newList = await prompt("ToDoリストの名前を入力してください", "ToDo リスト");
@@ -2064,8 +2065,12 @@ export module CyclicToDo
             title: string;
             href?: PageParams;
             menu?: minamo.dom.Source;
+            subMenu?: minamo.dom.Source;
         }
-        export const screenSegmentedHeader = async (items: HeaderSegmentSource[], menu: minamo.dom.Source) => heading
+        export const screenSegmentedHeader = async (
+            items: HeaderSegmentSource[],
+            menu?: minamo.dom.Source
+        ) => heading
         (
             "h1",
             [
@@ -2082,7 +2087,7 @@ export module CyclicToDo
                         )
                     )
                 ).reduce((a, b) => (a as any[]).concat(b), []),
-                await menuButton(menu),
+                menu ? await menuButton(menu): [],
             ],
             "segmented"
         );
@@ -2098,6 +2103,7 @@ export module CyclicToDo
                 className: "segment-title",
                 children:item.title,
             },
+            item.subMenu ? await menuButton(item.subMenu): [],
         ];
         export const screenHeaderLabelSegment = async (item: HeaderSegmentSource, className: string = "") =>
         ({
@@ -2355,6 +2361,86 @@ export module CyclicToDo
                 }
             }
         );
+        export const listScreenMenu = async (entry: ToDoTagEntry) =>
+        [
+            internalLink
+            ({
+                href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                children: menuItem(label("History")),
+            }),
+            "@overall" === entry.tag ? listRenameMenu(entry.pass): [],
+            Storage.Tag.isSystemTag(entry.tag) ? []:
+                menuItem
+                (
+                    label("Rename"),
+                    async () =>
+                    {
+                        const newTag = await prompt("タグの名前を入力してください", entry.tag);
+                        if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
+                        {
+                            if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
+                            {
+                                await showUrl({ pass: entry.pass, tag: newTag });
+                            }
+                            else
+                            {
+                                alert("その名前のタグは既に存在しています。");
+                            }
+                        }
+                    }
+                ),
+            internalLink
+            ({
+                href: { pass: entry.pass, hash: "removed" },
+                children: menuItem(label("@deleted")),
+            }),
+            menuItem
+            (
+                label("New ToDo"),
+                async () =>
+                {
+                    const newTask = await prompt("ToDo の名前を入力してください");
+                    if (null !== newTask)
+                    {
+                        Storage.Task.add(entry.pass, newTask);
+                        Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                        await reload();
+                    }
+                }
+            ),
+            {
+                tag: "button",
+                children: "🚫 リストをシェア",
+            },
+            internalLink
+            ({
+                href: { pass: entry.pass, hash: "export" },
+                children: menuItem(label("Export")),
+            }),
+            Storage.Tag.isSystemTag(entry.tag) ? []:
+                menuItem
+                (
+                    label("Delete"),
+                    async () =>
+                    {
+                        Storage.Tag.remove(entry.pass, entry.tag);
+                        await showUrl({ pass: entry.pass, tag: "@overall" });
+                    },
+                    "delete-button"
+                ),
+            "@overall" === entry.tag ?
+                menuItem
+                (
+                    label("Delete this List"),
+                    async () =>
+                    {
+                        Storage.Pass.remove(entry.pass);
+                        await showUrl({ });
+                    },
+                    "delete-button"
+                ):
+                [],
+        ];
         export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         ({
             tag: "div",
@@ -2368,85 +2454,7 @@ export module CyclicToDo
                         await screenHeaderListSegment(entry.pass),
                         await screenHeaderTagSegment(entry.pass, entry.tag),
                     ],
-                    [
-                        internalLink
-                        ({
-                            href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                            children: menuItem(label("History")),
-                        }),
-                        "@overall" === entry.tag ? listRenameMenu(entry.pass): [],
-                        Storage.Tag.isSystemTag(entry.tag) ? []:
-                            menuItem
-                            (
-                                label("Rename"),
-                                async () =>
-                                {
-                                    const newTag = await prompt("タグの名前を入力してください", entry.tag);
-                                    if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
-                                    {
-                                        if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
-                                        {
-                                            await showUrl({ pass: entry.pass, tag: newTag });
-                                        }
-                                        else
-                                        {
-                                            alert("その名前のタグは既に存在しています。");
-                                        }
-                                    }
-                                }
-                            ),
-                        internalLink
-                        ({
-                            href: { pass: entry.pass, hash: "removed" },
-                            children: menuItem(label("@deleted")),
-                        }),
-                        menuItem
-                        (
-                            label("New ToDo"),
-                            async () =>
-                            {
-                                const newTask = await prompt("ToDo の名前を入力してください");
-                                if (null !== newTask)
-                                {
-                                    Storage.Task.add(entry.pass, newTask);
-                                    Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                    await reload();
-                                }
-                            }
-                        ),
-                        {
-                            tag: "button",
-                            children: "🚫 リストをシェア",
-                        },
-                        internalLink
-                        ({
-                            href: { pass: entry.pass, hash: "export" },
-                            children: menuItem(label("Export")),
-                        }),
-                        Storage.Tag.isSystemTag(entry.tag) ? []:
-                            menuItem
-                            (
-                                label("Delete"),
-                                async () =>
-                                {
-                                    Storage.Tag.remove(entry.pass, entry.tag);
-                                    await showUrl({ pass: entry.pass, tag: "@overall" });
-                                },
-                                "delete-button"
-                            ),
-                        "@overall" === entry.tag ?
-                            menuItem
-                            (
-                                label("Delete this List"),
-                                async () =>
-                                {
-                                    Storage.Pass.remove(entry.pass);
-                                    await showUrl({ });
-                                },
-                                "delete-button"
-                            ):
-                            [],
-                    ]
+                    await listScreenMenu(entry),
                 ),
                 await historyBar(entry, list),
                 {
@@ -2814,7 +2822,7 @@ export module CyclicToDo
                                 children: "完全に削除",
                                 onclick: async () =>
                                 {
-                                    if (confirm("この操作は取り消せません。続行しますか？"))
+                                    if (systemConfirm("この操作は取り消せません。続行しますか？"))
                                     {
                                         Storage.Removed.clear(pass);
                                         await reload();
@@ -3150,7 +3158,7 @@ export module CyclicToDo
                                 children: "完全に削除",
                                 onclick: async () =>
                                 {
-                                    if (confirm("この操作は取り消せません。続行しますか？"))
+                                    if (systemConfirm("この操作は取り消せません。続行しますか？"))
                                     {
                                         Storage.Backup.clear();
                                         await reload();
