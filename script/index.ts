@@ -2567,6 +2567,78 @@ export module CyclicToDo
             };
             await showWindow(await listScreen(entry, list), updateWindow);
         };
+        export const historyScreenMenu = async (entry: ToDoTagEntry) =>
+        [
+            menuItem
+            (
+                label("Back to List"),
+                async () => await showUrl({ pass: entry.pass, tag: entry.tag, })
+            ),
+            Storage.Tag.isSystemTag(entry.tag) ? []:
+                menuItem
+                (
+                    label("Rename"),
+                    async () =>
+                    {
+                        const newTag = await prompt("タグの名前を入力してください", entry.tag);
+                        if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
+                        {
+                            if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
+                            {
+                                await showUrl({ pass: entry.pass, tag: newTag, hash: "history", });
+                            }
+                            else
+                            {
+                                alert("その名前のタグは既に存在しています。");
+                            }
+                        }
+                    }
+                ),
+            menuItem
+            (
+                label("New ToDo"),
+                async () =>
+                {
+                    const newTask = await prompt("ToDo の名前を入力してください");
+                    if (null !== newTask)
+                    {
+                        Storage.Task.add(entry.pass, newTask);
+                        Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                        await reload();
+                    }
+                }
+            ),
+            {
+                tag: "button",
+                children: "🚫 リストをシェア",
+            },
+            menuItem
+            (
+                label("Export"),
+                async () => await showUrl({ pass: entry.pass, hash: "export", })
+            ),
+            // Storage.Tag.isSystemTag(entry.tag) ? []:
+            //     menuItem
+            //     (
+            //         label("Delete"),
+            //         async () =>
+            //         {
+            //         },
+            //         "delete-button"
+            //     ),
+            // "@overall" === entry.tag ?
+            //     menuItem
+            //     (
+            //         label("Delete"),
+            //         async () =>
+            //         {
+            //             Storage.Pass.remove(entry.pass);
+            //             await showUrl({ });
+            //         },
+            //         "delete-button"
+            //     ):
+            //     [],
+        ];
         export const historyScreen = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[]) =>
         ({
             tag: "div",
@@ -2584,77 +2656,7 @@ export module CyclicToDo
                             title: locale.map("History"),
                         }
                     ],
-                    [
-                        menuItem
-                        (
-                            label("Back to List"),
-                            async () => await showUrl({ pass: entry.pass, tag: entry.tag, })
-                        ),
-                        Storage.Tag.isSystemTag(entry.tag) ? []:
-                            menuItem
-                            (
-                                label("Rename"),
-                                async () =>
-                                {
-                                    const newTag = await prompt("タグの名前を入力してください", entry.tag);
-                                    if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
-                                    {
-                                        if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
-                                        {
-                                            await showUrl({ pass: entry.pass, tag: newTag, hash: "history", });
-                                        }
-                                        else
-                                        {
-                                            alert("その名前のタグは既に存在しています。");
-                                        }
-                                    }
-                                }
-                            ),
-                        menuItem
-                        (
-                            label("New ToDo"),
-                            async () =>
-                            {
-                                const newTask = await prompt("ToDo の名前を入力してください");
-                                if (null !== newTask)
-                                {
-                                    Storage.Task.add(entry.pass, newTask);
-                                    Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                    await reload();
-                                }
-                            }
-                        ),
-                        {
-                            tag: "button",
-                            children: "🚫 リストをシェア",
-                        },
-                        menuItem
-                        (
-                            label("Export"),
-                            async () => await showUrl({ pass: entry.pass, hash: "export", })
-                        ),
-                        // Storage.Tag.isSystemTag(entry.tag) ? []:
-                        //     menuItem
-                        //     (
-                        //         label("Delete"),
-                        //         async () =>
-                        //         {
-                        //         },
-                        //         "delete-button"
-                        //     ),
-                        // "@overall" === entry.tag ?
-                        //     menuItem
-                        //     (
-                        //         label("Delete"),
-                        //         async () =>
-                        //         {
-                        //             Storage.Pass.remove(entry.pass);
-                        //             await showUrl({ });
-                        //         },
-                        //         "delete-button"
-                        //     ):
-                        //     [],
-                    ]
+                    await historyScreenMenu(entry),
                 ),
                 {
                     tag: "div",
@@ -2753,6 +2755,24 @@ export module CyclicToDo
                 }
             ],
         });
+        export const removedScreenMenu = async (pass: string) =>
+        [
+            menuItem
+            (
+                label("Back to List"),
+                async () => await showUrl({ pass, tag: "@overall", })
+            ),
+            menuItem
+            (
+                "完全に削除",
+                async () =>
+                {
+                    Storage.Removed.clear(pass);
+                    await reload();
+                },
+                "delete-button"
+            ),
+        ];
         export const removedScreen = async (pass: string, list: Storage.Removed.Type[]) =>
         ({
             tag: "div",
@@ -2766,23 +2786,7 @@ export module CyclicToDo
                         await screenHeaderListSegment(pass),
                         await screenHeaderTagSegment(pass, "@deleted"),
                     ],
-                    [
-                        menuItem
-                        (
-                            label("Back to List"),
-                            async () => await showUrl({ pass, tag: "@overall", })
-                        ),
-                        menuItem
-                        (
-                            "完全に削除",
-                            async () =>
-                            {
-                                Storage.Removed.clear(pass);
-                                await reload();
-                            },
-                            "delete-button"
-                        ),
-                    ],
+                    await removedScreenMenu(pass)
                 ),
                 0 < list.length ?
                     {
@@ -2836,6 +2840,23 @@ export module CyclicToDo
         });
         export const showRemovedScreen = async (pass: string) =>
             await showWindow(await removedScreen(pass, Storage.Removed.get(pass)));
+        export const todoScreenMenu = async (pass: string, item: ToDoEntry) =>
+        [
+            todoDoneMenu(pass, item),
+            todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
+            todoTagMenu(pass, item),
+            todoDeleteMenu(pass, item),
+            {
+                tag: "button",
+                children: "🚫 ToDo をシェア",
+            },
+            menuItem
+            (
+                label("Export"),
+                async () => await showUrl({ pass, hash: "export", })
+            ),
+        ];
+
         export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[], tag: string = Storage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0]) =>
         ({
             tag: "div",
@@ -2850,21 +2871,7 @@ export module CyclicToDo
                         await screenHeaderTagSegment(pass, tag),
                         await screenHeaderTaskSegment(pass, tag, item.task),
                     ],
-                    [
-                        todoDoneMenu(pass, item),
-                        todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
-                        todoTagMenu(pass, item),
-                        todoDeleteMenu(pass, item),
-                        {
-                            tag: "button",
-                            children: "🚫 ToDo をシェア",
-                        },
-                        menuItem
-                        (
-                            label("Export"),
-                            async () => await showUrl({ pass, hash: "export", })
-                        ),
-                    ]
+                    await todoScreenMenu(pass, item),
                 ),
                 {
                     tag: "div",
@@ -2980,6 +2987,14 @@ export module CyclicToDo
         }
         export const showExportScreen = async (pass: string) =>
             await showWindow(await exportScreen(pass));
+        export const exportScreenMenu = async (pass: string) =>
+        [
+            menuItem
+            (
+                label("Back to List"),
+                async () => async () => await showUrl({ pass, tag: "@overall", }),
+            )
+        ];
         export const exportScreen = async (pass: string) =>
         ({
             tag: "div",
@@ -2996,13 +3011,7 @@ export module CyclicToDo
                             title: locale.map("Export"),
                         }
                     ],
-                    [
-                        menuItem
-                        (
-                            label("Back to List"),
-                            async () => async () => await showUrl({ pass, tag: "@overall", }),
-                        )
-                    ]
+                    await exportScreenMenu(pass)
                 ),
                 {
                     tag: "textarea",
@@ -3013,6 +3022,14 @@ export module CyclicToDo
         });
         export const showImportScreen = async () =>
             await showWindow(await importScreen());
+        export const importScreenMenu = async () =>
+        [
+            menuItem
+            (
+                label("Back to Top"),
+                async () => await showUrl({ }),
+            )
+        ];
         export const importScreen = async () =>
         ({
             tag: "div",
@@ -3025,13 +3042,7 @@ export module CyclicToDo
                         screenHeaderHomeSegment(),
                         await screenHeaderListSegment("@import")
                     ],
-                    [
-                        menuItem
-                        (
-                            label("Back to Top"),
-                            async () => await showUrl({ }),
-                        )
-                    ]
+                    await importScreenMenu()
                 ),
                 {
                     tag: "textarea",
@@ -3105,6 +3116,14 @@ export module CyclicToDo
         });
         export const showRemovedListScreen = async () =>
             await showWindow(await removedListScreen(Storage.Backup.get().map(json => JSON.parse(json) as ToDoList)));
+        export const removedListScreenMenu = async () =>
+        [
+            menuItem
+            (
+                label("Back to Top"),
+                async () => await showUrl({ }),
+            )
+        ];
         export const removedListScreen = async (list: ToDoList[]) =>
         ({
             tag: "div",
@@ -3117,13 +3136,7 @@ export module CyclicToDo
                         screenHeaderHomeSegment(),
                         await screenHeaderListSegment("@removed")
                     ],
-                    [
-                        menuItem
-                        (
-                            label("Back to Top"),
-                            async () => await showUrl({ }),
-                        )
-                    ]
+                    await removedListScreenMenu()
                 ),
                 0 < list.length ?
                     {
@@ -3250,6 +3263,29 @@ export module CyclicToDo
                 },
             ]
         });
+        export const welcomeScreenMenu = async () =>
+        [
+            menuItem
+            (
+                label("New ToDo List"),
+                newListPrompt,
+            ),
+            internalLink
+            ({
+                href: { hash: "import", },
+                children: menuItem(label("Import List")),
+            }),
+            internalLink
+            ({
+                href: { hash: "removed", },
+                children: menuItem(label("@deleted")),
+            }),
+            externalLink
+            ({
+                href: "https://github.com/wraith13/cyclic-todo/",
+                children: menuItem(labelSpan("GitHub")),
+            }),
+        ];
         export const welcomeScreen = async () =>
         ({
             tag: "div",
@@ -3262,28 +3298,7 @@ export module CyclicToDo
                         icon: "application-icon",
                         title: CyclicToDo.applicationTitle,
                     }],
-                    [
-                        menuItem
-                        (
-                            label("New ToDo List"),
-                            newListPrompt,
-                        ),
-                        internalLink
-                        ({
-                            href: { hash: "import", },
-                            children: menuItem(label("Import List")),
-                        }),
-                        internalLink
-                        ({
-                            href: { hash: "removed", },
-                            children: menuItem(label("@deleted")),
-                        }),
-                        externalLink
-                        ({
-                            href: "https://github.com/wraith13/cyclic-todo/",
-                            children: menuItem(labelSpan("GitHub")),
-                        }),
-                    ]
+                    await welcomeScreenMenu()
                 ),
                 {
                     tag: "div",
@@ -3326,6 +3341,19 @@ export module CyclicToDo
         });
         export const showWelcomeScreen = async () =>
             await showWindow(await welcomeScreen());
+        export const updatingScreenMenu = async () =>
+        [
+            menuItem
+            (
+                label("Back to Top"),
+                async () => await showUrl({ }),
+            ),
+            menuItem
+            (
+                "GitHub",
+                async () => location.href = "https://github.com/wraith13/cyclic-todo/",
+            ),
+        ];
         export const updatingScreen = async (url: string = location.href) =>
         ({
             tag: "div",
@@ -3341,18 +3369,7 @@ export module CyclicToDo
                             title: "loading...",
                         },
                     ],
-                    [
-                        menuItem
-                        (
-                            label("Back to Top"),
-                            async () => await showUrl({ }),
-                        ),
-                        menuItem
-                        (
-                            "GitHub",
-                            async () => location.href = "https://github.com/wraith13/cyclic-todo/",
-                        ),
-                    ]
+                    await updatingScreenMenu()
                 ),
                 await applicationColorIcon(),
                 // {
