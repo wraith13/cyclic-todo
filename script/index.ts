@@ -96,6 +96,10 @@ export module CyclicToDo
         smartRest: null | number;
         count: number;
     }
+    export interface TagSettings
+    {
+        sort?: "smart" | "simple";
+    }
     export interface ToDoList
     {
         specification: "https://github.com/wraith13/cyclic-todo/README.md";
@@ -104,6 +108,7 @@ export module CyclicToDo
         pass: string;
         todos: string[];
         tags: { [tag: string]: string[] };
+        tagSettings: { [tag: string]: TagSettings };
         histories: { [todo: string]: number[] };
         removed: Storage.Removed.Type[];
     }
@@ -120,14 +125,22 @@ export module CyclicToDo
             const title = Title.get(pass);
             const timeAccuracy = Domain.timeAccuracy;
             const tags: { [tag: string]: string[] } = { };
+            const tagSettings: { [tag: string]: TagSettings } = { };
             [
-                //"@overall", todos でカバーされるのでここには含めない
+                "@overall",
                 "@unoverall",
                 //"@deleted", 現状のヤツは廃止。ただ、別の形で復帰させるかも。
             ].concat(Tag.get(pass))
             .forEach
             (
-                tag => tags[tag] = TagMember.getRaw(pass, tag)
+                tag =>
+                {
+                    if ("@overall" !== tag) // todos でカバーされるのでここには含めない
+                    {
+                        tags[tag] = TagMember.getRaw(pass, tag);
+                    }
+                    tagSettings[tag] = TagSettings.get(pass, tag);
+                }
             );
             const todos = TagMember.getRaw(pass, "@overall");
             const histories: { [todo: string]: number[] } = { };
@@ -145,6 +158,7 @@ export module CyclicToDo
                 pass,
                 todos,
                 tags,
+                tagSettings,
                 histories,
                 removed,
             };
@@ -164,6 +178,7 @@ export module CyclicToDo
                     Array.isArray(data.todos) &&
                     data.todos.filter(i => "string" !== typeof i).length <= 0 &&
                     "object" === typeof data.tags &&
+                    "object" === typeof data.tagSettings &&
                     "object" === typeof data.histories
                 )
                 {
@@ -172,6 +187,7 @@ export module CyclicToDo
                     TagMember.set(data.pass, "@overall", data.todos);
                     Tag.set(data.pass, Object.keys(data.tags));
                     Object.keys(data.tags).forEach(tag => TagMember.set(data.pass, tag, data.tags[tag]));
+                    Object.keys(data.tagSettings).forEach(tag => TagSettings.set(data.pass, tag, data.tagSettings[tag]));
                     Object.keys(data.histories).forEach(todo => History.set(data.pass, todo, data.histories[todo]));
                     Removed.set(data.pass, data.removed.map(i => JSON.stringify(i)));
                     return data.pass;
@@ -269,6 +285,7 @@ export module CyclicToDo
                     if (isSublist(tag))
                     {
                         const tasks = TagMember.getRaw(pass, tag).map(task => Task.serialize(pass, task));
+                        const settings = TagSettings.get(pass, tag);
                         Removed.add
                         (
                             pass,
@@ -277,14 +294,18 @@ export module CyclicToDo
                                 deteledAt: Domain.getTicks(),
                                 name: tag,
                                 tasks,
+                                settings,
                             }
                         );
+                        TagMember.getRaw(pass, tag).map(task => Task.removeRaw(pass, task));
                         removeRaw(pass, tag);
                         TagMember.removeKey(pass, tag);
+                        TagSettings.remove(pass, tag);
                     }
                     else
                     {
                         const tasks = TagMember.getRaw(pass, tag);
+                        const settings = TagSettings.get(pass, tag);
                         Removed.add
                         (
                             pass,
@@ -293,10 +314,12 @@ export module CyclicToDo
                                 deteledAt: Domain.getTicks(),
                                 name: tag,
                                 tasks,
+                                settings,
                             }
                         );
                         removeRaw(pass, tag);
                         TagMember.removeKey(pass, tag);
+                        TagSettings.remove(pass, tag);
                     }
                 }
             };
@@ -311,10 +334,12 @@ export module CyclicToDo
                         add(pass, item.name);
                         const allTasks = TagMember.getRaw(pass, "@overall");
                         TagMember.set(pass, item.name, item.tasks.filter(i => 0 <= allTasks.indexOf(i)));
+                        TagSettings.set(pass, item.name, item.settings);
                         break;
                     case "Sublist":
                         add(pass, item.name);
                         item.tasks.forEach(task => Task.restore(pass, task));
+                        TagSettings.set(pass, item.name, item.settings);
                         break;
                     }
                 }
@@ -333,8 +358,10 @@ export module CyclicToDo
                 {
                     add(pass, newTag);
                     TagMember.set(pass, newTag, TagMember.getRaw(pass, oldTag));
+                    TagSettings.set(pass, newTag, TagSettings.get(pass, oldTag));
                     removeRaw(pass, oldTag);
                     TagMember.removeKey(pass, oldTag);
+                    TagSettings.remove(pass, oldTag);
                     return true;
                 }
                 return false;
@@ -401,6 +428,15 @@ export module CyclicToDo
                 }
             };
         }
+        export module TagSettings
+        {
+            export const makeKey = (pass: string, tag: string) => `pass:(${pass}).tag:(${tag})`;
+            export const get = (pass: string, tag: string) =>
+                getStorage(pass).getOrNull<CyclicToDo.TagSettings>(makeKey(pass, tag)) ?? { };
+            export const set = (pass: string, tag: string, settings: CyclicToDo.TagSettings) =>
+                getStorage(pass).set(makeKey(pass, tag), settings);
+            export const remove = (pass: string, tag: string) => getStorage(pass).remove(makeKey(pass, tag));
+        }
         export module Task
         {
             export const encode = (task: string) => task.replace(/@/, "@=");
@@ -446,6 +482,12 @@ export module CyclicToDo
                 }
                 return false;
             };
+            export const removeRaw = (pass: string, task: string) =>
+            {
+                const tags = Tag.getByTodoRaw(pass, task);
+                tags.map(tag => Storage.TagMember.remove(pass, tag, task));
+                History.removeKey(pass, task);
+            };
             export const remove = (pass: string, task: string) =>
             {
                 Removed.add
@@ -453,9 +495,7 @@ export module CyclicToDo
                     pass,
                     serialize(pass, task),
                 );
-                const tags = Tag.getByTodoRaw(pass, task);
-                tags.map(tag => Storage.TagMember.remove(pass, tag, task));
-                History.removeKey(pass, task);
+                removeRaw(pass, task);
             };
             export const restore = (pass: string, item: Removed.Task) =>
             {
@@ -532,12 +572,14 @@ export module CyclicToDo
                 type: "Tag";
                 name: string;
                 tasks: string[];
+                settings: TagSettings;
             }
             export interface Sublist extends Base
             {
                 type: "Sublist";
                 name: string;
                 tasks: Task[];
+                settings: TagSettings;
             }
             export interface Task extends Base
             {
@@ -1367,6 +1409,91 @@ export module CyclicToDo
                             {
                                 tag: "h2",
                                 children: item.task,
+                            },
+                            tagButtonList,
+                            {
+                                tag: "div",
+                                className: "popup-operator",
+                                children:
+                                [
+                                    {
+                                        tag: "button",
+                                        className: "default-button",
+                                        children: "閉じる",
+                                        onclick: () =>
+                                        {
+                                            ui.close();
+                                        },
+                                    },
+                                ],
+                            },
+                        ],
+                        onClose: async () => resolve(result),
+                    });
+                }
+            );
+        };
+        export const tagSettingsPopup = async (pass: string, tag: string, settings: TagSettings = Storage.TagSettings.get(pass, tag)): Promise<boolean> =>
+        {
+            return await new Promise
+            (
+                async resolve =>
+                {
+                    let result = false;
+                    const tagButtonList = minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                    const tagButtonListUpdate = async () => minamo.dom.replaceChildren
+                    (
+                        tagButtonList,
+                        [
+                            {
+                                tag: "button",
+                                className: `check-button ${"smart" === (settings.sort ?? "smart") ? "checked": ""}`,
+                                children:
+                                [
+                                    await Resource.loadSvgOrCache("check-icon"),
+                                    {
+                                        tag: "span",
+                                        children: "Smart / スマート",
+                                    },
+                                ],
+                                onclick: async () =>
+                                {
+                                    settings.sort = "smart";
+                                    Storage.TagSettings.set(pass, tag, settings);
+                                    result = true;
+                                    await tagButtonListUpdate();
+                                }
+                            },
+                            {
+                                tag: "button",
+                                className: `check-button ${"simple" === (settings.sort ?? "smart") ? "checked": ""}`,
+                                children:
+                                [
+                                    await Resource.loadSvgOrCache("check-icon"),
+                                    {
+                                        tag: "span",
+                                        children: "Simple / Simple",
+                                    },
+                                ],
+                                onclick: async () =>
+                                {
+                                    settings.sort = "simple";
+                                    Storage.TagSettings.set(pass, tag, settings);
+                                    result = true;
+                                    await tagButtonListUpdate();
+                                }
+                            },
+                        ]
+                    );
+                    await tagButtonListUpdate();
+                    const ui = popup
+                    ({
+                        className: "add-remove-tags-popup",
+                        children:
+                        [
+                            {
+                                tag: "h2",
+                                children: `設定: ${Domain.tagMap(tag)}`,
                             },
                             tagButtonList,
                             {
