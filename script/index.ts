@@ -2065,11 +2065,14 @@ export module CyclicToDo
             title: string;
             href?: PageParams;
             menu?: minamo.dom.Source;
-            subMenu?: minamo.dom.Source;
         }
         export const screenSegmentedHeader = async (
-            items: HeaderSegmentSource[],
-            menu?: minamo.dom.Source
+            data:
+            {
+                items: HeaderSegmentSource[],
+                menu?: minamo.dom.Source,
+                operator?: minamo.dom.Source,
+            }
         ) => heading
         (
             "h1",
@@ -2077,7 +2080,7 @@ export module CyclicToDo
                 (
                     await Promise.all
                     (
-                        items
+                        data.items
                         .map
                         (
                             async (item, ix, list) =>
@@ -2087,7 +2090,13 @@ export module CyclicToDo
                         )
                     )
                 ).reduce((a, b) => (a as any[]).concat(b), []),
-                menu ? await menuButton(menu): [],
+                data.menu ? await menuButton(data.menu): [],
+                data.operator ?
+                {
+                    tag: "div",
+                    className: "header-operator",
+                    children: data.operator,
+                }: [],
             ],
             "segmented"
         );
@@ -2103,7 +2112,6 @@ export module CyclicToDo
                 className: "segment-title",
                 children:item.title,
             },
-            item.subMenu ? await menuButton(item.subMenu): [],
         ];
         export const screenHeaderLabelSegment = async (item: HeaderSegmentSource, className: string = "") =>
         ({
@@ -2448,14 +2456,15 @@ export module CyclicToDo
             children:
             [
                 await screenSegmentedHeader
-                (
+                ({
+                    items:
                     [
                         screenHeaderHomeSegment(),
                         await screenHeaderListSegment(entry.pass),
                         await screenHeaderTagSegment(entry.pass, entry.tag),
                     ],
-                    await listScreenMenu(entry),
-                ),
+                    menu: await listScreenMenu(entry),
+                }),
                 await historyBar(entry, list),
                 {
                     tag: "div",
@@ -2646,7 +2655,8 @@ export module CyclicToDo
             children:
             [
                 await screenSegmentedHeader
-                (
+                ({
+                    items:
                     [
                         screenHeaderHomeSegment(),
                         await screenHeaderListSegment(entry.pass),
@@ -2656,8 +2666,8 @@ export module CyclicToDo
                             title: locale.map("History"),
                         }
                     ],
-                    await historyScreenMenu(entry),
-                ),
+                    menu: await historyScreenMenu(entry),
+                }),
                 {
                     tag: "div",
                     className: "column-flex-list history-list",
@@ -2780,14 +2790,15 @@ export module CyclicToDo
             children:
             [
                 await screenSegmentedHeader
-                (
+                ({
+                    items:
                     [
                         screenHeaderHomeSegment(),
                         await screenHeaderListSegment(pass),
                         await screenHeaderTagSegment(pass, "@deleted"),
                     ],
-                    await removedScreenMenu(pass)
-                ),
+                    menu: await removedScreenMenu(pass)
+                }),
                 0 < list.length ?
                     {
                         tag: "div",
@@ -2864,15 +2875,16 @@ export module CyclicToDo
             children:
             [
                 await screenSegmentedHeader
-                (
+                ({
+                    items:
                     [
                         screenHeaderHomeSegment(),
                         await screenHeaderListSegment(pass),
                         await screenHeaderTagSegment(pass, tag),
                         await screenHeaderTaskSegment(pass, tag, item.task),
                     ],
-                    await todoScreenMenu(pass, item),
-                ),
+                    menu: await todoScreenMenu(pass, item),
+                }),
                 {
                     tag: "div",
                     className: "row-flex-list todo-list",
@@ -3002,7 +3014,8 @@ export module CyclicToDo
             children:
             [
                 await screenSegmentedHeader
-                (
+                ({
+                    items:
                     [
                         screenHeaderHomeSegment(),
                         await screenHeaderListSegment(pass),
@@ -3011,8 +3024,8 @@ export module CyclicToDo
                             title: locale.map("Export"),
                         }
                     ],
-                    await exportScreenMenu(pass)
-                ),
+                    menu: await exportScreenMenu(pass)
+                }),
                 {
                     tag: "textarea",
                     className: "json",
@@ -3037,13 +3050,14 @@ export module CyclicToDo
             children:
             [
                 await screenSegmentedHeader
-                (
+                ({
+                    items:
                     [
                         screenHeaderHomeSegment(),
                         await screenHeaderListSegment("@import")
                     ],
-                    await importScreenMenu()
-                ),
+                    menu: await importScreenMenu()
+                }),
                 {
                     tag: "textarea",
                     className: "json",
@@ -3131,13 +3145,14 @@ export module CyclicToDo
             children:
             [
                 await screenSegmentedHeader
-                (
+                ({
+                    items:
                     [
                         screenHeaderHomeSegment(),
                         await screenHeaderListSegment("@removed")
                     ],
-                    await removedListScreenMenu()
-                ),
+                    menu: await removedListScreenMenu()
+                }),
                 0 < list.length ?
                     {
                         tag: "div",
@@ -3293,13 +3308,14 @@ export module CyclicToDo
             children:
             [
                 await screenSegmentedHeader
-                (
+                ({
+                    items:
                     [{
                         icon: "application-icon",
                         title: CyclicToDo.applicationTitle,
                     }],
-                    await welcomeScreenMenu()
-                ),
+                    menu: await welcomeScreenMenu()
+                }),
                 {
                     tag: "div",
                     className: "column-flex-list list-list",
@@ -3361,7 +3377,8 @@ export module CyclicToDo
             children:
             [
                 await screenSegmentedHeader
-                (
+                ({
+                    items:
                     [
                         screenHeaderHomeSegment(),
                         {
@@ -3369,25 +3386,32 @@ export module CyclicToDo
                             title: "loading...",
                         },
                     ],
-                    await updatingScreenMenu()
-                ),
-                await applicationColorIcon(),
-                // {
-                //     tag: "div",
-                //     className: "message",
-                //     children: label("Updating..."),
-                // },
+                    menu: await updatingScreenMenu()
+                }),
                 {
                     tag: "div",
-                    className: "button-list",
+                    className: "screen-body",
                     children:
-                    {
-                        tag: "button",
-                        className: "default-button main-button long-button",
-                        children: label("Reload"),
-                        onclick: async () => await showPage(url),
-                    },
-                }
+                    [
+                        await applicationColorIcon(),
+                        // {
+                        //     tag: "div",
+                        //     className: "message",
+                        //     children: label("Updating..."),
+                        // },
+                        {
+                            tag: "div",
+                            className: "button-list",
+                            children:
+                            {
+                                tag: "button",
+                                className: "default-button main-button long-button",
+                                children: label("Reload"),
+                                onclick: async () => await showPage(url),
+                            },
+                        },
+                    ],
+                },
             ],
         });
         export const showUpdatingScreen = async (url: string = location.href) =>
@@ -3695,6 +3719,10 @@ export module CyclicToDo
             case "removed":
                 console.log("show removed-list screen");
                 Render.showRemovedListScreen();
+                break;
+            case "loading": // for debug only
+                console.log("show loading screen");
+                // await Render.showUpdatingScreen(url);
                 break;
             default:
                 console.log("show welcome screen");

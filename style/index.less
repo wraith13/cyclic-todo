@@ -1040,39 +1040,53 @@ button
         margin-bottom: 1em;
         text-align: center;
     }
-    & > .application-icon
+    .screen-body
     {
-        margin-left: auto;
-        margin-right: auto;
-        // width: 240px;
-        // height: 240px;
-        // max-width: 60vw;
-        // max-height: 50vh;
-        width: 400px;
-        height: 400px;
-        min-width: 25vw;
-        min-height: 25vw;
-        max-width: 90vw;
-        // max-height: 80vh;
-        display: block;
-        .loading-spinner;
-        // animation-iteration-count: infinite;
-        animation-iteration-count: 1;
-    }
-    // .message
-    // {
-    //     text-align: center;
-    //     padding: 0.5rem;
-    //     font-size: 2.5rem;
-    // }
-    .button-list
-    {
-        animation-name: late-fade-in;
-        animation-direction: normal;
-        animation-delay: 0s;
-        animation-duration: 1.5s;
-        animation-timing-function: ease-in-out;
-        animation-fill-mode: both;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
+        position: absolute;
+        top: 0px;
+        bottom: 0px;
+        right: 0px;
+        left: 0px;
+
+        & > .application-icon
+        {
+            margin-left: auto;
+            margin-right: auto;
+            // width: 240px;
+            // height: 240px;
+            // max-width: 60vw;
+            // max-height: 50vh;
+            width: 400px;
+            height: 400px;
+            min-width: 25vw;
+            min-height: 25vw;
+            max-width: 90vw;
+            // max-height: 80vh;
+            display: block;
+            .loading-spinner;
+            // animation-iteration-count: infinite;
+            animation-iteration-count: 1;
+        }
+        // .message
+        // {
+        //     text-align: center;
+        //     padding: 0.5rem;
+        //     font-size: 2.5rem;
+        // }
+        .button-list
+        {
+            animation-name: late-fade-in;
+            animation-direction: normal;
+            animation-delay: 0s;
+            animation-duration: 1.5s;
+            animation-timing-function: ease-in-out;
+            animation-fill-mode: both;
+            width: calc(100vw - 1.0rem);
+        }
     }
 }
 @keyframes late-fade-in
