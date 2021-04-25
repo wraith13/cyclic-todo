@@ -3321,7 +3321,6 @@ export module CyclicToDo
                     className: "column-flex-list list-list",
                     children: await Promise.all(Storage.Pass.get().map(pass => listItem(JSON.parse(Storage.exportJson(pass)) as ToDoList))),
                 },
-                await applicationColorIcon(),
                 {
                     tag: "div",
                     style: "text-align: center; padding: 0.5rem;",
@@ -3329,28 +3328,36 @@ export module CyclicToDo
                 },
                 {
                     tag: "div",
-                    className: "button-line",
+                    className: "screen-body",
                     children:
                     [
+                        await applicationColorIcon(),
                         {
-                            tag: "button",
-                            className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
-                            children: locale.parallel("New ToDo List"),
-                            onclick: newListPrompt,
+                            tag: "div",
+                            className: "button-line",
+                            children:
+                            [
+                                {
+                                    tag: "button",
+                                    className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
+                                    children: locale.parallel("New ToDo List"),
+                                    onclick: newListPrompt,
+                                },
+                                await menuButton
+                                ([
+                                    internalLink
+                                    ({
+                                        href: { hash: "import", },
+                                        children: menuItem(locale.parallel("Import List")),
+                                    }),
+                                    internalLink
+                                    ({
+                                        href: { hash: "removed", },
+                                        children: menuItem(locale.parallel("@deleted")),
+                                    }),
+                                ]),
+                            ],
                         },
-                        await menuButton
-                        ([
-                            internalLink
-                            ({
-                                href: { hash: "import", },
-                                children: menuItem(locale.parallel("Import List")),
-                            }),
-                            internalLink
-                            ({
-                                href: { hash: "removed", },
-                                children: menuItem(locale.parallel("@deleted")),
-                            }),
-                        ]),
                     ],
                 },
             ],
@@ -3420,8 +3427,8 @@ export module CyclicToDo
         {
             document.title = Array.from(Array.from(document.getElementsByTagName("h1"))[0]?.getElementsByClassName("segment-title"))
                 ?.map((div: HTMLDivElement) => div.innerText)
-                ?.reverse()
-                ?.join(" - ")
+                // ?.reverse()
+                ?.join(" / ")
                 ?? applicationTitle;
         };
         export type UpdateWindowEventEype = "timer" | "scroll" | "storage";
