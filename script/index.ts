@@ -430,12 +430,14 @@ export module CyclicToDo
         }
         export module TagSettings
         {
-            export const makeKey = (pass: string, tag: string) => `pass:(${pass}).tag:(${tag})`;
+            export const makeKey = (pass: string, tag: string) => `pass:(${pass}).tag:(${tag}).settings`;
             export const get = (pass: string, tag: string) =>
                 getStorage(pass).getOrNull<CyclicToDo.TagSettings>(makeKey(pass, tag)) ?? { };
             export const set = (pass: string, tag: string, settings: CyclicToDo.TagSettings) =>
                 getStorage(pass).set(makeKey(pass, tag), settings);
             export const remove = (pass: string, tag: string) => getStorage(pass).remove(makeKey(pass, tag));
+            export const getSort = (pass: string, tag: string) =>
+                (get(pass, tag).sort ?? (get(pass, "@overall").sort ?? "smart"));
         }
         export module Task
         {
@@ -836,17 +838,28 @@ export module CyclicToDo
         (
             tag => -Storage.TagMember.get(pass, tag).map(todo => Storage.History.get(pass, todo).length).reduce((a, b) => a +b, 0)
         );
-        export const todoComparer = (entry: ToDoTagEntry) => minamo.core.comparer.make<ToDoEntry>
-        ([
-            item => (2.0 /3.0) <= (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
-            item => (2.0 /3.0) <= (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
-                item.smartRest:
-                -(item.progress ?? -1),
-            item => 1 < item.count ? -2: -item.count,
-            item => 1 < item.count ? item.elapsed: -(item.elapsed ?? 0),
-            item => entry.todo.indexOf(item.task),
-            item => item.task,
-        ]);
+        export const todoComparer = (entry: ToDoTagEntry, sort = Storage.TagSettings.getSort(entry.pass, entry.tag)) =>
+        minamo.core.comparer.make<ToDoEntry>
+        (
+            "smart" === sort ?
+            [
+                item => (2.0 /3.0) <= (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
+                item => (2.0 /3.0) <= (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
+                    item.smartRest:
+                    -(item.progress ?? -1),
+                item => 1 < item.count ? -2: -item.count,
+                item => 1 < item.count ? item.elapsed: -(item.elapsed ?? 0),
+                item => entry.todo.indexOf(item.task),
+                item => item.task,
+            ]:
+            [
+                item => 0 <= (item.elapsed ?? -1) ? 1: 0,
+                item => -(item.elapsed ?? 0),
+                item => item.count,
+                item => entry.todo.indexOf(item.task),
+                item => item.task,
+            ]
+        );
         export const getRecentlyHistory = (pass: string, task: string) =>
         {
             const full = Storage.History.get(pass, task);
@@ -950,54 +963,7 @@ export module CyclicToDo
             }
         };
         export const updateListProgress = (list: ToDoEntry[], now: number = Domain.getTicks()) =>
-        {
             list.forEach(item => updateProgress(item, now));
-            let groups: ToDoEntry[][] = [];
-            list.forEach
-            (
-                item =>
-                {
-                    if (null !== item.RecentlyAverage && null !== item.progress)
-                    {
-                        const top = item.RecentlyAverage *1.1;
-                        const bottom = item.RecentlyAverage *0.9;
-                        const group = list.filter(i => null !== i.RecentlyAverage && null !== i.progress && bottom < i.RecentlyAverage && i.RecentlyAverage < top);
-                        if (2 <= group.length)
-                        {
-                            groups.push(group);
-                        }
-                    }
-                }
-            );
-            groups.sort(minamo.core.comparer.make(i => i.length));
-            groups = groups.filter
-            (
-                (g, ix) => groups.filter
-                (
-                    (g2, ix2) => ix < ix2 && 0 <= g2.filter
-                    (
-                        i2 => 0 <= g.indexOf(i2)
-                    )
-                    .length
-                )
-                .length <= 0
-            );
-            groups.forEach
-            (
-                group =>
-                {
-                    const groupAverage = Calculate.average(group.map(item => item.RecentlySmartAverage));
-                    const groupStandardDeviation = Calculate.average(group.map(item => item.RecentlyStandardDeviation ?? (item.RecentlySmartAverage *0.1)));
-                    group.forEach
-                    (
-                        item =>
-                        {
-                            item.smartRest = calcSmartRest({ RecentlySmartAverage: groupAverage, RecentlyStandardDeviation: groupStandardDeviation, elapsed: item.elapsed });
-                        }
-                    );
-                }
-            );
-        };
         export const sortList = (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         {
             const tasks = JSON.stringify(list.map(i => i.task));
@@ -1433,7 +1399,7 @@ export module CyclicToDo
                 }
             );
         };
-        export const tagSettingsPopup = async (pass: string, tag: string, settings: TagSettings = Storage.TagSettings.get(pass, tag)): Promise<boolean> =>
+        export const tagSortSettingsPopup = async (pass: string, tag: string, settings: TagSettings = Storage.TagSettings.get(pass, tag)): Promise<boolean> =>
         {
             return await new Promise
             (
@@ -1445,9 +1411,30 @@ export module CyclicToDo
                     (
                         tagButtonList,
                         [
+                            "@overall" !== tag ?
+                                {
+                                    tag: "button",
+                                    className: `check-button ${"@home" === (settings.sort ?? "@home") ? "checked": ""}`,
+                                    children:
+                                    [
+                                        await Resource.loadSvgOrCache("check-icon"),
+                                        {
+                                            tag: "span",
+                                            children: "ホームと同じ",
+                                        },
+                                    ],
+                                    onclick: async () =>
+                                    {
+                                        settings.sort = null;
+                                        Storage.TagSettings.set(pass, tag, settings);
+                                        result = true;
+                                        await tagButtonListUpdate();
+                                    }
+                                }:
+                                [],
                             {
                                 tag: "button",
-                                className: `check-button ${"smart" === (settings.sort ?? "smart") ? "checked": ""}`,
+                                className: `check-button ${"smart" === (settings.sort ?? ("@overall" === tag ? "smart": "@home")) ? "checked": ""}`,
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
@@ -1472,7 +1459,7 @@ export module CyclicToDo
                                     await Resource.loadSvgOrCache("check-icon"),
                                     {
                                         tag: "span",
-                                        children: "Simple / Simple",
+                                        children: "Simple / シンプル",
                                     },
                                 ],
                                 onclick: async () =>
@@ -1493,7 +1480,7 @@ export module CyclicToDo
                         [
                             {
                                 tag: "h2",
-                                children: `設定: ${Domain.tagMap(tag)}`,
+                                children: `並び順設定: ${Domain.tagMap(tag)}`,
                             },
                             tagButtonList,
                             {
@@ -2503,6 +2490,17 @@ export module CyclicToDo
                 href: { pass: entry.pass, tag: entry.tag, hash: "history" },
                 children: menuItem(label("History")),
             }),
+            menuItem
+            (
+                labelSpan("並び順設定"),
+                async () =>
+                {
+                    if (await tagSortSettingsPopup(entry.pass, entry.tag))
+                    {
+                        await reload();
+                    }
+                }
+            ),
             "@overall" === entry.tag ? listRenameMenu(entry.pass): [],
             Storage.Tag.isSystemTag(entry.tag) ? []:
                 menuItem

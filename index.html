@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun Apr 25 2021 19:05:55 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon Apr 26 2021 18:35:40 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -2695,12 +2695,19 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var title = Title.get(pass);
                 var timeAccuracy = Domain.timeAccuracy;
                 var tags = {};
+                var tagSettings = {};
                 [
-                    //"@overall", todos でカバーされるのでここには含めない
+                    "@overall",
                     "@unoverall",
                     //"@deleted", 現状のヤツは廃止。ただ、別の形で復帰させるかも。
                 ].concat(Tag.get(pass))
-                    .forEach(function (tag) { return tags[tag] = TagMember.getRaw(pass, tag); });
+                    .forEach(function (tag) {
+                    if ("@overall" !== tag) // todos でカバーされるのでここには含めない
+                     {
+                        tags[tag] = TagMember.getRaw(pass, tag);
+                    }
+                    tagSettings[tag] = TagSettings.get(pass, tag);
+                });
                 var todos = TagMember.getRaw(pass, "@overall");
                 var histories = {};
                 todos
@@ -2713,6 +2720,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     pass: pass,
                     todos: todos,
                     tags: tags,
+                    tagSettings: tagSettings,
                     histories: histories,
                     removed: removed,
                 };
@@ -2728,12 +2736,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         Array.isArray(data_1.todos) &&
                         data_1.todos.filter(function (i) { return "string" !== typeof i; }).length <= 0 &&
                         "object" === typeof data_1.tags &&
+                        "object" === typeof data_1.tagSettings &&
                         "object" === typeof data_1.histories) {
                         Pass.add(data_1.pass);
                         Title.set(data_1.pass, data_1.title);
                         TagMember.set(data_1.pass, "@overall", data_1.todos);
                         Tag.set(data_1.pass, Object.keys(data_1.tags));
                         Object.keys(data_1.tags).forEach(function (tag) { return TagMember.set(data_1.pass, tag, data_1.tags[tag]); });
+                        Object.keys(data_1.tagSettings).forEach(function (tag) { return TagSettings.set(data_1.pass, tag, data_1.tagSettings[tag]); });
                         Object.keys(data_1.histories).forEach(function (todo) { return History.set(data_1.pass, todo, data_1.histories[todo]); });
                         Removed.set(data_1.pass, data_1.removed.map(function (i) { return JSON.stringify(i); }));
                         return data_1.pass;
@@ -2822,25 +2832,32 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     if (!Tag.isSystemTag(tag)) {
                         if (Tag.isSublist(tag)) {
                             var tasks = TagMember.getRaw(pass, tag).map(function (task) { return Task.serialize(pass, task); });
+                            var settings = TagSettings.get(pass, tag);
                             Removed.add(pass, {
                                 type: "Sublist",
                                 deteledAt: Domain.getTicks(),
                                 name: tag,
                                 tasks: tasks,
+                                settings: settings,
                             });
+                            TagMember.getRaw(pass, tag).map(function (task) { return Task.removeRaw(pass, task); });
                             Tag.removeRaw(pass, tag);
                             TagMember.removeKey(pass, tag);
+                            TagSettings.remove(pass, tag);
                         }
                         else {
                             var tasks = TagMember.getRaw(pass, tag);
+                            var settings = TagSettings.get(pass, tag);
                             Removed.add(pass, {
                                 type: "Tag",
                                 deteledAt: Domain.getTicks(),
                                 name: tag,
                                 tasks: tasks,
+                                settings: settings,
                             });
                             Tag.removeRaw(pass, tag);
                             TagMember.removeKey(pass, tag);
+                            TagSettings.remove(pass, tag);
                         }
                     }
                 };
@@ -2852,10 +2869,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 Tag.add(pass, item.name);
                                 var allTasks_1 = TagMember.getRaw(pass, "@overall");
                                 TagMember.set(pass, item.name, item.tasks.filter(function (i) { return 0 <= allTasks_1.indexOf(i); }));
+                                TagSettings.set(pass, item.name, item.settings);
                                 break;
                             case "Sublist":
                                 Tag.add(pass, item.name);
                                 item.tasks.forEach(function (task) { return Task.restore(pass, task); });
+                                TagSettings.set(pass, item.name, item.settings);
                                 break;
                         }
                     }
@@ -2873,8 +2892,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     if (0 < newTag.length && !Tag.isSystemTag(oldTag) && !Tag.isSystemTag(newTag) && oldTag !== newTag && Tag.get(pass).indexOf(newTag) < 0) {
                         Tag.add(pass, newTag);
                         TagMember.set(pass, newTag, TagMember.getRaw(pass, oldTag));
+                        TagSettings.set(pass, newTag, TagSettings.get(pass, oldTag));
                         Tag.removeRaw(pass, oldTag);
                         TagMember.removeKey(pass, oldTag);
+                        TagSettings.remove(pass, oldTag);
                         return true;
                     }
                     return false;
@@ -2931,6 +2952,16 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 };
             })(TagMember = Storage.TagMember || (Storage.TagMember = {}));
+            var TagSettings;
+            (function (TagSettings) {
+                TagSettings.makeKey = function (pass, tag) { return "pass:(" + pass + ").tag:(" + tag + ").settings"; };
+                TagSettings.get = function (pass, tag) { var _a; return (_a = Storage.getStorage(pass).getOrNull(TagSettings.makeKey(pass, tag))) !== null && _a !== void 0 ? _a : {}; };
+                TagSettings.set = function (pass, tag, settings) {
+                    return Storage.getStorage(pass).set(TagSettings.makeKey(pass, tag), settings);
+                };
+                TagSettings.remove = function (pass, tag) { return Storage.getStorage(pass).remove(TagSettings.makeKey(pass, tag)); };
+                TagSettings.getSort = function (pass, tag) { var _a, _b; return ((_a = TagSettings.get(pass, tag).sort) !== null && _a !== void 0 ? _a : ((_b = TagSettings.get(pass, "@overall").sort) !== null && _b !== void 0 ? _b : "smart")); };
+            })(TagSettings = Storage.TagSettings || (Storage.TagSettings = {}));
             var Task;
             (function (Task) {
                 Task.encode = function (task) { return task.replace(/@/, "@="); };
@@ -2965,11 +2996,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                     return false;
                 };
-                Task.remove = function (pass, task) {
-                    Removed.add(pass, Task.serialize(pass, task));
+                Task.removeRaw = function (pass, task) {
                     var tags = Tag.getByTodoRaw(pass, task);
                     tags.map(function (tag) { return Storage.TagMember.remove(pass, tag, task); });
                     History.removeKey(pass, task);
+                };
+                Task.remove = function (pass, task) {
+                    Removed.add(pass, Task.serialize(pass, task));
+                    Task.removeRaw(pass, task);
                 };
                 Task.restore = function (pass, item) {
                     var sublist = Task.getSublist(item.name);
@@ -3225,19 +3259,30 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 return [2 /*return*/, Storage.History.add(pass, task, Domain.getDoneTicks(pass))];
             }); }); };
             Domain.tagComparer = function (pass) { return minamo_js_1.minamo.core.comparer.make(function (tag) { return -Storage.TagMember.get(pass, tag).map(function (todo) { return Storage.History.get(pass, todo).length; }).reduce(function (a, b) { return a + b; }, 0); }); };
-            Domain.todoComparer = function (entry) { return minamo_js_1.minamo.core.comparer.make([
-                function (item) { var _a, _b; return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ? -1 : 1; },
-                function (item) {
-                    var _a, _b, _c;
-                    return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ?
-                        item.smartRest :
-                        -((_c = item.progress) !== null && _c !== void 0 ? _c : -1);
-                },
-                function (item) { return 1 < item.count ? -2 : -item.count; },
-                function (item) { var _a; return 1 < item.count ? item.elapsed : -((_a = item.elapsed) !== null && _a !== void 0 ? _a : 0); },
-                function (item) { return entry.todo.indexOf(item.task); },
-                function (item) { return item.task; },
-            ]); };
+            Domain.todoComparer = function (entry, sort) {
+                if (sort === void 0) { sort = Storage.TagSettings.getSort(entry.pass, entry.tag); }
+                return minamo_js_1.minamo.core.comparer.make("smart" === sort ?
+                    [
+                        function (item) { var _a, _b; return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ? -1 : 1; },
+                        function (item) {
+                            var _a, _b, _c;
+                            return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ?
+                                item.smartRest :
+                                -((_c = item.progress) !== null && _c !== void 0 ? _c : -1);
+                        },
+                        function (item) { return 1 < item.count ? -2 : -item.count; },
+                        function (item) { var _a; return 1 < item.count ? item.elapsed : -((_a = item.elapsed) !== null && _a !== void 0 ? _a : 0); },
+                        function (item) { return entry.todo.indexOf(item.task); },
+                        function (item) { return item.task; },
+                    ] :
+                    [
+                        function (item) { var _a; return 0 <= ((_a = item.elapsed) !== null && _a !== void 0 ? _a : -1) ? 1 : 0; },
+                        function (item) { var _a; return -((_a = item.elapsed) !== null && _a !== void 0 ? _a : 0); },
+                        function (item) { return item.count; },
+                        function (item) { return entry.todo.indexOf(item.task); },
+                        function (item) { return item.task; },
+                    ]);
+            };
             Domain.getRecentlyHistory = function (pass, task) {
                 var full = Storage.History.get(pass, task);
                 var result = {
@@ -3328,28 +3373,51 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Domain.updateListProgress = function (list, now) {
                 if (now === void 0) { now = Domain.getTicks(); }
                 list.forEach(function (item) { return Domain.updateProgress(item, now); });
-                var groups = [];
-                list.forEach(function (item) {
-                    if (null !== item.RecentlyAverage && null !== item.progress) {
-                        var top_1 = item.RecentlyAverage * 1.1;
-                        var bottom_1 = item.RecentlyAverage * 0.9;
-                        var group = list.filter(function (i) { return null !== i.RecentlyAverage && null !== i.progress && bottom_1 < i.RecentlyAverage && i.RecentlyAverage < top_1; });
-                        if (2 <= group.length) {
-                            groups.push(group);
-                        }
-                    }
-                });
-                groups.sort(minamo_js_1.minamo.core.comparer.make(function (i) { return i.length; }));
-                groups = groups.filter(function (g, ix) { return groups.filter(function (g2, ix2) { return ix < ix2 && 0 <= g2.filter(function (i2) { return 0 <= g.indexOf(i2); })
-                    .length; })
-                    .length <= 0; });
-                groups.forEach(function (group) {
-                    var groupAverage = Calculate.average(group.map(function (item) { return item.RecentlySmartAverage; }));
-                    var groupStandardDeviation = Calculate.average(group.map(function (item) { var _a; return (_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : (item.RecentlySmartAverage * 0.1); }));
-                    group.forEach(function (item) {
-                        item.smartRest = Domain.calcSmartRest({ RecentlySmartAverage: groupAverage, RecentlyStandardDeviation: groupStandardDeviation, elapsed: item.elapsed });
-                    });
-                });
+                // let groups: ToDoEntry[][] = [];
+                // list.forEach
+                // (
+                //     item =>
+                //     {
+                //         if (null !== item.RecentlyAverage && null !== item.progress)
+                //         {
+                //             const top = item.RecentlyAverage *1.1;
+                //             const bottom = item.RecentlyAverage *0.9;
+                //             const group = list.filter(i => null !== i.RecentlyAverage && null !== i.progress && bottom < i.RecentlyAverage && i.RecentlyAverage < top);
+                //             if (2 <= group.length)
+                //             {
+                //                 groups.push(group);
+                //             }
+                //         }
+                //     }
+                // );
+                // groups.sort(minamo.core.comparer.make(i => i.length));
+                // groups = groups.filter
+                // (
+                //     (g, ix) => groups.filter
+                //     (
+                //         (g2, ix2) => ix < ix2 && 0 <= g2.filter
+                //         (
+                //             i2 => 0 <= g.indexOf(i2)
+                //         )
+                //         .length
+                //     )
+                //     .length <= 0
+                // );
+                // groups.forEach
+                // (
+                //     group =>
+                //     {
+                //         const groupAverage = Calculate.average(group.map(item => item.RecentlySmartAverage));
+                //         const groupStandardDeviation = Calculate.average(group.map(item => item.RecentlyStandardDeviation ?? (item.RecentlySmartAverage *0.1)));
+                //         group.forEach
+                //         (
+                //             item =>
+                //             {
+                //                 item.smartRest = calcSmartRest({ RecentlySmartAverage: groupAverage, RecentlyStandardDeviation: groupStandardDeviation, elapsed: item.elapsed });
+                //             }
+                //         );
+                //     }
+                // );
             };
             Domain.sortList = function (entry, list) {
                 var tasks = JSON.stringify(list.map(function (i) { return i.task; }));
@@ -3842,6 +3910,168 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
+            Render.tagSortSettingsPopup = function (pass, tag, settings) {
+                if (settings === void 0) { settings = Storage.TagSettings.get(pass, tag); }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                    var result, tagButtonList, tagButtonListUpdate, ui;
+                                    var _this = this;
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                result = false;
+                                                tagButtonList = minamo_js_1.minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                                                tagButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    var _a, _b, _c, _d, _e;
+                                                    var _f, _g, _h;
+                                                    var _this = this;
+                                                    var _j, _k, _l;
+                                                    return __generator(this, function (_m) {
+                                                        switch (_m.label) {
+                                                            case 0:
+                                                                _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                                _c = [tagButtonList];
+                                                                if (!("@overall" !== tag)) return [3 /*break*/, 2];
+                                                                _f = {
+                                                                    tag: "button",
+                                                                    className: "check-button " + ("@home" === ((_j = settings.sort) !== null && _j !== void 0 ? _j : "@home") ? "checked" : "")
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 1:
+                                                                _d = (_f.children = [
+                                                                    _m.sent(),
+                                                                    {
+                                                                        tag: "span",
+                                                                        children: "ホームと同じ",
+                                                                    }
+                                                                ],
+                                                                    _f.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                        return __generator(this, function (_a) {
+                                                                            switch (_a.label) {
+                                                                                case 0:
+                                                                                    settings.sort = null;
+                                                                                    Storage.TagSettings.set(pass, tag, settings);
+                                                                                    result = true;
+                                                                                    return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                case 1:
+                                                                                    _a.sent();
+                                                                                    return [2 /*return*/];
+                                                                            }
+                                                                        });
+                                                                    }); },
+                                                                    _f);
+                                                                return [3 /*break*/, 3];
+                                                            case 2:
+                                                                _d = [];
+                                                                _m.label = 3;
+                                                            case 3:
+                                                                _e = [
+                                                                    _d
+                                                                ];
+                                                                _g = {
+                                                                    tag: "button",
+                                                                    className: "check-button " + ("smart" === ((_k = settings.sort) !== null && _k !== void 0 ? _k : ("@overall" === tag ? "smart" : "@home")) ? "checked" : "")
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 4:
+                                                                _e = _e.concat([
+                                                                    (_g.children = [
+                                                                        _m.sent(),
+                                                                        {
+                                                                            tag: "span",
+                                                                            children: "Smart / スマート",
+                                                                        }
+                                                                    ],
+                                                                        _g.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            return __generator(this, function (_a) {
+                                                                                switch (_a.label) {
+                                                                                    case 0:
+                                                                                        settings.sort = "smart";
+                                                                                        Storage.TagSettings.set(pass, tag, settings);
+                                                                                        result = true;
+                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                    case 1:
+                                                                                        _a.sent();
+                                                                                        return [2 /*return*/];
+                                                                                }
+                                                                            });
+                                                                        }); },
+                                                                        _g)
+                                                                ]);
+                                                                _h = {
+                                                                    tag: "button",
+                                                                    className: "check-button " + ("simple" === ((_l = settings.sort) !== null && _l !== void 0 ? _l : "smart") ? "checked" : "")
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 5: return [2 /*return*/, _b.apply(_a, _c.concat([_e.concat([
+                                                                        (_h.children = [
+                                                                            _m.sent(),
+                                                                            {
+                                                                                tag: "span",
+                                                                                children: "Simple / シンプル",
+                                                                            }
+                                                                        ],
+                                                                            _h.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                return __generator(this, function (_a) {
+                                                                                    switch (_a.label) {
+                                                                                        case 0:
+                                                                                            settings.sort = "simple";
+                                                                                            Storage.TagSettings.set(pass, tag, settings);
+                                                                                            result = true;
+                                                                                            return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                        case 1:
+                                                                                            _a.sent();
+                                                                                            return [2 /*return*/];
+                                                                                    }
+                                                                                });
+                                                                            }); },
+                                                                            _h)
+                                                                    ])]))];
+                                                        }
+                                                    });
+                                                }); };
+                                                return [4 /*yield*/, tagButtonListUpdate()];
+                                            case 1:
+                                                _a.sent();
+                                                ui = Render.popup({
+                                                    className: "add-remove-tags-popup",
+                                                    children: [
+                                                        {
+                                                            tag: "h2",
+                                                            children: "\u4E26\u3073\u9806\u8A2D\u5B9A: " + Domain.tagMap(tag),
+                                                        },
+                                                        tagButtonList,
+                                                        {
+                                                            tag: "div",
+                                                            className: "popup-operator",
+                                                            children: [
+                                                                {
+                                                                    tag: "button",
+                                                                    className: "default-button",
+                                                                    children: "閉じる",
+                                                                    onclick: function () {
+                                                                        ui.close();
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                        return [2 /*return*/, resolve(result)];
+                                                    }); }); },
+                                                });
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); })];
+                            case 1: return [2 /*return*/, _a.sent()];
+                        }
+                    });
+                });
+            };
             Render.screenCover = function (data) {
                 var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
                     tag: "div",
@@ -5029,6 +5259,20 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 href: { pass: entry.pass, tag: entry.tag, hash: "history" },
                                 children: Render.menuItem(Render.label("History")),
                             }),
+                            Render.menuItem(Render.labelSpan("並び順設定"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, Render.tagSortSettingsPopup(entry.pass, entry.tag)];
+                                        case 1:
+                                            if (!_a.sent()) return [3 /*break*/, 3];
+                                            return [4 /*yield*/, CyclicToDo.reload()];
+                                        case 2:
+                                            _a.sent();
+                                            _a.label = 3;
+                                        case 3: return [2 /*return*/];
+                                    }
+                                });
+                            }); }),
                             "@overall" === entry.tag ? Render.listRenameMenu(entry.pass) : [],
                             Storage.Tag.isSystemTag(entry.tag) ? [] :
                                 Render.menuItem(Render.label("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
