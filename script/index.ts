@@ -853,8 +853,7 @@ export module CyclicToDo
                 item => item.task,
             ]:
             [
-                item => 0 <= (item.elapsed ?? -1) ? 1: 0,
-                item => -(item.elapsed ?? 0),
+                item => item.previous ?? 0,
                 item => item.count,
                 item => entry.todo.indexOf(item.task),
                 item => item.task,
@@ -1420,7 +1419,7 @@ export module CyclicToDo
                                         await Resource.loadSvgOrCache("check-icon"),
                                         {
                                             tag: "span",
-                                            children: "ホームと同じ",
+                                            children: label("sort.home"),
                                         },
                                     ],
                                     onclick: async () =>
@@ -1440,7 +1439,7 @@ export module CyclicToDo
                                     await Resource.loadSvgOrCache("check-icon"),
                                     {
                                         tag: "span",
-                                        children: "Smart / スマート",
+                                        children: label("sort.smart"),
                                     },
                                 ],
                                 onclick: async () =>
@@ -1459,7 +1458,7 @@ export module CyclicToDo
                                     await Resource.loadSvgOrCache("check-icon"),
                                     {
                                         tag: "span",
-                                        children: "Simple / シンプル",
+                                        children: label("sort.simple"),
                                     },
                                 ],
                                 onclick: async () =>
@@ -1549,7 +1548,7 @@ export module CyclicToDo
             const dom = minamo.dom.make(HTMLDivElement)
             ({
                 tag: "div",
-                className: `popup ${data.className ?? ""}`,
+                className: `popup locale-parallel-off ${data.className ?? ""}`,
                 children: data.children,
                 onclick: async (event: MouseEvent) =>
                 {

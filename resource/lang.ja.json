@@ -39,5 +39,8 @@
     "OK": "OK",
     "Cancel": "キャンセル",
     "Edit": "編集",
-    "Move to Sublist": "サブリストへ移動"
+    "Move to Sublist": "サブリストへ移動",
+    "sort.home": "ホームと同じ並び順",
+    "sort.smart": "スマート",
+    "sort.simple": "シンプル"
 }

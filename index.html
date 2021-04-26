@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon Apr 26 2021 18:35:40 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Apr 27 2021 05:10:25 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -2546,7 +2546,10 @@ define("resource/lang.en", [], {
     "OK": "OK",
     "Cancel": "Cancel",
     "Edit": "Edit",
-    "Move to Sublist": "Move to Sublist"
+    "Move to Sublist": "Move to Sublist",
+    "sort.home": "Same order as Home",
+    "sort.smart": "Smart",
+    "sort.simple": "Simple"
 });
 define("resource/lang.ja", [], {
     "previous": "前回",
@@ -2589,7 +2592,10 @@ define("resource/lang.ja", [], {
     "OK": "OK",
     "Cancel": "キャンセル",
     "Edit": "編集",
-    "Move to Sublist": "サブリストへ移動"
+    "Move to Sublist": "サブリストへ移動",
+    "sort.home": "ホームと同じ並び順",
+    "sort.smart": "スマート",
+    "sort.simple": "シンプル"
 });
 define("resource/images", [], {
     "application-icon": "./image/cyclictodohex.1024.svg",
@@ -3276,8 +3282,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         function (item) { return item.task; },
                     ] :
                     [
-                        function (item) { var _a; return 0 <= ((_a = item.elapsed) !== null && _a !== void 0 ? _a : -1) ? 1 : 0; },
-                        function (item) { var _a; return -((_a = item.elapsed) !== null && _a !== void 0 ? _a : 0); },
+                        function (item) { var _a; return (_a = item.previous) !== null && _a !== void 0 ? _a : 0; },
                         function (item) { return item.count; },
                         function (item) { return entry.todo.indexOf(item.task); },
                         function (item) { return item.task; },
@@ -3372,52 +3377,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             };
             Domain.updateListProgress = function (list, now) {
                 if (now === void 0) { now = Domain.getTicks(); }
-                list.forEach(function (item) { return Domain.updateProgress(item, now); });
-                // let groups: ToDoEntry[][] = [];
-                // list.forEach
-                // (
-                //     item =>
-                //     {
-                //         if (null !== item.RecentlyAverage && null !== item.progress)
-                //         {
-                //             const top = item.RecentlyAverage *1.1;
-                //             const bottom = item.RecentlyAverage *0.9;
-                //             const group = list.filter(i => null !== i.RecentlyAverage && null !== i.progress && bottom < i.RecentlyAverage && i.RecentlyAverage < top);
-                //             if (2 <= group.length)
-                //             {
-                //                 groups.push(group);
-                //             }
-                //         }
-                //     }
-                // );
-                // groups.sort(minamo.core.comparer.make(i => i.length));
-                // groups = groups.filter
-                // (
-                //     (g, ix) => groups.filter
-                //     (
-                //         (g2, ix2) => ix < ix2 && 0 <= g2.filter
-                //         (
-                //             i2 => 0 <= g.indexOf(i2)
-                //         )
-                //         .length
-                //     )
-                //     .length <= 0
-                // );
-                // groups.forEach
-                // (
-                //     group =>
-                //     {
-                //         const groupAverage = Calculate.average(group.map(item => item.RecentlySmartAverage));
-                //         const groupStandardDeviation = Calculate.average(group.map(item => item.RecentlyStandardDeviation ?? (item.RecentlySmartAverage *0.1)));
-                //         group.forEach
-                //         (
-                //             item =>
-                //             {
-                //                 item.smartRest = calcSmartRest({ RecentlySmartAverage: groupAverage, RecentlyStandardDeviation: groupStandardDeviation, elapsed: item.elapsed });
-                //             }
-                //         );
-                //     }
-                // );
+                return list.forEach(function (item) { return Domain.updateProgress(item, now); });
             };
             Domain.sortList = function (entry, list) {
                 var tasks = JSON.stringify(list.map(function (i) { return i.task; }));
@@ -3945,7 +3905,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                     _m.sent(),
                                                                     {
                                                                         tag: "span",
-                                                                        children: "ホームと同じ",
+                                                                        children: Render.label("sort.home"),
                                                                     }
                                                                 ],
                                                                     _f.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -3982,7 +3942,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                         _m.sent(),
                                                                         {
                                                                             tag: "span",
-                                                                            children: "Smart / スマート",
+                                                                            children: Render.label("sort.smart"),
                                                                         }
                                                                     ],
                                                                         _g.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -4011,7 +3971,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                             _m.sent(),
                                                                             {
                                                                                 tag: "span",
-                                                                                children: "Simple / シンプル",
+                                                                                children: Render.label("sort.simple"),
                                                                             }
                                                                         ],
                                                                             _h.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -4113,7 +4073,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var _a;
                 var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
                     tag: "div",
-                    className: "popup " + ((_a = data.className) !== null && _a !== void 0 ? _a : ""),
+                    className: "popup locale-parallel-off " + ((_a = data.className) !== null && _a !== void 0 ? _a : ""),
                     children: data.children,
                     onclick: function (event) { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {

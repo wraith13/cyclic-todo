@@ -39,5 +39,8 @@
     "OK": "OK",
     "Cancel": "Cancel",
     "Edit": "Edit",
-    "Move to Sublist": "Move to Sublist"
+    "Move to Sublist": "Move to Sublist",
+    "sort.home": "Same order as Home",
+    "sort.smart": "Smart",
+    "sort.simple": "Simple"
 }
