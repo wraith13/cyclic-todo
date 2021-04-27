@@ -27,11 +27,13 @@ export module locale
     let masterKey: LocaleType = 0 <= locales.indexOf(navigator.language as LocaleType) ?
         navigator.language as LocaleType:
         locales[0];
+    export const getLocaleName = (locale: LocaleType) => master[locale].$name;
     export const setLocale = (locale: LocaleType | null) =>
     {
-        if (0 <= locales.indexOf(locale ?? navigator.language as LocaleType))
+        const key = locale ?? navigator.language as LocaleType;
+        if (0 <= locales.indexOf(key))
         {
-            masterKey = locale;
+            masterKey = key;
         }
     };
     export const getPrimary = (key : LocaleKeyType) => master[masterKey][key];
@@ -1445,23 +1447,23 @@ export module CyclicToDo
                             (
                                 locale.locales.map
                                 (
-                                    async locale =>
+                                    async key =>
                                     ({
                                         tag: "button",
-                                        className: `check-button ${locale === (settings.locale ?? "@auto") ? "checked": ""}`,
+                                        className: `check-button ${key === (settings.locale ?? "@auto") ? "checked": ""}`,
                                         children:
                                         [
                                             await Resource.loadSvgOrCache("check-icon"),
                                             {
                                                 tag: "span",
-                                                children: label("sort.smart"),
+                                                children: labelSpan(locale.getLocaleName(key)),
                                             },
                                         ],
                                         onclick: async () =>
                                         {
-                                            if (locale !== settings.locale ?? null)
+                                            if (key !== settings.locale ?? null)
                                             {
-                                                settings.locale = locale;
+                                                settings.locale = key;
                                                 Storage.Settings.set(settings);
                                                 result = true;
                                                 await checkButtonListUpdate();
@@ -3510,6 +3512,17 @@ export module CyclicToDo
         [
             menuItem
             (
+                labelSpan("表示言語設定"),
+                async () =>
+                {
+                    if (await localeSettingsPopup())
+                    {
+                        await reload();
+                    }
+                }
+            ),
+            menuItem
+            (
                 label("New ToDo List"),
                 newListPrompt,
             ),
@@ -3923,6 +3936,7 @@ export module CyclicToDo
     export const showPage = async (url: string = location.href, wait: number = 0) =>
     {
         window.scrollTo(0,0);
+        locale.setLocale(Storage.Settings.get().locale);
         await Render.showUpdatingScreen(url);
         await minamo.core.timeout(wait);
         const urlParams = getUrlParams(url);

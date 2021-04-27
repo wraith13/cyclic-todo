@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue Apr 27 2021 05:10:25 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed Apr 28 2021 03:42:13 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -2506,6 +2506,7 @@ define("resource/config", [], {
     "maxRestAdjustMinutes": 60
 });
 define("resource/lang.en", [], {
+    "$name": "English",
     "previous": "previous",
     "expected interval": "expected interval",
     "elapsed time": "elapsed time",
@@ -2549,9 +2550,11 @@ define("resource/lang.en", [], {
     "Move to Sublist": "Move to Sublist",
     "sort.home": "Same order as Home",
     "sort.smart": "Smart",
-    "sort.simple": "Simple"
+    "sort.simple": "Simple",
+    "language.auto": "Auto"
 });
 define("resource/lang.ja", [], {
+    "$name": "日本語",
     "previous": "前回",
     "expected interval": "予想間隔",
     "elapsed time": "経過時間",
@@ -2595,7 +2598,8 @@ define("resource/lang.ja", [], {
     "Move to Sublist": "サブリストへ移動",
     "sort.home": "ホームと同じ並び順",
     "sort.smart": "スマート",
-    "sort.simple": "シンプル"
+    "sort.simple": "シンプル",
+    "language.auto": "自動"
 });
 define("resource/images", [], {
     "application-icon": "./image/cyclictodohex.1024.svg",
@@ -2620,7 +2624,7 @@ define("resource/images", [], {
 define("script/index", ["require", "exports", "script/minamo.js/index", "resource/config", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, config_json_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.CyclicToDo = exports.Calculate = exports.localeParallel = exports.localeSingle = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.makeObject = void 0;
+    exports.CyclicToDo = exports.Calculate = exports.locale = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.makeObject = void 0;
     config_json_1 = __importDefault(config_json_1);
     lang_en_json_1 = __importDefault(lang_en_json_1);
     lang_ja_json_1 = __importDefault(lang_ja_json_1);
@@ -2635,25 +2639,29 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
     exports.simpleReverseComparer = simpleReverseComparer;
     var uniqueFilter = function (value, index, list) { return index === list.indexOf(value); };
     exports.uniqueFilter = uniqueFilter;
-    var localeSingle;
-    (function (localeSingle) {
-        var localeTableKey = navigator.language;
-        var localeTable = Object.assign(JSON.parse(JSON.stringify(lang_en_json_1.default)), ({
-            ja: lang_ja_json_1.default
-        }[localeTableKey] || {}));
-        localeSingle.string = function (key) { return localeTable[key] || key; };
-        localeSingle.map = function (key) { return localeSingle.string(key); };
-    })(localeSingle = exports.localeSingle || (exports.localeSingle = {}));
-    var localeParallel;
-    (function (localeParallel) {
-        var _a;
-        var firstLocale = lang_en_json_1.default;
-        var secondLocale = (_a = {
-            //en : localeEn,
+    var locale;
+    (function (locale_1) {
+        locale_1.master = {
+            en: lang_en_json_1.default,
             ja: lang_ja_json_1.default,
-        }[navigator.language]) !== null && _a !== void 0 ? _a : lang_ja_json_1.default;
-        localeParallel.map = function (key) { return firstLocale[key] + " / " + secondLocale[key]; };
-    })(localeParallel = exports.localeParallel || (exports.localeParallel = {}));
+        };
+        locale_1.locales = Object.keys(locale_1.master);
+        var masterKey = 0 <= locale_1.locales.indexOf(navigator.language) ?
+            navigator.language :
+            locale_1.locales[0];
+        locale_1.getLocaleName = function (locale) { return locale_1.master[locale].$name; };
+        locale_1.setLocale = function (locale) {
+            var key = locale !== null && locale !== void 0 ? locale : navigator.language;
+            if (0 <= locale_1.locales.indexOf(key)) {
+                masterKey = key;
+            }
+        };
+        locale_1.getPrimary = function (key) { return locale_1.master[masterKey][key]; };
+        locale_1.getSecondary = function (key) { return locale_1.master[locale_1.locales.filter(function (locale) { return masterKey !== locale; })[0]][key]; };
+        locale_1.string = function (key) { return locale_1.getPrimary(key) || key; };
+        locale_1.map = function (key) { return locale_1.string(key); };
+        locale_1.parallel = function (key) { return locale_1.getPrimary(key) + " / " + locale_1.getSecondary(key); };
+    })(locale = exports.locale || (exports.locale = {}));
     var Calculate;
     (function (Calculate) {
         Calculate.phi = 1.618033988749894;
@@ -2685,11 +2693,6 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
     (function (CyclicToDo) {
         var _this = this;
         CyclicToDo.applicationTitle = config_json_1.default.applicationTitle;
-        var locale;
-        (function (locale) {
-            locale.map = localeSingle.map;
-            locale.parallel = localeParallel.map;
-        })(locale = CyclicToDo.locale || (CyclicToDo.locale = {}));
         var Storage;
         (function (Storage) {
             Storage.sessionPassPrefix = "@Session";
@@ -2760,6 +2763,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 }
                 return null;
             };
+            var Settings;
+            (function (Settings) {
+                Settings.makeKey = function () { return "settings"; };
+                Settings.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Settings.makeKey())) !== null && _a !== void 0 ? _a : {}; };
+                Settings.set = function (settings) {
+                    return minamo_js_1.minamo.localStorage.set(Settings.makeKey(), settings);
+                };
+            })(Settings = Storage.Settings || (Storage.Settings = {}));
             var Backup;
             (function (Backup) {
                 Backup.key = "backup";
@@ -3870,6 +3881,148 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
+            Render.localeSettingsPopup = function (settings) {
+                if (settings === void 0) { settings = Storage.Settings.get(); }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                    var result, checkButtonList, checkButtonListUpdate, ui;
+                                    var _this = this;
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                result = false;
+                                                checkButtonList = minamo_js_1.minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                                                checkButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    var _a, _b, _c, _d;
+                                                    var _e;
+                                                    var _this = this;
+                                                    var _f;
+                                                    return __generator(this, function (_g) {
+                                                        switch (_g.label) {
+                                                            case 0:
+                                                                _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                                _c = [checkButtonList];
+                                                                _e = {
+                                                                    tag: "button",
+                                                                    className: "check-button " + ("@auto" === ((_f = settings.locale) !== null && _f !== void 0 ? _f : "@auto") ? "checked" : "")
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 1:
+                                                                _d = [
+                                                                    (_e.children = [
+                                                                        _g.sent(),
+                                                                        {
+                                                                            tag: "span",
+                                                                            children: Render.label("language.auto"),
+                                                                        }
+                                                                    ],
+                                                                        _e.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            var _a;
+                                                                            return __generator(this, function (_b) {
+                                                                                switch (_b.label) {
+                                                                                    case 0:
+                                                                                        if (!(null !== ((_a = settings.locale) !== null && _a !== void 0 ? _a : null))) return [3 /*break*/, 2];
+                                                                                        settings.locale = null;
+                                                                                        Storage.Settings.set(settings);
+                                                                                        result = true;
+                                                                                        return [4 /*yield*/, checkButtonListUpdate()];
+                                                                                    case 1:
+                                                                                        _b.sent();
+                                                                                        _b.label = 2;
+                                                                                    case 2: return [2 /*return*/];
+                                                                                }
+                                                                            });
+                                                                        }); },
+                                                                        _e)
+                                                                ];
+                                                                return [4 /*yield*/, Promise.all(locale.locales.map(function (key) { return __awaiter(_this, void 0, void 0, function () {
+                                                                        var _a;
+                                                                        var _this = this;
+                                                                        var _b;
+                                                                        return __generator(this, function (_c) {
+                                                                            switch (_c.label) {
+                                                                                case 0:
+                                                                                    _a = {
+                                                                                        tag: "button",
+                                                                                        className: "check-button " + (key === ((_b = settings.locale) !== null && _b !== void 0 ? _b : "@auto") ? "checked" : "")
+                                                                                    };
+                                                                                    return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                                                case 1: return [2 /*return*/, (_a.children = [
+                                                                                        _c.sent(),
+                                                                                        {
+                                                                                            tag: "span",
+                                                                                            children: Render.labelSpan(locale.getLocaleName(key)),
+                                                                                        }
+                                                                                    ],
+                                                                                        _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                            var _a;
+                                                                                            return __generator(this, function (_b) {
+                                                                                                switch (_b.label) {
+                                                                                                    case 0:
+                                                                                                        if (!((_a = key !== settings.locale) !== null && _a !== void 0 ? _a : null)) return [3 /*break*/, 2];
+                                                                                                        settings.locale = key;
+                                                                                                        Storage.Settings.set(settings);
+                                                                                                        result = true;
+                                                                                                        return [4 /*yield*/, checkButtonListUpdate()];
+                                                                                                    case 1:
+                                                                                                        _b.sent();
+                                                                                                        _b.label = 2;
+                                                                                                    case 2: return [2 /*return*/];
+                                                                                                }
+                                                                                            });
+                                                                                        }); },
+                                                                                        _a)];
+                                                                            }
+                                                                        });
+                                                                    }); }))];
+                                                            case 2: return [2 /*return*/, _b.apply(_a, _c.concat([_d.concat([
+                                                                        _g.sent()
+                                                                    ])]))];
+                                                        }
+                                                    });
+                                                }); };
+                                                return [4 /*yield*/, checkButtonListUpdate()];
+                                            case 1:
+                                                _a.sent();
+                                                ui = Render.popup({
+                                                    className: "add-remove-tags-popup",
+                                                    children: [
+                                                        {
+                                                            tag: "h2",
+                                                            children: "\u8A00\u8A9E\u8A2D\u5B9A",
+                                                        },
+                                                        checkButtonList,
+                                                        {
+                                                            tag: "div",
+                                                            className: "popup-operator",
+                                                            children: [
+                                                                {
+                                                                    tag: "button",
+                                                                    className: "default-button",
+                                                                    children: "閉じる",
+                                                                    onclick: function () {
+                                                                        ui.close();
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                        return [2 /*return*/, resolve(result)];
+                                                    }); }); },
+                                                });
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); })];
+                            case 1: return [2 /*return*/, _a.sent()];
+                        }
+                    });
+                });
+            };
             Render.tagSortSettingsPopup = function (pass, tag, settings) {
                 if (settings === void 0) { settings = Storage.TagSettings.get(pass, tag); }
                 return __awaiter(_this, void 0, void 0, function () {
@@ -6469,8 +6622,23 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             Render.welcomeScreenMenu = function () { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
                 return __generator(this, function (_a) {
                     return [2 /*return*/, [
+                            Render.menuItem(Render.labelSpan("表示言語設定"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, Render.localeSettingsPopup()];
+                                        case 1:
+                                            if (!_a.sent()) return [3 /*break*/, 3];
+                                            return [4 /*yield*/, CyclicToDo.reload()];
+                                        case 2:
+                                            _a.sent();
+                                            _a.label = 3;
+                                        case 3: return [2 /*return*/];
+                                    }
+                                });
+                            }); }),
                             Render.menuItem(Render.label("New ToDo List"), Render.newListPrompt),
                             Render.internalLink({
                                 href: { hash: "import", },
@@ -6895,6 +7063,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     switch (_c.label) {
                         case 0:
                             window.scrollTo(0, 0);
+                            locale.setLocale(Storage.Settings.get().locale);
                             return [4 /*yield*/, Render.showUpdatingScreen(url)];
                         case 1:
                             _c.sent();
