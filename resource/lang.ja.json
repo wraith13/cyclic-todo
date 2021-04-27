@@ -1,4 +1,5 @@
 {
+    "$name": "日本語",
     "previous": "前回",
     "expected interval": "予想間隔",
     "elapsed time": "経過時間",
@@ -42,5 +43,6 @@
     "Move to Sublist": "サブリストへ移動",
     "sort.home": "ホームと同じ並び順",
     "sort.smart": "スマート",
-    "sort.simple": "シンプル"
+    "sort.simple": "シンプル",
+    "language.auto": "自動"
 }

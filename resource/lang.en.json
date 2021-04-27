@@ -1,4 +1,5 @@
 {
+    "$name": "English",
     "previous": "previous",
     "expected interval": "expected interval",
     "elapsed time": "elapsed time",
@@ -42,5 +43,6 @@
     "Move to Sublist": "Move to Sublist",
     "sort.home": "Same order as Home",
     "sort.smart": "Smart",
-    "sort.simple": "Simple"
+    "sort.simple": "Simple",
+    "language.auto": "Auto"
 }

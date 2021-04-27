@@ -12,30 +12,33 @@ export const makeObject = <T>(items: { key: string, value: T}[]) =>
 export const simpleComparer = minamo.core.comparer.basic;
 export const simpleReverseComparer = <T>(a: T, b: T) => -simpleComparer(a, b);
 export const uniqueFilter = <T>(value: T, index: number, list: T[]) => index === list.indexOf(value);
-export module localeSingle
+export module locale
 {
-    export type LocaleKeyType = keyof typeof localeEn;
-    interface LocaleEntry
+    export const master =
     {
-        [key : string] : string;
-    }
-    const localeTableKey = navigator.language;
-    const localeTable = Object.assign(JSON.parse(JSON.stringify(localeEn)), ((<{[key : string] : LocaleEntry}>{
-        ja : localeJa
-    })[localeTableKey] || { }));
-    export const string = (key : string) : string => localeTable[key] || key;
-    export const map = (key : LocaleKeyType) : string => string(key);
-}
-export module localeParallel
-{
-    export type LocaleKeyType = keyof typeof localeEn & keyof typeof localeJa;
-    const firstLocale = localeEn;
-    const secondLocale =
-    {
-        //en : localeEn,
+        en: localeEn,
         ja: localeJa,
-    }[navigator.language] ?? localeJa;
-    export const map = (key : LocaleKeyType) : string => `${firstLocale[key]} / ${secondLocale[key]}`;
+    };
+    export type LocaleKeyType =
+        keyof typeof localeEn &
+        keyof typeof localeJa;
+    export type LocaleType = keyof typeof master;
+    export const locales = Object.keys(master) as LocaleType[];
+    let masterKey: LocaleType = 0 <= locales.indexOf(navigator.language as LocaleType) ?
+        navigator.language as LocaleType:
+        locales[0];
+    export const setLocale = (locale: LocaleType | null) =>
+    {
+        if (0 <= locales.indexOf(locale ?? navigator.language as LocaleType))
+        {
+            masterKey = locale;
+        }
+    };
+    export const getPrimary = (key : LocaleKeyType) => master[masterKey][key];
+    export const getSecondary = (key : LocaleKeyType) => master[locales.filter(locale => masterKey !== locale)[0]][key];
+    export const string = (key : string) : string => getPrimary(key as LocaleKeyType) || key;
+    export const map = (key : LocaleKeyType) : string => string(key);
+    export const parallel = (key : LocaleKeyType) : string => `${getPrimary(key)} / ${getSecondary(key)}`;
 }
 export module Calculate
 {
@@ -70,19 +73,17 @@ export module Calculate
 export module CyclicToDo
 {
     export const applicationTitle = config.applicationTitle;
-    export module locale
+    export interface Settings
     {
-        export type LocaleKeyType = localeParallel.LocaleKeyType;
-        export const map = localeSingle.map;
-        export const parallel = localeParallel.map;
+        locale?: locale.LocaleType;
     }
-    interface ToDoTagEntry
+    export interface ToDoTagEntry
     {
         pass: string;
         tag: string;
         todo: string[];
     }
-    interface ToDoEntry
+    export interface ToDoEntry
     {
         task: string;
         isDefault: boolean;
@@ -199,6 +200,14 @@ export module CyclicToDo
             }
             return null;
         };
+        export module Settings
+        {
+            export const makeKey = () => `settings`;
+            export const get = () =>
+                minamo.localStorage.getOrNull<CyclicToDo.Settings>(makeKey()) ?? { };
+            export const set = (settings: CyclicToDo.Settings) =>
+                minamo.localStorage.set(makeKey(), settings);
+        }
         export module Backup
         {
             export const key = `backup`;
@@ -1398,80 +1407,72 @@ export module CyclicToDo
                 }
             );
         };
-        export const tagSortSettingsPopup = async (pass: string, tag: string, settings: TagSettings = Storage.TagSettings.get(pass, tag)): Promise<boolean> =>
+        export const localeSettingsPopup = async (settings: Settings = Storage.Settings.get()): Promise<boolean> =>
         {
             return await new Promise
             (
                 async resolve =>
                 {
                     let result = false;
-                    const tagButtonList = minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
-                    const tagButtonListUpdate = async () => minamo.dom.replaceChildren
+                    const checkButtonList = minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                    const checkButtonListUpdate = async () => minamo.dom.replaceChildren
                     (
-                        tagButtonList,
+                        checkButtonList,
                         [
-                            "@overall" !== tag ?
-                                {
-                                    tag: "button",
-                                    className: `check-button ${"@home" === (settings.sort ?? "@home") ? "checked": ""}`,
-                                    children:
-                                    [
-                                        await Resource.loadSvgOrCache("check-icon"),
-                                        {
-                                            tag: "span",
-                                            children: label("sort.home"),
-                                        },
-                                    ],
-                                    onclick: async () =>
+                            {
+                                tag: "button",
+                                className: `check-button ${"@auto" === (settings.locale ?? "@auto") ? "checked": ""}`,
+                                children:
+                                [
+                                    await Resource.loadSvgOrCache("check-icon"),
                                     {
-                                        settings.sort = null;
-                                        Storage.TagSettings.set(pass, tag, settings);
+                                        tag: "span",
+                                        children: label("language.auto"),
+                                    },
+                                ],
+                                onclick: async () =>
+                                {
+                                    if (null !== (settings.locale ?? null))
+                                    {
+                                        settings.locale = null;
+                                        Storage.Settings.set(settings);
                                         result = true;
-                                        await tagButtonListUpdate();
+                                        await checkButtonListUpdate();
                                     }
-                                }:
-                                [],
-                            {
-                                tag: "button",
-                                className: `check-button ${"smart" === (settings.sort ?? ("@overall" === tag ? "smart": "@home")) ? "checked": ""}`,
-                                children:
-                                [
-                                    await Resource.loadSvgOrCache("check-icon"),
-                                    {
-                                        tag: "span",
-                                        children: label("sort.smart"),
-                                    },
-                                ],
-                                onclick: async () =>
-                                {
-                                    settings.sort = "smart";
-                                    Storage.TagSettings.set(pass, tag, settings);
-                                    result = true;
-                                    await tagButtonListUpdate();
                                 }
                             },
-                            {
-                                tag: "button",
-                                className: `check-button ${"simple" === (settings.sort ?? "smart") ? "checked": ""}`,
-                                children:
-                                [
-                                    await Resource.loadSvgOrCache("check-icon"),
-                                    {
-                                        tag: "span",
-                                        children: label("sort.simple"),
-                                    },
-                                ],
-                                onclick: async () =>
-                                {
-                                    settings.sort = "simple";
-                                    Storage.TagSettings.set(pass, tag, settings);
-                                    result = true;
-                                    await tagButtonListUpdate();
-                                }
-                            },
+                            await Promise.all
+                            (
+                                locale.locales.map
+                                (
+                                    async locale =>
+                                    ({
+                                        tag: "button",
+                                        className: `check-button ${locale === (settings.locale ?? "@auto") ? "checked": ""}`,
+                                        children:
+                                        [
+                                            await Resource.loadSvgOrCache("check-icon"),
+                                            {
+                                                tag: "span",
+                                                children: label("sort.smart"),
+                                            },
+                                        ],
+                                        onclick: async () =>
+                                        {
+                                            if (locale !== settings.locale ?? null)
+                                            {
+                                                settings.locale = locale;
+                                                Storage.Settings.set(settings);
+                                                result = true;
+                                                await checkButtonListUpdate();
+                                            }
+                                        }
+                                    })
+                                )
+                            )
                         ]
                     );
-                    await tagButtonListUpdate();
+                    await checkButtonListUpdate();
                     const ui = popup
                     ({
                         className: "add-remove-tags-popup",
@@ -1479,9 +1480,9 @@ export module CyclicToDo
                         [
                             {
                                 tag: "h2",
-                                children: `並び順設定: ${Domain.tagMap(tag)}`,
+                                children: `言語設定`,
                             },
-                            tagButtonList,
+                            checkButtonList,
                             {
                                 tag: "div",
                                 className: "popup-operator",
@@ -1504,6 +1505,109 @@ export module CyclicToDo
                 }
             );
         };
+        export const tagSortSettingsPopup = async (pass: string, tag: string, settings: TagSettings = Storage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
+        (
+            async resolve =>
+            {
+                let result = false;
+                const tagButtonList = minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                const tagButtonListUpdate = async () => minamo.dom.replaceChildren
+                (
+                    tagButtonList,
+                    [
+                        "@overall" !== tag ?
+                            {
+                                tag: "button",
+                                className: `check-button ${"@home" === (settings.sort ?? "@home") ? "checked": ""}`,
+                                children:
+                                [
+                                    await Resource.loadSvgOrCache("check-icon"),
+                                    {
+                                        tag: "span",
+                                        children: label("sort.home"),
+                                    },
+                                ],
+                                onclick: async () =>
+                                {
+                                    settings.sort = null;
+                                    Storage.TagSettings.set(pass, tag, settings);
+                                    result = true;
+                                    await tagButtonListUpdate();
+                                }
+                            }:
+                            [],
+                        {
+                            tag: "button",
+                            className: `check-button ${"smart" === (settings.sort ?? ("@overall" === tag ? "smart": "@home")) ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                {
+                                    tag: "span",
+                                    children: label("sort.smart"),
+                                },
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.sort = "smart";
+                                Storage.TagSettings.set(pass, tag, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                        {
+                            tag: "button",
+                            className: `check-button ${"simple" === (settings.sort ?? "smart") ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                {
+                                    tag: "span",
+                                    children: label("sort.simple"),
+                                },
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.sort = "simple";
+                                Storage.TagSettings.set(pass, tag, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                    ]
+                );
+                await tagButtonListUpdate();
+                const ui = popup
+                ({
+                    className: "add-remove-tags-popup",
+                    children:
+                    [
+                        {
+                            tag: "h2",
+                            children: `並び順設定: ${Domain.tagMap(tag)}`,
+                        },
+                        tagButtonList,
+                        {
+                            tag: "div",
+                            className: "popup-operator",
+                            children:
+                            [
+                                {
+                                    tag: "button",
+                                    className: "default-button",
+                                    children: "閉じる",
+                                    onclick: () =>
+                                    {
+                                        ui.close();
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                    onClose: async () => resolve(result),
+                });
+            }
+        );
         export const screenCover = (data: { children?: minamo.dom.Source, onclick: () => unknown, }) =>
         {
             const dom = minamo.dom.make(HTMLDivElement)
