@@ -1070,7 +1070,7 @@ export module CyclicToDo
                         [
                             {
                                 tag: "h2",
-                                children: message ?? "入力してください。",
+                                children: message ?? locale.map("please input"),
                             },
                             input,
                             {
@@ -1115,7 +1115,7 @@ export module CyclicToDo
         export const confirm = systemConfirm;
         export const newListPrompt = async () =>
         {
-            const newList = await prompt("ToDoリストの名前を入力してください", "ToDo リスト");
+            const newList = await prompt("ToDoリストの名前を入力してください", locale.map("ToDo List"));
             if (null !== newList)
             {
                 const pass = Storage.Pass.generate();
@@ -1482,7 +1482,7 @@ export module CyclicToDo
                         [
                             {
                                 tag: "h2",
-                                children: `言語設定`,
+                                children: label("Display language setting"),
                             },
                             checkButtonList,
                             {
@@ -1586,7 +1586,7 @@ export module CyclicToDo
                     [
                         {
                             tag: "h2",
-                            children: `並び順設定: ${Domain.tagMap(tag)}`,
+                            children: `${locale.map("Sort order setting")}: ${Domain.tagMap(tag)}`,
                         },
                         tagButtonList,
                         {
@@ -1977,19 +1977,7 @@ export module CyclicToDo
                                 {
                                     tag: "button",
                                     className: item.isDefault ? "default-button main-button": "main-button",
-                                    children:
-                                    [
-                                        {
-                                            tag: "span",
-                                            className: "locale-parallel",
-                                            children: locale.parallel("Done"),
-                                        },
-                                        {
-                                            tag: "span",
-                                            className: "locale-map",
-                                            children: locale.map("Done"),
-                                        }
-                                    ],
+                                    children: label("Done"),
                                     onclick: async () =>
                                     {
                                         //if (isSessionPass(pass))
@@ -2083,7 +2071,7 @@ export module CyclicToDo
                         ([
                             menuItem
                             (
-                                locale.map("Edit"),
+                                label("Edit"),
                                 async () =>
                                 {
                                     const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), item.tick));
@@ -2097,7 +2085,7 @@ export module CyclicToDo
                             ),
                             menuItem
                             (
-                                locale.map("Delete"),
+                                label("Delete"),
                                 async () =>
                                 {
                                     Storage.History.remove(entry.pass, item.task, item.tick);
@@ -2167,7 +2155,7 @@ export module CyclicToDo
                         ([
                             menuItem
                             (
-                                locale.map("Edit"),
+                                label("Edit"),
                                 async () =>
                                 {
                                     const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), tick));
@@ -2181,7 +2169,7 @@ export module CyclicToDo
                             ),
                             menuItem
                             (
-                                locale.map("Delete"),
+                                label("Delete"),
                                 async () =>
                                 {
                                     Storage.History.remove(pass, item.task, tick);
@@ -2597,7 +2585,7 @@ export module CyclicToDo
             }),
             menuItem
             (
-                labelSpan("並び順設定"),
+                label("Sort order setting"),
                 async () =>
                 {
                     if (await tagSortSettingsPopup(entry.pass, entry.tag))
@@ -3475,7 +3463,7 @@ export module CyclicToDo
                                     {
                                         tag: "button",
                                         className: "default-button main-button",
-                                        children: "開く",
+                                        children: label("Open"),
                                     },
                                 }),
                                 await menuButton
@@ -3512,7 +3500,7 @@ export module CyclicToDo
         [
             menuItem
             (
-                labelSpan("表示言語設定"),
+                label("Display language setting"),
                 async () =>
                 {
                     if (await localeSettingsPopup())
@@ -3575,13 +3563,13 @@ export module CyclicToDo
                         await applicationColorIcon(),
                         {
                             tag: "div",
-                            className: "button-line",
+                            className: "button-line locale-parallel-on",
                             children:
                             [
                                 {
                                     tag: "button",
                                     className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
-                                    children: locale.parallel("New ToDo List"),
+                                    children: label("New ToDo List"),
                                     onclick: newListPrompt,
                                 },
                                 await menuButton
@@ -3589,12 +3577,12 @@ export module CyclicToDo
                                     internalLink
                                     ({
                                         href: { hash: "import", },
-                                        children: menuItem(locale.parallel("Import List")),
+                                        children: menuItem(label("Import List")),
                                     }),
                                     internalLink
                                     ({
                                         href: { hash: "removed", },
-                                        children: menuItem(locale.parallel("@deleted")),
+                                        children: menuItem(label("@deleted")),
                                     }),
                                 ]),
                             ],

@@ -5,6 +5,7 @@
     "elapsed time": "経過時間",
     "count": "回数",
     "Done": "完了",
+    "Open": "開く",
     "days": "日",
     "@overall": "ホーム",
     "@unoverall": "ホームから除外",
@@ -30,6 +31,7 @@
     "Back to Top": "トップ画面に戻る",
     "Back to Home": "ホーム画面に戻る",
     "Updating...": "更新中...",
+    "ToDo List": "ToDo リスト",
     "Tag": "タグ",
     "Sublist": "サブリスト",
     "Task": "ToDo",
@@ -44,5 +46,8 @@
     "sort.home": "ホームと同じ並び順",
     "sort.smart": "スマート",
     "sort.simple": "シンプル",
-    "language.auto": "自動"
+    "language.auto": "自動",
+    "please input": "入力してください。",
+    "Sort order setting": "並び順設定",
+    "Display language setting": "言語設定"
 }

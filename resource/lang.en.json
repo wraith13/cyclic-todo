@@ -5,6 +5,7 @@
     "elapsed time": "elapsed time",
     "count": "count",
     "Done": "Done",
+    "Open": "Open",
     "days": "days",
     "@overall": "Home",
     "@unoverall": "Excluded in Home",
@@ -30,6 +31,7 @@
     "Back to Top": "Back to Top screen",
     "Back to Home": "Back to Home",
     "Updating...": "Updating...",
+    "ToDo List": "ToDo List",
     "Tag": "Tag",
     "Sublist": "Sublist",
     "Task": "ToDo",
@@ -44,5 +46,8 @@
     "sort.home": "Same order as Home",
     "sort.smart": "Smart",
     "sort.simple": "Simple",
-    "language.auto": "Auto"
+    "language.auto": "Auto",
+    "please input": "Please input.",
+    "Sort order setting": "Sort order setting",
+    "Display language setting": "Display language setting"
 }

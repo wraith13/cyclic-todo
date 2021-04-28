@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed Apr 28 2021 03:42:13 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed Apr 28 2021 19:04:30 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -2512,6 +2512,7 @@ define("resource/lang.en", [], {
     "elapsed time": "elapsed time",
     "count": "count",
     "Done": "Done",
+    "Open": "Open",
     "days": "days",
     "@overall": "Home",
     "@unoverall": "Excluded in Home",
@@ -2537,6 +2538,7 @@ define("resource/lang.en", [], {
     "Back to Top": "Back to Top screen",
     "Back to Home": "Back to Home",
     "Updating...": "Updating...",
+    "ToDo List": "ToDo List",
     "Tag": "Tag",
     "Sublist": "Sublist",
     "Task": "ToDo",
@@ -2551,7 +2553,10 @@ define("resource/lang.en", [], {
     "sort.home": "Same order as Home",
     "sort.smart": "Smart",
     "sort.simple": "Simple",
-    "language.auto": "Auto"
+    "language.auto": "Auto",
+    "please input": "Please input.",
+    "Sort order setting": "Sort order setting",
+    "Display language setting": "Display language setting"
 });
 define("resource/lang.ja", [], {
     "$name": "日本語",
@@ -2560,6 +2565,7 @@ define("resource/lang.ja", [], {
     "elapsed time": "経過時間",
     "count": "回数",
     "Done": "完了",
+    "Open": "開く",
     "days": "日",
     "@overall": "ホーム",
     "@unoverall": "ホームから除外",
@@ -2585,6 +2591,7 @@ define("resource/lang.ja", [], {
     "Back to Top": "トップ画面に戻る",
     "Back to Home": "ホーム画面に戻る",
     "Updating...": "更新中...",
+    "ToDo List": "ToDo リスト",
     "Tag": "タグ",
     "Sublist": "サブリスト",
     "Task": "ToDo",
@@ -2599,7 +2606,10 @@ define("resource/lang.ja", [], {
     "sort.home": "ホームと同じ並び順",
     "sort.smart": "スマート",
     "sort.simple": "シンプル",
-    "language.auto": "自動"
+    "language.auto": "自動",
+    "please input": "入力してください。",
+    "Sort order setting": "並び順設定",
+    "Display language setting": "言語設定"
 });
 define("resource/images", [], {
     "application-icon": "./image/cyclictodohex.1024.svg",
@@ -3483,7 +3493,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         children: [
                                             {
                                                 tag: "h2",
-                                                children: message !== null && message !== void 0 ? message : "入力してください。",
+                                                children: message !== null && message !== void 0 ? message : locale.map("please input"),
                                             },
                                             input,
                                             {
@@ -3531,7 +3541,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var newList, pass;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, Render.prompt("ToDoリストの名前を入力してください", "ToDo リスト")];
+                        case 0: return [4 /*yield*/, Render.prompt("ToDoリストの名前を入力してください", locale.map("ToDo List"))];
                         case 1:
                             newList = _a.sent();
                             if (!(null !== newList)) return [3 /*break*/, 3];
@@ -3992,7 +4002,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     children: [
                                                         {
                                                             tag: "h2",
-                                                            children: "\u8A00\u8A9E\u8A2D\u5B9A",
+                                                            children: Render.label("Display language setting"),
                                                         },
                                                         checkButtonList,
                                                         {
@@ -4154,7 +4164,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     children: [
                                                         {
                                                             tag: "h2",
-                                                            children: "\u4E26\u3073\u9806\u8A2D\u5B9A: " + Domain.tagMap(tag),
+                                                            children: locale.map("Sort order setting") + ": " + Domain.tagMap(tag),
                                                         },
                                                         tagButtonList,
                                                         {
@@ -4578,18 +4588,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _c = [{
                                     tag: "button",
                                     className: item.isDefault ? "default-button main-button" : "main-button",
-                                    children: [
-                                        {
-                                            tag: "span",
-                                            className: "locale-parallel",
-                                            children: locale.parallel("Done"),
-                                        },
-                                        {
-                                            tag: "span",
-                                            className: "locale-map",
-                                            children: locale.map("Done"),
-                                        }
-                                    ],
+                                    children: Render.label("Done"),
                                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                         var fxxkingTypeScriptCompiler;
                                         return __generator(this, function (_a) {
@@ -4700,7 +4699,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             //     onclick: async () => { }
                             // },
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem(locale.map("Edit"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                    Render.menuItem(Render.label("Edit"), function () { return __awaiter(_this, void 0, void 0, function () {
                                         var result, _a, _b;
                                         return __generator(this, function (_c) {
                                             switch (_c.label) {
@@ -4720,7 +4719,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             }
                                         });
                                     }); }),
-                                    Render.menuItem(locale.map("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                    Render.menuItem(Render.label("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0:
@@ -4813,7 +4812,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             //     onclick: async () => { }
                             // },
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem(locale.map("Edit"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                    Render.menuItem(Render.label("Edit"), function () { return __awaiter(_this, void 0, void 0, function () {
                                         var result, _a, _b;
                                         return __generator(this, function (_c) {
                                             switch (_c.label) {
@@ -4833,7 +4832,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             }
                                         });
                                     }); }),
-                                    Render.menuItem(locale.map("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                    Render.menuItem(Render.label("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0:
@@ -5372,7 +5371,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 href: { pass: entry.pass, tag: entry.tag, hash: "history" },
                                 children: Render.menuItem(Render.label("History")),
                             }),
-                            Render.menuItem(Render.labelSpan("並び順設定"), function () { return __awaiter(_this, void 0, void 0, function () {
+                            Render.menuItem(Render.label("Sort order setting"), function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0: return [4 /*yield*/, Render.tagSortSettingsPopup(entry.pass, entry.tag)];
@@ -6582,7 +6581,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     children: {
                                         tag: "button",
                                         className: "default-button main-button",
-                                        children: "開く",
+                                        children: Render.label("Open"),
                                     },
                                 })];
                             return [4 /*yield*/, Render.menuButton([
@@ -6625,7 +6624,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var _this = this;
                 return __generator(this, function (_a) {
                     return [2 /*return*/, [
-                            Render.menuItem(Render.labelSpan("表示言語設定"), function () { return __awaiter(_this, void 0, void 0, function () {
+                            Render.menuItem(Render.label("Display language setting"), function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0: return [4 /*yield*/, Render.localeSettingsPopup()];
@@ -6705,22 +6704,22 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             ];
                             _j = {
                                 tag: "div",
-                                className: "button-line"
+                                className: "button-line locale-parallel-on"
                             };
                             _d = [{
                                     tag: "button",
                                     className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
-                                    children: locale.parallel("New ToDo List"),
+                                    children: Render.label("New ToDo List"),
                                     onclick: Render.newListPrompt,
                                 }];
                             return [4 /*yield*/, Render.menuButton([
                                     Render.internalLink({
                                         href: { hash: "import", },
-                                        children: Render.menuItem(locale.parallel("Import List")),
+                                        children: Render.menuItem(Render.label("Import List")),
                                     }),
                                     Render.internalLink({
                                         href: { hash: "removed", },
-                                        children: Render.menuItem(locale.parallel("@deleted")),
+                                        children: Render.menuItem(Render.label("@deleted")),
                                     }),
                                 ])];
                         case 5: return [2 /*return*/, (_e.children = _b.concat([
