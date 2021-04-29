@@ -2273,14 +2273,13 @@ export module CyclicToDo
             href?: PageParams;
             menu?: minamo.dom.Source;
         }
-        export const screenSegmentedHeader = async (
-            data:
-            {
-                items: HeaderSegmentSource[],
-                menu?: minamo.dom.Source,
-                operator?: minamo.dom.Source,
-            }
-        ) => heading
+        export interface HeaderSource
+        {
+            items: HeaderSegmentSource[];
+            menu?: minamo.dom.Source;
+            operator?: minamo.dom.Source;
+        }
+        export const screenSegmentedHeader = async (data:HeaderSource) => heading
         (
             "h1",
             [
@@ -2557,6 +2556,20 @@ export module CyclicToDo
                     ),
                 ])
         });
+        export const screen = async (className: string, header: HeaderSource, body: minamo.dom.Source) =>
+        ({
+            tag: "div",
+            className: `${className} screen`,
+            children:
+            [
+                await screenSegmentedHeader(header),
+                {
+                    tag: "div",
+                    className: "screen-body",
+                    children: body,
+                },
+            ]
+        });
         export const listRenameMenu =
         (
             pass: string,
@@ -2667,81 +2680,71 @@ export module CyclicToDo
                 ):
                 [],
         ];
-        export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
-        ({
-            tag: "div",
-            className: "list-screen screen",
-            children:
+        export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) => await screen
+        (
+            "list-screen",
+            {
+                items:
+                [
+                    screenHeaderHomeSegment(),
+                    await screenHeaderListSegment(entry.pass),
+                    await screenHeaderTagSegment(entry.pass, entry.tag),
+                ],
+                menu: await listScreenMenu(entry),
+            },
             [
-                await screenSegmentedHeader
-                ({
-                    items:
-                    [
-                        screenHeaderHomeSegment(),
-                        await screenHeaderListSegment(entry.pass),
-                        await screenHeaderTagSegment(entry.pass, entry.tag),
-                    ],
-                    menu: await listScreenMenu(entry),
-                }),
                 await historyBar(entry, list),
                 {
                     tag: "div",
-                    className: "screen-body",
+                    className: "column-flex-list todo-list",
+                    children: await Promise.all(list.map(item => todoItem(entry, item))),
+                },
+                {
+                    tag: "div",
+                    className: "button-list",
                     children:
                     [
-                        {
-                            tag: "div",
-                            className: "column-flex-list todo-list",
-                            children: await Promise.all(list.map(item => todoItem(entry, item))),
-                        },
-                        {
-                            tag: "div",
-                            className: "button-list",
-                            children:
-                            [
-                                "@overall" !== entry.tag ?
-                                    internalLink
-                                    ({
-                                        href: { pass: entry.pass, tag: "@overall", },
-                                        children:
-                                        {
-                                            tag: "button",
-                                            className: list.length <= 0 ? "main-button long-button": "default-button main-button long-button",
-                                            children: label("Back to Home"),
-                                        },
-                                    }):
-                                    [],
+                        "@overall" !== entry.tag ?
+                            internalLink
+                            ({
+                                href: { pass: entry.pass, tag: "@overall", },
+                                children:
                                 {
                                     tag: "button",
-                                    className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
-                                    children: label("New ToDo"),
-                                    onclick: async () =>
-                                    {
-                                        const newTask = await prompt("ToDo の名前を入力してください");
-                                        if (null !== newTask)
-                                        {
-                                            Storage.Task.add(entry.pass, newTask);
-                                            Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                            await reload();
-                                        }
-                                    }
+                                    className: list.length <= 0 ? "main-button long-button": "default-button main-button long-button",
+                                    children: label("Back to Home"),
                                 },
-                                internalLink
-                                ({
-                                    href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                                    children:
-                                    {
-                                        tag: "button",
-                                        className: "main-button long-button",
-                                        children: label("History"),
-                                    },
-                                }),
-                            ]
-                        }
-                    ],
-                },
+                            }):
+                            [],
+                        {
+                            tag: "button",
+                            className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
+                            children: label("New ToDo"),
+                            onclick: async () =>
+                            {
+                                const newTask = await prompt("ToDo の名前を入力してください");
+                                if (null !== newTask)
+                                {
+                                    Storage.Task.add(entry.pass, newTask);
+                                    Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                                    await reload();
+                                }
+                            }
+                        },
+                        internalLink
+                        ({
+                            href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                            children:
+                            {
+                                tag: "button",
+                                className: "main-button long-button",
+                                children: label("History"),
+                            },
+                        }),
+                    ]
+                }
             ]
-        });
+        );
         export const showListScreen = async (entry: ToDoTagEntry) =>
         {
             const list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)));
@@ -2873,54 +2876,44 @@ export module CyclicToDo
             //     ):
             //     [],
         ];
-        export const historyScreen = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[]) =>
-        ({
-            tag: "div",
-            className: "history-screen screen",
-            children:
+        export const historyScreen = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[]) => await screen
+        (
+            "history-screen",
+            {
+                items:
+                [
+                    screenHeaderHomeSegment(),
+                    await screenHeaderListSegment(entry.pass),
+                    await screenHeaderTagSegment(entry.pass, entry.tag),
+                    {
+                        icon: "history-icon",
+                        title: locale.map("History"),
+                    }
+                ],
+                menu: await historyScreenMenu(entry),
+            },
             [
-                await screenSegmentedHeader
-                ({
-                    items:
-                    [
-                        screenHeaderHomeSegment(),
-                        await screenHeaderListSegment(entry.pass),
-                        await screenHeaderTagSegment(entry.pass, entry.tag),
-                        {
-                            icon: "history-icon",
-                            title: locale.map("History"),
-                        }
-                    ],
-                    menu: await historyScreenMenu(entry),
-                }),
                 {
                     tag: "div",
-                    className: "screen-body",
-                    children:
-                    [
+                    className: "column-flex-list history-list",
+                    children: await Promise.all(list.map(item => historyItem(entry, item))),
+                },
+                {
+                    tag: "div",
+                    className: "button-list",
+                    children: internalLink
+                    ({
+                        href: { pass: entry.pass, tag: entry.tag, },
+                        children:
                         {
-                            tag: "div",
-                            className: "column-flex-list history-list",
-                            children: await Promise.all(list.map(item => historyItem(entry, item))),
+                            tag: "button",
+                            className: "default-button main-button long-button",
+                            children: label("Back to List"),
                         },
-                        {
-                            tag: "div",
-                            className: "button-list",
-                            children: internalLink
-                            ({
-                                href: { pass: entry.pass, tag: entry.tag, },
-                                children:
-                                {
-                                    tag: "button",
-                                    className: "default-button main-button long-button",
-                                    children: label("Back to List"),
-                                },
-                            }),
-                        },
-                    ],
+                    }),
                 },
             ]
-        });
+        );
         export const showHistoryScreen = async (entry: ToDoTagEntry) =>
         {
             const histories: { [task:string]:number[] } = { };
@@ -3015,79 +3008,69 @@ export module CyclicToDo
                 "delete-button"
             ),
         ];
-        export const removedScreen = async (pass: string, list: Storage.Removed.Type[]) =>
-        ({
-            tag: "div",
-            className: "removed-screen screen",
-            children:
+        export const removedScreen = async (pass: string, list: Storage.Removed.Type[]) => await screen
+        (
+            "removed-screen",
+            {
+                items:
+                [
+                    screenHeaderHomeSegment(),
+                    await screenHeaderListSegment(pass),
+                    await screenHeaderTagSegment(pass, "@deleted"),
+                ],
+                menu: await removedScreenMenu(pass)
+            },
             [
-                await screenSegmentedHeader
-                ({
-                    items:
-                    [
-                        screenHeaderHomeSegment(),
-                        await screenHeaderListSegment(pass),
-                        await screenHeaderTagSegment(pass, "@deleted"),
-                    ],
-                    menu: await removedScreenMenu(pass)
-                }),
+                0 < list.length ?
                 {
                     tag: "div",
-                    className: "screen-body",
+                    className: "column-flex-list removed-list",
+                    children: await Promise.all
+                    (
+                        [].concat(list)
+                            .sort(minamo.core.comparer.make(item => -item.deteledAt))
+                            .map(item => removedItem(pass, item))
+                    ),
+                }:
+                {
+                    tag: "div",
+                    className: "button-list",
+                    children: label("Recycle Bin is empty."),
+                },
+                {
+                    tag: "div",
+                    className: "button-list",
                     children:
                     [
-                        0 < list.length ?
-                        {
-                            tag: "div",
-                            className: "column-flex-list removed-list",
-                            children: await Promise.all
-                            (
-                                [].concat(list)
-                                    .sort(minamo.core.comparer.make(item => -item.deteledAt))
-                                    .map(item => removedItem(pass, item))
-                            ),
-                        }:
-                        {
-                            tag: "div",
-                            className: "button-list",
-                            children: label("Recycle Bin is empty."),
-                        },
-                        {
-                            tag: "div",
-                            className: "button-list",
+                        internalLink
+                        ({
+                            href: { pass, tag: "@overall", },
                             children:
-                            [
-                                internalLink
-                                ({
-                                    href: { pass, tag: "@overall", },
-                                    children:
+                            {
+                                tag: "button",
+                                className: "default-button main-button long-button",
+                                children: label("Back to Home"),
+                            },
+                        }),
+                        0 < list.length ?
+                            {
+                                tag: "button",
+                                className: "main-button long-button delete-button",
+                                children: "完全に削除",
+                                onclick: async () =>
+                                {
+                                    if (systemConfirm("この操作は取り消せません。続行しますか？"))
                                     {
-                                        tag: "button",
-                                        className: "default-button main-button long-button",
-                                        children: label("Back to Home"),
-                                    },
-                                }),
-                                0 < list.length ?
-                                    {
-                                        tag: "button",
-                                        className: "main-button long-button delete-button",
-                                        children: "完全に削除",
-                                        onclick: async () =>
-                                        {
-                                            if (systemConfirm("この操作は取り消せません。続行しますか？"))
-                                            {
-                                                Storage.Removed.clear(pass);
-                                                await reload();
-                                            }
-                                        },
-                                    }:
-                                    [],
-                            ],
-                        }
+                                        Storage.Removed.clear(pass);
+                                        await reload();
+                                    }
+                                },
+                            }:
+                            [],
                     ],
-                },
+                }
             ]
-        });
+        );
         export const showRemovedScreen = async (pass: string) =>
             await showWindow(await removedScreen(pass, Storage.Removed.get(pass)));
         export const todoScreenMenu = async (pass: string, item: ToDoEntry) =>
@@ -3107,102 +3090,92 @@ export module CyclicToDo
             ),
         ];
 
-        export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[], tag: string = Storage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0]) =>
-        ({
-            tag: "div",
-            className: "todo-screen screen",
-            children:
+        export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[], tag: string = Storage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0]) => await screen
+        (
+            "todo-screen",
+            {
+                items:
+                [
+                    screenHeaderHomeSegment(),
+                    await screenHeaderListSegment(pass),
+                    await screenHeaderTagSegment(pass, tag),
+                    await screenHeaderTaskSegment(pass, tag, item.task),
+                ],
+                menu: await todoScreenMenu(pass, item),
+            },
             [
-                await screenSegmentedHeader
-                ({
-                    items:
-                    [
-                        screenHeaderHomeSegment(),
-                        await screenHeaderListSegment(pass),
-                        await screenHeaderTagSegment(pass, tag),
-                        await screenHeaderTaskSegment(pass, tag, item.task),
-                    ],
-                    menu: await todoScreenMenu(pass, item),
-                }),
                 {
                     tag: "div",
-                    className: "screen-body",
+                    className: "row-flex-list todo-list",
                     children:
                     [
                         {
                             tag: "div",
-                            className: "row-flex-list todo-list",
+                            className: "task-item flex-item",
                             children:
                             [
                                 {
                                     tag: "div",
-                                    className: "task-item flex-item",
-                                    children:
-                                    [
-                                        {
-                                            tag: "div",
-                                            className: "item-tags",
-                                            children: await Promise.all
-                                            (
-                                                Storage.Tag.getByTodo(pass, item.task).map
-                                                (
-                                                    async tag => internalLink
-                                                    ({
-                                                        className: "tag",
-                                                        href: { pass, tag, },
-                                                        children:
-                                                        [
-                                                            await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
-                                                            Domain.tagMap(tag)
-                                                        ],
-                                                    })
-                                                )
-                                            ),
-                                        },
-                                        information(item),
-                                    ],
+                                    className: "item-tags",
+                                    children: await Promise.all
+                                    (
+                                        Storage.Tag.getByTodo(pass, item.task).map
+                                        (
+                                            async tag => internalLink
+                                            ({
+                                                className: "tag",
+                                                href: { pass, tag, },
+                                                children:
+                                                [
+                                                    await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
+                                                    Domain.tagMap(tag)
+                                                ],
+                                            })
+                                        )
+                                    ),
                                 },
+                                information(item),
                             ],
                         },
-                        {
-                            tag: "div",
-                            className: "column-flex-list tick-list",
-                            children: await Promise.all
-                            (
-                                ticks.map
-                                (
-                                    (tick, index) => tickItem
-                                    (
-                                        pass,
-                                        item,
-                                        tick,
-                                        "number" === typeof ticks[index +1] ? tick -ticks[index +1]: null,
-                                        ticks.length < 2 ? null: Math.max.apply(null, Calculate.intervals(ticks))
-                                    )
-                                )
-                            ),
-                        },
-                        Storage.isSessionPass(pass) ?
-                            []:
-                            {
-                                tag: "div",
-                                className: "button-list",
-                                children:
-                                {
-                                    tag: "button",
-                                    className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
-                                    children: label("Done"),
-                                    onclick: async () =>
-                                    {
-                                        Domain.done(pass, item.task);
-                                        await reload();
-                                    }
-                                },
-                            }
                     ],
                 },
+                {
+                    tag: "div",
+                    className: "column-flex-list tick-list",
+                    children: await Promise.all
+                    (
+                        ticks.map
+                        (
+                            (tick, index) => tickItem
+                            (
+                                pass,
+                                item,
+                                tick,
+                                "number" === typeof ticks[index +1] ? tick -ticks[index +1]: null,
+                                ticks.length < 2 ? null: Math.max.apply(null, Calculate.intervals(ticks))
+                            )
+                        )
+                    ),
+                },
+                Storage.isSessionPass(pass) ?
+                    []:
+                    {
+                        tag: "div",
+                        className: "button-list",
+                        children:
+                        {
+                            tag: "button",
+                            className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
+                            children: label("Done"),
+                            onclick: async () =>
+                            {
+                                Domain.done(pass, item.task);
+                                await reload();
+                            }
+                        },
+                    }
             ]
-        });
+        );
         export const showTodoScreen = async (pass: string, task: string) =>
         {
             const item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
@@ -3253,39 +3226,29 @@ export module CyclicToDo
                 async () => async () => await showUrl({ pass, tag: "@overall", }),
             )
         ];
-        export const exportScreen = async (pass: string) =>
-        ({
-            tag: "div",
-            className: "export-screen screen",
-            children:
+        export const exportScreen = async (pass: string) => await screen
+        (
+            "export-screen",
+            {
+                items:
+                [
+                    screenHeaderHomeSegment(),
+                    await screenHeaderListSegment(pass),
+                    {
+                        icon: "list-icon", // 本来は export だけど、まだ作ってない
+                        title: locale.map("Export"),
+                    }
+                ],
+                menu: await exportScreenMenu(pass)
+            },
             [
-                await screenSegmentedHeader
-                ({
-                    items:
-                    [
-                        screenHeaderHomeSegment(),
-                        await screenHeaderListSegment(pass),
-                        {
-                            icon: "list-icon", // 本来は export だけど、まだ作ってない
-                            title: locale.map("Export"),
-                        }
-                    ],
-                    menu: await exportScreenMenu(pass)
-                }),
                 {
-                    tag: "div",
-                    className: "screen-body",
-                    children:
-                    [
-                        {
-                            tag: "textarea",
-                            className: "json",
-                            children: Storage.exportJson(pass),
-                        }
-                    ],
-                },
-            ],
-        });
+                    tag: "textarea",
+                    className: "json",
+                    children: Storage.exportJson(pass),
+                }
+            ]
+        );
         export const showImportScreen = async () =>
             await showWindow(await importScreen());
         export const importScreenMenu = async () =>
@@ -3296,54 +3259,44 @@ export module CyclicToDo
                 async () => await showUrl({ }),
             )
         ];
-        export const importScreen = async () =>
-        ({
-            tag: "div",
-            className: "import-screen screen",
-            children:
+        export const importScreen = async () => await screen
+        (
+            "import-screen",
+            {
+                items:
+                [
+                    screenHeaderHomeSegment(),
+                    await screenHeaderListSegment("@import")
+                ],
+                menu: await importScreenMenu()
+            },
             [
-                await screenSegmentedHeader
-                ({
-                    items:
-                    [
-                        screenHeaderHomeSegment(),
-                        await screenHeaderListSegment("@import")
-                    ],
-                    menu: await importScreenMenu()
-                }),
+                {
+                    tag: "textarea",
+                    className: "json",
+                    placeholder: "エクスポートした JSON をペーストしてください。"
+                },
                 {
                     tag: "div",
-                    className: "screen-body",
+                    className: "button-list",
                     children:
-                    [
+                    {
+                        tag: "button",
+                        className: "default-button main-button long-button",
+                        children: label("Import"),
+                        onclick: async () =>
                         {
-                            tag: "textarea",
-                            className: "json",
-                            placeholder: "エクスポートした JSON をペーストしてください。"
-                        },
-                        {
-                            tag: "div",
-                            className: "button-list",
-                            children:
+                            const textarea = document.getElementsByClassName("json")[0] as HTMLTextAreaElement;
+                            const pass = Storage.importJson(textarea.value);
+                            if (null !== pass)
                             {
-                                tag: "button",
-                                className: "default-button main-button long-button",
-                                children: label("Import"),
-                                onclick: async () =>
-                                {
-                                    const textarea = document.getElementsByClassName("json")[0] as HTMLTextAreaElement;
-                                    const pass = Storage.importJson(textarea.value);
-                                    if (null !== pass)
-                                    {
-                                        showUrl({ pass, tag: "@overall", });
-                                    }
-                                },
-                            },
+                                showUrl({ pass, tag: "@overall", });
+                            }
                         },
-                    ],
+                    },
                 },
-            ],
-        });
+            ]
+        );
         export const removedListItem = async (list: ToDoList) =>
         ({
             tag: "div",
@@ -3398,73 +3351,63 @@ export module CyclicToDo
                 async () => await showUrl({ }),
             )
         ];
-        export const removedListScreen = async (list: ToDoList[]) =>
-        ({
-            tag: "div",
-            className: "remove-list-screen screen",
-            children:
+        export const removedListScreen = async (list: ToDoList[]) => await screen
+        (
+            "remove-list-screen",
+            {
+                items:
+                [
+                    screenHeaderHomeSegment(),
+                    await screenHeaderListSegment("@removed")
+                ],
+                menu: await removedListScreenMenu()
+            },
             [
-                await screenSegmentedHeader
-                ({
-                    items:
-                    [
-                        screenHeaderHomeSegment(),
-                        await screenHeaderListSegment("@removed")
-                    ],
-                    menu: await removedListScreenMenu()
-                }),
+                0 < list.length ?
                 {
                     tag: "div",
-                    className: "screen-body",
+                    className: "column-flex-list removed-list-list",
+                    children: await Promise.all(list.map(item => removedListItem(item))),
+                }:
+                {
+                    tag: "div",
+                    className: "button-list",
+                    children: label("Recycle Bin is empty."),
+                },
+                {
+                    tag: "div",
+                    className: "button-list",
                     children:
                     [
-                        0 < list.length ?
-                        {
-                            tag: "div",
-                            className: "column-flex-list removed-list-list",
-                            children: await Promise.all(list.map(item => removedListItem(item))),
-                        }:
-                        {
-                            tag: "div",
-                            className: "button-list",
-                            children: label("Recycle Bin is empty."),
-                        },
-                        {
-                            tag: "div",
-                            className: "button-list",
+                        internalLink
+                        ({
+                            href: {  },
                             children:
-                            [
-                                internalLink
-                                ({
-                                    href: {  },
-                                    children:
+                            {
+                                tag: "button",
+                                className: "default-button main-button long-button",
+                                children: label("Back to Top"),
+                            },
+                        }),
+                        0 < list.length ?
+                            {
+                                tag: "button",
+                                className: "main-button long-button delete-button",
+                                children: "完全に削除",
+                                onclick: async () =>
+                                {
+                                    if (systemConfirm("この操作は取り消せません。続行しますか？"))
                                     {
-                                        tag: "button",
-                                        className: "default-button main-button long-button",
-                                        children: label("Back to Top"),
-                                    },
-                                }),
-                                0 < list.length ?
-                                    {
-                                        tag: "button",
-                                        className: "main-button long-button delete-button",
-                                        children: "完全に削除",
-                                        onclick: async () =>
-                                        {
-                                            if (systemConfirm("この操作は取り消せません。続行しますか？"))
-                                            {
-                                                Storage.Backup.clear();
-                                                await reload();
-                                            }
-                                        },
-                                    }:
-                                    [],
-                            ],
-                        }
+                                        Storage.Backup.clear();
+                                        await reload();
+                                    }
+                                },
+                            }:
+                            [],
                     ],
-                },
-            ],
-        });
+                }
+            ]
+        );
         export const applicationIcon = async () =>
         ({
             tag: "div",
@@ -3579,21 +3522,18 @@ export module CyclicToDo
                 children: menuItem(labelSpan("GitHub")),
             }),
         ];
-        export const welcomeScreen = async () =>
-        ({
-            tag: "div",
-            className: "welcome-screen screen",
-            children:
+        export const welcomeScreen = async () => await screen
+        (
+            "welcome-screen",
+            {
+                items:
+                [{
+                    icon: "application-icon",
+                    title: CyclicToDo.applicationTitle,
+                }],
+                menu: await welcomeScreenMenu()
+            },
             [
-                await screenSegmentedHeader
-                ({
-                    items:
-                    [{
-                        icon: "application-icon",
-                        title: CyclicToDo.applicationTitle,
-                    }],
-                    menu: await welcomeScreenMenu()
-                }),
                 {
                     tag: "div",
                     className: "column-flex-list list-list",
@@ -3604,42 +3544,35 @@ export module CyclicToDo
                     style: "text-align: center; padding: 0.5rem;",
                     children: "🚧 This static web application is under development. / この Static Web アプリは開発中です。",
                 },
+                        await applicationColorIcon(),
                 {
                     tag: "div",
-                    className: "screen-body",
+                    className: "button-line locale-parallel-on",
                     children:
                     [
-                        await applicationColorIcon(),
                         {
-                            tag: "div",
-                            className: "button-line locale-parallel-on",
-                            children:
-                            [
-                                {
-                                    tag: "button",
-                                    className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
-                                    children: label("New ToDo List"),
-                                    onclick: newListPrompt,
-                                },
-                                await menuButton
-                                ([
-                                    internalLink
-                                    ({
-                                        href: { hash: "import", },
-                                        children: menuItem(label("Import List")),
-                                    }),
-                                    internalLink
-                                    ({
-                                        href: { hash: "removed", },
-                                        children: menuItem(label("@deleted")),
-                                    }),
-                                ]),
-                            ],
+                            tag: "button",
+                            className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
+                            children: label("New ToDo List"),
+                            onclick: newListPrompt,
                         },
+                        await menuButton
+                        ([
+                            internalLink
+                            ({
+                                href: { hash: "import", },
+                                children: menuItem(label("Import List")),
+                            }),
+                            internalLink
+                            ({
+                                href: { hash: "removed", },
+                                children: menuItem(label("@deleted")),
+                            }),
+                        ]),
                     ],
                 },
-            ],
-        });
+            ]
+        );
         export const showWelcomeScreen = async () =>
             await showWindow(await welcomeScreen());
         export const updatingScreenMenu = async () =>
@@ -3655,50 +3588,40 @@ export module CyclicToDo
                 async () => location.href = "https://github.com/wraith13/cyclic-todo/",
             ),
         ];
-        export const updatingScreen = async (url: string = location.href) =>
-        ({
-            tag: "div",
-            className: "updating-screen screen",
-            children:
+        export const updatingScreen = async (url: string = location.href) => await screen
+        (
+            "updating-screen",
+            {
+                items:
+                [
+                    screenHeaderHomeSegment(),
+                    {
+                        icon: "list-icon",
+                        title: "loading...",
+                    },
+                ],
+                menu: await updatingScreenMenu()
+            },
             [
-                await screenSegmentedHeader
-                ({
-                    items:
-                    [
-                        screenHeaderHomeSegment(),
-                        {
-                            icon: "list-icon",
-                            title: "loading...",
-                        },
-                    ],
-                    menu: await updatingScreenMenu()
-                }),
+                await applicationColorIcon(),
+                // {
+                //     tag: "div",
+                //     className: "message",
+                //     children: label("Updating..."),
+                // },
                 {
                     tag: "div",
-                    className: "screen-body",
+                    className: "button-list",
                     children:
-                    [
-                        await applicationColorIcon(),
-                        // {
-                        //     tag: "div",
-                        //     className: "message",
-                        //     children: label("Updating..."),
-                        // },
-                        {
-                            tag: "div",
-                            className: "button-list",
-                            children:
-                            {
-                                tag: "button",
-                                className: "default-button main-button long-button",
-                                children: label("Reload"),
-                                onclick: async () => await showPage(url),
-                            },
-                        },
-                    ],
+                    {
+                        tag: "button",
+                        className: "default-button main-button long-button",
+                        children: label("Reload"),
+                        onclick: async () => await showPage(url),
+                    },
                 },
-            ],
-        });
+            ]
+        );
         export const showUpdatingScreen = async (url: string = location.href) =>
             await showWindow(await updatingScreen(url));
         export const updateTitle = () =>
