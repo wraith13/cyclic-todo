@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed Apr 28 2021 19:04:30 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed Apr 28 2021 19:56:22 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -1279,6 +1279,24 @@ button.delete-button {
     color: #FFFFFF;
   }
 }
+.screen {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+.screen > :not(.screen-body) {
+  flex-shrink: 0;
+}
+.screen > .screen-body {
+  overflow: auto;
+  flex-grow: 1;
+}
 .todo-screen .task-item {
   padding-top: 0px;
 }
@@ -1314,16 +1332,6 @@ button.delete-button {
 .todo-screen .tick-list .tick-item .item-operator {
   padding-left: 0.5rem;
 }
-.welcome-screen,
-.updating-screen {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  right: 0px;
-  left: 0px;
-}
 .welcome-screen .screen-body,
 .updating-screen .screen-body {
   display: flex;
@@ -1332,7 +1340,6 @@ button.delete-button {
   justify-content: space-evenly;
   right: 0px;
   left: 0px;
-  flex-grow: 1;
 }
 .welcome-screen .screen-body > .application-icon,
 .updating-screen .screen-body > .application-icon {
@@ -5469,10 +5476,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             }); };
             Render.listScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c;
-                var _d, _e, _f;
+                var _d, _e, _f, _g;
                 var _this = this;
-                return __generator(this, function (_g) {
-                    switch (_g.label) {
+                return __generator(this, function (_h) {
+                    switch (_h.label) {
                         case 0:
                             _d = {
                                 tag: "div",
@@ -5484,80 +5491,87 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             return [4 /*yield*/, Render.screenHeaderListSegment(entry.pass)];
                         case 1:
                             _b = _b.concat([
-                                _g.sent()
+                                _h.sent()
                             ]);
                             return [4 /*yield*/, Render.screenHeaderTagSegment(entry.pass, entry.tag)];
                         case 2:
                             _e.items = _b.concat([
-                                _g.sent()
+                                _h.sent()
                             ]);
                             return [4 /*yield*/, Render.listScreenMenu(entry)];
-                        case 3: return [4 /*yield*/, _a.apply(void 0, [(_e.menu = _g.sent(),
+                        case 3: return [4 /*yield*/, _a.apply(void 0, [(_e.menu = _h.sent(),
                                     _e)])];
                         case 4:
                             _c = [
-                                _g.sent()
+                                _h.sent()
                             ];
                             return [4 /*yield*/, Render.historyBar(entry, list)];
                         case 5:
                             _c = _c.concat([
-                                _g.sent()
+                                _h.sent()
                             ]);
                             _f = {
+                                tag: "div",
+                                className: "screen-body"
+                            };
+                            _g = {
                                 tag: "div",
                                 className: "column-flex-list todo-list"
                             };
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.todoItem(entry, item); }))];
                         case 6: return [2 /*return*/, (_d.children = _c.concat([
-                                (_f.children = _g.sent(),
-                                    _f),
-                                {
-                                    tag: "div",
-                                    className: "button-list",
-                                    children: [
-                                        "@overall" !== entry.tag ?
+                                (_f.children = [
+                                    (_g.children = _h.sent(),
+                                        _g),
+                                    {
+                                        tag: "div",
+                                        className: "button-list",
+                                        children: [
+                                            "@overall" !== entry.tag ?
+                                                Render.internalLink({
+                                                    href: { pass: entry.pass, tag: "@overall", },
+                                                    children: {
+                                                        tag: "button",
+                                                        className: list.length <= 0 ? "main-button long-button" : "default-button main-button long-button",
+                                                        children: Render.label("Back to Home"),
+                                                    },
+                                                }) :
+                                                [],
+                                            {
+                                                tag: "button",
+                                                className: list.length <= 0 ? "default-button main-button long-button" : "main-button long-button",
+                                                children: Render.label("New ToDo"),
+                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    var newTask;
+                                                    return __generator(this, function (_a) {
+                                                        switch (_a.label) {
+                                                            case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
+                                                            case 1:
+                                                                newTask = _a.sent();
+                                                                if (!(null !== newTask)) return [3 /*break*/, 3];
+                                                                Storage.Task.add(entry.pass, newTask);
+                                                                Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                                                                return [4 /*yield*/, CyclicToDo.reload()];
+                                                            case 2:
+                                                                _a.sent();
+                                                                _a.label = 3;
+                                                            case 3: return [2 /*return*/];
+                                                        }
+                                                    });
+                                                }); }
+                                            },
                                             Render.internalLink({
-                                                href: { pass: entry.pass, tag: "@overall", },
+                                                href: { pass: entry.pass, tag: entry.tag, hash: "history" },
                                                 children: {
                                                     tag: "button",
-                                                    className: list.length <= 0 ? "main-button long-button" : "default-button main-button long-button",
-                                                    children: Render.label("Back to Home"),
+                                                    className: "main-button long-button",
+                                                    children: Render.label("History"),
                                                 },
-                                            }) :
-                                            [],
-                                        {
-                                            tag: "button",
-                                            className: list.length <= 0 ? "default-button main-button long-button" : "main-button long-button",
-                                            children: Render.label("New ToDo"),
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                var newTask;
-                                                return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
-                                                        case 1:
-                                                            newTask = _a.sent();
-                                                            if (!(null !== newTask)) return [3 /*break*/, 3];
-                                                            Storage.Task.add(entry.pass, newTask);
-                                                            Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                                            return [4 /*yield*/, CyclicToDo.reload()];
-                                                        case 2:
-                                                            _a.sent();
-                                                            _a.label = 3;
-                                                        case 3: return [2 /*return*/];
-                                                    }
-                                                });
-                                            }); }
-                                        },
-                                        Render.internalLink({
-                                            href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                                            children: {
-                                                tag: "button",
-                                                className: "main-button long-button",
-                                                children: Render.label("History"),
-                                            },
-                                        }),
-                                    ]
-                                }
+                                            }),
+                                        ]
+                                    }
+                                ],
+                                    _f)
                             ]),
                                 _d)];
                     }
@@ -5725,9 +5739,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             }); };
             Render.historyScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c;
-                var _d, _e, _f;
-                return __generator(this, function (_g) {
-                    switch (_g.label) {
+                var _d, _e, _f, _g;
+                return __generator(this, function (_h) {
+                    switch (_h.label) {
                         case 0:
                             _d = {
                                 tag: "div",
@@ -5739,44 +5753,51 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             return [4 /*yield*/, Render.screenHeaderListSegment(entry.pass)];
                         case 1:
                             _b = _b.concat([
-                                _g.sent()
+                                _h.sent()
                             ]);
                             return [4 /*yield*/, Render.screenHeaderTagSegment(entry.pass, entry.tag)];
                         case 2:
                             _e.items = _b.concat([
-                                _g.sent(),
+                                _h.sent(),
                                 {
                                     icon: "history-icon",
                                     title: locale.map("History"),
                                 }
                             ]);
                             return [4 /*yield*/, Render.historyScreenMenu(entry)];
-                        case 3: return [4 /*yield*/, _a.apply(void 0, [(_e.menu = _g.sent(),
+                        case 3: return [4 /*yield*/, _a.apply(void 0, [(_e.menu = _h.sent(),
                                     _e)])];
                         case 4:
                             _c = [
-                                _g.sent()
+                                _h.sent()
                             ];
                             _f = {
+                                tag: "div",
+                                className: "screen-body"
+                            };
+                            _g = {
                                 tag: "div",
                                 className: "column-flex-list history-list"
                             };
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.historyItem(entry, item); }))];
                         case 5: return [2 /*return*/, (_d.children = _c.concat([
-                                (_f.children = _g.sent(),
-                                    _f),
-                                {
-                                    tag: "div",
-                                    className: "button-list",
-                                    children: Render.internalLink({
-                                        href: { pass: entry.pass, tag: entry.tag, },
-                                        children: {
-                                            tag: "button",
-                                            className: "default-button main-button long-button",
-                                            children: Render.label("Back to List"),
-                                        },
-                                    }),
-                                }
+                                (_f.children = [
+                                    (_g.children = _h.sent(),
+                                        _g),
+                                    {
+                                        tag: "div",
+                                        className: "button-list",
+                                        children: Render.internalLink({
+                                            href: { pass: entry.pass, tag: entry.tag, },
+                                            children: {
+                                                tag: "button",
+                                                className: "default-button main-button long-button",
+                                                children: Render.label("Back to List"),
+                                            },
+                                        }),
+                                    }
+                                ],
+                                    _f)
                             ]),
                                 _d)];
                     }
@@ -5906,10 +5927,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             }); };
             Render.removedScreen = function (pass, list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d;
-                var _e, _f, _g;
+                var _e, _f, _g, _h;
                 var _this = this;
-                return __generator(this, function (_h) {
-                    switch (_h.label) {
+                return __generator(this, function (_j) {
+                    switch (_j.label) {
                         case 0:
                             _e = {
                                 tag: "div",
@@ -5921,22 +5942,26 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             return [4 /*yield*/, Render.screenHeaderListSegment(pass)];
                         case 1:
                             _b = _b.concat([
-                                _h.sent()
+                                _j.sent()
                             ]);
                             return [4 /*yield*/, Render.screenHeaderTagSegment(pass, "@deleted")];
                         case 2:
                             _f.items = _b.concat([
-                                _h.sent()
+                                _j.sent()
                             ]);
                             return [4 /*yield*/, Render.removedScreenMenu(pass)];
-                        case 3: return [4 /*yield*/, _a.apply(void 0, [(_f.menu = _h.sent(),
+                        case 3: return [4 /*yield*/, _a.apply(void 0, [(_f.menu = _j.sent(),
                                     _f)])];
                         case 4:
                             _c = [
-                                _h.sent()
+                                _j.sent()
                             ];
-                            if (!(0 < list.length)) return [3 /*break*/, 6];
                             _g = {
+                                tag: "div",
+                                className: "screen-body"
+                            };
+                            if (!(0 < list.length)) return [3 /*break*/, 6];
+                            _h = {
                                 tag: "div",
                                 className: "column-flex-list removed-list"
                             };
@@ -5944,8 +5969,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     .sort(minamo_js_1.minamo.core.comparer.make(function (item) { return -item.deteledAt; }))
                                     .map(function (item) { return Render.removedItem(pass, item); }))];
                         case 5:
-                            _d = (_g.children = _h.sent(),
-                                _g);
+                            _d = (_h.children = _j.sent(),
+                                _h);
                             return [3 /*break*/, 7];
                         case 6:
                             _d = {
@@ -5953,44 +5978,47 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "button-list",
                                 children: Render.label("Recycle Bin is empty."),
                             };
-                            _h.label = 7;
+                            _j.label = 7;
                         case 7: return [2 /*return*/, (_e.children = _c.concat([
-                                _d,
-                                {
-                                    tag: "div",
-                                    className: "button-list",
-                                    children: [
-                                        Render.internalLink({
-                                            href: { pass: pass, tag: "@overall", },
-                                            children: {
-                                                tag: "button",
-                                                className: "default-button main-button long-button",
-                                                children: Render.label("Back to Home"),
-                                            },
-                                        }),
-                                        0 < list.length ?
-                                            {
-                                                tag: "button",
-                                                className: "main-button long-button delete-button",
-                                                children: "完全に削除",
-                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                    return __generator(this, function (_a) {
-                                                        switch (_a.label) {
-                                                            case 0:
-                                                                if (!Render.systemConfirm("この操作は取り消せません。続行しますか？")) return [3 /*break*/, 2];
-                                                                Storage.Removed.clear(pass);
-                                                                return [4 /*yield*/, CyclicToDo.reload()];
-                                                            case 1:
-                                                                _a.sent();
-                                                                _a.label = 2;
-                                                            case 2: return [2 /*return*/];
-                                                        }
-                                                    });
-                                                }); },
-                                            } :
-                                            [],
-                                    ],
-                                }
+                                (_g.children = [
+                                    _d,
+                                    {
+                                        tag: "div",
+                                        className: "button-list",
+                                        children: [
+                                            Render.internalLink({
+                                                href: { pass: pass, tag: "@overall", },
+                                                children: {
+                                                    tag: "button",
+                                                    className: "default-button main-button long-button",
+                                                    children: Render.label("Back to Home"),
+                                                },
+                                            }),
+                                            0 < list.length ?
+                                                {
+                                                    tag: "button",
+                                                    className: "main-button long-button delete-button",
+                                                    children: "完全に削除",
+                                                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        return __generator(this, function (_a) {
+                                                            switch (_a.label) {
+                                                                case 0:
+                                                                    if (!Render.systemConfirm("この操作は取り消せません。続行しますか？")) return [3 /*break*/, 2];
+                                                                    Storage.Removed.clear(pass);
+                                                                    return [4 /*yield*/, CyclicToDo.reload()];
+                                                                case 1:
+                                                                    _a.sent();
+                                                                    _a.label = 2;
+                                                                case 2: return [2 /*return*/];
+                                                            }
+                                                        });
+                                                    }); },
+                                                } :
+                                                [],
+                                        ],
+                                    }
+                                ],
+                                    _g)
                             ]),
                                 _e)];
                     }
@@ -6034,50 +6062,54 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Render.todoScreen = function (pass, item, ticks, tag) {
                 if (tag === void 0) { tag = Storage.Tag.getByTodo(pass, item.task).filter(function (tag) { return "@overall" !== tag; }).concat("@overall")[0]; }
                 return __awaiter(_this, void 0, void 0, function () {
-                    var _a, _b, _c;
-                    var _d, _e, _f, _g, _h, _j;
+                    var _a, _b, _c, _d;
+                    var _e, _f, _g, _h, _j, _k, _l;
                     var _this = this;
-                    return __generator(this, function (_k) {
-                        switch (_k.label) {
+                    return __generator(this, function (_m) {
+                        switch (_m.label) {
                             case 0:
-                                _d = {
+                                _e = {
                                     tag: "div",
                                     className: "todo-screen screen"
                                 };
                                 _a = Render.screenSegmentedHeader;
-                                _e = {};
+                                _f = {};
                                 _b = [Render.screenHeaderHomeSegment()];
                                 return [4 /*yield*/, Render.screenHeaderListSegment(pass)];
                             case 1:
                                 _b = _b.concat([
-                                    _k.sent()
+                                    _m.sent()
                                 ]);
                                 return [4 /*yield*/, Render.screenHeaderTagSegment(pass, tag)];
                             case 2:
                                 _b = _b.concat([
-                                    _k.sent()
+                                    _m.sent()
                                 ]);
                                 return [4 /*yield*/, Render.screenHeaderTaskSegment(pass, tag, item.task)];
                             case 3:
-                                _e.items = _b.concat([
-                                    _k.sent()
+                                _f.items = _b.concat([
+                                    _m.sent()
                                 ]);
                                 return [4 /*yield*/, Render.todoScreenMenu(pass, item)];
-                            case 4: return [4 /*yield*/, _a.apply(void 0, [(_e.menu = _k.sent(),
-                                        _e)])];
+                            case 4: return [4 /*yield*/, _a.apply(void 0, [(_f.menu = _m.sent(),
+                                        _f)])];
                             case 5:
                                 _c = [
-                                    _k.sent()
+                                    _m.sent()
                                 ];
-                                _f = {
+                                _g = {
+                                    tag: "div",
+                                    className: "screen-body"
+                                };
+                                _h = {
                                     tag: "div",
                                     className: "row-flex-list todo-list"
                                 };
-                                _g = {
+                                _j = {
                                     tag: "div",
                                     className: "task-item flex-item"
                                 };
-                                _h = {
+                                _k = {
                                     tag: "div",
                                     className: "item-tags"
                                 };
@@ -6102,50 +6134,53 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         });
                                     }); }))];
                             case 6:
-                                _c = _c.concat([
-                                    (_f.children = [
-                                        (_g.children = [
-                                            (_h.children = _k.sent(),
-                                                _h),
+                                _d = [
+                                    (_h.children = [
+                                        (_j.children = [
+                                            (_k.children = _m.sent(),
+                                                _k),
                                             Render.information(item)
                                         ],
-                                            _g)
+                                            _j)
                                     ],
-                                        _f)
-                                ]);
-                                _j = {
+                                        _h)
+                                ];
+                                _l = {
                                     tag: "div",
                                     className: "column-flex-list tick-list"
                                 };
                                 return [4 /*yield*/, Promise.all(ticks.map(function (tick, index) { return Render.tickItem(pass, item, tick, "number" === typeof ticks[index + 1] ? tick - ticks[index + 1] : null, ticks.length < 2 ? null : Math.max.apply(null, Calculate.intervals(ticks))); }))];
-                            case 7: return [2 /*return*/, (_d.children = _c.concat([
-                                    (_j.children = _k.sent(),
-                                        _j),
-                                    Storage.isSessionPass(pass) ?
-                                        [] :
-                                        {
-                                            tag: "div",
-                                            className: "button-list",
-                                            children: {
-                                                tag: "button",
-                                                className: item.isDefault ? "default-button main-button long-button" : "main-button long-button",
-                                                children: Render.label("Done"),
-                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                    return __generator(this, function (_a) {
-                                                        switch (_a.label) {
-                                                            case 0:
-                                                                Domain.done(pass, item.task);
-                                                                return [4 /*yield*/, CyclicToDo.reload()];
-                                                            case 1:
-                                                                _a.sent();
-                                                                return [2 /*return*/];
-                                                        }
-                                                    });
-                                                }); }
-                                            },
-                                        }
+                            case 7: return [2 /*return*/, (_e.children = _c.concat([
+                                    (_g.children = _d.concat([
+                                        (_l.children = _m.sent(),
+                                            _l),
+                                        Storage.isSessionPass(pass) ?
+                                            [] :
+                                            {
+                                                tag: "div",
+                                                className: "button-list",
+                                                children: {
+                                                    tag: "button",
+                                                    className: item.isDefault ? "default-button main-button long-button" : "main-button long-button",
+                                                    children: Render.label("Done"),
+                                                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        return __generator(this, function (_a) {
+                                                            switch (_a.label) {
+                                                                case 0:
+                                                                    Domain.done(pass, item.task);
+                                                                    return [4 /*yield*/, CyclicToDo.reload()];
+                                                                case 1:
+                                                                    _a.sent();
+                                                                    return [2 /*return*/];
+                                                            }
+                                                        });
+                                                    }); }
+                                                },
+                                            }
+                                    ]),
+                                        _g)
                                 ]),
-                                    _d)];
+                                    _e)];
                         }
                     });
                 });
@@ -6266,9 +6301,15 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 3: return [2 /*return*/, (_c.children = [
                                 _e.sent(),
                                 {
-                                    tag: "textarea",
-                                    className: "json",
-                                    children: Storage.exportJson(pass),
+                                    tag: "div",
+                                    className: "screen-body",
+                                    children: [
+                                        {
+                                            tag: "textarea",
+                                            className: "json",
+                                            children: Storage.exportJson(pass),
+                                        }
+                                    ],
                                 }
                             ],
                                 _c)];
@@ -6322,29 +6363,35 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 3: return [2 /*return*/, (_c.children = [
                                 _e.sent(),
                                 {
-                                    tag: "textarea",
-                                    className: "json",
-                                    placeholder: "エクスポートした JSON をペーストしてください。"
-                                },
-                                {
                                     tag: "div",
-                                    className: "button-list",
-                                    children: {
-                                        tag: "button",
-                                        className: "default-button main-button long-button",
-                                        children: Render.label("Import"),
-                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                            var textarea, pass;
-                                            return __generator(this, function (_a) {
-                                                textarea = document.getElementsByClassName("json")[0];
-                                                pass = Storage.importJson(textarea.value);
-                                                if (null !== pass) {
-                                                    CyclicToDo.showUrl({ pass: pass, tag: "@overall", });
-                                                }
-                                                return [2 /*return*/];
-                                            });
-                                        }); },
-                                    },
+                                    className: "screen-body",
+                                    children: [
+                                        {
+                                            tag: "textarea",
+                                            className: "json",
+                                            placeholder: "エクスポートした JSON をペーストしてください。"
+                                        },
+                                        {
+                                            tag: "div",
+                                            className: "button-list",
+                                            children: {
+                                                tag: "button",
+                                                className: "default-button main-button long-button",
+                                                children: Render.label("Import"),
+                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    var textarea, pass;
+                                                    return __generator(this, function (_a) {
+                                                        textarea = document.getElementsByClassName("json")[0];
+                                                        pass = Storage.importJson(textarea.value);
+                                                        if (null !== pass) {
+                                                            CyclicToDo.showUrl({ pass: pass, tag: "@overall", });
+                                                        }
+                                                        return [2 /*return*/];
+                                                    });
+                                                }); },
+                                            },
+                                        },
+                                    ],
                                 }
                             ],
                                 _c)];
@@ -6430,10 +6477,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             }); };
             Render.removedListScreen = function (list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d;
-                var _e, _f, _g;
+                var _e, _f, _g, _h;
                 var _this = this;
-                return __generator(this, function (_h) {
-                    switch (_h.label) {
+                return __generator(this, function (_j) {
+                    switch (_j.label) {
                         case 0:
                             _e = {
                                 tag: "div",
@@ -6445,24 +6492,28 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             return [4 /*yield*/, Render.screenHeaderListSegment("@removed")];
                         case 1:
                             _f.items = _b.concat([
-                                _h.sent()
+                                _j.sent()
                             ]);
                             return [4 /*yield*/, Render.removedListScreenMenu()];
-                        case 2: return [4 /*yield*/, _a.apply(void 0, [(_f.menu = _h.sent(),
+                        case 2: return [4 /*yield*/, _a.apply(void 0, [(_f.menu = _j.sent(),
                                     _f)])];
                         case 3:
                             _c = [
-                                _h.sent()
+                                _j.sent()
                             ];
-                            if (!(0 < list.length)) return [3 /*break*/, 5];
                             _g = {
+                                tag: "div",
+                                className: "screen-body"
+                            };
+                            if (!(0 < list.length)) return [3 /*break*/, 5];
+                            _h = {
                                 tag: "div",
                                 className: "column-flex-list removed-list-list"
                             };
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.removedListItem(item); }))];
                         case 4:
-                            _d = (_g.children = _h.sent(),
-                                _g);
+                            _d = (_h.children = _j.sent(),
+                                _h);
                             return [3 /*break*/, 6];
                         case 5:
                             _d = {
@@ -6470,44 +6521,47 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "button-list",
                                 children: Render.label("Recycle Bin is empty."),
                             };
-                            _h.label = 6;
+                            _j.label = 6;
                         case 6: return [2 /*return*/, (_e.children = _c.concat([
-                                _d,
-                                {
-                                    tag: "div",
-                                    className: "button-list",
-                                    children: [
-                                        Render.internalLink({
-                                            href: {},
-                                            children: {
-                                                tag: "button",
-                                                className: "default-button main-button long-button",
-                                                children: Render.label("Back to Top"),
-                                            },
-                                        }),
-                                        0 < list.length ?
-                                            {
-                                                tag: "button",
-                                                className: "main-button long-button delete-button",
-                                                children: "完全に削除",
-                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                    return __generator(this, function (_a) {
-                                                        switch (_a.label) {
-                                                            case 0:
-                                                                if (!Render.systemConfirm("この操作は取り消せません。続行しますか？")) return [3 /*break*/, 2];
-                                                                Storage.Backup.clear();
-                                                                return [4 /*yield*/, CyclicToDo.reload()];
-                                                            case 1:
-                                                                _a.sent();
-                                                                _a.label = 2;
-                                                            case 2: return [2 /*return*/];
-                                                        }
-                                                    });
-                                                }); },
-                                            } :
-                                            [],
-                                    ],
-                                }
+                                (_g.children = [
+                                    _d,
+                                    {
+                                        tag: "div",
+                                        className: "button-list",
+                                        children: [
+                                            Render.internalLink({
+                                                href: {},
+                                                children: {
+                                                    tag: "button",
+                                                    className: "default-button main-button long-button",
+                                                    children: Render.label("Back to Top"),
+                                                },
+                                            }),
+                                            0 < list.length ?
+                                                {
+                                                    tag: "button",
+                                                    className: "main-button long-button delete-button",
+                                                    children: "完全に削除",
+                                                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        return __generator(this, function (_a) {
+                                                            switch (_a.label) {
+                                                                case 0:
+                                                                    if (!Render.systemConfirm("この操作は取り消せません。続行しますか？")) return [3 /*break*/, 2];
+                                                                    Storage.Backup.clear();
+                                                                    return [4 /*yield*/, CyclicToDo.reload()];
+                                                                case 1:
+                                                                    _a.sent();
+                                                                    _a.label = 2;
+                                                                case 2: return [2 /*return*/];
+                                                            }
+                                                        });
+                                                    }); },
+                                                } :
+                                                [],
+                                        ],
+                                    }
+                                ],
+                                    _g)
                             ]),
                                 _e)];
                     }
