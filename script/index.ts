@@ -1009,6 +1009,18 @@ export module CyclicToDo
             href: data.href,
             children: data.children,
         });
+        export const div = (className: string) => (children: minamo.dom.Source) =>
+        ({
+            tag: "div",
+            children,
+            className,
+        });
+        export const span = (className: string) => (children: minamo.dom.Source) =>
+        ({
+            tag: "span",
+            children,
+            className,
+        });
         export const heading = (tag: string, text: minamo.dom.Source, className?: string) =>
         ({
             tag,
@@ -1073,33 +1085,29 @@ export module CyclicToDo
                                 children: message ?? locale.map("please input"),
                             },
                             input,
-                            {
-                                tag: "div",
-                                className: "popup-operator",
-                                children:
-                                [
+                            div("popup-operator")
+                            ([
+                                {
+                                    tag: "button",
+                                    className: "cancel-button",
+                                    children: locale.map("Cancel"),
+                                    onclick: () =>
                                     {
-                                        tag: "button",
-                                        className: "cancel-button",
-                                        children: locale.map("Cancel"),
-                                        onclick: () =>
-                                        {
-                                            result = null;
-                                            ui.close();
-                                        },
+                                        result = null;
+                                        ui.close();
                                     },
+                                },
+                                {
+                                    tag: "button",
+                                    className: "default-button",
+                                    children: locale.map("OK"),
+                                    onclick: () =>
                                     {
-                                        tag: "button",
-                                        className: "default-button",
-                                        children: locale.map("OK"),
-                                        onclick: () =>
-                                        {
-                                            result = input.value;
-                                            ui.close();
-                                        },
+                                        result = input.value;
+                                        ui.close();
                                     },
-                                ],
-                            },
+                                },
+                            ]),
                         ],
                         onClose: async () => resolve(result),
                     });
@@ -1165,33 +1173,29 @@ export module CyclicToDo
                             },
                             inputDate,
                             inputTime,
-                            {
-                                tag: "div",
-                                className: "popup-operator",
-                                children:
-                                [
+                            div("popup-operator")
+                            ([
+                                {
+                                    tag: "button",
+                                    className: "cancel-button",
+                                    children: locale.map("Cancel"),
+                                    onclick: () =>
                                     {
-                                        tag: "button",
-                                        className: "cancel-button",
-                                        children: locale.map("Cancel"),
-                                        onclick: () =>
-                                        {
-                                            result = null;
-                                            ui.close();
-                                        },
+                                        result = null;
+                                        ui.close();
                                     },
+                                },
+                                {
+                                    tag: "button",
+                                    className: "default-button",
+                                    children: locale.map("OK"),
+                                    onclick: () =>
                                     {
-                                        tag: "button",
-                                        className: "default-button",
-                                        children: locale.map("OK"),
-                                        onclick: () =>
-                                        {
-                                            result = `${inputDate.value}T${inputTime.value}`;
-                                            ui.close();
-                                        },
+                                        result = `${inputDate.value}T${inputTime.value}`;
+                                        ui.close();
                                     },
-                                ],
-                            },
+                                },
+                            ])
                         ],
                         onClose: async () => resolve(result),
                     });
@@ -1289,22 +1293,16 @@ export module CyclicToDo
                                 children: item.task,
                             },
                             tagButtonList,
-                            {
-                                tag: "div",
-                                className: "popup-operator",
-                                children:
-                                [
-                                    {
-                                        tag: "button",
-                                        className: "default-button",
-                                        children: "閉じる",
-                                        onclick: () =>
-                                        {
-                                            ui.close();
-                                        },
-                                    },
-                                ],
-                            },
+                            div("popup-operator")
+                            ([{
+                                tag: "button",
+                                className: "default-button",
+                                children: "閉じる",
+                                onclick: () =>
+                                {
+                                    ui.close();
+                                },
+                            }])
                         ],
                         onClose: async () => resolve
                         (
@@ -1387,22 +1385,16 @@ export module CyclicToDo
                                 children: item.task,
                             },
                             tagButtonList,
-                            {
-                                tag: "div",
-                                className: "popup-operator",
-                                children:
-                                [
-                                    {
-                                        tag: "button",
-                                        className: "default-button",
-                                        children: "閉じる",
-                                        onclick: () =>
-                                        {
-                                            ui.close();
-                                        },
-                                    },
-                                ],
-                            },
+                            div("popup-operator")
+                            ([{
+                                tag: "button",
+                                className: "default-button",
+                                children: "閉じる",
+                                onclick: () =>
+                                {
+                                    ui.close();
+                                },
+                            }])
                         ],
                         onClose: async () => resolve(result),
                     });
@@ -1485,22 +1477,16 @@ export module CyclicToDo
                                 children: label("Display language setting"),
                             },
                             checkButtonList,
-                            {
-                                tag: "div",
-                                className: "popup-operator",
-                                children:
-                                [
-                                    {
-                                        tag: "button",
-                                        className: "default-button",
-                                        children: "閉じる",
-                                        onclick: () =>
-                                        {
-                                            ui.close();
-                                        },
-                                    },
-                                ],
-                            },
+                            div("popup-operator")
+                            ([{
+                                tag: "button",
+                                className: "default-button",
+                                children: "閉じる",
+                                onclick: () =>
+                                {
+                                    ui.close();
+                                },
+                            }])
                         ],
                         onClose: async () => resolve(result),
                     });
@@ -1589,22 +1575,16 @@ export module CyclicToDo
                             children: `${locale.map("Sort order setting")}: ${Domain.tagMap(tag)}`,
                         },
                         tagButtonList,
-                        {
-                            tag: "div",
-                            className: "popup-operator",
-                            children:
-                            [
-                                {
-                                    tag: "button",
-                                    className: "default-button",
-                                    children: "閉じる",
-                                    onclick: () =>
-                                    {
-                                        ui.close();
-                                    },
-                                },
-                            ],
-                        },
+                        div("popup-operator")
+                        ([{
+                            tag: "button",
+                            className: "default-button",
+                            children: "閉じる",
+                            onclick: () =>
+                            {
+                                ui.close();
+                            },
+                        }]),
                     ],
                     onClose: async () => resolve(result),
                 });
@@ -1758,113 +1738,52 @@ export module CyclicToDo
             },
             children:
             [
-                {
-                    tag: "div",
-                    className: "task-last-timestamp",
-                    children:
-                    [
-                        label("previous"),
-                        {
-                            tag: "span",
-                            className: "value monospace",
-                            children: Domain.dateStringFromTick(item.previous),
-                        }
-                    ],
-                },
-                {
-                    tag: "div",
-                    className: "task-interval-average",
-                    children:
-                    [
-                        label("expected interval"),
-                        {
-                            tag: "span",
-                            className: "value monospace",
-                            children: null === item.RecentlyStandardDeviation ?
-                                Domain.timeLongStringFromTick(item.RecentlySmartAverage):
-                                Domain.timeRangeStringFromTick
-                                (
-                                    Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
-                                    item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
-                                ),
-                        }
-                    ],
-                },
-                {
-                    tag: "div",
-                    className: "task-elapsed-time",
-                    children:
-                    [
-                        label("elapsed time"),
-                        {
-                            tag: "span",
-                            className: "value monospace",
-                            children: Domain.timeLongStringFromTick(item.elapsed),
-                        }
-                    ],
-                },
+                div("task-last-timestamp")
+                ([
+                    label("previous"),
+                    span("value monospace")(Domain.dateStringFromTick(item.previous)),
+                ]),
+                div("task-interval-average")
+                ([
+                    label("expected interval"),
+                    span("value monospace")
+                    (
+                        null === item.RecentlyStandardDeviation ?
+                            Domain.timeLongStringFromTick(item.RecentlySmartAverage):
+                            Domain.timeRangeStringFromTick
+                            (
+                                Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
+                                item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
+                            )
+                    )
+                ]),
+                div("task-elapsed-time")
+                ([
+                    label("elapsed time"),
+                    span("value monospace")(Domain.timeLongStringFromTick(item.elapsed)),
+                ]),
                 /*
-                {
-                    tag: "div",
-                    className: "task-interval-average",
-                    children:
-                    [
-                        {
-                            tag: "span",
-                            className: "label",
-                            children: "expected interval average (予想間隔平均):",
-                        },
-                        {
-                            tag: "span",
-                            className: "value monospace",
-                            children: renderTime(item.smartAverage),
-                        }
-                    ],
-                },
-                {
-                    tag: "div",
-                    className: "task-interval-average",
-                    children:
-                    [
-                        {
-                            tag: "span",
-                            className: "label",
-                            children: "recentrly interval average (直近間隔平均):",
-                        },
-                        {
-                            tag: "span",
-                            className: "value monospace",
-                            children: renderTime(item.average),
-                        }
-                    ],
-                },
+                div("task-interval-average")
+                ([
+                    span("label")("expected interval average (予想間隔平均):"),
+                    span("value monospace")(renderTime(item.smartAverage)),
+                ])
+                div("task-interval-average")
+                ([
+                    span("label")("recentrly interval average (直近間隔平均):"),
+                    span("value monospace")(renderTime(item.average)),
+                ]),
                 */
-                {
-                    tag: "div",
-                    className: "task-count",
-                    children:
-                    [
-                        label("count"),
-                        {
-                            tag: "span",
-                            className: "value monospace",
-                            children: item.count.toLocaleString(),
-                        }
-                    ],
-                },
-                // {
-                //     tag: "div",
-                //     className: "task-count",
-                //     children:
-                //     [
-                //         "smartRest",
-                //         {
-                //             tag: "span",
-                //             className: "value monospace",
-                //             children: null === item.smartRest ? "N/A": item.smartRest.toLocaleString(),
-                //         }
-                //     ],
-                // },
+                div("task-count")
+                ([
+                    label("count"),
+                    span("value monospace")(item.count.toLocaleString()),
+                ]),
+                // div("task-count")
+                // ([
+                //     "smartRest",
+                //     span("value monospace")(null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
+                // ]),
             ],
         });
         export const todoDoneMenu =
@@ -1948,90 +1867,76 @@ export module CyclicToDo
             },
             "delete-button"
         );
-        export const todoItem = async (entry: ToDoTagEntry, item: ToDoEntry) =>
-        ({
-            tag: "div",
-            className: "task-item flex-item",
-            children:
-            [
-                {
-                    tag: "div",
-                    className: "item-header",
+        export const todoItem = async (entry: ToDoTagEntry, item: ToDoEntry) => div("task-item flex-item")
+        ([
+            div("item-header")
+            ([
+                internalLink
+                ({
+                    className: "item-title",
+                    href: { pass: entry.pass, todo: item.task, },
                     children:
                     [
-                        internalLink
-                        ({
-                            className: "item-title",
-                            href: { pass: entry.pass, todo: item.task, },
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("task-icon"),
-                                Storage.Tag.decode(item.task),
-                            ]
-                        }),
+                        await Resource.loadSvgOrCache("task-icon"),
+                        Storage.Tag.decode(item.task),
+                    ]
+                }),
+                div("item-operator")
+                ([
+                    {
+                        tag: "button",
+                        className: item.isDefault ? "default-button main-button": "main-button",
+                        children: label("Done"),
+                        onclick: async () =>
                         {
-                            tag: "div",
-                            className: "item-operator",
+                            //if (isSessionPass(pass))
+                            const fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
+                            if (fxxkingTypeScriptCompiler)
+                            {
+                                alert
+                                (
+                                    "This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                                    +"\n"
+                                    +"これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。"
+                                );
+                            }
+                            else
+                            {
+                                Domain.done(entry.pass, item.task);
+                                await reload();
+                            }
+                        }
+                    },
+                    await menuButton
+                    ([
+                        todoDoneMenu(entry.pass, item),
+                        todoRenameMenu(entry.pass, item),
+                        todoTagMenu(entry.pass, item),
+                        todoDeleteMenu(entry.pass, item),
+                    ]),
+                ]),
+            ]),
+            div("item-tags")
+            (
+                await Promise.all
+                (
+                    Storage.Tag.getByTodo(entry.pass, item.task).map
+                    (
+                        async tag => internalLink
+                        ({
+                            className: "tag",
+                            href: { pass: entry.pass, tag, },
                             children:
                             [
-                                {
-                                    tag: "button",
-                                    className: item.isDefault ? "default-button main-button": "main-button",
-                                    children: label("Done"),
-                                    onclick: async () =>
-                                    {
-                                        //if (isSessionPass(pass))
-                                        const fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
-                                        if (fxxkingTypeScriptCompiler)
-                                        {
-                                            alert
-                                            (
-                                                "This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
-                                                +"\n"
-                                                +"これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。"
-                                            );
-                                        }
-                                        else
-                                        {
-                                            Domain.done(entry.pass, item.task);
-                                            await reload();
-                                        }
-                                    }
-                                },
-                                await menuButton
-                                ([
-                                    todoDoneMenu(entry.pass, item),
-                                    todoRenameMenu(entry.pass, item),
-                                    todoTagMenu(entry.pass, item),
-                                    todoDeleteMenu(entry.pass, item),
-                                ]),
+                                await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
+                                Domain.tagMap(tag)
                             ],
-                        },
-                    ],
-                },
-                {
-                    tag: "div",
-                    className: "item-tags",
-                    children: await Promise.all
-                    (
-                        Storage.Tag.getByTodo(entry.pass, item.task).map
-                        (
-                            async tag => internalLink
-                            ({
-                                className: "tag",
-                                href: { pass: entry.pass, tag, },
-                                children:
-                                [
-                                    await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
-                                    Domain.tagMap(tag)
-                                ],
-                            })
-                        )
-                    ),
-                },
-                information(item),
-            ],
-        });
+                        })
+                    )
+                )
+            ),
+            information(item),
+        ]);
         export const historyItem = async (entry: ToDoTagEntry, item: { task: string, tick: number }) =>
         ({
             tag: "div",
@@ -2297,34 +2202,17 @@ export module CyclicToDo
                     )
                 ).reduce((a, b) => (a as any[]).concat(b), []),
                 data.menu ? await menuButton(data.menu): [],
-                data.operator ?
-                {
-                    tag: "div",
-                    className: "header-operator",
-                    children: data.operator,
-                }: [],
+                data.operator ? div("header-operator")(data.operator): [],
             ],
             "segmented"
         );
         export const screenHeaderSegmentCore = async (item: HeaderSegmentSource) =>
         [
-            {
-                tag: "div",
-                className: "icon",
-                children: await Resource.loadSvgOrCache(item.icon),
-            },
-            {
-                tag: "div",
-                className: "segment-title",
-                children:item.title,
-            },
+            div("icon")(await Resource.loadSvgOrCache(item.icon)),
+            div("isegment-titlecon")(item.title),
         ];
         export const screenHeaderLabelSegment = async (item: HeaderSegmentSource, className: string = "") =>
-        ({
-            tag: "div",
-            className: `segment label-segment ${className}`,
-            children: await screenHeaderSegmentCore(item),
-        });
+            div(`segment label-segment ${className}`)(await screenHeaderSegmentCore(item));
         export const screenHeaderLinkSegment = async (item: HeaderSegmentSource, className: string = "") => internalLink
         ({
             className: `segment ${className}`,

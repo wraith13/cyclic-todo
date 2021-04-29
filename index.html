@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu Apr 29 2021 17:08:02 GMT+0900 (GMT+09:00) -->
+<!-- build at: Fri Apr 30 2021 07:34:59 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -1296,7 +1296,8 @@ button.delete-button {
   flex-shrink: 0;
 }
 .screen > .screen-body {
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   flex-grow: 1;
 }
 .todo-screen .task-item {
@@ -3444,6 +3445,20 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     children: data.children,
                 });
             };
+            Render.div = function (className) { return function (children) {
+                return ({
+                    tag: "div",
+                    children: children,
+                    className: className,
+                });
+            }; };
+            Render.span = function (className) { return function (children) {
+                return ({
+                    tag: "span",
+                    children: children,
+                    className: className,
+                });
+            }; };
             Render.heading = function (tag, text, className) {
                 return ({
                     tag: tag,
@@ -3511,30 +3526,26 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 children: message !== null && message !== void 0 ? message : locale.map("please input"),
                                             },
                                             input,
-                                            {
-                                                tag: "div",
-                                                className: "popup-operator",
-                                                children: [
-                                                    {
-                                                        tag: "button",
-                                                        className: "cancel-button",
-                                                        children: locale.map("Cancel"),
-                                                        onclick: function () {
-                                                            result = null;
-                                                            ui.close();
-                                                        },
+                                            Render.div("popup-operator")([
+                                                {
+                                                    tag: "button",
+                                                    className: "cancel-button",
+                                                    children: locale.map("Cancel"),
+                                                    onclick: function () {
+                                                        result = null;
+                                                        ui.close();
                                                     },
-                                                    {
-                                                        tag: "button",
-                                                        className: "default-button",
-                                                        children: locale.map("OK"),
-                                                        onclick: function () {
-                                                            result = input.value;
-                                                            ui.close();
-                                                        },
+                                                },
+                                                {
+                                                    tag: "button",
+                                                    className: "default-button",
+                                                    children: locale.map("OK"),
+                                                    onclick: function () {
+                                                        result = input.value;
+                                                        ui.close();
                                                     },
-                                                ],
-                                            },
+                                                },
+                                            ]),
                                         ],
                                         onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                             return [2 /*return*/, resolve(result)];
@@ -3614,30 +3625,26 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             },
                                             inputDate,
                                             inputTime,
-                                            {
-                                                tag: "div",
-                                                className: "popup-operator",
-                                                children: [
-                                                    {
-                                                        tag: "button",
-                                                        className: "cancel-button",
-                                                        children: locale.map("Cancel"),
-                                                        onclick: function () {
-                                                            result = null;
-                                                            ui.close();
-                                                        },
+                                            Render.div("popup-operator")([
+                                                {
+                                                    tag: "button",
+                                                    className: "cancel-button",
+                                                    children: locale.map("Cancel"),
+                                                    onclick: function () {
+                                                        result = null;
+                                                        ui.close();
                                                     },
-                                                    {
-                                                        tag: "button",
-                                                        className: "default-button",
-                                                        children: locale.map("OK"),
-                                                        onclick: function () {
-                                                            result = inputDate.value + "T" + inputTime.value;
-                                                            ui.close();
-                                                        },
+                                                },
+                                                {
+                                                    tag: "button",
+                                                    className: "default-button",
+                                                    children: locale.map("OK"),
+                                                    onclick: function () {
+                                                        result = inputDate.value + "T" + inputTime.value;
+                                                        ui.close();
                                                     },
-                                                ],
-                                            },
+                                                },
+                                            ])
                                         ],
                                         onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                             return [2 /*return*/, resolve(result)];
@@ -3762,20 +3769,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                         children: item.task,
                                                     },
                                                     tagButtonList,
-                                                    {
-                                                        tag: "div",
-                                                        className: "popup-operator",
-                                                        children: [
-                                                            {
-                                                                tag: "button",
-                                                                className: "default-button",
-                                                                children: "閉じる",
-                                                                onclick: function () {
-                                                                    ui.close();
-                                                                },
+                                                    Render.div("popup-operator")([{
+                                                            tag: "button",
+                                                            className: "default-button",
+                                                            children: "閉じる",
+                                                            onclick: function () {
+                                                                ui.close();
                                                             },
-                                                        ],
-                                                    },
+                                                        }])
                                                 ],
                                                 onClose: function () { return __awaiter(_this, void 0, void 0, function () {
                                                     return __generator(this, function (_a) {
@@ -3879,20 +3880,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                         children: item.task,
                                                     },
                                                     tagButtonList,
-                                                    {
-                                                        tag: "div",
-                                                        className: "popup-operator",
-                                                        children: [
-                                                            {
-                                                                tag: "button",
-                                                                className: "default-button",
-                                                                children: "閉じる",
-                                                                onclick: function () {
-                                                                    ui.close();
-                                                                },
+                                                    Render.div("popup-operator")([{
+                                                            tag: "button",
+                                                            className: "default-button",
+                                                            children: "閉じる",
+                                                            onclick: function () {
+                                                                ui.close();
                                                             },
-                                                        ],
-                                                    },
+                                                        }])
                                                 ],
                                                 onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                                     return [2 /*return*/, resolve(result)];
@@ -4020,20 +4015,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                             children: Render.label("Display language setting"),
                                                         },
                                                         checkButtonList,
-                                                        {
-                                                            tag: "div",
-                                                            className: "popup-operator",
-                                                            children: [
-                                                                {
-                                                                    tag: "button",
-                                                                    className: "default-button",
-                                                                    children: "閉じる",
-                                                                    onclick: function () {
-                                                                        ui.close();
-                                                                    },
+                                                        Render.div("popup-operator")([{
+                                                                tag: "button",
+                                                                className: "default-button",
+                                                                children: "閉じる",
+                                                                onclick: function () {
+                                                                    ui.close();
                                                                 },
-                                                            ],
-                                                        },
+                                                            }])
                                                     ],
                                                     onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                                         return [2 /*return*/, resolve(result)];
@@ -4182,20 +4171,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                             children: locale.map("Sort order setting") + ": " + Domain.tagMap(tag),
                                                         },
                                                         tagButtonList,
-                                                        {
-                                                            tag: "div",
-                                                            className: "popup-operator",
-                                                            children: [
-                                                                {
-                                                                    tag: "button",
-                                                                    className: "default-button",
-                                                                    children: "閉じる",
-                                                                    onclick: function () {
-                                                                        ui.close();
-                                                                    },
+                                                        Render.div("popup-operator")([{
+                                                                tag: "button",
+                                                                className: "default-button",
+                                                                children: "閉じる",
+                                                                onclick: function () {
+                                                                    ui.close();
                                                                 },
-                                                            ],
-                                                        },
+                                                            }]),
                                                     ],
                                                     onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                                         return [2 /*return*/, resolve(result)];
@@ -4364,105 +4347,41 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         style: Render.progressStyle(item.progress),
                     },
                     children: [
-                        {
-                            tag: "div",
-                            className: "task-last-timestamp",
-                            children: [
-                                Render.label("previous"),
-                                {
-                                    tag: "span",
-                                    className: "value monospace",
-                                    children: Domain.dateStringFromTick(item.previous),
-                                }
-                            ],
-                        },
-                        {
-                            tag: "div",
-                            className: "task-interval-average",
-                            children: [
-                                Render.label("expected interval"),
-                                {
-                                    tag: "span",
-                                    className: "value monospace",
-                                    children: null === item.RecentlyStandardDeviation ?
-                                        Domain.timeLongStringFromTick(item.RecentlySmartAverage) :
-                                        Domain.timeRangeStringFromTick(Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (item.RecentlyStandardDeviation * Domain.standardDeviationRate)), item.RecentlySmartAverage + (item.RecentlyStandardDeviation * Domain.standardDeviationRate)),
-                                }
-                            ],
-                        },
-                        {
-                            tag: "div",
-                            className: "task-elapsed-time",
-                            children: [
-                                Render.label("elapsed time"),
-                                {
-                                    tag: "span",
-                                    className: "value monospace",
-                                    children: Domain.timeLongStringFromTick(item.elapsed),
-                                }
-                            ],
-                        },
+                        Render.div("task-last-timestamp")([
+                            Render.label("previous"),
+                            Render.span("value monospace")(Domain.dateStringFromTick(item.previous)),
+                        ]),
+                        Render.div("task-interval-average")([
+                            Render.label("expected interval"),
+                            Render.span("value monospace")(null === item.RecentlyStandardDeviation ?
+                                Domain.timeLongStringFromTick(item.RecentlySmartAverage) :
+                                Domain.timeRangeStringFromTick(Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (item.RecentlyStandardDeviation * Domain.standardDeviationRate)), item.RecentlySmartAverage + (item.RecentlyStandardDeviation * Domain.standardDeviationRate)))
+                        ]),
+                        Render.div("task-elapsed-time")([
+                            Render.label("elapsed time"),
+                            Render.span("value monospace")(Domain.timeLongStringFromTick(item.elapsed)),
+                        ]),
                         /*
-                        {
-                            tag: "div",
-                            className: "task-interval-average",
-                            children:
-                            [
-                                {
-                                    tag: "span",
-                                    className: "label",
-                                    children: "expected interval average (予想間隔平均):",
-                                },
-                                {
-                                    tag: "span",
-                                    className: "value monospace",
-                                    children: renderTime(item.smartAverage),
-                                }
-                            ],
-                        },
-                        {
-                            tag: "div",
-                            className: "task-interval-average",
-                            children:
-                            [
-                                {
-                                    tag: "span",
-                                    className: "label",
-                                    children: "recentrly interval average (直近間隔平均):",
-                                },
-                                {
-                                    tag: "span",
-                                    className: "value monospace",
-                                    children: renderTime(item.average),
-                                }
-                            ],
-                        },
+                        div("task-interval-average")
+                        ([
+                            span("label")("expected interval average (予想間隔平均):"),
+                            span("value monospace")(renderTime(item.smartAverage)),
+                        ])
+                        div("task-interval-average")
+                        ([
+                            span("label")("recentrly interval average (直近間隔平均):"),
+                            span("value monospace")(renderTime(item.average)),
+                        ]),
                         */
-                        {
-                            tag: "div",
-                            className: "task-count",
-                            children: [
-                                Render.label("count"),
-                                {
-                                    tag: "span",
-                                    className: "value monospace",
-                                    children: item.count.toLocaleString(),
-                                }
-                            ],
-                        },
-                        // {
-                        //     tag: "div",
-                        //     className: "task-count",
-                        //     children:
-                        //     [
-                        //         "smartRest",
-                        //         {
-                        //             tag: "span",
-                        //             className: "value monospace",
-                        //             children: null === item.smartRest ? "N/A": item.smartRest.toLocaleString(),
-                        //         }
-                        //     ],
-                        // },
+                        Render.div("task-count")([
+                            Render.label("count"),
+                            Render.span("value monospace")(item.count.toLocaleString()),
+                        ]),
+                        // div("task-count")
+                        // ([
+                        //     "smartRest",
+                        //     span("value monospace")(null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
+                        // ]),
                     ],
                 });
             };
@@ -4568,39 +4487,30 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); }, "delete-button"); };
             Render.todoItem = function (entry, item) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d;
-                var _e, _f, _g, _h, _j;
+                var _a, _b, _c, _d, _e, _f, _g, _h;
+                var _j;
                 var _this = this;
                 return __generator(this, function (_k) {
                     switch (_k.label) {
                         case 0:
-                            _e = {
-                                tag: "div",
-                                className: "task-item flex-item"
-                            };
-                            _f = {
-                                tag: "div",
-                                className: "item-header"
-                            };
-                            _a = Render.internalLink;
-                            _g = {
+                            _a = Render.div("task-item flex-item");
+                            _b = Render.div("item-header");
+                            _c = Render.internalLink;
+                            _j = {
                                 className: "item-title",
                                 href: { pass: entry.pass, todo: item.task, }
                             };
                             return [4 /*yield*/, Resource.loadSvgOrCache("task-icon")];
                         case 1:
-                            _b = [
-                                _a.apply(void 0, [(_g.children = [
+                            _d = [
+                                _c.apply(void 0, [(_j.children = [
                                         _k.sent(),
                                         Storage.Tag.decode(item.task)
                                     ],
-                                        _g)])
+                                        _j)])
                             ];
-                            _h = {
-                                tag: "div",
-                                className: "item-operator"
-                            };
-                            _c = [{
+                            _e = Render.div("item-operator");
+                            _f = [{
                                     tag: "button",
                                     className: item.isDefault ? "default-button main-button" : "main-button",
                                     children: Render.label("Done"),
@@ -4633,19 +4543,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     Render.todoDeleteMenu(entry.pass, item),
                                 ])];
                         case 2:
-                            _d = [
-                                (_f.children = _b.concat([
-                                    (_h.children = _c.concat([
-                                        _k.sent()
-                                    ]),
-                                        _h)
-                                ]),
-                                    _f)
+                            _g = [
+                                _b.apply(void 0, [_d.concat([
+                                        _e.apply(void 0, [_f.concat([
+                                                _k.sent()
+                                            ])])
+                                    ])])
                             ];
-                            _j = {
-                                tag: "div",
-                                className: "item-tags"
-                            };
+                            _h = Render.div("item-tags");
                             return [4 /*yield*/, Promise.all(Storage.Tag.getByTodo(entry.pass, item.task).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
                                     var _b;
@@ -4666,12 +4571,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         }
                                     });
                                 }); }))];
-                        case 3: return [2 /*return*/, (_e.children = _d.concat([
-                                (_j.children = _k.sent(),
-                                    _j),
-                                Render.information(item)
-                            ]),
-                                _e)];
+                        case 3: return [2 /*return*/, _a.apply(void 0, [_g.concat([
+                                    _h.apply(void 0, [_k.sent()]),
+                                    Render.information(item)
+                                ])])];
                     }
                 });
             }); };
@@ -5003,12 +4906,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _e.label = 4;
                         case 4: return [2 /*return*/, _a.apply(void 0, _b.concat([_c.concat([
                                     _d,
-                                    data.operator ?
-                                        {
-                                            tag: "div",
-                                            className: "header-operator",
-                                            children: data.operator,
-                                        } : []
+                                    data.operator ? Render.div("header-operator")(data.operator) : []
                                 ]), "segmented"]))];
                     }
                 });
@@ -5018,40 +4916,25 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            _a = {
-                                tag: "div",
-                                className: "icon"
-                            };
+                            _a = Render.div("icon");
                             return [4 /*yield*/, Resource.loadSvgOrCache(item.icon)];
                         case 1: return [2 /*return*/, [
-                                (_a.children = _b.sent(),
-                                    _a),
-                                {
-                                    tag: "div",
-                                    className: "segment-title",
-                                    children: item.title,
-                                }
+                                _a.apply(void 0, [_b.sent()]),
+                                Render.div("isegment-titlecon")(item.title)
                             ]];
                     }
                 });
             }); };
             Render.screenHeaderLabelSegment = function (item, className) {
                 if (className === void 0) { className = ""; }
-                return __awaiter(_this, void 0, void 0, function () {
-                    var _a;
-                    return __generator(this, function (_b) {
-                        switch (_b.label) {
-                            case 0:
-                                _a = {
-                                    tag: "div",
-                                    className: "segment label-segment " + className
-                                };
-                                return [4 /*yield*/, Render.screenHeaderSegmentCore(item)];
-                            case 1: return [2 /*return*/, (_a.children = _b.sent(),
-                                    _a)];
-                        }
-                    });
-                });
+                return __awaiter(_this, void 0, void 0, function () { var _a; return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            _a = Render.div("segment label-segment " + className);
+                            return [4 /*yield*/, Render.screenHeaderSegmentCore(item)];
+                        case 1: return [2 /*return*/, _a.apply(void 0, [_b.sent()])];
+                    }
+                }); });
             };
             Render.screenHeaderLinkSegment = function (item, className) {
                 if (className === void 0) { className = ""; }
