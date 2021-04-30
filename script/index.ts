@@ -1009,18 +1009,23 @@ export module CyclicToDo
             href: data.href,
             children: data.children,
         });
-        export const div = (className: string) => (children: minamo.dom.Source) =>
-        ({
-            tag: "div",
-            children,
-            className,
-        });
-        export const span = (className: string) => (children: minamo.dom.Source) =>
-        ({
-            tag: "span",
-            children,
-            className,
-        });
+        export const tag = (tag: string) => (className: string | object) => (children: minamo.dom.Source) =>
+            "string" === typeof className ?
+            {
+                tag,
+                children,
+                className,
+            }:
+            Object.assign
+            (
+                {
+                    tag,
+                    children,
+                },
+                className,
+            );
+        export const div = tag("div");
+        export const span = tag("span");
         export const heading = (tag: string, text: minamo.dom.Source, className?: string) =>
         ({
             tag,
@@ -1937,73 +1942,60 @@ export module CyclicToDo
             ),
             information(item),
         ]);
-        export const historyItem = async (entry: ToDoTagEntry, item: { task: string, tick: number }) =>
-        ({
-            tag: "div",
-            className: "history-item flex-item ",
-            children:
-            [
-                {
-                    tag: "div",
-                    className: "item-information",
-                    children:
-                    [
-                        internalLink
-                        ({
-                            className: "item-title",
-                            href: { pass: entry.pass, todo: item.task, },
-                            children: Storage.Tag.decode(item.task)
-                        }),
-                        {
-                            tag: "span",
-                            className: "value monospace",
-                            children: Domain.dateStringFromTick(item.tick),
-                        },
-                    ]
-                },
-                {
-                    tag: "div",
-                    className: "item-operator",
-                    children: null !== item.tick ?
-                    [
-                        // {
-                        //     tag: "button",
-                        //     className: "default-button main-button",
-                        //     children: "開く",
-                        //     onclick: async () => { }
-                        // },
-                        await menuButton
-                        ([
-                            menuItem
-                            (
-                                label("Edit"),
-                                async () =>
+        export const historyItem = async (entry: ToDoTagEntry, item: { task: string, tick: number }) => div("history-item flex-item ")
+        ([
+            div("item-information")
+            ([
+                internalLink
+                ({
+                    className: "item-title",
+                    href: { pass: entry.pass, todo: item.task, },
+                    children: Storage.Tag.decode(item.task)
+                }),
+                span("value monospace")(Domain.dateStringFromTick(item.tick)),
+            ]),
+            {
+                tag: "div",
+                className: "item-operator",
+                children: null !== item.tick ?
+                [
+                    // {
+                    //     tag: "button",
+                    //     className: "default-button main-button",
+                    //     children: "開く",
+                    //     onclick: async () => { }
+                    // },
+                    await menuButton
+                    ([
+                        menuItem
+                        (
+                            label("Edit"),
+                            async () =>
+                            {
+                                const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), item.tick));
+                                if (null !== result && item.tick !== Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
                                 {
-                                    const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), item.tick));
-                                    if (null !== result && item.tick !== Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
-                                    {
-                                        Storage.History.removeRaw(entry.pass, item.task, item.tick);
-                                        Storage.History.add(entry.pass, item.task, Domain.getTicks(result));
-                                        await reload();
-                                    }
-                                }
-                            ),
-                            menuItem
-                            (
-                                label("Delete"),
-                                async () =>
-                                {
-                                    Storage.History.remove(entry.pass, item.task, item.tick);
+                                    Storage.History.removeRaw(entry.pass, item.task, item.tick);
+                                    Storage.History.add(entry.pass, item.task, Domain.getTicks(result));
                                     await reload();
-                                },
-                                "delete-button"
-                            )
-                        ]),
-                    ]:
-                    [],
-                }
-            ]
-        });
+                                }
+                            }
+                        ),
+                        menuItem
+                        (
+                            label("Delete"),
+                            async () =>
+                            {
+                                Storage.History.remove(entry.pass, item.task, item.tick);
+                                await reload();
+                            },
+                            "delete-button"
+                        )
+                    ]),
+                ]:
+                [],
+            }
+        ]);
         export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null) =>
         ({
             tag: "div",
@@ -2012,79 +2004,55 @@ export module CyclicToDo
             children:
             [
                 await Resource.loadSvgOrCache("tick-icon"),
-                {
-                    tag: "div",
-                    className: "item-information",
-                    children:
-                    [
-                        {
-                            tag: "div",
-                            className: "tick-timestamp",
-                            children:
-                            [
-                                label("timestamp"),
+                div("item-information")
+                ([
+                    div("tick-timestamp")
+                    ([
+                        label("timestamp"),
+                        span("value monospace")(Domain.dateStringFromTick(tick)),
+                    ]),
+                    div("tick-interval")
+                    ([
+                        label("interval"),
+                        span("value monospace")(Domain.timeLongStringFromTick(interval)),
+                    ]),
+                ]),
+                div("item-operator")
+                ([
+                    // {
+                    //     tag: "button",
+                    //     className: "default-button main-button",
+                    //     children: "開く",
+                    //     onclick: async () => { }
+                    // },
+                    await menuButton
+                    ([
+                        menuItem
+                        (
+                            label("Edit"),
+                            async () =>
+                            {
+                                const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), tick));
+                                if (null !== result && tick !== Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
                                 {
-                                    tag: "span",
-                                    className: "value monospace",
-                                    children: Domain.dateStringFromTick(tick),
-                                }
-                            ],
-                        },
-                        {
-                            tag: "div",
-                            className: "tick-interval",
-                            children:
-                            [
-                                label("interval"),
-                                {
-                                    tag: "span",
-                                    className: "value monospace",
-                                    children: Domain.timeLongStringFromTick(interval),
-                                }
-                            ],
-                        },
-                    ],
-                },
-                {
-                    tag: "div",
-                    className: "item-operator",
-                    children:
-                    [
-                        // {
-                        //     tag: "button",
-                        //     className: "default-button main-button",
-                        //     children: "開く",
-                        //     onclick: async () => { }
-                        // },
-                        await menuButton
-                        ([
-                            menuItem
-                            (
-                                label("Edit"),
-                                async () =>
-                                {
-                                    const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), tick));
-                                    if (null !== result && tick !== Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
-                                    {
-                                        Storage.History.removeRaw(pass, item.task, tick);
-                                        Storage.History.add(pass, item.task, Domain.getTicks(result));
-                                        await reload();
-                                    }
-                                }
-                            ),
-                            menuItem
-                            (
-                                label("Delete"),
-                                async () =>
-                                {
-                                    Storage.History.remove(pass, item.task, tick);
+                                    Storage.History.removeRaw(pass, item.task, tick);
+                                    Storage.History.add(pass, item.task, Domain.getTicks(result));
                                     await reload();
-                                },
-                                "delete-button"
-                            )
-                        ]),
-                    ]
-                }
+                                }
+                            }
+                        ),
+                        menuItem
+                        (
+                            label("Delete"),
+                            async () =>
+                            {
+                                Storage.History.remove(pass, item.task, tick);
+                                await reload();
+                            },
+                            "delete-button"
+                        )
+                    ]),
+                ])
             ]
         });
         export const dropDownLabel = (options: { list: string[] | { [value:string]:string }, value: string, onChange?: (value: string) => unknown, className?: string}) =>
@@ -2133,16 +2101,11 @@ export module CyclicToDo
                 internalLink
                 ({
                     href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                    children:
-                    {
-                        tag: "span",
-                        className: "history-bar-title",
-                        children:
-                        [
-                            await Resource.loadSvgOrCache("history-icon"),
-                            locale.map("History"),
-                        ],
-                    },
+                    children: span("history-bar-title")
+                    ([
+                        await Resource.loadSvgOrCache("history-icon"),
+                        locale.map("History"),
+                    ]),
                 }),
                 await Promise.all
                 (
@@ -2151,21 +2114,12 @@ export module CyclicToDo
                         async item => internalLink
                         ({
                             href: { pass: entry.pass, todo: item.task, },
-                            children:
-                            {
-                                tag: "span",
-                                className: "history-bar-item",
-                                children:
-                                [
-                                    await Resource.loadSvgOrCache("task-icon"),
-                                    Storage.Tag.decode(item.task),
-                                    {
-                                        tag: "span",
-                                        className: "monospace",
-                                        children: `(${Domain.timeLongStringFromTick(item.elapsed)})`
-                                    }
-                                ],
-                            }
+                            children: span("history-bar-item")
+                            ([
+                                await Resource.loadSvgOrCache("task-icon"),
+                                Storage.Tag.decode(item.task),
+                                span("monospace")(`(${Domain.timeLongStringFromTick(item.elapsed)})`),
+                            ])
                         }),
                     )
                 ),
@@ -2209,7 +2163,7 @@ export module CyclicToDo
         export const screenHeaderSegmentCore = async (item: HeaderSegmentSource) =>
         [
             div("icon")(await Resource.loadSvgOrCache(item.icon)),
-            div("isegment-titlecon")(item.title),
+            div("segment-title")(item.title),
         ];
         export const screenHeaderLabelSegment = async (item: HeaderSegmentSource, className: string = "") =>
             div(`segment label-segment ${className}`)(await screenHeaderSegmentCore(item));
