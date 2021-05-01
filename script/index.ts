@@ -1044,24 +1044,11 @@ export module CyclicToDo
                     "#22884466",
                     "rgba(128,128,128,0.2)"
                 );
-        export const labelSpan = (children: minamo.dom.Source) =>
-        ({
-            tag: "span",
-            className: "label",
-            children,
-        });
+        export const labelSpan = span("label");
         export const label = (label: locale.LocaleKeyType) => labelSpan
         ([
-            {
-                tag: "span",
-                className: "locale-parallel",
-                children: locale.parallel(label),
-            },
-            {
-                tag: "span",
-                className: "locale-map",
-                children: locale.map(label),
-            }
+            span("locale-parallel")(locale.parallel(label)),
+            span("locale-map")(locale.map(label)),
         ]);
         export const systemPrompt = async (message?: string, _default?: string): Promise<string | null> =>
         {
@@ -1233,10 +1220,7 @@ export module CyclicToDo
                                             children:
                                             [
                                                 await Resource.loadSvgOrCache("check-icon"),
-                                                {
-                                                    tag: "span",
-                                                    children: Domain.tagMap(tag),
-                                                },
+                                                span("")(Domain.tagMap(tag)),
                                             ],
                                             onclick: () =>
                                             {
@@ -1268,10 +1252,7 @@ export module CyclicToDo
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    {
-                                        tag: "span",
-                                        children: Domain.tagMap("@new"),
-                                    },
+                                    span("")(Domain.tagMap("@new")),
                                 ],
                                 onclick: async () =>
                                 {
@@ -1340,10 +1321,7 @@ export module CyclicToDo
                                         children:
                                         [
                                             await Resource.loadSvgOrCache("check-icon"),
-                                            {
-                                                tag: "span",
-                                                children: Domain.tagMap(sublist),
-                                            },
+                                            span("")(Domain.tagMap(sublist)),
                                         ],
                                         onclick: () =>
                                         {
@@ -1360,10 +1338,7 @@ export module CyclicToDo
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    {
-                                        tag: "span",
-                                        children: Domain.tagMap("@new-sublist"),
-                                    },
+                                    span("")(Domain.tagMap("@new-sublist")),
                                 ],
                                 onclick: async () =>
                                 {
@@ -1424,10 +1399,7 @@ export module CyclicToDo
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    {
-                                        tag: "span",
-                                        children: label("language.auto"),
-                                    },
+                                    span("")(label("language.auto")),
                                 ],
                                 onclick: async () =>
                                 {
@@ -1451,10 +1423,7 @@ export module CyclicToDo
                                         children:
                                         [
                                             await Resource.loadSvgOrCache("check-icon"),
-                                            {
-                                                tag: "span",
-                                                children: labelSpan(locale.getLocaleName(key)),
-                                            },
+                                            span("")(labelSpan(locale.getLocaleName(key))),
                                         ],
                                         onclick: async () =>
                                         {
@@ -1515,10 +1484,7 @@ export module CyclicToDo
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    {
-                                        tag: "span",
-                                        children: label("sort.home"),
-                                    },
+                                    span("")(label("sort.home")),
                                 ],
                                 onclick: async () =>
                                 {
@@ -1535,10 +1501,7 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache("check-icon"),
-                                {
-                                    tag: "span",
-                                    children: label("sort.smart"),
-                                },
+                                span("")(label("sort.smart")),
                             ],
                             onclick: async () =>
                             {
@@ -1554,10 +1517,7 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache("check-icon"),
-                                {
-                                    tag: "span",
-                                    children: label("sort.simple"),
-                                },
+                                span("")(label("sort.simple")),
                             ],
                             onclick: async () =>
                             {
@@ -2092,39 +2052,34 @@ export module CyclicToDo
             };
             return result;
         };
-        export const historyBar = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
-        ({
-            tag: "div",
-            className: "horizontal-list history-bar",
-            children:
-            [
-                internalLink
-                ({
-                    href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                    children: span("history-bar-title")
-                    ([
-                        await Resource.loadSvgOrCache("history-icon"),
-                        locale.map("History"),
-                    ]),
-                }),
-                await Promise.all
+        export const historyBar = async (entry: ToDoTagEntry, list: ToDoEntry[]) => div("horizontal-list history-bar")
+        ([
+            internalLink
+            ({
+                href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                children: span("history-bar-title")
+                ([
+                    await Resource.loadSvgOrCache("history-icon"),
+                    locale.map("History"),
+                ]),
+            }),
+            await Promise.all
+            (
+                [].concat(list).sort(minamo.core.comparer.make(i => -i.previous ?? 0)).map
                 (
-                    [].concat(list).sort(minamo.core.comparer.make(i => -i.previous ?? 0)).map
-                    (
-                        async item => internalLink
-                        ({
-                            href: { pass: entry.pass, todo: item.task, },
-                            children: span("history-bar-item")
-                            ([
-                                await Resource.loadSvgOrCache("task-icon"),
-                                Storage.Tag.decode(item.task),
-                                span("monospace")(`(${Domain.timeLongStringFromTick(item.elapsed)})`),
-                            ])
-                        }),
-                    )
-                ),
-            ]
-        });
+                    async item => internalLink
+                    ({
+                        href: { pass: entry.pass, todo: item.task, },
+                        children: span("history-bar-item")
+                        ([
+                            await Resource.loadSvgOrCache("task-icon"),
+                            Storage.Tag.decode(item.task),
+                            span("monospace")(`(${Domain.timeLongStringFromTick(item.elapsed)})`),
+                        ])
+                    }),
+                )
+            ),
+        ]);
         export interface HeaderSegmentSource
         {
             icon: Resource.KeyType;
@@ -2398,20 +2353,11 @@ export module CyclicToDo
                     ),
                 ])
         });
-        export const screen = async (className: string, header: HeaderSource, body: minamo.dom.Source) =>
-        ({
-            tag: "div",
-            className: `${className} screen`,
-            children:
-            [
-                await screenSegmentedHeader(header),
-                {
-                    tag: "div",
-                    className: "screen-body",
-                    children: body,
-                },
-            ]
-        });
+        export const screen = async (className: string, header: HeaderSource, body: minamo.dom.Source) => div(`${className} screen`)
+        ([
+            await screenSegmentedHeader(header),
+            div("screen-body")(body),
+        ]);
         export const listRenameMenu =
         (
             pass: string,
@@ -2536,11 +2482,7 @@ export module CyclicToDo
             },
             [
                 await historyBar(entry, list),
-                {
-                    tag: "div",
-                    className: "column-flex-list todo-list",
-                    children: await Promise.all(list.map(item => todoItem(entry, item))),
-                },
+                div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item)))),
                 {
                     tag: "div",
                     className: "button-list",
@@ -2809,27 +2751,14 @@ export module CyclicToDo
                         },
                     ],
                 },
-                {
-                    tag: "div",
-                    className: "item-information",
-                    children:
-                    [
-                        {
-                            tag: "div",
-                            // className: "task-last-timestamp",
-                            children:
-                            [
-                                label("deletedAt"),
-                                {
-                                    tag: "span",
-                                    className: "value monospace",
-                                    children: Domain.dateStringFromTick(item.deteledAt),
-                                }
-                            ],
-                        },
-
-                    ],
-                }
+                div("item-information")
+                ([
+                    div("") // className: "task-last-timestamp"
+                    ([
+                        label("deletedAt"),
+                        span("value monospace")(Domain.dateStringFromTick(item.deteledAt)),
+                    ])
+                ]),
             ],
         });
         export const removedScreenMenu = async (pass: string) =>

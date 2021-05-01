@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Fri Apr 30 2021 18:52:16 GMT+0900 (GMT+09:00) -->
+<!-- build at: Fri Apr 30 2021 19:06:30 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -3474,24 +3474,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 1 <= progress ?
                     "background: #22884466;" :
                     Render.backgroundLinerGradient(progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }), "#22884466", "rgba(128,128,128,0.2)"); };
-            Render.labelSpan = function (children) {
-                return ({
-                    tag: "span",
-                    className: "label",
-                    children: children,
-                });
-            };
+            Render.labelSpan = Render.span("label");
             Render.label = function (label) { return Render.labelSpan([
-                {
-                    tag: "span",
-                    className: "locale-parallel",
-                    children: locale.parallel(label),
-                },
-                {
-                    tag: "span",
-                    className: "locale-map",
-                    children: locale.map(label),
-                }
+                Render.span("locale-parallel")(locale.parallel(label)),
+                Render.span("locale-map")(locale.map(label)),
             ]); };
             Render.systemPrompt = function (message, _default) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
@@ -3692,10 +3678,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                             case 1:
                                                                                 dom = _a.apply(void 0, [(_b.children = [
                                                                                         _c.sent(),
-                                                                                        {
-                                                                                            tag: "span",
-                                                                                            children: Domain.tagMap(tag),
-                                                                                        }
+                                                                                        Render.span("")(Domain.tagMap(tag))
                                                                                     ],
                                                                                         _b.onclick = function () {
                                                                                             if (0 <= result.indexOf(tag)) {
@@ -3729,10 +3712,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                         case 2: return [2 /*return*/, _b.apply(_a, _c.concat([_d.concat([
                                                                     (_e.children = [
                                                                         _f.sent(),
-                                                                        {
-                                                                            tag: "span",
-                                                                            children: Domain.tagMap("@new"),
-                                                                        }
+                                                                        Render.span("")(Domain.tagMap("@new"))
                                                                     ],
                                                                         _e.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
                                                                             var tag;
@@ -3820,10 +3800,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                             case 1: return [2 /*return*/, (_a.children = [
                                                                     _c.sent(),
-                                                                    {
-                                                                        tag: "span",
-                                                                        children: Domain.tagMap(sublist),
-                                                                    }
+                                                                    Render.span("")(Domain.tagMap(sublist))
                                                                 ],
                                                                     _a.onclick = function () {
                                                                         Storage.TagMember.add(pass, sublist, item.task);
@@ -3847,10 +3824,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             _b.apply(_a, _c.concat([_d.concat([
                                                     (_e.children = [
                                                         _f.sent(),
-                                                        {
-                                                            tag: "span",
-                                                            children: Domain.tagMap("@new-sublist"),
-                                                        }
+                                                        Render.span("")(Domain.tagMap("@new-sublist"))
                                                     ],
                                                         _e.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
                                                             var sublist, tag_3;
@@ -3934,10 +3908,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                 _d = [
                                                                     (_e.children = [
                                                                         _g.sent(),
-                                                                        {
-                                                                            tag: "span",
-                                                                            children: Render.label("language.auto"),
-                                                                        }
+                                                                        Render.span("")(Render.label("language.auto"))
                                                                     ],
                                                                         _e.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
                                                                             var _a;
@@ -3972,10 +3943,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                                     return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                                 case 1: return [2 /*return*/, (_a.children = [
                                                                                         _c.sent(),
-                                                                                        {
-                                                                                            tag: "span",
-                                                                                            children: Render.labelSpan(locale.getLocaleName(key)),
-                                                                                        }
+                                                                                        Render.span("")(Render.labelSpan(locale.getLocaleName(key)))
                                                                                     ],
                                                                                         _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
                                                                                             var _a;
@@ -4070,10 +4038,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                             case 1:
                                                                 _d = (_f.children = [
                                                                     _m.sent(),
-                                                                    {
-                                                                        tag: "span",
-                                                                        children: Render.label("sort.home"),
-                                                                    }
+                                                                    Render.span("")(Render.label("sort.home"))
                                                                 ],
                                                                     _f.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
                                                                         return __generator(this, function (_a) {
@@ -4107,10 +4072,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                 _e = _e.concat([
                                                                     (_g.children = [
                                                                         _m.sent(),
-                                                                        {
-                                                                            tag: "span",
-                                                                            children: Render.label("sort.smart"),
-                                                                        }
+                                                                        Render.span("")(Render.label("sort.smart"))
                                                                     ],
                                                                         _g.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
                                                                             return __generator(this, function (_a) {
@@ -4136,10 +4098,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                             case 5: return [2 /*return*/, _b.apply(_a, _c.concat([_e.concat([
                                                                         (_h.children = [
                                                                             _m.sent(),
-                                                                            {
-                                                                                tag: "span",
-                                                                                children: Render.label("sort.simple"),
-                                                                            }
+                                                                            Render.span("")(Render.label("sort.simple"))
                                                                         ],
                                                                             _h.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
                                                                                 return __generator(this, function (_a) {
@@ -4776,25 +4735,22 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 return result;
             };
             Render.historyBar = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c;
-                var _d, _e;
+                var _a, _b, _c, _d;
+                var _e;
                 var _this = this;
                 return __generator(this, function (_f) {
                     switch (_f.label) {
                         case 0:
-                            _d = {
-                                tag: "div",
-                                className: "horizontal-list history-bar"
-                            };
-                            _a = Render.internalLink;
+                            _a = Render.div("horizontal-list history-bar");
+                            _b = Render.internalLink;
                             _e = {
                                 href: { pass: entry.pass, tag: entry.tag, hash: "history" }
                             };
-                            _b = Render.span("history-bar-title");
+                            _c = Render.span("history-bar-title");
                             return [4 /*yield*/, Resource.loadSvgOrCache("history-icon")];
                         case 1:
-                            _c = [
-                                _a.apply(void 0, [(_e.children = _b.apply(void 0, [[
+                            _d = [
+                                _b.apply(void 0, [(_e.children = _c.apply(void 0, [[
                                             _f.sent(),
                                             locale.map("History")
                                         ]]),
@@ -4821,10 +4777,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         }
                                     });
                                 }); }))];
-                        case 2: return [2 /*return*/, (_d.children = _c.concat([
-                                _f.sent()
-                            ]),
-                                _d)];
+                        case 2: return [2 /*return*/, _a.apply(void 0, [_d.concat([
+                                    _f.sent()
+                                ])])];
                     }
                 });
             }); };
@@ -5191,20 +5146,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            _a = {
-                                tag: "div",
-                                className: className + " screen"
-                            };
+                            _a = Render.div(className + " screen");
                             return [4 /*yield*/, Render.screenSegmentedHeader(header)];
-                        case 1: return [2 /*return*/, (_a.children = [
-                                _b.sent(),
-                                {
-                                    tag: "div",
-                                    className: "screen-body",
-                                    children: body,
-                                }
-                            ],
-                                _a)];
+                        case 1: return [2 /*return*/, _a.apply(void 0, [[
+                                    _b.sent(),
+                                    Render.div("screen-body")(body)
+                                ]])];
                     }
                 });
             }); };
@@ -5340,15 +5287,15 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             Render.listScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d;
-                var _e, _f;
+                var _a, _b, _c, _d, _e;
+                var _f;
                 var _this = this;
                 return __generator(this, function (_g) {
                     switch (_g.label) {
                         case 0:
                             _a = Render.screen;
                             _b = ["list-screen"];
-                            _e = {};
+                            _f = {};
                             _c = [Render.screenHeaderHomeSegment()];
                             return [4 /*yield*/, Render.screenHeaderListSegment(entry.pass)];
                         case 1:
@@ -5357,26 +5304,22 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             ]);
                             return [4 /*yield*/, Render.screenHeaderTagSegment(entry.pass, entry.tag)];
                         case 2:
-                            _e.items = _c.concat([
+                            _f.items = _c.concat([
                                 _g.sent()
                             ]);
                             return [4 /*yield*/, Render.listScreenMenu(entry)];
                         case 3:
-                            _b = _b.concat([(_e.menu = _g.sent(),
-                                    _e)]);
+                            _b = _b.concat([(_f.menu = _g.sent(),
+                                    _f)]);
                             return [4 /*yield*/, Render.historyBar(entry, list)];
                         case 4:
                             _d = [
                                 _g.sent()
                             ];
-                            _f = {
-                                tag: "div",
-                                className: "column-flex-list todo-list"
-                            };
+                            _e = Render.div("column-flex-list todo-list");
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.todoItem(entry, item); }))];
                         case 5: return [4 /*yield*/, _a.apply(void 0, _b.concat([_d.concat([
-                                    (_f.children = _g.sent(),
-                                        _f),
+                                    _e.apply(void 0, [_g.sent()]),
                                     {
                                         tag: "div",
                                         className: "button-list",
@@ -5716,24 +5659,13 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     }
                                 ],
                                     _b),
-                                {
-                                    tag: "div",
-                                    className: "item-information",
-                                    children: [
-                                        {
-                                            tag: "div",
-                                            // className: "task-last-timestamp",
-                                            children: [
-                                                Render.label("deletedAt"),
-                                                {
-                                                    tag: "span",
-                                                    className: "value monospace",
-                                                    children: Domain.dateStringFromTick(item.deteledAt),
-                                                }
-                                            ],
-                                        },
-                                    ],
-                                }
+                                Render.div("item-information")([
+                                    Render.div("") // className: "task-last-timestamp"
+                                    ([
+                                        Render.label("deletedAt"),
+                                        Render.span("value monospace")(Domain.dateStringFromTick(item.deteledAt)),
+                                    ])
+                                ])
                             ],
                                 _a)];
                     }
