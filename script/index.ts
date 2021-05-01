@@ -1009,7 +1009,7 @@ export module CyclicToDo
             href: data.href,
             children: data.children,
         });
-        export const tag = (tag: string) => (className: string | object) => (children: minamo.dom.Source) =>
+        export const $tag = (tag: string) => (className: string | object) => (children: minamo.dom.Source) =>
             "string" === typeof className ?
             {
                 tag,
@@ -1024,8 +1024,8 @@ export module CyclicToDo
                 },
                 className,
             );
-        export const div = tag("div");
-        export const span = tag("span");
+        export const $div = $tag("div");
+        export const $span = $tag("span");
         export const heading = (tag: string, text: minamo.dom.Source, className?: string) =>
         ({
             tag,
@@ -1044,11 +1044,11 @@ export module CyclicToDo
                     "#22884466",
                     "rgba(128,128,128,0.2)"
                 );
-        export const labelSpan = span("label");
+        export const labelSpan = $span("label");
         export const label = (label: locale.LocaleKeyType) => labelSpan
         ([
-            span("locale-parallel")(locale.parallel(label)),
-            span("locale-map")(locale.map(label)),
+            $span("locale-parallel")(locale.parallel(label)),
+            $span("locale-map")(locale.map(label)),
         ]);
         export const systemPrompt = async (message?: string, _default?: string): Promise<string | null> =>
         {
@@ -1077,7 +1077,7 @@ export module CyclicToDo
                                 children: message ?? locale.map("please input"),
                             },
                             input,
-                            div("popup-operator")
+                            $div("popup-operator")
                             ([
                                 {
                                     tag: "button",
@@ -1165,7 +1165,7 @@ export module CyclicToDo
                             },
                             inputDate,
                             inputTime,
-                            div("popup-operator")
+                            $div("popup-operator")
                             ([
                                 {
                                     tag: "button",
@@ -1220,7 +1220,7 @@ export module CyclicToDo
                                             children:
                                             [
                                                 await Resource.loadSvgOrCache("check-icon"),
-                                                span("")(Domain.tagMap(tag)),
+                                                $span("")(Domain.tagMap(tag)),
                                             ],
                                             onclick: () =>
                                             {
@@ -1252,7 +1252,7 @@ export module CyclicToDo
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    span("")(Domain.tagMap("@new")),
+                                    $span("")(Domain.tagMap("@new")),
                                 ],
                                 onclick: async () =>
                                 {
@@ -1279,7 +1279,7 @@ export module CyclicToDo
                                 children: item.task,
                             },
                             tagButtonList,
-                            div("popup-operator")
+                            $div("popup-operator")
                             ([{
                                 tag: "button",
                                 className: "default-button",
@@ -1321,7 +1321,7 @@ export module CyclicToDo
                                         children:
                                         [
                                             await Resource.loadSvgOrCache("check-icon"),
-                                            span("")(Domain.tagMap(sublist)),
+                                            $span("")(Domain.tagMap(sublist)),
                                         ],
                                         onclick: () =>
                                         {
@@ -1338,7 +1338,7 @@ export module CyclicToDo
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    span("")(Domain.tagMap("@new-sublist")),
+                                    $span("")(Domain.tagMap("@new-sublist")),
                                 ],
                                 onclick: async () =>
                                 {
@@ -1365,7 +1365,7 @@ export module CyclicToDo
                                 children: item.task,
                             },
                             tagButtonList,
-                            div("popup-operator")
+                            $div("popup-operator")
                             ([{
                                 tag: "button",
                                 className: "default-button",
@@ -1399,7 +1399,7 @@ export module CyclicToDo
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    span("")(label("language.auto")),
+                                    $span("")(label("language.auto")),
                                 ],
                                 onclick: async () =>
                                 {
@@ -1423,7 +1423,7 @@ export module CyclicToDo
                                         children:
                                         [
                                             await Resource.loadSvgOrCache("check-icon"),
-                                            span("")(labelSpan(locale.getLocaleName(key))),
+                                            $span("")(labelSpan(locale.getLocaleName(key))),
                                         ],
                                         onclick: async () =>
                                         {
@@ -1451,7 +1451,7 @@ export module CyclicToDo
                                 children: label("Display language setting"),
                             },
                             checkButtonList,
-                            div("popup-operator")
+                            $div("popup-operator")
                             ([{
                                 tag: "button",
                                 className: "default-button",
@@ -1484,7 +1484,7 @@ export module CyclicToDo
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    span("")(label("sort.home")),
+                                    $span("")(label("sort.home")),
                                 ],
                                 onclick: async () =>
                                 {
@@ -1501,7 +1501,7 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache("check-icon"),
-                                span("")(label("sort.smart")),
+                                $span("")(label("sort.smart")),
                             ],
                             onclick: async () =>
                             {
@@ -1517,7 +1517,7 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache("check-icon"),
-                                span("")(label("sort.simple")),
+                                $span("")(label("sort.simple")),
                             ],
                             onclick: async () =>
                             {
@@ -1540,7 +1540,7 @@ export module CyclicToDo
                             children: `${locale.map("Sort order setting")}: ${Domain.tagMap(tag)}`,
                         },
                         tagButtonList,
-                        div("popup-operator")
+                        $div("popup-operator")
                         ([{
                             tag: "button",
                             className: "default-button",
@@ -1693,64 +1693,62 @@ export module CyclicToDo
         //     href,
         //     children,
         // });
-        export const information = (item: ToDoEntry) =>
+        export const information = (item: ToDoEntry) => $div
         ({
-            tag: "div",
             className: "item-information",
             attributes:
             {
                 style: progressStyle(item.progress),
-            },
-            children:
-            [
-                div("task-last-timestamp")
-                ([
-                    label("previous"),
-                    span("value monospace")(Domain.dateStringFromTick(item.previous)),
-                ]),
-                div("task-interval-average")
-                ([
-                    label("expected interval"),
-                    span("value monospace")
-                    (
-                        null === item.RecentlyStandardDeviation ?
-                            Domain.timeLongStringFromTick(item.RecentlySmartAverage):
-                            Domain.timeRangeStringFromTick
-                            (
-                                Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
-                                item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
-                            )
-                    )
-                ]),
-                div("task-elapsed-time")
-                ([
-                    label("elapsed time"),
-                    span("value monospace")(Domain.timeLongStringFromTick(item.elapsed)),
-                ]),
-                /*
-                div("task-interval-average")
-                ([
-                    span("label")("expected interval average (予想間隔平均):"),
-                    span("value monospace")(renderTime(item.smartAverage)),
-                ])
-                div("task-interval-average")
-                ([
-                    span("label")("recentrly interval average (直近間隔平均):"),
-                    span("value monospace")(renderTime(item.average)),
-                ]),
-                */
-                div("task-count")
-                ([
-                    label("count"),
-                    span("value monospace")(item.count.toLocaleString()),
-                ]),
-                // div("task-count")
-                // ([
-                //     "smartRest",
-                //     span("value monospace")(null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
-                // ]),
-            ],
-        });
+            }
+        })
+        ([
+            $div("task-last-timestamp")
+            ([
+                label("previous"),
+                $span("value monospace")(Domain.dateStringFromTick(item.previous)),
+            ]),
+            $div("task-interval-average")
+            ([
+                label("expected interval"),
+                $span("value monospace")
+                (
+                    null === item.RecentlyStandardDeviation ?
+                        Domain.timeLongStringFromTick(item.RecentlySmartAverage):
+                        Domain.timeRangeStringFromTick
+                        (
+                            Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
+                            item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
+                        )
+                )
+            ]),
+            $div("task-elapsed-time")
+            ([
+                label("elapsed time"),
+                $span("value monospace")(Domain.timeLongStringFromTick(item.elapsed)),
+            ]),
+            /*
+            div("task-interval-average")
+            ([
+                span("label")("expected interval average (予想間隔平均):"),
+                span("value monospace")(renderTime(item.smartAverage)),
+            ])
+            div("task-interval-average")
+            ([
+                span("label")("recentrly interval average (直近間隔平均):"),
+                span("value monospace")(renderTime(item.average)),
+            ]),
+            */
+            $div("task-count")
+            ([
+                label("count"),
+                $span("value monospace")(item.count.toLocaleString()),
+            ]),
+            // div("task-count")
+            // ([
+            //     "smartRest",
+            //     span("value monospace")(null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
+            // ]),
+        ]);
         export const todoDoneMenu =
         (
             pass: string,
@@ -1832,9 +1830,9 @@ export module CyclicToDo
             },
             "delete-button"
         );
-        export const todoItem = async (entry: ToDoTagEntry, item: ToDoEntry) => div("task-item flex-item")
+        export const todoItem = async (entry: ToDoTagEntry, item: ToDoEntry) => $div("task-item flex-item")
         ([
-            div("item-header")
+            $div("item-header")
             ([
                 internalLink
                 ({
@@ -1846,7 +1844,7 @@ export module CyclicToDo
                         Storage.Tag.decode(item.task),
                     ]
                 }),
-                div("item-operator")
+                $div("item-operator")
                 ([
                     {
                         tag: "button",
@@ -1881,7 +1879,7 @@ export module CyclicToDo
                     ]),
                 ]),
             ]),
-            div("item-tags")
+            $div("item-tags")
             (
                 await Promise.all
                 (
@@ -1902,9 +1900,9 @@ export module CyclicToDo
             ),
             information(item),
         ]);
-        export const historyItem = async (entry: ToDoTagEntry, item: { task: string, tick: number }) => div("history-item flex-item ")
+        export const historyItem = async (entry: ToDoTagEntry, item: { task: string, tick: number }) => $div("history-item flex-item ")
         ([
-            div("item-information")
+            $div("item-information")
             ([
                 internalLink
                 ({
@@ -1912,7 +1910,7 @@ export module CyclicToDo
                     href: { pass: entry.pass, todo: item.task, },
                     children: Storage.Tag.decode(item.task)
                 }),
-                span("value monospace")(Domain.dateStringFromTick(item.tick)),
+                $span("value monospace")(Domain.dateStringFromTick(item.tick)),
             ]),
             {
                 tag: "div",
@@ -1956,65 +1954,63 @@ export module CyclicToDo
                 [],
             }
         ]);
-        export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null) =>
+        export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null) => $div
         ({
-            tag: "div",
             className: "tick-item flex-item ",
             style: Render.progressStyle(null === interval ? null: interval /max),
-            children:
-            [
-                await Resource.loadSvgOrCache("tick-icon"),
-                div("item-information")
+        })
+        ([
+            await Resource.loadSvgOrCache("tick-icon"),
+            $div("item-information")
+            ([
+                $div("tick-timestamp")
                 ([
-                    div("tick-timestamp")
-                    ([
-                        label("timestamp"),
-                        span("value monospace")(Domain.dateStringFromTick(tick)),
-                    ]),
-                    div("tick-interval")
-                    ([
-                        label("interval"),
-                        span("value monospace")(Domain.timeLongStringFromTick(interval)),
-                    ]),
+                    label("timestamp"),
+                    $span("value monospace")(Domain.dateStringFromTick(tick)),
                 ]),
-                div("item-operator")
+                $div("tick-interval")
                 ([
-                    // {
-                    //     tag: "button",
-                    //     className: "default-button main-button",
-                    //     children: "開く",
-                    //     onclick: async () => { }
-                    // },
-                    await menuButton
-                    ([
-                        menuItem
-                        (
-                            label("Edit"),
-                            async () =>
+                    label("interval"),
+                    $span("value monospace")(Domain.timeLongStringFromTick(interval)),
+                ]),
+            ]),
+            $div("item-operator")
+            ([
+                // {
+                //     tag: "button",
+                //     className: "default-button main-button",
+                //     children: "開く",
+                //     onclick: async () => { }
+                // },
+                await menuButton
+                ([
+                    menuItem
+                    (
+                        label("Edit"),
+                        async () =>
+                        {
+                            const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), tick));
+                            if (null !== result && tick !== Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
                             {
-                                const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), tick));
-                                if (null !== result && tick !== Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
-                                {
-                                    Storage.History.removeRaw(pass, item.task, tick);
-                                    Storage.History.add(pass, item.task, Domain.getTicks(result));
-                                    await reload();
-                                }
-                            }
-                        ),
-                        menuItem
-                        (
-                            label("Delete"),
-                            async () =>
-                            {
-                                Storage.History.remove(pass, item.task, tick);
+                                Storage.History.removeRaw(pass, item.task, tick);
+                                Storage.History.add(pass, item.task, Domain.getTicks(result));
                                 await reload();
-                            },
-                            "delete-button"
-                        )
-                    ]),
-                ])
-            ]
-        });
+                            }
+                        }
+                    ),
+                    menuItem
+                    (
+                        label("Delete"),
+                        async () =>
+                        {
+                            Storage.History.remove(pass, item.task, tick);
+                            await reload();
+                        },
+                        "delete-button"
+                    )
+                ]),
+            ])
+        ]);
         export const dropDownLabel = (options: { list: string[] | { [value:string]:string }, value: string, onChange?: (value: string) => unknown, className?: string}) =>
         {
             const dropdown = minamo.dom.make(HTMLSelectElement)
@@ -2052,12 +2048,12 @@ export module CyclicToDo
             };
             return result;
         };
-        export const historyBar = async (entry: ToDoTagEntry, list: ToDoEntry[]) => div("horizontal-list history-bar")
+        export const historyBar = async (entry: ToDoTagEntry, list: ToDoEntry[]) => $div("horizontal-list history-bar")
         ([
             internalLink
             ({
                 href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                children: span("history-bar-title")
+                children: $span("history-bar-title")
                 ([
                     await Resource.loadSvgOrCache("history-icon"),
                     locale.map("History"),
@@ -2070,11 +2066,11 @@ export module CyclicToDo
                     async item => internalLink
                     ({
                         href: { pass: entry.pass, todo: item.task, },
-                        children: span("history-bar-item")
+                        children: $span("history-bar-item")
                         ([
                             await Resource.loadSvgOrCache("task-icon"),
                             Storage.Tag.decode(item.task),
-                            span("monospace")(`(${Domain.timeLongStringFromTick(item.elapsed)})`),
+                            $span("monospace")(`(${Domain.timeLongStringFromTick(item.elapsed)})`),
                         ])
                     }),
                 )
@@ -2111,17 +2107,17 @@ export module CyclicToDo
                     )
                 ).reduce((a, b) => (a as any[]).concat(b), []),
                 data.menu ? await menuButton(data.menu): [],
-                data.operator ? div("header-operator")(data.operator): [],
+                data.operator ? $div("header-operator")(data.operator): [],
             ],
             "segmented"
         );
         export const screenHeaderSegmentCore = async (item: HeaderSegmentSource) =>
         [
-            div("icon")(await Resource.loadSvgOrCache(item.icon)),
-            div("segment-title")(item.title),
+            $div("icon")(await Resource.loadSvgOrCache(item.icon)),
+            $div("segment-title")(item.title),
         ];
         export const screenHeaderLabelSegment = async (item: HeaderSegmentSource, className: string = "") =>
-            div(`segment label-segment ${className}`)(await screenHeaderSegmentCore(item));
+            $div(`segment label-segment ${className}`)(await screenHeaderSegmentCore(item));
         export const screenHeaderLinkSegment = async (item: HeaderSegmentSource, className: string = "") => internalLink
         ({
             className: `segment ${className}`,
@@ -2353,10 +2349,10 @@ export module CyclicToDo
                     ),
                 ])
         });
-        export const screen = async (className: string, header: HeaderSource, body: minamo.dom.Source) => div(`${className} screen`)
+        export const screen = async (className: string, header: HeaderSource, body: minamo.dom.Source) => $div(`${className} screen`)
         ([
             await screenSegmentedHeader(header),
-            div("screen-body")(body),
+            $div("screen-body")(body),
         ]);
         export const listRenameMenu =
         (
@@ -2482,51 +2478,47 @@ export module CyclicToDo
             },
             [
                 await historyBar(entry, list),
-                div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item)))),
-                {
-                    tag: "div",
-                    className: "button-list",
-                    children:
-                    [
-                        "@overall" !== entry.tag ?
-                            internalLink
-                            ({
-                                href: { pass: entry.pass, tag: "@overall", },
-                                children:
-                                {
-                                    tag: "button",
-                                    className: list.length <= 0 ? "main-button long-button": "default-button main-button long-button",
-                                    children: label("Back to Home"),
-                                },
-                            }):
-                            [],
-                        {
-                            tag: "button",
-                            className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
-                            children: label("New ToDo"),
-                            onclick: async () =>
-                            {
-                                const newTask = await prompt("ToDo の名前を入力してください");
-                                if (null !== newTask)
-                                {
-                                    Storage.Task.add(entry.pass, newTask);
-                                    Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                    await reload();
-                                }
-                            }
-                        },
+                $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item)))),
+                $div("button-list")
+                ([
+                    "@overall" !== entry.tag ?
                         internalLink
                         ({
-                            href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                            href: { pass: entry.pass, tag: "@overall", },
                             children:
                             {
                                 tag: "button",
-                                className: "main-button long-button",
-                                children: label("History"),
+                                className: list.length <= 0 ? "main-button long-button": "default-button main-button long-button",
+                                children: label("Back to Home"),
                             },
-                        }),
-                    ]
-                }
+                        }):
+                        [],
+                    {
+                        tag: "button",
+                        className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
+                        children: label("New ToDo"),
+                        onclick: async () =>
+                        {
+                            const newTask = await prompt("ToDo の名前を入力してください");
+                            if (null !== newTask)
+                            {
+                                Storage.Task.add(entry.pass, newTask);
+                                Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                                await reload();
+                            }
+                        }
+                    },
+                    internalLink
+                    ({
+                        href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                        children:
+                        {
+                            tag: "button",
+                            className: "main-button long-button",
+                            children: label("History"),
+                        },
+                    }),
+                ])
             ]
         );
         export const showListScreen = async (entry: ToDoTagEntry) =>
@@ -2542,7 +2534,7 @@ export module CyclicToDo
                     case "timer":
                         Domain.updateListProgress(list);
                         isDirty = ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[])) || isDirty;
-                        if (isDirty && document.body.scrollTop <= 0 && ! hasScreenCover())
+                        if (isDirty && document.body.scrollTop <= 0 && (document.getElementsByClassName("screen-body")[0]?.scrollTop ?? 0) <= 9 && ! hasScreenCover())
                         {
                             await reload();
                         }
@@ -2587,6 +2579,17 @@ export module CyclicToDo
                 }
             };
             await showWindow(await listScreen(entry, list), updateWindow);
+            document.getElementsByClassName("screen-body")[0]?.addEventListener
+            (
+                "scroll",
+                () =>
+                {
+                    if ((document.getElementsByClassName("screen-body")[0]?.scrollTop ?? 0) <= 0)
+                    {
+                        Render.updateWindow?.("scroll");
+                    }
+                }
+            );
         };
         export const historyScreenMenu = async (entry: ToDoTagEntry) =>
         [
@@ -2677,23 +2680,14 @@ export module CyclicToDo
                 menu: await historyScreenMenu(entry),
             },
             [
-                {
-                    tag: "div",
-                    className: "column-flex-list history-list",
-                    children: await Promise.all(list.map(item => historyItem(entry, item))),
-                },
+                $div("column-flex-list history-list")(await Promise.all(list.map(item => historyItem(entry, item)))),
                 {
                     tag: "div",
                     className: "button-list",
                     children: internalLink
                     ({
                         href: { pass: entry.pass, tag: entry.tag, },
-                        children:
-                        {
-                            tag: "button",
-                            className: "default-button main-button long-button",
-                            children: label("Back to List"),
-                        },
+                        children: $tag("button")("default-button main-button long-button")(label("Back to List")),
                     }),
                 },
             ]
@@ -2712,51 +2706,37 @@ export module CyclicToDo
             className: "removed-item flex-item",
             children:
             [
-                {
-                    tag: "div",
-                    className: "item-header",
-                    children:
-                    [
-                        {
-                            tag: "div",
-                            className: "item-title",
-                            children:
-                            [
-                                await Resource.loadSvgOrCache(Storage.Removed.getIcon(item)),
-                                `${Storage.Removed.getTypeName(item)}: ${Storage.Removed.getName(item)}`,
-                            ],
-                        },
-                        {
-                            tag: "div",
-                            className: "item-operator",
-                            children:
-                            [
-                                {
-                                    tag: "button",
-                                    className: "main-button",
-                                    children: "復元",
-                                    onclick: async () =>
-                                    {
-                                        if (Storage.Removed.restore(pass, item))
-                                        {
-                                            await reload();
-                                        }
-                                        else
-                                        {
-                                            await alert("復元できませんでした。( 同名の項目が存在すると復元できません。また、サブリスト内の ToDo の場合、元のサブリストが存在している必要があります。 )");
-                                        }
-                                    }
-                                },
-                            ],
-                        },
-                    ],
-                },
-                div("item-information")
+                $div("item-header")
                 ([
-                    div("") // className: "task-last-timestamp"
+                    $div("item-title")
+                    ([
+                        await Resource.loadSvgOrCache(Storage.Removed.getIcon(item)),
+                        `${Storage.Removed.getTypeName(item)}: ${Storage.Removed.getName(item)}`,
+                    ]),
+                    $div("item-operator")
+                    ([{
+                        tag: "button",
+                        className: "main-button",
+                        children: "復元",
+                        onclick: async () =>
+                        {
+                            if (Storage.Removed.restore(pass, item))
+                            {
+                                await reload();
+                            }
+                            else
+                            {
+                                await alert("復元できませんでした。( 同名の項目が存在すると復元できません。また、サブリスト内の ToDo の場合、元のサブリストが存在している必要があります。 )");
+                            }
+                        }
+                    }])
+                ]),
+                $div("item-information")
+                ([
+                    $div("") // className: "task-last-timestamp"
                     ([
                         label("deletedAt"),
-                        span("value monospace")(Domain.dateStringFromTick(item.deteledAt)),
+                        $span("value monospace")(Domain.dateStringFromTick(item.deteledAt)),
                     ])
                 ]),
             ],
@@ -2793,53 +2773,39 @@ export module CyclicToDo
             },
             [
                 0 < list.length ?
-                {
-                    tag: "div",
-                    className: "column-flex-list removed-list",
-                    children: await Promise.all
+                $div("column-flex-list removed-list")
+                (
+                    await Promise.all
                     (
                         [].concat(list)
                             .sort(minamo.core.comparer.make(item => -item.deteledAt))
                             .map(item => removedItem(pass, item))
-                    ),
-                }:
-                {
-                    tag: "div",
-                    className: "button-list",
-                    children: label("Recycle Bin is empty."),
-                },
-                {
-                    tag: "div",
-                    className: "button-list",
-                    children:
-                    [
-                        internalLink
-                        ({
-                            href: { pass, tag: "@overall", },
-                            children:
+                    )
+                ):
+                $div("button-list")(label("Recycle Bin is empty.")),
+                $div("button-list")
+                ([
+                    internalLink
+                    ({
+                        href: { pass, tag: "@overall", },
+                        children: $tag("button")("default-button main-button long-button")(label("Back to Home")),
+                    }),
+                    0 < list.length ?
+                        {
+                            tag: "button",
+                            className: "main-button long-button delete-button",
+                            children: "完全に削除",
+                            onclick: async () =>
                             {
-                                tag: "button",
-                                className: "default-button main-button long-button",
-                                children: label("Back to Home"),
-                            },
-                        }),
-                        0 < list.length ?
-                            {
-                                tag: "button",
-                                className: "main-button long-button delete-button",
-                                children: "完全に削除",
-                                onclick: async () =>
+                                if (systemConfirm("この操作は取り消せません。続行しますか？"))
                                 {
-                                    if (systemConfirm("この操作は取り消せません。続行しますか？"))
-                                    {
-                                        Storage.Removed.clear(pass);
-                                        await reload();
-                                    }
-                                },
-                            }:
-                            [],
-                    ],
-                }
+                                    Storage.Removed.clear(pass);
+                                    await reload();
+                                }
+                            },
+                        }:
+                        [],
+                ]),
             ]
         );
         export const showRemovedScreen = async (pass: string) =>
