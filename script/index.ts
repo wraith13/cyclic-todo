@@ -1026,12 +1026,6 @@ export module CyclicToDo
             );
         export const $div = $tag("div");
         export const $span = $tag("span");
-        export const heading = (tag: string, text: minamo.dom.Source, className?: string) =>
-        ({
-            tag,
-            children: text,
-            className,
-        });
         export const backgroundLinerGradient = (leftPercent: string, leftColor: string, rightColor: string) =>
             `background: linear-gradient(to right, ${leftColor} ${leftPercent}, ${rightColor} ${leftPercent});`;
         export const progressStyle = (progress: number | null) => null === progress ?
@@ -1072,10 +1066,7 @@ export module CyclicToDo
                     ({
                         children:
                         [
-                            {
-                                tag: "h2",
-                                children: message ?? locale.map("please input"),
-                            },
+                            $tag("h2")("")(message ?? locale.map("please input")),
                             input,
                             $div("popup-operator")
                             ([
@@ -1159,10 +1150,7 @@ export module CyclicToDo
                     ({
                         children:
                         [
-                            {
-                                tag: "h2",
-                                children: message,
-                            },
+                            $tag("h2")("")(message),
                             inputDate,
                             inputTime,
                             $div("popup-operator")
@@ -1274,10 +1262,7 @@ export module CyclicToDo
                         className: "add-remove-tags-popup",
                         children:
                         [
-                            {
-                                tag: "h2",
-                                children: item.task,
-                            },
+                            $tag("h2")("")(item.task),
                             tagButtonList,
                             $div("popup-operator")
                             ([{
@@ -1360,10 +1345,7 @@ export module CyclicToDo
                         className: "add-remove-tags-popup",
                         children:
                         [
-                            {
-                                tag: "h2",
-                                children: item.task,
-                            },
+                            $tag("h2")("")(item.task),
                             tagButtonList,
                             $div("popup-operator")
                             ([{
@@ -1446,10 +1428,7 @@ export module CyclicToDo
                         className: "add-remove-tags-popup",
                         children:
                         [
-                            {
-                                tag: "h2",
-                                children: label("Display language setting"),
-                            },
+                            $tag("h2")("")(label("Display language setting")),
                             checkButtonList,
                             $div("popup-operator")
                             ([{
@@ -1535,10 +1514,7 @@ export module CyclicToDo
                     className: "add-remove-tags-popup",
                     children:
                     [
-                        {
-                            tag: "h2",
-                            children: `${locale.map("Sort order setting")}: ${Domain.tagMap(tag)}`,
-                        },
+                        $tag("h2")("")(`${locale.map("Sort order setting")}: ${Domain.tagMap(tag)}`),
                         tagButtonList,
                         $div("popup-operator")
                         ([{
@@ -1912,10 +1888,9 @@ export module CyclicToDo
                 }),
                 $span("value monospace")(Domain.dateStringFromTick(item.tick)),
             ]),
-            {
-                tag: "div",
-                className: "item-operator",
-                children: null !== item.tick ?
+            $div("item-operator")
+            (
+                null !== item.tick ?
                 [
                     // {
                     //     tag: "button",
@@ -1951,8 +1926,8 @@ export module CyclicToDo
                         )
                     ]),
                 ]:
-                [],
-            }
+                []
+            ),
         ]);
         export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null) => $div
         ({
@@ -2036,16 +2011,11 @@ export module CyclicToDo
                     options.value:
                     (options.list[options.value] ?? options.value),
             });
-            const result =
-            {
-                tag: "label",
-                className: options.className,
-                children:
-                [
-                    dropdown,
-                    labelSoan
-                ]
-            };
+            const result = $tag("label")(options.className)
+            ([
+                dropdown,
+                labelSoan
+            ]);
             return result;
         };
         export const historyBar = async (entry: ToDoTagEntry, list: ToDoEntry[]) => $div("horizontal-list history-bar")
@@ -2089,28 +2059,24 @@ export module CyclicToDo
             menu?: minamo.dom.Source;
             operator?: minamo.dom.Source;
         }
-        export const screenSegmentedHeader = async (data:HeaderSource) => heading
-        (
-            "h1",
-            [
+        export const screenSegmentedHeader = async (data:HeaderSource) => $tag("h1")("segmented")
+        ([
+            (
+                await Promise.all
                 (
-                    await Promise.all
+                    data.items
+                    .map
                     (
-                        data.items
-                        .map
-                        (
-                            async (item, ix, list) =>
-                                (item.href && screenHeaderLinkSegment(item, ix === list.length -1 ? "last-segment": undefined)) ||
-                                (item.menu && screenHeaderPopupSegment(item, ix === list.length -1 ? "last-segment": undefined)) ||
-                                (true && screenHeaderLabelSegment(item, ix === list.length -1 ? "last-segment": undefined))
-                        )
+                        async (item, ix, list) =>
+                            (item.href && screenHeaderLinkSegment(item, ix === list.length -1 ? "last-segment": undefined)) ||
+                            (item.menu && screenHeaderPopupSegment(item, ix === list.length -1 ? "last-segment": undefined)) ||
+                            (true && screenHeaderLabelSegment(item, ix === list.length -1 ? "last-segment": undefined))
                     )
-                ).reduce((a, b) => (a as any[]).concat(b), []),
-                data.menu ? await menuButton(data.menu): [],
-                data.operator ? $div("header-operator")(data.operator): [],
-            ],
-            "segmented"
-        );
+                )
+            ).reduce((a, b) => (a as any[]).concat(b), []),
+            data.menu ? await menuButton(data.menu): [],
+            data.operator ? $div("header-operator")(data.operator): [],
+        ]);
         export const screenHeaderSegmentCore = async (item: HeaderSegmentSource) =>
         [
             $div("icon")(await Resource.loadSvgOrCache(item.icon)),
@@ -2485,12 +2451,7 @@ export module CyclicToDo
                         internalLink
                         ({
                             href: { pass: entry.pass, tag: "@overall", },
-                            children:
-                            {
-                                tag: "button",
-                                className: list.length <= 0 ? "main-button long-button": "default-button main-button long-button",
-                                children: label("Back to Home"),
-                            },
+                            children: $tag("button")(list.length <= 0 ? "main-button long-button": "default-button main-button long-button")(label("Back to Home")),
                         }):
                         [],
                     {
@@ -2511,12 +2472,7 @@ export module CyclicToDo
                     internalLink
                     ({
                         href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                        children:
-                        {
-                            tag: "button",
-                            className: "main-button long-button",
-                            children: label("History"),
-                        },
+                        children: $tag("button")("main-button long-button")(label("History")),
                     }),
                 ])
             ]
@@ -2681,15 +2637,14 @@ export module CyclicToDo
             },
             [
                 $div("column-flex-list history-list")(await Promise.all(list.map(item => historyItem(entry, item)))),
-                {
-                    tag: "div",
-                    className: "button-list",
-                    children: internalLink
+                $div("button-list")
+                (
+                    internalLink
                     ({
                         href: { pass: entry.pass, tag: entry.tag, },
                         children: $tag("button")("default-button main-button long-button")(label("Back to List")),
-                    }),
-                },
+                    })
+                ),
             ]
         );
         export const showHistoryScreen = async (entry: ToDoTagEntry) =>
@@ -2700,47 +2655,42 @@ export module CyclicToDo
             list = list.concat(entry.todo.filter(task => histories[task].length <= 0).map(task => ({ task, tick: null })));
             await showWindow(await historyScreen(entry, list));
         };
-        export const removedItem = async (pass: string, item: Storage.Removed.Type) =>
-        ({
-            tag: "div",
-            className: "removed-item flex-item",
-            children:
-            [
-                $div("item-header")
+        export const removedItem = async (pass: string, item: Storage.Removed.Type) => $div("removed-item flex-item")
+        ([
+            $div("item-header")
+            ([
+                $div("item-title")
                 ([
-                    $div("item-title")
-                    ([
-                        await Resource.loadSvgOrCache(Storage.Removed.getIcon(item)),
-                        `${Storage.Removed.getTypeName(item)}: ${Storage.Removed.getName(item)}`,
-                    ]),
-                    $div("item-operator")
-                    ([{
-                        tag: "button",
-                        className: "main-button",
-                        children: "復元",
-                        onclick: async () =>
+                    await Resource.loadSvgOrCache(Storage.Removed.getIcon(item)),
+                    `${Storage.Removed.getTypeName(item)}: ${Storage.Removed.getName(item)}`,
+                ]),
+                $div("item-operator")
+                ([{
+                    tag: "button",
+                    className: "main-button",
+                    children: "復元",
+                    onclick: async () =>
+                    {
+                        if (Storage.Removed.restore(pass, item))
                         {
-                            if (Storage.Removed.restore(pass, item))
-                            {
-                                await reload();
-                            }
-                            else
-                            {
-                                await alert("復元できませんでした。( 同名の項目が存在すると復元できません。また、サブリスト内の ToDo の場合、元のサブリストが存在している必要があります。 )");
-                            }
+                            await reload();
                         }
-                    }])
-                ]),
-                $div("item-information")
+                        else
+                        {
+                            await alert("復元できませんでした。( 同名の項目が存在すると復元できません。また、サブリスト内の ToDo の場合、元のサブリストが存在している必要があります。 )");
+                        }
+                    }
+                }])
+            ]),
+            $div("item-information")
+            ([
+                $div("") // className: "task-last-timestamp"
                 ([
-                    $div("") // className: "task-last-timestamp"
-                    ([
-                        label("deletedAt"),
-                        $span("value monospace")(Domain.dateStringFromTick(item.deteledAt)),
-                    ])
-                ]),
-            ],
-        });
+                    label("deletedAt"),
+                    $span("value monospace")(Domain.dateStringFromTick(item.deteledAt)),
+                ])
+            ]),
+        ]);
         export const removedScreenMenu = async (pass: string) =>
         [
             menuItem
@@ -2841,45 +2791,35 @@ export module CyclicToDo
                 menu: await todoScreenMenu(pass, item),
             },
             [
-                {
-                    tag: "div",
-                    className: "row-flex-list todo-list",
-                    children:
-                    [
-                        {
-                            tag: "div",
-                            className: "task-item flex-item",
-                            children:
-                            [
-                                {
-                                    tag: "div",
-                                    className: "item-tags",
-                                    children: await Promise.all
-                                    (
-                                        Storage.Tag.getByTodo(pass, item.task).map
-                                        (
-                                            async tag => internalLink
-                                            ({
-                                                className: "tag",
-                                                href: { pass, tag, },
-                                                children:
-                                                [
-                                                    await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
-                                                    Domain.tagMap(tag)
-                                                ],
-                                            })
-                                        )
-                                    ),
-                                },
-                                information(item),
-                            ],
-                        },
-                    ],
-                },
-                {
-                    tag: "div",
-                    className: "column-flex-list tick-list",
-                    children: await Promise.all
+                $div("row-flex-list todo-list")
+                ([
+                    $div("task-item flex-item")
+                    ([
+                        $div("item-tags")
+                        (
+                            await Promise.all
+                            (
+                                Storage.Tag.getByTodo(pass, item.task).map
+                                (
+                                    async tag => internalLink
+                                    ({
+                                        className: "tag",
+                                        href: { pass, tag, },
+                                        children:
+                                        [
+                                            await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
+                                            Domain.tagMap(tag)
+                                        ],
+                                    })
+                                )
+                            )
+                        ),
+                        information(item),
+                    ]),
+                ]),
+                $div("column-flex-list tick-list")
+                (
+                    await Promise.all
                     (
                         ticks.map
                         (
@@ -2892,25 +2832,21 @@ export module CyclicToDo
                                 ticks.length < 2 ? null: Math.max.apply(null, Calculate.intervals(ticks))
                             )
                         )
-                    ),
-                },
+                    )
+                ),
                 Storage.isSessionPass(pass) ?
                     []:
-                    {
-                        tag: "div",
-                        className: "button-list",
-                        children:
+                    $div("button-list")
+                    ({
+                        tag: "button",
+                        className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
+                        children: label("Done"),
+                        onclick: async () =>
                         {
-                            tag: "button",
-                            className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
-                            children: label("Done"),
-                            onclick: async () =>
-                            {
-                                Domain.done(pass, item.task);
-                                await reload();
-                            }
-                        },
-                    }
+                            Domain.done(pass, item.task);
+                            await reload();
+                        }
+                    }),
             ]
         );
         export const showTodoScreen = async (pass: string, task: string) =>
@@ -2979,11 +2915,7 @@ export module CyclicToDo
                 menu: await exportScreenMenu(pass)
             },
             [
-                {
-                    tag: "textarea",
-                    className: "json",
-                    children: Storage.exportJson(pass),
-                }
+                $tag("textarea")("json")(Storage.exportJson(pass)),
             ]
         );
         export const showImportScreen = async () =>
@@ -3008,76 +2940,49 @@ export module CyclicToDo
                 menu: await importScreenMenu()
             },
             [
-                {
-                    tag: "textarea",
-                    className: "json",
-                    placeholder: "エクスポートした JSON をペーストしてください。"
-                },
-                {
-                    tag: "div",
-                    className: "button-list",
-                    children:
+                $tag("textarea")("json")("エクスポートした JSON をペーストしてください。"),
+                $div("button-list")
+                ({
+                    tag: "button",
+                    className: "default-button main-button long-button",
+                    children: label("Import"),
+                    onclick: async () =>
                     {
-                        tag: "button",
-                        className: "default-button main-button long-button",
-                        children: label("Import"),
-                        onclick: async () =>
+                        const textarea = document.getElementsByClassName("json")[0] as HTMLTextAreaElement;
+                        const pass = Storage.importJson(textarea.value);
+                        if (null !== pass)
                         {
-                            const textarea = document.getElementsByClassName("json")[0] as HTMLTextAreaElement;
-                            const pass = Storage.importJson(textarea.value);
-                            if (null !== pass)
-                            {
-                                showUrl({ pass, tag: "@overall", });
-                            }
-                        },
+                            showUrl({ pass, tag: "@overall", });
+                        }
                     },
-                },
+                }),
             ]
         );
-        export const removedListItem = async (list: ToDoList) =>
-        ({
-            tag: "div",
-            className: "list-item flex-item",
-            children:
-            [
-                {
-                    tag: "div",
-                    className: "item-header",
-                    children:
-                    [
+        export const removedListItem = async (list: ToDoList) => $div("list-item flex-item")
+        ([
+            $div("item-header")
+            ([
+                $div("item-title")
+                ([
+                    await Resource.loadSvgOrCache("list-icon"),
+                    list.title ?? `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
+                ]),
+                $div("item-operator")
+                ([{
+                    tag: "button",
+                    className: "default-button main-button",
+                    children: "復元",
+                    onclick: async () =>
+                    {
+                        const pass = Storage.importJson(JSON.stringify(list));
+                        if (null !== pass)
                         {
-                            tag: "div",
-                            className: "item-title",
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("list-icon"),
-                                list.title ?? `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
-                            ],
-                        },
-                        {
-                            tag: "div",
-                            className: "item-operator",
-                            children:
-                            [
-                                {
-                                    tag: "button",
-                                    className: "default-button main-button",
-                                    children: "復元",
-                                    onclick: async () =>
-                                    {
-                                        const pass = Storage.importJson(JSON.stringify(list));
-                                        if (null !== pass)
-                                        {
-                                            showUrl({ pass, tag: "@overall", });
-                                        }
-                                    },
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        });
+                            showUrl({ pass, tag: "@overall", });
+                        }
+                    },
+                }]),
+            ]),
+        ]);
         export const showRemovedListScreen = async () =>
             await showWindow(await removedListScreen(Storage.Backup.get().map(json => JSON.parse(json) as ToDoList)));
         export const removedListScreenMenu = async () =>
@@ -3101,130 +3006,92 @@ export module CyclicToDo
             },
             [
                 0 < list.length ?
-                {
-                    tag: "div",
-                    className: "column-flex-list removed-list-list",
-                    children: await Promise.all(list.map(item => removedListItem(item))),
-                }:
-                {
-                    tag: "div",
-                    className: "button-list",
-                    children: label("Recycle Bin is empty."),
-                },
-                {
-                    tag: "div",
-                    className: "button-list",
-                    children:
-                    [
-                        internalLink
-                        ({
-                            href: {  },
-                            children:
+                    $div("column-flex-list removed-list-list")(await Promise.all(list.map(item => removedListItem(item)))):
+                    $div("button-list")(label("Recycle Bin is empty.")),
+                $div("button-list")
+                ([
+                    internalLink
+                    ({
+                        href: {  },
+                        children: $tag("button")("default-button main-button long-button")(label("Back to Top")),
+                    }),
+                    0 < list.length ?
+                        {
+                            tag: "button",
+                            className: "main-button long-button delete-button",
+                            children: "完全に削除",
+                            onclick: async () =>
                             {
-                                tag: "button",
-                                className: "default-button main-button long-button",
-                                children: label("Back to Top"),
-                            },
-                        }),
-                        0 < list.length ?
-                            {
-                                tag: "button",
-                                className: "main-button long-button delete-button",
-                                children: "完全に削除",
-                                onclick: async () =>
+                                if (systemConfirm("この操作は取り消せません。続行しますか？"))
                                 {
-                                    if (systemConfirm("この操作は取り消せません。続行しますか？"))
-                                    {
-                                        Storage.Backup.clear();
-                                        await reload();
-                                    }
-                                },
-                            }:
-                            [],
-                    ],
-                }
+                                    Storage.Backup.clear();
+                                    await reload();
+                                }
+                            },
+                        }:
+                        [],
+                ]),
             ]
         );
         export const applicationIcon = async () =>
-        ({
-            tag: "div",
-            className: "application-icon icon",
-            children: await Resource.loadSvgOrCache("application-icon"),
-        });
+            $div("application-icon icon")(await Resource.loadSvgOrCache("application-icon"));
         export const applicationColorIcon = async () =>
-        ({
-            tag: "div",
-            className: "application-icon icon",
-            children: await Resource.loadSvgOrCache("application-color-icon"),
-        });
-        export const listItem = async (list: ToDoList) =>
-        ({
-            tag: "div",
-            className: "list-item flex-item",
-            children:
-            [
-                {
-                    tag: "div",
-                    className: "item-header",
+            $div("application-icon icon")(await Resource.loadSvgOrCache("application-color-icon"));
+        export const listItem = async (list: ToDoList) => $div("list-item flex-item")
+        ([
+            $div("item-header")
+            ([
+                internalLink
+                ({
+                    className: "item-title",
+                    href: { pass: list.pass, tag: "@overall", },
                     children:
                     [
+                        await Resource.loadSvgOrCache("list-icon"),
+                        list.title,
+                        // Storage.Title.get(list.pass),
+                        // `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
+                    ]
+                }),
+                $div("item-operator")
+                ([
+                    internalLink
+                    ({
+                        href: { pass: list.pass, tag: "@overall", },
+                        children:
+                        {
+                            tag: "button",
+                            className: "default-button main-button",
+                            children: label("Open"),
+                        },
+                    }),
+                    await menuButton
+                    ([
+                        listRenameMenu(list.pass),
                         internalLink
                         ({
-                            className: "item-title",
-                            href: { pass: list.pass, tag: "@overall", },
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("list-icon"),
-                                list.title,
-                                // Storage.Title.get(list.pass),
-                                // `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
-                            ]
+                            href: { pass: list.pass, tag: "@overall", hash: "history" },
+                            children: menuItem(label("History")),
                         }),
-                        {
-                            tag: "div",
-                            className: "item-operator",
-                            children:
-                            [
-                                internalLink
-                                ({
-                                    href: { pass: list.pass, tag: "@overall", },
-                                    children:
-                                    {
-                                        tag: "button",
-                                        className: "default-button main-button",
-                                        children: label("Open"),
-                                    },
-                                }),
-                                await menuButton
-                                ([
-                                    listRenameMenu(list.pass),
-                                    internalLink
-                                    ({
-                                        href: { pass: list.pass, tag: "@overall", hash: "history" },
-                                        children: menuItem(label("History")),
-                                    }),
-                                    internalLink
-                                    ({
-                                        href: { pass: list.pass, hash: "export", },
-                                        children: menuItem(label("Export")),
-                                    }),
-                                    menuItem
-                                    (
-                                        label("Delete"),
-                                        async () =>
-                                        {
-                                            Storage.Pass.remove(list.pass);
-                                            await reload();
-                                        },
-                                        "delete-button"
-                                    )
-                                ]),
-                            ]
-                        }
-                    ]
-                },
-            ]
-        });
+                        internalLink
+                        ({
+                            href: { pass: list.pass, hash: "export", },
+                            children: menuItem(label("Export")),
+                        }),
+                        menuItem
+                        (
+                            label("Delete"),
+                            async () =>
+                            {
+                                Storage.Pass.remove(list.pass);
+                                await reload();
+                            },
+                            "delete-button"
+                        )
+                    ]),
+                ]),
+            ]),
+        ]);
         export const welcomeScreenMenu = async () =>
         [
             menuItem
@@ -3271,43 +3138,33 @@ export module CyclicToDo
                 menu: await welcomeScreenMenu()
             },
             [
-                {
-                    tag: "div",
-                    className: "column-flex-list list-list",
-                    children: await Promise.all(Storage.Pass.get().map(pass => listItem(JSON.parse(Storage.exportJson(pass)) as ToDoList))),
-                },
-                {
-                    tag: "div",
-                    style: "text-align: center; padding: 0.5rem;",
-                    children: "🚧 This static web application is under development. / この Static Web アプリは開発中です。",
-                },
-                        await applicationColorIcon(),
-                {
-                    tag: "div",
-                    className: "button-line locale-parallel-on",
-                    children:
-                    [
-                        {
-                            tag: "button",
-                            className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
-                            children: label("New ToDo List"),
-                            onclick: newListPrompt,
-                        },
-                        await menuButton
-                        ([
-                            internalLink
-                            ({
-                                href: { hash: "import", },
-                                children: menuItem(label("Import List")),
-                            }),
-                            internalLink
-                            ({
-                                href: { hash: "removed", },
-                                children: menuItem(label("@deleted")),
-                            }),
-                        ]),
-                    ],
-                },
+                $div("column-flex-list list-list")
+                    (await Promise.all(Storage.Pass.get().map(pass => listItem(JSON.parse(Storage.exportJson(pass)) as ToDoList)))),
+                $div({ style: "text-align: center; padding: 0.5rem;", })
+                    ("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
+                await applicationColorIcon(),
+                $div("button-line locale-parallel-on")
+                ([
+                    {
+                        tag: "button",
+                        className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
+                        children: label("New ToDo List"),
+                        onclick: newListPrompt,
+                    },
+                    await menuButton
+                    ([
+                        internalLink
+                        ({
+                            href: { hash: "import", },
+                            children: menuItem(label("Import List")),
+                        }),
+                        internalLink
+                        ({
+                            href: { hash: "removed", },
+                            children: menuItem(label("@deleted")),
+                        }),
+                    ]),
+                ]),
             ]
         );
         export const showWelcomeScreen = async () =>
@@ -3341,22 +3198,14 @@ export module CyclicToDo
             },
             [
                 await applicationColorIcon(),
-                // {
-                //     tag: "div",
-                //     className: "message",
-                //     children: label("Updating..."),
-                // },
-                {
-                    tag: "div",
-                    className: "button-list",
-                    children:
-                    {
-                        tag: "button",
-                        className: "default-button main-button long-button",
-                        children: label("Reload"),
-                        onclick: async () => await showPage(url),
-                    },
-                },
+                // $div("message")(label("Updating...")),
+                $div("button-list")
+                ({
+                    tag: "button",
+                    className: "default-button main-button long-button",
+                    children: label("Reload"),
+                    onclick: async () => await showPage(url),
+                }),
             ]
         );
         export const showUpdatingScreen = async (url: string = location.href) =>
