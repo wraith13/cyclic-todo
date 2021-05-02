@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun May 02 2021 00:26:26 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sun May 02 2021 19:28:39 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -263,10 +263,6 @@ h1.segmented {
   white-space: nowrap;
   justify-content: start;
 }
-h1.segmented button.menu-button {
-  right: 0.25rem;
-  position: absolute;
-}
 h1 .icon {
   display: inline-block;
   margin-right: 0.25rem;
@@ -283,7 +279,7 @@ h1 .segment {
   align-items: center;
   font-size: 1.2rem;
   padding-left: 0.25rem;
-  padding-right: 3rem;
+  padding-right: 1.25rem;
   text-decoration: none;
 }
 h1 .segment.label-segment {
@@ -325,13 +321,13 @@ h1 .segment:not(.label-segment) {
     background-color: #228844;
   }
 }
-h1 .segment.last-segment {
+h1 .segment.fill-header-segment {
   flex-grow: 1;
   margin-right: -3rem;
 }
 h1 .segment + .segment,
 h1 .segment + .menu-popup + .segment {
-  margin-left: -2rem;
+  margin-left: -0.25rem;
   border-left-style: solid;
   border-left-width: 1px;
   border-left-color: #FFFFFF !important;
@@ -396,9 +392,21 @@ h1 button.menu-button {
     background-color: #228844;
   }
 }
+h1 .segment.fill-header-segment + button.menu-button,
+h1 .segment.fill-header-segment + .menu-popup + button.menu-button {
+  right: 0.25rem;
+  position: absolute;
+}
 h1 .menu-popup:not(.segment-popup) {
   top: calc(10px + 2rem);
   right: 0.5rem;
+}
+h1 .header-operator {
+  flex-grow: 1;
+  margin-right: 0.25rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
 }
 h2 {
   padding: 0.25rem 0.5rem;
@@ -407,46 +415,16 @@ h2 {
 h1,
 h2 {
   margin: 0rem;
-  cursor: pointer;
   color: #FFFFFF;
   fill: #FFFFFF;
+  background-color: #228844;
+  text-decoration: none;
 }
 @media (prefers-color-scheme: dark) {
   h1,
   h2 {
     color: #000022;
     fill: #000022;
-  }
-}
-@media (hover: hover) {
-  h1:not(:hover),
-  h2:not(:hover) {
-    border-color: #228844;
-    background-color: #228844;
-  }
-  h1:hover,
-  h2:hover {
-    border-color: #6F7F00;
-    background-color: #6F7F00;
-  }
-}
-@media (hover: none) {
-  h1,
-  h2 {
-    border-color: #228844;
-    background-color: #228844;
-  }
-}
-@media (hover: hover) {
-  h1 a:not(:hover),
-  h2 a:not(:hover) {
-    text-decoration: none;
-  }
-}
-@media (hover: none) {
-  h1 a,
-  h2 a {
-    text-decoration: none;
   }
 }
 label {
@@ -4742,6 +4720,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
+            var getLastSegmentClass = function (data, ix) { return ix === data.items.length - 1 ?
+                (!data.operator ? "last-segment fill-header-segment" : "last-segment") : undefined; };
             Render.screenSegmentedHeader = function (data) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c;
                 var _this = this;
@@ -4750,11 +4730,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 0:
                             _a = Render.$tag("h1")("segmented");
                             return [4 /*yield*/, Promise.all(data.items
-                                    .map(function (item, ix, list) { return __awaiter(_this, void 0, void 0, function () {
+                                    .map(function (item, ix) { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
-                                        return [2 /*return*/, (item.href && Render.screenHeaderLinkSegment(item, ix === list.length - 1 ? "last-segment" : undefined)) ||
-                                                (item.menu && Render.screenHeaderPopupSegment(item, ix === list.length - 1 ? "last-segment" : undefined)) ||
-                                                (true && Render.screenHeaderLabelSegment(item, ix === list.length - 1 ? "last-segment" : undefined))];
+                                        return [2 /*return*/, (item.href && Render.screenHeaderLinkSegment(item, getLastSegmentClass(data, ix))) ||
+                                                (item.menu && Render.screenHeaderPopupSegment(item, getLastSegmentClass(data, ix))) ||
+                                                (true && Render.screenHeaderLabelSegment(item, getLastSegmentClass(data, ix)))];
                                     });
                                 }); }))];
                         case 1:
@@ -5268,6 +5248,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             return [4 /*yield*/, Render.listScreenMenu(entry)];
                         case 3:
                             _b = _b.concat([(_f.menu = _g.sent(),
+                                    _f.operator = {
+                                        tag: "input",
+                                        type: "text",
+                                        placeholder: "絞り込み",
+                                    },
                                     _f)]);
                             return [4 /*yield*/, Render.historyBar(entry, list)];
                         case 4:

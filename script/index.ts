@@ -2059,6 +2059,8 @@ export module CyclicToDo
             menu?: minamo.dom.Source;
             operator?: minamo.dom.Source;
         }
+        const getLastSegmentClass = (data:HeaderSource, ix: number) => ix === data.items.length -1 ?
+            (! data.operator  ? "last-segment fill-header-segment": "last-segment"): undefined;
         export const screenSegmentedHeader = async (data:HeaderSource) => $tag("h1")("segmented")
         ([
             (
@@ -2067,10 +2069,10 @@ export module CyclicToDo
                     data.items
                     .map
                     (
-                        async (item, ix, list) =>
-                            (item.href && screenHeaderLinkSegment(item, ix === list.length -1 ? "last-segment": undefined)) ||
-                            (item.menu && screenHeaderPopupSegment(item, ix === list.length -1 ? "last-segment": undefined)) ||
-                            (true && screenHeaderLabelSegment(item, ix === list.length -1 ? "last-segment": undefined))
+                        async (item, ix) =>
+                            (item.href && screenHeaderLinkSegment(item, getLastSegmentClass(data,ix))) ||
+                            (item.menu && screenHeaderPopupSegment(item, getLastSegmentClass(data,ix))) ||
+                            (true && screenHeaderLabelSegment(item, getLastSegmentClass(data,ix)))
                     )
                 )
             ).reduce((a, b) => (a as any[]).concat(b), []),
@@ -2441,6 +2443,12 @@ export module CyclicToDo
                     await screenHeaderTagSegment(entry.pass, entry.tag),
                 ],
                 menu: await listScreenMenu(entry),
+                operator:
+                {
+                    tag: "input",
+                    type: "text",
+                    placeholder: "絞り込み",
+                }
             },
             [
                 await historyBar(entry, list),

@@ -35,11 +35,6 @@ h1
     {
         white-space: nowrap;
         justify-content: start;
-        button.menu-button
-        {
-            right: 0.25rem;
-            position: absolute;
-        }
     }
     align-items: center;
     .icon
@@ -61,7 +56,8 @@ h1
         align-items: center;
         font-size: 1.2rem;
         padding-left: 0.25rem;
-        padding-right: 3rem;
+        padding-right: 1.25rem;
+        //padding-right: 3rem;
         text-decoration: none;
         &.label-segment
         {
@@ -73,16 +69,20 @@ h1
         {
             .primary-operator-coloring-trait;
         }
-        &.last-segment
+        &.fill-header-segment
         {
             flex-grow: 1;
             margin-right: -3rem;
         }
+        // &.last-segment:not(.fill-header-segment)
+        // {
+        //     padding-right: 1.25rem;
+        // }
     }
     .segment + .segment,
     .segment +.menu-popup + .segment
     {
-        margin-left: -2rem;
+        margin-left: -0.25rem;
         border-left-style: solid;
         border-left-width: 1px;
         border-left-color: @base-color !important;
@@ -128,10 +128,24 @@ h1
         margin-right: 0.25rem;
         .primary-operator-coloring-trait;
     }
+    .segment.fill-header-segment + button.menu-button,
+    .segment.fill-header-segment +.menu-popup + button.menu-button
+    {
+        right: 0.25rem;
+        position: absolute;
+    }
     .menu-popup:not(.segment-popup)
     {
         top: calc(10px + 2.0rem);
         right: 0.5rem;
+    }
+    .header-operator
+    {
+        flex-grow: 1;
+        margin-right: 0.25rem;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
     }
 }
 h2
@@ -142,21 +156,9 @@ h2
 h1, h2
 {
     margin: 0rem;
-    .primary-operator-coloring-trait;
-    @media (hover: hover)
-    {
-        a:not(:hover)
-        {
-            text-decoration: none;
-        }
-    }
-    @media (hover: none)
-    {
-        a
-        {
-            text-decoration: none;
-        }
-    }
+    .negative-foreground-coloring-trait;
+    background-color: @accent-color;
+    text-decoration: none;
 }
 label
 {
