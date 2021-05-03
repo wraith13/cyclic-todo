@@ -1009,6 +1009,7 @@ export module CyclicToDo
             href: data.href,
             children: data.children,
         });
+        export const $make = minamo.dom.make;
         export const $tag = (tag: string) => (className: string | object) => (children: minamo.dom.Source) =>
             "string" === typeof className ?
             {
@@ -2433,20 +2434,62 @@ export module CyclicToDo
                 ):
                 [],
         ];
-        export const filter = async (_onUpdate: (text: string) => unknown) =>
+        export const filter = async (onUpdate: (text: string) => Promise<unknown>) =>
         {
-            const altIcon = $div("alt-icon")(await Resource.loadSvgOrCache("search-icon"));
-            const input =
+            const context =
             {
+                value: "",
+            };
+            const onchange = () =>
+            {
+                const value = input.value.trim().replace(/\w+/, " ");
+                if (value !== context.value)
+                {
+                    context.value = value;
+                    onUpdate(value);
+                }
+            };
+            const onfocus = () =>
+            {
+                Array.from(document.getElementsByTagName("h1"))[0]?.classList?.add("header-operator-has-focus");
+            };
+            const clear = () =>
+            {
+                Array.from(document.getElementsByTagName("h1"))[0]?.classList?.remove("header-operator-has-focus");
+                input.value = context.value = "";
+                input.blur();
+                onchange();
+            };
+            const icon = $div
+            ({
+                className: "filter-icon",
+                onclick: () =>
+                {
+                    onfocus();
+                    input.focus();
+                }
+            })
+            (await Resource.loadSvgOrCache("search-icon"));
+            const clearIcon = $div
+            ({
+                className: "clear-icon",
+                onclick: clear,
+            })
+            (await Resource.loadSvgOrCache("cross-icon"));
+            const input = $make(HTMLInputElement)
+            ({
                 tag: "input",
                 type: "text",
                 placeholder: "絞り込み",
-                style: "width: 120px",
-            };
+                onfocus,
+                onchange,
+                onkeyup: () => onchange(),
+            });
             const result = $div("filter-frame")
             ([
-                altIcon,
-                $div("input-frame")(input),
+                icon,
+                input,
+                clearIcon,
             ]);
             return result;
         };
@@ -2461,7 +2504,7 @@ export module CyclicToDo
                     await screenHeaderTagSegment(entry.pass, entry.tag),
                 ],
                 menu: await listScreenMenu(entry),
-                operator: await filter(() => { }),
+                operator: await filter(async () => { }),
             },
             [
                 await historyBar(entry, list),

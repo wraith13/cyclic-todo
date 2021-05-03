@@ -1,9 +1,9 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon May 03 2021 13:40:55 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon May 03 2021 21:19:07 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
 <meta name="theme-color" content="#228844">
 <meta name="apple-mobile-web-app-title" content="Cyclic ToDo">
 <title>Cyclic ToDo</title>
@@ -357,17 +357,39 @@ h1 .segment + .menu-popup + .segment .icon svg {
 h1 .segment + .menu-popup {
   white-space: nowrap;
 }
-h1.locale-parallel-off .segment:not(.last-segment):not(:hover) {
+h1.locale-parallel-off:not(.header-operator-has-focus) .segment:not(.last-segment):not(:hover) {
   padding-right: 0.5rem;
 }
-h1.locale-parallel-off .segment:not(.last-segment):not(:hover) .segment-title {
+h1.locale-parallel-off:not(.header-operator-has-focus) .segment:not(.last-segment):not(:hover) .segment-title {
   display: none;
 }
-h1.locale-parallel-off .filter-frame .input-frame {
+h1.locale-parallel-off:not(.header-operator-has-focus) .filter-frame {
+  background-color: transparent;
+  border-style: none;
+  border-width: 0px;
+  flex-grow: 0;
+}
+h1.locale-parallel-off:not(.header-operator-has-focus) .filter-frame > :not(.filter-icon) {
   display: none;
 }
-h1.locale-parallel-on .filter-frame .alt-icon {
+h1.locale-parallel-off:not(.header-operator-has-focus) .filter-frame .filter-icon svg {
+  color: #FFFFFF;
+  fill: #FFFFFF;
+}
+@media (prefers-color-scheme: dark) {
+  h1.locale-parallel-off:not(.header-operator-has-focus) .filter-frame .filter-icon svg {
+    color: #000022;
+    fill: #000022;
+  }
+}
+h1.locale-parallel-off.header-operator-has-focus .segment {
+  padding-right: 0.5rem;
+}
+h1.locale-parallel-off.header-operator-has-focus .segment .segment-title {
   display: none;
+}
+h1.locale-parallel-off.header-operator-has-focus .filter-frame {
+  max-width: initial;
 }
 h1 button.menu-button {
   margin: 0px;
@@ -410,13 +432,50 @@ h1 .header-operator {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  margin-left: 0.5rem;
 }
-h1 .header-operator input {
+.filter-frame {
+  color: #000022;
+  fill: #000022;
+  background-color: #FFFFFF;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-grow: 1;
+  justify-content: stretch;
+  padding: 2px 4px;
+  border-radius: 32px;
+  border-style: solid;
+  border-width: 1px;
   border-color: #8888;
+  font-size: 1rem;
+  max-width: 360px;
 }
-.filter-frame .alt-icon svg {
+@media (prefers-color-scheme: dark) {
+  .filter-frame {
+    color: #FFFFFF;
+    fill: #FFFFFF;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .filter-frame {
+    background-color: #000022;
+  }
+}
+.filter-frame svg {
+  color: #888;
+  fill: #888;
   width: 1.5rem;
   height: 1.5rem;
+}
+.filter-frame input {
+  background-color: transparent;
+  border-style: none;
+  border-width: 0px;
+  margin: 0px;
+  padding: 0px 4px;
+  min-width: 120px;
+  flex-grow: 1;
 }
 h2 {
   padding: 0.25rem 0.5rem;
@@ -2634,7 +2693,8 @@ define("resource/images", [], {
     "add-folder-icon": "./image/add-folder.1024.svg",
     "add-task-icon": "./image/add-task.1024.svg",
     "recycle-bin-icon": "./image/recycle-bin.1024.svg",
-    "search-icon": "./image/search.1024.svg"
+    "search-icon": "./image/search.1024.svg",
+    "cross-icon": "./image/cross.1024.svg"
 });
 define("script/index", ["require", "exports", "script/minamo.js/index", "resource/config", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, config_json_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -3434,6 +3494,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     children: data.children,
                 });
             };
+            Render.$make = minamo_js_1.minamo.dom.make;
             Render.$tag = function (tag) { return function (className) { return function (children) {
                 return "string" === typeof className ?
                     {
@@ -5236,24 +5297,61 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         ]];
                 });
             }); };
-            Render.filter = function (_onUpdate) { return __awaiter(_this, void 0, void 0, function () {
-                var altIcon, _a, input, result;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
+            Render.filter = function (onUpdate) { return __awaiter(_this, void 0, void 0, function () {
+                var context, onchange, onfocus, clear, icon, _a, clearIcon, _b, input, result;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
-                            _a = Render.$div("alt-icon");
+                            context = {
+                                value: "",
+                            };
+                            onchange = function () {
+                                var value = input.value.trim().replace(/\w+/, " ");
+                                if (value !== context.value) {
+                                    context.value = value;
+                                    onUpdate(value);
+                                }
+                            };
+                            onfocus = function () {
+                                var _a, _b;
+                                (_b = (_a = Array.from(document.getElementsByTagName("h1"))[0]) === null || _a === void 0 ? void 0 : _a.classList) === null || _b === void 0 ? void 0 : _b.add("header-operator-has-focus");
+                            };
+                            clear = function () {
+                                var _a, _b;
+                                (_b = (_a = Array.from(document.getElementsByTagName("h1"))[0]) === null || _a === void 0 ? void 0 : _a.classList) === null || _b === void 0 ? void 0 : _b.remove("header-operator-has-focus");
+                                input.value = context.value = "";
+                                input.blur();
+                                onchange();
+                            };
+                            _a = Render.$div({
+                                className: "filter-icon",
+                                onclick: function () {
+                                    onfocus();
+                                    input.focus();
+                                }
+                            });
                             return [4 /*yield*/, Resource.loadSvgOrCache("search-icon")];
                         case 1:
-                            altIcon = _a.apply(void 0, [_b.sent()]);
-                            input = {
+                            icon = _a.apply(void 0, [_c.sent()]);
+                            _b = Render.$div({
+                                className: "clear-icon",
+                                onclick: clear,
+                            });
+                            return [4 /*yield*/, Resource.loadSvgOrCache("cross-icon")];
+                        case 2:
+                            clearIcon = _b.apply(void 0, [_c.sent()]);
+                            input = Render.$make(HTMLInputElement)({
                                 tag: "input",
                                 type: "text",
                                 placeholder: "絞り込み",
-                                style: "width: 120px",
-                            };
+                                onfocus: onfocus,
+                                onchange: onchange,
+                                onkeyup: function () { return onchange(); },
+                            });
                             result = Render.$div("filter-frame")([
-                                altIcon,
-                                Render.$div("input-frame")(input),
+                                icon,
+                                input,
+                                clearIcon,
                             ]);
                             return [2 /*return*/, result];
                     }
@@ -5283,7 +5381,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             return [4 /*yield*/, Render.listScreenMenu(entry)];
                         case 3:
                             _f.menu = _g.sent();
-                            return [4 /*yield*/, Render.filter(function () { })];
+                            return [4 /*yield*/, Render.filter(function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    return [2 /*return*/];
+                                }); }); })];
                         case 4:
                             _b = _b.concat([(_f.operator = _g.sent(),
                                     _f)]);
@@ -6795,6 +6895,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
 </svg>
 </div><div id="search-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M591.138,636.333C538.919,678.637 472.398,704 400,704C232.218,704 96,567.782 96,400C96,232.218 232.218,96 400,96C567.782,96 704,232.218 704,400C704,472.364 678.661,538.857 636.387,591.072L668.737,623.442C690.078,617.768 713.792,623.297 730.516,640.026L959.361,868.94C984.334,893.921 984.328,934.477 959.348,959.45C934.367,984.423 893.811,984.417 868.838,959.436L639.993,730.522C623.248,713.773 617.734,690.021 623.447,668.661L591.138,636.333ZM400,192C514.798,192 608,285.202 608,400C608,514.798 514.798,608 400,608C285.202,608 192,514.798 192,400C192,285.202 285.202,192 400,192Z"/>
+</svg>
+</div><div id="cross-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M512,398.841L734.604,176.149C755.322,155.423 788.969,155.417 809.695,176.134L847.749,214.174C868.475,234.891 868.481,268.538 847.764,289.264L625.115,512L847.764,734.736C868.481,755.462 868.475,789.109 847.749,809.826L809.695,847.866C788.969,868.583 755.322,868.577 734.604,847.851L512,625.159L289.396,847.851C268.678,868.577 235.031,868.583 214.305,847.866L176.251,809.826C155.525,789.109 155.519,755.462 176.236,734.736L398.885,512L176.236,289.264C155.519,268.538 155.525,234.891 176.251,214.174L214.305,176.134C235.031,155.417 268.678,155.423 289.396,176.149L512,398.841Z"/>
 </svg>
 </div></div></body>
 </html>
