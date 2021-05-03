@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon May 03 2021 09:45:57 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon May 03 2021 13:40:55 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -363,6 +363,12 @@ h1.locale-parallel-off .segment:not(.last-segment):not(:hover) {
 h1.locale-parallel-off .segment:not(.last-segment):not(:hover) .segment-title {
   display: none;
 }
+h1.locale-parallel-off .filter-frame .input-frame {
+  display: none;
+}
+h1.locale-parallel-on .filter-frame .alt-icon {
+  display: none;
+}
 h1 button.menu-button {
   margin: 0px;
   margin-right: 0.25rem;
@@ -407,6 +413,10 @@ h1 .header-operator {
 }
 h1 .header-operator input {
   border-color: #8888;
+}
+.filter-frame .alt-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 h2 {
   padding: 0.25rem 0.5rem;
@@ -2623,7 +2633,8 @@ define("resource/images", [], {
     "add-tag-icon": "./image/add-tag.1024.svg",
     "add-folder-icon": "./image/add-folder.1024.svg",
     "add-task-icon": "./image/add-task.1024.svg",
-    "recycle-bin-icon": "./image/recycle-bin.1024.svg"
+    "recycle-bin-icon": "./image/recycle-bin.1024.svg",
+    "search-icon": "./image/search.1024.svg"
 });
 define("script/index", ["require", "exports", "script/minamo.js/index", "resource/config", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, config_json_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -5226,19 +5237,26 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             Render.filter = function (_onUpdate) { return __awaiter(_this, void 0, void 0, function () {
-                var input, result;
-                return __generator(this, function (_a) {
-                    input = {
-                        tag: "input",
-                        type: "text",
-                        placeholder: "絞り込み",
-                        style: "width: 120px",
-                    };
-                    result = Render.$div("filter-frame")([
-                        // altIcon,
-                        input,
-                    ]);
-                    return [2 /*return*/, result];
+                var altIcon, _a, input, result;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            _a = Render.$div("alt-icon");
+                            return [4 /*yield*/, Resource.loadSvgOrCache("search-icon")];
+                        case 1:
+                            altIcon = _a.apply(void 0, [_b.sent()]);
+                            input = {
+                                tag: "input",
+                                type: "text",
+                                placeholder: "絞り込み",
+                                style: "width: 120px",
+                            };
+                            result = Render.$div("filter-frame")([
+                                altIcon,
+                                Render.$div("input-frame")(input),
+                            ]);
+                            return [2 /*return*/, result];
+                    }
                 });
             }); };
             Render.listScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
@@ -6774,6 +6792,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
 </svg>
 </div><div id="recycle-bin-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M656.066,112L656.151,112L656.266,112.001L656.31,112.001L656.342,112.001L656.447,112.002L656.601,112.004L656.743,112.005L656.919,112.009L657.039,112.011L657.218,112.015L657.334,112.018L657.497,112.023L657.546,112.024L657.572,112.025L657.63,112.027L657.751,112.032L657.854,112.035L657.902,112.037L657.925,112.038L657.977,112.04C668.507,112.468 678.167,116.294 685.891,122.452C692.474,127.679 697.739,134.666 700.878,142.947C701.489,144.553 702.017,146.201 702.455,147.886L702.488,148.01L702.496,148.042L744.289,304L880,304C906.492,304 928,325.508 928,352C928,378.492 906.492,400 880,400L862.369,400L734.373,877.636C727.668,902.657 702.334,917.752 677.292,912L336,912C335.666,912 335.333,911.997 335,911.99C334.667,911.997 334.334,912 334,912L330,912L329.933,912L329.84,912L329.713,911.999L329.69,911.999L329.673,911.999C328.967,911.994 328.263,911.974 327.56,911.939L327.477,911.935L327.348,911.928L327.225,911.921L327.178,911.918C317.903,911.379 309.332,908.202 302.206,903.128C293.396,896.886 286.628,887.652 283.617,876.415L155.948,400L144,400C117.508,400 96,378.492 96,352C96,325.508 117.508,304 144,304L280.681,304L320.098,156.908C321.694,131.855 342.547,112 368,112L656,112L656.066,112ZM762.982,400L255.336,400L366.814,816L651.503,816L762.982,400ZM450.142,784.613C468.623,781.362 480.989,763.718 477.738,745.236L427.491,459.595C424.24,441.114 406.596,428.749 388.114,432C369.633,435.251 357.268,452.895 360.519,471.376L410.766,757.017C414.017,775.499 431.661,787.864 450.142,784.613ZM573.858,783.481C555.377,780.23 543.011,762.586 546.262,744.105L596.509,458.464C599.76,439.982 617.404,427.617 635.886,430.868C654.367,434.12 666.732,451.763 663.481,470.245L613.234,755.886C609.983,774.367 592.339,786.732 573.858,783.481ZM405.794,208L380.068,304L644.902,304L619.176,208L405.794,208Z"/>
+</svg>
+</div><div id="search-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M591.138,636.333C538.919,678.637 472.398,704 400,704C232.218,704 96,567.782 96,400C96,232.218 232.218,96 400,96C567.782,96 704,232.218 704,400C704,472.364 678.661,538.857 636.387,591.072L668.737,623.442C690.078,617.768 713.792,623.297 730.516,640.026L959.361,868.94C984.334,893.921 984.328,934.477 959.348,959.45C934.367,984.423 893.811,984.417 868.838,959.436L639.993,730.522C623.248,713.773 617.734,690.021 623.447,668.661L591.138,636.333ZM400,192C514.798,192 608,285.202 608,400C608,514.798 514.798,608 400,608C285.202,608 192,514.798 192,400C192,285.202 285.202,192 400,192Z"/>
 </svg>
 </div></div></body>
 </html>

@@ -2435,10 +2435,7 @@ export module CyclicToDo
         ];
         export const filter = async (_onUpdate: (text: string) => unknown) =>
         {
-            // const altIcon =
-            // {
-
-            // };
+            const altIcon = $div("alt-icon")(await Resource.loadSvgOrCache("search-icon"));
             const input =
             {
                 tag: "input",
@@ -2448,8 +2445,8 @@ export module CyclicToDo
             };
             const result = $div("filter-frame")
             ([
-                // altIcon,
-                input,
+                altIcon,
+                $div("input-frame")(input),
             ]);
             return result;
         };
