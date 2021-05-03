@@ -2060,7 +2060,8 @@ export module CyclicToDo
             operator?: minamo.dom.Source;
         }
         const getLastSegmentClass = (data:HeaderSource, ix: number) => ix === data.items.length -1 ?
-            (! data.operator  ? "last-segment fill-header-segment": "last-segment"): undefined;
+            //(! data.operator  ? "last-segment fill-header-segment": "last-segment"): undefined;
+            "last-segment": undefined;
         export const screenSegmentedHeader = async (data:HeaderSource) => $tag("h1")("segmented")
         ([
             (
@@ -2432,6 +2433,26 @@ export module CyclicToDo
                 ):
                 [],
         ];
+        export const filter = async (_onUpdate: (text: string) => unknown) =>
+        {
+            // const altIcon =
+            // {
+
+            // };
+            const input =
+            {
+                tag: "input",
+                type: "text",
+                placeholder: "絞り込み",
+                style: "width: 120px",
+            };
+            const result = $div("filter-frame")
+            ([
+                // altIcon,
+                input,
+            ]);
+            return result;
+        };
         export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) => await screen
         (
             "list-screen",
@@ -2443,12 +2464,7 @@ export module CyclicToDo
                     await screenHeaderTagSegment(entry.pass, entry.tag),
                 ],
                 menu: await listScreenMenu(entry),
-                operator:
-                {
-                    tag: "input",
-                    type: "text",
-                    placeholder: "絞り込み",
-                }
+                operator: await filter(() => { }),
             },
             [
                 await historyBar(entry, list),

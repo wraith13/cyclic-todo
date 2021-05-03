@@ -57,7 +57,6 @@ h1
         font-size: 1.2rem;
         padding-left: 0.25rem;
         padding-right: 1.25rem;
-        //padding-right: 3rem;
         text-decoration: none;
         &.label-segment
         {
@@ -74,10 +73,6 @@ h1
             flex-grow: 1;
             margin-right: -3rem;
         }
-        // &.last-segment:not(.fill-header-segment)
-        // {
-        //     padding-right: 1.25rem;
-        // }
     }
     .segment + .segment,
     .segment +.menu-popup + .segment
@@ -115,7 +110,7 @@ h1
     {
         .segment:not(.last-segment):not(:hover)
         {
-            padding-right: 2.25rem;
+            padding-right: 0.5rem;
             .segment-title
             {
                 display: none;
@@ -127,10 +122,6 @@ h1
         margin: 0px;
         margin-right: 0.25rem;
         .primary-operator-coloring-trait;
-    }
-    .segment.fill-header-segment + button.menu-button,
-    .segment.fill-header-segment +.menu-popup + button.menu-button
-    {
         right: 0.25rem;
         position: absolute;
     }
@@ -142,10 +133,15 @@ h1
     .header-operator
     {
         flex-grow: 1;
-        margin-right: 0.25rem;
+        margin-right: 3rem;
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
+
+        input
+        {
+            border-color: #8888;
+        }
     }
 }
 h2

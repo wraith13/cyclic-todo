@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun May 02 2021 19:28:39 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon May 03 2021 09:45:57 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=contain">
@@ -358,7 +358,7 @@ h1 .segment + .menu-popup {
   white-space: nowrap;
 }
 h1.locale-parallel-off .segment:not(.last-segment):not(:hover) {
-  padding-right: 2.25rem;
+  padding-right: 0.5rem;
 }
 h1.locale-parallel-off .segment:not(.last-segment):not(:hover) .segment-title {
   display: none;
@@ -369,6 +369,8 @@ h1 button.menu-button {
   cursor: pointer;
   color: #FFFFFF;
   fill: #FFFFFF;
+  right: 0.25rem;
+  position: absolute;
 }
 @media (prefers-color-scheme: dark) {
   h1 button.menu-button {
@@ -392,21 +394,19 @@ h1 button.menu-button {
     background-color: #228844;
   }
 }
-h1 .segment.fill-header-segment + button.menu-button,
-h1 .segment.fill-header-segment + .menu-popup + button.menu-button {
-  right: 0.25rem;
-  position: absolute;
-}
 h1 .menu-popup:not(.segment-popup) {
   top: calc(10px + 2rem);
   right: 0.5rem;
 }
 h1 .header-operator {
   flex-grow: 1;
-  margin-right: 0.25rem;
+  margin-right: 3rem;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+}
+h1 .header-operator input {
+  border-color: #8888;
 }
 h2 {
   padding: 0.25rem 0.5rem;
@@ -4721,7 +4721,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             var getLastSegmentClass = function (data, ix) { return ix === data.items.length - 1 ?
-                (!data.operator ? "last-segment fill-header-segment" : "last-segment") : undefined; };
+                //(! data.operator  ? "last-segment fill-header-segment": "last-segment"): undefined;
+                "last-segment" : undefined; };
             Render.screenSegmentedHeader = function (data) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c;
                 var _this = this;
@@ -5224,6 +5225,22 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         ]];
                 });
             }); };
+            Render.filter = function (_onUpdate) { return __awaiter(_this, void 0, void 0, function () {
+                var input, result;
+                return __generator(this, function (_a) {
+                    input = {
+                        tag: "input",
+                        type: "text",
+                        placeholder: "絞り込み",
+                        style: "width: 120px",
+                    };
+                    result = Render.$div("filter-frame")([
+                        // altIcon,
+                        input,
+                    ]);
+                    return [2 /*return*/, result];
+                });
+            }); };
             Render.listScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e;
                 var _f;
@@ -5247,21 +5264,19 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             ]);
                             return [4 /*yield*/, Render.listScreenMenu(entry)];
                         case 3:
-                            _b = _b.concat([(_f.menu = _g.sent(),
-                                    _f.operator = {
-                                        tag: "input",
-                                        type: "text",
-                                        placeholder: "絞り込み",
-                                    },
+                            _f.menu = _g.sent();
+                            return [4 /*yield*/, Render.filter(function () { })];
+                        case 4:
+                            _b = _b.concat([(_f.operator = _g.sent(),
                                     _f)]);
                             return [4 /*yield*/, Render.historyBar(entry, list)];
-                        case 4:
+                        case 5:
                             _d = [
                                 _g.sent()
                             ];
                             _e = Render.$div("column-flex-list todo-list");
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.todoItem(entry, item); }))];
-                        case 5: return [4 /*yield*/, _a.apply(void 0, _b.concat([_d.concat([
+                        case 6: return [4 /*yield*/, _a.apply(void 0, _b.concat([_d.concat([
                                     _e.apply(void 0, [_g.sent()]),
                                     Render.$div("button-list")([
                                         "@overall" !== entry.tag ?
@@ -5299,7 +5314,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         }),
                                     ])
                                 ])]))];
-                        case 6: return [2 /*return*/, _g.sent()];
+                        case 7: return [2 /*return*/, _g.sent()];
                     }
                 });
             }); };
