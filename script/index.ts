@@ -2324,6 +2324,7 @@ export module CyclicToDo
             await screenSegmentedHeader(header),
             $div("screen-body")(body),
         ]);
+        export const replaceScreenBodu = (body: minamo.dom.Source) => minamo.dom.replaceChildren(document.getElementsByClassName("screen-body")[0], body);
         export const listRenameMenu =
         (
             pass: string,
@@ -2456,7 +2457,7 @@ export module CyclicToDo
             const clear = () =>
             {
                 Array.from(document.getElementsByTagName("h1"))[0]?.classList?.remove("header-operator-has-focus");
-                input.value = context.value = "";
+                input.value = "";
                 input.blur();
                 onchange();
             };
@@ -2480,11 +2481,14 @@ export module CyclicToDo
             ({
                 tag: "input",
                 type: "text",
+                className: "filter-text",
                 placeholder: "絞り込み",
                 onfocus,
-                onchange,
                 onkeyup: () => onchange(),
             });
+            input.addEventListener('change', onchange);
+            input.addEventListener('compositionupdate', onchange);
+            input.addEventListener('compositionend', onchange);
             const result = $div("filter-frame")
             ([
                 icon,
@@ -2493,53 +2497,70 @@ export module CyclicToDo
             ]);
             return result;
         };
+        export const getFilterText = () =>
+            ((Array.from(document.getElementsByClassName("filter-text"))[0] as HTMLInputElement)?.value ?? "")
+            .trim().replace(/\w+/g, " ").replace(/ or /ig, " or ");
+        export const isMatchTest = (filter: string, target: string) => "" === filter ||
+            0 < filter.split(" or ").filter(i => i.split(" ").filter(t => ! new RegExp(t, "i").test(target)).length <= 0).length;
+        export const isMatchToDoEntry = (filter: string, item: ToDoEntry) => isMatchTest(filter, item.task);
+        export const listScreenHeader = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
+        ({
+            items:
+            [
+                screenHeaderHomeSegment(),
+                await screenHeaderListSegment(entry.pass),
+                await screenHeaderTagSegment(entry.pass, entry.tag),
+            ],
+            menu: await listScreenMenu(entry),
+            operator: await filter
+            (
+                async filter =>
+                {
+                    replaceScreenBodu(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, item))));
+                    resizeFlexList();
+                }
+            ),
+        });
+        export const listScreenBody = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
+        ([
+            await historyBar(entry, list),
+            $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item)))),
+            $div("button-list")
+            ([
+                "@overall" !== entry.tag ?
+                    internalLink
+                    ({
+                        href: { pass: entry.pass, tag: "@overall", },
+                        children: $tag("button")(list.length <= 0 ? "main-button long-button": "default-button main-button long-button")(label("Back to Home")),
+                    }):
+                    [],
+                {
+                    tag: "button",
+                    className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
+                    children: label("New ToDo"),
+                    onclick: async () =>
+                    {
+                        const newTask = await prompt("ToDo の名前を入力してください");
+                        if (null !== newTask)
+                        {
+                            Storage.Task.add(entry.pass, newTask);
+                            Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                            await reload();
+                        }
+                    }
+                },
+                internalLink
+                ({
+                    href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                    children: $tag("button")("main-button long-button")(label("History")),
+                }),
+            ])
+        ]);
         export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) => await screen
         (
             "list-screen",
-            {
-                items:
-                [
-                    screenHeaderHomeSegment(),
-                    await screenHeaderListSegment(entry.pass),
-                    await screenHeaderTagSegment(entry.pass, entry.tag),
-                ],
-                menu: await listScreenMenu(entry),
-                operator: await filter(async () => { }),
-            },
-            [
-                await historyBar(entry, list),
-                $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item)))),
-                $div("button-list")
-                ([
-                    "@overall" !== entry.tag ?
-                        internalLink
-                        ({
-                            href: { pass: entry.pass, tag: "@overall", },
-                            children: $tag("button")(list.length <= 0 ? "main-button long-button": "default-button main-button long-button")(label("Back to Home")),
-                        }):
-                        [],
-                    {
-                        tag: "button",
-                        className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
-                        children: label("New ToDo"),
-                        onclick: async () =>
-                        {
-                            const newTask = await prompt("ToDo の名前を入力してください");
-                            if (null !== newTask)
-                            {
-                                Storage.Task.add(entry.pass, newTask);
-                                Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                                await reload();
-                            }
-                        }
-                    },
-                    internalLink
-                    ({
-                        href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                        children: $tag("button")("main-button long-button")(label("History")),
-                    }),
-                ])
-            ]
+            await listScreenHeader(entry, list),
+            await listScreenBody(entry, list)
         );
         export const showListScreen = async (entry: ToDoTagEntry) =>
         {
@@ -2554,12 +2575,21 @@ export module CyclicToDo
                     case "timer":
                         Domain.updateListProgress(list);
                         isDirty = ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[])) || isDirty;
-                        if (isDirty && document.body.scrollTop <= 0 && (document.getElementsByClassName("screen-body")[0]?.scrollTop ?? 0) <= 9 && ! hasScreenCover())
+                        if
+                        (
+                            isDirty &&
+                            document.body.scrollTop <= 0 &&
+                            (document.getElementsByClassName("screen-body")[0]?.scrollTop ?? 0) <= 9 &&
+                            ! hasScreenCover() &&
+                            ! (Array.from(document.getElementsByTagName("h1"))[0]?.classList?.contains("header-operator-has-focus") ?? false)
+                        )
                         {
                             await reload();
                         }
                         else
                         {
+                            const filter = getFilterText();
+                            const filteredList = list.filter(item => isMatchToDoEntry(filter, item));
                             (
                                 Array.from
                                 (
@@ -2573,7 +2603,7 @@ export module CyclicToDo
                             (
                                 (dom, index) =>
                                 {
-                                    const item = list[index];
+                                    const item = filteredList[index];
                                     const button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0] as HTMLButtonElement;
                                     button.classList.toggle("default-button", item.isDefault);
                                     const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
@@ -2583,7 +2613,7 @@ export module CyclicToDo
                             );
                             Array.from(document.getElementsByClassName("history-bar")).forEach
                             (
-                                async dom => minamo.dom.replaceChildren(dom, (await historyBar(entry, list)).children)
+                                async dom => minamo.dom.replaceChildren(dom, (await historyBar(entry, filteredList)).children)
                             );
                         }
                         break;
