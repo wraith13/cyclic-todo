@@ -2435,6 +2435,11 @@ export module CyclicToDo
                 ):
                 [],
         ];
+        export const regulateFilterText = (filter: string) => filter
+            .trim()
+            .replace(/\s+/g, " ")
+            .replace(/ or /ig, " or ")
+            .replace(/[\u3041-\u3096]/g, match => String.fromCharCode(match.charCodeAt(0) +0x60));
         export const filter = async (onUpdate: (text: string) => Promise<unknown>) =>
         {
             const context =
@@ -2443,7 +2448,7 @@ export module CyclicToDo
             };
             const onchange = () =>
             {
-                const value = input.value.trim().replace(/\w+/, " ");
+                const value = regulateFilterText(input.value);
                 if (value !== context.value)
                 {
                     context.value = value;
@@ -2497,11 +2502,39 @@ export module CyclicToDo
             ]);
             return result;
         };
-        export const getFilterText = () =>
-            ((Array.from(document.getElementsByClassName("filter-text"))[0] as HTMLInputElement)?.value ?? "")
-            .trim().replace(/\w+/g, " ").replace(/ or /ig, " or ");
-        export const isMatchTest = (filter: string, target: string) => "" === filter ||
-            0 < filter.split(" or ").filter(i => i.split(" ").filter(t => ! new RegExp(t, "i").test(target)).length <= 0).length;
+        export const getFilterText = () => regulateFilterText
+        (
+            (Array.from(document.getElementsByClassName("filter-text"))[0] as HTMLInputElement)?.value ?? ""
+        );
+        export const isMatchTest = (filter: string, target: string) =>
+        {
+            if ("" === filter)
+            {
+                return true;
+            }
+            const tokens = filter.split(" ");
+            const conditions: string[][] = [];
+            let i = 0;
+            while(i < tokens.length)
+            {
+                const current = [ tokens[i] ];
+                ++i;
+                if ("" !== current[0])
+                {
+                    while(i < tokens.length && "or" === tokens[i])
+                    {
+                        ++i;
+                        if (i < tokens.length && "" !== tokens[i])
+                        {
+                            current.push(tokens[i]);
+                            ++i;
+                        }
+                    }
+                    conditions.push(current);
+                }
+            }
+            return conditions.filter(current => current.filter(t => new RegExp(t, "i").test(target)).length <= 0).length <= 0;
+        };
         export const isMatchToDoEntry = (filter: string, item: ToDoEntry) => isMatchTest(filter, item.task);
         export const listScreenHeader = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         ({
