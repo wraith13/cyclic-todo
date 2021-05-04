@@ -58,6 +58,11 @@ h1
         padding-left: 0.25rem;
         padding-right: 1.25rem;
         text-decoration: none;
+        min-width: 2.25rem;
+        &:first-child
+        {
+            min-width: 2.75rem;
+        }
         &.label-segment
         {
             cursor: default;
@@ -173,7 +178,7 @@ h1
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
-        margin-left: 0.5rem;
+        z-index: 1000;
     }
 }
 .filter-frame
@@ -193,7 +198,7 @@ h1
     border-width: 1px;
     border-color: #8888;
     font-size: 1.0rem;
-    max-width: 360px;
+    max-width: 240px;
     // background-color: fade(0);
     svg
     {

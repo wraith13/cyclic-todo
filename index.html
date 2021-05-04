@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon May 03 2021 21:19:07 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon May 03 2021 23:00:56 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -281,6 +281,10 @@ h1 .segment {
   padding-left: 0.25rem;
   padding-right: 1.25rem;
   text-decoration: none;
+  min-width: 2.25rem;
+}
+h1 .segment:first-child {
+  min-width: 2.75rem;
 }
 h1 .segment.label-segment {
   cursor: default;
@@ -432,7 +436,7 @@ h1 .header-operator {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  margin-left: 0.5rem;
+  z-index: 1000;
 }
 .filter-frame {
   color: #000022;
@@ -449,7 +453,7 @@ h1 .header-operator {
   border-width: 1px;
   border-color: #8888;
   font-size: 1rem;
-  max-width: 360px;
+  max-width: 240px;
 }
 @media (prefers-color-scheme: dark) {
   .filter-frame {
