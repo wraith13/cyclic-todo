@@ -989,6 +989,7 @@ export module CyclicToDo
             tag?:string;
             todo?: string;
             hash?: string;
+            filter?: string;
         }
         export const internalLink = (data: { className?: string, href: PageParams, children: minamo.dom.Source}) =>
         ({
@@ -2060,6 +2061,12 @@ export module CyclicToDo
             menu?: minamo.dom.Source;
             operator?: minamo.dom.Source;
         }
+        export interface ScreenSource
+        {
+            className: string;
+            header: HeaderSource;
+            body: minamo.dom.Source;
+        }
         const getLastSegmentClass = (data:HeaderSource, ix: number) => ix === data.items.length -1 ?
             //(! data.operator  ? "last-segment fill-header-segment": "last-segment"): undefined;
             "last-segment": undefined;
@@ -2319,11 +2326,6 @@ export module CyclicToDo
                     ),
                 ])
         });
-        export const screen = async (className: string, header: HeaderSource, body: minamo.dom.Source) => $div(`${className} screen`)
-        ([
-            await screenSegmentedHeader(header),
-            $div("screen-body")(body),
-        ]);
         export const replaceScreenBodu = (body: minamo.dom.Source) => minamo.dom.replaceChildren(document.getElementsByClassName("screen-body")[0], body);
         export const listRenameMenu =
         (
@@ -2435,20 +2437,21 @@ export module CyclicToDo
                 ):
                 [],
         ];
-        export const regulateFilterText = (filter: string) => filter
+        export const softRegulateFilterText = (filter: string) => filter
             .trim()
-            .replace(/\s+/g, " ")
+            .replace(/\s+/g, " ");
+        export const regulateFilterText = (filter: string) => softRegulateFilterText(filter)
             .replace(/ or /ig, " or ")
             .replace(/[\u3041-\u3096]/g, match => String.fromCharCode(match.charCodeAt(0) +0x60));
-        export const filter = async (onUpdate: (text: string) => Promise<unknown>) =>
+        export const filter = async (init: string, onUpdate: (text: string) => Promise<unknown>) =>
         {
             const context =
             {
-                value: "",
+                value: init,
             };
             const onchange = () =>
             {
-                const value = regulateFilterText(input.value);
+                const value = softRegulateFilterText(input.value);
                 if (value !== context.value)
                 {
                     context.value = value;
@@ -2486,6 +2489,7 @@ export module CyclicToDo
             ({
                 tag: "input",
                 type: "text",
+                value: init,
                 className: "filter-text",
                 placeholder: "絞り込み",
                 onfocus,
@@ -2547,10 +2551,15 @@ export module CyclicToDo
             menu: await listScreenMenu(entry),
             operator: await filter
             (
+                getUrlParams().filter ?? "",
                 async filter =>
                 {
-                    replaceScreenBodu(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, item))));
+                    const regulatedFilter = regulateFilterText(filter);
+                    replaceScreenBodu(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(regulatedFilter, item))));
                     resizeFlexList();
+                    const urlParams = getUrlParams();
+                    urlParams.filter = "" === filter ? undefined: filter;
+                    history.pushState(null, document.title, makeUrl(urlParams));
                 }
             ),
         });
@@ -2589,13 +2598,13 @@ export module CyclicToDo
                 }),
             ])
         ]);
-        export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[]) => await screen
-        (
-            "list-screen",
-            await listScreenHeader(entry, list),
-            await listScreenBody(entry, list)
-        );
-        export const showListScreen = async (entry: ToDoTagEntry) =>
+        export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[], filter: string) =>
+        ({
+            className: "list-screen",
+            header: await listScreenHeader(entry, list),
+            body: await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, item)))
+        });
+        export const showListScreen = async (urlParams: PageParams, entry: ToDoTagEntry) =>
         {
             const list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)));
             Domain.updateListProgress(list);
@@ -2661,7 +2670,8 @@ export module CyclicToDo
                         break;
                 }
             };
-            await showWindow(await listScreen(entry, list), updateWindow);
+            const filter = regulateFilterText(urlParams.filter ?? "");
+            await showWindow(await listScreen(entry, list, filter), updateWindow);
             document.getElementsByClassName("screen-body")[0]?.addEventListener
             (
                 "scroll",
@@ -2746,9 +2756,10 @@ export module CyclicToDo
             //     ):
             //     [],
         ];
-        export const historyScreen = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[]) => await screen
-        (
-            "history-screen",
+        export const historyScreen = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[]): Promise<ScreenSource> =>
+        ({
+            className: "history-screen",
+            header:
             {
                 items:
                 [
@@ -2762,6 +2773,7 @@ export module CyclicToDo
                 ],
                 menu: await historyScreenMenu(entry),
             },
+            body:
             [
                 $div("column-flex-list history-list")(await Promise.all(list.map(item => historyItem(entry, item)))),
                 $div("button-list")
@@ -2773,7 +2785,7 @@ export module CyclicToDo
                     })
                 ),
             ]
-        );
+        });
         export const showHistoryScreen = async (entry: ToDoTagEntry) =>
         {
             const histories: { [task:string]:number[] } = { };
@@ -2836,9 +2848,10 @@ export module CyclicToDo
                 "delete-button"
             ),
         ];
-        export const removedScreen = async (pass: string, list: Storage.Removed.Type[]) => await screen
-        (
-            "removed-screen",
+        export const removedScreen = async (pass: string, list: Storage.Removed.Type[]) =>
+        ({
+            className: "removed-screen",
+            header:
             {
                 items:
                 [
@@ -2848,6 +2861,7 @@ export module CyclicToDo
                 ],
                 menu: await removedScreenMenu(pass)
             },
+            body:
             [
                 0 < list.length ?
                 $div("column-flex-list removed-list")
@@ -2884,7 +2898,7 @@ export module CyclicToDo
                         [],
                 ]),
             ]
-        );
+        });
         export const showRemovedScreen = async (pass: string) =>
             await showWindow(await removedScreen(pass, Storage.Removed.get(pass)));
         export const todoScreenMenu = async (pass: string, item: ToDoEntry) =>
@@ -2904,9 +2918,10 @@ export module CyclicToDo
             ),
         ];
 
-        export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[], tag: string = Storage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0]) => await screen
-        (
-            "todo-screen",
+        export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[], tag: string = Storage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0]) =>
+        ({
+            className: "todo-screen",
+            header:
             {
                 items:
                 [
@@ -2917,7 +2932,21 @@ export module CyclicToDo
                 ],
                 menu: await todoScreenMenu(pass, item),
             },
+            body:
             [
+                Storage.isSessionPass(pass) ?
+                    []:
+                    $div("button-list")
+                    ({
+                        tag: "button",
+                        className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
+                        children: label("Done"),
+                        onclick: async () =>
+                        {
+                            Domain.done(pass, item.task);
+                            await reload();
+                        }
+                    }),
                 $div("row-flex-list todo-list")
                 ([
                     $div("task-item flex-item")
@@ -2961,21 +2990,8 @@ export module CyclicToDo
                         )
                     )
                 ),
-                Storage.isSessionPass(pass) ?
-                    []:
-                    $div("button-list")
-                    ({
-                        tag: "button",
-                        className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
-                        children: label("Done"),
-                        onclick: async () =>
-                        {
-                            Domain.done(pass, item.task);
-                            await reload();
-                        }
-                    }),
             ]
-        );
+        });
         export const showTodoScreen = async (pass: string, task: string) =>
         {
             const item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
@@ -3026,9 +3042,10 @@ export module CyclicToDo
                 async () => async () => await showUrl({ pass, tag: "@overall", }),
             )
         ];
-        export const exportScreen = async (pass: string) => await screen
-        (
-            "export-screen",
+        export const exportScreen = async (pass: string): Promise<ScreenSource> =>
+        ({
+            className: "export-screen",
+            header:
             {
                 items:
                 [
@@ -3041,10 +3058,11 @@ export module CyclicToDo
                 ],
                 menu: await exportScreenMenu(pass)
             },
+            body:
             [
                 $tag("textarea")("json")(Storage.exportJson(pass)),
             ]
-        );
+        });
         export const showImportScreen = async () =>
             await showWindow(await importScreen());
         export const importScreenMenu = async () =>
@@ -3055,9 +3073,10 @@ export module CyclicToDo
                 async () => await showUrl({ }),
             )
         ];
-        export const importScreen = async () => await screen
-        (
-            "import-screen",
+        export const importScreen = async () =>
+        ({
+            className: "import-screen",
+            header:
             {
                 items:
                 [
@@ -3066,6 +3085,7 @@ export module CyclicToDo
                 ],
                 menu: await importScreenMenu()
             },
+            body:
             [
                 $tag("textarea")("json")("エクスポートした JSON をペーストしてください。"),
                 $div("button-list")
@@ -3084,7 +3104,7 @@ export module CyclicToDo
                     },
                 }),
             ]
-        );
+        });
         export const removedListItem = async (list: ToDoList) => $div("list-item flex-item")
         ([
             $div("item-header")
@@ -3120,9 +3140,10 @@ export module CyclicToDo
                 async () => await showUrl({ }),
             )
         ];
-        export const removedListScreen = async (list: ToDoList[]) => await screen
-        (
-            "remove-list-screen",
+        export const removedListScreen = async (list: ToDoList[]) =>
+        ({
+            className: "remove-list-screen",
+            header:
             {
                 items:
                 [
@@ -3131,6 +3152,7 @@ export module CyclicToDo
                 ],
                 menu: await removedListScreenMenu()
             },
+            body:
             [
                 0 < list.length ?
                     $div("column-flex-list removed-list-list")(await Promise.all(list.map(item => removedListItem(item)))):
@@ -3159,7 +3181,7 @@ export module CyclicToDo
                         [],
                 ]),
             ]
-        );
+        });
         export const applicationIcon = async () =>
             $div("application-icon icon")(await Resource.loadSvgOrCache("application-icon"));
         export const applicationColorIcon = async () =>
@@ -3253,9 +3275,10 @@ export module CyclicToDo
                 children: menuItem(labelSpan("GitHub")),
             }),
         ];
-        export const welcomeScreen = async () => await screen
-        (
-            "welcome-screen",
+        export const welcomeScreen = async (): Promise<ScreenSource> =>
+        ({
+            className: "welcome-screen",
+            header:
             {
                 items:
                 [{
@@ -3264,6 +3287,7 @@ export module CyclicToDo
                 }],
                 menu: await welcomeScreenMenu()
             },
+            body:
             [
                 $div("column-flex-list list-list")
                     (await Promise.all(Storage.Pass.get().map(pass => listItem(JSON.parse(Storage.exportJson(pass)) as ToDoList)))),
@@ -3293,7 +3317,7 @@ export module CyclicToDo
                     ]),
                 ]),
             ]
-        );
+        });
         export const showWelcomeScreen = async () =>
             await showWindow(await welcomeScreen());
         export const updatingScreenMenu = async () =>
@@ -3309,9 +3333,10 @@ export module CyclicToDo
                 async () => location.href = "https://github.com/wraith13/cyclic-todo/",
             ),
         ];
-        export const updatingScreen = async (url: string = location.href) => await screen
-        (
-            "updating-screen",
+        export const updatingScreen = async (url: string = location.href): Promise<ScreenSource> =>
+        ({
+            className: "updating-screen",
+            header:
             {
                 items:
                 [
@@ -3323,6 +3348,7 @@ export module CyclicToDo
                 ],
                 menu: await updatingScreenMenu()
             },
+            body:
             [
                 await applicationColorIcon(),
                 // $div("message")(label("Updating...")),
@@ -3334,7 +3360,7 @@ export module CyclicToDo
                     onclick: async () => await showPage(url),
                 }),
             ]
-        );
+        });
         export const showUpdatingScreen = async (url: string = location.href) =>
             await showWindow(await updatingScreen(url));
         export const updateTitle = () =>
@@ -3348,7 +3374,7 @@ export module CyclicToDo
         export type UpdateWindowEventEype = "timer" | "scroll" | "storage";
         export let updateWindow: (event: UpdateWindowEventEype) => unknown;
         let updateWindowTimer = undefined;
-        export const showWindow = async (screen: minamo.dom.Source, updateWindow?: (event: UpdateWindowEventEype) => unknown) =>
+        export const showWindow = async (screen: ScreenSource, updateWindow?: (event: UpdateWindowEventEype) => unknown) =>
         {
             if (undefined !== updateWindow)
             {
@@ -3386,7 +3412,11 @@ export module CyclicToDo
             minamo.dom.replaceChildren
             (
                 document.getElementById("body"),
-                screen
+                $div(`${screen.className} screen`)
+                ([
+                    await screenSegmentedHeader(screen.header),
+                    $div("screen-body")(screen.body),
+                ])
             );
             updateTitle();
             //minamo.core.timeout(100);
@@ -3560,7 +3590,7 @@ export module CyclicToDo
             .map(kvp => kvp.split("="))
             .filter(kvp => 2 <= kvp.length)
             .forEach(kvp => result[kvp[0]] = decodeURIComponent(kvp[1]));
-        return result;
+        return result as Render.PageParams;
     };
     export const getUrlHash = (url: string = location.href) => url.replace(/[^#]*#?/, "");
     export const makeUrl =
@@ -3678,7 +3708,7 @@ export module CyclicToDo
                 break;
             default:
                 console.log("show list screen");
-                Render.showListScreen({ tag: tag ?? "@overall", pass, todo: Storage.TagMember.get(pass, tag) });
+                Render.showListScreen(urlParams, { tag: tag ?? "@overall", pass, todo: Storage.TagMember.get(pass, tag) });
                 break;
             }
         }
