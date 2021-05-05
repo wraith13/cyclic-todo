@@ -2070,8 +2070,8 @@ export module CyclicToDo
         const getLastSegmentClass = (data:HeaderSource, ix: number) => ix === data.items.length -1 ?
             //(! data.operator  ? "last-segment fill-header-segment": "last-segment"): undefined;
             "last-segment": undefined;
-        export const screenSegmentedHeader = async (data:HeaderSource) => $tag("h1")("segmented")
-        ([
+        export const screenSegmentedHeader = async (data:HeaderSource) => //$tag("h1")("segmented")
+        [
             (
                 await Promise.all
                 (
@@ -2087,7 +2087,7 @@ export module CyclicToDo
             ).reduce((a, b) => (a as any[]).concat(b), []),
             data.menu ? await menuButton(data.menu): [],
             data.operator ? $div("header-operator")(data.operator): [],
-        ]);
+        ];
         export const screenHeaderSegmentCore = async (item: HeaderSegmentSource) =>
         [
             $div("icon")(await Resource.loadSvgOrCache(item.icon)),
@@ -2442,7 +2442,8 @@ export module CyclicToDo
             .replace(/\s+/g, " ");
         export const regulateFilterText = (filter: string) => softRegulateFilterText(filter)
             .replace(/ or /ig, " or ")
-            .replace(/[\u3041-\u3096]/g, match => String.fromCharCode(match.charCodeAt(0) +0x60));
+            .replace(/[Ａ-Ｚａ-ｚ０-９]/g, match => String.fromCharCode(match.charCodeAt(0) -0xFEE0)) // 全角 to 半角
+            .replace(/[\u3041-\u3096]/g, match => String.fromCharCode(match.charCodeAt(0) +0x60)); // ひらがな to カタカナ
         export const filter = async (init: string, onUpdate: (text: string) => Promise<unknown>) =>
         {
             const context =
@@ -3409,15 +3410,26 @@ export module CyclicToDo
                     }
                 );
             }
+            document.getElementById("screen").className = `${screen.className} screen`;
             minamo.dom.replaceChildren
             (
-                document.getElementById("body"),
-                $div(`${screen.className} screen`)
-                ([
-                    await screenSegmentedHeader(screen.header),
-                    $div("screen-body")(screen.body),
-                ])
+                document.getElementById("screen-header"),
+                await screenSegmentedHeader(screen.header)
             );
+            minamo.dom.replaceChildren
+            (
+                document.getElementById("screen-body"),
+                screen.body
+            );
+            // minamo.dom.replaceChildren
+            // (
+            //     document.getElementById("body"),
+            //     $div(`${screen.className} screen`)
+            //     ([
+            //         await screenSegmentedHeader(screen.header),
+            //         $div("screen-body")(screen.body),
+            //     ])
+            // );
             updateTitle();
             //minamo.core.timeout(100);
             resizeFlexList();
