@@ -2540,6 +2540,18 @@ export module CyclicToDo
             }
             return ! conditions.some(current => ! current.some(t => new RegExp(t, "i").test(target)));
         };
+        export const updateUrlFilterParam = (filter: string, urlParams: PageParams = getUrlParams()) =>
+        {
+            if ("" === filter)
+            {
+                delete urlParams.filter;
+            }
+            else
+            {
+                urlParams.filter = filter;
+            }
+            history.pushState(null, document.title, makeUrl(urlParams));
+        };
         export const isMatchToDoEntry = (filter: string, entry: ToDoTagEntry, item: ToDoEntry) =>
             isMatchTest(filter, item.task) ||
             Storage.Tag.getByTodo(entry.pass, item.task).some(tag => entry.tag !== tag && isMatchTest(filter, tag));
@@ -2560,16 +2572,7 @@ export module CyclicToDo
                     const regulatedFilter = regulateFilterText(filter);
                     replaceScreenBodu(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(regulatedFilter, entry, item))));
                     resizeFlexList();
-                    const urlParams = getUrlParams();
-                    if ("" === filter)
-                    {
-                        delete urlParams.filter;
-                    }
-                    else
-                    {
-                        urlParams.filter = filter;
-                    }
-                    history.pushState(null, document.title, makeUrl(urlParams));
+                    updateUrlFilterParam(filter);
                 }
             ),
         });
@@ -2790,16 +2793,7 @@ export module CyclicToDo
                     const regulatedFilter = regulateFilterText(filter);
                     replaceScreenBodu(await historyScreenBody(entry, list.filter(item => isMatchHistoryItem(regulatedFilter, entry, item))));
                     resizeFlexList();
-                    const urlParams = getUrlParams();
-                    if ("" === filter)
-                    {
-                        delete urlParams.filter;
-                    }
-                    else
-                    {
-                        urlParams.filter = filter;
-                    }
-                    history.pushState(null, document.title, makeUrl(urlParams));
+                    updateUrlFilterParam(filter);
                 }
             )
         });

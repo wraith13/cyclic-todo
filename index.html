@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu May 06 2021 20:20:40 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu May 06 2021 20:55:31 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -329,6 +329,9 @@ h1 .segment.fill-header-segment {
   flex-grow: 1;
   margin-right: -3rem;
 }
+h1 .segment:not(:hover) {
+  background-color: transparent !important;
+}
 h1 .segment + .segment,
 h1 .segment + .menu-popup + .segment {
   margin-left: -0.25rem;
@@ -425,6 +428,9 @@ h1 button.menu-button {
     border-color: #228844;
     background-color: #228844;
   }
+}
+h1 button.menu-button:not(:hover) {
+  background-color: transparent !important;
 }
 h1 .menu-popup:not(.segment-popup) {
   top: calc(10px + 2rem);
@@ -5385,6 +5391,16 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 }
                 return !conditions.some(function (current) { return !current.some(function (t) { return new RegExp(t, "i").test(target); }); });
             };
+            Render.updateUrlFilterParam = function (filter, urlParams) {
+                if (urlParams === void 0) { urlParams = CyclicToDo.getUrlParams(); }
+                if ("" === filter) {
+                    delete urlParams.filter;
+                }
+                else {
+                    urlParams.filter = filter;
+                }
+                history.pushState(null, document.title, CyclicToDo.makeUrl(urlParams));
+            };
             Render.isMatchToDoEntry = function (filter, entry, item) {
                 return Render.isMatchTest(filter, item.task) ||
                     Storage.Tag.getByTodo(entry.pass, item.task).some(function (tag) { return entry.tag !== tag && Render.isMatchTest(filter, tag); });
@@ -5413,7 +5429,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 3:
                             _b.menu = _d.sent();
                             return [4 /*yield*/, Render.filter((_c = CyclicToDo.getUrlParams().filter) !== null && _c !== void 0 ? _c : "", function (filter) { return __awaiter(_this, void 0, void 0, function () {
-                                    var regulatedFilter, _a, urlParams;
+                                    var regulatedFilter, _a;
                                     return __generator(this, function (_b) {
                                         switch (_b.label) {
                                             case 0:
@@ -5423,14 +5439,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             case 1:
                                                 _a.apply(void 0, [_b.sent()]);
                                                 Render.resizeFlexList();
-                                                urlParams = CyclicToDo.getUrlParams();
-                                                if ("" === filter) {
-                                                    delete urlParams.filter;
-                                                }
-                                                else {
-                                                    urlParams.filter = filter;
-                                                }
-                                                history.pushState(null, document.title, CyclicToDo.makeUrl(urlParams));
+                                                Render.updateUrlFilterParam(filter);
                                                 return [2 /*return*/];
                                         }
                                     });
@@ -5717,7 +5726,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 3:
                             _b.menu = _d.sent();
                             return [4 /*yield*/, Render.filter((_c = CyclicToDo.getUrlParams().filter) !== null && _c !== void 0 ? _c : "", function (filter) { return __awaiter(_this, void 0, void 0, function () {
-                                    var regulatedFilter, _a, urlParams;
+                                    var regulatedFilter, _a;
                                     return __generator(this, function (_b) {
                                         switch (_b.label) {
                                             case 0:
@@ -5727,14 +5736,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             case 1:
                                                 _a.apply(void 0, [_b.sent()]);
                                                 Render.resizeFlexList();
-                                                urlParams = CyclicToDo.getUrlParams();
-                                                if ("" === filter) {
-                                                    delete urlParams.filter;
-                                                }
-                                                else {
-                                                    urlParams.filter = filter;
-                                                }
-                                                history.pushState(null, document.title, CyclicToDo.makeUrl(urlParams));
+                                                Render.updateUrlFilterParam(filter);
                                                 return [2 /*return*/];
                                         }
                                     });
