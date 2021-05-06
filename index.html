@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed May 05 2021 21:23:26 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu May 06 2021 20:20:40 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -478,7 +478,7 @@ h1 .header-operator {
   border-width: 0px;
   margin: 0px;
   padding: 0px 4px;
-  min-width: 120px;
+  width: 60px;
   flex-grow: 1;
 }
 h2 {
@@ -5292,8 +5292,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 .replace(/\s+/g, " "); };
             Render.regulateFilterText = function (filter) { return Render.softRegulateFilterText(filter)
                 .replace(/ or /ig, " or ")
-                .replace(/[Ａ-Ｚａ-ｚ０-９]/g, function (match) { return String.fromCharCode(match.charCodeAt(0) - 0xFEE0); })
-                .replace(/[\u3041-\u3096]/g, function (match) { return String.fromCharCode(match.charCodeAt(0) + 0x60); }); };
+                .replace(/[Ａ-Ｚａ-ｚ０-９]/g, function (match) { return String.fromCharCode(match.charCodeAt(0) - 0xFEE0); }) // 全角 to 半角
+                .replace(/[\u3041-\u3096]/g, function (match) { return String.fromCharCode(match.charCodeAt(0) + 0x60); }); }; // ひらがな to カタカナ
             Render.filter = function (init, onUpdate) { return __awaiter(_this, void 0, void 0, function () {
                 var context, onchange, onfocus, clear, icon, _a, clearIcon, _b, input, result;
                 return __generator(this, function (_c) {
@@ -5383,9 +5383,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         conditions.push(current);
                     }
                 }
-                return conditions.filter(function (current) { return current.filter(function (t) { return new RegExp(t, "i").test(target); }).length <= 0; }).length <= 0;
+                return !conditions.some(function (current) { return !current.some(function (t) { return new RegExp(t, "i").test(target); }); });
             };
-            Render.isMatchToDoEntry = function (filter, item) { return Render.isMatchTest(filter, item.task); };
+            Render.isMatchToDoEntry = function (filter, entry, item) {
+                return Render.isMatchTest(filter, item.task) ||
+                    Storage.Tag.getByTodo(entry.pass, item.task).some(function (tag) { return entry.tag !== tag && Render.isMatchTest(filter, tag); });
+            };
             Render.listScreenHeader = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a;
                 var _b;
@@ -5416,12 +5419,17 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             case 0:
                                                 regulatedFilter = Render.regulateFilterText(filter);
                                                 _a = Render.replaceScreenBodu;
-                                                return [4 /*yield*/, Render.listScreenBody(entry, list.filter(function (item) { return Render.isMatchToDoEntry(regulatedFilter, item); }))];
+                                                return [4 /*yield*/, Render.listScreenBody(entry, list.filter(function (item) { return Render.isMatchToDoEntry(regulatedFilter, entry, item); }))];
                                             case 1:
                                                 _a.apply(void 0, [_b.sent()]);
                                                 Render.resizeFlexList();
                                                 urlParams = CyclicToDo.getUrlParams();
-                                                urlParams.filter = "" === filter ? undefined : filter;
+                                                if ("" === filter) {
+                                                    delete urlParams.filter;
+                                                }
+                                                else {
+                                                    urlParams.filter = filter;
+                                                }
                                                 history.pushState(null, document.title, CyclicToDo.makeUrl(urlParams));
                                                 return [2 /*return*/];
                                         }
@@ -5496,7 +5504,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             return [4 /*yield*/, Render.listScreenHeader(entry, list)];
                         case 1:
                             _a.header = _b.sent();
-                            return [4 /*yield*/, Render.listScreenBody(entry, list.filter(function (item) { return Render.isMatchToDoEntry(filter, item); }))];
+                            return [4 /*yield*/, Render.listScreenBody(entry, list.filter(function (item) { return Render.isMatchToDoEntry(filter, entry, item); }))];
                         case 2: return [2 /*return*/, (_a.body = _b.sent(),
                                 _a)];
                     }
@@ -5541,7 +5549,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             return [3 /*break*/, 4];
                                         case 3:
                                             filter_1 = Render.getFilterText();
-                                            filteredList_1 = list.filter(function (item) { return Render.isMatchToDoEntry(filter_1, item); });
+                                            filteredList_1 = list.filter(function (item) { return Render.isMatchToDoEntry(filter_1, entry, item); });
                                             Array.from(document
                                                 .getElementsByClassName("list-screen")[0]
                                                 .getElementsByClassName("todo-list")[0].childNodes).forEach(function (dom, index) {
@@ -5677,26 +5685,29 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         ]];
                 });
             }); };
-            Render.historyScreen = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b;
-                var _c, _d;
-                return __generator(this, function (_e) {
-                    switch (_e.label) {
+            Render.isMatchHistoryItem = function (filter, _entry, item) {
+                return Render.isMatchTest(filter, item.task) ||
+                    Render.isMatchTest(filter, Domain.dateStringFromTick(item.tick));
+            };
+            Render.historyScreenHeader = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
+                var _b;
+                var _this = this;
+                var _c;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
                         case 0:
-                            _c = {
-                                className: "history-screen"
-                            };
-                            _d = {};
+                            _b = {};
                             _a = [Render.screenHeaderHomeSegment()];
                             return [4 /*yield*/, Render.screenHeaderListSegment(entry.pass)];
                         case 1:
                             _a = _a.concat([
-                                _e.sent()
+                                _d.sent()
                             ]);
                             return [4 /*yield*/, Render.screenHeaderTagSegment(entry.pass, entry.tag)];
                         case 2:
-                            _d.items = _a.concat([
-                                _e.sent(),
+                            _b.items = _a.concat([
+                                _d.sent(),
                                 {
                                     icon: "history-icon",
                                     title: locale.map("History"),
@@ -5704,35 +5715,85 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             ]);
                             return [4 /*yield*/, Render.historyScreenMenu(entry)];
                         case 3:
-                            _c.header = (_d.menu = _e.sent(),
-                                _d);
-                            _b = Render.$div("column-flex-list history-list");
+                            _b.menu = _d.sent();
+                            return [4 /*yield*/, Render.filter((_c = CyclicToDo.getUrlParams().filter) !== null && _c !== void 0 ? _c : "", function (filter) { return __awaiter(_this, void 0, void 0, function () {
+                                    var regulatedFilter, _a, urlParams;
+                                    return __generator(this, function (_b) {
+                                        switch (_b.label) {
+                                            case 0:
+                                                regulatedFilter = Render.regulateFilterText(filter);
+                                                _a = Render.replaceScreenBodu;
+                                                return [4 /*yield*/, Render.historyScreenBody(entry, list.filter(function (item) { return Render.isMatchHistoryItem(regulatedFilter, entry, item); }))];
+                                            case 1:
+                                                _a.apply(void 0, [_b.sent()]);
+                                                Render.resizeFlexList();
+                                                urlParams = CyclicToDo.getUrlParams();
+                                                if ("" === filter) {
+                                                    delete urlParams.filter;
+                                                }
+                                                else {
+                                                    urlParams.filter = filter;
+                                                }
+                                                history.pushState(null, document.title, CyclicToDo.makeUrl(urlParams));
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); })];
+                        case 4: return [2 /*return*/, (_b.operator = _d.sent(),
+                                _b)];
+                    }
+                });
+            }); };
+            Render.historyScreenBody = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            _a = Render.$div("column-flex-list history-list");
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.historyItem(entry, item); }))];
-                        case 4: return [2 /*return*/, (_c.body = [
-                                _b.apply(void 0, [_e.sent()]),
+                        case 1: return [2 /*return*/, ([
+                                _a.apply(void 0, [_b.sent()]),
                                 Render.$div("button-list")(Render.internalLink({
                                     href: { pass: entry.pass, tag: entry.tag, },
                                     children: Render.$tag("button")("default-button main-button long-button")(Render.label("Back to List")),
                                 }))
-                            ],
-                                _c)];
+                            ])];
                     }
                 });
             }); };
-            Render.showHistoryScreen = function (entry) { return __awaiter(_this, void 0, void 0, function () {
-                var histories, list, _a;
+            Render.historyScreen = function (entry, list, filter) { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
+                        case 0:
+                            _a = {
+                                className: "history-screen"
+                            };
+                            return [4 /*yield*/, Render.historyScreenHeader(entry, list)];
+                        case 1:
+                            _a.header = _b.sent();
+                            return [4 /*yield*/, Render.historyScreenBody(entry, list.filter(function (item) { return Render.isMatchHistoryItem(filter, entry, item); }))];
+                        case 2: return [2 /*return*/, (_a.body = _b.sent(),
+                                _a)];
+                    }
+                });
+            }); };
+            Render.showHistoryScreen = function (urlParams, entry) { return __awaiter(_this, void 0, void 0, function () {
+                var histories, list, filter, _a;
+                var _b;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             histories = {};
                             list = entry.todo.map(function (task) { return (histories[task] = Storage.History.get(entry.pass, task)).map(function (tick) { return ({ task: task, tick: tick }); }); }).reduce(function (a, b) { return a.concat(b); }, []);
                             list.sort(minamo_js_1.minamo.core.comparer.make(function (a) { return -a.tick; }));
                             list = list.concat(entry.todo.filter(function (task) { return histories[task].length <= 0; }).map(function (task) { return ({ task: task, tick: null }); }));
+                            filter = Render.regulateFilterText((_b = urlParams.filter) !== null && _b !== void 0 ? _b : "");
                             _a = Render.showWindow;
-                            return [4 /*yield*/, Render.historyScreen(entry, list)];
-                        case 1: return [4 /*yield*/, _a.apply(void 0, [_b.sent()])];
+                            return [4 /*yield*/, Render.historyScreen(entry, list, filter)];
+                        case 1: return [4 /*yield*/, _a.apply(void 0, [_c.sent()])];
                         case 2:
-                            _b.sent();
+                            _c.sent();
                             return [2 /*return*/];
                     }
                 });
@@ -6763,7 +6824,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 .replace(/\?.*/, "")
                 .replace(/#.*/, "")
                 + "?"
-                + Object.keys(args).filter(function (i) { return "hash" !== i; }).map(function (i) { return i + "=" + encodeURIComponent(args[i]); }).join("&")
+                + Object.keys(args)
+                    .filter(function (i) { return undefined !== i; })
+                    .filter(function (i) { return "hash" !== i; })
+                    .map(function (i) { return i + "=" + encodeURIComponent(args[i]); })
+                    .join("&")
                 + ("#" + ((_a = args["hash"]) !== null && _a !== void 0 ? _a : ""));
         };
         // export const makeUrl =
@@ -6873,7 +6938,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             switch (hash) {
                                 case "history":
                                     console.log("show history screen");
-                                    Render.showHistoryScreen({ tag: tag, pass: pass, todo: Storage.TagMember.get(pass, tag) });
+                                    Render.showHistoryScreen(urlParams, { tag: tag, pass: pass, todo: Storage.TagMember.get(pass, tag) });
                                     break;
                                 // case "statistics":
                                 //     dom.updateStatisticsScreen(title, pass, todo);

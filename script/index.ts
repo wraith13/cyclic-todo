@@ -2538,9 +2538,11 @@ export module CyclicToDo
                     conditions.push(current);
                 }
             }
-            return conditions.filter(current => current.filter(t => new RegExp(t, "i").test(target)).length <= 0).length <= 0;
+            return ! conditions.some(current => ! current.some(t => new RegExp(t, "i").test(target)));
         };
-        export const isMatchToDoEntry = (filter: string, item: ToDoEntry) => isMatchTest(filter, item.task);
+        export const isMatchToDoEntry = (filter: string, entry: ToDoTagEntry, item: ToDoEntry) =>
+            isMatchTest(filter, item.task) ||
+            Storage.Tag.getByTodo(entry.pass, item.task).some(tag => entry.tag !== tag && isMatchTest(filter, tag));
         export const listScreenHeader = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         ({
             items:
@@ -2556,10 +2558,17 @@ export module CyclicToDo
                 async filter =>
                 {
                     const regulatedFilter = regulateFilterText(filter);
-                    replaceScreenBodu(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(regulatedFilter, item))));
+                    replaceScreenBodu(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(regulatedFilter, entry, item))));
                     resizeFlexList();
                     const urlParams = getUrlParams();
-                    urlParams.filter = "" === filter ? undefined: filter;
+                    if ("" === filter)
+                    {
+                        delete urlParams.filter;
+                    }
+                    else
+                    {
+                        urlParams.filter = filter;
+                    }
                     history.pushState(null, document.title, makeUrl(urlParams));
                 }
             ),
@@ -2603,7 +2612,7 @@ export module CyclicToDo
         ({
             className: "list-screen",
             header: await listScreenHeader(entry, list),
-            body: await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, item)))
+            body: await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item)))
         });
         export const showListScreen = async (urlParams: PageParams, entry: ToDoTagEntry) =>
         {
@@ -2632,7 +2641,7 @@ export module CyclicToDo
                         else
                         {
                             const filter = getFilterText();
-                            const filteredList = list.filter(item => isMatchToDoEntry(filter, item));
+                            const filteredList = list.filter(item => isMatchToDoEntry(filter, entry, item));
                             (
                                 Array.from
                                 (
@@ -2757,43 +2766,69 @@ export module CyclicToDo
             //     ):
             //     [],
         ];
-        export const historyScreen = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[]): Promise<ScreenSource> =>
+        export const isMatchHistoryItem = (filter: string, _entry: ToDoTagEntry, item: { task: string, tick: number | null }) =>
+            isMatchTest(filter, item.task) ||
+            isMatchTest(filter, Domain.dateStringFromTick(item.tick));
+        export const historyScreenHeader = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[]): Promise<HeaderSource> =>
+        ({
+            items:
+            [
+                screenHeaderHomeSegment(),
+                await screenHeaderListSegment(entry.pass),
+                await screenHeaderTagSegment(entry.pass, entry.tag),
+                {
+                    icon: "history-icon",
+                    title: locale.map("History"),
+                }
+            ],
+            menu: await historyScreenMenu(entry),
+            operator: await filter
+            (
+                getUrlParams().filter ?? "",
+                async filter =>
+                {
+                    const regulatedFilter = regulateFilterText(filter);
+                    replaceScreenBodu(await historyScreenBody(entry, list.filter(item => isMatchHistoryItem(regulatedFilter, entry, item))));
+                    resizeFlexList();
+                    const urlParams = getUrlParams();
+                    if ("" === filter)
+                    {
+                        delete urlParams.filter;
+                    }
+                    else
+                    {
+                        urlParams.filter = filter;
+                    }
+                    history.pushState(null, document.title, makeUrl(urlParams));
+                }
+            )
+        });
+        export const historyScreenBody = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[]) =>
+        ([
+            $div("column-flex-list history-list")(await Promise.all(list.map(item => historyItem(entry, item)))),
+            $div("button-list")
+            (
+                internalLink
+                ({
+                    href: { pass: entry.pass, tag: entry.tag, },
+                    children: $tag("button")("default-button main-button long-button")(label("Back to List")),
+                })
+            ),
+        ]);
+        export const historyScreen = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[], filter: string): Promise<ScreenSource> =>
         ({
             className: "history-screen",
-            header:
-            {
-                items:
-                [
-                    screenHeaderHomeSegment(),
-                    await screenHeaderListSegment(entry.pass),
-                    await screenHeaderTagSegment(entry.pass, entry.tag),
-                    {
-                        icon: "history-icon",
-                        title: locale.map("History"),
-                    }
-                ],
-                menu: await historyScreenMenu(entry),
-            },
-            body:
-            [
-                $div("column-flex-list history-list")(await Promise.all(list.map(item => historyItem(entry, item)))),
-                $div("button-list")
-                (
-                    internalLink
-                    ({
-                        href: { pass: entry.pass, tag: entry.tag, },
-                        children: $tag("button")("default-button main-button long-button")(label("Back to List")),
-                    })
-                ),
-            ]
+            header: await historyScreenHeader(entry, list),
+            body: await historyScreenBody(entry, list.filter(item => isMatchHistoryItem(filter, entry, item)))
         });
-        export const showHistoryScreen = async (entry: ToDoTagEntry) =>
+        export const showHistoryScreen = async (urlParams: PageParams, entry: ToDoTagEntry) =>
         {
             const histories: { [task:string]:number[] } = { };
             let list = entry.todo.map(task => (histories[task] = Storage.History.get(entry.pass, task)).map(tick => ({ task, tick }))).reduce((a, b) => a.concat(b), []);
             list.sort(minamo.core.comparer.make(a => -a.tick));
             list = list.concat(entry.todo.filter(task => histories[task].length <= 0).map(task => ({ task, tick: null })));
-            await showWindow(await historyScreen(entry, list));
+            const filter = regulateFilterText(urlParams.filter ?? "");
+            await showWindow(await historyScreen(entry, list, filter));
         };
         export const removedItem = async (pass: string, item: Storage.Removed.Type) => $div("removed-item flex-item")
         ([
@@ -3614,7 +3649,11 @@ export module CyclicToDo
             .replace(/\?.*/, "")
             .replace(/#.*/, "")
             +"?"
-            +Object.keys(args).filter(i => "hash" !== i).map(i => `${i}=${encodeURIComponent(args[i])}`).join("&")
+            +Object.keys(args)
+                .filter(i => undefined !== i)
+                .filter(i => "hash" !== i)
+                .map(i => `${i}=${encodeURIComponent(args[i])}`)
+                .join("&")
             +`#${args["hash"] ?? ""}`;
     // export const makeUrl =
     // (
@@ -3701,7 +3740,7 @@ export module CyclicToDo
             {
             case "history":
                 console.log("show history screen");
-                Render.showHistoryScreen({ tag: tag, pass, todo: Storage.TagMember.get(pass, tag) });
+                Render.showHistoryScreen(urlParams, { tag: tag, pass, todo: Storage.TagMember.get(pass, tag) });
                 break;
             // case "statistics":
             //     dom.updateStatisticsScreen(title, pass, todo);
