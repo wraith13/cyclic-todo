@@ -3463,6 +3463,37 @@ export module CyclicToDo
             //minamo.core.timeout(100);
             resizeFlexList();
         };
+        let lastToastAt = 0;
+        export const showToast = async (toast: minamo.dom.Source, wait: number = 5000) =>
+        {
+            const timestamp = lastToastAt = new Date().getTime();
+            const frame = document.getElementById("screen-toast");
+            frame.classList.remove("slide-down");
+            frame.classList.add("slide-up");
+            minamo.dom.replaceChildren(frame, toast);
+            await minamo.core.timeout(500);
+            if (0 < wait)
+            {
+                await minamo.core.timeout(wait);
+                if (timestamp === lastToastAt)
+                {
+                    hideToast();
+                }
+            }
+        };
+        export const hideToast = async () =>
+        {
+            const timestamp = lastToastAt = new Date().getTime();
+            const frame = document.getElementById("screen-toast");
+            frame.classList.remove("slide-up");
+            frame.classList.add("slide-down");
+            await minamo.core.timeout(500);
+            if (timestamp === lastToastAt)
+            {
+                minamo.dom.removeChildren(frame);
+                frame.classList.remove("slide-down");
+            }
+        };
         export const resizeFlexList = () =>
         {
             const minColumns = 1 +Math.floor(window.innerWidth / 780);
