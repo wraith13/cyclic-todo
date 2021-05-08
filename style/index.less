@@ -115,7 +115,7 @@ h1
     {
         white-space: nowrap;
     }
-    &.locale-parallel-off
+    @media (max-width:780px)
     {
         &:not(.header-operator-has-focus)
         {
@@ -187,6 +187,105 @@ h1
         flex-direction: row;
         justify-content: flex-end;
         z-index: 1000;
+    }
+    &.update
+    {
+        animation-name: update-progress;
+        animation-direction: normal;
+        animation-delay: 0s;
+        animation-duration: 0.5s;
+        animation-timing-function: ease-in-out;
+        animation-fill-mode: both;
+    }
+    &.max-progress
+    {
+        background-color: @active-color;
+    }
+}
+@keyframes update-progress
+{
+    0% { background: linear-gradient(to right, @active-color 0%, @accent-color 0%); }
+    5% { background: linear-gradient(to right, @active-color 5%, @accent-color 5%); }
+    10% { background: linear-gradient(to right, @active-color 10%, @accent-color 10%); }
+    15% { background: linear-gradient(to right, @active-color 15%, @accent-color 15%); }
+    20% { background: linear-gradient(to right, @active-color 20%, @accent-color 20%); }
+    25% { background: linear-gradient(to right, @active-color 25%, @accent-color 25%); }
+    30% { background: linear-gradient(to right, @active-color 30%, @accent-color 30%); }
+    35% { background: linear-gradient(to right, @active-color 35%, @accent-color 35%); }
+    40% { background: linear-gradient(to right, @active-color 40%, @accent-color 40%); }
+    45% { background: linear-gradient(to right, @active-color 45%, @accent-color 45%); }
+    50% { background: linear-gradient(to right, @active-color 50%, @accent-color 50%); }
+    55% { background: linear-gradient(to right, @active-color 55%, @accent-color 55%); }
+    60% { background: linear-gradient(to right, @active-color 60%, @accent-color 60%); }
+    65% { background: linear-gradient(to right, @active-color 65%, @accent-color 65%); }
+    70% { background: linear-gradient(to right, @active-color 70%, @accent-color 70%); }
+    75% { background: linear-gradient(to right, @active-color 75%, @accent-color 75%); }
+    80% { background: linear-gradient(to right, @active-color 80%, @accent-color 80%); }
+    85% { background: linear-gradient(to right, @active-color 85%, @accent-color 85%); }
+    90% { background: linear-gradient(to right, @active-color 90%, @accent-color 90%); }
+    95% { background: linear-gradient(to right, @active-color 95%, @accent-color 95%); }
+    100% { background: linear-gradient(to right, @active-color 100%, @accent-color 100%); }
+}
+#screen-toast
+{
+    &:not(:empty)
+    {
+        border-top-color: @accent-color;
+        border-top-width: 1px;
+        border-top-style: solid;
+        padding: 2rem;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+}
+.slide-up-in
+{
+    animation-name: slide-up-in;
+    animation-direction: normal;
+    animation-delay: 0s;
+    animation-duration: 0.5s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: both;
+}
+@keyframes slide-up-in
+{
+    0%
+    {
+        opacity: 0.0;
+        max-height: 0px;
+        padding: 0rem;
+    }
+    100%
+    {
+        opacity: 1.0;
+        max-height: 6rem;
+        padding: 2rem;
+    }
+}
+.slide-down-out
+{
+    animation-name: slide-down-out;
+    animation-direction: normal;
+    animation-delay: 0s;
+    animation-duration: 0.5s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: both;
+}
+@keyframes slide-down-out
+{
+    0%
+    {
+        opacity: 1.0;
+        max-height: 6rem;
+        padding: 2rem;
+    }
+    100%
+    {
+        opacity: 0.0;
+        max-height: 0px;
+        padding: 0rem;
     }
 }
 .filter-frame

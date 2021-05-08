@@ -843,8 +843,11 @@ export module CyclicToDo
                     getTicks() -1
                 ) +1
             );
-        export const done = async (pass: string, task: string) =>
-            Storage.History.add(pass, task, getDoneTicks(pass));
+        export const done = async (pass: string, task: string, tick: number = getDoneTicks(pass)) =>
+        {
+            Storage.History.add(pass, task, tick);
+            return tick;
+        };
         export const tagComparer = (pass: string) => minamo.core.comparer.make<string>
         (
             tag => -Storage.TagMember.get(pass, tag).map(todo => Storage.History.get(pass, todo).length).reduce((a, b) => a +b, 0)
@@ -1844,7 +1847,14 @@ export module CyclicToDo
                             else
                             {
                                 Domain.done(entry.pass, item.task);
-                                await reload();
+                                showPage(location.href, 0); // await しない
+                                //reload(); // await しない
+                                showToast(`${item.task}: 完了しました！`); // await しない
+                                setProgressStyole("update");
+                                await minamo.core.timeout(500);
+                                setProgressStyole("max-progress");
+                                await minamo.core.timeout(100);
+                                setProgressStyole("");
                             }
                         }
                     },
@@ -3468,8 +3478,8 @@ export module CyclicToDo
         {
             const timestamp = lastToastAt = new Date().getTime();
             const frame = document.getElementById("screen-toast");
-            frame.classList.remove("slide-down");
-            frame.classList.add("slide-up");
+            frame.classList.remove("slide-down-out");
+            frame.classList.add("slide-up-in");
             minamo.dom.replaceChildren(frame, toast);
             await minamo.core.timeout(500);
             if (0 < wait)
@@ -3485,29 +3495,22 @@ export module CyclicToDo
         {
             const timestamp = lastToastAt = new Date().getTime();
             const frame = document.getElementById("screen-toast");
-            frame.classList.remove("slide-up");
-            frame.classList.add("slide-down");
+            frame.classList.remove("slide-up-in");
+            frame.classList.add("slide-down-out");
             await minamo.core.timeout(500);
             if (timestamp === lastToastAt)
             {
                 minamo.dom.removeChildren(frame);
-                frame.classList.remove("slide-down");
+                frame.classList.remove("slide-down-out");
             }
         };
+        export const setProgressStyole = (className: string) => document.getElementById("screen-header").className = `segmented ${className}`;
         export const resizeFlexList = () =>
         {
             const minColumns = 1 +Math.floor(window.innerWidth / 780);
             const maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 450)));
             const FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
             const border = FontRemUnit *26 +10;
-            (Array.from(document.getElementsByTagName("h1")) as HTMLDivElement[]).forEach
-            (
-                header =>
-                {
-                    header.classList.toggle("locale-parallel-on", 2 <= minColumns);
-                    header.classList.toggle("locale-parallel-off", minColumns < 2);
-                }
-            );
             (Array.from(document.getElementsByClassName("button-list")) as HTMLDivElement[]).forEach
             (
                 header =>
