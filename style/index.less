@@ -188,55 +188,58 @@ h1
         justify-content: flex-end;
         z-index: 1000;
     }
+    .progress-bar
+    {
+        position: absolute;
+        background-color: @active-color;
+        left: 0px;
+        top: 0px;
+        height: 2.5rem;
+    }
     &.update
     {
-        animation-name: update-progress;
-        animation-direction: normal;
-        animation-delay: 0s;
-        animation-duration: 0.5s;
-        animation-timing-function: ease-in-out;
-        animation-fill-mode: both;
+        .progress-bar
+        {
+            animation-name: update-progress;
+            animation-direction: normal;
+            animation-delay: 0s;
+            animation-duration: 1.0s;
+            animation-timing-function: ease-in-out;
+            animation-fill-mode: both;
+        }
     }
     &.max-progress
     {
-        background-color: @active-color;
+        .progress-bar
+        {
+            width: 100vw;
+        }
     }
 }
 @keyframes update-progress
 {
-    0% { background: linear-gradient(to right, @active-color 0%, @accent-color 0%); }
-    5% { background: linear-gradient(to right, @active-color 5%, @accent-color 5%); }
-    10% { background: linear-gradient(to right, @active-color 10%, @accent-color 10%); }
-    15% { background: linear-gradient(to right, @active-color 15%, @accent-color 15%); }
-    20% { background: linear-gradient(to right, @active-color 20%, @accent-color 20%); }
-    25% { background: linear-gradient(to right, @active-color 25%, @accent-color 25%); }
-    30% { background: linear-gradient(to right, @active-color 30%, @accent-color 30%); }
-    35% { background: linear-gradient(to right, @active-color 35%, @accent-color 35%); }
-    40% { background: linear-gradient(to right, @active-color 40%, @accent-color 40%); }
-    45% { background: linear-gradient(to right, @active-color 45%, @accent-color 45%); }
-    50% { background: linear-gradient(to right, @active-color 50%, @accent-color 50%); }
-    55% { background: linear-gradient(to right, @active-color 55%, @accent-color 55%); }
-    60% { background: linear-gradient(to right, @active-color 60%, @accent-color 60%); }
-    65% { background: linear-gradient(to right, @active-color 65%, @accent-color 65%); }
-    70% { background: linear-gradient(to right, @active-color 70%, @accent-color 70%); }
-    75% { background: linear-gradient(to right, @active-color 75%, @accent-color 75%); }
-    80% { background: linear-gradient(to right, @active-color 80%, @accent-color 80%); }
-    85% { background: linear-gradient(to right, @active-color 85%, @accent-color 85%); }
-    90% { background: linear-gradient(to right, @active-color 90%, @accent-color 90%); }
-    95% { background: linear-gradient(to right, @active-color 95%, @accent-color 95%); }
-    100% { background: linear-gradient(to right, @active-color 100%, @accent-color 100%); }
+    0%
+    {
+        width: 0vw;
+    }
+    100%
+    {
+        width: 100vw;
+    }
 }
 #screen-toast
 {
     &:not(:empty)
     {
+        filter: drop-shadow(0.0rem -1rem 1rem @accent-color);
         border-top-color: @accent-color;
         border-top-width: 1px;
         border-top-style: solid;
+        .positive-background-coloring-trait;
         padding: 2rem;
         display: flex;
         flex-direction: row;
-        justify-content: space-evenly;
+        justify-content: space-between;
         align-items: center;
     }
 }
@@ -247,7 +250,7 @@ h1
     animation-delay: 0s;
     animation-duration: 0.5s;
     animation-timing-function: ease-in-out;
-    animation-fill-mode: both;
+    animation-fill-mode: backwards;
 }
 @keyframes slide-up-in
 {
@@ -287,6 +290,14 @@ h1
         max-height: 0px;
         padding: 0rem;
     }
+}
+.text-button
+{
+    .link-trait;
+    border-style: none;
+    border-width: 0px;
+    background-color: transparent !important;
+    text-decoration: none !important;
 }
 .filter-frame
 {

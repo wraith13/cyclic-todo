@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Fri May 07 2021 21:10:08 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sun May 09 2021 17:28:54 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -446,91 +446,48 @@ h1 .header-operator {
   justify-content: flex-end;
   z-index: 1000;
 }
-h1.update {
+h1 .progress-bar {
+  position: absolute;
+  background-color: #6F7F00;
+  left: 0px;
+  top: 0px;
+  height: 2.5rem;
+}
+h1.update .progress-bar {
   animation-name: update-progress;
   animation-direction: normal;
   animation-delay: 0s;
-  animation-duration: 0.5s;
+  animation-duration: 1s;
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
 }
-h1.max-progress {
-  background-color: #6F7F00;
+h1.max-progress .progress-bar {
+  width: 100vw;
 }
 @keyframes update-progress {
   0% {
-    background: linear-gradient(to right, #6F7F00 0%, #228844 0%);
-  }
-  5% {
-    background: linear-gradient(to right, #6F7F00 5%, #228844 5%);
-  }
-  10% {
-    background: linear-gradient(to right, #6F7F00 10%, #228844 10%);
-  }
-  15% {
-    background: linear-gradient(to right, #6F7F00 15%, #228844 15%);
-  }
-  20% {
-    background: linear-gradient(to right, #6F7F00 20%, #228844 20%);
-  }
-  25% {
-    background: linear-gradient(to right, #6F7F00 25%, #228844 25%);
-  }
-  30% {
-    background: linear-gradient(to right, #6F7F00 30%, #228844 30%);
-  }
-  35% {
-    background: linear-gradient(to right, #6F7F00 35%, #228844 35%);
-  }
-  40% {
-    background: linear-gradient(to right, #6F7F00 40%, #228844 40%);
-  }
-  45% {
-    background: linear-gradient(to right, #6F7F00 45%, #228844 45%);
-  }
-  50% {
-    background: linear-gradient(to right, #6F7F00 50%, #228844 50%);
-  }
-  55% {
-    background: linear-gradient(to right, #6F7F00 55%, #228844 55%);
-  }
-  60% {
-    background: linear-gradient(to right, #6F7F00 60%, #228844 60%);
-  }
-  65% {
-    background: linear-gradient(to right, #6F7F00 65%, #228844 65%);
-  }
-  70% {
-    background: linear-gradient(to right, #6F7F00 70%, #228844 70%);
-  }
-  75% {
-    background: linear-gradient(to right, #6F7F00 75%, #228844 75%);
-  }
-  80% {
-    background: linear-gradient(to right, #6F7F00 80%, #228844 80%);
-  }
-  85% {
-    background: linear-gradient(to right, #6F7F00 85%, #228844 85%);
-  }
-  90% {
-    background: linear-gradient(to right, #6F7F00 90%, #228844 90%);
-  }
-  95% {
-    background: linear-gradient(to right, #6F7F00 95%, #228844 95%);
+    width: 0vw;
   }
   100% {
-    background: linear-gradient(to right, #6F7F00 100%, #228844 100%);
+    width: 100vw;
   }
 }
 #screen-toast:not(:empty) {
+  filter: drop-shadow(0rem -1rem 1rem #228844);
   border-top-color: #228844;
   border-top-width: 1px;
   border-top-style: solid;
+  background-color: #FFFFFF;
   padding: 2rem;
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
+}
+@media (prefers-color-scheme: dark) {
+  #screen-toast:not(:empty) {
+    background-color: #000022;
+  }
 }
 .slide-up-in {
   animation-name: slide-up-in;
@@ -538,7 +495,7 @@ h1.max-progress {
   animation-delay: 0s;
   animation-duration: 0.5s;
   animation-timing-function: ease-in-out;
-  animation-fill-mode: both;
+  animation-fill-mode: backwards;
 }
 @keyframes slide-up-in {
   0% {
@@ -570,6 +527,29 @@ h1.max-progress {
     opacity: 0;
     max-height: 0px;
     padding: 0rem;
+  }
+}
+.text-button {
+  cursor: pointer;
+  border-style: none;
+  border-width: 0px;
+  background-color: transparent !important;
+  text-decoration: none !important;
+}
+@media (hover: hover) {
+  .text-button:hover {
+    opacity: 1;
+    color: #6F7F00;
+    fill: #6F7F00;
+    text-decoration: underline;
+  }
+  .text-button:not(:hover) {
+    text-decoration: none;
+  }
+}
+@media (hover: none) {
+  .text-button {
+    text-decoration: none;
   }
 }
 .filter-frame {
@@ -4639,33 +4619,52 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     className: item.isDefault ? "default-button main-button" : "main-button",
                                     children: Render.label("Done"),
                                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                        var fxxkingTypeScriptCompiler;
+                                        var fxxkingTypeScriptCompiler, tick_1;
+                                        var _this = this;
                                         return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0:
-                                                    fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
-                                                    if (!fxxkingTypeScriptCompiler) return [3 /*break*/, 1];
-                                                    Render.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
-                                                        + "\n"
-                                                        + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。");
-                                                    return [3 /*break*/, 4];
-                                                case 1:
-                                                    Domain.done(entry.pass, item.task);
-                                                    CyclicToDo.showPage(location.href, 0); // await しない
-                                                    //reload(); // await しない
-                                                    Render.showToast(item.task + ": \u5B8C\u4E86\u3057\u307E\u3057\u305F\uFF01"); // await しない
-                                                    Render.setProgressStyole("update");
-                                                    return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
-                                                case 2:
-                                                    _a.sent();
-                                                    Render.setProgressStyole("max-progress");
-                                                    return [4 /*yield*/, minamo_js_1.minamo.core.timeout(100)];
-                                                case 3:
-                                                    _a.sent();
-                                                    Render.setProgressStyole("");
-                                                    _a.label = 4;
-                                                case 4: return [2 /*return*/];
+                                            fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
+                                            if (fxxkingTypeScriptCompiler) {
+                                                Render.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                                                    + "\n"
+                                                    + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。");
                                             }
+                                            else {
+                                                tick_1 = Domain.done(entry.pass, item.task);
+                                                Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
+                                                Render.updateWindow("operate");
+                                                Render.setProgressStyole("update", 1000);
+                                                Render.showToast([
+                                                    Render.$span("dummy")([]),
+                                                    Render.$span("")(item.task + ": \u5B8C\u4E86\u3057\u307E\u3057\u305F\uFF01"),
+                                                    {
+                                                        tag: "button",
+                                                        className: "text-button",
+                                                        children: "取り消す",
+                                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            var _a, _b, _c;
+                                                            return __generator(this, function (_d) {
+                                                                switch (_d.label) {
+                                                                    case 0:
+                                                                        _b = (_a = Storage.History).remove;
+                                                                        _c = [entry.pass, item.task];
+                                                                        return [4 /*yield*/, tick_1];
+                                                                    case 1:
+                                                                        _b.apply(_a, _c.concat([_d.sent()]));
+                                                                        Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
+                                                                        Render.updateWindow("operate");
+                                                                        Render.setProgressStyole("update", 1000);
+                                                                        Render.showToast("取り消しました。");
+                                                                        CyclicToDo.showPage(location.href, 0); // await しない
+                                                                        return [2 /*return*/];
+                                                                }
+                                                            });
+                                                        }); },
+                                                    }
+                                                ]); // await しない
+                                                CyclicToDo.showPage(location.href, 0); // await しない
+                                                //reload(); // await しない
+                                            }
+                                            return [2 /*return*/];
                                         });
                                     }); }
                                 }];
@@ -4953,18 +4952,20 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var _this = this;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
-                        case 0: return [4 /*yield*/, Promise.all(data.items
-                                .map(function (item, ix) { return __awaiter(_this, void 0, void 0, function () {
-                                return __generator(this, function (_a) {
-                                    return [2 /*return*/, (item.href && Render.screenHeaderLinkSegment(item, getLastSegmentClass(data, ix))) ||
-                                            (item.menu && Render.screenHeaderPopupSegment(item, getLastSegmentClass(data, ix))) ||
-                                            (true && Render.screenHeaderLabelSegment(item, getLastSegmentClass(data, ix)))];
-                                });
-                            }); }))];
+                        case 0:
+                            _a = [Render.$div("progress-bar")([])];
+                            return [4 /*yield*/, Promise.all(data.items
+                                    .map(function (item, ix) { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        return [2 /*return*/, (item.href && Render.screenHeaderLinkSegment(item, getLastSegmentClass(data, ix))) ||
+                                                (item.menu && Render.screenHeaderPopupSegment(item, getLastSegmentClass(data, ix))) ||
+                                                (true && Render.screenHeaderLabelSegment(item, getLastSegmentClass(data, ix)))];
+                                    });
+                                }); }))];
                         case 1:
-                            _a = [
+                            _a = _a.concat([
                                 (_c.sent()).reduce(function (a, b) { return a.concat(b); }, [])
-                            ];
+                            ]);
                             if (!data.menu) return [3 /*break*/, 3];
                             return [4 /*yield*/, Render.menuButton(data.menu)];
                         case 2:
@@ -5674,30 +5675,31 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             Domain.sortList(entry, list);
                             isDirty = false;
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
-                                var _a, filter_1, filteredList_1;
+                                var _a, filter_1, filteredList_1, oldDom, className, height, _b, _c, _d, onewDom;
                                 var _this = this;
-                                var _b, _c, _d, _e, _f;
-                                return __generator(this, function (_g) {
-                                    switch (_g.label) {
+                                var _e, _f, _g, _h, _j;
+                                return __generator(this, function (_k) {
+                                    switch (_k.label) {
                                         case 0:
                                             _a = event;
                                             switch (_a) {
                                                 case "timer": return [3 /*break*/, 1];
                                                 case "scroll": return [3 /*break*/, 5];
                                                 case "storage": return [3 /*break*/, 8];
+                                                case "operate": return [3 /*break*/, 10];
                                             }
-                                            return [3 /*break*/, 10];
+                                            return [3 /*break*/, 12];
                                         case 1:
                                             Domain.updateListProgress(list);
                                             isDirty = (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list))) || isDirty;
                                             if (!(isDirty &&
                                                 document.body.scrollTop <= 0 &&
-                                                ((_c = (_b = document.getElementsByClassName("screen-body")[0]) === null || _b === void 0 ? void 0 : _b.scrollTop) !== null && _c !== void 0 ? _c : 0) <= 9 &&
+                                                ((_f = (_e = document.getElementsByClassName("screen-body")[0]) === null || _e === void 0 ? void 0 : _e.scrollTop) !== null && _f !== void 0 ? _f : 0) <= 9 &&
                                                 !Render.hasScreenCover() &&
-                                                !((_f = (_e = (_d = Array.from(document.getElementsByTagName("h1"))[0]) === null || _d === void 0 ? void 0 : _d.classList) === null || _e === void 0 ? void 0 : _e.contains("header-operator-has-focus")) !== null && _f !== void 0 ? _f : false))) return [3 /*break*/, 3];
+                                                !((_j = (_h = (_g = Array.from(document.getElementsByTagName("h1"))[0]) === null || _g === void 0 ? void 0 : _g.classList) === null || _h === void 0 ? void 0 : _h.contains("header-operator-has-focus")) !== null && _j !== void 0 ? _j : false))) return [3 /*break*/, 3];
                                             return [4 /*yield*/, CyclicToDo.reload()];
                                         case 2:
-                                            _g.sent();
+                                            _k.sent();
                                             return [3 /*break*/, 4];
                                         case 3:
                                             filter_1 = Render.getFilterText();
@@ -5721,20 +5723,38 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     case 1: return [2 /*return*/, _b.apply(_a, _c.concat([(_d.sent()).children]))];
                                                 }
                                             }); }); });
-                                            _g.label = 4;
-                                        case 4: return [3 /*break*/, 10];
+                                            _k.label = 4;
+                                        case 4: return [3 /*break*/, 12];
                                         case 5:
                                             if (!isDirty) return [3 /*break*/, 7];
                                             return [4 /*yield*/, CyclicToDo.reload()];
                                         case 6:
-                                            _g.sent();
-                                            _g.label = 7;
-                                        case 7: return [3 /*break*/, 10];
+                                            _k.sent();
+                                            _k.label = 7;
+                                        case 7: return [3 /*break*/, 12];
                                         case 8: return [4 /*yield*/, CyclicToDo.reload()];
                                         case 9:
-                                            _g.sent();
-                                            return [3 /*break*/, 10];
-                                        case 10: return [2 /*return*/];
+                                            _k.sent();
+                                            return [3 /*break*/, 12];
+                                        case 10:
+                                            Domain.updateListProgress(list);
+                                            Domain.sortList(entry, list);
+                                            isDirty = false;
+                                            oldDom = document.getElementById("screen-body").getElementsByClassName("todo-list")[0];
+                                            className = oldDom.className;
+                                            height = oldDom.style.height;
+                                            _c = (_b = minamo_js_1.minamo.dom).replaceChildren;
+                                            _d = [document.getElementById("screen-body")];
+                                            return [4 /*yield*/, Render.listScreenBody(entry, list.filter(function (item) { return Render.isMatchToDoEntry(filter, entry, item); }))];
+                                        case 11:
+                                            _c.apply(_b, _d.concat([_k.sent()]));
+                                            onewDom = document.getElementById("screen-body").getElementsByClassName("todo-list")[0];
+                                            onewDom.className = className;
+                                            if (height) {
+                                                onewDom.style.height = height;
+                                            }
+                                            return [3 /*break*/, 12];
+                                        case 12: return [2 /*return*/];
                                     }
                                 });
                             }); };
@@ -6888,7 +6908,32 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
-            Render.setProgressStyole = function (className) { return document.getElementById("screen-header").className = "segmented " + className; };
+            Render.setProgressStyoleRaw = function (className) { return document.getElementById("screen-header").className = "segmented " + className; };
+            var lastSetProgressAt = 0;
+            Render.setProgressStyole = function (className, timeout) { return __awaiter(_this, void 0, void 0, function () {
+                var timestamp;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            timestamp = lastSetProgressAt = new Date().getTime();
+                            Render.setProgressStyoleRaw(className);
+                            if (!(0 < timeout)) return [3 /*break*/, 3];
+                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(timeout)];
+                        case 1:
+                            _a.sent();
+                            if (!(timestamp === lastSetProgressAt)) return [3 /*break*/, 3];
+                            Render.setProgressStyoleRaw("max-progress");
+                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(100)];
+                        case 2:
+                            _a.sent();
+                            if (timestamp === lastSetProgressAt) {
+                                Render.setProgressStyoleRaw("");
+                            }
+                            _a.label = 3;
+                        case 3: return [2 /*return*/];
+                    }
+                });
+            }); };
             Render.resizeFlexList = function () {
                 var minColumns = 1 + Math.floor(window.innerWidth / 780);
                 var maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 450)));

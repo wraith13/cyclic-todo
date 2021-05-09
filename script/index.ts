@@ -1846,15 +1846,31 @@ export module CyclicToDo
                             }
                             else
                             {
-                                Domain.done(entry.pass, item.task);
+                                const tick = Domain.done(entry.pass, item.task);
+                                Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
+                                updateWindow("operate");
+                                setProgressStyole("update", 1000);
+                                showToast
+                                ([
+                                    $span("dummy")([]),
+                                    $span("")(`${item.task}: 完了しました！`),
+                                    {
+                                        tag: "button",
+                                        className: "text-button",
+                                        children: "取り消す",
+                                        onclick: async () =>
+                                        {
+                                            Storage.History.remove(entry.pass, item.task, await tick);
+                                            Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
+                                            updateWindow("operate");
+                                            setProgressStyole("update", 1000);
+                                            showToast("取り消しました。");
+                                            showPage(location.href, 0); // await しない
+                                        },
+                                    }
+                                ]); // await しない
                                 showPage(location.href, 0); // await しない
                                 //reload(); // await しない
-                                showToast(`${item.task}: 完了しました！`); // await しない
-                                setProgressStyole("update");
-                                await minamo.core.timeout(500);
-                                setProgressStyole("max-progress");
-                                await minamo.core.timeout(100);
-                                setProgressStyole("");
                             }
                         }
                     },
@@ -2082,6 +2098,7 @@ export module CyclicToDo
             "last-segment": undefined;
         export const screenSegmentedHeader = async (data:HeaderSource) => //$tag("h1")("segmented")
         [
+            $div("progress-bar")([]),
             (
                 await Promise.all
                 (
@@ -2690,6 +2707,25 @@ export module CyclicToDo
                         break;
                     case "storage":
                         await reload();
+                        break;
+                    case "operate":
+                        Domain.updateListProgress(list);
+                        Domain.sortList(entry, list);
+                        isDirty = false;
+                        const oldDom = document.getElementById("screen-body").getElementsByClassName("todo-list")[0] as HTMLDivElement;
+                        const className = oldDom.className;
+                        const height = oldDom.style.height;
+                        minamo.dom.replaceChildren
+                        (
+                            document.getElementById("screen-body"),
+                            await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item)))
+                        );
+                        const onewDom = document.getElementById("screen-body").getElementsByClassName("todo-list")[0] as HTMLDivElement;
+                        onewDom.className = className;
+                        if (height)
+                        {
+                            onewDom.style.height = height;
+                        }
                         break;
                 }
             };
@@ -3411,7 +3447,7 @@ export module CyclicToDo
                 ?.join(" / ")
                 ?? applicationTitle;
         };
-        export type UpdateWindowEventEype = "timer" | "scroll" | "storage";
+        export type UpdateWindowEventEype = "timer" | "scroll" | "storage" | "operate";
         export let updateWindow: (event: UpdateWindowEventEype) => unknown;
         let updateWindowTimer = undefined;
         export const showWindow = async (screen: ScreenSource, updateWindow?: (event: UpdateWindowEventEype) => unknown) =>
@@ -3504,7 +3540,27 @@ export module CyclicToDo
                 frame.classList.remove("slide-down-out");
             }
         };
-        export const setProgressStyole = (className: string) => document.getElementById("screen-header").className = `segmented ${className}`;
+
+        export const setProgressStyoleRaw = (className: string) => document.getElementById("screen-header").className = `segmented ${className}`;
+        let lastSetProgressAt = 0;
+        export const setProgressStyole = async (className: string, timeout: number) =>
+        {
+            const timestamp = lastSetProgressAt = new Date().getTime();
+            setProgressStyoleRaw(className);
+            if (0 < timeout)
+            {
+                await minamo.core.timeout(timeout);
+                if (timestamp === lastSetProgressAt)
+                {
+                    setProgressStyoleRaw("max-progress");
+                    await minamo.core.timeout(100);
+                    if (timestamp === lastSetProgressAt)
+                    {
+                        setProgressStyoleRaw("");
+                    }
+                }
+            }
+        };
         export const resizeFlexList = () =>
         {
             const minColumns = 1 +Math.floor(window.innerWidth / 780);
