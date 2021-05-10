@@ -1864,7 +1864,12 @@ export module CyclicToDo
                                             Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
                                             updateWindow("operate");
                                             setProgressStyole("update", 1000);
-                                            showToast("取り消しました。");
+                                            showToast
+                                            ([
+                                                $span("dummy")([]),
+                                                $span("")("取り消しました。"),
+                                                $span("dummy")([]),
+                                            ]);
                                             showPage(location.href, 0); // await しない
                                         },
                                     }
@@ -2666,7 +2671,7 @@ export module CyclicToDo
                             ! (Array.from(document.getElementsByTagName("h1"))[0]?.classList?.contains("header-operator-has-focus") ?? false)
                         )
                         {
-                            await reload();
+                            //await reload();
                         }
                         else
                         {
@@ -2699,7 +2704,11 @@ export module CyclicToDo
                             );
                         }
                         break;
+                    case "focus":
+                    case "blur":
                     case "scroll":
+                        Domain.updateListProgress(list);
+                        isDirty = ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[])) || isDirty;
                         if (isDirty)
                         {
                             await reload();
@@ -2713,13 +2722,26 @@ export module CyclicToDo
                         Domain.sortList(entry, list);
                         isDirty = false;
                         const oldDom = document.getElementById("screen-body").getElementsByClassName("todo-list")[0] as HTMLDivElement;
+                        //const scrollTop = document.getElementById("screen-body").scrollTop;
                         const className = oldDom.className;
                         const height = oldDom.style.height;
-                        minamo.dom.replaceChildren
+                        Array.from(document.getElementById("screen-body").children).forEach(i => i.classList.add("remove-me"));
+                        minamo.dom.appendChildren
                         (
                             document.getElementById("screen-body"),
                             await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item)))
                         );
+                        minamo.dom.removeChildren
+                        (
+                            document.getElementById("screen-body"),
+                            i => (i as HTMLElement).classList?.contains("remove-me")
+                        );
+                        // minamo.dom.replaceChildren
+                        // (
+                        //     document.getElementById("screen-body"),
+                        //     await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item)))
+                        // );
+                        //document.getElementById("screen-body").scrollTop = scrollTop;
                         const onewDom = document.getElementById("screen-body").getElementsByClassName("todo-list")[0] as HTMLDivElement;
                         onewDom.className = className;
                         if (height)
@@ -3447,7 +3469,7 @@ export module CyclicToDo
                 ?.join(" / ")
                 ?? applicationTitle;
         };
-        export type UpdateWindowEventEype = "timer" | "scroll" | "storage" | "operate";
+        export type UpdateWindowEventEype = "timer" | "scroll" | "storage" | "focus" | "blur" | "operate";
         export let updateWindow: (event: UpdateWindowEventEype) => unknown;
         let updateWindowTimer = undefined;
         export const showWindow = async (screen: ScreenSource, updateWindow?: (event: UpdateWindowEventEype) => unknown) =>
@@ -3659,6 +3681,14 @@ export module CyclicToDo
                 100,
             );
         };
+        export const onWindowFocus = () =>
+        {
+            updateWindow?.("focus");
+        };
+        export const onWindowBlur = () =>
+        {
+            updateWindow?.("blur");
+        };
         let onUpdateStorageCount = 0;
         export const onUpdateStorage = () =>
         {
@@ -3785,6 +3815,8 @@ export module CyclicToDo
         // const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
         // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
         window.addEventListener('resize', Render.onWindowResize);
+        window.addEventListener('focus', Render.onWindowFocus);
+        window.addEventListener('blur', Render.onWindowBlur);
         window.addEventListener('storage', Render.onUpdateStorage);
         window.addEventListener('compositionstart', Render.onCompositionStart);
         window.addEventListener('compositionend', Render.onCompositionEnd);
