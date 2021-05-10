@@ -1849,7 +1849,6 @@ export module CyclicToDo
                                 const tick = Domain.done(entry.pass, item.task);
                                 Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
                                 updateWindow("operate");
-                                setProgressStyole("update", 1000);
                                 showToast
                                 ([
                                     $span("dummy")([]),
@@ -1863,19 +1862,16 @@ export module CyclicToDo
                                             Storage.History.remove(entry.pass, item.task, await tick);
                                             Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
                                             updateWindow("operate");
-                                            setProgressStyole("update", 1000);
+                                            // setProgressStyole("update", 1000);
                                             showToast
                                             ([
                                                 $span("dummy")([]),
                                                 $span("")("取り消しました。"),
                                                 $span("dummy")([]),
                                             ]);
-                                            showPage(location.href, 0); // await しない
                                         },
                                     }
                                 ]); // await しない
-                                showPage(location.href, 0); // await しない
-                                //reload(); // await しない
                             }
                         }
                     },
@@ -2661,7 +2657,7 @@ export module CyclicToDo
                 {
                     case "timer":
                         Domain.updateListProgress(list);
-                        isDirty = ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[])) || isDirty;
+                        isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[]));
                         if
                         (
                             isDirty &&
@@ -2672,6 +2668,7 @@ export module CyclicToDo
                         )
                         {
                             //await reload();
+                            await updateWindow("operate");
                         }
                         else
                         {
@@ -2708,10 +2705,11 @@ export module CyclicToDo
                     case "blur":
                     case "scroll":
                         Domain.updateListProgress(list);
-                        isDirty = ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[])) || isDirty;
+                        isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[]));
                         if (isDirty)
                         {
-                            await reload();
+                            //await reload();
+                            await updateWindow("operate");
                         }
                         break;
                     case "storage":
@@ -2721,33 +2719,12 @@ export module CyclicToDo
                         Domain.updateListProgress(list);
                         Domain.sortList(entry, list);
                         isDirty = false;
-                        const oldDom = document.getElementById("screen-body").getElementsByClassName("todo-list")[0] as HTMLDivElement;
-                        //const scrollTop = document.getElementById("screen-body").scrollTop;
-                        const className = oldDom.className;
-                        const height = oldDom.style.height;
-                        Array.from(document.getElementById("screen-body").children).forEach(i => i.classList.add("remove-me"));
-                        minamo.dom.appendChildren
+                        minamo.dom.replaceChildren
                         (
                             document.getElementById("screen-body"),
                             await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item)))
                         );
-                        minamo.dom.removeChildren
-                        (
-                            document.getElementById("screen-body"),
-                            i => (i as HTMLElement).classList?.contains("remove-me")
-                        );
-                        // minamo.dom.replaceChildren
-                        // (
-                        //     document.getElementById("screen-body"),
-                        //     await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item)))
-                        // );
-                        //document.getElementById("screen-body").scrollTop = scrollTop;
-                        const onewDom = document.getElementById("screen-body").getElementsByClassName("todo-list")[0] as HTMLDivElement;
-                        onewDom.className = className;
-                        if (height)
-                        {
-                            onewDom.style.height = height;
-                        }
+                        resizeFlexList();
                         break;
                 }
             };
@@ -3589,6 +3566,14 @@ export module CyclicToDo
             const maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 450)));
             const FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
             const border = FontRemUnit *26 +10;
+            (Array.from(document.getElementsByClassName("menu-popup")) as HTMLDivElement[]).forEach
+            (
+                header =>
+                {
+                    header.classList.toggle("locale-parallel-on", 2 <= minColumns);
+                    header.classList.toggle("locale-parallel-off", minColumns < 2);
+                }
+            );
             (Array.from(document.getElementsByClassName("button-list")) as HTMLDivElement[]).forEach
             (
                 header =>

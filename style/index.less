@@ -10,14 +10,22 @@
 {
     .locale-map
     {
-        display: none !important;
+        display: none;
+    }
+    .locale-parallel
+    {
+        display: initial;
     }
 }
 .locale-parallel-off
 {
+    .locale-map
+    {
+        display: initial;
+    }
     .locale-parallel
     {
-        display: none !important;
+        display: none;
     }
 }
 h1
@@ -231,12 +239,12 @@ h1
 {
     &:not(:empty)
     {
-        filter: drop-shadow(0.0rem -1rem 1rem @accent-color);
+        filter: drop-shadow(0.0rem -0rem 3rem @accent-color);
         border-top-color: @accent-color;
         border-top-width: 1px;
         border-top-style: solid;
         .positive-background-coloring-trait;
-        padding: 2rem;
+        padding: 2rem 1.5rem;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -258,13 +266,15 @@ h1
     {
         opacity: 0.0;
         max-height: 0px;
-        padding: 0rem;
+        padding-top: 0rem;
+        padding-bottom: 0rem;
     }
     100%
     {
         opacity: 1.0;
         max-height: 6rem;
-        padding: 2rem;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
     }
 }
 .slide-down-out
@@ -296,6 +306,8 @@ h1
     .link-trait;
     border-style: none;
     border-width: 0px;
+    padding: 0px;
+    margin: 0px;
     background-color: transparent !important;
     text-decoration: none !important;
 }
