@@ -1000,8 +1000,9 @@ export module CyclicToDo
             className: data.className,
             href: makeUrl(data.href),
             children: data.children,
-            onclick: () =>
+            onclick: (event: MouseEvent) =>
             {
+                event.stopPropagation();
                 showUrl(data.href);
                 return false;
             }
@@ -1628,8 +1629,9 @@ export module CyclicToDo
                 tag: "div",
                 className: "menu-popup",
                 children: menu,
-                onclick: async () =>
+                onclick: async (event: MouseEvent) =>
                 {
+                    event.stopPropagation();
                     console.log("menu-popup.click!");
                     cover?.close();
                     close();
@@ -1643,8 +1645,9 @@ export module CyclicToDo
                 [
                     await Resource.loadSvgOrCache("ellipsis-icon"),
                 ],
-                onclick: () =>
+                onclick: (event: MouseEvent) =>
                 {
+                    event.stopPropagation();
                     console.log("menu-button.click!");
                     popup.classList.add("show");
                     cover = screenCover
@@ -2142,8 +2145,9 @@ export module CyclicToDo
                 tag: "div",
                 className: "menu-popup segment-popup",
                 children: item.menu,
-                onclick: async () =>
+                onclick: async (event: MouseEvent) =>
                 {
+                    event.stopPropagation();
                     console.log("menu-popup.click!");
                     cover?.close();
                     close();
@@ -2154,8 +2158,9 @@ export module CyclicToDo
                 tag: "div",
                 className: `segment ${className}`,
                 children: await screenHeaderSegmentCore(item),
-                onclick: () =>
+                onclick: (event: MouseEvent) =>
                 {
+                    event.stopPropagation();
                     console.log("menu-button.click!");
                     popup.classList.add("show");
                     //popup.style.height = `${popup.offsetHeight -2}px`;
@@ -2527,7 +2532,11 @@ export module CyclicToDo
             input.addEventListener('change', onchange);
             input.addEventListener('compositionupdate', onchange);
             input.addEventListener('compositionend', onchange);
-            const result = $div("filter-frame")
+            const result = $div
+            ({
+                className: "filter-frame",
+                onclick: (event: MouseEvent) => event.stopPropagation(),
+            })
             ([
                 icon,
                 input,
@@ -2717,8 +2726,8 @@ export module CyclicToDo
                         Domain.updateListProgress(list);
                         Domain.sortList(entry, list);
                         isDirty = false;
-                        const regulatedFilter = regulateFilterText(filter);
-                        replaceScreenBodu(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(regulatedFilter, entry, item))));
+                        const filter = getFilterText();
+                        replaceScreenBodu(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))));
                         resizeFlexList();
                         break;
                 }
@@ -3782,13 +3791,21 @@ export module CyclicToDo
     export const start = async () =>
     {
         console.log("start!!!");
+        locale.setLocale(Storage.Settings.get().locale);
         window.onpopstate = () => showPage();
+        window.addEventListener('resize', Render.onWindowResize);
+        window.addEventListener('focus', Render.onWindowFocus);
+        window.addEventListener('blur', Render.onWindowBlur);
+        window.addEventListener('storage', Render.onUpdateStorage);
+        window.addEventListener('compositionstart', Render.onCompositionStart);
+        window.addEventListener('compositionend', Render.onCompositionEnd);
+        window.addEventListener('keydown', Render.onKeydown);
+        document.getElementById("screen-header").addEventListener('click', () => document.getElementById("screen-body").scrollTo(0, 0));
         await showPage();
     };
     export const showPage = async (url: string = location.href, wait: number = 0) =>
     {
         window.scrollTo(0,0);
-        locale.setLocale(Storage.Settings.get().locale);
         await Render.showUpdatingScreen(url);
         await minamo.core.timeout(wait);
         const urlParams = getUrlParams(url);
@@ -3798,13 +3815,6 @@ export module CyclicToDo
         const pass = urlParams["pass"] ?? `${Storage.sessionPassPrefix}:${new Date().getTime()}`;
         // const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
         // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
-        window.addEventListener('resize', Render.onWindowResize);
-        window.addEventListener('focus', Render.onWindowFocus);
-        window.addEventListener('blur', Render.onWindowBlur);
-        window.addEventListener('storage', Render.onUpdateStorage);
-        window.addEventListener('compositionstart', Render.onCompositionStart);
-        window.addEventListener('compositionend', Render.onCompositionEnd);
-        window.addEventListener('keydown', Render.onKeydown);
         if (pass && todo)
         {
             console.log("show todo screen");

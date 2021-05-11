@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue May 11 2021 01:14:12 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue May 11 2021 20:43:02 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -3615,7 +3615,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     className: data.className,
                     href: CyclicToDo.makeUrl(data.href),
                     children: data.children,
-                    onclick: function () {
+                    onclick: function (event) {
+                        event.stopPropagation();
                         CyclicToDo.showUrl(data.href);
                         return false;
                     }
@@ -4412,8 +4413,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 tag: "div",
                                 className: "menu-popup",
                                 children: menu,
-                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                onclick: function (event) { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
+                                        event.stopPropagation();
                                         console.log("menu-popup.click!");
                                         cover === null || cover === void 0 ? void 0 : cover.close();
                                         close();
@@ -4431,7 +4433,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             button = _a.apply(void 0, [(_b.children = [
                                     _c.sent()
                                 ],
-                                    _b.onclick = function () {
+                                    _b.onclick = function (event) {
+                                        event.stopPropagation();
                                         console.log("menu-button.click!");
                                         popup.classList.add("show");
                                         cover = Render.screenCover({
@@ -5055,8 +5058,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     tag: "div",
                                     className: "menu-popup segment-popup",
                                     children: item.menu,
-                                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                    onclick: function (event) { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
+                                            event.stopPropagation();
                                             console.log("menu-popup.click!");
                                             cover === null || cover === void 0 ? void 0 : cover.close();
                                             close();
@@ -5072,7 +5076,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 return [4 /*yield*/, Render.screenHeaderSegmentCore(item)];
                             case 1:
                                 segment = _a.apply(void 0, [(_b.children = _c.sent(),
-                                        _b.onclick = function () {
+                                        _b.onclick = function (event) {
+                                            event.stopPropagation();
                                             console.log("menu-button.click!");
                                             popup.classList.add("show");
                                             //popup.style.height = `${popup.offsetHeight -2}px`;
@@ -5510,7 +5515,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             input.addEventListener('change', onchange);
                             input.addEventListener('compositionupdate', onchange);
                             input.addEventListener('compositionend', onchange);
-                            result = Render.$div("filter-frame")([
+                            result = Render.$div({
+                                className: "filter-frame",
+                                onclick: function (event) { return event.stopPropagation(); },
+                            })([
                                 icon,
                                 input,
                                 clearIcon,
@@ -5677,7 +5685,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             Domain.sortList(entry, list);
                             isDirty = false;
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
-                                var _a, filter_1, filteredList_1, regulatedFilter_1, _b;
+                                var _a, filter_1, filteredList_1, filter_2, _b;
                                 var _this = this;
                                 var _c, _d, _e, _f, _g;
                                 return __generator(this, function (_h) {
@@ -5750,9 +5758,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             Domain.updateListProgress(list);
                                             Domain.sortList(entry, list);
                                             isDirty = false;
-                                            regulatedFilter_1 = Render.regulateFilterText(filter);
+                                            filter_2 = Render.getFilterText();
                                             _b = Render.replaceScreenBodu;
-                                            return [4 /*yield*/, Render.listScreenBody(entry, list.filter(function (item) { return Render.isMatchToDoEntry(regulatedFilter_1, entry, item); }))];
+                                            return [4 /*yield*/, Render.listScreenBody(entry, list.filter(function (item) { return Render.isMatchToDoEntry(filter_2, entry, item); }))];
                                         case 11:
                                             _b.apply(void 0, [_h.sent()]);
                                             Render.resizeFlexList();
@@ -7114,7 +7122,16 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 switch (_a.label) {
                     case 0:
                         console.log("start!!!");
+                        locale.setLocale(Storage.Settings.get().locale);
                         window.onpopstate = function () { return CyclicToDo.showPage(); };
+                        window.addEventListener('resize', Render.onWindowResize);
+                        window.addEventListener('focus', Render.onWindowFocus);
+                        window.addEventListener('blur', Render.onWindowBlur);
+                        window.addEventListener('storage', Render.onUpdateStorage);
+                        window.addEventListener('compositionstart', Render.onCompositionStart);
+                        window.addEventListener('compositionend', Render.onCompositionEnd);
+                        window.addEventListener('keydown', Render.onKeydown);
+                        document.getElementById("screen-header").addEventListener('click', function () { return document.getElementById("screen-body").scrollTo(0, 0); });
                         return [4 /*yield*/, CyclicToDo.showPage()];
                     case 1:
                         _a.sent();
@@ -7132,7 +7149,6 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     switch (_c.label) {
                         case 0:
                             window.scrollTo(0, 0);
-                            locale.setLocale(Storage.Settings.get().locale);
                             return [4 /*yield*/, Render.showUpdatingScreen(url)];
                         case 1:
                             _c.sent();
@@ -7144,15 +7160,6 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             tag = urlParams["tag"];
                             todo = urlParams["todo"];
                             pass = (_b = urlParams["pass"]) !== null && _b !== void 0 ? _b : Storage.sessionPassPrefix + ":" + new Date().getTime();
-                            // const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
-                            // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
-                            window.addEventListener('resize', Render.onWindowResize);
-                            window.addEventListener('focus', Render.onWindowFocus);
-                            window.addEventListener('blur', Render.onWindowBlur);
-                            window.addEventListener('storage', Render.onUpdateStorage);
-                            window.addEventListener('compositionstart', Render.onCompositionStart);
-                            window.addEventListener('compositionend', Render.onCompositionEnd);
-                            window.addEventListener('keydown', Render.onKeydown);
                             if (!(pass && todo)) return [3 /*break*/, 4];
                             console.log("show todo screen");
                             return [4 /*yield*/, Render.showTodoScreen(pass, todo)];
