@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon May 10 2021 20:23:18 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue May 11 2021 01:14:12 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -541,6 +541,7 @@ h1.max-progress .progress-bar {
   cursor: pointer;
   border-style: none;
   border-width: 0px;
+  border-radius: 0px;
   padding: 0px;
   margin: 0px;
   background-color: transparent !important;
@@ -4654,11 +4655,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                             return __generator(this, function (_d) {
                                                                 switch (_d.label) {
                                                                     case 0:
-                                                                        _b = (_a = Storage.History).remove;
+                                                                        _b = (_a = Storage.History).removeRaw;
                                                                         _c = [entry.pass, item.task];
                                                                         return [4 /*yield*/, tick_1];
                                                                     case 1:
-                                                                        _b.apply(_a, _c.concat([_d.sent()]));
+                                                                        _b.apply(_a, _c.concat([_d.sent()])); // ごみ箱は利用せずに直に削除
                                                                         Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
                                                                         Render.updateWindow("operate");
                                                                         // setProgressStyole("update", 1000);
@@ -5559,7 +5560,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 return Render.isMatchTest(filter, item.task) ||
                     Storage.Tag.getByTodo(entry.pass, item.task).some(function (tag) { return entry.tag !== tag && Render.isMatchTest(filter, tag); });
             };
-            Render.listScreenHeader = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
+            Render.listScreenHeader = function (entry, _list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a;
                 var _b;
                 var _this = this;
@@ -5583,19 +5584,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 3:
                             _b.menu = _d.sent();
                             return [4 /*yield*/, Render.filter((_c = CyclicToDo.getUrlParams().filter) !== null && _c !== void 0 ? _c : "", function (filter) { return __awaiter(_this, void 0, void 0, function () {
-                                    var regulatedFilter, _a;
-                                    return __generator(this, function (_b) {
-                                        switch (_b.label) {
-                                            case 0:
-                                                regulatedFilter = Render.regulateFilterText(filter);
-                                                _a = Render.replaceScreenBodu;
-                                                return [4 /*yield*/, Render.listScreenBody(entry, list.filter(function (item) { return Render.isMatchToDoEntry(regulatedFilter, entry, item); }))];
-                                            case 1:
-                                                _a.apply(void 0, [_b.sent()]);
-                                                Render.resizeFlexList();
-                                                Render.updateUrlFilterParam(filter);
-                                                return [2 /*return*/];
-                                        }
+                                    return __generator(this, function (_a) {
+                                        Render.updateUrlFilterParam(filter);
+                                        Render.updateWindow("operate");
+                                        return [2 /*return*/];
                                     });
                                 }); })];
                         case 4: return [2 /*return*/, (_b.operator = _d.sent(),
@@ -5685,11 +5677,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             Domain.sortList(entry, list);
                             isDirty = false;
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
-                                var _a, filter_1, filteredList_1, _b, _c, _d;
+                                var _a, filter_1, filteredList_1, regulatedFilter_1, _b;
                                 var _this = this;
-                                var _e, _f, _g, _h, _j;
-                                return __generator(this, function (_k) {
-                                    switch (_k.label) {
+                                var _c, _d, _e, _f, _g;
+                                return __generator(this, function (_h) {
+                                    switch (_h.label) {
                                         case 0:
                                             _a = event;
                                             switch (_a) {
@@ -5706,14 +5698,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             isDirty = isDirty || (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list)));
                                             if (!(isDirty &&
                                                 document.body.scrollTop <= 0 &&
-                                                ((_f = (_e = document.getElementsByClassName("screen-body")[0]) === null || _e === void 0 ? void 0 : _e.scrollTop) !== null && _f !== void 0 ? _f : 0) <= 9 &&
+                                                ((_d = (_c = document.getElementsByClassName("screen-body")[0]) === null || _c === void 0 ? void 0 : _c.scrollTop) !== null && _d !== void 0 ? _d : 0) <= 9 &&
                                                 !Render.hasScreenCover() &&
-                                                !((_j = (_h = (_g = Array.from(document.getElementsByTagName("h1"))[0]) === null || _g === void 0 ? void 0 : _g.classList) === null || _h === void 0 ? void 0 : _h.contains("header-operator-has-focus")) !== null && _j !== void 0 ? _j : false))) return [3 /*break*/, 3];
+                                                !((_g = (_f = (_e = Array.from(document.getElementsByTagName("h1"))[0]) === null || _e === void 0 ? void 0 : _e.classList) === null || _f === void 0 ? void 0 : _f.contains("header-operator-has-focus")) !== null && _g !== void 0 ? _g : false))) return [3 /*break*/, 3];
                                             //await reload();
                                             return [4 /*yield*/, updateWindow("operate")];
                                         case 2:
                                             //await reload();
-                                            _k.sent();
+                                            _h.sent();
                                             return [3 /*break*/, 4];
                                         case 3:
                                             filter_1 = Render.getFilterText();
@@ -5737,7 +5729,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     case 1: return [2 /*return*/, _b.apply(_a, _c.concat([(_d.sent()).children]))];
                                                 }
                                             }); }); });
-                                            _k.label = 4;
+                                            _h.label = 4;
                                         case 4: return [3 /*break*/, 12];
                                         case 5:
                                             Domain.updateListProgress(list);
@@ -5747,22 +5739,22 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             return [4 /*yield*/, updateWindow("operate")];
                                         case 6:
                                             //await reload();
-                                            _k.sent();
-                                            _k.label = 7;
+                                            _h.sent();
+                                            _h.label = 7;
                                         case 7: return [3 /*break*/, 12];
                                         case 8: return [4 /*yield*/, CyclicToDo.reload()];
                                         case 9:
-                                            _k.sent();
+                                            _h.sent();
                                             return [3 /*break*/, 12];
                                         case 10:
                                             Domain.updateListProgress(list);
                                             Domain.sortList(entry, list);
                                             isDirty = false;
-                                            _c = (_b = minamo_js_1.minamo.dom).replaceChildren;
-                                            _d = [document.getElementById("screen-body")];
-                                            return [4 /*yield*/, Render.listScreenBody(entry, list.filter(function (item) { return Render.isMatchToDoEntry(filter, entry, item); }))];
+                                            regulatedFilter_1 = Render.regulateFilterText(filter);
+                                            _b = Render.replaceScreenBodu;
+                                            return [4 /*yield*/, Render.listScreenBody(entry, list.filter(function (item) { return Render.isMatchToDoEntry(regulatedFilter_1, entry, item); }))];
                                         case 11:
-                                            _c.apply(_b, _d.concat([_k.sent()]));
+                                            _b.apply(void 0, [_h.sent()]);
                                             Render.resizeFlexList();
                                             return [3 /*break*/, 12];
                                         case 12: return [2 /*return*/];
@@ -6886,6 +6878,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
                             case 1:
                                 _a.sent();
+                                if (timestamp === lastToastAt) {
+                                    frame.classList.remove("slide-up-in");
+                                }
                                 if (!(0 < wait)) return [3 /*break*/, 3];
                                 return [4 /*yield*/, minamo_js_1.minamo.core.timeout(wait)];
                             case 2:

@@ -1859,7 +1859,7 @@ export module CyclicToDo
                                         children: "取り消す",
                                         onclick: async () =>
                                         {
-                                            Storage.History.remove(entry.pass, item.task, await tick);
+                                            Storage.History.removeRaw(entry.pass, item.task, await tick); // ごみ箱は利用せずに直に削除
                                             Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
                                             updateWindow("operate");
                                             // setProgressStyole("update", 1000);
@@ -2583,7 +2583,7 @@ export module CyclicToDo
         export const isMatchToDoEntry = (filter: string, entry: ToDoTagEntry, item: ToDoEntry) =>
             isMatchTest(filter, item.task) ||
             Storage.Tag.getByTodo(entry.pass, item.task).some(tag => entry.tag !== tag && isMatchTest(filter, tag));
-        export const listScreenHeader = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
+        export const listScreenHeader = async (entry: ToDoTagEntry, _list: ToDoEntry[]) =>
         ({
             items:
             [
@@ -2597,10 +2597,8 @@ export module CyclicToDo
                 getUrlParams().filter ?? "",
                 async filter =>
                 {
-                    const regulatedFilter = regulateFilterText(filter);
-                    replaceScreenBodu(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(regulatedFilter, entry, item))));
-                    resizeFlexList();
                     updateUrlFilterParam(filter);
+                    updateWindow("operate");
                 }
             ),
         });
@@ -2719,11 +2717,8 @@ export module CyclicToDo
                         Domain.updateListProgress(list);
                         Domain.sortList(entry, list);
                         isDirty = false;
-                        minamo.dom.replaceChildren
-                        (
-                            document.getElementById("screen-body"),
-                            await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item)))
-                        );
+                        const regulatedFilter = regulateFilterText(filter);
+                        replaceScreenBodu(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(regulatedFilter, entry, item))));
                         resizeFlexList();
                         break;
                 }
@@ -3517,6 +3512,10 @@ export module CyclicToDo
             frame.classList.add("slide-up-in");
             minamo.dom.replaceChildren(frame, toast);
             await minamo.core.timeout(500);
+            if (timestamp === lastToastAt)
+            {
+                frame.classList.remove("slide-up-in");
+            }
             if (0 < wait)
             {
                 await minamo.core.timeout(wait);
