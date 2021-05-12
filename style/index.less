@@ -63,9 +63,14 @@ h1
         justify-content: start;
         align-items: center;
         font-size: 1.2rem;
-        padding-left: 0.25rem;
         padding-right: 1.25rem;
-        text-decoration: none;
+        overflow-x: hidden;
+        transform: skewX(150deg);
+        & > *
+        {
+            transform: skewX(-150deg);
+        }
+                text-decoration: none;
         min-width: 2.25rem;
         &:first-child
         {
@@ -91,10 +96,17 @@ h1
             background-color: transparent !important;
         }
     }
+    .segment:first-child,
+    .progress-bar + .segment
+    {
+        padding-left: 1.25rem;
+        margin-left: -0.75rem;
+    }
     .segment + .segment,
     .segment +.menu-popup + .segment
     {
-        margin-left: -0.25rem;
+        padding-left: 0.5rem;
+        margin-left: 0rem;
         border-left-style: solid;
         border-left-width: 1px;
         border-left-color: @base-color !important;
@@ -102,13 +114,6 @@ h1
         {
             border-left-color: @dark-base-color !important;
         }
-        overflow-x: hidden;
-        transform: skewX(150deg);
-        & > *
-        {
-            transform: skewX(-150deg);
-        }
-        padding-left: 0.5rem;
         .icon
         {
             padding: 0.5rem 0.25rem;
@@ -285,6 +290,7 @@ h1
     animation-duration: 0.5s;
     animation-timing-function: ease-in-out;
     animation-fill-mode: both;
+    overflow-y: hidden;
 }
 @keyframes slide-down-out
 {

@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed May 12 2021 20:18:44 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed May 12 2021 23:07:47 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -284,10 +284,14 @@ h1 .segment {
   justify-content: start;
   align-items: center;
   font-size: 1.2rem;
-  padding-left: 0.25rem;
   padding-right: 1.25rem;
+  overflow-x: hidden;
+  transform: skewX(150deg);
   text-decoration: none;
   min-width: 2.25rem;
+}
+h1 .segment > * {
+  transform: skewX(-150deg);
 }
 h1 .segment:first-child {
   min-width: 2.75rem;
@@ -338,25 +342,24 @@ h1 .segment.fill-header-segment {
 h1 .segment:not(:hover) {
   background-color: transparent !important;
 }
+h1 .segment:first-child,
+h1 .progress-bar + .segment {
+  padding-left: 1.25rem;
+  margin-left: -0.75rem;
+}
 h1 .segment + .segment,
 h1 .segment + .menu-popup + .segment {
-  margin-left: -0.25rem;
+  padding-left: 0.5rem;
+  margin-left: 0rem;
   border-left-style: solid;
   border-left-width: 1px;
   border-left-color: #FFFFFF !important;
-  overflow-x: hidden;
-  transform: skewX(150deg);
-  padding-left: 0.5rem;
 }
 @media (prefers-color-scheme: dark) {
   h1 .segment + .segment,
   h1 .segment + .menu-popup + .segment {
     border-left-color: #000022 !important;
   }
-}
-h1 .segment + .segment > *,
-h1 .segment + .menu-popup + .segment > * {
-  transform: skewX(-150deg);
 }
 h1 .segment + .segment .icon,
 h1 .segment + .menu-popup + .segment .icon {
@@ -524,6 +527,7 @@ h1.max-progress .progress-bar {
   animation-duration: 0.5s;
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
+  overflow-y: hidden;
 }
 @keyframes slide-down-out {
   0% {
@@ -4672,6 +4676,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     if (!isFirst) return [3 /*break*/, 3];
                                                     isFirst = false;
                                                     tick_1 = Domain.done(entry.pass, item.task);
+                                                    Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
                                                     Render.showToast([
                                                         Render.$span("dummy")([]),
                                                         Render.$span("")(item.task + ": \u5B8C\u4E86\u3057\u307E\u3057\u305F\uFF01"),
@@ -4707,7 +4712,6 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     return [4 /*yield*/, minamo_js_1.minamo.core.timeout(1000)];
                                                 case 2:
                                                     _a.sent();
-                                                    Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
                                                     Render.updateWindow("operate");
                                                     _a.label = 3;
                                                 case 3: return [2 /*return*/];
@@ -5729,78 +5733,72 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             _a = event;
                                             switch (_a) {
                                                 case "timer": return [3 /*break*/, 1];
-                                                case "focus": return [3 /*break*/, 5];
-                                                case "blur": return [3 /*break*/, 5];
-                                                case "scroll": return [3 /*break*/, 5];
-                                                case "storage": return [3 /*break*/, 8];
-                                                case "operate": return [3 /*break*/, 10];
+                                                case "focus": return [3 /*break*/, 2];
+                                                case "blur": return [3 /*break*/, 2];
+                                                case "scroll": return [3 /*break*/, 2];
+                                                case "storage": return [3 /*break*/, 5];
+                                                case "operate": return [3 /*break*/, 7];
                                             }
-                                            return [3 /*break*/, 12];
+                                            return [3 /*break*/, 9];
                                         case 1:
                                             Domain.updateListProgress(list);
                                             isDirty = isDirty || (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list)));
-                                            if (!(isDirty &&
+                                            if (isDirty &&
                                                 document.body.scrollTop <= 0 &&
                                                 ((_d = (_c = document.getElementsByClassName("screen-body")[0]) === null || _c === void 0 ? void 0 : _c.scrollTop) !== null && _d !== void 0 ? _d : 0) <= 9 &&
                                                 !Render.hasScreenCover() &&
-                                                !((_g = (_f = (_e = Array.from(document.getElementsByTagName("h1"))[0]) === null || _e === void 0 ? void 0 : _e.classList) === null || _f === void 0 ? void 0 : _f.contains("header-operator-has-focus")) !== null && _g !== void 0 ? _g : false))) return [3 /*break*/, 3];
-                                            //await reload();
-                                            return [4 /*yield*/, updateWindow("operate")];
+                                                !((_g = (_f = (_e = Array.from(document.getElementsByTagName("h1"))[0]) === null || _e === void 0 ? void 0 : _e.classList) === null || _f === void 0 ? void 0 : _f.contains("header-operator-has-focus")) !== null && _g !== void 0 ? _g : false)) {
+                                                //await updateWindow("operate");
+                                            }
+                                            else {
+                                                filter_1 = Render.getFilterText();
+                                                filteredList_1 = list.filter(function (item) { return Render.isMatchToDoEntry(filter_1, entry, item); });
+                                                Array.from(document
+                                                    .getElementsByClassName("list-screen")[0]
+                                                    .getElementsByClassName("todo-list")[0].childNodes).forEach(function (dom, index) {
+                                                    var item = filteredList_1[index];
+                                                    var button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0];
+                                                    button.classList.toggle("default-button", item.isDefault);
+                                                    var information = dom.getElementsByClassName("item-information")[0];
+                                                    information.setAttribute("style", Render.progressStyle(item.progress));
+                                                    information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
+                                                });
+                                                Array.from(document.getElementsByClassName("history-bar")).forEach(function (dom) { return __awaiter(_this, void 0, void 0, function () { var _a, _b, _c; return __generator(this, function (_d) {
+                                                    switch (_d.label) {
+                                                        case 0:
+                                                            _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                            _c = [dom];
+                                                            return [4 /*yield*/, Render.historyBar(entry, filteredList_1)];
+                                                        case 1: return [2 /*return*/, _b.apply(_a, _c.concat([(_d.sent()).children]))];
+                                                    }
+                                                }); }); });
+                                            }
+                                            return [3 /*break*/, 9];
                                         case 2:
-                                            //await reload();
-                                            _h.sent();
-                                            return [3 /*break*/, 4];
-                                        case 3:
-                                            filter_1 = Render.getFilterText();
-                                            filteredList_1 = list.filter(function (item) { return Render.isMatchToDoEntry(filter_1, entry, item); });
-                                            Array.from(document
-                                                .getElementsByClassName("list-screen")[0]
-                                                .getElementsByClassName("todo-list")[0].childNodes).forEach(function (dom, index) {
-                                                var item = filteredList_1[index];
-                                                var button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0];
-                                                button.classList.toggle("default-button", item.isDefault);
-                                                var information = dom.getElementsByClassName("item-information")[0];
-                                                information.setAttribute("style", Render.progressStyle(item.progress));
-                                                information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
-                                            });
-                                            Array.from(document.getElementsByClassName("history-bar")).forEach(function (dom) { return __awaiter(_this, void 0, void 0, function () { var _a, _b, _c; return __generator(this, function (_d) {
-                                                switch (_d.label) {
-                                                    case 0:
-                                                        _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
-                                                        _c = [dom];
-                                                        return [4 /*yield*/, Render.historyBar(entry, filteredList_1)];
-                                                    case 1: return [2 /*return*/, _b.apply(_a, _c.concat([(_d.sent()).children]))];
-                                                }
-                                            }); }); });
-                                            _h.label = 4;
-                                        case 4: return [3 /*break*/, 12];
-                                        case 5:
                                             Domain.updateListProgress(list);
                                             isDirty = isDirty || (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list)));
-                                            if (!isDirty) return [3 /*break*/, 7];
-                                            //await reload();
+                                            if (!isDirty) return [3 /*break*/, 4];
                                             return [4 /*yield*/, updateWindow("operate")];
+                                        case 3:
+                                            _h.sent();
+                                            _h.label = 4;
+                                        case 4: return [3 /*break*/, 9];
+                                        case 5: return [4 /*yield*/, CyclicToDo.reload()];
                                         case 6:
-                                            //await reload();
                                             _h.sent();
-                                            _h.label = 7;
-                                        case 7: return [3 /*break*/, 12];
-                                        case 8: return [4 /*yield*/, CyclicToDo.reload()];
-                                        case 9:
-                                            _h.sent();
-                                            return [3 /*break*/, 12];
-                                        case 10:
+                                            return [3 /*break*/, 9];
+                                        case 7:
                                             Domain.updateListProgress(list);
                                             Domain.sortList(entry, list);
                                             isDirty = false;
                                             filter_2 = Render.getFilterText();
                                             _b = Render.replaceScreenBodu;
                                             return [4 /*yield*/, Render.listScreenBody(entry, list.filter(function (item) { return Render.isMatchToDoEntry(filter_2, entry, item); }))];
-                                        case 11:
+                                        case 8:
                                             _b.apply(void 0, [_h.sent()]);
                                             Render.resizeFlexList();
-                                            return [3 /*break*/, 12];
-                                        case 12: return [2 /*return*/];
+                                            return [3 /*break*/, 9];
+                                        case 9: return [2 /*return*/];
                                     }
                                 });
                             }); };

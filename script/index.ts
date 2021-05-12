@@ -1858,6 +1858,7 @@ export module CyclicToDo
                                         {
                                             isFirst = false;
                                             const tick = Domain.done(entry.pass, item.task);
+                                            Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
                                             showToast
                                             ([
                                                 $span("dummy")([]),
@@ -1883,7 +1884,6 @@ export module CyclicToDo
                                             ]); // await しない
                                             itemDom.classList.add("fade-and-slide-out");
                                             await minamo.core.timeout(1000);
-                                            Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
                                             updateWindow("operate");
                                         }
                                     }
@@ -2688,8 +2688,7 @@ export module CyclicToDo
                             ! (Array.from(document.getElementsByTagName("h1"))[0]?.classList?.contains("header-operator-has-focus") ?? false)
                         )
                         {
-                            //await reload();
-                            await updateWindow("operate");
+                            //await updateWindow("operate");
                         }
                         else
                         {
@@ -2729,7 +2728,6 @@ export module CyclicToDo
                         isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[]));
                         if (isDirty)
                         {
-                            //await reload();
                             await updateWindow("operate");
                         }
                         break;
