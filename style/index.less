@@ -301,6 +301,33 @@ h1
         padding: 0rem;
     }
 }
+.fade-and-slide-out
+{
+    animation-name: fade-and-slide-out;
+    animation-direction: normal;
+    animation-delay: 0s;
+    animation-duration: 1.0s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: both;
+}
+@keyframes fade-and-slide-out
+{
+    0%
+    {
+        opacity: 1.0;
+        max-height: 15rem;
+    }
+    50%
+    {
+        opacity: 0.0;
+        max-height: 15rem;
+    }
+    100%
+    {
+        opacity: 0.0;
+        max-height: 0rem;
+    }
+}
 .text-button
 {
     .link-trait;

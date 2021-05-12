@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue May 11 2021 20:43:02 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed May 12 2021 20:18:44 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -535,6 +535,28 @@ h1.max-progress .progress-bar {
     opacity: 0;
     max-height: 0px;
     padding: 0rem;
+  }
+}
+.fade-and-slide-out {
+  animation-name: fade-and-slide-out;
+  animation-direction: normal;
+  animation-delay: 0s;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+@keyframes fade-and-slide-out {
+  0% {
+    opacity: 1;
+    max-height: 15rem;
+  }
+  50% {
+    opacity: 0;
+    max-height: 15rem;
+  }
+  100% {
+    opacity: 0;
+    max-height: 0rem;
   }
 }
 .text-button {
@@ -3676,7 +3698,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            input = minamo_js_1.minamo.dom.make(HTMLInputElement)({
+                            input = Render.$make(HTMLInputElement)({
                                 tag: "input",
                                 type: "text",
                                 value: _default,
@@ -3765,13 +3787,13 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            inputDate = minamo_js_1.minamo.dom.make(HTMLInputElement)({
+                            inputDate = Render.$make(HTMLInputElement)({
                                 tag: "input",
                                 type: "date",
                                 value: Domain.dateCoreStringFromTick(_default),
                                 required: "",
                             });
-                            inputTime = minamo_js_1.minamo.dom.make(HTMLInputElement)({
+                            inputTime = Render.$make(HTMLInputElement)({
                                 tag: "input",
                                 type: "time",
                                 value: Domain.timeCoreStringFromTick(Domain.getTime(_default)),
@@ -3826,7 +3848,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         case 0:
                                             hasNewTag = false;
                                             result = [].concat(currentTags);
-                                            tagButtonList = minamo_js_1.minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                                            tagButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
                                             tagButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
                                                 var _a, _b, _c, _d;
                                                 var _e;
@@ -3842,7 +3864,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                     return __generator(this, function (_c) {
                                                                         switch (_c.label) {
                                                                             case 0:
-                                                                                _a = minamo_js_1.minamo.dom.make(HTMLButtonElement);
+                                                                                _a = Render.$make(HTMLButtonElement);
                                                                                 _b = {
                                                                                     tag: "button",
                                                                                     className: "check-button"
@@ -3954,7 +3976,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     switch (_f.label) {
                                         case 0:
                                             result = false;
-                                            tagButtonList = minamo_js_1.minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                                            tagButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
                                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                             _c = [tagButtonList];
                                             return [4 /*yield*/, Promise.all(["@root"].concat(Storage.Tag.get(pass).filter(function (tag) { return Storage.Tag.isSublist(tag); }).sort(Domain.tagComparer(pass))).map(function (sublist) { return __awaiter(_this, void 0, void 0, function () {
@@ -4055,7 +4077,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         switch (_a.label) {
                                             case 0:
                                                 result = false;
-                                                checkButtonList = minamo_js_1.minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                                                checkButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
                                                 checkButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
                                                     var _a, _b, _c, _d;
                                                     var _e;
@@ -4182,7 +4204,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         switch (_a.label) {
                                             case 0:
                                                 result = false;
-                                                tagButtonList = minamo_js_1.minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                                                tagButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
                                                 tagButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
                                                     var _a, _b, _c, _d, _e;
                                                     var _f, _g, _h;
@@ -4314,7 +4336,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             };
             Render.screenCover = function (data) {
-                var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
+                var dom = Render.$make(HTMLDivElement)({
                     tag: "div",
                     className: "screen-cover fade-in",
                     children: data.children,
@@ -4352,7 +4374,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Render.hasScreenCover = function () { return 0 < document.getElementsByClassName("screen-cover").length; };
             Render.popup = function (data) {
                 var _a;
-                var dom = minamo_js_1.minamo.dom.make(HTMLDivElement)({
+                var dom = Render.$make(HTMLDivElement)({
                     tag: "div",
                     className: "popup locale-parallel-off " + ((_a = data.className) !== null && _a !== void 0 ? _a : ""),
                     children: data.children,
@@ -4409,7 +4431,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 popup.classList.remove("show");
                                 cover = null;
                             };
-                            popup = minamo_js_1.minamo.dom.make(HTMLDivElement)({
+                            popup = Render.$make(HTMLDivElement)({
                                 tag: "div",
                                 className: "menu-popup",
                                 children: menu,
@@ -4423,7 +4445,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     });
                                 }); },
                             });
-                            _a = minamo_js_1.minamo.dom.make(HTMLButtonElement);
+                            _a = Render.$make(HTMLButtonElement);
                             _b = {
                                 tag: "button",
                                 className: "menu-button"
@@ -4605,30 +4627,32 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); }, "delete-button"); };
             Render.todoItem = function (entry, item) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e, _f, _g, _h;
-                var _j;
+                var isFirst, itemDom, _a, _b, _c, _d, _e, _f, _g, _h, _j;
+                var _k;
                 var _this = this;
-                return __generator(this, function (_k) {
-                    switch (_k.label) {
+                return __generator(this, function (_l) {
+                    switch (_l.label) {
                         case 0:
-                            _a = Render.$div("task-item flex-item");
-                            _b = Render.$div("item-header");
-                            _c = Render.internalLink;
-                            _j = {
+                            isFirst = true;
+                            _a = Render.$make(HTMLDivElement);
+                            _b = Render.$div("task-item flex-item");
+                            _c = Render.$div("item-header");
+                            _d = Render.internalLink;
+                            _k = {
                                 className: "item-title",
                                 href: { pass: entry.pass, todo: item.task, }
                             };
                             return [4 /*yield*/, Resource.loadSvgOrCache("task-icon")];
                         case 1:
-                            _d = [
-                                _c.apply(void 0, [(_j.children = [
-                                        _k.sent(),
+                            _e = [
+                                _d.apply(void 0, [(_k.children = [
+                                        _l.sent(),
                                         Storage.Tag.decode(item.task)
                                     ],
-                                        _j)])
+                                        _k)])
                             ];
-                            _e = Render.$div("item-operator");
-                            _f = [{
+                            _f = Render.$div("item-operator");
+                            _g = [{
                                     tag: "button",
                                     className: item.isDefault ? "default-button main-button" : "main-button",
                                     children: Render.label("Done"),
@@ -4636,49 +4660,58 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         var fxxkingTypeScriptCompiler, tick_1;
                                         var _this = this;
                                         return __generator(this, function (_a) {
-                                            fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
-                                            if (fxxkingTypeScriptCompiler) {
-                                                Render.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
-                                                    + "\n"
-                                                    + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。");
+                                            switch (_a.label) {
+                                                case 0:
+                                                    fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
+                                                    if (!fxxkingTypeScriptCompiler) return [3 /*break*/, 1];
+                                                    Render.alert("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                                                        + "\n"
+                                                        + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。");
+                                                    return [3 /*break*/, 3];
+                                                case 1:
+                                                    if (!isFirst) return [3 /*break*/, 3];
+                                                    isFirst = false;
+                                                    tick_1 = Domain.done(entry.pass, item.task);
+                                                    Render.showToast([
+                                                        Render.$span("dummy")([]),
+                                                        Render.$span("")(item.task + ": \u5B8C\u4E86\u3057\u307E\u3057\u305F\uFF01"),
+                                                        {
+                                                            tag: "button",
+                                                            className: "text-button",
+                                                            children: "取り消す",
+                                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                var _a, _b, _c;
+                                                                return __generator(this, function (_d) {
+                                                                    switch (_d.label) {
+                                                                        case 0:
+                                                                            _b = (_a = Storage.History).removeRaw;
+                                                                            _c = [entry.pass, item.task];
+                                                                            return [4 /*yield*/, tick_1];
+                                                                        case 1:
+                                                                            _b.apply(_a, _c.concat([_d.sent()])); // ごみ箱は利用せずに直に削除
+                                                                            Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
+                                                                            Render.updateWindow("operate");
+                                                                            // setProgressStyole("update", 1000);
+                                                                            Render.showToast([
+                                                                                Render.$span("dummy")([]),
+                                                                                Render.$span("")("取り消しました。"),
+                                                                                Render.$span("dummy")([]),
+                                                                            ]);
+                                                                            return [2 /*return*/];
+                                                                    }
+                                                                });
+                                                            }); },
+                                                        }
+                                                    ]); // await しない
+                                                    itemDom.classList.add("fade-and-slide-out");
+                                                    return [4 /*yield*/, minamo_js_1.minamo.core.timeout(1000)];
+                                                case 2:
+                                                    _a.sent();
+                                                    Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
+                                                    Render.updateWindow("operate");
+                                                    _a.label = 3;
+                                                case 3: return [2 /*return*/];
                                             }
-                                            else {
-                                                tick_1 = Domain.done(entry.pass, item.task);
-                                                Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
-                                                Render.updateWindow("operate");
-                                                Render.showToast([
-                                                    Render.$span("dummy")([]),
-                                                    Render.$span("")(item.task + ": \u5B8C\u4E86\u3057\u307E\u3057\u305F\uFF01"),
-                                                    {
-                                                        tag: "button",
-                                                        className: "text-button",
-                                                        children: "取り消す",
-                                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                            var _a, _b, _c;
-                                                            return __generator(this, function (_d) {
-                                                                switch (_d.label) {
-                                                                    case 0:
-                                                                        _b = (_a = Storage.History).removeRaw;
-                                                                        _c = [entry.pass, item.task];
-                                                                        return [4 /*yield*/, tick_1];
-                                                                    case 1:
-                                                                        _b.apply(_a, _c.concat([_d.sent()])); // ごみ箱は利用せずに直に削除
-                                                                        Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
-                                                                        Render.updateWindow("operate");
-                                                                        // setProgressStyole("update", 1000);
-                                                                        Render.showToast([
-                                                                            Render.$span("dummy")([]),
-                                                                            Render.$span("")("取り消しました。"),
-                                                                            Render.$span("dummy")([]),
-                                                                        ]);
-                                                                        return [2 /*return*/];
-                                                                }
-                                                            });
-                                                        }); },
-                                                    }
-                                                ]); // await しない
-                                            }
-                                            return [2 /*return*/];
                                         });
                                     }); }
                                 }];
@@ -4689,14 +4722,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     Render.todoDeleteMenu(entry.pass, item),
                                 ])];
                         case 2:
-                            _g = [
-                                _b.apply(void 0, [_d.concat([
-                                        _e.apply(void 0, [_f.concat([
-                                                _k.sent()
+                            _h = [
+                                _c.apply(void 0, [_e.concat([
+                                        _f.apply(void 0, [_g.concat([
+                                                _l.sent()
                                             ])])
                                     ])])
                             ];
-                            _h = Render.$div("item-tags");
+                            _j = Render.$div("item-tags");
                             return [4 /*yield*/, Promise.all(Storage.Tag.getByTodo(entry.pass, item.task).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
                                     var _b;
@@ -4717,10 +4750,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         }
                                     });
                                 }); }))];
-                        case 3: return [2 /*return*/, _a.apply(void 0, [_g.concat([
-                                    _h.apply(void 0, [_k.sent()]),
-                                    Render.information(item)
-                                ])])];
+                        case 3:
+                            itemDom = _a.apply(void 0, [_b.apply(void 0, [_h.concat([
+                                        _j.apply(void 0, [_l.sent()]),
+                                        Render.information(item)
+                                    ])])]);
+                            return [2 /*return*/, itemDom];
                     }
                 });
             }); };
@@ -4883,7 +4918,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             }); };
             Render.dropDownLabel = function (options) {
                 var _a;
-                var dropdown = minamo_js_1.minamo.dom.make(HTMLSelectElement)({
+                var dropdown = Render.$make(HTMLSelectElement)({
                     className: options.className,
                     children: Array.isArray(options.list) ?
                         options.list.map(function (i) { return ({ tag: "option", value: i, children: i, selected: options.value === i ? true : undefined, }); }) :
@@ -4898,7 +4933,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         }
                     },
                 });
-                var labelSoan = minamo_js_1.minamo.dom.make(HTMLSpanElement)({
+                var labelSoan = Render.$make(HTMLSpanElement)({
                     children: Array.isArray(options.list) ?
                         options.value :
                         ((_a = options.list[options.value]) !== null && _a !== void 0 ? _a : options.value),
@@ -5054,7 +5089,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     popup.classList.remove("show");
                                     cover = null;
                                 };
-                                popup = minamo_js_1.minamo.dom.make(HTMLDivElement)({
+                                popup = Render.$make(HTMLDivElement)({
                                     tag: "div",
                                     className: "menu-popup segment-popup",
                                     children: item.menu,
@@ -5068,7 +5103,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         });
                                     }); },
                                 });
-                                _a = minamo_js_1.minamo.dom.make(HTMLDivElement);
+                                _a = Render.$make(HTMLDivElement);
                                 _b = {
                                     tag: "div",
                                     className: "segment " + className

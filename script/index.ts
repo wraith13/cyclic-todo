@@ -1057,7 +1057,7 @@ export module CyclicToDo
         };
         export const customPrompt = async (message?: string, _default?: string): Promise<string | null> =>
         {
-            const input = minamo.dom.make(HTMLInputElement)
+            const input = $make(HTMLInputElement)
             ({
                 tag: "input",
                 type: "text",
@@ -1133,14 +1133,14 @@ export module CyclicToDo
         };
         export const dateTimePrompt = async (message: string, _default: number): Promise<string | null> =>
         {
-            const inputDate = minamo.dom.make(HTMLInputElement)
+            const inputDate = $make(HTMLInputElement)
             ({
                 tag: "input",
                 type: "date",
                 value: Domain.dateCoreStringFromTick(_default),
                 required: "",
             });
-            const inputTime = minamo.dom.make(HTMLInputElement)
+            const inputTime = $make(HTMLInputElement)
             ({
                 tag: "input",
                 type: "time",
@@ -1196,7 +1196,7 @@ export module CyclicToDo
                 {
                     let hasNewTag = false;
                     let result: string[] = [].concat(currentTags);
-                    const tagButtonList = minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                    const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
                     const tagButtonListUpdate = async () => minamo.dom.replaceChildren
                     (
                         tagButtonList,
@@ -1207,7 +1207,7 @@ export module CyclicToDo
                                 (
                                     async tag =>
                                     {
-                                        const dom = minamo.dom.make(HTMLButtonElement)
+                                        const dom = $make(HTMLButtonElement)
                                         ({
                                             tag: "button",
                                             className: "check-button",
@@ -1296,7 +1296,7 @@ export module CyclicToDo
                 async resolve =>
                 {
                     let result = false;
-                    const tagButtonList = minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                    const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
                     minamo.dom.replaceChildren
                     (
                         tagButtonList,
@@ -1376,7 +1376,7 @@ export module CyclicToDo
                 async resolve =>
                 {
                     let result = false;
-                    const checkButtonList = minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                    const checkButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
                     const checkButtonListUpdate = async () => minamo.dom.replaceChildren
                     (
                         checkButtonList,
@@ -1457,7 +1457,7 @@ export module CyclicToDo
             async resolve =>
             {
                 let result = false;
-                const tagButtonList = minamo.dom.make(HTMLDivElement)({ className: "check-button-list" });
+                const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
                 const tagButtonListUpdate = async () => minamo.dom.replaceChildren
                 (
                     tagButtonList,
@@ -1539,7 +1539,7 @@ export module CyclicToDo
         );
         export const screenCover = (data: { children?: minamo.dom.Source, onclick: () => unknown, }) =>
         {
-            const dom = minamo.dom.make(HTMLDivElement)
+            const dom = $make(HTMLDivElement)
             ({
                 tag: "div",
                 className: "screen-cover fade-in",
@@ -1578,7 +1578,7 @@ export module CyclicToDo
             }
         ) =>
         {
-            const dom = minamo.dom.make(HTMLDivElement)
+            const dom = $make(HTMLDivElement)
             ({
                 tag: "div",
                 className: `popup locale-parallel-off ${data.className ?? ""}`,
@@ -1624,7 +1624,7 @@ export module CyclicToDo
                 popup.classList.remove("show");
                 cover = null;
             };
-            const popup = minamo.dom.make(HTMLDivElement)
+            const popup = $make(HTMLDivElement)
             ({
                 tag: "div",
                 className: "menu-popup",
@@ -1637,7 +1637,7 @@ export module CyclicToDo
                     close();
                 },
             });
-            const button = minamo.dom.make(HTMLButtonElement)
+            const button = $make(HTMLButtonElement)
             ({
                 tag: "button",
                 className: "menu-button",
@@ -1814,100 +1814,114 @@ export module CyclicToDo
             },
             "delete-button"
         );
-        export const todoItem = async (entry: ToDoTagEntry, item: ToDoEntry) => $div("task-item flex-item")
-        ([
-            $div("item-header")
-            ([
-                internalLink
-                ({
-                    className: "item-title",
-                    href: { pass: entry.pass, todo: item.task, },
-                    children:
-                    [
-                        await Resource.loadSvgOrCache("task-icon"),
-                        Storage.Tag.decode(item.task),
-                    ]
-                }),
-                $div("item-operator")
+        export const todoItem = async (entry: ToDoTagEntry, item: ToDoEntry) =>
+        {
+            let isFirst = true;
+            const itemDom = $make(HTMLDivElement)
+            (
+                $div("task-item flex-item")
                 ([
-                    {
-                        tag: "button",
-                        className: item.isDefault ? "default-button main-button": "main-button",
-                        children: label("Done"),
-                        onclick: async () =>
-                        {
-                            //if (isSessionPass(pass))
-                            const fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
-                            if (fxxkingTypeScriptCompiler)
+                    $div("item-header")
+                    ([
+                        internalLink
+                        ({
+                            className: "item-title",
+                            href: { pass: entry.pass, todo: item.task, },
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("task-icon"),
+                                Storage.Tag.decode(item.task),
+                            ]
+                        }),
+                        $div("item-operator")
+                        ([
                             {
-                                alert
-                                (
-                                    "This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
-                                    +"\n"
-                                    +"これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。"
-                                );
-                            }
-                            else
-                            {
-                                const tick = Domain.done(entry.pass, item.task);
-                                Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
-                                updateWindow("operate");
-                                showToast
-                                ([
-                                    $span("dummy")([]),
-                                    $span("")(`${item.task}: 完了しました！`),
+                                tag: "button",
+                                className: item.isDefault ? "default-button main-button": "main-button",
+                                children: label("Done"),
+                                onclick: async () =>
+                                {
+                                    //if (isSessionPass(pass))
+                                    const fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
+                                    if (fxxkingTypeScriptCompiler)
                                     {
-                                        tag: "button",
-                                        className: "text-button",
-                                        children: "取り消す",
-                                        onclick: async () =>
+                                        alert
+                                        (
+                                            "This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                                            +"\n"
+                                            +"これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。"
+                                        );
+                                    }
+                                    else
+                                    {
+                                        if (isFirst) // チャタリング防止
                                         {
-                                            Storage.History.removeRaw(entry.pass, item.task, await tick); // ごみ箱は利用せずに直に削除
-                                            Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
-                                            updateWindow("operate");
-                                            // setProgressStyole("update", 1000);
+                                            isFirst = false;
+                                            const tick = Domain.done(entry.pass, item.task);
                                             showToast
                                             ([
                                                 $span("dummy")([]),
-                                                $span("")("取り消しました。"),
-                                                $span("dummy")([]),
-                                            ]);
-                                        },
+                                                $span("")(`${item.task}: 完了しました！`),
+                                                {
+                                                    tag: "button",
+                                                    className: "text-button",
+                                                    children: "取り消す",
+                                                    onclick: async () =>
+                                                    {
+                                                        Storage.History.removeRaw(entry.pass, item.task, await tick); // ごみ箱は利用せずに直に削除
+                                                        Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
+                                                        updateWindow("operate");
+                                                        // setProgressStyole("update", 1000);
+                                                        showToast
+                                                        ([
+                                                            $span("dummy")([]),
+                                                            $span("")("取り消しました。"),
+                                                            $span("dummy")([]),
+                                                        ]);
+                                                    },
+                                                }
+                                            ]); // await しない
+                                            itemDom.classList.add("fade-and-slide-out");
+                                            await minamo.core.timeout(1000);
+                                            Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
+                                            updateWindow("operate");
+                                        }
                                     }
-                                ]); // await しない
-                            }
-                        }
-                    },
-                    await menuButton
-                    ([
-                        todoDoneMenu(entry.pass, item),
-                        todoRenameMenu(entry.pass, item),
-                        todoTagMenu(entry.pass, item),
-                        todoDeleteMenu(entry.pass, item),
+                                }
+                            },
+                            await menuButton
+                            ([
+                                todoDoneMenu(entry.pass, item),
+                                todoRenameMenu(entry.pass, item),
+                                todoTagMenu(entry.pass, item),
+                                todoDeleteMenu(entry.pass, item),
+                            ]),
+                        ]),
                     ]),
-                ]),
-            ]),
-            $div("item-tags")
-            (
-                await Promise.all
-                (
-                    Storage.Tag.getByTodo(entry.pass, item.task).map
+                    $div("item-tags")
                     (
-                        async tag => internalLink
-                        ({
-                            className: "tag",
-                            href: { pass: entry.pass, tag, },
-                            children:
-                            [
-                                await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
-                                Domain.tagMap(tag)
-                            ],
-                        })
-                    )
-                )
-            ),
-            information(item),
-        ]);
+                        await Promise.all
+                        (
+                            Storage.Tag.getByTodo(entry.pass, item.task).map
+                            (
+                                async tag => internalLink
+                                ({
+                                    className: "tag",
+                                    href: { pass: entry.pass, tag, },
+                                    children:
+                                    [
+                                        await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
+                                        Domain.tagMap(tag)
+                                    ],
+                                })
+                            )
+                        )
+                    ),
+                    information(item),
+                ])
+            );
+            return itemDom;
+        };
         export const historyItem = async (entry: ToDoTagEntry, item: { task: string, tick: number }) => $div("history-item flex-item ")
         ([
             $div("item-information")
@@ -2020,7 +2034,7 @@ export module CyclicToDo
         ]);
         export const dropDownLabel = (options: { list: string[] | { [value:string]:string }, value: string, onChange?: (value: string) => unknown, className?: string}) =>
         {
-            const dropdown = minamo.dom.make(HTMLSelectElement)
+            const dropdown = $make(HTMLSelectElement)
             ({
                 className: options.className,
                 children: Array.isArray(options.list) ?
@@ -2037,7 +2051,7 @@ export module CyclicToDo
                     }
                 },
             });
-            const labelSoan = minamo.dom.make(HTMLSpanElement)
+            const labelSoan = $make(HTMLSpanElement)
             ({
                 children: Array.isArray(options.list) ?
                     options.value:
@@ -2140,7 +2154,7 @@ export module CyclicToDo
                 popup.classList.remove("show");
                 cover = null;
             };
-            const popup = minamo.dom.make(HTMLDivElement)
+            const popup = $make(HTMLDivElement)
             ({
                 tag: "div",
                 className: "menu-popup segment-popup",
@@ -2153,7 +2167,7 @@ export module CyclicToDo
                     close();
                 },
             });
-            const segment = minamo.dom.make(HTMLDivElement)
+            const segment = $make(HTMLDivElement)
             ({
                 tag: "div",
                 className: `segment ${className}`,
