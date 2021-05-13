@@ -312,26 +312,30 @@ h1
     animation-name: fade-and-slide-out;
     animation-direction: normal;
     animation-delay: 0s;
-    animation-duration: 1.0s;
+    animation-duration: 0.5s;
     animation-timing-function: ease-in-out;
     animation-fill-mode: both;
 }
 @keyframes fade-and-slide-out
 {
+    //  margin-bottom は対象となってる箇所の CSS が抱えてる問題に引き摺られてアニメーション終了時でも隙間が残る問題を回避する為の暫定的な処置
     0%
     {
         opacity: 1.0;
         max-height: 15rem;
+        margin-bottom: 0px;
     }
     50%
     {
         opacity: 0.0;
         max-height: 15rem;
+        margin-bottom: 0px;
     }
     100%
     {
         opacity: 0.0;
         max-height: 0rem;
+        margin-bottom: -1rem;
     }
 }
 .text-button

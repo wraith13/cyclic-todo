@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed May 12 2021 23:07:47 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu May 13 2021 18:59:46 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -545,7 +545,7 @@ h1.max-progress .progress-bar {
   animation-name: fade-and-slide-out;
   animation-direction: normal;
   animation-delay: 0s;
-  animation-duration: 1s;
+  animation-duration: 0.5s;
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
 }
@@ -553,14 +553,17 @@ h1.max-progress .progress-bar {
   0% {
     opacity: 1;
     max-height: 15rem;
+    margin-bottom: 0px;
   }
   50% {
     opacity: 0;
     max-height: 15rem;
+    margin-bottom: 0px;
   }
   100% {
     opacity: 0;
     max-height: 0rem;
+    margin-bottom: -1rem;
   }
 }
 .text-button {
@@ -4709,7 +4712,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                         }
                                                     ]); // await しない
                                                     itemDom.classList.add("fade-and-slide-out");
-                                                    return [4 /*yield*/, minamo_js_1.minamo.core.timeout(1000)];
+                                                    return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
                                                 case 2:
                                                     _a.sent();
                                                     Render.updateWindow("operate");

@@ -1883,7 +1883,7 @@ export module CyclicToDo
                                                 }
                                             ]); // await しない
                                             itemDom.classList.add("fade-and-slide-out");
-                                            await minamo.core.timeout(1000);
+                                            await minamo.core.timeout(500);
                                             updateWindow("operate");
                                         }
                                     }
