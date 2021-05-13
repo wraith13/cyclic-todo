@@ -2114,7 +2114,7 @@ export module CyclicToDo
         const getLastSegmentClass = (data:HeaderSource, ix: number) => ix === data.items.length -1 ?
             //(! data.operator  ? "last-segment fill-header-segment": "last-segment"): undefined;
             "last-segment": undefined;
-        export const screenSegmentedHeader = async (data:HeaderSource) => //$tag("h1")("segmented")
+        export const screenSegmentedHeader = async (data:HeaderSource) =>
         [
             $div("progress-bar")([]),
             (
@@ -2447,7 +2447,7 @@ export module CyclicToDo
                     {
                         Storage.Task.add(entry.pass, newTask);
                         Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                        await reload();
+                        await showUrl({ pass: entry.pass, todo: newTask, });
                     }
                 }
             ),
@@ -2508,11 +2508,11 @@ export module CyclicToDo
             };
             const onfocus = () =>
             {
-                Array.from(document.getElementsByTagName("h1"))[0]?.classList?.add("header-operator-has-focus");
+                getHeaderElement().classList.add("header-operator-has-focus");
             };
             const clear = () =>
             {
-                Array.from(document.getElementsByTagName("h1"))[0]?.classList?.remove("header-operator-has-focus");
+                getHeaderElement().classList.remove("header-operator-has-focus");
                 input.value = "";
                 input.blur();
                 onchange();
@@ -2649,7 +2649,7 @@ export module CyclicToDo
                         {
                             Storage.Task.add(entry.pass, newTask);
                             Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                            await reload();
+                            await showUrl({ pass: entry.pass, todo: newTask, });
                         }
                     }
                 },
@@ -2685,7 +2685,7 @@ export module CyclicToDo
                             document.body.scrollTop <= 0 &&
                             (document.getElementsByClassName("screen-body")[0]?.scrollTop ?? 0) <= 9 &&
                             ! hasScreenCover() &&
-                            ! (Array.from(document.getElementsByTagName("h1"))[0]?.classList?.contains("header-operator-has-focus") ?? false)
+                            ! (getHeaderElement().classList.contains("header-operator-has-focus") ?? false)
                         )
                         {
                             //await updateWindow("operate");
@@ -2795,7 +2795,7 @@ export module CyclicToDo
                     {
                         Storage.Task.add(entry.pass, newTask);
                         Storage.TagMember.add(entry.pass, entry.tag, newTask);
-                        await reload();
+                        await showUrl({ pass: entry.pass, todo: newTask, });
                     }
                 }
             ),
@@ -3456,7 +3456,7 @@ export module CyclicToDo
             await showWindow(await updatingScreen(url));
         export const updateTitle = () =>
         {
-            document.title = Array.from(Array.from(document.getElementsByTagName("h1"))[0]?.getElementsByClassName("segment-title"))
+            document.title = Array.from(getHeaderElement().getElementsByClassName("segment-title"))
                 ?.map((div: HTMLDivElement) => div.innerText)
                 // ?.reverse()
                 ?.join(" / ")
@@ -3465,6 +3465,7 @@ export module CyclicToDo
         export type UpdateWindowEventEype = "timer" | "scroll" | "storage" | "focus" | "blur" | "operate";
         export let updateWindow: (event: UpdateWindowEventEype) => unknown;
         let updateWindowTimer = undefined;
+        export const getHeaderElement = () => document.getElementById("screen-header") as HTMLDivElement;
         export const showWindow = async (screen: ScreenSource, updateWindow?: (event: UpdateWindowEventEype) => unknown) =>
         {
             if (undefined !== updateWindow)
@@ -3503,7 +3504,7 @@ export module CyclicToDo
             document.getElementById("screen").className = `${screen.className} screen`;
             minamo.dom.replaceChildren
             (
-                document.getElementById("screen-header"),
+                getHeaderElement(),
                 await screenSegmentedHeader(screen.header)
             );
             minamo.dom.replaceChildren
@@ -3511,15 +3512,7 @@ export module CyclicToDo
                 document.getElementById("screen-body"),
                 screen.body
             );
-            // minamo.dom.replaceChildren
-            // (
-            //     document.getElementById("body"),
-            //     $div(`${screen.className} screen`)
-            //     ([
-            //         await screenSegmentedHeader(screen.header),
-            //         $div("screen-body")(screen.body),
-            //     ])
-            // );
+            getHeaderElement().classList.toggle("header-operator-has-focus", "" !== getFilterText());
             updateTitle();
             //minamo.core.timeout(100);
             resizeFlexList();
