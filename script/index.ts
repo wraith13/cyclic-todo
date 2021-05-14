@@ -1859,7 +1859,7 @@ export module CyclicToDo
                                             isFirst = false;
                                             const tick = Domain.done(entry.pass, item.task);
                                             Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
-                                            showToast
+                                            const toast = showToast
                                             ([
                                                 $span("dummy")([]),
                                                 $span("")(`${item.task}: 完了しました！`),
@@ -1873,7 +1873,7 @@ export module CyclicToDo
                                                         Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
                                                         updateWindow("operate");
                                                         // setProgressStyole("update", 1000);
-                                                        showToast
+                                                        toast.update
                                                         ([
                                                             $span("dummy")([]),
                                                             $span("")("取り消しました。"),
@@ -3517,42 +3517,42 @@ export module CyclicToDo
             //minamo.core.timeout(100);
             resizeFlexList();
         };
-        let lastToastAt = 0;
-        export const showToast = async (toast: minamo.dom.Source, wait: number = 5000) =>
+        export const showToast = (toast: minamo.dom.Source, wait: number = 5000) =>
         {
-            const timestamp = lastToastAt = new Date().getTime();
-            const frame = document.getElementById("screen-toast");
-            frame.classList.remove("slide-down-out");
-            frame.classList.add("slide-up-in");
-            minamo.dom.replaceChildren(frame, toast);
-            await minamo.core.timeout(500);
-            if (timestamp === lastToastAt)
+            const dom = $make(HTMLDivElement)
+            ({
+                tag: "div",
+                className: "item slide-up-in",
+            });
+            const result =
             {
-                frame.classList.remove("slide-up-in");
-            }
-            if (0 < wait)
-            {
-                await minamo.core.timeout(wait);
-                if (timestamp === lastToastAt)
+                dom,
+                timer: null as (number | null),
+                update: (toast: minamo.dom.Source, wait: number = 5000) =>
                 {
-                    hideToast();
+                    minamo.dom.replaceChildren(dom, toast);
+                    if (null !== result.timer)
+                    {
+                        clearTimeout(result.timer);
+                    }
+                    if (0 < wait)
+                    {
+                        result.timer = setTimeout(() => result.hide(), wait);
+                    }
+                },
+                hide: async () =>
+                {
+                    dom.classList.remove("slide-up-in");
+                    dom.classList.add("slide-down-out");
+                    await minamo.core.timeout(500);
+                    minamo.dom.remove(dom);
                 }
-            }
+            };
+            result.update(toast, wait);
+            document.getElementById("screen-toast").appendChild(dom);
+            setTimeout(() => dom.classList.remove("slide-up-in"), 500);
+            return result;
         };
-        export const hideToast = async () =>
-        {
-            const timestamp = lastToastAt = new Date().getTime();
-            const frame = document.getElementById("screen-toast");
-            frame.classList.remove("slide-up-in");
-            frame.classList.add("slide-down-out");
-            await minamo.core.timeout(500);
-            if (timestamp === lastToastAt)
-            {
-                minamo.dom.removeChildren(frame);
-                frame.classList.remove("slide-down-out");
-            }
-        };
-
         export const setProgressStyoleRaw = (className: string) => document.getElementById("screen-header").className = `segmented ${className}`;
         let lastSetProgressAt = 0;
         export const setProgressStyole = async (className: string, timeout: number) =>

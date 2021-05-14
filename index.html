@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu May 13 2021 19:44:38 GMT+0900 (GMT+09:00) -->
+<!-- build at: Fri May 14 2021 19:07:49 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -483,6 +483,8 @@ h1.max-progress .progress-bar {
 }
 #screen-toast:not(:empty) {
   filter: drop-shadow(0rem 0rem 3rem #228844);
+}
+#screen-toast .item {
   border-top-color: #228844;
   border-top-width: 1px;
   border-top-style: solid;
@@ -494,7 +496,7 @@ h1.max-progress .progress-bar {
   align-items: center;
 }
 @media (prefers-color-scheme: dark) {
-  #screen-toast:not(:empty) {
+  #screen-toast .item {
     background-color: #000022;
   }
 }
@@ -4664,7 +4666,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     className: item.isDefault ? "default-button main-button" : "main-button",
                                     children: Render.label("Done"),
                                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                        var fxxkingTypeScriptCompiler, tick_1;
+                                        var fxxkingTypeScriptCompiler, tick_1, toast_1;
                                         var _this = this;
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
@@ -4680,7 +4682,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     isFirst = false;
                                                     tick_1 = Domain.done(entry.pass, item.task);
                                                     Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
-                                                    Render.showToast([
+                                                    toast_1 = Render.showToast([
                                                         Render.$span("dummy")([]),
                                                         Render.$span("")(item.task + ": \u5B8C\u4E86\u3057\u307E\u3057\u305F\uFF01"),
                                                         {
@@ -4700,7 +4702,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                             Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
                                                                             Render.updateWindow("operate");
                                                                             // setProgressStyole("update", 1000);
-                                                                            Render.showToast([
+                                                                            toast_1.update([
                                                                                 Render.$span("dummy")([]),
                                                                                 Render.$span("")("取り消しました。"),
                                                                                 Render.$span("dummy")([]),
@@ -4710,7 +4712,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                 });
                                                             }); },
                                                         }
-                                                    ]); // await しない
+                                                    ]);
                                                     itemDom.classList.add("fade-and-slide-out");
                                                     return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
                                                 case 2:
@@ -6896,58 +6898,45 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
-            var lastToastAt = 0;
             Render.showToast = function (toast, wait) {
                 if (wait === void 0) { wait = 5000; }
-                return __awaiter(_this, void 0, void 0, function () {
-                    var timestamp, frame;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                timestamp = lastToastAt = new Date().getTime();
-                                frame = document.getElementById("screen-toast");
-                                frame.classList.remove("slide-down-out");
-                                frame.classList.add("slide-up-in");
-                                minamo_js_1.minamo.dom.replaceChildren(frame, toast);
-                                return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
-                            case 1:
-                                _a.sent();
-                                if (timestamp === lastToastAt) {
-                                    frame.classList.remove("slide-up-in");
-                                }
-                                if (!(0 < wait)) return [3 /*break*/, 3];
-                                return [4 /*yield*/, minamo_js_1.minamo.core.timeout(wait)];
-                            case 2:
-                                _a.sent();
-                                if (timestamp === lastToastAt) {
-                                    Render.hideToast();
-                                }
-                                _a.label = 3;
-                            case 3: return [2 /*return*/];
+                var dom = Render.$make(HTMLDivElement)({
+                    tag: "div",
+                    className: "item slide-up-in",
+                });
+                var result = {
+                    dom: dom,
+                    timer: null,
+                    update: function (toast, wait) {
+                        if (wait === void 0) { wait = 5000; }
+                        minamo_js_1.minamo.dom.replaceChildren(dom, toast);
+                        if (null !== result.timer) {
+                            clearTimeout(result.timer);
                         }
-                    });
-                });
-            };
-            Render.hideToast = function () { return __awaiter(_this, void 0, void 0, function () {
-                var timestamp, frame;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            timestamp = lastToastAt = new Date().getTime();
-                            frame = document.getElementById("screen-toast");
-                            frame.classList.remove("slide-up-in");
-                            frame.classList.add("slide-down-out");
-                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
-                        case 1:
-                            _a.sent();
-                            if (timestamp === lastToastAt) {
-                                minamo_js_1.minamo.dom.removeChildren(frame);
-                                frame.classList.remove("slide-down-out");
+                        if (0 < wait) {
+                            result.timer = setTimeout(function () { return result.hide(); }, wait);
+                        }
+                    },
+                    hide: function () { return __awaiter(_this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    dom.classList.remove("slide-up-in");
+                                    dom.classList.add("slide-down-out");
+                                    return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                case 1:
+                                    _a.sent();
+                                    minamo_js_1.minamo.dom.remove(dom);
+                                    return [2 /*return*/];
                             }
-                            return [2 /*return*/];
-                    }
-                });
-            }); };
+                        });
+                    }); }
+                };
+                result.update(toast, wait);
+                document.getElementById("screen-toast").appendChild(dom);
+                setTimeout(function () { return dom.classList.remove("slide-up-in"); }, 500);
+                return result;
+            };
             Render.setProgressStyoleRaw = function (className) { return document.getElementById("screen-header").className = "segmented " + className; };
             var lastSetProgressAt = 0;
             Render.setProgressStyole = function (className, timeout) { return __awaiter(_this, void 0, void 0, function () {
