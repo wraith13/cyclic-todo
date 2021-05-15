@@ -986,6 +986,34 @@ export module CyclicToDo
     }
     export module Render
     {
+        export module Operate
+        {
+            export const done = async (pass: string, task: string, tick: number, onCanceled: () => unknown) =>
+            {
+                Domain.done(pass, task, tick);
+                const toast = showToast
+                ([
+                    $span("dummy")([]),
+                    $span("")(`${task}: 完了しました！`),
+                    {
+                        tag: "button",
+                        className: "text-button",
+                        children: "取り消す",
+                        onclick: async () =>
+                        {
+                            Storage.History.removeRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
+                            toast.update
+                            ([
+                                $span("dummy")([]),
+                                $span("")("取り消しました。"),
+                                $span("dummy")([]),
+                            ]);
+                            onCanceled();
+                        },
+                    }
+                ]);
+            };
+        }
         export interface PageParams
         {
             pass?:string;
@@ -1857,34 +1885,21 @@ export module CyclicToDo
                                         if (isFirst) // チャタリング防止
                                         {
                                             isFirst = false;
-                                            const tick = Domain.done(entry.pass, item.task);
-                                            Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
-                                            const toast = showToast
-                                            ([
-                                                $span("dummy")([]),
-                                                $span("")(`${item.task}: 完了しました！`),
-                                                {
-                                                    tag: "button",
-                                                    className: "text-button",
-                                                    children: "取り消す",
-                                                    onclick: async () =>
-                                                    {
-                                                        Storage.History.removeRaw(entry.pass, item.task, await tick); // ごみ箱は利用せずに直に削除
-                                                        Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
-                                                        updateWindow("operate");
-                                                        // setProgressStyole("update", 1000);
-                                                        toast.update
-                                                        ([
-                                                            $span("dummy")([]),
-                                                            $span("")("取り消しました。"),
-                                                            $span("dummy")([]),
-                                                        ]);
-                                                    },
-                                                }
-                                            ]); // await しない
+                                            const unUpdate = () =>
+                                            {
+                                                Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
+                                                updateWindow("operate");
+                                            };
+                                            Operate.done
+                                            (
+                                                entry.pass,
+                                                item.task,
+                                                Domain.getDoneTicks(entry.pass),
+                                                unUpdate
+                                            );
                                             itemDom.classList.add("fade-and-slide-out");
                                             await minamo.core.timeout(500);
-                                            updateWindow("operate");
+                                            unUpdate();
                                         }
                                     }
                                 }

@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Fri May 14 2021 19:07:49 GMT+0900 (GMT+09:00) -->
+<!-- build at: Fri May 14 2021 23:24:42 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -3640,6 +3640,39 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
         var Render;
         (function (Render) {
             var _this = this;
+            var Operate;
+            (function (Operate) {
+                var _this = this;
+                Operate.done = function (pass, task, tick, onCanceled) { return __awaiter(_this, void 0, void 0, function () {
+                    var toast;
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        Domain.done(pass, task, tick);
+                        toast = Render.showToast([
+                            Render.$span("dummy")([]),
+                            Render.$span("")(task + ": \u5B8C\u4E86\u3057\u307E\u3057\u305F\uFF01"),
+                            {
+                                tag: "button",
+                                className: "text-button",
+                                children: "取り消す",
+                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        Storage.History.removeRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
+                                        toast.update([
+                                            Render.$span("dummy")([]),
+                                            Render.$span("")("取り消しました。"),
+                                            Render.$span("dummy")([]),
+                                        ]);
+                                        onCanceled();
+                                        return [2 /*return*/];
+                                    });
+                                }); },
+                            }
+                        ]);
+                        return [2 /*return*/];
+                    });
+                }); };
+            })(Operate = Render.Operate || (Render.Operate = {}));
             Render.internalLink = function (data) {
                 return ({
                     tag: "a",
@@ -4666,8 +4699,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     className: item.isDefault ? "default-button main-button" : "main-button",
                                     children: Render.label("Done"),
                                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                        var fxxkingTypeScriptCompiler, tick_1, toast_1;
-                                        var _this = this;
+                                        var fxxkingTypeScriptCompiler, unUpdate;
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0:
@@ -4680,44 +4712,16 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 case 1:
                                                     if (!isFirst) return [3 /*break*/, 3];
                                                     isFirst = false;
-                                                    tick_1 = Domain.done(entry.pass, item.task);
-                                                    Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
-                                                    toast_1 = Render.showToast([
-                                                        Render.$span("dummy")([]),
-                                                        Render.$span("")(item.task + ": \u5B8C\u4E86\u3057\u307E\u3057\u305F\uFF01"),
-                                                        {
-                                                            tag: "button",
-                                                            className: "text-button",
-                                                            children: "取り消す",
-                                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                var _a, _b, _c;
-                                                                return __generator(this, function (_d) {
-                                                                    switch (_d.label) {
-                                                                        case 0:
-                                                                            _b = (_a = Storage.History).removeRaw;
-                                                                            _c = [entry.pass, item.task];
-                                                                            return [4 /*yield*/, tick_1];
-                                                                        case 1:
-                                                                            _b.apply(_a, _c.concat([_d.sent()])); // ごみ箱は利用せずに直に削除
-                                                                            Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
-                                                                            Render.updateWindow("operate");
-                                                                            // setProgressStyole("update", 1000);
-                                                                            toast_1.update([
-                                                                                Render.$span("dummy")([]),
-                                                                                Render.$span("")("取り消しました。"),
-                                                                                Render.$span("dummy")([]),
-                                                                            ]);
-                                                                            return [2 /*return*/];
-                                                                    }
-                                                                });
-                                                            }); },
-                                                        }
-                                                    ]);
+                                                    unUpdate = function () {
+                                                        Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
+                                                        Render.updateWindow("operate");
+                                                    };
+                                                    Operate.done(entry.pass, item.task, Domain.getDoneTicks(entry.pass), unUpdate);
                                                     itemDom.classList.add("fade-and-slide-out");
                                                     return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
                                                 case 2:
                                                     _a.sent();
-                                                    Render.updateWindow("operate");
+                                                    unUpdate();
                                                     _a.label = 3;
                                                 case 3: return [2 /*return*/];
                                             }
