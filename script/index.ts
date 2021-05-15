@@ -3820,7 +3820,22 @@ export module CyclicToDo
         window.addEventListener('compositionstart', Render.onCompositionStart);
         window.addEventListener('compositionend', Render.onCompositionEnd);
         window.addEventListener('keydown', Render.onKeydown);
-        document.getElementById("screen-header").addEventListener('click', () => document.getElementById("screen-body").scrollTo(0, 0));
+        document.getElementById("screen-header").addEventListener
+        (
+            'click',
+            async () =>
+            {
+                const body = document.getElementById("screen-body");
+                let top = body.scrollTop;
+                for(let i = 0; i < 25; ++i)
+                {
+                    top *= 0.6;
+                    body.scrollTo(0, top);
+                    await minamo.core.timeout(10);
+                }
+                body.scrollTo(0, 0);
+            }
+        );
         await showPage();
     };
     export const showPage = async (url: string = location.href, wait: number = 0) =>
