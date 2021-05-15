@@ -991,29 +991,41 @@ export module CyclicToDo
             export const done = async (pass: string, task: string, tick: number, onCanceled: () => unknown) =>
             {
                 Domain.done(pass, task, tick);
-                const toast = showToast
+                const toast = makeToast
                 ([
                     $span("dummy")([]),
-                    $span("")(`${task}: 完了しました！`),
-                    {
-                        tag: "button",
-                        className: "text-button",
-                        children: "取り消す",
-                        onclick: async () =>
+                    $span("")(`完了！: ${task}`),
+                    cancelTextButton
+                    (
+                        async () =>
                         {
                             Storage.History.removeRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
-                            toast.update
-                            ([
-                                $span("dummy")([]),
-                                $span("")("取り消しました。"),
-                                $span("dummy")([]),
-                            ]);
+                            await toast.hide();
                             onCanceled();
-                        },
-                    }
+                        }
+                    )
                 ]);
             };
         }
+        export const cancelTextButton = (onCanceled: () => unknown) =>
+        ({
+            tag: "button",
+            className: "text-button",
+            children: "取り消す",
+            onclick: async () =>
+            {
+                onCanceled();
+                makeToast
+                (
+                    [
+                        $span("dummy")([]),
+                        $span("")("取り消しました。"),
+                        $span("dummy")([]),
+                    ],
+                    3000
+                );
+            },
+        });
         export interface PageParams
         {
             pass?:string;
@@ -3532,40 +3544,35 @@ export module CyclicToDo
             //minamo.core.timeout(100);
             resizeFlexList();
         };
-        export const showToast = (toast: minamo.dom.Source, wait: number = 5000) =>
+        export interface Toast
+        {
+            dom: HTMLDivElement;
+            timer: number | null;
+            hide: ()  => Promise<unknown>;
+        }
+        export const makeToast = (contents: minamo.dom.Source, wait: number = 5000): Toast =>
         {
             const dom = $make(HTMLDivElement)
             ({
                 tag: "div",
                 className: "item slide-up-in",
+                children: contents,
             });
+            const hideRaw = async (className: string, wait: number) =>
+            {
+                dom.classList.remove("slide-up-in");
+                dom.classList.add(className);
+                await minamo.core.timeout(wait);
+                minamo.dom.remove(dom);
+            };
             const result =
             {
                 dom,
-                timer: null as (number | null),
-                update: (toast: minamo.dom.Source, wait: number = 5000) =>
-                {
-                    minamo.dom.replaceChildren(dom, toast);
-                    if (null !== result.timer)
-                    {
-                        clearTimeout(result.timer);
-                    }
-                    if (0 < wait)
-                    {
-                        result.timer = setTimeout(() => result.hide(), wait);
-                    }
-                },
-                hide: async () =>
-                {
-                    dom.classList.remove("slide-up-in");
-                    dom.classList.add("slide-down-out");
-                    await minamo.core.timeout(500);
-                    minamo.dom.remove(dom);
-                }
+                timer: 0 < wait ? setTimeout(() => hideRaw("slow-slide-down-out", 500), wait): null,
+                hide: async () => await hideRaw("slide-down-out", 250),
             };
-            result.update(toast, wait);
             document.getElementById("screen-toast").appendChild(dom);
-            setTimeout(() => dom.classList.remove("slide-up-in"), 500);
+            setTimeout(() => dom.classList.remove("slide-up-in"), 250);
             return result;
         };
         export const setProgressStyoleRaw = (className: string) => document.getElementById("screen-header").className = `segmented ${className}`;

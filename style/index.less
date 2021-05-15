@@ -264,7 +264,7 @@ h1
     animation-name: slide-up-in;
     animation-direction: normal;
     animation-delay: 0s;
-    animation-duration: 0.5s;
+    animation-duration: 0.25s;
     animation-timing-function: ease-in-out;
     animation-fill-mode: both;
 }
@@ -290,10 +290,15 @@ h1
     animation-name: slide-down-out;
     animation-direction: normal;
     animation-delay: 0s;
-    animation-duration: 0.5s;
+    animation-duration: 0.25s;
     animation-timing-function: ease-in-out;
     animation-fill-mode: both;
     overflow-y: hidden;
+}
+.slow-slide-down-out
+{
+    .slide-down-out;
+    animation-duration: 0.5s;
 }
 @keyframes slide-down-out
 {

@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sat May 15 2021 13:38:31 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sat May 15 2021 23:49:10 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -504,7 +504,7 @@ h1.max-progress .progress-bar {
   animation-name: slide-up-in;
   animation-direction: normal;
   animation-delay: 0s;
-  animation-duration: 0.5s;
+  animation-duration: 0.25s;
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
 }
@@ -526,10 +526,20 @@ h1.max-progress .progress-bar {
   animation-name: slide-down-out;
   animation-direction: normal;
   animation-delay: 0s;
-  animation-duration: 0.5s;
+  animation-duration: 0.25s;
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
   overflow-y: hidden;
+}
+.slow-slide-down-out {
+  animation-name: slide-down-out;
+  animation-direction: normal;
+  animation-delay: 0s;
+  animation-duration: 0.25s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+  overflow-y: hidden;
+  animation-duration: 0.5s;
 }
 @keyframes slide-down-out {
   0% {
@@ -3648,31 +3658,45 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     var _this = this;
                     return __generator(this, function (_a) {
                         Domain.done(pass, task, tick);
-                        toast = Render.showToast([
+                        toast = Render.makeToast([
                             Render.$span("dummy")([]),
-                            Render.$span("")(task + ": \u5B8C\u4E86\u3057\u307E\u3057\u305F\uFF01"),
-                            {
-                                tag: "button",
-                                className: "text-button",
-                                children: "取り消す",
-                                onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                    return __generator(this, function (_a) {
-                                        Storage.History.removeRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
-                                        toast.update([
-                                            Render.$span("dummy")([]),
-                                            Render.$span("")("取り消しました。"),
-                                            Render.$span("dummy")([]),
-                                        ]);
-                                        onCanceled();
-                                        return [2 /*return*/];
-                                    });
-                                }); },
-                            }
+                            Render.$span("")("\u5B8C\u4E86\uFF01: " + task),
+                            Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            Storage.History.removeRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
+                                            return [4 /*yield*/, toast.hide()];
+                                        case 1:
+                                            _a.sent();
+                                            onCanceled();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); })
                         ]);
                         return [2 /*return*/];
                     });
                 }); };
             })(Operate = Render.Operate || (Render.Operate = {}));
+            Render.cancelTextButton = function (onCanceled) {
+                return ({
+                    tag: "button",
+                    className: "text-button",
+                    children: "取り消す",
+                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            onCanceled();
+                            Render.makeToast([
+                                Render.$span("dummy")([]),
+                                Render.$span("")("取り消しました。"),
+                                Render.$span("dummy")([]),
+                            ], 3000);
+                            return [2 /*return*/];
+                        });
+                    }); },
+                });
+            };
             Render.internalLink = function (data) {
                 return ({
                     tag: "a",
@@ -6902,43 +6926,39 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
-            Render.showToast = function (toast, wait) {
+            Render.makeToast = function (contents, wait) {
                 if (wait === void 0) { wait = 5000; }
                 var dom = Render.$make(HTMLDivElement)({
                     tag: "div",
                     className: "item slide-up-in",
+                    children: contents,
                 });
+                var hideRaw = function (className, wait) { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                dom.classList.remove("slide-up-in");
+                                dom.classList.add(className);
+                                return [4 /*yield*/, minamo_js_1.minamo.core.timeout(wait)];
+                            case 1:
+                                _a.sent();
+                                minamo_js_1.minamo.dom.remove(dom);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); };
                 var result = {
                     dom: dom,
-                    timer: null,
-                    update: function (toast, wait) {
-                        if (wait === void 0) { wait = 5000; }
-                        minamo_js_1.minamo.dom.replaceChildren(dom, toast);
-                        if (null !== result.timer) {
-                            clearTimeout(result.timer);
+                    timer: 0 < wait ? setTimeout(function () { return hideRaw("slow-slide-down-out", 500); }, wait) : null,
+                    hide: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, hideRaw("slide-down-out", 250)];
+                            case 1: return [2 /*return*/, _a.sent()];
                         }
-                        if (0 < wait) {
-                            result.timer = setTimeout(function () { return result.hide(); }, wait);
-                        }
-                    },
-                    hide: function () { return __awaiter(_this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    dom.classList.remove("slide-up-in");
-                                    dom.classList.add("slide-down-out");
-                                    return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
-                                case 1:
-                                    _a.sent();
-                                    minamo_js_1.minamo.dom.remove(dom);
-                                    return [2 /*return*/];
-                            }
-                        });
-                    }); }
+                    }); }); },
                 };
-                result.update(toast, wait);
                 document.getElementById("screen-toast").appendChild(dom);
-                setTimeout(function () { return dom.classList.remove("slide-up-in"); }, 500);
+                setTimeout(function () { return dom.classList.remove("slide-up-in"); }, 250);
                 return result;
             };
             Render.setProgressStyoleRaw = function (className) { return document.getElementById("screen-header").className = "segmented " + className; };
