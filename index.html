@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun May 16 2021 03:29:18 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sun May 16 2021 20:18:06 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2789,7 +2789,9 @@ define("resource/lang.en", [], {
     "language.auto": "Auto",
     "please input": "Please input.",
     "Sort order setting": "Sort order setting",
-    "Display language setting": "Display language setting"
+    "Display language setting": "Display language setting",
+    "roll-back": "Cancel",
+    "roll-backed": "Canceled."
 });
 define("resource/lang.ja", [], {
     "$name": "日本語",
@@ -2842,7 +2844,9 @@ define("resource/lang.ja", [], {
     "language.auto": "自動",
     "please input": "入力してください。",
     "Sort order setting": "並び順設定",
-    "Display language setting": "言語設定"
+    "Display language setting": "言語設定",
+    "roll-back": "取り消す",
+    "roll-backed": "取り消しました。"
 });
 define("resource/images", [], {
     "application-icon": "./image/cyclictodohex.1024.svg",
@@ -3653,6 +3657,35 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             var Operate;
             (function (Operate) {
                 var _this = this;
+                Operate.removeList = function (pass, onCanceled) {
+                    if (onCanceled === void 0) { onCanceled = function () { return Render.updateWindow("operate"); }; }
+                    return __awaiter(_this, void 0, void 0, function () {
+                        var list, toast;
+                        var _this = this;
+                        return __generator(this, function (_a) {
+                            list = JSON.parse(Storage.exportJson(pass));
+                            Storage.Pass.remove(list.pass);
+                            toast = Render.makeToast([
+                                Render.$span("dummy")([]),
+                                Render.$span("")("ToDo \u30EA\u30B9\u30C8\u3092\u524A\u9664\u3057\u307E\u3057\u305F\uFF01: " + list.title),
+                                Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                Storage.importJson(JSON.stringify(list));
+                                                return [4 /*yield*/, toast.hide()];
+                                            case 1:
+                                                _a.sent();
+                                                onCanceled();
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); })
+                            ]);
+                            return [2 /*return*/];
+                        });
+                    });
+                };
                 Operate.done = function (pass, task, tick, onCanceled) { return __awaiter(_this, void 0, void 0, function () {
                     var toast;
                     var _this = this;
@@ -3683,13 +3716,13 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 return ({
                     tag: "button",
                     className: "text-button",
-                    children: "取り消す",
+                    children: Render.label("roll-back"),
                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
                             onCanceled();
                             Render.makeToast([
                                 Render.$span("dummy")([]),
-                                Render.$span("")("取り消しました。"),
+                                Render.$span("")(Render.label("roll-backed")),
                                 Render.$span("dummy")([]),
                             ], 3000);
                             return [2 /*return*/];
@@ -5529,10 +5562,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 }); }, "delete-button"),
                             "@overall" === entry.tag ?
                                 Render.menuItem(Render.label("Delete this List"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                    var backup;
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0:
-                                                Storage.Pass.remove(entry.pass);
+                                                backup = location.href;
+                                                Operate.removeList(entry.pass, function () { return CyclicToDo.showPage(backup); });
                                                 return [4 /*yield*/, CyclicToDo.showUrl({})];
                                             case 1:
                                                 _a.sent();
@@ -5789,7 +5824,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 case "storage": return [3 /*break*/, 5];
                                                 case "operate": return [3 /*break*/, 7];
                                             }
-                                            return [3 /*break*/, 9];
+                                            return [3 /*break*/, 12];
                                         case 1:
                                             Domain.updateListProgress(list);
                                             isDirty = isDirty || (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list)));
@@ -5823,7 +5858,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     }
                                                 }); }); });
                                             }
-                                            return [3 /*break*/, 9];
+                                            return [3 /*break*/, 12];
                                         case 2:
                                             Domain.updateListProgress(list);
                                             isDirty = isDirty || (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list)));
@@ -5832,12 +5867,13 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         case 3:
                                             _f.sent();
                                             _f.label = 4;
-                                        case 4: return [3 /*break*/, 9];
+                                        case 4: return [3 /*break*/, 12];
                                         case 5: return [4 /*yield*/, CyclicToDo.reload()];
                                         case 6:
                                             _f.sent();
-                                            return [3 /*break*/, 9];
+                                            return [3 /*break*/, 12];
                                         case 7:
+                                            if (!(0 <= Storage.Pass.get().indexOf(entry.pass))) return [3 /*break*/, 9];
                                             Domain.updateListProgress(list);
                                             Domain.sortList(entry, list);
                                             isDirty = false;
@@ -5847,8 +5883,13 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         case 8:
                                             _b.apply(void 0, [_f.sent()]);
                                             Render.resizeFlexList();
-                                            return [3 /*break*/, 9];
-                                        case 9: return [2 /*return*/];
+                                            return [3 /*break*/, 11];
+                                        case 9: return [4 /*yield*/, CyclicToDo.showUrl({})];
+                                        case 10:
+                                            _f.sent();
+                                            _f.label = 11;
+                                        case 11: return [3 /*break*/, 12];
+                                        case 12: return [2 /*return*/];
                                     }
                                 });
                             }); };
@@ -6724,14 +6765,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     }),
                                     Render.menuItem(Render.label("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0:
-                                                    Storage.Pass.remove(list.pass);
-                                                    return [4 /*yield*/, CyclicToDo.reload()];
-                                                case 1:
-                                                    _a.sent();
-                                                    return [2 /*return*/];
-                                            }
+                                            // Storage.Pass.remove(list.pass);
+                                            // await reload();
+                                            Operate.removeList(list.pass);
+                                            Render.updateWindow("operate");
+                                            return [2 /*return*/];
                                         });
                                     }); }, "delete-button")
                                 ])];
@@ -6938,7 +6976,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0:
-                                                if (!("storage" === event)) return [3 /*break*/, 2];
+                                                if (!("storage" === event || "operate" === event)) return [3 /*break*/, 2];
                                                 return [4 /*yield*/, CyclicToDo.reload()];
                                             case 1:
                                                 _a.sent();
@@ -7043,6 +7081,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
                 var border = FontRemUnit * 26 + 10;
                 Array.from(document.getElementsByClassName("menu-popup")).forEach(function (header) {
+                    header.classList.toggle("locale-parallel-on", 2 <= minColumns);
+                    header.classList.toggle("locale-parallel-off", minColumns < 2);
+                });
+                [document.getElementById("screen-toast")].forEach(function (header) {
                     header.classList.toggle("locale-parallel-on", 2 <= minColumns);
                     header.classList.toggle("locale-parallel-off", minColumns < 2);
                 });
@@ -7247,97 +7289,101 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 }
                             });
                         }); });
-                        return [4 /*yield*/, CyclicToDo.showPage()];
+                        return [4 /*yield*/, Render.showUpdatingScreen(location.href)];
                     case 1:
+                        _a.sent();
+                        return [4 /*yield*/, CyclicToDo.showPage()];
+                    case 2:
                         _a.sent();
                         return [2 /*return*/];
                 }
             });
         }); };
-        CyclicToDo.showPage = function (url, wait) {
+        CyclicToDo.showPage = function (url, _wait) {
             if (url === void 0) { url = location.href; }
-            if (wait === void 0) { wait = 0; }
+            if (_wait === void 0) { _wait = 0; }
             return __awaiter(_this, void 0, void 0, function () {
-                var urlParams, hash, tag, todo, pass, _a;
-                var _b;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var urlParams, hash, tag, todo, pass, _a, _b;
+                var _c;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
                         case 0:
                             window.scrollTo(0, 0);
-                            return [4 /*yield*/, Render.showUpdatingScreen(url)];
-                        case 1:
-                            _c.sent();
-                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(wait)];
-                        case 2:
-                            _c.sent();
                             urlParams = CyclicToDo.getUrlParams(url);
                             hash = CyclicToDo.getUrlHash(url);
                             tag = urlParams["tag"];
                             todo = urlParams["todo"];
-                            pass = (_b = urlParams["pass"]) !== null && _b !== void 0 ? _b : Storage.sessionPassPrefix + ":" + new Date().getTime();
-                            if (!(pass && todo)) return [3 /*break*/, 4];
+                            pass = (_c = urlParams["pass"]) !== null && _c !== void 0 ? _c : Storage.sessionPassPrefix + ":" + new Date().getTime();
+                            if (!(pass && todo)) return [3 /*break*/, 2];
                             console.log("show todo screen");
                             return [4 /*yield*/, Render.showTodoScreen(pass, todo)];
-                        case 3:
-                            _c.sent();
-                            return [3 /*break*/, 12];
-                        case 4:
-                            if (!(Storage.isSessionPass(pass) && !tag)) return [3 /*break*/, 11];
+                        case 1:
+                            _d.sent();
+                            return [3 /*break*/, 18];
+                        case 2:
+                            if (!(Storage.isSessionPass(pass) && !tag)) return [3 /*break*/, 9];
                             _a = hash;
                             switch (_a) {
-                                case "import": return [3 /*break*/, 5];
-                                case "removed": return [3 /*break*/, 6];
-                                case "loading": return [3 /*break*/, 7];
+                                case "import": return [3 /*break*/, 3];
+                                case "removed": return [3 /*break*/, 4];
+                                case "loading": return [3 /*break*/, 5];
                             }
-                            return [3 /*break*/, 8];
-                        case 5:
+                            return [3 /*break*/, 6];
+                        case 3:
                             console.log("show import screen");
                             Render.showImportScreen();
-                            return [3 /*break*/, 10];
-                        case 6:
+                            return [3 /*break*/, 8];
+                        case 4:
                             console.log("show removed-list screen");
                             Render.showRemovedListScreen();
-                            return [3 /*break*/, 10];
-                        case 7:
+                            return [3 /*break*/, 8];
+                        case 5:
                             console.log("show loading screen");
                             // await Render.showUpdatingScreen(url);
-                            return [3 /*break*/, 10];
-                        case 8:
+                            return [3 /*break*/, 8];
+                        case 6:
                             console.log("show welcome screen");
                             return [4 /*yield*/, Render.showWelcomeScreen()];
+                        case 7:
+                            _d.sent();
+                            return [3 /*break*/, 8];
+                        case 8: return [3 /*break*/, 18];
                         case 9:
-                            _c.sent();
-                            return [3 /*break*/, 10];
-                        case 10: return [3 /*break*/, 12];
-                        case 11:
-                            //Domain.merge(pass, tag, todo, history);
-                            switch (hash) {
-                                case "history":
-                                    console.log("show history screen");
-                                    Render.showHistoryScreen(urlParams, { tag: tag, pass: pass, todo: Storage.TagMember.get(pass, tag) });
-                                    break;
-                                // case "statistics":
-                                //     dom.updateStatisticsScreen(title, pass, todo);
-                                //     break;
-                                case "removed":
-                                    console.log("show removed screen");
-                                    Render.showRemovedScreen(pass);
-                                    break;
-                                case "import":
-                                    console.log("show import screen");
-                                    Render.showImportScreen();
-                                    break;
-                                case "export":
-                                    console.log("show export screen");
-                                    Render.showExportScreen(pass);
-                                    break;
-                                default:
-                                    console.log("show list screen");
-                                    Render.showListScreen(urlParams, { tag: tag !== null && tag !== void 0 ? tag : "@overall", pass: pass, todo: Storage.TagMember.get(pass, tag) });
-                                    break;
+                            _b = hash;
+                            switch (_b) {
+                                case "history": return [3 /*break*/, 10];
+                                case "removed": return [3 /*break*/, 11];
+                                case "import": return [3 /*break*/, 12];
+                                case "export": return [3 /*break*/, 13];
                             }
-                            _c.label = 12;
-                        case 12: return [2 /*return*/];
+                            return [3 /*break*/, 14];
+                        case 10:
+                            console.log("show history screen");
+                            Render.showHistoryScreen(urlParams, { tag: tag, pass: pass, todo: Storage.TagMember.get(pass, tag) });
+                            return [3 /*break*/, 18];
+                        case 11:
+                            console.log("show removed screen");
+                            Render.showRemovedScreen(pass);
+                            return [3 /*break*/, 18];
+                        case 12:
+                            console.log("show import screen");
+                            Render.showImportScreen();
+                            return [3 /*break*/, 18];
+                        case 13:
+                            console.log("show export screen");
+                            Render.showExportScreen(pass);
+                            return [3 /*break*/, 18];
+                        case 14:
+                            if (!(0 <= Storage.Pass.get().indexOf(pass))) return [3 /*break*/, 15];
+                            console.log("show list screen");
+                            Render.showListScreen(urlParams, { tag: tag !== null && tag !== void 0 ? tag : "@overall", pass: pass, todo: Storage.TagMember.get(pass, tag) });
+                            return [3 /*break*/, 17];
+                        case 15: return [4 /*yield*/, CyclicToDo.showUrl({})];
+                        case 16:
+                            _d.sent();
+                            _d.label = 17;
+                        case 17: return [3 /*break*/, 18];
+                        case 18: return [2 /*return*/];
                     }
                 });
             });

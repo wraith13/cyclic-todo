@@ -49,5 +49,7 @@
     "language.auto": "Auto",
     "please input": "Please input.",
     "Sort order setting": "Sort order setting",
-    "Display language setting": "Display language setting"
+    "Display language setting": "Display language setting",
+    "roll-back": "Cancel",
+    "roll-backed": "Canceled."
 }

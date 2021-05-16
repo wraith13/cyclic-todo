@@ -49,5 +49,7 @@
     "language.auto": "自動",
     "please input": "入力してください。",
     "Sort order setting": "並び順設定",
-    "Display language setting": "言語設定"
+    "Display language setting": "言語設定",
+    "roll-back": "取り消す",
+    "roll-backed": "取り消しました。"
 }

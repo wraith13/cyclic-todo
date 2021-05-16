@@ -988,6 +988,25 @@ export module CyclicToDo
     {
         export module Operate
         {
+            export const removeList = async (pass: string, onCanceled: () => unknown = () => updateWindow("operate")) =>
+            {
+                const list = JSON.parse(Storage.exportJson(pass));
+                Storage.Pass.remove(list.pass);
+                const toast = makeToast
+                ([
+                    $span("dummy")([]),
+                    $span("")(`ToDo リストを削除しました！: ${list.title}`),
+                    cancelTextButton
+                    (
+                        async () =>
+                        {
+                            Storage.importJson(JSON.stringify(list));
+                            await toast.hide();
+                            onCanceled();
+                        }
+                    )
+                ]);
+            };
             export const done = async (pass: string, task: string, tick: number, onCanceled: () => unknown) =>
             {
                 Domain.done(pass, task, tick);
@@ -1011,7 +1030,7 @@ export module CyclicToDo
         ({
             tag: "button",
             className: "text-button",
-            children: "取り消す",
+            children: label("roll-back"),
             onclick: async () =>
             {
                 onCanceled();
@@ -1019,7 +1038,7 @@ export module CyclicToDo
                 (
                     [
                         $span("dummy")([]),
-                        $span("")("取り消しました。"),
+                        $span("")(label("roll-backed")),
                         $span("dummy")([]),
                     ],
                     3000
@@ -2519,7 +2538,10 @@ export module CyclicToDo
                     label("Delete this List"),
                     async () =>
                     {
-                        Storage.Pass.remove(entry.pass);
+                        // Storage.Pass.remove(entry.pass);
+                        // await showUrl({ });
+                        const backup = location.href;
+                        Operate.removeList(entry.pass, () => showPage(backup));
                         await showUrl({ });
                     },
                     "delete-button"
@@ -2777,12 +2799,19 @@ export module CyclicToDo
                         await reload();
                         break;
                     case "operate":
-                        Domain.updateListProgress(list);
-                        Domain.sortList(entry, list);
-                        isDirty = false;
-                        const filter = getFilterText();
-                        replaceScreenBody(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))));
-                        resizeFlexList();
+                        if (0 <= Storage.Pass.get().indexOf(entry.pass))
+                        {
+                            Domain.updateListProgress(list);
+                            Domain.sortList(entry, list);
+                            isDirty = false;
+                            const filter = getFilterText();
+                            replaceScreenBody(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))));
+                            resizeFlexList();
+                        }
+                        else
+                        {
+                            await showUrl({ });
+                        }
                         break;
                 }
             };
@@ -3382,8 +3411,10 @@ export module CyclicToDo
                             label("Delete"),
                             async () =>
                             {
-                                Storage.Pass.remove(list.pass);
-                                await reload();
+                                // Storage.Pass.remove(list.pass);
+                                // await reload();
+                                Operate.removeList(list.pass);
+                                updateWindow("operate");
                             },
                             "delete-button"
                         )
@@ -3535,7 +3566,7 @@ export module CyclicToDo
             {
                 Render.updateWindow = async (event: UpdateWindowEventEype) =>
                 {
-                    if ("storage" === event)
+                    if ("storage" === event || "operate" === event)
                     {
                         await reload();
                     }
@@ -3639,6 +3670,14 @@ export module CyclicToDo
             const FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
             const border = FontRemUnit *26 +10;
             (Array.from(document.getElementsByClassName("menu-popup")) as HTMLDivElement[]).forEach
+            (
+                header =>
+                {
+                    header.classList.toggle("locale-parallel-on", 2 <= minColumns);
+                    header.classList.toggle("locale-parallel-off", minColumns < 2);
+                }
+            );
+            [document.getElementById("screen-toast") as HTMLDivElement].forEach
             (
                 header =>
                 {
@@ -3880,13 +3919,13 @@ export module CyclicToDo
                 body.scrollTo(0, 0);
             }
         );
+        await Render.showUpdatingScreen(location.href);
         await showPage();
     };
-    export const showPage = async (url: string = location.href, wait: number = 0) =>
+    export const showPage = async (url: string = location.href, _wait: number = 0) =>
     {
         window.scrollTo(0,0);
-        await Render.showUpdatingScreen(url);
-        await minamo.core.timeout(wait);
+        //await minamo.core.timeout(wait);
         const urlParams = getUrlParams(url);
         const hash = getUrlHash(url);
         const tag = urlParams["tag"];
@@ -3947,8 +3986,15 @@ export module CyclicToDo
                 Render.showExportScreen(pass);
                 break;
             default:
-                console.log("show list screen");
-                Render.showListScreen(urlParams, { tag: tag ?? "@overall", pass, todo: Storage.TagMember.get(pass, tag) });
+                if (0 <= Storage.Pass.get().indexOf(pass))
+                {
+                    console.log("show list screen");
+                    Render.showListScreen(urlParams, { tag: tag ?? "@overall", pass, todo: Storage.TagMember.get(pass, tag) });
+                }
+                else
+                {
+                    await showUrl({ });
+                }
                 break;
             }
         }
