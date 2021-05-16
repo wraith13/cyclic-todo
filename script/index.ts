@@ -1777,7 +1777,8 @@ export module CyclicToDo
         (
             pass: string,
             item: ToDoEntry,
-            onDone: () => Promise<unknown> = async () => await reload()
+            onDone: () => Promise<unknown> = async () => await updateWindow("operate"),
+            onCanceled: () => Promise<unknown> = async () => await updateWindow("operate")
         ) =>
         menuItem
         (
@@ -1787,7 +1788,13 @@ export module CyclicToDo
                 const result = Domain.parseDate(await dateTimePrompt(item.task, Domain.getTicks()));
                 if (null !== result && Domain.getTicks(result) <= Domain.getTicks())
                 {
-                    Storage.History.add(pass, item.task, Domain.getTicks(result));
+                    Operate.done
+                    (
+                        pass,
+                        item.task,
+                        Domain.getTicks(result),
+                        onCanceled
+                    );
                     await onDone();
                 }
             }
@@ -1857,6 +1864,17 @@ export module CyclicToDo
         export const todoItem = async (entry: ToDoTagEntry, item: ToDoEntry) =>
         {
             let isFirst = true;
+            const onUpdate = async () =>
+            {
+                Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
+                updateWindow("operate");
+            };
+            const onDone = async () =>
+            {
+                itemDom.classList.add("fade-and-slide-out");
+                await minamo.core.timeout(500);
+                onUpdate();
+            };
             const itemDom = $make(HTMLDivElement)
             (
                 $div("task-item flex-item")
@@ -1897,28 +1915,21 @@ export module CyclicToDo
                                         if (isFirst) // チャタリング防止
                                         {
                                             isFirst = false;
-                                            const unUpdate = () =>
-                                            {
-                                                Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
-                                                updateWindow("operate");
-                                            };
                                             Operate.done
                                             (
                                                 entry.pass,
                                                 item.task,
                                                 Domain.getDoneTicks(entry.pass),
-                                                unUpdate
+                                                onUpdate
                                             );
-                                            itemDom.classList.add("fade-and-slide-out");
-                                            await minamo.core.timeout(500);
-                                            unUpdate();
+                                            await onDone();
                                         }
                                     }
                                 }
                             },
                             await menuButton
                             ([
-                                todoDoneMenu(entry.pass, item),
+                                todoDoneMenu(entry.pass, item, onDone, onUpdate),
                                 todoRenameMenu(entry.pass, item),
                                 todoTagMenu(entry.pass, item),
                                 todoDeleteMenu(entry.pass, item),
@@ -2400,7 +2411,11 @@ export module CyclicToDo
                     ),
                 ])
         });
-        export const replaceScreenBodu = (body: minamo.dom.Source) => minamo.dom.replaceChildren(document.getElementsByClassName("screen-body")[0], body);
+        export const replaceScreenBody = (body: minamo.dom.Source) => minamo.dom.replaceChildren
+        (
+            document.getElementsByClassName("screen-body")[0],
+            body
+        );
         export const listRenameMenu =
         (
             pass: string,
@@ -2766,7 +2781,7 @@ export module CyclicToDo
                         Domain.sortList(entry, list);
                         isDirty = false;
                         const filter = getFilterText();
-                        replaceScreenBodu(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))));
+                        replaceScreenBody(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))));
                         resizeFlexList();
                         break;
                 }
@@ -2879,7 +2894,7 @@ export module CyclicToDo
                 async filter =>
                 {
                     const regulatedFilter = regulateFilterText(filter);
-                    replaceScreenBodu(await historyScreenBody(entry, list.filter(item => isMatchHistoryItem(regulatedFilter, entry, item))));
+                    replaceScreenBody(await historyScreenBody(entry, list.filter(item => isMatchHistoryItem(regulatedFilter, entry, item))));
                     resizeFlexList();
                     updateUrlFilterParam(filter);
                 }
@@ -3035,84 +3050,93 @@ export module CyclicToDo
                 async () => await showUrl({ pass, hash: "export", })
             ),
         ];
-
-        export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[], tag: string = Storage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0]) =>
+        export const todoScreenHeader = async (pass: string, item: ToDoEntry, _ticks: number[], tag: string) =>
         ({
-            className: "todo-screen",
-            header:
-            {
-                items:
-                [
-                    screenHeaderHomeSegment(),
-                    await screenHeaderListSegment(pass),
-                    await screenHeaderTagSegment(pass, tag),
-                    await screenHeaderTaskSegment(pass, tag, item.task),
-                ],
-                menu: await todoScreenMenu(pass, item),
-            },
-            body:
+            items:
             [
-                Storage.isSessionPass(pass) ?
-                    []:
-                    $div("button-list")
-                    ({
-                        tag: "button",
-                        className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
-                        children: label("Done"),
-                        onclick: async () =>
-                        {
-                            Domain.done(pass, item.task);
-                            await reload();
-                        }
-                    }),
-                $div("row-flex-list todo-list")
+                screenHeaderHomeSegment(),
+                await screenHeaderListSegment(pass),
+                await screenHeaderTagSegment(pass, tag),
+                await screenHeaderTaskSegment(pass, tag, item.task),
+            ],
+            menu: await todoScreenMenu(pass, item),
+        });
+        export const todoScreenBody = async (pass: string, item: ToDoEntry, ticks: number[], _tag: string) =>
+        ([
+            Storage.isSessionPass(pass) ?
+                []:
+                $div("button-list")
+                ({
+                    tag: "button",
+                    className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
+                    children: label("Done"),
+                    onclick: async () =>
+                    {
+                        Operate.done
+                        (
+                            pass,
+                            item.task,
+                            Domain.getDoneTicks(pass),
+                            () => updateWindow("operate")
+                        );
+                        updateWindow("operate");
+                    }
+                }),
+            $div("row-flex-list todo-list")
+            ([
+                $div("task-item flex-item")
                 ([
-                    $div("task-item flex-item")
-                    ([
-                        $div("item-tags")
-                        (
-                            await Promise.all
-                            (
-                                Storage.Tag.getByTodo(pass, item.task).map
-                                (
-                                    async tag => internalLink
-                                    ({
-                                        className: "tag",
-                                        href: { pass, tag, },
-                                        children:
-                                        [
-                                            await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
-                                            Domain.tagMap(tag)
-                                        ],
-                                    })
-                                )
-                            )
-                        ),
-                        information(item),
-                    ]),
-                ]),
-                $div("column-flex-list tick-list")
-                (
-                    await Promise.all
+                    $div("item-tags")
                     (
-                        ticks.map
+                        await Promise.all
                         (
-                            (tick, index) => tickItem
+                            Storage.Tag.getByTodo(pass, item.task).map
                             (
-                                pass,
-                                item,
-                                tick,
-                                "number" === typeof ticks[index +1] ? tick -ticks[index +1]: null,
-                                ticks.length < 2 ? null: Math.max.apply(null, Calculate.intervals(ticks))
+                                async tag => internalLink
+                                ({
+                                    className: "tag",
+                                    href: { pass, tag, },
+                                    children:
+                                    [
+                                        await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
+                                        Domain.tagMap(tag)
+                                    ],
+                                })
                             )
                         )
+                    ),
+                    information(item),
+                ]),
+            ]),
+            $div("column-flex-list tick-list")
+            (
+                await Promise.all
+                (
+                    ticks.map
+                    (
+                        (tick, index) => tickItem
+                        (
+                            pass,
+                            item,
+                            tick,
+                            "number" === typeof ticks[index +1] ? tick -ticks[index +1]: null,
+                            ticks.length < 2 ? null: Math.max.apply(null, Calculate.intervals(ticks))
+                        )
                     )
-                ),
-            ]
+                )
+            ),
+        ]);
+        export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[], tag: string) =>
+        ({
+            className: "todo-screen",
+            header: await todoScreenHeader(pass, item, ticks, tag),
+            body: await todoScreenBody(pass, item, ticks, tag)
         });
         export const showTodoScreen = async (pass: string, task: string) =>
         {
-            const item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
+            let item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
+            let tag: string = Storage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0];
+            let ticks = Storage.History.get(pass, task);
             Domain.updateProgress(item);
             const updateWindow = async (event: UpdateWindowEventEype) =>
             {
@@ -3130,9 +3154,17 @@ export module CyclicToDo
                     case "storage":
                         await reload();
                         break;
+                    case "operate":
+                        item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
+                        tag = Storage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0];
+                        ticks = Storage.History.get(pass, task);
+                        Domain.updateProgress(item);
+                        replaceScreenBody(await todoScreenBody(pass, item, ticks, tag));
+                        resizeFlexList();
+                        break;
                 }
             };
-            await showWindow(await todoScreen(pass, item, Storage.History.get(pass, task)), updateWindow);
+            await showWindow(await todoScreen(pass, item, ticks, tag), updateWindow);
         };
         export module Resource
         {
@@ -3560,6 +3592,11 @@ export module CyclicToDo
             });
             const hideRaw = async (className: string, wait: number) =>
             {
+                if (null !== result.timer)
+                {
+                    clearTimeout(result.timer);
+                    result.timer = null;
+                }
                 dom.classList.remove("slide-up-in");
                 dom.classList.add(className);
                 await minamo.core.timeout(wait);
