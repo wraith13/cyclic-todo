@@ -993,10 +993,9 @@ export module CyclicToDo
                 const list = JSON.parse(Storage.exportJson(pass));
                 Storage.Pass.remove(list.pass);
                 const toast = makeToast
-                ([
-                    $span("dummy")([]),
-                    $span("")(`ToDo リストを削除しました！: ${list.title}`),
-                    cancelTextButton
+                ({
+                    content: $span("")(`ToDo リストを削除しました！: ${list.title}`),
+                    backwardOperator: cancelTextButton
                     (
                         async () =>
                         {
@@ -1004,17 +1003,16 @@ export module CyclicToDo
                             await toast.hide();
                             onCanceled();
                         }
-                    )
-                ]);
+                    ),
+                });
             };
             export const done = async (pass: string, task: string, tick: number, onCanceled: () => unknown) =>
             {
                 Domain.done(pass, task, tick);
                 const toast = makeToast
-                ([
-                    $span("dummy")([]),
-                    $span("")(`完了！: ${task}`),
-                    cancelTextButton
+                ({
+                    content: $span("")(`完了！: ${task}`),
+                    backwardOperator: cancelTextButton
                     (
                         async () =>
                         {
@@ -1022,8 +1020,8 @@ export module CyclicToDo
                             await toast.hide();
                             onCanceled();
                         }
-                    )
-                ]);
+                    ),
+                });
             };
         }
         export const cancelTextButton = (onCanceled: () => unknown) =>
@@ -1035,14 +1033,10 @@ export module CyclicToDo
             {
                 onCanceled();
                 makeToast
-                (
-                    [
-                        $span("dummy")([]),
-                        $span("")(label("roll-backed")),
-                        $span("dummy")([]),
-                    ],
-                    3000
-                );
+                ({
+                    content: $span("")(label("roll-backed")),
+                    wait: 3000,
+                });
             },
         });
         export interface PageParams
@@ -1166,7 +1160,9 @@ export module CyclicToDo
         };
         // export const prompt = systemPrompt;
         export const prompt = customPrompt;
-        export const alert = (message: string) => window.alert(message);
+        // export const alert = (message: string) => window.alert(message);
+        export const alert = (message: string) => makeToast({ content: message, });
+
         export const systemConfirm = (message: string) => window.confirm(message);
         export const confirm = systemConfirm;
         export const newListPrompt = async () =>
@@ -3613,13 +3609,27 @@ export module CyclicToDo
             timer: number | null;
             hide: ()  => Promise<unknown>;
         }
-        export const makeToast = (contents: minamo.dom.Source, wait: number = 5000): Toast =>
+        export const makeToast =
+        (
+            data:
+            {
+                content: minamo.dom.Source,
+                backwardOperator?: minamo.dom.Source,
+                forwardOperator?: minamo.dom.Source,
+                wait?: number,
+            }
+        ): Toast =>
         {
             const dom = $make(HTMLDivElement)
             ({
                 tag: "div",
                 className: "item slide-up-in",
-                children: contents,
+                children:
+                [
+                    data.backwardOperator ?? $span("dummy")([]),
+                    data.content,
+                    data.forwardOperator ?? $span("dummy")([]),
+                ],
             });
             const hideRaw = async (className: string, wait: number) =>
             {
@@ -3633,6 +3643,7 @@ export module CyclicToDo
                 await minamo.core.timeout(wait);
                 minamo.dom.remove(dom);
             };
+            const wait = data.wait ?? 5000;
             const result =
             {
                 dom,

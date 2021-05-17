@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon May 17 2021 17:59:57 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon May 17 2021 18:25:42 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -3742,10 +3742,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         return __generator(this, function (_a) {
                             list = JSON.parse(Storage.exportJson(pass));
                             Storage.Pass.remove(list.pass);
-                            toast = Render.makeToast([
-                                Render.$span("dummy")([]),
-                                Render.$span("")("ToDo \u30EA\u30B9\u30C8\u3092\u524A\u9664\u3057\u307E\u3057\u305F\uFF01: " + list.title),
-                                Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
+                            toast = Render.makeToast({
+                                content: Render.$span("")("ToDo \u30EA\u30B9\u30C8\u3092\u524A\u9664\u3057\u307E\u3057\u305F\uFF01: " + list.title),
+                                backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0:
@@ -3757,8 +3756,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 return [2 /*return*/];
                                         }
                                     });
-                                }); })
-                            ]);
+                                }); }),
+                            });
                             return [2 /*return*/];
                         });
                     });
@@ -3768,10 +3767,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     var _this = this;
                     return __generator(this, function (_a) {
                         Domain.done(pass, task, tick);
-                        toast = Render.makeToast([
-                            Render.$span("dummy")([]),
-                            Render.$span("")("\u5B8C\u4E86\uFF01: " + task),
-                            Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
+                        toast = Render.makeToast({
+                            content: Render.$span("")("\u5B8C\u4E86\uFF01: " + task),
+                            backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
@@ -3783,8 +3781,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             return [2 /*return*/];
                                     }
                                 });
-                            }); })
-                        ]);
+                            }); }),
+                        });
                         return [2 /*return*/];
                     });
                 }); };
@@ -3797,11 +3795,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
                             onCanceled();
-                            Render.makeToast([
-                                Render.$span("dummy")([]),
-                                Render.$span("")(Render.label("roll-backed")),
-                                Render.$span("dummy")([]),
-                            ], 3000);
+                            Render.makeToast({
+                                content: Render.$span("")(Render.label("roll-backed")),
+                                wait: 3000,
+                            });
                             return [2 /*return*/];
                         });
                     }); },
@@ -3920,7 +3917,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             }); };
             // export const prompt = systemPrompt;
             Render.prompt = Render.customPrompt;
-            Render.alert = function (message) { return window.alert(message); };
+            // export const alert = (message: string) => window.alert(message);
+            Render.alert = function (message) { return Render.makeToast({ content: message, }); };
             Render.systemConfirm = function (message) { return window.confirm(message); };
             Render.confirm = Render.systemConfirm;
             Render.newListPrompt = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -7087,12 +7085,16 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
-            Render.makeToast = function (contents, wait) {
-                if (wait === void 0) { wait = 5000; }
+            Render.makeToast = function (data) {
+                var _a, _b, _c;
                 var dom = Render.$make(HTMLDivElement)({
                     tag: "div",
                     className: "item slide-up-in",
-                    children: contents,
+                    children: [
+                        (_a = data.backwardOperator) !== null && _a !== void 0 ? _a : Render.$span("dummy")([]),
+                        data.content,
+                        (_b = data.forwardOperator) !== null && _b !== void 0 ? _b : Render.$span("dummy")([]),
+                    ],
                 });
                 var hideRaw = function (className, wait) { return __awaiter(_this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
@@ -7112,6 +7114,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         }
                     });
                 }); };
+                var wait = (_c = data.wait) !== null && _c !== void 0 ? _c : 5000;
                 var result = {
                     dom: dom,
                     timer: 0 < wait ? setTimeout(function () { return hideRaw("slow-slide-down-out", 500); }, wait) : null,
