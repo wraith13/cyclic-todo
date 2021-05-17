@@ -244,7 +244,22 @@ h1
 {
     &:not(:empty)
     {
-        filter: drop-shadow(0.0rem -0rem 3rem @accent-color);
+        //filter: drop-shadow(0.0rem -0rem 3rem @accent-color);
+        animation-name: shadow-slide-up-in;
+        animation-direction: normal;
+        animation-delay: 0s;
+        animation-duration: 0.25s;
+        animation-timing-function: ease-in-out;
+        animation-fill-mode: both;
+    }
+    :empty
+    {
+        animation-name: shadow-slide-down-out;
+        animation-direction: normal;
+        animation-delay: 0s;
+        animation-duration: 0.25s;
+        animation-timing-function: ease-in-out;
+        animation-fill-mode: both;
     }
     .item
     {
@@ -258,6 +273,32 @@ h1
         justify-content: space-between;
         align-items: center;
     }
+}
+@keyframes shadow-slide-up-in
+{
+    0% { filter: initial; }
+    10% { filter: drop-shadow(0.0rem -0rem 0.333rem @accent-color); }
+    20% { filter: drop-shadow(0.0rem -0rem 0.666rem @accent-color); }
+    40% { filter: drop-shadow(0.0rem -0rem 1rem @accent-color); }
+    50% { filter: drop-shadow(0.0rem -0rem 1.333rem @accent-color); }
+    60% { filter: drop-shadow(0.0rem -0rem 1.666rem @accent-color); }
+    70% { filter: drop-shadow(0.0rem -0rem 2rem @accent-color); }
+    80% { filter: drop-shadow(0.0rem -0rem 2.333rem @accent-color); }
+    90% { filter: drop-shadow(0.0rem -0rem 2.666rem @accent-color); }
+    100% { filter: drop-shadow(0.0rem -0rem 3rem @accent-color); }
+}
+@keyframes shadow-slide-down-out
+{
+    0% { filter: drop-shadow(0.0rem -0rem 3rem @accent-color); }
+    10% { filter: drop-shadow(0.0rem -0rem 2.666rem @accent-color); }
+    20% { filter: drop-shadow(0.0rem -0rem 2.333rem @accent-color); }
+    40% { filter: drop-shadow(0.0rem -0rem 2rem @accent-color); }
+    50% { filter: drop-shadow(0.0rem -0rem 1.666rem @accent-color); }
+    60% { filter: drop-shadow(0.0rem -0rem 1.333rem @accent-color); }
+    70% { filter: drop-shadow(0.0rem -0rem 1rem @accent-color); }
+    80% { filter: drop-shadow(0.0rem -0rem 0.666rem @accent-color); }
+    90% { filter: drop-shadow(0.0rem -0rem 0.333rem @accent-color); }
+    100% { filter: initial; }
 }
 .slide-up-in
 {

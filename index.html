@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun May 16 2021 20:18:06 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon May 17 2021 17:59:57 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -482,7 +482,20 @@ h1.max-progress .progress-bar {
   }
 }
 #screen-toast:not(:empty) {
-  filter: drop-shadow(0rem 0rem 3rem #228844);
+  animation-name: shadow-slide-up-in;
+  animation-direction: normal;
+  animation-delay: 0s;
+  animation-duration: 0.25s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+#screen-toast :empty {
+  animation-name: shadow-slide-down-out;
+  animation-direction: normal;
+  animation-delay: 0s;
+  animation-duration: 0.25s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
 }
 #screen-toast .item {
   border-top-color: #228844;
@@ -498,6 +511,70 @@ h1.max-progress .progress-bar {
 @media (prefers-color-scheme: dark) {
   #screen-toast .item {
     background-color: #000022;
+  }
+}
+@keyframes shadow-slide-up-in {
+  0% {
+    filter: initial;
+  }
+  10% {
+    filter: drop-shadow(0rem 0rem 0.333rem #228844);
+  }
+  20% {
+    filter: drop-shadow(0rem 0rem 0.666rem #228844);
+  }
+  40% {
+    filter: drop-shadow(0rem 0rem 1rem #228844);
+  }
+  50% {
+    filter: drop-shadow(0rem 0rem 1.333rem #228844);
+  }
+  60% {
+    filter: drop-shadow(0rem 0rem 1.666rem #228844);
+  }
+  70% {
+    filter: drop-shadow(0rem 0rem 2rem #228844);
+  }
+  80% {
+    filter: drop-shadow(0rem 0rem 2.333rem #228844);
+  }
+  90% {
+    filter: drop-shadow(0rem 0rem 2.666rem #228844);
+  }
+  100% {
+    filter: drop-shadow(0rem 0rem 3rem #228844);
+  }
+}
+@keyframes shadow-slide-down-out {
+  0% {
+    filter: drop-shadow(0rem 0rem 3rem #228844);
+  }
+  10% {
+    filter: drop-shadow(0rem 0rem 2.666rem #228844);
+  }
+  20% {
+    filter: drop-shadow(0rem 0rem 2.333rem #228844);
+  }
+  40% {
+    filter: drop-shadow(0rem 0rem 2rem #228844);
+  }
+  50% {
+    filter: drop-shadow(0rem 0rem 1.666rem #228844);
+  }
+  60% {
+    filter: drop-shadow(0rem 0rem 1.333rem #228844);
+  }
+  70% {
+    filter: drop-shadow(0rem 0rem 1rem #228844);
+  }
+  80% {
+    filter: drop-shadow(0rem 0rem 0.666rem #228844);
+  }
+  90% {
+    filter: drop-shadow(0rem 0rem 0.333rem #228844);
+  }
+  100% {
+    filter: initial;
   }
 }
 .slide-up-in {
