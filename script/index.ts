@@ -2383,8 +2383,8 @@ export module CyclicToDo
         });
         export const screenHeaderTaskSegment = async (pass: string, tag: string, current: string): Promise<HeaderSegmentSource> =>
         ({
-            icon:"task-icon",
-            title: Storage.Tag.decode(current),
+            icon: "@history" === current ? "history-icon": "task-icon",
+            title: "@history" === current ? locale.map("History"): Storage.Tag.decode(current),
             menu:
                 (
                     (
@@ -2423,6 +2423,15 @@ export module CyclicToDo
                                 await showUrl({ pass, todo: newTask, });
                             }
                         }
+                    ),
+                    menuLinkItem
+                    (
+                        [
+                            await Resource.loadSvgOrCache("history-icon"), // 本来は plus だけど、まだ作ってない
+                            label("History"),
+                        ],
+                        { pass, tag: tag, hash: "history" },
+                        "@history" === current ? "current-item": undefined
                     ),
                 ])
         });
@@ -2907,10 +2916,7 @@ export module CyclicToDo
                 screenHeaderHomeSegment(),
                 await screenHeaderListSegment(entry.pass),
                 await screenHeaderTagSegment(entry.pass, entry.tag),
-                {
-                    icon: "history-icon",
-                    title: locale.map("History"),
-                }
+                await screenHeaderTaskSegment(entry.pass, entry.tag, "@history"),
             ],
             menu: await historyScreenMenu(entry),
             operator: await filter
@@ -3638,10 +3644,13 @@ export module CyclicToDo
                     clearTimeout(result.timer);
                     result.timer = null;
                 }
-                dom.classList.remove("slide-up-in");
-                dom.classList.add(className);
-                await minamo.core.timeout(wait);
-                minamo.dom.remove(dom);
+                if (dom.parentElement)
+                {
+                    dom.classList.remove("slide-up-in");
+                    dom.classList.add(className);
+                    await minamo.core.timeout(wait);
+                    minamo.dom.remove(dom);
+                }
             };
             const wait = data.wait ?? 5000;
             const result =
@@ -3653,6 +3662,24 @@ export module CyclicToDo
             document.getElementById("screen-toast").appendChild(dom);
             setTimeout(() => dom.classList.remove("slide-up-in"), 250);
             return result;
+        };
+        let latestPrimaryToast: Toast;
+        export const makePrimaryToast =
+        (
+            data:
+            {
+                content: minamo.dom.Source,
+                backwardOperator?: minamo.dom.Source,
+                forwardOperator?: minamo.dom.Source,
+                wait?: number,
+            }
+        ): Toast =>
+        {
+            if (latestPrimaryToast)
+            {
+                latestPrimaryToast.hide();
+            }
+            return latestPrimaryToast = makeToast(data);
         };
         export const setProgressStyoleRaw = (className: string) => document.getElementById("screen-header").className = `segmented ${className}`;
         let lastSetProgressAt = 0;
@@ -3936,6 +3963,7 @@ export module CyclicToDo
     export const showPage = async (url: string = location.href, _wait: number = 0) =>
     {
         window.scrollTo(0,0);
+        document.getElementById("screen-body").scrollTo(0,0);
         //await minamo.core.timeout(wait);
         const urlParams = getUrlParams(url);
         const hash = getUrlHash(url);

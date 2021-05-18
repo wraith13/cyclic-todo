@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon May 17 2021 18:25:42 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue May 18 2021 18:31:52 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -489,7 +489,7 @@ h1.max-progress .progress-bar {
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
 }
-#screen-toast :empty {
+#screen-toast:empty {
   animation-name: shadow-slide-down-out;
   animation-direction: normal;
   animation-delay: 0s;
@@ -628,6 +628,7 @@ h1.max-progress .progress-bar {
     opacity: 0;
     max-height: 0px;
     padding: 0rem;
+    display: none;
   }
 }
 .fade-and-slide-out {
@@ -5464,15 +5465,15 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             Render.screenHeaderTaskSegment = function (pass, tag, current) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c;
-                var _d;
+                var _a, _b, _c, _d, _e;
+                var _f;
                 var _this = this;
-                return __generator(this, function (_e) {
-                    switch (_e.label) {
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            _d = {
-                                icon: "task-icon",
-                                title: Storage.Tag.decode(current)
+                            _f = {
+                                icon: "@history" === current ? "history-icon" : "task-icon",
+                                title: "@history" === current ? locale.map("History") : Storage.Tag.decode(current)
                             };
                             return [4 /*yield*/, Promise.all(Storage.TagMember.get(pass, tag).map(function (task) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
@@ -5489,34 +5490,43 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     });
                                 }); }))];
                         case 1:
-                            _b = (_a = (_e.sent()))
+                            _b = (_a = (_g.sent()))
                                 .concat;
                             _c = Render.menuItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("add-task-icon")];
-                        case 2: return [2 /*return*/, (_d.menu = _b.apply(_a, [[
-                                    _c.apply(void 0, [[
-                                            _e.sent(),
-                                            Render.label("New ToDo")
-                                        ], function () { return __awaiter(_this, void 0, void 0, function () {
-                                            var newTask;
-                                            return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
-                                                    case 1:
-                                                        newTask = _a.sent();
-                                                        if (!(null !== newTask)) return [3 /*break*/, 3];
-                                                        Storage.Task.add(pass, newTask);
-                                                        Storage.TagMember.add(pass, tag, newTask);
-                                                        return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: newTask, })];
-                                                    case 2:
-                                                        _a.sent();
-                                                        _a.label = 3;
-                                                    case 3: return [2 /*return*/];
-                                                }
-                                            });
-                                        }); }])
-                                ]]),
-                                _d)];
+                        case 2:
+                            _d = [
+                                _c.apply(void 0, [[
+                                        _g.sent(),
+                                        Render.label("New ToDo")
+                                    ], function () { return __awaiter(_this, void 0, void 0, function () {
+                                        var newTask;
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
+                                                case 1:
+                                                    newTask = _a.sent();
+                                                    if (!(null !== newTask)) return [3 /*break*/, 3];
+                                                    Storage.Task.add(pass, newTask);
+                                                    Storage.TagMember.add(pass, tag, newTask);
+                                                    return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: newTask, })];
+                                                case 2:
+                                                    _a.sent();
+                                                    _a.label = 3;
+                                                case 3: return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }])
+                            ];
+                            _e = Render.menuLinkItem;
+                            return [4 /*yield*/, Resource.loadSvgOrCache("history-icon")];
+                        case 3: return [2 /*return*/, (_f.menu = _b.apply(_a, [_d.concat([
+                                    _e.apply(void 0, [[
+                                            _g.sent(),
+                                            Render.label("History")
+                                        ], { pass: pass, tag: tag, hash: "history" }, "@history" === current ? "current-item" : undefined])
+                                ])]),
+                                _f)];
                     }
                 });
             }); };
@@ -6088,15 +6098,16 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             ]);
                             return [4 /*yield*/, Render.screenHeaderTagSegment(entry.pass, entry.tag)];
                         case 2:
+                            _a = _a.concat([
+                                _d.sent()
+                            ]);
+                            return [4 /*yield*/, Render.screenHeaderTaskSegment(entry.pass, entry.tag, "@history")];
+                        case 3:
                             _b.items = _a.concat([
-                                _d.sent(),
-                                {
-                                    icon: "history-icon",
-                                    title: locale.map("History"),
-                                }
+                                _d.sent()
                             ]);
                             return [4 /*yield*/, Render.historyScreenMenu(entry)];
-                        case 3:
+                        case 4:
                             _b.menu = _d.sent();
                             return [4 /*yield*/, Render.filter((_c = CyclicToDo.getUrlParams().filter) !== null && _c !== void 0 ? _c : "", function (filter) { return __awaiter(_this, void 0, void 0, function () {
                                     var regulatedFilter, _a;
@@ -6114,7 +6125,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         }
                                     });
                                 }); })];
-                        case 4: return [2 /*return*/, (_b.operator = _d.sent(),
+                        case 5: return [2 /*return*/, (_b.operator = _d.sent(),
                                 _b)];
                     }
                 });
@@ -7104,13 +7115,15 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     clearTimeout(result.timer);
                                     result.timer = null;
                                 }
+                                if (!dom.parentElement) return [3 /*break*/, 2];
                                 dom.classList.remove("slide-up-in");
                                 dom.classList.add(className);
                                 return [4 /*yield*/, minamo_js_1.minamo.core.timeout(wait)];
                             case 1:
                                 _a.sent();
                                 minamo_js_1.minamo.dom.remove(dom);
-                                return [2 /*return*/];
+                                _a.label = 2;
+                            case 2: return [2 /*return*/];
                         }
                     });
                 }); };
@@ -7128,6 +7141,13 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 document.getElementById("screen-toast").appendChild(dom);
                 setTimeout(function () { return dom.classList.remove("slide-up-in"); }, 250);
                 return result;
+            };
+            var latestPrimaryToast;
+            Render.makePrimaryToast = function (data) {
+                if (latestPrimaryToast) {
+                    latestPrimaryToast.hide();
+                }
+                return latestPrimaryToast = Render.makeToast(data);
             };
             Render.setProgressStyoleRaw = function (className) { return document.getElementById("screen-header").className = "segmented " + className; };
             var lastSetProgressAt = 0;
@@ -7389,6 +7409,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     switch (_d.label) {
                         case 0:
                             window.scrollTo(0, 0);
+                            document.getElementById("screen-body").scrollTo(0, 0);
                             urlParams = CyclicToDo.getUrlParams(url);
                             hash = CyclicToDo.getUrlHash(url);
                             tag = urlParams["tag"];

@@ -252,7 +252,7 @@ h1
         animation-timing-function: ease-in-out;
         animation-fill-mode: both;
     }
-    :empty
+    &:empty
     {
         animation-name: shadow-slide-down-out;
         animation-direction: normal;
@@ -354,6 +354,7 @@ h1
         opacity: 0.0;
         max-height: 0px;
         padding: 0rem;
+        display: none; // Safari の CSS バグ回避の為に必要
     }
 }
 .fade-and-slide-out
