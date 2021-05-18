@@ -2233,7 +2233,7 @@ export module CyclicToDo
                     //popup.style.height = `${popup.offsetHeight -2}px`;
                     popup.style.width = `${popup.offsetWidth -2}px`;
                     popup.style.top = `${segment.offsetTop +segment.offsetHeight}px`;
-                    popup.style.left = `${segment.offsetLeft}px`;
+                    popup.style.left = `${Math.max(segment.offsetLeft, 4)}px`;
                     cover = screenCover
                     ({
                         onclick: close,
@@ -2242,13 +2242,78 @@ export module CyclicToDo
             });
             return [ segment, popup, ];
         };
-        export const screenHeaderHomeSegment = (): HeaderSegmentSource =>
+        export const screenHeaderHomeSegment = async (): Promise<HeaderSegmentSource> =>
         ({
             icon: "application-icon",
             href: { },
             title: CyclicToDo.applicationTitle,
         });
-        export const screenHeaderListSegment = async (pass: string): Promise<HeaderSegmentSource> =>
+        export const primaryScreenHeaderHomeSegment = async (): Promise<HeaderSegmentSource> =>
+        ({
+            icon: "application-icon",
+            title: CyclicToDo.applicationTitle,
+            // icon:
+            // {
+            //     "@removed": "recycle-bin-icon" as Resource.KeyType,
+            //     "@import": "list-icon" as Resource.KeyType, // 本来は import だけど、まだ作ってない
+            // }[pass] ?? "list-icon",
+            // title:
+            // {
+            //     "@removed": locale.map("@deleted"),
+            //     "@import": locale.map("Import List"),
+            // }[pass] ?? Storage.Title.get(pass), // `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
+            menu:
+                (
+                    (
+                        await Promise.all
+                        (
+                            Storage.Pass.get().map
+                            (
+                                async i => menuLinkItem
+                                (
+                                    [
+                                        await Resource.loadSvgOrCache("list-icon"),
+                                        Storage.Title.get(i),
+                                        // labelSpan(`ToDo リスト ( pass: ${i.substr(0, 2)}****${i.substr(-2)} )`)
+                                    ],
+                                    { pass: i, tag: "@overall", },
+                                    // pass === i ? "current-item": undefined
+                                )
+                            )
+                        )
+                    ) as minamo.dom.Source[]
+                )
+                .concat
+                ([
+                    menuItem
+                    (
+                        [
+                            await Resource.loadSvgOrCache("add-list-icon"),
+                            label("New ToDo List"),
+                        ],
+                        newListPrompt,
+                    ),
+                    menuItem
+                    (
+                        [
+                            await Resource.loadSvgOrCache("list-icon"),
+                            label("Import List"),
+                        ],
+                        async () => await showUrl({ hash: "import", }),
+                        // pass === "@import" ? "current-item": undefined
+                    ),
+                    menuLinkItem
+                    (
+                        [
+                            await Resource.loadSvgOrCache("recycle-bin-icon"),
+                            labelSpan(`${locale.map("@deleted")} (${Storage.Backup.get().length})`),
+                        ],
+                        { hash: "removed" },
+                        // pass === "@removed" ? "current-item": undefined
+                    )
+                ])
+        });
+        export const primaryScreenHeaderListSegment = async (pass: string): Promise<HeaderSegmentSource> =>
         ({
             icon:
             {
@@ -2311,7 +2376,13 @@ export module CyclicToDo
                     )
                 ])
         });
-        export const screenHeaderTagSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
+        export const screenHeaderListSegment = async (pass: string): Promise<HeaderSegmentSource> =>
+        ({
+            icon: "list-icon",
+            href: { pass, tag: "@overall", },
+            title: Storage.Title.get(pass),
+        });
+        export const primaryScreenHeaderTagSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
         ({
             icon: Storage.Tag.getIcon(current),
             title: Domain.tagMap(current),
@@ -2380,6 +2451,12 @@ export module CyclicToDo
                         current === "@deleted" ? "current-item": undefined
                     ),
                 ])
+        });
+        export const screenHeaderTagSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
+        ({
+            icon: Storage.Tag.getIcon(current),
+            href:{ pass, tag: current, },
+            title: Domain.tagMap(current),
         });
         export const screenHeaderTaskSegment = async (pass: string, tag: string, current: string): Promise<HeaderSegmentSource> =>
         ({
@@ -2679,9 +2756,9 @@ export module CyclicToDo
         ({
             items:
             [
-                screenHeaderHomeSegment(),
+                await screenHeaderHomeSegment(),
                 await screenHeaderListSegment(entry.pass),
-                await screenHeaderTagSegment(entry.pass, entry.tag),
+                await primaryScreenHeaderTagSegment(entry.pass, entry.tag),
             ],
             menu: await listScreenMenu(entry),
             operator: await filter
@@ -2913,7 +2990,7 @@ export module CyclicToDo
         ({
             items:
             [
-                screenHeaderHomeSegment(),
+                await screenHeaderHomeSegment(),
                 await screenHeaderListSegment(entry.pass),
                 await screenHeaderTagSegment(entry.pass, entry.tag),
                 await screenHeaderTaskSegment(entry.pass, entry.tag, "@history"),
@@ -3019,9 +3096,9 @@ export module CyclicToDo
             {
                 items:
                 [
-                    screenHeaderHomeSegment(),
+                    await screenHeaderHomeSegment(),
                     await screenHeaderListSegment(pass),
-                    await screenHeaderTagSegment(pass, "@deleted"),
+                    await primaryScreenHeaderTagSegment(pass, "@deleted"),
                 ],
                 menu: await removedScreenMenu(pass)
             },
@@ -3085,7 +3162,7 @@ export module CyclicToDo
         ({
             items:
             [
-                screenHeaderHomeSegment(),
+                await screenHeaderHomeSegment(),
                 await screenHeaderListSegment(pass),
                 await screenHeaderTagSegment(pass, tag),
                 await screenHeaderTaskSegment(pass, tag, item.task),
@@ -3230,7 +3307,7 @@ export module CyclicToDo
             {
                 items:
                 [
-                    screenHeaderHomeSegment(),
+                    await screenHeaderHomeSegment(),
                     await screenHeaderListSegment(pass),
                     {
                         icon: "list-icon", // 本来は export だけど、まだ作ってない
@@ -3261,8 +3338,8 @@ export module CyclicToDo
             {
                 items:
                 [
-                    screenHeaderHomeSegment(),
-                    await screenHeaderListSegment("@import")
+                    await screenHeaderHomeSegment(),
+                    await primaryScreenHeaderListSegment("@import")
                 ],
                 menu: await importScreenMenu()
             },
@@ -3328,8 +3405,8 @@ export module CyclicToDo
             {
                 items:
                 [
-                    screenHeaderHomeSegment(),
-                    await screenHeaderListSegment("@removed")
+                    await screenHeaderHomeSegment(),
+                    await primaryScreenHeaderListSegment("@removed")
                 ],
                 menu: await removedListScreenMenu()
             },
@@ -3464,10 +3541,9 @@ export module CyclicToDo
             header:
             {
                 items:
-                [{
-                    icon: "application-icon",
-                    title: CyclicToDo.applicationTitle,
-                }],
+                [
+                    await primaryScreenHeaderHomeSegment(),
+                ],
                 menu: await welcomeScreenMenu()
             },
             body:
@@ -3523,7 +3599,7 @@ export module CyclicToDo
             {
                 items:
                 [
-                    screenHeaderHomeSegment(),
+                    await screenHeaderHomeSegment(),
                     {
                         icon: "list-icon",
                         title: "loading...",

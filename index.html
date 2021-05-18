@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue May 18 2021 18:31:52 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue May 18 2021 18:54:59 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -374,10 +374,10 @@ h1 .segment + .menu-popup {
   white-space: nowrap;
 }
 @media (max-width: 780px) {
-  h1:not(.header-operator-has-focus) .segment:not(.last-segment):not(:hover) {
+  h1:not(.header-operator-has-focus) .segment:not(.last-segment) {
     padding-right: 0.5rem;
   }
-  h1:not(.header-operator-has-focus) .segment:not(.last-segment):not(:hover) .segment-title {
+  h1:not(.header-operator-has-focus) .segment:not(.last-segment) .segment-title {
     display: none;
   }
   h1:not(.header-operator-has-focus) .filter-frame {
@@ -5283,7 +5283,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             //popup.style.height = `${popup.offsetHeight -2}px`;
                                             popup.style.width = popup.offsetWidth - 2 + "px";
                                             popup.style.top = segment.offsetTop + segment.offsetHeight + "px";
-                                            popup.style.left = segment.offsetLeft + "px";
+                                            popup.style.left = Math.max(segment.offsetLeft, 4) + "px";
                                             cover = Render.screenCover({
                                                 onclick: close,
                                             });
@@ -5294,14 +5294,90 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     });
                 });
             };
-            Render.screenHeaderHomeSegment = function () {
-                return ({
-                    icon: "application-icon",
-                    href: {},
-                    title: CyclicToDo.applicationTitle,
+            Render.screenHeaderHomeSegment = function () { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, ({
+                            icon: "application-icon",
+                            href: {},
+                            title: CyclicToDo.applicationTitle,
+                        })];
                 });
-            };
-            Render.screenHeaderListSegment = function (pass) { return __awaiter(_this, void 0, void 0, function () {
+            }); };
+            Render.primaryScreenHeaderHomeSegment = function () { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c, _d, _e, _f;
+                var _g;
+                var _this = this;
+                return __generator(this, function (_h) {
+                    switch (_h.label) {
+                        case 0:
+                            _g = {
+                                icon: "application-icon",
+                                title: CyclicToDo.applicationTitle
+                            };
+                            return [4 /*yield*/, Promise.all(Storage.Pass.get().map(function (i) { return __awaiter(_this, void 0, void 0, function () {
+                                    var _a;
+                                    return __generator(this, function (_b) {
+                                        switch (_b.label) {
+                                            case 0:
+                                                _a = Render.menuLinkItem;
+                                                return [4 /*yield*/, Resource.loadSvgOrCache("list-icon")];
+                                            case 1: return [2 /*return*/, _a.apply(void 0, [[
+                                                        _b.sent(),
+                                                        Storage.Title.get(i)
+                                                    ], { pass: i, tag: "@overall", }])];
+                                        }
+                                    });
+                                }); }))];
+                        case 1:
+                            _b = (_a = (_h.sent()))
+                                .concat;
+                            _c = Render.menuItem;
+                            return [4 /*yield*/, Resource.loadSvgOrCache("add-list-icon")];
+                        case 2:
+                            _d = [
+                                _c.apply(void 0, [[
+                                        _h.sent(),
+                                        Render.label("New ToDo List")
+                                    ], Render.newListPrompt])
+                            ];
+                            _e = Render.menuItem;
+                            return [4 /*yield*/, Resource.loadSvgOrCache("list-icon")];
+                        case 3:
+                            _d = _d.concat([
+                                _e.apply(void 0, [[
+                                        _h.sent(),
+                                        Render.label("Import List")
+                                    ], function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, CyclicToDo.showUrl({ hash: "import", })];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); }])
+                            ]);
+                            _f = Render.menuLinkItem;
+                            return [4 /*yield*/, Resource.loadSvgOrCache("recycle-bin-icon")];
+                        case 4: return [2 /*return*/, (
+                            // icon:
+                            // {
+                            //     "@removed": "recycle-bin-icon" as Resource.KeyType,
+                            //     "@import": "list-icon" as Resource.KeyType, // 本来は import だけど、まだ作ってない
+                            // }[pass] ?? "list-icon",
+                            // title:
+                            // {
+                            //     "@removed": locale.map("@deleted"),
+                            //     "@import": locale.map("Import List"),
+                            // }[pass] ?? Storage.Title.get(pass), // `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
+                            _g.menu = _b.apply(_a, [_d.concat([
+                                    _f.apply(void 0, [[
+                                            _h.sent(),
+                                            Render.labelSpan(locale.map("@deleted") + " (" + Storage.Backup.get().length + ")")
+                                        ], { hash: "removed" }])
+                                ])]),
+                                _g)];
+                    }
+                });
+            }); };
+            Render.primaryScreenHeaderListSegment = function (pass) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e, _f;
                 var _g;
                 var _this = this;
@@ -5373,7 +5449,16 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
-            Render.screenHeaderTagSegment = function (pass, current) { return __awaiter(_this, void 0, void 0, function () {
+            Render.screenHeaderListSegment = function (pass) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, ({
+                            icon: "list-icon",
+                            href: { pass: pass, tag: "@overall", },
+                            title: Storage.Title.get(pass),
+                        })];
+                });
+            }); };
+            Render.primaryScreenHeaderTagSegment = function (pass, current) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e, _f;
                 var _g;
                 var _this = this;
@@ -5462,6 +5547,15 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 ])]),
                                 _g)];
                     }
+                });
+            }); };
+            Render.screenHeaderTagSegment = function (pass, current) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, ({
+                            icon: Storage.Tag.getIcon(current),
+                            href: { pass: pass, tag: current, },
+                            title: Domain.tagMap(current),
+                        })];
                 });
             }); };
             Render.screenHeaderTaskSegment = function (pass, tag, current) { return __awaiter(_this, void 0, void 0, function () {
@@ -5786,19 +5880,23 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     switch (_d.label) {
                         case 0:
                             _b = {};
-                            _a = [Render.screenHeaderHomeSegment()];
-                            return [4 /*yield*/, Render.screenHeaderListSegment(entry.pass)];
+                            return [4 /*yield*/, Render.screenHeaderHomeSegment()];
                         case 1:
+                            _a = [
+                                _d.sent()
+                            ];
+                            return [4 /*yield*/, Render.screenHeaderListSegment(entry.pass)];
+                        case 2:
                             _a = _a.concat([
                                 _d.sent()
                             ]);
-                            return [4 /*yield*/, Render.screenHeaderTagSegment(entry.pass, entry.tag)];
-                        case 2:
+                            return [4 /*yield*/, Render.primaryScreenHeaderTagSegment(entry.pass, entry.tag)];
+                        case 3:
                             _b.items = _a.concat([
                                 _d.sent()
                             ]);
                             return [4 /*yield*/, Render.listScreenMenu(entry)];
-                        case 3:
+                        case 4:
                             _b.menu = _d.sent();
                             return [4 /*yield*/, Render.filter((_c = CyclicToDo.getUrlParams().filter) !== null && _c !== void 0 ? _c : "", function (filter) { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
@@ -5807,7 +5905,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         return [2 /*return*/];
                                     });
                                 }); })];
-                        case 4: return [2 /*return*/, (_b.operator = _d.sent(),
+                        case 5: return [2 /*return*/, (_b.operator = _d.sent(),
                                 _b)];
                     }
                 });
@@ -6090,24 +6188,28 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     switch (_d.label) {
                         case 0:
                             _b = {};
-                            _a = [Render.screenHeaderHomeSegment()];
-                            return [4 /*yield*/, Render.screenHeaderListSegment(entry.pass)];
+                            return [4 /*yield*/, Render.screenHeaderHomeSegment()];
                         case 1:
-                            _a = _a.concat([
+                            _a = [
                                 _d.sent()
-                            ]);
-                            return [4 /*yield*/, Render.screenHeaderTagSegment(entry.pass, entry.tag)];
+                            ];
+                            return [4 /*yield*/, Render.screenHeaderListSegment(entry.pass)];
                         case 2:
                             _a = _a.concat([
                                 _d.sent()
                             ]);
-                            return [4 /*yield*/, Render.screenHeaderTaskSegment(entry.pass, entry.tag, "@history")];
+                            return [4 /*yield*/, Render.screenHeaderTagSegment(entry.pass, entry.tag)];
                         case 3:
+                            _a = _a.concat([
+                                _d.sent()
+                            ]);
+                            return [4 /*yield*/, Render.screenHeaderTaskSegment(entry.pass, entry.tag, "@history")];
+                        case 4:
                             _b.items = _a.concat([
                                 _d.sent()
                             ]);
                             return [4 /*yield*/, Render.historyScreenMenu(entry)];
-                        case 4:
+                        case 5:
                             _b.menu = _d.sent();
                             return [4 /*yield*/, Render.filter((_c = CyclicToDo.getUrlParams().filter) !== null && _c !== void 0 ? _c : "", function (filter) { return __awaiter(_this, void 0, void 0, function () {
                                     var regulatedFilter, _a;
@@ -6125,7 +6227,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         }
                                     });
                                 }); })];
-                        case 5: return [2 /*return*/, (_b.operator = _d.sent(),
+                        case 6: return [2 /*return*/, (_b.operator = _d.sent(),
                                 _b)];
                     }
                 });
@@ -6270,33 +6372,37 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "removed-screen"
                             };
                             _e = {};
-                            _a = [Render.screenHeaderHomeSegment()];
-                            return [4 /*yield*/, Render.screenHeaderListSegment(pass)];
+                            return [4 /*yield*/, Render.screenHeaderHomeSegment()];
                         case 1:
+                            _a = [
+                                _f.sent()
+                            ];
+                            return [4 /*yield*/, Render.screenHeaderListSegment(pass)];
+                        case 2:
                             _a = _a.concat([
                                 _f.sent()
                             ]);
-                            return [4 /*yield*/, Render.screenHeaderTagSegment(pass, "@deleted")];
-                        case 2:
+                            return [4 /*yield*/, Render.primaryScreenHeaderTagSegment(pass, "@deleted")];
+                        case 3:
                             _e.items = _a.concat([
                                 _f.sent()
                             ]);
                             return [4 /*yield*/, Render.removedScreenMenu(pass)];
-                        case 3:
+                        case 4:
                             _d.header = (_e.menu = _f.sent(),
                                 _e);
-                            if (!(0 < list.length)) return [3 /*break*/, 5];
+                            if (!(0 < list.length)) return [3 /*break*/, 6];
                             _c = Render.$div("column-flex-list removed-list");
                             return [4 /*yield*/, Promise.all([].concat(list)
                                     .sort(minamo_js_1.minamo.core.comparer.make(function (item) { return -item.deteledAt; }))
                                     .map(function (item) { return Render.removedItem(pass, item); }))];
-                        case 4:
-                            _b = _c.apply(void 0, [_f.sent()]);
-                            return [3 /*break*/, 6];
                         case 5:
+                            _b = _c.apply(void 0, [_f.sent()]);
+                            return [3 /*break*/, 7];
+                        case 6:
                             _b = Render.$div("button-list")(Render.label("Recycle Bin is empty."));
-                            _f.label = 6;
-                        case 6: return [2 /*return*/, (_d.body = [
+                            _f.label = 7;
+                        case 7: return [2 /*return*/, (_d.body = [
                                 _b,
                                 Render.$div("button-list")([
                                     Render.internalLink({
@@ -6372,24 +6478,28 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     switch (_c.label) {
                         case 0:
                             _b = {};
-                            _a = [Render.screenHeaderHomeSegment()];
-                            return [4 /*yield*/, Render.screenHeaderListSegment(pass)];
+                            return [4 /*yield*/, Render.screenHeaderHomeSegment()];
                         case 1:
-                            _a = _a.concat([
+                            _a = [
                                 _c.sent()
-                            ]);
-                            return [4 /*yield*/, Render.screenHeaderTagSegment(pass, tag)];
+                            ];
+                            return [4 /*yield*/, Render.screenHeaderListSegment(pass)];
                         case 2:
                             _a = _a.concat([
                                 _c.sent()
                             ]);
-                            return [4 /*yield*/, Render.screenHeaderTaskSegment(pass, tag, item.task)];
+                            return [4 /*yield*/, Render.screenHeaderTagSegment(pass, tag)];
                         case 3:
+                            _a = _a.concat([
+                                _c.sent()
+                            ]);
+                            return [4 /*yield*/, Render.screenHeaderTaskSegment(pass, tag, item.task)];
+                        case 4:
                             _b.items = _a.concat([
                                 _c.sent()
                             ]);
                             return [4 /*yield*/, Render.todoScreenMenu(pass, item)];
-                        case 4: return [2 /*return*/, (_b.menu = _c.sent(),
+                        case 5: return [2 /*return*/, (_b.menu = _c.sent(),
                                 _b)];
                     }
                 });
@@ -6583,9 +6693,13 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "export-screen"
                             };
                             _c = {};
-                            _a = [Render.screenHeaderHomeSegment()];
-                            return [4 /*yield*/, Render.screenHeaderListSegment(pass)];
+                            return [4 /*yield*/, Render.screenHeaderHomeSegment()];
                         case 1:
+                            _a = [
+                                _d.sent()
+                            ];
+                            return [4 /*yield*/, Render.screenHeaderListSegment(pass)];
+                        case 2:
                             _c.items = _a.concat([
                                 _d.sent(),
                                 {
@@ -6594,7 +6708,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 }
                             ]);
                             return [4 /*yield*/, Render.exportScreenMenu(pass)];
-                        case 2: return [2 /*return*/, (_b.header = (_c.menu = _d.sent(),
+                        case 3: return [2 /*return*/, (_b.header = (_c.menu = _d.sent(),
                                 _c),
                                 _b.body = [
                                     Render.$tag("textarea")("json")(Storage.exportJson(pass)),
@@ -6636,14 +6750,18 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "import-screen"
                             };
                             _c = {};
-                            _a = [Render.screenHeaderHomeSegment()];
-                            return [4 /*yield*/, Render.screenHeaderListSegment("@import")];
+                            return [4 /*yield*/, Render.screenHeaderHomeSegment()];
                         case 1:
+                            _a = [
+                                _d.sent()
+                            ];
+                            return [4 /*yield*/, Render.primaryScreenHeaderListSegment("@import")];
+                        case 2:
                             _c.items = _a.concat([
                                 _d.sent()
                             ]);
                             return [4 /*yield*/, Render.importScreenMenu()];
-                        case 2: return [2 /*return*/, (_b.header = (_c.menu = _d.sent(),
+                        case 3: return [2 /*return*/, (_b.header = (_c.menu = _d.sent(),
                                 _c),
                                 _b.body = [
                                     Render.$tag("textarea")("json")("エクスポートした JSON をペーストしてください。"),
@@ -6738,26 +6856,30 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "remove-list-screen"
                             };
                             _e = {};
-                            _a = [Render.screenHeaderHomeSegment()];
-                            return [4 /*yield*/, Render.screenHeaderListSegment("@removed")];
+                            return [4 /*yield*/, Render.screenHeaderHomeSegment()];
                         case 1:
+                            _a = [
+                                _f.sent()
+                            ];
+                            return [4 /*yield*/, Render.primaryScreenHeaderListSegment("@removed")];
+                        case 2:
                             _e.items = _a.concat([
                                 _f.sent()
                             ]);
                             return [4 /*yield*/, Render.removedListScreenMenu()];
-                        case 2:
+                        case 3:
                             _d.header = (_e.menu = _f.sent(),
                                 _e);
-                            if (!(0 < list.length)) return [3 /*break*/, 4];
+                            if (!(0 < list.length)) return [3 /*break*/, 5];
                             _c = Render.$div("column-flex-list removed-list-list");
                             return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.removedListItem(item); }))];
-                        case 3:
-                            _b = _c.apply(void 0, [_f.sent()]);
-                            return [3 /*break*/, 5];
                         case 4:
+                            _b = _c.apply(void 0, [_f.sent()]);
+                            return [3 /*break*/, 6];
+                        case 5:
                             _b = Render.$div("button-list")(Render.label("Recycle Bin is empty."));
-                            _f.label = 5;
-                        case 5: return [2 /*return*/, (_d.body = [
+                            _f.label = 6;
+                        case 6: return [2 /*return*/, (_d.body = [
                                 _b,
                                 Render.$div("button-list")([
                                     Render.internalLink({
@@ -6912,25 +7034,25 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _e = {
                                 className: "welcome-screen"
                             };
-                            _f = {
-                                items: [{
-                                        icon: "application-icon",
-                                        title: CyclicToDo.applicationTitle,
-                                    }]
-                            };
-                            return [4 /*yield*/, Render.welcomeScreenMenu()];
+                            _f = {};
+                            return [4 /*yield*/, Render.primaryScreenHeaderHomeSegment()];
                         case 1:
+                            _f.items = [
+                                _g.sent()
+                            ];
+                            return [4 /*yield*/, Render.welcomeScreenMenu()];
+                        case 2:
                             _e.header = (_f.menu = _g.sent(),
                                 _f);
                             _a = Render.$div("column-flex-list list-list");
                             return [4 /*yield*/, Promise.all(Storage.Pass.get().map(function (pass) { return Render.listItem(JSON.parse(Storage.exportJson(pass))); }))];
-                        case 2:
+                        case 3:
                             _b = [
                                 _a.apply(void 0, [_g.sent()]),
                                 Render.$div({ style: "text-align: center; padding: 0.5rem;", })("🚧 This static web application is under development. / この Static Web アプリは開発中です。")
                             ];
                             return [4 /*yield*/, Render.applicationColorIcon()];
-                        case 3:
+                        case 4:
                             _b = _b.concat([
                                 _g.sent()
                             ]);
@@ -6951,7 +7073,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         children: Render.menuItem(Render.label("@deleted")),
                                     }),
                                 ])];
-                        case 4: return [2 /*return*/, (_e.body = _b.concat([
+                        case 5: return [2 /*return*/, (_e.body = _b.concat([
                                 _c.apply(void 0, [_d.concat([
                                         _g.sent()
                                     ])])
@@ -6996,21 +7118,22 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 _a = {
                                     className: "updating-screen"
                                 };
-                                _b = {
-                                    items: [
-                                        Render.screenHeaderHomeSegment(),
-                                        {
-                                            icon: "list-icon",
-                                            title: "loading...",
-                                        },
-                                    ]
-                                };
-                                return [4 /*yield*/, Render.updatingScreenMenu()];
+                                _b = {};
+                                return [4 /*yield*/, Render.screenHeaderHomeSegment()];
                             case 1:
+                                _b.items = [
+                                    _c.sent(),
+                                    {
+                                        icon: "list-icon",
+                                        title: "loading...",
+                                    }
+                                ];
+                                return [4 /*yield*/, Render.updatingScreenMenu()];
+                            case 2:
                                 _a.header = (_b.menu = _c.sent(),
                                     _b);
                                 return [4 /*yield*/, Render.applicationColorIcon()];
-                            case 2: return [2 /*return*/, (_a.body = [
+                            case 3: return [2 /*return*/, (_a.body = [
                                     _c.sent(),
                                     // $div("message")(label("Updating...")),
                                     Render.$div("button-list")({
