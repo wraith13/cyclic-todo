@@ -2252,67 +2252,58 @@ export module CyclicToDo
         ({
             icon: "application-icon",
             title: CyclicToDo.applicationTitle,
-            // icon:
-            // {
-            //     "@removed": "recycle-bin-icon" as Resource.KeyType,
-            //     "@import": "list-icon" as Resource.KeyType, // 本来は import だけど、まだ作ってない
-            // }[pass] ?? "list-icon",
-            // title:
-            // {
-            //     "@removed": locale.map("@deleted"),
-            //     "@import": locale.map("Import List"),
-            // }[pass] ?? Storage.Title.get(pass), // `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
-            menu:
+            menu: await primaryScreenHeaderListSegmentMenu("")
+        });
+        export const primaryScreenHeaderListSegmentMenu = async (pass: string): Promise<minamo.dom.Source> =>
+            (
                 (
+                    await Promise.all
                     (
-                        await Promise.all
+                        Storage.Pass.get().map
                         (
-                            Storage.Pass.get().map
+                            async i => menuLinkItem
                             (
-                                async i => menuLinkItem
-                                (
-                                    [
-                                        await Resource.loadSvgOrCache("list-icon"),
-                                        Storage.Title.get(i),
-                                        // labelSpan(`ToDo リスト ( pass: ${i.substr(0, 2)}****${i.substr(-2)} )`)
-                                    ],
-                                    { pass: i, tag: "@overall", },
-                                    // pass === i ? "current-item": undefined
-                                )
+                                [
+                                    await Resource.loadSvgOrCache("list-icon"),
+                                    Storage.Title.get(i),
+                                    // labelSpan(`ToDo リスト ( pass: ${i.substr(0, 2)}****${i.substr(-2)} )`)
+                                ],
+                                { pass: i, tag: "@overall", },
+                                pass === i ? "current-item": undefined
                             )
                         )
-                    ) as minamo.dom.Source[]
-                )
-                .concat
-                ([
-                    menuItem
-                    (
-                        [
-                            await Resource.loadSvgOrCache("add-list-icon"),
-                            label("New ToDo List"),
-                        ],
-                        newListPrompt,
-                    ),
-                    menuItem
-                    (
-                        [
-                            await Resource.loadSvgOrCache("list-icon"),
-                            label("Import List"),
-                        ],
-                        async () => await showUrl({ hash: "import", }),
-                        // pass === "@import" ? "current-item": undefined
-                    ),
-                    menuLinkItem
-                    (
-                        [
-                            await Resource.loadSvgOrCache("recycle-bin-icon"),
-                            labelSpan(`${locale.map("@deleted")} (${Storage.Backup.get().length})`),
-                        ],
-                        { hash: "removed" },
-                        // pass === "@removed" ? "current-item": undefined
                     )
-                ])
-        });
+                ) as minamo.dom.Source[]
+            )
+            .concat
+            ([
+                menuItem
+                (
+                    [
+                        await Resource.loadSvgOrCache("add-list-icon"),
+                        label("New ToDo List"),
+                    ],
+                    newListPrompt,
+                ),
+                menuItem
+                (
+                    [
+                        await Resource.loadSvgOrCache("list-icon"),
+                        label("Import List"),
+                    ],
+                    async () => await showUrl({ hash: "import", }),
+                    pass === "@import" ? "current-item": undefined
+                ),
+                menuLinkItem
+                (
+                    [
+                        await Resource.loadSvgOrCache("recycle-bin-icon"),
+                        labelSpan(`${locale.map("@deleted")} (${Storage.Backup.get().length})`),
+                    ],
+                    { hash: "removed" },
+                    pass === "@removed" ? "current-item": undefined
+                )
+            ]);
         export const primaryScreenHeaderListSegment = async (pass: string): Promise<HeaderSegmentSource> =>
         ({
             icon:
@@ -2325,56 +2316,7 @@ export module CyclicToDo
                 "@removed": locale.map("@deleted"),
                 "@import": locale.map("Import List"),
             }[pass] ?? Storage.Title.get(pass), // `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
-            menu:
-                (
-                    (
-                        await Promise.all
-                        (
-                            Storage.Pass.get().map
-                            (
-                                async i => menuLinkItem
-                                (
-                                    [
-                                        await Resource.loadSvgOrCache("list-icon"),
-                                        Storage.Title.get(i),
-                                        // labelSpan(`ToDo リスト ( pass: ${i.substr(0, 2)}****${i.substr(-2)} )`)
-                                    ],
-                                    { pass: i, tag: "@overall", },
-                                    pass === i ? "current-item": undefined
-                                )
-                            )
-                        )
-                    ) as minamo.dom.Source[]
-                )
-                .concat
-                ([
-                    menuItem
-                    (
-                        [
-                            await Resource.loadSvgOrCache("add-list-icon"),
-                            label("New ToDo List"),
-                        ],
-                        newListPrompt,
-                    ),
-                    menuItem
-                    (
-                        [
-                            await Resource.loadSvgOrCache("list-icon"),
-                            label("Import List"),
-                        ],
-                        async () => await showUrl({ hash: "import", }),
-                        pass === "@import" ? "current-item": undefined
-                    ),
-                    menuLinkItem
-                    (
-                        [
-                            await Resource.loadSvgOrCache("recycle-bin-icon"),
-                            labelSpan(`${locale.map("@deleted")} (${Storage.Backup.get().length})`),
-                        ],
-                        { hash: "removed" },
-                        pass === "@removed" ? "current-item": undefined
-                    )
-                ])
+            menu: await primaryScreenHeaderListSegmentMenu(pass),
         });
         export const screenHeaderListSegment = async (pass: string): Promise<HeaderSegmentSource> =>
         ({
@@ -2757,7 +2699,9 @@ export module CyclicToDo
             items:
             [
                 await screenHeaderHomeSegment(),
-                await screenHeaderListSegment(entry.pass),
+                "@overall" === entry.tag ?
+                    await primaryScreenHeaderListSegment(entry.pass):
+                    await screenHeaderListSegment(entry.pass),
                 await primaryScreenHeaderTagSegment(entry.pass, entry.tag),
             ],
             menu: await listScreenMenu(entry),
