@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu May 20 2021 05:30:23 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu May 20 2021 05:35:12 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -5817,8 +5817,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 history.pushState(null, document.title, CyclicToDo.makeUrl(urlParams));
             };
             Render.isMatchToDoEntry = function (filter, entry, item) {
-                return Render.isMatchTest(filter, item.task) ||
-                    Storage.Tag.getByTodo(entry.pass, item.task).some(function (tag) { return entry.tag !== tag && Render.isMatchTest(filter, tag); });
+                return Render.isMatchTest(filter, Render.regulateFilterText(item.task)) ||
+                    Storage.Tag.getByTodo(entry.pass, item.task).some(function (tag) { return entry.tag !== tag && Render.isMatchTest(filter, Render.regulateFilterText(tag)); });
             };
             Render.listScreenHeader = function (entry, _list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b;
@@ -6133,8 +6133,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             Render.isMatchHistoryItem = function (filter, _entry, item) {
-                return Render.isMatchTest(filter, item.task) ||
-                    Render.isMatchTest(filter, Domain.dateStringFromTick(item.tick));
+                return Render.isMatchTest(filter, Render.regulateFilterText(item.task)) ||
+                    Render.isMatchTest(filter, Render.regulateFilterText(Domain.dateStringFromTick(item.tick)));
             };
             Render.historyScreenHeader = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
                 var _a;

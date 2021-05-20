@@ -2692,8 +2692,8 @@ export module CyclicToDo
             history.pushState(null, document.title, makeUrl(urlParams));
         };
         export const isMatchToDoEntry = (filter: string, entry: ToDoTagEntry, item: ToDoEntry) =>
-            isMatchTest(filter, item.task) ||
-            Storage.Tag.getByTodo(entry.pass, item.task).some(tag => entry.tag !== tag && isMatchTest(filter, tag));
+            isMatchTest(filter, regulateFilterText(item.task)) ||
+            Storage.Tag.getByTodo(entry.pass, item.task).some(tag => entry.tag !== tag && isMatchTest(filter, regulateFilterText(tag)));
         export const listScreenHeader = async (entry: ToDoTagEntry, _list: ToDoEntry[]) =>
         ({
             items:
@@ -2928,8 +2928,8 @@ export module CyclicToDo
             //     [],
         ];
         export const isMatchHistoryItem = (filter: string, _entry: ToDoTagEntry, item: { task: string, tick: number | null }) =>
-            isMatchTest(filter, item.task) ||
-            isMatchTest(filter, Domain.dateStringFromTick(item.tick));
+            isMatchTest(filter, regulateFilterText(item.task)) ||
+            isMatchTest(filter, regulateFilterText(Domain.dateStringFromTick(item.tick)));
         export const historyScreenHeader = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[]): Promise<HeaderSource> =>
         ({
             items:
