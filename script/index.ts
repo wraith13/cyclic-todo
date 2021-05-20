@@ -1876,6 +1876,22 @@ export module CyclicToDo
             },
             "delete-button"
         );
+        export const getTodoIcon = (item: ToDoEntry): Resource.KeyType =>
+        {
+            if (null === item.progress)
+            {
+                switch(item.count)
+                {
+                // case 0:
+                //     return "zero-icon";
+                // case 1:
+                //     return "one-icon";
+                default:
+                    return "sleep-icon";
+                }
+            }
+            return "task-icon";
+        };
         export const todoItem = async (entry: ToDoTagEntry, item: ToDoEntry) =>
         {
             let isFirst = true;
@@ -1902,7 +1918,7 @@ export module CyclicToDo
                             href: { pass: entry.pass, todo: item.task, },
                             children:
                             [
-                                await Resource.loadSvgOrCache("task-icon"),
+                                await Resource.loadSvgOrCache(getTodoIcon(item)),
                                 Storage.Tag.decode(item.task),
                             ]
                         }),

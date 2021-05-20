@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu May 20 2021 05:35:12 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu May 20 2021 18:16:55 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2939,6 +2939,7 @@ define("resource/images", [], {
     "folder-icon": "./image/folder.1024.svg",
     "history-icon": "./image/history.1024.svg",
     "task-icon": "./image/task.1024.svg",
+    "sleep-icon": "./image/sleep.1024.svg",
     "tick-icon": "./image/tick.1024.svg",
     "add-list-icon": "./image/add-list.1024.svg",
     "add-tag-icon": "./image/add-tag.1024.svg",
@@ -4807,6 +4808,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); }, "delete-button"); };
+            Render.getTodoIcon = function (item) {
+                if (null === item.progress) {
+                    return "sleep-icon";
+                }
+                return "task-icon";
+            };
             Render.todoItem = function (entry, item) { return __awaiter(_this, void 0, void 0, function () {
                 var isFirst, onUpdate, onDone, itemDom, _a, _b, _c, _d, _e, _f, _g, _h, _j;
                 var _k;
@@ -4843,7 +4850,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "item-title",
                                 href: { pass: entry.pass, todo: item.task, }
                             };
-                            return [4 /*yield*/, Resource.loadSvgOrCache("task-icon")];
+                            return [4 /*yield*/, Resource.loadSvgOrCache(Render.getTodoIcon(item))];
                         case 1:
                             _e = [
                                 _d.apply(void 0, [(_k.children = [
@@ -7643,6 +7650,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
 </svg>
 </div><div id="task-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M512,81.124C749.807,81.124 942.876,274.193 942.876,512C942.876,749.807 749.807,942.876 512,942.876C274.193,942.876 81.124,749.807 81.124,512C81.124,274.193 274.193,81.124 512,81.124ZM469.52,578.24L366.174,474.4C354.766,462.938 336.199,462.894 324.737,474.301L283.201,515.639C271.738,527.047 271.694,545.615 283.102,557.077L448.455,723.221C459.863,734.683 478.43,734.727 489.892,723.32L794.49,420.172C805.952,408.764 805.996,390.197 794.589,378.734L753.25,337.198C741.843,325.736 723.275,325.692 711.813,337.1L469.52,578.24Z"/>
+</svg>
+</div><div id="sleep-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M938.575,450.949C941.411,470.913 942.876,491.287 942.876,512C942.876,749.807 749.807,942.876 512,942.876C274.193,942.876 81.124,749.807 81.124,512C81.124,274.193 274.193,81.124 512,81.124C530.715,81.124 549.154,82.32 567.264,84.642C414.729,109.929 298.252,242.614 298.252,402.288C298.252,580 442.532,724.28 620.244,724.28C781.411,724.28 915.081,605.615 938.575,450.949Z"/>
 </svg>
 </div><div id="tick-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M512,96C741.597,96 928,282.403 928,512C928,741.597 741.597,928 512,928C282.403,928 96,741.597 96,512C96,282.403 282.403,96 512,96ZM512,192C688.613,192 832,335.387 832,512C832,688.613 688.613,832 512,832C335.387,832 192,688.613 192,512C192,335.387 335.387,192 512,192ZM503.806,508.395L662.473,349.917C681.066,331.345 711.239,331.363 729.811,349.957L730.354,350.501C748.926,369.095 748.908,399.268 730.314,417.839L539.166,608.761C538.717,609.249 538.254,609.732 537.778,610.208C530.727,617.263 522.02,621.663 512.902,623.408L512.727,623.441L512.644,623.456L512.605,623.464L512.535,623.476L512.443,623.493L512.386,623.504L512.31,623.518L512.198,623.537L512.159,623.544L512.129,623.549L512.014,623.569L511.872,623.593C510.28,623.863 508.661,624.054 507.02,624.162L506.898,624.17L506.756,624.179L506.72,624.181L506.691,624.183L506.592,624.189L506.483,624.195L506.432,624.198L506.381,624.2L506.286,624.205L506.203,624.209L506.144,624.212L506.067,624.216L505.979,624.22L505.919,624.222L505.857,624.225L505.751,624.229L505.672,624.233L505.63,624.234L505.569,624.236L505.43,624.241L505.364,624.243L505.337,624.244L505.281,624.246L505.104,624.251L505.055,624.252L505.041,624.252L504.993,624.254L504.768,624.258L504.742,624.259C504.438,624.265 504.133,624.268 503.829,624.268L503.817,624.268L503.685,624.267L503.553,624.267L503.541,624.267L503.507,624.267L503.295,624.265L503.26,624.264C498.449,624.21 493.806,623.446 489.434,622.072L489.338,622.042L489.266,622.019C482.181,619.773 475.514,615.843 469.896,610.229L341.788,482.199C323.05,463.472 323.041,433.055 341.768,414.316C360.495,395.578 390.912,395.569 409.65,414.296L503.806,508.395Z"/>
