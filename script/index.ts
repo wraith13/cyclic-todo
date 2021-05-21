@@ -1882,10 +1882,10 @@ export module CyclicToDo
             {
                 switch(item.count)
                 {
-                // case 0:
-                //     return "zero-icon";
-                // case 1:
-                //     return "one-icon";
+                case 0:
+                    return "zero-icon";
+                case 1:
+                    return "one-icon";
                 default:
                     return "sleep-icon";
                 }
