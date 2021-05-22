@@ -3695,8 +3695,11 @@ export module CyclicToDo
                     await minamo.core.timeout(wait);
                     minamo.dom.remove(dom);
                     // 以下は Safari での CSS バグをクリアする為の細工。本質的には必要の無い呼び出し。
-                    await minamo.core.timeout(10);
-                    resizeFlexList();
+                    if (document.getElementById("screen-toast").getElementsByClassName("item").length <= 0)
+                    {
+                        await minamo.core.timeout(10);
+                        updateWindow("operate");
+                    }
                 }
             };
             const wait = data.wait ?? 5000;

@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Fri May 21 2021 21:28:45 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sat May 22 2021 18:31:14 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -482,28 +482,13 @@ h1.max-progress .progress-bar {
   }
 }
 #screen-toast {
+  filter: drop-shadow(0rem 0rem 3rem #228844);
   background-color: #FFFFFF;
 }
 @media (prefers-color-scheme: dark) {
   #screen-toast {
     background-color: #000022;
   }
-}
-#screen-toast:not(:empty) {
-  animation-name: shadow-slide-up-in;
-  animation-direction: normal;
-  animation-delay: 0s;
-  animation-duration: 0.25s;
-  animation-timing-function: ease-in-out;
-  animation-fill-mode: both;
-}
-#screen-toast:empty {
-  animation-name: shadow-slide-down-out;
-  animation-direction: normal;
-  animation-delay: 0s;
-  animation-duration: 0.25s;
-  animation-timing-function: ease-in-out;
-  animation-fill-mode: both;
 }
 #screen-toast .item {
   border-top-color: #228844;
@@ -514,70 +499,6 @@ h1.max-progress .progress-bar {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-}
-@keyframes shadow-slide-up-in {
-  0% {
-    filter: initial;
-  }
-  10% {
-    filter: drop-shadow(0rem 0rem 0.333rem #228844);
-  }
-  20% {
-    filter: drop-shadow(0rem 0rem 0.666rem #228844);
-  }
-  40% {
-    filter: drop-shadow(0rem 0rem 1rem #228844);
-  }
-  50% {
-    filter: drop-shadow(0rem 0rem 1.333rem #228844);
-  }
-  60% {
-    filter: drop-shadow(0rem 0rem 1.666rem #228844);
-  }
-  70% {
-    filter: drop-shadow(0rem 0rem 2rem #228844);
-  }
-  80% {
-    filter: drop-shadow(0rem 0rem 2.333rem #228844);
-  }
-  90% {
-    filter: drop-shadow(0rem 0rem 2.666rem #228844);
-  }
-  100% {
-    filter: drop-shadow(0rem 0rem 3rem #228844);
-  }
-}
-@keyframes shadow-slide-down-out {
-  0% {
-    filter: drop-shadow(0rem 0rem 3rem #228844);
-  }
-  10% {
-    filter: drop-shadow(0rem 0rem 2.666rem #228844);
-  }
-  20% {
-    filter: drop-shadow(0rem 0rem 2.333rem #228844);
-  }
-  40% {
-    filter: drop-shadow(0rem 0rem 2rem #228844);
-  }
-  50% {
-    filter: drop-shadow(0rem 0rem 1.666rem #228844);
-  }
-  60% {
-    filter: drop-shadow(0rem 0rem 1.333rem #228844);
-  }
-  70% {
-    filter: drop-shadow(0rem 0rem 1rem #228844);
-  }
-  80% {
-    filter: drop-shadow(0rem 0rem 0.666rem #228844);
-  }
-  90% {
-    filter: drop-shadow(0rem 0rem 0.333rem #228844);
-  }
-  100% {
-    filter: initial;
-  }
 }
 .slide-up-in {
   animation-name: slide-up-in;
@@ -7228,12 +7149,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             case 1:
                                 _a.sent();
                                 minamo_js_1.minamo.dom.remove(dom);
-                                // 以下は Safari での CSS バグをクリアする為の細工。本質的には必要の無い呼び出し。
+                                if (!(document.getElementById("screen-toast").getElementsByClassName("item").length <= 0)) return [3 /*break*/, 3];
                                 return [4 /*yield*/, minamo_js_1.minamo.core.timeout(10)];
                             case 2:
-                                // 以下は Safari での CSS バグをクリアする為の細工。本質的には必要の無い呼び出し。
                                 _a.sent();
-                                Render.resizeFlexList();
+                                Render.updateWindow("operate");
                                 _a.label = 3;
                             case 3: return [2 /*return*/];
                         }
