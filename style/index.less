@@ -243,9 +243,10 @@ h1
 }
 #screen-toast
 {
+    .positive-background-coloring-trait;
     &:not(:empty)
     {
-        //filter: drop-shadow(0.0rem -0rem 3rem @accent-color);
+        // filter: drop-shadow(0.0rem -0rem 3rem @accent-color);
         animation-name: shadow-slide-up-in;
         animation-direction: normal;
         animation-delay: 0s;
@@ -267,7 +268,6 @@ h1
         border-top-color: @accent-color;
         border-top-width: 1px;
         border-top-style: solid;
-        .positive-background-coloring-trait;
         padding: 2rem 1.5rem;
         display: flex;
         flex-direction: row;
@@ -355,7 +355,6 @@ h1
         opacity: 0.0;
         max-height: 0px;
         padding: 0rem;
-        display: none; // Safari の CSS バグ回避の為に必要
     }
 }
 .fade-and-slide-out

@@ -3,5 +3,6 @@
     "timeAccuracy": 60000,
     "standardDeviationRate": 1.5,
     "granceMinutes": 1440,
-    "maxRestAdjustMinutes": 60
+    "maxRestAdjustMinutes": 60,
+    "maxShortTermMinutes": 14400
 }

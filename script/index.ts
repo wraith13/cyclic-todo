@@ -873,6 +873,14 @@ export module CyclicToDo
                 item => item.task,
             ]
         );
+        export const getTermCategory = (item: ToDoEntry) =>
+            0 < (item.smartRest ?? 0) ?
+                (
+                    item.RecentlySmartAverage < config.maxShortTermMinutes ?
+                        "@short-term":
+                        "@long-term"
+                ):
+                "@irregular-term";
         export const getRecentlyHistory = (pass: string, task: string) =>
         {
             const full = Storage.History.get(pass, task);
@@ -3686,6 +3694,9 @@ export module CyclicToDo
                     dom.classList.add(className);
                     await minamo.core.timeout(wait);
                     minamo.dom.remove(dom);
+                    // 以下は Safari での CSS バグをクリアする為の細工。本質的には必要の無い呼び出し。
+                    await minamo.core.timeout(10);
+                    resizeFlexList();
                 }
             };
             const wait = data.wait ?? 5000;
