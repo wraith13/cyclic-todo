@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun May 23 2021 09:34:10 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sun May 23 2021 19:18:33 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -3082,6 +3082,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     switch (tag) {
                         case "@overall":
                             return "home-icon";
+                        case "@irregular-term":
+                            return "sleep-icon";
                         case "@unoverall":
                             return "anti-home-icon";
                         case "@untagged":
@@ -3157,16 +3159,16 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     return result;
                 };
                 Tag.getByTodo = function (pass, todo) {
-                    return ["@overall"]
+                    return ["@overall", "@short-term", "@long-term", "@irregular-term"]
                         .concat(Tag.get(pass))
-                        .concat(["@unoverall", "@short-term", "@long-term", "@irregular-term", "@untagged"])
+                        .concat(["@unoverall", "@untagged"])
                         .filter(function (tag) { return 0 < TagMember.get(pass, tag).filter(function (i) { return todo === i; }).length; })
                         .sort(minamo_js_1.minamo.core.comparer.make(function (tag) { return Tag.isSublist(tag) ? 0 : 1; }));
                 };
                 Tag.getByTodoRaw = function (pass, todo) {
-                    return ["@overall"]
+                    return ["@overall", "@short-term", "@long-term", "@irregular-term"]
                         .concat(Tag.get(pass))
-                        .concat(["@unoverall", "@short-term", "@long-term", "@irregular-term", "@untagged"])
+                        .concat(["@unoverall", "@untagged"])
                         .filter(function (tag) { return 0 < TagMember.getRaw(pass, tag).filter(function (i) { return todo === i; }).length; });
                 };
                 Tag.rename = function (pass, oldTag, newTag) {
@@ -5394,7 +5396,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 icon: Storage.Tag.getIcon(current),
                                 title: Domain.tagMap(current)
                             };
-                            return [4 /*yield*/, Promise.all(["@overall"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@short-term", "@long-term", "@irregular-term", "@untagged"])
+                            return [4 /*yield*/, Promise.all(["@overall", "@short-term", "@long-term", "@irregular-term"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@untagged"])
                                     .map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
                                     return __generator(this, function (_b) {
@@ -6521,7 +6523,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     switch (_b.label) {
                         case 0:
                             item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
-                            tag = Storage.Tag.getByTodo(pass, item.task).filter(function (tag) { return "@overall" !== tag; }).concat("@overall")[0];
+                            tag = Storage.Tag.getByTodo(pass, item.task)
+                                .filter(function (tag) { return ["@overall", "@short-term", "@long-term", "@irregular-term",].indexOf(tag) < 0; })
+                                .concat("@overall")[0];
                             ticks = Storage.History.get(pass, task);
                             Domain.updateProgress(pass, item);
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
