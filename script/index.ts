@@ -267,6 +267,10 @@ export module CyclicToDo
                 {
                     case "@overall":
                         return "home-icon";
+                    case "@short-term":
+                        return "short-term-icon";
+                    case "@long-term":
+                        return "long-term-icon";
                     case "@irregular-term":
                         return "sleep-icon";
                     case "@unoverall":

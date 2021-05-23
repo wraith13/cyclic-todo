@@ -493,10 +493,13 @@ button
     top: calc(10px + 1.5rem);
     right: 0.0rem;
     z-index: 99999;
+    max-height: calc(100vh - 15rem);
+    overflow: hidden;
+    overflow-y: auto;
     &, & > a
     {
         display: flex;
-        flex-wrap: wrap;
+        // flex-wrap: wrap;
         align-items: stretch;
         justify-content: stretch;
         flex-direction: column;
@@ -507,7 +510,6 @@ button
     border-radius: 0.5rem;
     line-height: 1.5rem;
     font-size: 1.5rem;
-    overflow: hidden;
     a, button
     {
         border-radius: 0px;
