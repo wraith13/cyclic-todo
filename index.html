@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sat May 22 2021 18:31:14 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sun May 23 2021 09:34:10 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2750,6 +2750,9 @@ define("resource/lang.en", [], {
     "days": "days",
     "@overall": "Home",
     "@unoverall": "Excluded in Home",
+    "@short-term": "Short Term",
+    "@long-term": "Long Term",
+    "@irregular-term": "Irregular Term",
     "@untagged": "Uncategorized",
     "@deleted": "Recycle Bin",
     "@new": "New Tag",
@@ -2805,6 +2808,9 @@ define("resource/lang.ja", [], {
     "days": "日",
     "@overall": "ホーム",
     "@unoverall": "ホームから除外",
+    "@short-term": "短期",
+    "@long-term": "長期",
+    "@irregular-term": "不定期",
     "@untagged": "未分類",
     "@deleted": "ごみ箱",
     "@new": "新しいタグ",
@@ -3153,11 +3159,16 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 Tag.getByTodo = function (pass, todo) {
                     return ["@overall"]
                         .concat(Tag.get(pass))
-                        .concat(["@unoverall", "@untagged"])
+                        .concat(["@unoverall", "@short-term", "@long-term", "@irregular-term", "@untagged"])
                         .filter(function (tag) { return 0 < TagMember.get(pass, tag).filter(function (i) { return todo === i; }).length; })
                         .sort(minamo_js_1.minamo.core.comparer.make(function (tag) { return Tag.isSublist(tag) ? 0 : 1; }));
                 };
-                Tag.getByTodoRaw = function (pass, todo) { return ["@overall"].concat(Tag.get(pass)).concat(["@unoverall", "@untagged"]).filter(function (tag) { return 0 < TagMember.getRaw(pass, tag).filter(function (i) { return todo === i; }).length; }); };
+                Tag.getByTodoRaw = function (pass, todo) {
+                    return ["@overall"]
+                        .concat(Tag.get(pass))
+                        .concat(["@unoverall", "@short-term", "@long-term", "@irregular-term", "@untagged"])
+                        .filter(function (tag) { return 0 < TagMember.getRaw(pass, tag).filter(function (i) { return todo === i; }).length; });
+                };
                 Tag.rename = function (pass, oldTag, newTag) {
                     if (0 < newTag.length && !Tag.isSystemTag(oldTag) && !Tag.isSystemTag(newTag) && oldTag !== newTag && Tag.get(pass).indexOf(newTag) < 0) {
                         Tag.add(pass, newTag);
@@ -3510,6 +3521,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     case "@root":
                     case "@overall":
                     case "@unoverall":
+                    case "@short-term":
+                    case "@long-term":
+                    case "@irregular-term":
                     case "@untagged":
                     case "@deleted":
                     case "@new":
@@ -3559,12 +3573,26 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     ]);
             };
             Domain.getTermCategory = function (item) {
-                var _a;
-                return 0 < ((_a = item.smartRest) !== null && _a !== void 0 ? _a : 0) ?
+                return null !== item.smartRest ?
                     (item.RecentlySmartAverage < config_json_1.default.maxShortTermMinutes ?
                         "@short-term" :
                         "@long-term") :
                     "@irregular-term";
+            };
+            Domain.updateTermCategory = function (pass, item) {
+                var term = Domain.getTermCategory(item);
+                if (Storage.TagMember.get(pass, term).indexOf(item.task) < 0) {
+                    ["@short-term", "@long-term", "@irregular-term"].forEach(function (tag) {
+                        if (tag === term) {
+                            Storage.TagMember.add(pass, term, item.task);
+                        }
+                        else {
+                            if (0 <= Storage.TagMember.get(pass, tag).indexOf(item.task)) {
+                                Storage.TagMember.remove(pass, tag, item.task);
+                            }
+                        }
+                    });
+                }
             };
             Domain.getRecentlyHistory = function (pass, task) {
                 var full = Storage.History.get(pass, task);
@@ -3620,7 +3648,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var _a, _b;
                 return Domain.calcSmartRestCore(item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate), (_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : (item.RecentlySmartAverage * 0.1), item.elapsed);
             };
-            Domain.updateProgress = function (item, now) {
+            Domain.updateProgress = function (pass, item, now) {
                 var _a, _b;
                 if (now === void 0) { now = Domain.getTicks(); }
                 if (0 < item.count) {
@@ -3651,11 +3679,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             }
                         }
                     }
+                    Domain.updateTermCategory(pass, item);
                 }
             };
-            Domain.updateListProgress = function (list, now) {
+            Domain.updateListProgress = function (pass, list, now) {
                 if (now === void 0) { now = Domain.getTicks(); }
-                return list.forEach(function (item) { return Domain.updateProgress(item, now); });
+                return list.forEach(function (item) { return Domain.updateProgress(pass, item, now); });
             };
             Domain.sortList = function (entry, list) {
                 var tasks = JSON.stringify(list.map(function (i) { return i.task; }));
@@ -5365,7 +5394,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 icon: Storage.Tag.getIcon(current),
                                 title: Domain.tagMap(current)
                             };
-                            return [4 /*yield*/, Promise.all(["@overall"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@untagged"])
+                            return [4 /*yield*/, Promise.all(["@overall"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@short-term", "@long-term", "@irregular-term", "@untagged"])
                                     .map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
                                     return __generator(this, function (_b) {
@@ -5892,7 +5921,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     switch (_d.label) {
                         case 0:
                             list = entry.todo.map(function (task) { return Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)); });
-                            Domain.updateListProgress(list);
+                            Domain.updateListProgress(entry.pass, list);
                             Domain.sortList(entry, list);
                             isDirty = false;
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
@@ -5913,7 +5942,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             }
                                             return [3 /*break*/, 12];
                                         case 1:
-                                            Domain.updateListProgress(list);
+                                            Domain.updateListProgress(entry.pass, list);
                                             isDirty = isDirty || (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list)));
                                             if (isDirty &&
                                                 document.body.scrollTop <= 0 &&
@@ -5947,7 +5976,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             }
                                             return [3 /*break*/, 12];
                                         case 2:
-                                            Domain.updateListProgress(list);
+                                            Domain.updateListProgress(entry.pass, list);
                                             isDirty = isDirty || (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list)));
                                             if (!isDirty) return [3 /*break*/, 4];
                                             return [4 /*yield*/, updateWindow("operate")];
@@ -5961,7 +5990,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             return [3 /*break*/, 12];
                                         case 7:
                                             if (!(0 <= Storage.Pass.get().indexOf(entry.pass))) return [3 /*break*/, 9];
-                                            Domain.updateListProgress(list);
+                                            Domain.updateListProgress(entry.pass, list);
                                             Domain.sortList(entry, list);
                                             isDirty = false;
                                             filter_2 = Render.getFilterText();
@@ -6494,7 +6523,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
                             tag = Storage.Tag.getByTodo(pass, item.task).filter(function (tag) { return "@overall" !== tag; }).concat("@overall")[0];
                             ticks = Storage.History.get(pass, task);
-                            Domain.updateProgress(item);
+                            Domain.updateProgress(pass, item);
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
                                 var _a, dom, information_1, _b;
                                 return __generator(this, function (_c) {
@@ -6508,7 +6537,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             }
                                             return [3 /*break*/, 6];
                                         case 1:
-                                            Domain.updateProgress(item);
+                                            Domain.updateProgress(pass, item);
                                             dom = document
                                                 .getElementsByClassName("todo-screen")[0]
                                                 .getElementsByClassName("task-item")[0];
@@ -6524,7 +6553,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
                                             tag = Storage.Tag.getByTodo(pass, item.task).filter(function (tag) { return "@overall" !== tag; }).concat("@overall")[0];
                                             ticks = Storage.History.get(pass, task);
-                                            Domain.updateProgress(item);
+                                            Domain.updateProgress(pass, item);
                                             _b = Render.replaceScreenBody;
                                             return [4 /*yield*/, Render.todoScreenBody(pass, item, ticks, tag)];
                                         case 5:

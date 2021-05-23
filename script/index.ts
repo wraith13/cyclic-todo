@@ -359,10 +359,14 @@ export module CyclicToDo
             export const getByTodo = (pass: string, todo: string) =>
                 ["@overall"]
                     .concat(get(pass))
-                    .concat(["@unoverall", "@untagged"])
+                    .concat(["@unoverall", "@short-term", "@long-term", "@irregular-term", "@untagged"])
                     .filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length)
                     .sort(minamo.core.comparer.make(tag => isSublist(tag) ? 0: 1));
-            export const getByTodoRaw = (pass: string, todo: string) => ["@overall"].concat(get(pass)).concat(["@unoverall", "@untagged"]).filter(tag => 0 < TagMember.getRaw(pass, tag).filter(i => todo === i).length);
+            export const getByTodoRaw = (pass: string, todo: string) =>
+                ["@overall"]
+                    .concat(get(pass))
+                    .concat(["@unoverall", "@short-term", "@long-term", "@irregular-term", "@untagged"])
+                    .filter(tag => 0 < TagMember.getRaw(pass, tag).filter(i => todo === i).length);
             export const rename = (pass: string, oldTag: string, newTag: string) =>
             {
                 if (0 < newTag.length && ! isSystemTag(oldTag) && ! isSystemTag(newTag) && oldTag !== newTag && get(pass).indexOf(newTag) < 0)
@@ -823,6 +827,9 @@ export module CyclicToDo
             case "@root":
             case "@overall":
             case "@unoverall":
+            case "@short-term":
+            case "@long-term":
+            case "@irregular-term":
             case "@untagged":
             case "@deleted":
             case "@new":
@@ -874,13 +881,37 @@ export module CyclicToDo
             ]
         );
         export const getTermCategory = (item: ToDoEntry) =>
-            0 < (item.smartRest ?? 0) ?
+            null !== item.smartRest ?
                 (
                     item.RecentlySmartAverage < config.maxShortTermMinutes ?
                         "@short-term":
                         "@long-term"
                 ):
                 "@irregular-term";
+        export const updateTermCategory = (pass: string, item: ToDoEntry) =>
+        {
+            const term = getTermCategory(item);
+            if (Storage.TagMember.get(pass, term).indexOf(item.task) < 0)
+            {
+                ["@short-term", "@long-term", "@irregular-term"].forEach
+                (
+                    tag =>
+                    {
+                        if (tag === term)
+                        {
+                            Storage.TagMember.add(pass, term, item.task);
+                        }
+                        else
+                        {
+                            if (0 <= Storage.TagMember.get(pass, tag).indexOf(item.task))
+                            {
+                                Storage.TagMember.remove(pass, tag, item.task);
+                            }
+                        }
+                    }
+                );
+            }
+        };
         export const getRecentlyHistory = (pass: string, task: string) =>
         {
             const full = Storage.History.get(pass, task);
@@ -943,7 +974,7 @@ export module CyclicToDo
                 item.RecentlyStandardDeviation ?? (item.RecentlySmartAverage *0.1),
                 item.elapsed
             );
-        export const updateProgress = (item: ToDoEntry, now: number = Domain.getTicks()) =>
+        export const updateProgress = (pass: string, item: ToDoEntry, now: number = Domain.getTicks()) =>
         {
             if (0 < item.count)
             {
@@ -981,10 +1012,11 @@ export module CyclicToDo
                         }
                     }
                 }
+                updateTermCategory(pass, item);
             }
         };
-        export const updateListProgress = (list: ToDoEntry[], now: number = Domain.getTicks()) =>
-            list.forEach(item => updateProgress(item, now));
+        export const updateListProgress = (pass: string, list: ToDoEntry[], now: number = Domain.getTicks()) =>
+            list.forEach(item => updateProgress(pass, item, now));
         export const sortList = (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         {
             const tasks = JSON.stringify(list.map(i => i.task));
@@ -2357,7 +2389,7 @@ export module CyclicToDo
                     (
                         await Promise.all
                         (
-                            ["@overall"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@untagged"])
+                            ["@overall"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@short-term", "@long-term", "@irregular-term", "@untagged"])
                             .map
                             (
                                 async tag => menuLinkItem
@@ -2783,7 +2815,7 @@ export module CyclicToDo
         export const showListScreen = async (urlParams: PageParams, entry: ToDoTagEntry) =>
         {
             const list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)));
-            Domain.updateListProgress(list);
+            Domain.updateListProgress(entry.pass, list);
             Domain.sortList(entry, list);
             let isDirty = false;
             const updateWindow = async (event: UpdateWindowEventEype) =>
@@ -2791,7 +2823,7 @@ export module CyclicToDo
                 switch(event)
                 {
                     case "timer":
-                        Domain.updateListProgress(list);
+                        Domain.updateListProgress(entry.pass, list);
                         isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[]));
                         if
                         (
@@ -2838,7 +2870,7 @@ export module CyclicToDo
                     case "focus":
                     case "blur":
                     case "scroll":
-                        Domain.updateListProgress(list);
+                        Domain.updateListProgress(entry.pass, list);
                         isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[]));
                         if (isDirty)
                         {
@@ -2851,7 +2883,7 @@ export module CyclicToDo
                     case "operate":
                         if (0 <= Storage.Pass.get().indexOf(entry.pass))
                         {
-                            Domain.updateListProgress(list);
+                            Domain.updateListProgress(entry.pass, list);
                             Domain.sortList(entry, list);
                             isDirty = false;
                             const filter = getFilterText();
@@ -3213,13 +3245,13 @@ export module CyclicToDo
             let item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
             let tag: string = Storage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0];
             let ticks = Storage.History.get(pass, task);
-            Domain.updateProgress(item);
+            Domain.updateProgress(pass, item);
             const updateWindow = async (event: UpdateWindowEventEype) =>
             {
                 switch(event)
                 {
                     case "timer":
-                        Domain.updateProgress(item);
+                        Domain.updateProgress(pass, item);
                         const dom = document
                             .getElementsByClassName("todo-screen")[0]
                             .getElementsByClassName("task-item")[0] as HTMLDivElement;
@@ -3234,7 +3266,7 @@ export module CyclicToDo
                         item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
                         tag = Storage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0];
                         ticks = Storage.History.get(pass, task);
-                        Domain.updateProgress(item);
+                        Domain.updateProgress(pass, item);
                         replaceScreenBody(await todoScreenBody(pass, item, ticks, tag));
                         resizeFlexList();
                         break;
