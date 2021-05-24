@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon May 24 2021 08:08:10 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon May 24 2021 18:38:39 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -835,6 +835,7 @@ button.delete-button {
   overflow: hidden;
   overflow-y: auto;
   color: #228844;
+  background-color: #FFFFFF;
   border-style: solid;
   border-width: 1px;
   border-radius: 0.5rem;
@@ -850,6 +851,11 @@ button.delete-button {
   align-items: stretch;
   justify-content: stretch;
   flex-direction: column;
+}
+@media (prefers-color-scheme: dark) {
+  .menu-popup {
+    background-color: #000022;
+  }
 }
 .menu-popup a,
 .menu-popup button {
@@ -3688,8 +3694,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             }
                         }
                     }
-                    Domain.updateTermCategory(pass, item);
                 }
+                Domain.updateTermCategory(pass, item);
             };
             Domain.updateListProgress = function (pass, list, now) {
                 if (now === void 0) { now = Domain.getTicks(); }
@@ -3783,8 +3789,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     className: data.className,
                     href: CyclicToDo.makeUrl(data.href),
                     children: data.children,
-                    onclick: function (event) {
-                        event.stopPropagation();
+                    onclick: function (_event) {
+                        // event.stopPropagation();
                         CyclicToDo.showUrl(data.href);
                         return false;
                     }

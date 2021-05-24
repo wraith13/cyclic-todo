@@ -1018,8 +1018,8 @@ export module CyclicToDo
                         }
                     }
                 }
-                updateTermCategory(pass, item);
             }
+            updateTermCategory(pass, item);
         };
         export const updateListProgress = (pass: string, list: ToDoEntry[], now: number = Domain.getTicks()) =>
             list.forEach(item => updateProgress(pass, item, now));
@@ -1099,9 +1099,9 @@ export module CyclicToDo
             className: data.className,
             href: makeUrl(data.href),
             children: data.children,
-            onclick: (event: MouseEvent) =>
+            onclick: (_event: MouseEvent) =>
             {
-                event.stopPropagation();
+                // event.stopPropagation();
                 showUrl(data.href);
                 return false;
             }
