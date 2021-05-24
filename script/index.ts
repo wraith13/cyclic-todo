@@ -1038,7 +1038,7 @@ export module CyclicToDo
             {
                 const list = JSON.parse(Storage.exportJson(pass));
                 Storage.Pass.remove(list.pass);
-                const toast = makeToast
+                const toast = makePrimaryToast
                 ({
                     content: $span("")(`ToDo リストを削除しました！: ${list.title}`),
                     backwardOperator: cancelTextButton
@@ -1055,7 +1055,7 @@ export module CyclicToDo
             export const done = async (pass: string, task: string, tick: number, onCanceled: () => unknown) =>
             {
                 Domain.done(pass, task, tick);
-                const toast = makeToast
+                const toast = makePrimaryToast
                 ({
                     content: $span("")(`完了！: ${task}`),
                     backwardOperator: cancelTextButton
