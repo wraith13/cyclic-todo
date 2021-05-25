@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue May 25 2021 17:56:28 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue May 25 2021 19:35:19 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2742,7 +2742,7 @@ define("resource/config", [], {
     "applicationTitle": "Cyclic ToDo",
     "timeAccuracy": 60000,
     "standardDeviationRate": 1.5,
-    "sleepStandardDeviationRate": 2.5,
+    "sleepStandardDeviationRate": 3.0,
     "granceMinutes": 1440,
     "maxRestAdjustMinutes": 60,
     "maxShortTermMinutes": 14400
@@ -3625,21 +3625,20 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Domain.getToDoEntry = function (pass, task) {
                 // const history: { recentries: number[], previous: null | number, count: number, } = getRecentlyHistory(pass, task);
                 var full = Storage.History.get(pass, task);
-                // const longRecentries = full.filter((_, index) => index < 125);
-                // const longRecentlyAverage = longRecentries.length <= 1 ? null: Calculate.average(Calculate.intervals(longRecentries));
-                // const longRecentlyStandardDeviation = longRecentries.length <= 5 ?
-                //     null:
-                //     Calculate.standardDeviation(Calculate.intervals(longRecentries));
+                var longRecentries = Calculate.intervals(full.filter(function (_, index) { return index < 126; }));
+                var longRecentlyAverage = longRecentries.length <= 1 ? null : Calculate.average(longRecentries);
+                var longRecentlyStandardDeviation = longRecentries.length <= 5 ?
+                    null :
+                    Calculate.standardDeviation(longRecentries, longRecentlyAverage);
                 var history = {
-                    full: full,
-                    recentries: 
-                    // (
-                    //     null === longRecentlyStandardDeviation ?
-                    //         full:
-                    //         full.filter(i => Calculate.standardScore(longRecentlyAverage, longRecentlyStandardDeviation, i) <= config.sleepStandardDeviationRate)
-                    // )
-                    // .filter((_, index) => index < 25),
-                    full.filter(function (_, index) { return index < 25; }),
+                    // full,
+                    intervals: (null === longRecentlyStandardDeviation ?
+                        longRecentries :
+                        // todo 毎の hisotry 画面では config.granceMinutes を使うが、ここでは予想間隔の精度の都合から使わない。 ( 整合性が無くなるが、特にそれでなんの影響も無いので気にしない。 )
+                        //longRecentries.filter(i => (i -longRecentlyAverage -config.granceMinutes) / longRecentlyStandardDeviation <= config.sleepStandardDeviationRate)
+                        longRecentries.filter(function (i) { return (i - longRecentlyAverage) / longRecentlyStandardDeviation <= config_json_1.default.sleepStandardDeviationRate; }))
+                        .filter(function (_, index) { return index < 25; }),
+                    // intervals: longRecentries.filter((_, index) => index < 25),
                     previous: full.length <= 0 ? null : full[0],
                     //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
                     count: full.length,
@@ -3647,30 +3646,26 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var inflateRecentrly = function (intervals) { return 20 <= intervals.length ?
                     intervals.filter(function (_, ix) { return ix < 5; }).concat(intervals.filter(function (_, ix) { return ix < 10; }), intervals) :
                     intervals.filter(function (_, ix) { return ix < 5; }).concat(intervals); };
-                var calcAverage = function (ticks, maxLength, length) {
-                    if (maxLength === void 0) { maxLength = ticks.length; }
-                    if (length === void 0) { length = Math.min(maxLength, ticks.length); }
-                    return ((ticks[0] - ticks[length - 1]) / (length - 1));
-                };
+                // const calcAverage = (ticks: number[], maxLength: number = ticks.length, length = Math.min(maxLength, ticks.length)) =>
+                //     ((ticks[0] -ticks[length -1]) /(length -1));
                 var result = {
                     task: task,
                     isDefault: false,
                     progress: null,
                     previous: history.previous,
                     elapsed: null,
-                    // overallAverage: full.length <= 1 ? null: calcAverage(full),
-                    RecentlyStandardDeviation: history.recentries.length <= 1 ?
+                    RecentlyStandardDeviation: history.intervals.length <= 0 ?
                         null :
-                        history.recentries.length <= 2 ?
-                            calcAverage(history.recentries) * 0.05 : // この値を標準偏差として代用
-                            Calculate.standardDeviation(inflateRecentrly(Calculate.intervals(history.recentries))),
+                        history.intervals.length <= 1 ?
+                            Calculate.average(history.intervals) * 0.05 : // この値を標準偏差として代用
+                            Calculate.standardDeviation(inflateRecentrly(history.intervals)),
                     count: history.count,
-                    RecentlySmartAverage: history.recentries.length <= 1 ?
+                    RecentlySmartAverage: history.intervals.length <= 0 ?
                         null :
-                        Calculate.average(inflateRecentrly(Calculate.intervals(history.recentries))),
-                    RecentlyAverage: history.recentries.length <= 1 ?
+                        Calculate.average(inflateRecentrly(history.intervals)),
+                    RecentlyAverage: history.intervals.length <= 0 ?
                         null :
-                        Calculate.average(Calculate.intervals(history.recentries.filter(function (_, ix) { return ix <= 15; }))),
+                        Calculate.average(history.intervals),
                     smartRest: null,
                 };
                 return result;
@@ -5025,7 +5020,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 0:
                             _a = Render.$div({
                                 className: "tick-item flex-item ",
-                                style: Render.progressStyle(null === interval ? null : interval / max),
+                                style: Render.progressStyle(null === interval || max < interval ? null : interval / max),
                             });
                             return [4 /*yield*/, Resource.loadSvgOrCache(null === interval ? "one-icon" :
                                     max < interval ? "sleep-icon" :
@@ -6478,66 +6473,77 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
-            Render.todoScreenBody = function (pass, item, ticks, _tag) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e;
-                var _this = this;
-                return __generator(this, function (_f) {
-                    switch (_f.label) {
-                        case 0:
-                            _a = [Storage.isSessionPass(pass) ?
-                                    [] :
-                                    Render.$div("button-list")({
-                                        tag: "button",
-                                        className: item.isDefault ? "default-button main-button long-button" : "main-button long-button",
-                                        children: Render.label("Done"),
-                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                            return __generator(this, function (_a) {
-                                                Operate.done(pass, item.task, Domain.getDoneTicks(pass), function () { return Render.updateWindow("operate"); });
-                                                Render.updateWindow("operate");
-                                                return [2 /*return*/];
-                                            });
-                                        }); }
-                                    })];
-                            _b = Render.$div("row-flex-list todo-list");
-                            _c = Render.$div("task-item flex-item");
-                            _d = Render.$div("item-tags");
-                            return [4 /*yield*/, Promise.all(Storage.Tag.getByTodo(pass, item.task).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
-                                    var _a;
-                                    var _b;
-                                    return __generator(this, function (_c) {
-                                        switch (_c.label) {
-                                            case 0:
-                                                _a = Render.internalLink;
-                                                _b = {
-                                                    className: "tag",
-                                                    href: { pass: pass, tag: tag, }
-                                                };
-                                                return [4 /*yield*/, Resource.loadSvgOrCache(Storage.Tag.getIcon(tag))];
-                                            case 1: return [2 /*return*/, _a.apply(void 0, [(_b.children = [
-                                                        _c.sent(),
-                                                        Domain.tagMap(tag)
-                                                    ],
-                                                        _b)])];
-                                        }
-                                    });
-                                }); }))];
-                        case 1:
-                            _a = _a.concat([
-                                _b.apply(void 0, [[
-                                        _c.apply(void 0, [[
-                                                _d.apply(void 0, [_f.sent()]),
-                                                Render.information(item)
-                                            ]])
-                                    ]])
-                            ]);
-                            _e = Render.$div("column-flex-list tick-list");
-                            return [4 /*yield*/, Promise.all(ticks.map(function (tick, index) { return Render.tickItem(pass, item, tick, "number" === typeof ticks[index + 1] ? tick - ticks[index + 1] : null, ticks.length < 2 ? null : Math.max.apply(null, Calculate.intervals(ticks))); }))];
-                        case 2: return [2 /*return*/, (_a.concat([
-                                _e.apply(void 0, [_f.sent()])
-                            ]))];
-                    }
+            Render.getIntervalsMax = function (intervals) {
+                var average = intervals.length <= 1 ? null : Calculate.average(intervals);
+                var standardDeviation = intervals.length <= 5 ?
+                    null :
+                    Calculate.standardDeviation(intervals, average);
+                return null === standardDeviation ? (intervals.length <= 0 ? null : Math.max.apply(null, intervals)) :
+                    Math.max.apply(null, intervals.filter(function (i) { return (i - average - config_json_1.default.granceMinutes) / standardDeviation <= config_json_1.default.sleepStandardDeviationRate; }));
+            };
+            Render.todoScreenBody = function (pass, item, ticks, _tag, max) {
+                if (max === void 0) { max = Render.getIntervalsMax(Calculate.intervals(ticks)); }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var _a, _b, _c, _d, _e;
+                    var _this = this;
+                    return __generator(this, function (_f) {
+                        switch (_f.label) {
+                            case 0:
+                                _a = [Storage.isSessionPass(pass) ?
+                                        [] :
+                                        Render.$div("button-list")({
+                                            tag: "button",
+                                            className: item.isDefault ? "default-button main-button long-button" : "main-button long-button",
+                                            children: Render.label("Done"),
+                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                return __generator(this, function (_a) {
+                                                    Operate.done(pass, item.task, Domain.getDoneTicks(pass), function () { return Render.updateWindow("operate"); });
+                                                    Render.updateWindow("operate");
+                                                    return [2 /*return*/];
+                                                });
+                                            }); }
+                                        })];
+                                _b = Render.$div("row-flex-list todo-list");
+                                _c = Render.$div("task-item flex-item");
+                                _d = Render.$div("item-tags");
+                                return [4 /*yield*/, Promise.all(Storage.Tag.getByTodo(pass, item.task).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
+                                        var _a;
+                                        var _b;
+                                        return __generator(this, function (_c) {
+                                            switch (_c.label) {
+                                                case 0:
+                                                    _a = Render.internalLink;
+                                                    _b = {
+                                                        className: "tag",
+                                                        href: { pass: pass, tag: tag, }
+                                                    };
+                                                    return [4 /*yield*/, Resource.loadSvgOrCache(Storage.Tag.getIcon(tag))];
+                                                case 1: return [2 /*return*/, _a.apply(void 0, [(_b.children = [
+                                                            _c.sent(),
+                                                            Domain.tagMap(tag)
+                                                        ],
+                                                            _b)])];
+                                            }
+                                        });
+                                    }); }))];
+                            case 1:
+                                _a = _a.concat([
+                                    _b.apply(void 0, [[
+                                            _c.apply(void 0, [[
+                                                    _d.apply(void 0, [_f.sent()]),
+                                                    Render.information(item)
+                                                ]])
+                                        ]])
+                                ]);
+                                _e = Render.$div("column-flex-list tick-list");
+                                return [4 /*yield*/, Promise.all(ticks.map(function (tick, index) { return Render.tickItem(pass, item, tick, "number" === typeof ticks[index + 1] ? tick - ticks[index + 1] : null, max); }))];
+                            case 2: return [2 /*return*/, (_a.concat([
+                                    _e.apply(void 0, [_f.sent()])
+                                ]))];
+                        }
+                    });
                 });
-            }); };
+            };
             Render.todoScreen = function (pass, item, ticks, tag) { return __awaiter(_this, void 0, void 0, function () {
                 var _a;
                 return __generator(this, function (_b) {

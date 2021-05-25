@@ -934,22 +934,24 @@ export module CyclicToDo
         {
             // const history: { recentries: number[], previous: null | number, count: number, } = getRecentlyHistory(pass, task);
             const full = Storage.History.get(pass, task);
-            // const longRecentries = full.filter((_, index) => index < 125);
-            // const longRecentlyAverage = longRecentries.length <= 1 ? null: Calculate.average(Calculate.intervals(longRecentries));
-            // const longRecentlyStandardDeviation = longRecentries.length <= 5 ?
-            //     null:
-            //     Calculate.standardDeviation(Calculate.intervals(longRecentries));
+            const longRecentries = Calculate.intervals(full.filter((_, index) => index < 126));
+            const longRecentlyAverage = longRecentries.length <= 1 ? null: Calculate.average(longRecentries);
+            const longRecentlyStandardDeviation = longRecentries.length <= 5 ?
+                null:
+                Calculate.standardDeviation(longRecentries, longRecentlyAverage);
             const history =
             {
-                full,
-                recentries:
-                    // (
-                    //     null === longRecentlyStandardDeviation ?
-                    //         full:
-                    //         full.filter(i => Calculate.standardScore(longRecentlyAverage, longRecentlyStandardDeviation, i) <= config.sleepStandardDeviationRate)
-                    // )
-                    // .filter((_, index) => index < 25),
-                    full.filter((_, index) => index < 25),
+                // full,
+                intervals:
+                    (
+                        null === longRecentlyStandardDeviation ?
+                            longRecentries:
+                            // todo 毎の hisotry 画面では config.granceMinutes を使うが、ここでは予想間隔の精度の都合から使わない。 ( 整合性が無くなるが、特にそれでなんの影響も無いので気にしない。 )
+                            //longRecentries.filter(i => (i -longRecentlyAverage -config.granceMinutes) / longRecentlyStandardDeviation <= config.sleepStandardDeviationRate)
+                            longRecentries.filter(i => (i -longRecentlyAverage) / longRecentlyStandardDeviation <= config.sleepStandardDeviationRate)
+                    )
+                    .filter((_, index) => index < 25),
+                // intervals: longRecentries.filter((_, index) => index < 25),
                 previous: full.length <= 0 ? null: full[0],
                 //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
                 count: full.length,
@@ -959,8 +961,8 @@ export module CyclicToDo
             const inflateRecentrly = (intervals: number[]) => 20 <= intervals.length ?
                 intervals.filter((_, ix) => ix < 5).concat(intervals.filter((_, ix) => ix < 10), intervals):
                 intervals.filter((_, ix) => ix < 5).concat(intervals);
-            const calcAverage = (ticks: number[], maxLength: number = ticks.length, length = Math.min(maxLength, ticks.length)) =>
-                ((ticks[0] -ticks[length -1]) /(length -1));
+            // const calcAverage = (ticks: number[], maxLength: number = ticks.length, length = Math.min(maxLength, ticks.length)) =>
+            //     ((ticks[0] -ticks[length -1]) /(length -1));
             const result: ToDoEntry =
             {
                 task,
@@ -968,19 +970,18 @@ export module CyclicToDo
                 progress: null,
                 previous: history.previous,
                 elapsed: null,
-                // overallAverage: full.length <= 1 ? null: calcAverage(full),
-                RecentlyStandardDeviation: history.recentries.length <= 1 ?
+                RecentlyStandardDeviation: history.intervals.length <= 0 ?
                     null:
-                    history.recentries.length <= 2 ?
-                        calcAverage(history.recentries) *0.05: // この値を標準偏差として代用
-                        Calculate.standardDeviation(inflateRecentrly(Calculate.intervals(history.recentries))),
+                    history.intervals.length <= 1 ?
+                        Calculate.average(history.intervals) *0.05: // この値を標準偏差として代用
+                        Calculate.standardDeviation(inflateRecentrly(history.intervals)),
                 count: history.count,
-                RecentlySmartAverage: history.recentries.length <= 1 ?
+                RecentlySmartAverage: history.intervals.length <= 0 ?
                     null:
-                    Calculate.average(inflateRecentrly(Calculate.intervals(history.recentries))),
-                RecentlyAverage: history.recentries.length <= 1 ?
+                    Calculate.average(inflateRecentrly(history.intervals)),
+                RecentlyAverage: history.intervals.length <= 0 ?
                     null:
-                    Calculate.average(Calculate.intervals(history.recentries.filter((_, ix) => ix <= 15))),
+                    Calculate.average(history.intervals),
                 smartRest: null,
             };
             return result;
@@ -2117,7 +2118,7 @@ export module CyclicToDo
         export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null) => $div
         ({
             className: "tick-item flex-item ",
-            style: Render.progressStyle(null === interval ? null: interval /max),
+            style: Render.progressStyle(null === interval || max < interval ? null: interval /max),
         })
         ([
             await Resource.loadSvgOrCache
@@ -3204,7 +3205,16 @@ export module CyclicToDo
             ],
             menu: await todoScreenMenu(pass, item),
         });
-        export const todoScreenBody = async (pass: string, item: ToDoEntry, ticks: number[], _tag: string) =>
+        export const getIntervalsMax = (intervals: number[]) =>
+        {
+            const average = intervals.length <= 1 ? null: Calculate.average(intervals);
+            const standardDeviation = intervals.length <= 5 ?
+                null:
+                Calculate.standardDeviation(intervals, average);
+            return null === standardDeviation ? (intervals.length <= 0 ? null: Math.max.apply(null, intervals)):
+                Math.max.apply(null, intervals.filter(i => (i -average -config.granceMinutes) / standardDeviation <= config.sleepStandardDeviationRate));
+        };
+        export const todoScreenBody = async (pass: string, item: ToDoEntry, ticks: number[], _tag: string, max: number | null = getIntervalsMax(Calculate.intervals(ticks))) =>
         ([
             Storage.isSessionPass(pass) ?
                 []:
@@ -3263,7 +3273,7 @@ export module CyclicToDo
                             item,
                             tick,
                             "number" === typeof ticks[index +1] ? tick -ticks[index +1]: null,
-                            ticks.length < 2 ? null: Math.max.apply(null, Calculate.intervals(ticks))
+                            max
                         )
                     )
                 )
