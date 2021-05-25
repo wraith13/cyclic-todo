@@ -92,7 +92,7 @@ export module CyclicToDo
         progress: null | number;
         previous: null | number;
         elapsed: null | number;
-        overallAverage: null | number;
+        // overallAverage: null | number;
         RecentlyStandardDeviation: null | number;
         RecentlySmartAverage: null | number;
         RecentlyAverage: null | number;
@@ -918,20 +918,43 @@ export module CyclicToDo
                 );
             }
         };
-        export const getRecentlyHistory = (pass: string, task: string) =>
+        // export const getRecentlyHistory = (pass: string, task: string) =>
+        // {
+        //     const full = Storage.History.get(pass, task);
+        //     const result =
+        //     {
+        //         recentries: full.filter((_, index) => index < 25),
+        //         previous: full.length <= 0 ? null: full[0],
+        //         //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
+        //         count: full.length,
+        //     };
+        //     return result;
+        // };
+        export const getToDoEntry = (pass: string, task: string) =>
         {
+            // const history: { recentries: number[], previous: null | number, count: number, } = getRecentlyHistory(pass, task);
             const full = Storage.History.get(pass, task);
-            const result =
+            const longRecentries = full.filter((_, index) => index < 125);
+            const longRecentlyAverage = longRecentries.length <= 1 ? null: Calculate.average(Calculate.intervals(longRecentries));
+            const longRecentlyStandardDeviation = longRecentries.length <= 5 ?
+                null:
+                Calculate.standardDeviation(Calculate.intervals(longRecentries));
+            const history =
             {
-                recentries: full.filter((_, index) => index < 25),
+                full,
+                recentries:
+                    (
+                        null === longRecentlyStandardDeviation ?
+                            full:
+                            full.filter(i => Calculate.standardScore(longRecentlyAverage, longRecentlyStandardDeviation, i) <= config.sleepStandardDeviationRate)
+                    )
+                    .filter((_, index) => index < 25),
                 previous: full.length <= 0 ? null: full[0],
                 //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
                 count: full.length,
             };
-            return result;
-        };
-        export const getToDoEntry = (_pass: string, task: string, history: { recentries: number[], previous: null | number, count: number, }) =>
-        {
+
+
             const inflateRecentrly = (intervals: number[]) => 20 <= intervals.length ?
                 intervals.filter((_, ix) => ix < 5).concat(intervals.filter((_, ix) => ix < 10), intervals):
                 intervals.filter((_, ix) => ix < 5).concat(intervals);
@@ -944,7 +967,7 @@ export module CyclicToDo
                 progress: null,
                 previous: history.previous,
                 elapsed: null,
-                overallAverage: history.recentries.length <= 1 ? null: calcAverage(history.recentries),
+                // overallAverage: full.length <= 1 ? null: calcAverage(full),
                 RecentlyStandardDeviation: history.recentries.length <= 1 ?
                     null:
                     history.recentries.length <= 2 ?
@@ -1943,7 +1966,7 @@ export module CyclicToDo
             let isFirst = true;
             const onUpdate = async () =>
             {
-                Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
+                Object.assign(item, Domain.getToDoEntry(entry.pass, item.task));
                 updateWindow("operate");
             };
             const onDone = async () =>
@@ -2096,7 +2119,12 @@ export module CyclicToDo
             style: Render.progressStyle(null === interval ? null: interval /max),
         })
         ([
-            await Resource.loadSvgOrCache("tick-icon"),
+            await Resource.loadSvgOrCache
+            (
+                null === interval ?
+                    "one-icon":
+                    "tick-icon"
+            ),
             $div("item-information")
             ([
                 $div("tick-timestamp")
@@ -2820,7 +2848,7 @@ export module CyclicToDo
         });
         export const showListScreen = async (urlParams: PageParams, entry: ToDoTagEntry) =>
         {
-            const list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)));
+            const list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task));
             Domain.updateListProgress(entry.pass, list);
             Domain.sortList(entry, list);
             let isDirty = false;
@@ -3248,7 +3276,7 @@ export module CyclicToDo
         });
         export const showTodoScreen = async (pass: string, task: string) =>
         {
-            let item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
+            let item = Domain.getToDoEntry(pass, task);
             let tag: string = Storage.Tag.getByTodo(pass, item.task)
                 .filter(tag => [ "@overall", "@short-term", "@long-term", "@irregular-term", ].indexOf(tag) < 0)
                 .concat("@overall")[0];
@@ -3271,7 +3299,7 @@ export module CyclicToDo
                         await reload();
                         break;
                     case "operate":
-                        item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
+                        item = Domain.getToDoEntry(pass, task);
                         tag = Storage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0];
                         ticks = Storage.History.get(pass, task);
                         Domain.updateProgress(pass, item);

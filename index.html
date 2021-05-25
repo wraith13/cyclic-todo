@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon May 24 2021 18:58:03 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue May 25 2021 17:42:33 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2742,6 +2742,7 @@ define("resource/config", [], {
     "applicationTitle": "Cyclic ToDo",
     "timeAccuracy": 60000,
     "standardDeviationRate": 1.5,
+    "sleepStandardDeviationRate": 2.5,
     "granceMinutes": 1440,
     "maxRestAdjustMinutes": 60,
     "maxShortTermMinutes": 14400
@@ -3609,17 +3610,36 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     });
                 }
             };
-            Domain.getRecentlyHistory = function (pass, task) {
+            // export const getRecentlyHistory = (pass: string, task: string) =>
+            // {
+            //     const full = Storage.History.get(pass, task);
+            //     const result =
+            //     {
+            //         recentries: full.filter((_, index) => index < 25),
+            //         previous: full.length <= 0 ? null: full[0],
+            //         //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
+            //         count: full.length,
+            //     };
+            //     return result;
+            // };
+            Domain.getToDoEntry = function (pass, task) {
+                // const history: { recentries: number[], previous: null | number, count: number, } = getRecentlyHistory(pass, task);
                 var full = Storage.History.get(pass, task);
-                var result = {
-                    recentries: full.filter(function (_, index) { return index < 25; }),
+                var longRecentries = full.filter(function (_, index) { return index < 125; });
+                var longRecentlyAverage = longRecentries.length <= 1 ? null : Calculate.average(Calculate.intervals(longRecentries));
+                var longRecentlyStandardDeviation = longRecentries.length <= 5 ?
+                    null :
+                    Calculate.standardDeviation(Calculate.intervals(longRecentries));
+                var history = {
+                    full: full,
+                    recentries: (null === longRecentlyStandardDeviation ?
+                        full :
+                        full.filter(function (i) { return Calculate.standardScore(longRecentlyAverage, longRecentlyStandardDeviation, i) <= config_json_1.default.sleepStandardDeviationRate; }))
+                        .filter(function (_, index) { return index < 25; }),
                     previous: full.length <= 0 ? null : full[0],
                     //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
                     count: full.length,
                 };
-                return result;
-            };
-            Domain.getToDoEntry = function (_pass, task, history) {
                 var inflateRecentrly = function (intervals) { return 20 <= intervals.length ?
                     intervals.filter(function (_, ix) { return ix < 5; }).concat(intervals.filter(function (_, ix) { return ix < 10; }), intervals) :
                     intervals.filter(function (_, ix) { return ix < 5; }).concat(intervals); };
@@ -3634,7 +3654,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     progress: null,
                     previous: history.previous,
                     elapsed: null,
-                    overallAverage: history.recentries.length <= 1 ? null : calcAverage(history.recentries),
+                    // overallAverage: full.length <= 1 ? null: calcAverage(full),
                     RecentlyStandardDeviation: history.recentries.length <= 1 ?
                         null :
                         history.recentries.length <= 2 ?
@@ -4808,7 +4828,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             isFirst = true;
                             onUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
-                                    Object.assign(item, Domain.getToDoEntry(entry.pass, item.task, Domain.getRecentlyHistory(entry.pass, item.task)));
+                                    Object.assign(item, Domain.getToDoEntry(entry.pass, item.task));
                                     Render.updateWindow("operate");
                                     return [2 /*return*/];
                                 });
@@ -5003,7 +5023,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "tick-item flex-item ",
                                 style: Render.progressStyle(null === interval ? null : interval / max),
                             });
-                            return [4 /*yield*/, Resource.loadSvgOrCache("tick-icon")];
+                            return [4 /*yield*/, Resource.loadSvgOrCache(null === interval ?
+                                    "one-icon" :
+                                    "tick-icon")];
                         case 1:
                             _b = [
                                 _d.sent(),
@@ -5935,7 +5957,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 return __generator(this, function (_d) {
                     switch (_d.label) {
                         case 0:
-                            list = entry.todo.map(function (task) { return Domain.getToDoEntry(entry.pass, task, Domain.getRecentlyHistory(entry.pass, task)); });
+                            list = entry.todo.map(function (task) { return Domain.getToDoEntry(entry.pass, task); });
                             Domain.updateListProgress(entry.pass, list);
                             Domain.sortList(entry, list);
                             isDirty = false;
@@ -6535,7 +6557,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
+                            item = Domain.getToDoEntry(pass, task);
                             tag = Storage.Tag.getByTodo(pass, item.task)
                                 .filter(function (tag) { return ["@overall", "@short-term", "@long-term", "@irregular-term",].indexOf(tag) < 0; })
                                 .concat("@overall")[0];
@@ -6567,7 +6589,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             _c.sent();
                                             return [3 /*break*/, 6];
                                         case 4:
-                                            item = Domain.getToDoEntry(pass, task, Domain.getRecentlyHistory(pass, task));
+                                            item = Domain.getToDoEntry(pass, task);
                                             tag = Storage.Tag.getByTodo(pass, item.task).filter(function (tag) { return "@overall" !== tag; }).concat("@overall")[0];
                                             ticks = Storage.History.get(pass, task);
                                             Domain.updateProgress(pass, item);
