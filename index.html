@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue May 25 2021 17:42:33 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue May 25 2021 17:56:28 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -3625,17 +3625,21 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Domain.getToDoEntry = function (pass, task) {
                 // const history: { recentries: number[], previous: null | number, count: number, } = getRecentlyHistory(pass, task);
                 var full = Storage.History.get(pass, task);
-                var longRecentries = full.filter(function (_, index) { return index < 125; });
-                var longRecentlyAverage = longRecentries.length <= 1 ? null : Calculate.average(Calculate.intervals(longRecentries));
-                var longRecentlyStandardDeviation = longRecentries.length <= 5 ?
-                    null :
-                    Calculate.standardDeviation(Calculate.intervals(longRecentries));
+                // const longRecentries = full.filter((_, index) => index < 125);
+                // const longRecentlyAverage = longRecentries.length <= 1 ? null: Calculate.average(Calculate.intervals(longRecentries));
+                // const longRecentlyStandardDeviation = longRecentries.length <= 5 ?
+                //     null:
+                //     Calculate.standardDeviation(Calculate.intervals(longRecentries));
                 var history = {
                     full: full,
-                    recentries: (null === longRecentlyStandardDeviation ?
-                        full :
-                        full.filter(function (i) { return Calculate.standardScore(longRecentlyAverage, longRecentlyStandardDeviation, i) <= config_json_1.default.sleepStandardDeviationRate; }))
-                        .filter(function (_, index) { return index < 25; }),
+                    recentries: 
+                    // (
+                    //     null === longRecentlyStandardDeviation ?
+                    //         full:
+                    //         full.filter(i => Calculate.standardScore(longRecentlyAverage, longRecentlyStandardDeviation, i) <= config.sleepStandardDeviationRate)
+                    // )
+                    // .filter((_, index) => index < 25),
+                    full.filter(function (_, index) { return index < 25; }),
                     previous: full.length <= 0 ? null : full[0],
                     //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
                     count: full.length,
@@ -5023,9 +5027,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "tick-item flex-item ",
                                 style: Render.progressStyle(null === interval ? null : interval / max),
                             });
-                            return [4 /*yield*/, Resource.loadSvgOrCache(null === interval ?
-                                    "one-icon" :
-                                    "tick-icon")];
+                            return [4 /*yield*/, Resource.loadSvgOrCache(null === interval ? "one-icon" :
+                                    max < interval ? "sleep-icon" :
+                                        "tick-icon")];
                         case 1:
                             _b = [
                                 _d.sent(),

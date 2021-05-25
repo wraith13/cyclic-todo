@@ -934,21 +934,22 @@ export module CyclicToDo
         {
             // const history: { recentries: number[], previous: null | number, count: number, } = getRecentlyHistory(pass, task);
             const full = Storage.History.get(pass, task);
-            const longRecentries = full.filter((_, index) => index < 125);
-            const longRecentlyAverage = longRecentries.length <= 1 ? null: Calculate.average(Calculate.intervals(longRecentries));
-            const longRecentlyStandardDeviation = longRecentries.length <= 5 ?
-                null:
-                Calculate.standardDeviation(Calculate.intervals(longRecentries));
+            // const longRecentries = full.filter((_, index) => index < 125);
+            // const longRecentlyAverage = longRecentries.length <= 1 ? null: Calculate.average(Calculate.intervals(longRecentries));
+            // const longRecentlyStandardDeviation = longRecentries.length <= 5 ?
+            //     null:
+            //     Calculate.standardDeviation(Calculate.intervals(longRecentries));
             const history =
             {
                 full,
                 recentries:
-                    (
-                        null === longRecentlyStandardDeviation ?
-                            full:
-                            full.filter(i => Calculate.standardScore(longRecentlyAverage, longRecentlyStandardDeviation, i) <= config.sleepStandardDeviationRate)
-                    )
-                    .filter((_, index) => index < 25),
+                    // (
+                    //     null === longRecentlyStandardDeviation ?
+                    //         full:
+                    //         full.filter(i => Calculate.standardScore(longRecentlyAverage, longRecentlyStandardDeviation, i) <= config.sleepStandardDeviationRate)
+                    // )
+                    // .filter((_, index) => index < 25),
+                    full.filter((_, index) => index < 25),
                 previous: full.length <= 0 ? null: full[0],
                 //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
                 count: full.length,
@@ -2121,9 +2122,9 @@ export module CyclicToDo
         ([
             await Resource.loadSvgOrCache
             (
-                null === interval ?
-                    "one-icon":
-                    "tick-icon"
+                null === interval ? "one-icon":
+                max < interval ? "sleep-icon":
+                "tick-icon"
             ),
             $div("item-information")
             ([
