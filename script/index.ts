@@ -271,7 +271,7 @@ export module CyclicToDo
                     case "@overall":
                         return "home-icon";
                     case "@pickup":
-                        return "short-term-icon";
+                        return "pickup-icon";
                     case "@short-term":
                         return "short-term-icon";
                     case "@long-term":
@@ -1935,7 +1935,8 @@ export module CyclicToDo
                 {
                     if (await addRemoveTagsPopup(pass, item, Storage.Tag.getByTodo(pass, item.task)))
                     {
-                        await reload();
+                        // await reload();
+                        updateWindow("operate");
                     }
                 }
             ),
@@ -1946,7 +1947,8 @@ export module CyclicToDo
                 {
                     if (await moveToSublistPopup(pass, item))
                     {
-                        await reload();
+                        // await reload();
+                        updateWindow("operate");
                     }
                 }
             )
