@@ -9,6 +9,7 @@
     "days": "日",
     "@overall": "ホーム",
     "@unoverall": "ホームから除外",
+    "@pickup": "ピックアップ",
     "@short-term": "短期",
     "@long-term": "長期",
     "@irregular-term": "不定期",

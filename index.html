@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue May 25 2021 19:35:19 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed May 26 2021 07:15:00 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2758,6 +2758,7 @@ define("resource/lang.en", [], {
     "days": "days",
     "@overall": "Home",
     "@unoverall": "Excluded in Home",
+    "@pickup": "Pick Up",
     "@short-term": "Short Term",
     "@long-term": "Long Term",
     "@irregular-term": "Irregular Term",
@@ -2816,6 +2817,7 @@ define("resource/lang.ja", [], {
     "days": "日",
     "@overall": "ホーム",
     "@unoverall": "ホームから除外",
+    "@pickup": "ピックアップ",
     "@short-term": "短期",
     "@long-term": "長期",
     "@irregular-term": "不定期",
@@ -2976,11 +2978,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var tagSettings = {};
                 [
                     "@overall",
+                    "@pickup",
+                    "@short-term",
+                    "@long-term",
                     "@unoverall",
                     //"@deleted", 現状のヤツは廃止。ただ、別の形で復帰させるかも。
                 ].concat(Tag.get(pass))
                     .forEach(function (tag) {
-                    if ("@overall" !== tag) // todos でカバーされるのでここには含めない
+                    if (["@overall", "@short-term", "@long-term",].indexOf(tag) < 0) // @overall は todos でカバーされるし、 @short-term と @long-term は自動登録されるのでここには含めない
                      {
                         tags[tag] = TagMember.getRaw(pass, tag);
                     }
@@ -3092,6 +3097,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     switch (tag) {
                         case "@overall":
                             return "home-icon";
+                        case "@pickup":
+                            return "short-term-icon";
                         case "@short-term":
                             return "short-term-icon";
                         case "@long-term":
@@ -3173,14 +3180,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     return result;
                 };
                 Tag.getByTodo = function (pass, todo) {
-                    return ["@overall", "@short-term", "@long-term", "@irregular-term"]
+                    return ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"]
                         .concat(Tag.get(pass))
                         .concat(["@unoverall", "@untagged"])
                         .filter(function (tag) { return 0 < TagMember.get(pass, tag).filter(function (i) { return todo === i; }).length; })
                         .sort(minamo_js_1.minamo.core.comparer.make(function (tag) { return Tag.isSublist(tag) ? 0 : 1; }));
                 };
                 Tag.getByTodoRaw = function (pass, todo) {
-                    return ["@overall", "@short-term", "@long-term", "@irregular-term"]
+                    return ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"]
                         .concat(Tag.get(pass))
                         .concat(["@unoverall", "@untagged"])
                         .filter(function (tag) { return 0 < TagMember.getRaw(pass, tag).filter(function (i) { return todo === i; }).length; });
@@ -3537,6 +3544,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     case "@root":
                     case "@overall":
                     case "@unoverall":
+                    case "@pickup":
                     case "@short-term":
                     case "@long-term":
                     case "@irregular-term":
@@ -3761,10 +3769,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     });
                 };
                 Operate.done = function (pass, task, tick, onCanceled) { return __awaiter(_this, void 0, void 0, function () {
-                    var toast;
+                    var isPickuped, toast;
                     var _this = this;
                     return __generator(this, function (_a) {
                         Domain.done(pass, task, tick);
+                        isPickuped = 0 <= Storage.TagMember.get(pass, "@pickup").indexOf(task);
+                        if (isPickuped) {
+                            Storage.TagMember.remove(pass, "@pickup", task);
+                        }
                         toast = Render.makePrimaryToast({
                             content: Render.$span("")("\u5B8C\u4E86\uFF01: " + task),
                             backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
@@ -3772,6 +3784,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     switch (_a.label) {
                                         case 0:
                                             Storage.History.removeRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
+                                            if (isPickuped) {
+                                                Storage.TagMember.add(pass, "@pickup", task);
+                                            }
                                             return [4 /*yield*/, toast.hide()];
                                         case 1:
                                             _a.sent();
@@ -4030,7 +4045,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                         case 0:
                                                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                                             _c = [tagButtonList];
-                                                            return [4 /*yield*/, Promise.all(Storage.Tag.get(pass).sort(Domain.tagComparer(pass)).concat("@unoverall").map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
+                                                            return [4 /*yield*/, Promise.all(["@pickup"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat("@unoverall").map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                                                     var dom, _a, update;
                                                                     var _b;
                                                                     return __generator(this, function (_c) {
@@ -5430,7 +5445,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 icon: Storage.Tag.getIcon(current),
                                 title: Domain.tagMap(current)
                             };
-                            return [4 /*yield*/, Promise.all(["@overall", "@short-term", "@long-term", "@irregular-term"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@untagged"])
+                            return [4 /*yield*/, Promise.all(["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@untagged"])
                                     .map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
                                     return __generator(this, function (_b) {
@@ -5949,19 +5964,20 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
-            Render.showListScreen = function (urlParams, entry) { return __awaiter(_this, void 0, void 0, function () {
-                var list, isDirty, updateWindow, filter, _a;
+            Render.showListScreen = function (pass, tag, urlParams) { return __awaiter(_this, void 0, void 0, function () {
+                var entry, list, isDirty, updateWindow, filter, _a;
                 var _this = this;
                 var _b, _c;
                 return __generator(this, function (_d) {
                     switch (_d.label) {
                         case 0:
+                            entry = { tag: tag, pass: pass, todo: Storage.TagMember.get(pass, tag) };
                             list = entry.todo.map(function (task) { return Domain.getToDoEntry(entry.pass, task); });
                             Domain.updateListProgress(entry.pass, list);
                             Domain.sortList(entry, list);
                             isDirty = false;
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
-                                var _a, filter_1, filteredList_1, filter_2, _b;
+                                var _a, filter_1, filteredList_1, entry_1, filter_2, _b;
                                 var _this = this;
                                 var _c, _d, _e;
                                 return __generator(this, function (_f) {
@@ -6026,12 +6042,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             return [3 /*break*/, 12];
                                         case 7:
                                             if (!(0 <= Storage.Pass.get().indexOf(entry.pass))) return [3 /*break*/, 9];
-                                            Domain.updateListProgress(entry.pass, list);
-                                            Domain.sortList(entry, list);
+                                            entry_1 = { tag: tag, pass: pass, todo: Storage.TagMember.get(pass, tag) };
+                                            list = entry_1.todo.map(function (task) { return Domain.getToDoEntry(entry_1.pass, task); });
+                                            Domain.updateListProgress(entry_1.pass, list);
+                                            Domain.sortList(entry_1, list);
                                             isDirty = false;
                                             filter_2 = Render.getFilterText();
                                             _b = Render.replaceScreenBody;
-                                            return [4 /*yield*/, Render.listScreenBody(entry, list.filter(function (item) { return Render.isMatchToDoEntry(filter_2, entry, item); }))];
+                                            return [4 /*yield*/, Render.listScreenBody(entry_1, list.filter(function (item) { return Render.isMatchToDoEntry(filter_2, entry_1, item); }))];
                                         case 8:
                                             _b.apply(void 0, [_f.sent()]);
                                             Render.resizeFlexList();
@@ -6569,7 +6587,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 0:
                             item = Domain.getToDoEntry(pass, task);
                             tag = Storage.Tag.getByTodo(pass, item.task)
-                                .filter(function (tag) { return ["@overall", "@short-term", "@long-term", "@irregular-term",].indexOf(tag) < 0; })
+                                .filter(function (tag) { return ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term",].indexOf(tag) < 0; })
                                 .concat("@overall")[0];
                             ticks = Storage.History.get(pass, task);
                             Domain.updateProgress(pass, item);
@@ -7587,7 +7605,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 14:
                             if (!(0 <= Storage.Pass.get().indexOf(pass))) return [3 /*break*/, 15];
                             console.log("show list screen");
-                            Render.showListScreen(urlParams, { tag: tag !== null && tag !== void 0 ? tag : "@overall", pass: pass, todo: Storage.TagMember.get(pass, tag) });
+                            Render.showListScreen(pass, tag !== null && tag !== void 0 ? tag : "@overall", urlParams);
                             return [3 /*break*/, 17];
                         case 15: return [4 /*yield*/, CyclicToDo.showUrl({})];
                         case 16:

@@ -131,6 +131,9 @@ export module CyclicToDo
             const tagSettings: { [tag: string]: TagSettings } = { };
             [
                 "@overall",
+                "@pickup",
+                "@short-term",
+                "@long-term",
                 "@unoverall",
                 //"@deleted", 現状のヤツは廃止。ただ、別の形で復帰させるかも。
             ].concat(Tag.get(pass))
@@ -138,7 +141,7 @@ export module CyclicToDo
             (
                 tag =>
                 {
-                    if ("@overall" !== tag) // todos でカバーされるのでここには含めない
+                    if ([ "@overall", "@short-term", "@long-term", ].indexOf(tag) < 0) // @overall は todos でカバーされるし、 @short-term と @long-term は自動登録されるのでここには含めない
                     {
                         tags[tag] = TagMember.getRaw(pass, tag);
                     }
@@ -267,6 +270,8 @@ export module CyclicToDo
                 {
                     case "@overall":
                         return "home-icon";
+                    case "@pickup":
+                        return "short-term-icon";
                     case "@short-term":
                         return "short-term-icon";
                     case "@long-term":
@@ -363,13 +368,13 @@ export module CyclicToDo
                 return result;
             };
             export const getByTodo = (pass: string, todo: string) =>
-                ["@overall", "@short-term", "@long-term", "@irregular-term"]
+                ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"]
                     .concat(get(pass))
                     .concat(["@unoverall", "@untagged"])
                     .filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length)
                     .sort(minamo.core.comparer.make(tag => isSublist(tag) ? 0: 1));
             export const getByTodoRaw = (pass: string, todo: string) =>
-                ["@overall", "@short-term", "@long-term", "@irregular-term"]
+                ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"]
                     .concat(get(pass))
                     .concat(["@unoverall", "@untagged"])
                     .filter(tag => 0 < TagMember.getRaw(pass, tag).filter(i => todo === i).length);
@@ -833,6 +838,7 @@ export module CyclicToDo
             case "@root":
             case "@overall":
             case "@unoverall":
+            case "@pickup":
             case "@short-term":
             case "@long-term":
             case "@irregular-term":
@@ -1080,6 +1086,11 @@ export module CyclicToDo
             export const done = async (pass: string, task: string, tick: number, onCanceled: () => unknown) =>
             {
                 Domain.done(pass, task, tick);
+                const isPickuped = 0 <= Storage.TagMember.get(pass, "@pickup").indexOf(task);
+                if (isPickuped)
+                {
+                    Storage.TagMember.remove(pass, "@pickup", task);
+                }
                 const toast = makePrimaryToast
                 ({
                     content: $span("")(`完了！: ${task}`),
@@ -1088,7 +1099,11 @@ export module CyclicToDo
                         async () =>
                         {
                             Storage.History.removeRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
-                            await toast.hide();
+                            if (isPickuped)
+                            {
+                                Storage.TagMember.add(pass, "@pickup", task);
+                            }
+                                        await toast.hide();
                             onCanceled();
                         }
                     ),
@@ -1329,7 +1344,7 @@ export module CyclicToDo
                         [
                             await Promise.all
                             (
-                                Storage.Tag.get(pass).sort(Domain.tagComparer(pass)).concat("@unoverall").map
+                                ["@pickup"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat("@unoverall").map
                                 (
                                     async tag =>
                                     {
@@ -2425,7 +2440,7 @@ export module CyclicToDo
                     (
                         await Promise.all
                         (
-                            ["@overall", "@short-term", "@long-term", "@irregular-term"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@untagged"])
+                            ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@untagged"])
                             .map
                             (
                                 async tag => menuLinkItem
@@ -2848,9 +2863,10 @@ export module CyclicToDo
             header: await listScreenHeader(entry, list),
             body: await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item)))
         });
-        export const showListScreen = async (urlParams: PageParams, entry: ToDoTagEntry) =>
+        export const showListScreen = async (pass: string, tag: string, urlParams: PageParams) =>
         {
-            const list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task));
+            let entry = { tag, pass, todo: Storage.TagMember.get(pass, tag) };
+            let list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task));
             Domain.updateListProgress(entry.pass, list);
             Domain.sortList(entry, list);
             let isDirty = false;
@@ -2919,6 +2935,8 @@ export module CyclicToDo
                     case "operate":
                         if (0 <= Storage.Pass.get().indexOf(entry.pass))
                         {
+                            let entry = { tag, pass, todo: Storage.TagMember.get(pass, tag) };
+                            list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task));
                             Domain.updateListProgress(entry.pass, list);
                             Domain.sortList(entry, list);
                             isDirty = false;
@@ -3289,7 +3307,7 @@ export module CyclicToDo
         {
             let item = Domain.getToDoEntry(pass, task);
             let tag: string = Storage.Tag.getByTodo(pass, item.task)
-                .filter(tag => [ "@overall", "@short-term", "@long-term", "@irregular-term", ].indexOf(tag) < 0)
+                .filter(tag => [ "@overall", "@pickup", "@short-term", "@long-term", "@irregular-term", ].indexOf(tag) < 0)
                 .concat("@overall")[0];
             let ticks = Storage.History.get(pass, task);
             Domain.updateProgress(pass, item);
@@ -4157,7 +4175,7 @@ export module CyclicToDo
                 if (0 <= Storage.Pass.get().indexOf(pass))
                 {
                     console.log("show list screen");
-                    Render.showListScreen(urlParams, { tag: tag ?? "@overall", pass, todo: Storage.TagMember.get(pass, tag) });
+                    Render.showListScreen(pass, tag ?? "@overall", urlParams);
                 }
                 else
                 {
