@@ -3619,7 +3619,7 @@ export module CyclicToDo
                     (await Promise.all(Storage.Pass.get().map(pass => listItem(JSON.parse(Storage.exportJson(pass)) as ToDoList)))),
                 $div({ style: "text-align: center; padding: 0.5rem;", })
                     ("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
-                await applicationColorIcon(),
+                $div("logo")([await applicationColorIcon(),$span("logo-text")(applicationTitle)]),
                 $div("button-line locale-parallel-on")
                 ([
                     {

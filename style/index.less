@@ -1344,6 +1344,28 @@ button
         }
     }
 }
+.logo
+{
+    margin: calc(100vw / 16);
+    font-size: calc(100vw / 16);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    & > .application-icon
+    {
+        width: calc(100vw / 8);
+        height: calc(100vw / 8);
+    }
+    & > .application-icon + .logo-text
+    {
+        margin-left: calc(100vw / 36);
+    }
+    & > .logo-text
+    {
+        color: @accent-color;
+        font-size: calc(100vw / 12);
+    }
+}
 .updating-screen
 {
     .screen-body

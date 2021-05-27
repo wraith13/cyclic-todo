@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed May 26 2021 18:58:24 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu May 27 2021 05:29:50 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -1594,6 +1594,24 @@ button.delete-button {
 .welcome-screen .screen-body .button-list,
 .updating-screen .screen-body .button-list {
   width: calc(100vw - 1rem);
+}
+.logo {
+  margin: calc(100vw / 16);
+  font-size: calc(100vw / 16);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.logo > .application-icon {
+  width: calc(100vw / 8);
+  height: calc(100vw / 8);
+}
+.logo > .application-icon + .logo-text {
+  margin-left: calc(100vw / 36);
+}
+.logo > .logo-text {
+  color: #228844;
+  font-size: calc(100vw / 12);
 }
 .updating-screen .screen-body {
   justify-content: space-evenly;
@@ -7025,38 +7043,39 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             Render.welcomeScreen = function () { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d;
-                var _e, _f;
-                return __generator(this, function (_g) {
-                    switch (_g.label) {
+                var _a, _b, _c, _d, _e;
+                var _f, _g;
+                return __generator(this, function (_h) {
+                    switch (_h.label) {
                         case 0:
-                            _e = {
+                            _f = {
                                 className: "welcome-screen"
                             };
-                            _f = {};
+                            _g = {};
                             return [4 /*yield*/, Render.primaryScreenHeaderHomeSegment()];
                         case 1:
-                            _f.items = [
-                                _g.sent()
+                            _g.items = [
+                                _h.sent()
                             ];
                             return [4 /*yield*/, Render.welcomeScreenMenu()];
                         case 2:
-                            _e.header = (_f.menu = _g.sent(),
-                                _f);
+                            _f.header = (_g.menu = _h.sent(),
+                                _g);
                             _a = Render.$div("column-flex-list list-list");
                             return [4 /*yield*/, Promise.all(Storage.Pass.get().map(function (pass) { return Render.listItem(JSON.parse(Storage.exportJson(pass))); }))];
                         case 3:
                             _b = [
-                                _a.apply(void 0, [_g.sent()]),
+                                _a.apply(void 0, [_h.sent()]),
                                 Render.$div({ style: "text-align: center; padding: 0.5rem;", })("🚧 This static web application is under development. / この Static Web アプリは開発中です。")
                             ];
+                            _c = Render.$div("logo");
                             return [4 /*yield*/, Render.applicationColorIcon()];
                         case 4:
                             _b = _b.concat([
-                                _g.sent()
+                                _c.apply(void 0, [[_h.sent(), Render.$span("logo-text")(CyclicToDo.applicationTitle)]])
                             ]);
-                            _c = Render.$div("button-line locale-parallel-on");
-                            _d = [{
+                            _d = Render.$div("button-line locale-parallel-on");
+                            _e = [{
                                     tag: "button",
                                     className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
                                     children: Render.label("New ToDo List"),
@@ -7072,12 +7091,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         children: Render.menuItem(Render.label("@deleted")),
                                     }),
                                 ])];
-                        case 5: return [2 /*return*/, (_e.body = _b.concat([
-                                _c.apply(void 0, [_d.concat([
-                                        _g.sent()
+                        case 5: return [2 /*return*/, (_f.body = _b.concat([
+                                _d.apply(void 0, [_e.concat([
+                                        _h.sent()
                                     ])])
                             ]),
-                                _e)];
+                                _f)];
                     }
                 });
             }); };
