@@ -881,7 +881,7 @@ export module CyclicToDo
                     item.smartRest:
                     -(item.progress ?? -1),
                 item => 1 < item.count ? -2: -item.count,
-                item => 1 < item.count ? item.elapsed: -(item.elapsed ?? 0),
+                item => 1 < item.count ? (item.elapsed -item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate)): -(item.elapsed ?? 0),
                 item => entry.todo.indexOf(item.task),
                 item => item.task,
             ]:
@@ -1043,8 +1043,8 @@ export module CyclicToDo
                         item.isDefault = false;
                         if (Domain.granceTime < -item.smartRest)
                         {
-                            item.RecentlySmartAverage = null;
-                            item.RecentlyStandardDeviation = null;
+                            // item.RecentlySmartAverage = null;
+                            // item.RecentlyStandardDeviation = null;
                             item.smartRest = null;
                         }
                     }

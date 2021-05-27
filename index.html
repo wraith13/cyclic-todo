@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu May 27 2021 05:29:50 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu May 27 2021 18:25:44 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -3604,7 +3604,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 -((_c = item.progress) !== null && _c !== void 0 ? _c : -1);
                         },
                         function (item) { return 1 < item.count ? -2 : -item.count; },
-                        function (item) { var _a; return 1 < item.count ? item.elapsed : -((_a = item.elapsed) !== null && _a !== void 0 ? _a : 0); },
+                        function (item) { var _a, _b; return 1 < item.count ? (item.elapsed - item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate)) : -((_b = item.elapsed) !== null && _b !== void 0 ? _b : 0); },
                         function (item) { return entry.todo.indexOf(item.task); },
                         function (item) { return item.task; },
                     ] :
@@ -3734,8 +3734,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             item.progress = null;
                             item.isDefault = false;
                             if (Domain.granceTime < -item.smartRest) {
-                                item.RecentlySmartAverage = null;
-                                item.RecentlyStandardDeviation = null;
+                                // item.RecentlySmartAverage = null;
+                                // item.RecentlyStandardDeviation = null;
                                 item.smartRest = null;
                             }
                         }
