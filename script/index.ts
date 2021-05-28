@@ -679,6 +679,21 @@ export module CyclicToDo
                 return true;
             };
         }
+        export module Filter
+        {
+            export const key = `filter.recently`;
+            export const get = () => minamo.localStorage.getOrNull<string[]>(key) ?? [];
+            export const set = (filterList: string[]) => minamo.localStorage.set(key, filterList);
+            export const add = (filter: string) =>
+            {
+                set
+                (
+                    [ filter ].concat(get())
+                        .filter(uniqueFilter)
+                        .filter((_i, ix) => ix < 30)
+                );
+            };
+        }
     }
     export module Domain
     {
