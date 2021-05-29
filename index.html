@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu May 27 2021 18:25:44 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sat May 29 2021 13:26:12 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -497,8 +497,25 @@ h1.max-progress .progress-bar {
   padding: 2rem 1.5rem;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: stretch;
   align-items: center;
+}
+#screen-toast .item > button,
+#screen-toast .item > div,
+#screen-toast .item > span {
+  min-width: calc(100% / 3);
+  max-width: calc(100% / 3);
+  text-align: center;
+}
+#screen-toast .item > button:first-child,
+#screen-toast .item > div:first-child,
+#screen-toast .item > span:first-child {
+  text-align: left;
+}
+#screen-toast .item > button:last-child,
+#screen-toast .item > div:last-child,
+#screen-toast .item > span:last-child {
+  text-align: right;
 }
 .slide-up-in {
   animation-name: slide-up-in;
@@ -3433,6 +3450,17 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     return true;
                 };
             })(Removed = Storage.Removed || (Storage.Removed = {}));
+            var Filter;
+            (function (Filter) {
+                Filter.key = "filter.recently";
+                Filter.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Filter.key)) !== null && _a !== void 0 ? _a : []; };
+                Filter.set = function (filterList) { return minamo_js_1.minamo.localStorage.set(Filter.key, filterList); };
+                Filter.add = function (filter) {
+                    Filter.set([filter].concat(Filter.get())
+                        .filter(exports.uniqueFilter)
+                        .filter(function (_i, ix) { return ix < 30; }));
+                };
+            })(Filter = Storage.Filter || (Storage.Filter = {}));
         })(Storage = CyclicToDo.Storage || (CyclicToDo.Storage = {}));
         var Domain;
         (function (Domain) {
@@ -6830,6 +6858,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                             pass = Storage.importJson(JSON.stringify(list));
                                                             if (null !== pass) {
                                                                 CyclicToDo.showUrl({ pass: pass, tag: "@overall", });
+                                                            }
+                                                            else {
+                                                                console.error(JSON.stringify(list));
                                                             }
                                                             return [2 /*return*/];
                                                         });

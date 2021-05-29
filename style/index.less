@@ -253,8 +253,28 @@ h1
         padding: 2rem 1.5rem;
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: stretch;
         align-items: center;
+        & > button,
+        & > div,
+        & > span
+        {
+            min-width: calc(100% / 3);
+            max-width: calc(100% / 3);
+            text-align: center;
+        }
+        & > button:first-child,
+        & > div:first-child,
+        & > span:first-child
+        {
+            text-align: left;
+        }
+        & > button:last-child,
+        & > div:last-child,
+        & > span:last-child
+        {
+            text-align: right;
+        }
     }
 }
 .slide-up-in
