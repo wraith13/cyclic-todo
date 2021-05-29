@@ -3634,11 +3634,9 @@ export module CyclicToDo
             },
             body:
             [
-                $div("column-flex-list list-list")
-                    (await Promise.all(Storage.Pass.get().map(pass => listItem(JSON.parse(Storage.exportJson(pass)) as ToDoList)))),
+                $div("logo")([await applicationColorIcon(),$span("logo-text")(applicationTitle)]),
                 $div({ style: "text-align: center; padding: 0.5rem;", })
                     ("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
-                $div("logo")([await applicationColorIcon(),$span("logo-text")(applicationTitle)]),
                 $div("button-line locale-parallel-on")
                 ([
                     {
@@ -3661,6 +3659,8 @@ export module CyclicToDo
                         }),
                     ]),
                 ]),
+                $div("row-flex-list compact-flex-list list-list")
+                    (await Promise.all(Storage.Pass.get().map(pass => listItem(JSON.parse(Storage.exportJson(pass)) as ToDoList)))),
             ]
         });
         export const showWelcomeScreen = async () =>
@@ -3957,7 +3957,9 @@ export module CyclicToDo
                         // list.classList.add(`max-column-${columns}`);
                         const height = window.innerHeight -list.offsetTop;
                         const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight;
-                        const columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
+                        const columns = list.classList.contains("compact-flex-list") ?
+                            Math.min(maxColumns, length):
+                            Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         list.classList.add(`max-column-${columns}`);
                         const itemWidth = Math.min(window.innerWidth, (list.childNodes[0] as HTMLElement).offsetWidth);
                         list.classList.toggle("locale-parallel-on", border < itemWidth);

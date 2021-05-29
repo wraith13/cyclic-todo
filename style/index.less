@@ -1314,10 +1314,10 @@ button
 {
     .screen-body
     {
-        & > .application-icon
+        .list-list:not(:empty)
         {
-            margin-top: 2.5vh;
-            margin-bottom: 5vh;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
         }
     }
 }
@@ -1373,17 +1373,17 @@ button
     align-items: center;
     & > .application-icon
     {
-        width: calc(100vw / 8);
-        height: calc(100vw / 8);
+        width: calc(100vw / 6);
+        height: calc(100vw / 6);
     }
     & > .application-icon + .logo-text
     {
-        margin-left: calc(100vw / 36);
+        margin-left: calc(100vw / 24);
     }
     & > .logo-text
     {
         color: @accent-color;
-        font-size: calc(100vw / 12);
+        font-size: calc(100vw / 8);
     }
 }
 .updating-screen

@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sat May 29 2021 13:26:12 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sat May 29 2021 20:42:50 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -1576,9 +1576,9 @@ button.delete-button {
 .todo-screen .tick-list .tick-item .item-operator {
   padding-left: 0.5rem;
 }
-.welcome-screen .screen-body > .application-icon {
-  margin-top: 2.5vh;
-  margin-bottom: 5vh;
+.welcome-screen .screen-body .list-list:not(:empty) {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 .welcome-screen .screen-body,
 .updating-screen .screen-body {
@@ -1620,15 +1620,15 @@ button.delete-button {
   align-items: center;
 }
 .logo > .application-icon {
-  width: calc(100vw / 8);
-  height: calc(100vw / 8);
+  width: calc(100vw / 6);
+  height: calc(100vw / 6);
 }
 .logo > .application-icon + .logo-text {
-  margin-left: calc(100vw / 36);
+  margin-left: calc(100vw / 24);
 }
 .logo > .logo-text {
   color: #228844;
-  font-size: calc(100vw / 12);
+  font-size: calc(100vw / 8);
 }
 .updating-screen .screen-body {
   justify-content: space-evenly;
@@ -7092,21 +7092,15 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 2:
                             _f.header = (_g.menu = _h.sent(),
                                 _g);
-                            _a = Render.$div("column-flex-list list-list");
-                            return [4 /*yield*/, Promise.all(Storage.Pass.get().map(function (pass) { return Render.listItem(JSON.parse(Storage.exportJson(pass))); }))];
+                            _a = Render.$div("logo");
+                            return [4 /*yield*/, Render.applicationColorIcon()];
                         case 3:
                             _b = [
-                                _a.apply(void 0, [_h.sent()]),
+                                _a.apply(void 0, [[_h.sent(), Render.$span("logo-text")(CyclicToDo.applicationTitle)]]),
                                 Render.$div({ style: "text-align: center; padding: 0.5rem;", })("🚧 This static web application is under development. / この Static Web アプリは開発中です。")
                             ];
-                            _c = Render.$div("logo");
-                            return [4 /*yield*/, Render.applicationColorIcon()];
-                        case 4:
-                            _b = _b.concat([
-                                _c.apply(void 0, [[_h.sent(), Render.$span("logo-text")(CyclicToDo.applicationTitle)]])
-                            ]);
-                            _d = Render.$div("button-line locale-parallel-on");
-                            _e = [{
+                            _c = Render.$div("button-line locale-parallel-on");
+                            _d = [{
                                     tag: "button",
                                     className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
                                     children: Render.label("New ToDo List"),
@@ -7122,10 +7116,16 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         children: Render.menuItem(Render.label("@deleted")),
                                     }),
                                 ])];
-                        case 5: return [2 /*return*/, (_f.body = _b.concat([
-                                _d.apply(void 0, [_e.concat([
+                        case 4:
+                            _b = _b.concat([
+                                _c.apply(void 0, [_d.concat([
                                         _h.sent()
                                     ])])
+                            ]);
+                            _e = Render.$div("row-flex-list compact-flex-list list-list");
+                            return [4 /*yield*/, Promise.all(Storage.Pass.get().map(function (pass) { return Render.listItem(JSON.parse(Storage.exportJson(pass))); }))];
+                        case 5: return [2 /*return*/, (_f.body = _b.concat([
+                                _e.apply(void 0, [_h.sent()])
                             ]),
                                 _f)];
                     }
@@ -7406,7 +7406,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         // list.classList.add(`max-column-${columns}`);
                         var height = window.innerHeight - list.offsetTop;
                         var itemHeight = list.childNodes[0].offsetHeight;
-                        var columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
+                        var columns = list.classList.contains("compact-flex-list") ?
+                            Math.min(maxColumns, length) :
+                            Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         list.classList.add("max-column-" + columns);
                         var itemWidth = Math.min(window.innerWidth, list.childNodes[0].offsetWidth);
                         list.classList.toggle("locale-parallel-on", border < itemWidth);
