@@ -255,24 +255,28 @@ h1
         flex-direction: row;
         justify-content: stretch;
         align-items: center;
-        & > button,
-        & > div,
-        & > span
-        {
-            min-width: calc(100% / 3);
-            max-width: calc(100% / 3);
-            text-align: center;
-        }
         & > button:first-child,
         & > div:first-child,
         & > span:first-child
         {
+            min-width: calc(100% / 4);
+            max-width: calc(100% / 4);
             text-align: left;
+        }
+        & > button:not(:first-child):not(:last-child),
+        & > div:not(:first-child):not(:last-child),
+        & > span:not(:first-child):not(:last-child)
+        {
+            min-width: calc(100% / 2);
+            max-width: calc(100% / 2);
+            text-align: center;
         }
         & > button:last-child,
         & > div:last-child,
         & > span:last-child
         {
+            min-width: calc(100% / 4);
+            max-width: calc(100% / 4);
             text-align: right;
         }
     }

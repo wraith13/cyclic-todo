@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sat May 29 2021 20:42:50 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sun May 30 2021 18:34:08 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -500,21 +500,25 @@ h1.max-progress .progress-bar {
   justify-content: stretch;
   align-items: center;
 }
-#screen-toast .item > button,
-#screen-toast .item > div,
-#screen-toast .item > span {
-  min-width: calc(100% / 3);
-  max-width: calc(100% / 3);
-  text-align: center;
-}
 #screen-toast .item > button:first-child,
 #screen-toast .item > div:first-child,
 #screen-toast .item > span:first-child {
+  min-width: calc(100% / 4);
+  max-width: calc(100% / 4);
   text-align: left;
+}
+#screen-toast .item > button:not(:first-child):not(:last-child),
+#screen-toast .item > div:not(:first-child):not(:last-child),
+#screen-toast .item > span:not(:first-child):not(:last-child) {
+  min-width: calc(100% / 2);
+  max-width: calc(100% / 2);
+  text-align: center;
 }
 #screen-toast .item > button:last-child,
 #screen-toast .item > div:last-child,
 #screen-toast .item > span:last-child {
+  min-width: calc(100% / 4);
+  max-width: calc(100% / 4);
   text-align: right;
 }
 .slide-up-in {
