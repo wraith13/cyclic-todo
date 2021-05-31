@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun May 30 2021 18:34:08 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon May 31 2021 11:42:25 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2843,7 +2843,9 @@ define("resource/lang.en", [], {
     "Sort order setting": "Sort order setting",
     "Display language setting": "Display language setting",
     "roll-back": "Cancel",
-    "roll-backed": "Canceled."
+    "roll-backed": "Canceled.",
+    "Add to Pickup": "Add to Pickup",
+    "Remove from Pickup": "Remove from Pickup"
 });
 define("resource/lang.ja", [], {
     "$name": "日本語",
@@ -2902,7 +2904,9 @@ define("resource/lang.ja", [], {
     "Sort order setting": "並び順設定",
     "Display language setting": "言語設定",
     "roll-back": "取り消す",
-    "roll-backed": "取り消しました。"
+    "roll-backed": "取り消しました。",
+    "Add to Pickup": "ピックアップに加える",
+    "Remove from Pickup": "ピックアップから外す"
 });
 define("resource/images", [], {
     "application-icon": "./image/cyclictodohex.1024.svg",
@@ -3838,6 +3842,54 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             if (isPickuped) {
                                                 Storage.TagMember.add(pass, "@pickup", task);
                                             }
+                                            return [4 /*yield*/, toast.hide()];
+                                        case 1:
+                                            _a.sent();
+                                            onCanceled();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }),
+                        });
+                        return [2 /*return*/];
+                    });
+                }); };
+                Operate.addToPickup = function (pass, task, onCanceled) { return __awaiter(_this, void 0, void 0, function () {
+                    var toast;
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        Storage.TagMember.add(pass, "@pickup", task);
+                        toast = Render.makePrimaryToast({
+                            content: Render.$span("")("\u30D4\u30C3\u30AF\u30A2\u30C3\u30D7\u306B\u8FFD\u52A0\uFF01: " + task),
+                            backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            Storage.TagMember.remove(pass, "@pickup", task);
+                                            return [4 /*yield*/, toast.hide()];
+                                        case 1:
+                                            _a.sent();
+                                            onCanceled();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }),
+                        });
+                        return [2 /*return*/];
+                    });
+                }); };
+                Operate.removeFromPickup = function (pass, task, onCanceled) { return __awaiter(_this, void 0, void 0, function () {
+                    var toast;
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        Storage.TagMember.remove(pass, "@pickup", task);
+                        toast = Render.makePrimaryToast({
+                            content: Render.$span("")("\u30D4\u30C3\u30AF\u30A2\u30C3\u30D7\u304B\u3089\u30CF\u30BA\u3057\u307E\u3057\u305F\uFF01: " + task),
+                            backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            Storage.TagMember.add(pass, "@pickup", task);
                                             return [4 /*yield*/, toast.hide()];
                                         case 1:
                                             _a.sent();
@@ -4826,6 +4878,29 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             };
             Render.todoTagMenu = function (pass, item) {
                 return [
+                    0 <= Storage.TagMember.get(pass, "@pickup").indexOf(item.task) ?
+                        Render.menuItem(Render.label("Remove from Pickup"), function () { return __awaiter(_this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, Operate.removeFromPickup(pass, item.task, function () { return Render.updateWindow("operate"); })];
+                                    case 1:
+                                        _a.sent();
+                                        Render.updateWindow("operate");
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); }) :
+                        Render.menuItem(Render.label("Add to Pickup"), function () { return __awaiter(_this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, Operate.addToPickup(pass, item.task, function () { return Render.updateWindow("operate"); })];
+                                    case 1:
+                                        _a.sent();
+                                        Render.updateWindow("operate");
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); }),
                     Render.menuItem(Render.label("Add/Remove Tag"), function () { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
                             switch (_a.label) {

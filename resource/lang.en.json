@@ -55,5 +55,7 @@
     "Sort order setting": "Sort order setting",
     "Display language setting": "Display language setting",
     "roll-back": "Cancel",
-    "roll-backed": "Canceled."
+    "roll-backed": "Canceled.",
+    "Add to Pickup": "Add to Pickup",
+    "Remove from Pickup": "Remove from Pickup"
 }

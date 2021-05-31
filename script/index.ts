@@ -1118,7 +1118,41 @@ export module CyclicToDo
                             {
                                 Storage.TagMember.add(pass, "@pickup", task);
                             }
-                                        await toast.hide();
+                            await toast.hide();
+                            onCanceled();
+                        }
+                    ),
+                });
+            };
+            export const addToPickup = async (pass: string, task: string, onCanceled: () => unknown) =>
+            {
+                Storage.TagMember.add(pass, "@pickup", task);
+                const toast = makePrimaryToast
+                ({
+                    content: $span("")(`ピックアップに追加！: ${task}`),
+                    backwardOperator: cancelTextButton
+                    (
+                        async () =>
+                        {
+                            Storage.TagMember.remove(pass, "@pickup", task);
+                            await toast.hide();
+                            onCanceled();
+                        }
+                    ),
+                });
+            };
+            export const removeFromPickup = async (pass: string, task: string, onCanceled: () => unknown) =>
+            {
+                Storage.TagMember.remove(pass, "@pickup", task);
+                const toast = makePrimaryToast
+                ({
+                    content: $span("")(`ピックアップからハズしました！: ${task}`),
+                    backwardOperator: cancelTextButton
+                    (
+                        async () =>
+                        {
+                            Storage.TagMember.add(pass, "@pickup", task);
+                            await toast.hide();
                             onCanceled();
                         }
                     ),
@@ -1943,6 +1977,25 @@ export module CyclicToDo
         );
         export const todoTagMenu = (pass: string, item: ToDoEntry) =>
         [
+            0 <= Storage.TagMember.get(pass, "@pickup").indexOf(item.task) ?
+                menuItem
+                (
+                    label("Remove from Pickup"),
+                    async () =>
+                    {
+                        await Operate.removeFromPickup(pass, item.task, () => updateWindow("operate"));
+                        updateWindow("operate");
+                    }
+                ):
+                menuItem
+                (
+                    label("Add to Pickup"),
+                    async () =>
+                    {
+                        await Operate.addToPickup(pass, item.task, () => updateWindow("operate"));
+                        updateWindow("operate");
+                    }
+                ),
             menuItem
             (
                 label("Add/Remove Tag"),
