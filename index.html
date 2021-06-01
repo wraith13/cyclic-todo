@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon May 31 2021 17:34:18 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Jun 01 2021 18:53:44 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -1732,6 +1732,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var _this = this;
 (function () {
+    var _a, _b;
     var loadScript = function (src) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             return [2 /*return*/, new Promise(function (resolve, reject) {
@@ -1892,7 +1893,8 @@ var _this = this;
     var resolveMapping = function (path) {
         return evil.mapping[path] || path;
     };
-    globalThis.require = function (path) {
+    var gThis = (_b = (_a = globalThis !== null && globalThis !== void 0 ? globalThis : self) !== null && _a !== void 0 ? _a : window) !== null && _b !== void 0 ? _b : global;
+    gThis.require = function (path) {
         var _a;
         switch (path) {
             case "require":
@@ -1911,7 +1913,7 @@ var _this = this;
                 return result;
         }
     };
-    globalThis.define = function (path, requires, content) {
+    gThis.define = function (path, requires, content) {
         if (/\.json(\?.*)?$/i.test(path) || "function" !== typeof content) {
             return evil.modules[path] = content;
         }
@@ -6709,6 +6711,17 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
+            Render.getPrimaryTag = function (tags) { return minamo_js_1.minamo.core.simpleDeepCopy(tags).sort(minamo_js_1.minamo.core.comparer.make(function (tag) {
+                var _a;
+                return ((_a = {
+                    "@pickup": 1,
+                    "@short-term": 4,
+                    "@long-term": 4,
+                    "@irregular-term": 4,
+                    "@overall": 5,
+                    "@untagged": 3,
+                }[tag]) !== null && _a !== void 0 ? _a : (Storage.Tag.isSublist(tag) ? 0 : 2));
+            }))[0]; };
             Render.showTodoScreen = function (pass, task) { return __awaiter(_this, void 0, void 0, function () {
                 var item, tag, ticks, updateWindow, _a;
                 var _this = this;
@@ -6716,9 +6729,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     switch (_b.label) {
                         case 0:
                             item = Domain.getToDoEntry(pass, task);
-                            tag = Storage.Tag.getByTodo(pass, item.task)
-                                .filter(function (tag) { return ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term",].indexOf(tag) < 0; })
-                                .concat("@overall")[0];
+                            tag = Render.getPrimaryTag(Storage.Tag.getByTodo(pass, item.task));
                             ticks = Storage.History.get(pass, task);
                             Domain.updateProgress(pass, item);
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {

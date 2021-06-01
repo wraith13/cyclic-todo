@@ -3373,12 +3373,28 @@ export module CyclicToDo
             header: await todoScreenHeader(pass, item, ticks, tag),
             body: await todoScreenBody(pass, item, ticks, tag)
         });
+        export const getPrimaryTag = (tags: string[]) => minamo.core.simpleDeepCopy(tags).sort
+        (
+            minamo.core.comparer.make
+            (
+                tag =>
+                (
+                    {
+                        "@pickup": 1,
+                        "@short-term": 4,
+                        "@long-term": 4,
+                        "@irregular-term": 4,
+                        "@overall": 5,
+                        "@untagged": 3,
+                    }
+                    [tag] ?? (Storage.Tag.isSublist(tag) ? 0: 2)
+                )
+            )
+        )[0];
         export const showTodoScreen = async (pass: string, task: string) =>
         {
             let item = Domain.getToDoEntry(pass, task);
-            let tag: string = Storage.Tag.getByTodo(pass, item.task)
-                .filter(tag => [ "@overall", "@pickup", "@short-term", "@long-term", "@irregular-term", ].indexOf(tag) < 0)
-                .concat("@overall")[0];
+            let tag: string = getPrimaryTag(Storage.Tag.getByTodo(pass, item.task));
             let ticks = Storage.History.get(pass, task);
             Domain.updateProgress(pass, item);
             const updateWindow = async (event: UpdateWindowEventEype) =>
