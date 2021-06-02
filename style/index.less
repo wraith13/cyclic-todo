@@ -414,7 +414,56 @@ h1
         width: 60px; // この値自体は適当で直接的には全く意味がない・・・んだけど、この指定が無いとスマフォでシュリンクしてくれずにレイアウトが崩れる。
         flex-grow: 1;
     }
+    .dropdownlist
+    {
+        position: absolute;
+        .positive-background-coloring-trait;
+        top: 2.5rem;
+        max-height: 50vh;
+        overflow-y: auto;
+        border-style: solid;
+        border-width: 1px;
+        border-radius: 0.5rem;
+        border-color: @accent-color;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        // justify-content: stretch;
+        button
+        {
+            border-width: 0px;
+            border-style: none;
+            border-radius: initial;
+            margin: 0px;
+            text-align: left;
+        }
+    }
 }
+h1:not(.header-operator-has-focus)
+{
+    .filter-frame
+    {
+        .dropdownlist
+        {
+            display: none;;
+        }
+    }
+}
+h1.header-operator-has-focus
+{
+    .filter-frame
+    {
+        input:not(.empty) + .dropdownlist
+        {
+            display: none;;
+        }
+        .dropdownlist:empty
+        {
+            display: none;;
+        }
+    }
+}
+
 h2
 {
     padding: 0.25rem 0.5rem;

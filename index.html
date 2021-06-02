@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed Jun 02 2021 18:50:40 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed Jun 02 2021 20:39:50 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -667,6 +667,41 @@ h1.max-progress .progress-bar {
   padding: 0px 4px;
   width: 60px;
   flex-grow: 1;
+}
+.filter-frame .dropdownlist {
+  position: absolute;
+  background-color: #FFFFFF;
+  top: 2.5rem;
+  max-height: 50vh;
+  overflow-y: auto;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 0.5rem;
+  border-color: #228844;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+@media (prefers-color-scheme: dark) {
+  .filter-frame .dropdownlist {
+    background-color: #000022;
+  }
+}
+.filter-frame .dropdownlist button {
+  border-width: 0px;
+  border-style: none;
+  border-radius: initial;
+  margin: 0px;
+  text-align: left;
+}
+h1:not(.header-operator-has-focus) .filter-frame .dropdownlist {
+  display: none;
+}
+h1.header-operator-has-focus .filter-frame input:not(.empty) + .dropdownlist {
+  display: none;
+}
+h1.header-operator-has-focus .filter-frame .dropdownlist:empty {
+  display: none;
 }
 h2 {
   padding: 0.25rem 0.5rem;
@@ -5876,8 +5911,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 .replace(/ or /ig, " or ")
                 .replace(/[Ａ-Ｚａ-ｚ０-９]/g, function (match) { return String.fromCharCode(match.charCodeAt(0) - 0xFEE0); }) // 全角 to 半角
                 .replace(/[\u3041-\u3096]/g, function (match) { return String.fromCharCode(match.charCodeAt(0) + 0x60); }); }; // ひらがな to カタカナ
+            var lastFilterUpdateAt = 0;
             Render.filter = function (init, onUpdate) { return __awaiter(_this, void 0, void 0, function () {
-                var context, onchange, onfocus, clear, icon, _a, clearIcon, _b, input, result;
+                var context, onchange, onfocus, onblur, clear, icon, _a, clearIcon, _b, input, dropdownlist, result;
+                var _this = this;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
@@ -5885,8 +5922,17 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 value: init,
                             };
                             onchange = function () {
+                                input.classList.toggle("empty", "" === input.value);
                                 var value = Render.softRegulateFilterText(input.value);
                                 if (value !== context.value) {
+                                    if ("" !== value) {
+                                        var timestamp_1 = lastFilterUpdateAt = new Date().getTime();
+                                        setTimeout(function () {
+                                            if (timestamp_1 === lastFilterUpdateAt) {
+                                                Storage.Filter.add(value);
+                                            }
+                                        }, 5000);
+                                    }
                                     context.value = value;
                                     onUpdate(value);
                                 }
@@ -5894,6 +5940,19 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             onfocus = function () {
                                 Render.getHeaderElement().classList.add("header-operator-has-focus");
                             };
+                            onblur = function () { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                        case 1:
+                                            _a.sent();
+                                            if ("" === Render.softRegulateFilterText(input.value)) {
+                                                Render.getHeaderElement().classList.remove("header-operator-has-focus");
+                                            }
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); };
                             clear = function () {
                                 Render.getHeaderElement().classList.remove("header-operator-has-focus");
                                 input.value = "";
@@ -5924,19 +5983,32 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "filter-text",
                                 placeholder: "絞り込み",
                                 onfocus: onfocus,
+                                onblur: onblur,
                                 onkeyup: function () { return onchange(); },
                             });
                             input.addEventListener('change', onchange);
                             input.addEventListener('compositionupdate', onchange);
                             input.addEventListener('compositionend', onchange);
+                            dropdownlist = Render.$div("dropdownlist")(Storage.Filter.get().map(function (i) {
+                                return ({
+                                    tag: "button",
+                                    children: i,
+                                    onclick: function () {
+                                        input.value = i;
+                                        onchange();
+                                    }
+                                });
+                            }));
                             result = Render.$div({
                                 className: "filter-frame",
                                 onclick: function (event) { return event.stopPropagation(); },
                             })([
                                 icon,
                                 input,
+                                dropdownlist,
                                 clearIcon,
                             ]);
+                            onchange();
                             return [2 /*return*/, result];
                     }
                 });

@@ -2756,6 +2756,7 @@ export module CyclicToDo
             .replace(/ or /ig, " or ")
             .replace(/[Ａ-Ｚａ-ｚ０-９]/g, match => String.fromCharCode(match.charCodeAt(0) -0xFEE0)) // 全角 to 半角
             .replace(/[\u3041-\u3096]/g, match => String.fromCharCode(match.charCodeAt(0) +0x60)); // ひらがな to カタカナ
+        let lastFilterUpdateAt = 0;
         export const filter = async (init: string, onUpdate: (text: string) => Promise<unknown>) =>
         {
             const context =
@@ -2764,9 +2765,25 @@ export module CyclicToDo
             };
             const onchange = () =>
             {
+                input.classList.toggle("empty", "" === input.value);
                 const value = softRegulateFilterText(input.value);
                 if (value !== context.value)
                 {
+                    if ("" !== value)
+                    {
+                        const timestamp = lastFilterUpdateAt = new Date().getTime();
+                        setTimeout
+                        (
+                            () =>
+                            {
+                                if (timestamp === lastFilterUpdateAt)
+                                {
+                                    Storage.Filter.add(value);
+                                }
+                            },
+                            5000,
+                        );
+                    }
                     context.value = value;
                     onUpdate(value);
                 }
@@ -2774,6 +2791,14 @@ export module CyclicToDo
             const onfocus = () =>
             {
                 getHeaderElement().classList.add("header-operator-has-focus");
+            };
+            const onblur = async () =>
+            {
+                await minamo.core.timeout(500);
+                if ("" === softRegulateFilterText(input.value))
+                {
+                    getHeaderElement().classList.remove("header-operator-has-focus");
+                }
             };
             const clear = () =>
             {
@@ -2806,11 +2831,28 @@ export module CyclicToDo
                 className: "filter-text",
                 placeholder: "絞り込み",
                 onfocus,
+                onblur,
                 onkeyup: () => onchange(),
             });
             input.addEventListener('change', onchange);
             input.addEventListener('compositionupdate', onchange);
             input.addEventListener('compositionend', onchange);
+            const dropdownlist = $div("dropdownlist")
+            (
+                Storage.Filter.get().map
+                (
+                    i =>
+                    ({
+                        tag: "button",
+                        children: i,
+                        onclick: () =>
+                        {
+                            input.value = i;
+                            onchange();
+                        }
+                    })
+                )
+            );
             const result = $div
             ({
                 className: "filter-frame",
@@ -2819,8 +2861,10 @@ export module CyclicToDo
             ([
                 icon,
                 input,
+                dropdownlist,
                 clearIcon,
             ]);
+            onchange();
             return result;
         };
         export const getFilterText = () => regulateFilterText
