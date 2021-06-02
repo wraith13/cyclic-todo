@@ -3597,8 +3597,8 @@ export module CyclicToDo
         });
         export const applicationIcon = async () =>
             $div("application-icon icon")(await Resource.loadSvgOrCache("application-icon"));
-        export const applicationColorIcon = async () =>
-            $div("application-icon icon")(await Resource.loadSvgOrCache("application-color-icon"));
+        // export const applicationColorIcon = async () =>
+        //     $div("application-icon icon")(await Resource.loadSvgOrCache("application-color-icon"));
         export const listItem = async (list: ToDoList) => $div("list-item flex-item")
         ([
             $div("item-header")
@@ -3703,7 +3703,8 @@ export module CyclicToDo
             },
             body:
             [
-                $div("logo")([await applicationColorIcon(),$span("logo-text")(applicationTitle)]),
+                //$div("logo")([await applicationColorIcon(),$span("logo-text")(applicationTitle)]),
+                $div("logo")([await applicationIcon(),$span("logo-text")(applicationTitle)]),
                 $div({ style: "text-align: center; padding: 0.5rem;", })
                     ("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
                 $div("button-line locale-parallel-on")
@@ -3764,7 +3765,8 @@ export module CyclicToDo
             },
             body:
             [
-                await applicationColorIcon(),
+                //await applicationColorIcon(),
+                await applicationIcon(),
                 // $div("message")(label("Updating...")),
                 $div("button-list")
                 ({

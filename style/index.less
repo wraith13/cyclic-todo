@@ -1354,6 +1354,11 @@ button
             .loading-spinner;
             // animation-iteration-count: infinite;
             animation-iteration-count: 1;
+            svg
+            {
+                color: @accent-color;
+                fill: @accent-color;
+            }
         }
         // .message
         // {
@@ -1379,6 +1384,11 @@ button
     {
         width: calc(100vw / 6);
         height: calc(100vw / 6);
+        svg
+        {
+            color: @accent-color;
+            fill: @accent-color;
+        }
     }
     & > .application-icon + .logo-text
     {
@@ -1386,13 +1396,14 @@ button
     }
     & > .logo-text
     {
-        color: @accent-color;
-        background: -webkit-linear-gradient(top, #28D928, #136E13);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
         font-size: calc(100vw / 8);
-        line-height: 1.4em;
+        color: @accent-color;
+        // グラデーション
+        // background: -webkit-linear-gradient(top, #28D928, #136E13);
+        // background-clip: text;
+        // -webkit-background-clip: text;
+        // -webkit-text-fill-color: transparent;
+        // line-height: 1.4em;
         white-space: nowrap;
     }
 }
