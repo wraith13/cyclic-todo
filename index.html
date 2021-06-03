@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed Jun 02 2021 20:39:50 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu Jun 03 2021 19:58:35 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -5913,7 +5913,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 .replace(/[\u3041-\u3096]/g, function (match) { return String.fromCharCode(match.charCodeAt(0) + 0x60); }); }; // ひらがな to カタカナ
             var lastFilterUpdateAt = 0;
             Render.filter = function (init, onUpdate) { return __awaiter(_this, void 0, void 0, function () {
-                var context, onchange, onfocus, onblur, clear, icon, _a, clearIcon, _b, input, dropdownlist, result;
+                var context, onchange, onfocus, onblur, clear, icon, _a, clearIcon, _b, input, dropdownlist, updateDropdownlist, result;
                 var _this = this;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
@@ -5931,7 +5931,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             if (timestamp_1 === lastFilterUpdateAt) {
                                                 Storage.Filter.add(value);
                                             }
-                                        }, 5000);
+                                        }, 3000);
                                     }
                                     context.value = value;
                                     onUpdate(value);
@@ -5939,6 +5939,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             };
                             onfocus = function () {
                                 Render.getHeaderElement().classList.add("header-operator-has-focus");
+                                updateDropdownlist();
                             };
                             onblur = function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
@@ -5989,16 +5990,20 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             input.addEventListener('change', onchange);
                             input.addEventListener('compositionupdate', onchange);
                             input.addEventListener('compositionend', onchange);
-                            dropdownlist = Render.$div("dropdownlist")(Storage.Filter.get().map(function (i) {
-                                return ({
-                                    tag: "button",
-                                    children: i,
-                                    onclick: function () {
-                                        input.value = i;
-                                        onchange();
-                                    }
-                                });
-                            }));
+                            dropdownlist = Render.$make(HTMLDivElement)(Render.$div("dropdownlist")([]));
+                            updateDropdownlist = function () {
+                                minamo_js_1.minamo.dom.replaceChildren(dropdownlist, Storage.Filter.get().map(function (i) {
+                                    return ({
+                                        tag: "button",
+                                        children: i,
+                                        onclick: function () {
+                                            input.value = i;
+                                            onchange();
+                                            Storage.Filter.add(i);
+                                        }
+                                    });
+                                }));
+                            };
                             result = Render.$div({
                                 className: "filter-frame",
                                 onclick: function (event) { return event.stopPropagation(); },

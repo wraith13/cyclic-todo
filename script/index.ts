@@ -2781,7 +2781,7 @@ export module CyclicToDo
                                     Storage.Filter.add(value);
                                 }
                             },
-                            5000,
+                            3000,
                         );
                     }
                     context.value = value;
@@ -2791,6 +2791,7 @@ export module CyclicToDo
             const onfocus = () =>
             {
                 getHeaderElement().classList.add("header-operator-has-focus");
+                updateDropdownlist();
             };
             const onblur = async () =>
             {
@@ -2837,22 +2838,28 @@ export module CyclicToDo
             input.addEventListener('change', onchange);
             input.addEventListener('compositionupdate', onchange);
             input.addEventListener('compositionend', onchange);
-            const dropdownlist = $div("dropdownlist")
-            (
-                Storage.Filter.get().map
+            const dropdownlist = $make(HTMLDivElement)($div("dropdownlist")([]));
+            const updateDropdownlist = () =>
+            {
+                minamo.dom.replaceChildren
                 (
-                    i =>
-                    ({
-                        tag: "button",
-                        children: i,
-                        onclick: () =>
-                        {
-                            input.value = i;
-                            onchange();
-                        }
-                    })
-                )
-            );
+                    dropdownlist,
+                    Storage.Filter.get().map
+                    (
+                        i =>
+                        ({
+                            tag: "button",
+                            children: i,
+                            onclick: () =>
+                            {
+                                input.value = i;
+                                onchange();
+                                Storage.Filter.add(i);
+                            }
+                        })
+                    )
+                );
+            };
             const result = $div
             ({
                 className: "filter-frame",
