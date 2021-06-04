@@ -2334,6 +2334,7 @@ export module CyclicToDo
             items: HeaderSegmentSource[];
             menu?: minamo.dom.Source;
             operator?: minamo.dom.Source;
+            parent?: PageParams;
         }
         export interface ScreenSource
         {
@@ -2360,6 +2361,21 @@ export module CyclicToDo
                     )
                 )
             ).reduce((a, b) => (a as any[]).concat(b), []),
+            data.parent ?
+                {
+                    tag: "button",
+                    className: "icon-button",
+                    children:
+                    [
+                        await Resource.loadSvgOrCache("cross-icon"),
+                    ],
+                    onclick: (event: MouseEvent) =>
+                    {
+                        event.stopPropagation();
+                        showUrl(data.parent);
+                    },
+                }:
+                [],
             data.menu ? await menuButton(data.menu): [],
             data.operator ? $div("header-operator")(data.operator): [],
         ];
@@ -2922,7 +2938,7 @@ export module CyclicToDo
         export const isMatchToDoEntry = (filter: string, entry: ToDoTagEntry, item: ToDoEntry) =>
             isMatchTest(filter, regulateFilterText(item.task)) ||
             Storage.Tag.getByTodo(entry.pass, item.task).some(tag => entry.tag !== tag && isMatchTest(filter, regulateFilterText(tag)));
-        export const listScreenHeader = async (entry: ToDoTagEntry, _list: ToDoEntry[]) =>
+        export const listScreenHeader = async (entry: ToDoTagEntry, _list: ToDoEntry[]): Promise<HeaderSource> =>
         ({
             items:
             [
@@ -2942,6 +2958,7 @@ export module CyclicToDo
                     updateWindow("operate");
                 }
             ),
+            // parent: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall", }
         });
         export const listScreenBody = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         ([
