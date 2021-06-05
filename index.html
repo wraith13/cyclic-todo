@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sat Jun 05 2021 16:01:52 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sun Jun 06 2021 01:16:57 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -5538,22 +5538,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         })];
                 });
             }); };
-            Render.primaryScreenHeaderHomeSegment = function () { return __awaiter(_this, void 0, void 0, function () {
-                var _a;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
-                        case 0:
-                            _a = {
-                                icon: "application-icon",
-                                title: CyclicToDo.applicationTitle
-                            };
-                            return [4 /*yield*/, Render.primaryScreenHeaderListSegmentMenu("")];
-                        case 1: return [2 /*return*/, (_a.menu = _b.sent(),
-                                _a)];
-                    }
-                });
-            }); };
-            Render.primaryScreenHeaderListSegmentMenu = function (pass) { return __awaiter(_this, void 0, void 0, function () {
+            Render.screenHeaderListSegmentMenu = function (pass) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e, _f;
                 var _this = this;
                 return __generator(this, function (_g) {
@@ -5611,7 +5596,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
-            Render.primaryScreenHeaderListSegment = function (pass) { return __awaiter(_this, void 0, void 0, function () {
+            Render.screenHeaderListSegment = function (pass) { return __awaiter(_this, void 0, void 0, function () {
                 var _a;
                 var _b, _c;
                 return __generator(this, function (_d) {
@@ -5627,22 +5612,13 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     "@import": locale.map("Import List"),
                                 }[pass]) !== null && _c !== void 0 ? _c : Storage.Title.get(pass)
                             };
-                            return [4 /*yield*/, Render.primaryScreenHeaderListSegmentMenu(pass)];
+                            return [4 /*yield*/, Render.screenHeaderListSegmentMenu(pass)];
                         case 1: return [2 /*return*/, (_a.menu = _d.sent(),
                                 _a)];
                     }
                 });
             }); };
-            Render.screenHeaderListSegment = function (pass) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    return [2 /*return*/, ({
-                            icon: "list-icon",
-                            href: { pass: pass, tag: "@overall", },
-                            title: Storage.Title.get(pass),
-                        })];
-                });
-            }); };
-            Render.primaryScreenHeaderTagSegment = function (pass, current) { return __awaiter(_this, void 0, void 0, function () {
+            Render.screenHeaderTagSegment = function (pass, current) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e, _f;
                 var _g;
                 var _this = this;
@@ -5731,15 +5707,6 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 ])]),
                                 _g)];
                     }
-                });
-            }); };
-            Render.screenHeaderTagSegment = function (pass, current) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    return [2 /*return*/, ({
-                            icon: Storage.Tag.getIcon(current),
-                            href: { pass: pass, tag: current, },
-                            title: Domain.tagMap(current),
-                        })];
                 });
             }); };
             Render.screenHeaderTaskSegment = function (pass, tag, current) { return __awaiter(_this, void 0, void 0, function () {
@@ -6098,50 +6065,42 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     Storage.Tag.getByTodo(entry.pass, item.task).some(function (tag) { return entry.tag !== tag && Render.isMatchTest(filter, Render.regulateFilterText(tag)); });
             };
             Render.listScreenHeader = function (entry, _list) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b;
-                var _c;
+                var _a;
+                var _b;
                 var _this = this;
-                var _d;
-                return __generator(this, function (_e) {
-                    switch (_e.label) {
+                var _c;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
                         case 0:
-                            _c = {};
+                            _b = {};
                             return [4 /*yield*/, Render.screenHeaderHomeSegment()];
                         case 1:
                             _a = [
-                                _e.sent()
+                                _d.sent()
                             ];
-                            if (!("@overall" === entry.tag)) return [3 /*break*/, 3];
-                            return [4 /*yield*/, Render.primaryScreenHeaderListSegment(entry.pass)];
+                            return [4 /*yield*/, Render.screenHeaderListSegment(entry.pass)];
                         case 2:
-                            _b = _e.sent();
-                            return [3 /*break*/, 5];
-                        case 3: return [4 /*yield*/, Render.screenHeaderListSegment(entry.pass)];
-                        case 4:
-                            _b = _e.sent();
-                            _e.label = 5;
-                        case 5:
                             _a = _a.concat([
-                                _b
+                                _d.sent()
                             ]);
-                            return [4 /*yield*/, Render.primaryScreenHeaderTagSegment(entry.pass, entry.tag)];
-                        case 6:
-                            _c.items = _a.concat([
-                                _e.sent()
+                            return [4 /*yield*/, Render.screenHeaderTagSegment(entry.pass, entry.tag)];
+                        case 3:
+                            _b.items = _a.concat([
+                                _d.sent()
                             ]);
                             return [4 /*yield*/, Render.listScreenMenu(entry)];
-                        case 7:
-                            _c.menu = _e.sent();
-                            return [4 /*yield*/, Render.filter((_d = CyclicToDo.getUrlParams().filter) !== null && _d !== void 0 ? _d : "", function (filter) { return __awaiter(_this, void 0, void 0, function () {
+                        case 4:
+                            _b.menu = _d.sent();
+                            return [4 /*yield*/, Render.filter((_c = CyclicToDo.getUrlParams().filter) !== null && _c !== void 0 ? _c : "", function (filter) { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         Render.updateUrlFilterParam(filter);
                                         Render.updateWindow("operate");
                                         return [2 /*return*/];
                                     });
                                 }); })];
-                        case 8: return [2 /*return*/, (_c.operator = _e.sent(),
-                                _c.parent = "@overall" === entry.tag ? {} : { pass: entry.pass, tag: "@overall", },
-                                _c)];
+                        case 5: return [2 /*return*/, (_b.operator = _d.sent(),
+                                _b.parent = "@overall" === entry.tag ? {} : { pass: entry.pass, tag: "@overall", },
+                                _b)];
                     }
                 });
             }); };
@@ -6621,7 +6580,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _a = _a.concat([
                                 _f.sent()
                             ]);
-                            return [4 /*yield*/, Render.primaryScreenHeaderTagSegment(pass, "@deleted")];
+                            return [4 /*yield*/, Render.screenHeaderTagSegment(pass, "@deleted")];
                         case 3:
                             _e.items = _a.concat([
                                 _f.sent()
@@ -7019,7 +6978,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _a = [
                                 _d.sent()
                             ];
-                            return [4 /*yield*/, Render.primaryScreenHeaderListSegment("@import")];
+                            return [4 /*yield*/, Render.screenHeaderListSegment("@import")];
                         case 2:
                             _c.items = _a.concat([
                                 _d.sent()
@@ -7129,7 +7088,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _a = [
                                 _f.sent()
                             ];
-                            return [4 /*yield*/, Render.primaryScreenHeaderListSegment("@removed")];
+                            return [4 /*yield*/, Render.screenHeaderListSegment("@removed")];
                         case 2:
                             _e.items = _a.concat([
                                 _f.sent()
@@ -7298,7 +7257,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 className: "welcome-screen"
                             };
                             _g = {};
-                            return [4 /*yield*/, Render.primaryScreenHeaderHomeSegment()];
+                            return [4 /*yield*/, Render.screenHeaderHomeSegment()];
                         case 1:
                             _g.items = [
                                 _h.sent()

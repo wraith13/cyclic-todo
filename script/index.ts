@@ -2441,13 +2441,7 @@ export module CyclicToDo
             href: { },
             title: CyclicToDo.applicationTitle,
         });
-        export const primaryScreenHeaderHomeSegment = async (): Promise<HeaderSegmentSource> =>
-        ({
-            icon: "application-icon",
-            title: CyclicToDo.applicationTitle,
-            menu: await primaryScreenHeaderListSegmentMenu("")
-        });
-        export const primaryScreenHeaderListSegmentMenu = async (pass: string): Promise<minamo.dom.Source> =>
+        export const screenHeaderListSegmentMenu = async (pass: string): Promise<minamo.dom.Source> =>
             (
                 (
                     await Promise.all
@@ -2497,7 +2491,7 @@ export module CyclicToDo
                     pass === "@removed" ? "current-item": undefined
                 )
             ]);
-        export const primaryScreenHeaderListSegment = async (pass: string): Promise<HeaderSegmentSource> =>
+        export const screenHeaderListSegment = async (pass: string): Promise<HeaderSegmentSource> =>
         ({
             icon:
             {
@@ -2509,15 +2503,9 @@ export module CyclicToDo
                 "@removed": locale.map("@deleted"),
                 "@import": locale.map("Import List"),
             }[pass] ?? Storage.Title.get(pass), // `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
-            menu: await primaryScreenHeaderListSegmentMenu(pass),
+            menu: await screenHeaderListSegmentMenu(pass),
         });
-        export const screenHeaderListSegment = async (pass: string): Promise<HeaderSegmentSource> =>
-        ({
-            icon: "list-icon",
-            href: { pass, tag: "@overall", },
-            title: Storage.Title.get(pass),
-        });
-        export const primaryScreenHeaderTagSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
+        export const screenHeaderTagSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
         ({
             icon: Storage.Tag.getIcon(current),
             title: Domain.tagMap(current),
@@ -2586,12 +2574,6 @@ export module CyclicToDo
                         current === "@deleted" ? "current-item": undefined
                     ),
                 ])
-        });
-        export const screenHeaderTagSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
-        ({
-            icon: Storage.Tag.getIcon(current),
-            href:{ pass, tag: current, },
-            title: Domain.tagMap(current),
         });
         export const screenHeaderTaskSegment = async (pass: string, tag: string, current: string): Promise<HeaderSegmentSource> =>
         ({
@@ -2943,10 +2925,8 @@ export module CyclicToDo
             items:
             [
                 await screenHeaderHomeSegment(),
-                "@overall" === entry.tag ?
-                    await primaryScreenHeaderListSegment(entry.pass):
-                    await screenHeaderListSegment(entry.pass),
-                await primaryScreenHeaderTagSegment(entry.pass, entry.tag),
+                await screenHeaderListSegment(entry.pass),
+                await screenHeaderTagSegment(entry.pass, entry.tag),
             ],
             menu: await listScreenMenu(entry),
             operator: await filter
@@ -3291,7 +3271,7 @@ export module CyclicToDo
                 [
                     await screenHeaderHomeSegment(),
                     await screenHeaderListSegment(pass),
-                    await primaryScreenHeaderTagSegment(pass, "@deleted"),
+                    await screenHeaderTagSegment(pass, "@deleted"),
                 ],
                 menu: await removedScreenMenu(pass),
                 parent: { pass, tag: "@overall", },
@@ -3562,7 +3542,7 @@ export module CyclicToDo
                 items:
                 [
                     await screenHeaderHomeSegment(),
-                    await primaryScreenHeaderListSegment("@import")
+                    await screenHeaderListSegment("@import")
                 ],
                 menu: await importScreenMenu(),
                 parent: { },
@@ -3634,7 +3614,7 @@ export module CyclicToDo
                 items:
                 [
                     await screenHeaderHomeSegment(),
-                    await primaryScreenHeaderListSegment("@removed")
+                    await screenHeaderListSegment("@removed")
                 ],
                 menu: await removedListScreenMenu(),
                 parent: { },
@@ -3771,7 +3751,7 @@ export module CyclicToDo
             {
                 items:
                 [
-                    await primaryScreenHeaderHomeSegment(),
+                    await screenHeaderHomeSegment(),
                 ],
                 menu: await welcomeScreenMenu()
             },
