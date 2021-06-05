@@ -2958,7 +2958,7 @@ export module CyclicToDo
                     updateWindow("operate");
                 }
             ),
-            // parent: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall", }
+            parent: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall", }
         });
         export const listScreenBody = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
         ([
@@ -3198,7 +3198,8 @@ export module CyclicToDo
                     resizeFlexList();
                     updateUrlFilterParam(filter);
                 }
-            )
+            ),
+            parent: { pass: entry.pass, tag: entry.tag, },
         });
         export const historyScreenBody = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[]) =>
         ([
@@ -3292,7 +3293,8 @@ export module CyclicToDo
                     await screenHeaderListSegment(pass),
                     await primaryScreenHeaderTagSegment(pass, "@deleted"),
                 ],
-                menu: await removedScreenMenu(pass)
+                menu: await removedScreenMenu(pass),
+                parent: { pass, tag: "@overall", },
             },
             body:
             [
@@ -3360,6 +3362,7 @@ export module CyclicToDo
                 await screenHeaderTaskSegment(pass, tag, item.task),
             ],
             menu: await todoScreenMenu(pass, item),
+            parent: { pass, tag, },
         });
         export const getIntervalsMax = (intervals: number[]) =>
         {
@@ -3533,7 +3536,8 @@ export module CyclicToDo
                         title: locale.map("Export"),
                     }
                 ],
-                menu: await exportScreenMenu(pass)
+                menu: await exportScreenMenu(pass),
+                parent: { pass: pass, tag: "@overall", },
             },
             body:
             [
@@ -3560,7 +3564,8 @@ export module CyclicToDo
                     await screenHeaderHomeSegment(),
                     await primaryScreenHeaderListSegment("@import")
                 ],
-                menu: await importScreenMenu()
+                menu: await importScreenMenu(),
+                parent: { },
             },
             body:
             [
@@ -3631,7 +3636,8 @@ export module CyclicToDo
                     await screenHeaderHomeSegment(),
                     await primaryScreenHeaderListSegment("@removed")
                 ],
-                menu: await removedListScreenMenu()
+                menu: await removedListScreenMenu(),
+                parent: { },
             },
             body:
             [
@@ -3829,7 +3835,8 @@ export module CyclicToDo
                         title: "loading...",
                     },
                 ],
-                menu: await updatingScreenMenu()
+                menu: await updatingScreenMenu(),
+                parent: { },
             },
             body:
             [

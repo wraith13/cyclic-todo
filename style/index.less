@@ -176,6 +176,7 @@ h1
             }
         }
     }
+    button.icon-button,
     button.menu-button
     {
         margin: 0px;
@@ -188,6 +189,10 @@ h1
             background-color: transparent !important;
         }
     }
+    button.icon-button + button.menu-button
+    {
+        right: 2.50rem;
+    }
     .menu-popup:not(.segment-popup)
     {
         top: calc(10px + 2.0rem);
@@ -196,7 +201,7 @@ h1
     .header-operator
     {
         flex-grow: 1;
-        margin-right: 3rem;
+        margin-right: 5.25rem;
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
@@ -517,6 +522,7 @@ button
     font-weight: bold;
     font-size: 1.0rem;
     // cursor: pointer;
+    &.icon-button,
     &.menu-button
     {
         @media (hover: hover)
