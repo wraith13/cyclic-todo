@@ -1080,6 +1080,23 @@ export module CyclicToDo
     {
         export module Operate
         {
+            export const renameList = async (pass: string, oldName: string, newName, onCanceled: () => unknown = () => updateWindow("operate")) =>
+            {
+                Storage.Title.set(pass, newName);
+                const toast = makePrimaryToast
+                ({
+                    content: $span("")(`ToDo リストの名前を変更しました！： ${oldName} → ${newName}`),
+                    backwardOperator: cancelTextButton
+                    (
+                        async () =>
+                        {
+                            Storage.Title.set(pass, oldName);
+                            await toast.hide();
+                            onCanceled();
+                        }
+                    ),
+                });
+            };
             export const removeList = async (pass: string, onCanceled: () => unknown = () => updateWindow("operate")) =>
             {
                 const list = JSON.parse(Storage.exportJson(pass));
@@ -2663,10 +2680,10 @@ export module CyclicToDo
             async () =>
             {
                 const oldTitle = Storage.Title.get(pass);
-                const newTitle = await prompt("ToDoリストの名前を入力してください。", oldTitle);
+                const newTitle = await prompt(locale.map("Input a ToDo list's name."), oldTitle);
                 if (null !== newTitle && 0 < newTitle.length && newTitle !== oldTitle)
                 {
-                    Storage.Title.set(pass, newTitle);
+                    Operate.renameList(pass, oldTitle, newTitle, async () => await onRename(oldTitle));
                     await onRename(newTitle);
                 }
             }

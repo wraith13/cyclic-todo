@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun Jun 06 2021 23:37:06 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon Jun 07 2021 07:51:21 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2912,7 +2912,8 @@ define("resource/lang.en", [], {
     "Add to Pickup": "Add to Pickup",
     "Remove from Pickup": "Remove from Pickup",
     "Filter": "Filter",
-    "Clear Filter History": "Clear Filter History"
+    "Clear Filter History": "Clear Filter History",
+    "Input a ToDo list's name.": "Input a ToDo list's name."
 });
 define("resource/lang.ja", [], {
     "$name": "日本語",
@@ -2975,7 +2976,8 @@ define("resource/lang.ja", [], {
     "Add to Pickup": "ピックアップに加える",
     "Remove from Pickup": "ピックアップから外す",
     "Filter": "絞り込み",
-    "Clear Filter History": "絞り込みの履歴をクリア"
+    "Clear Filter History": "絞り込みの履歴をクリア",
+    "Input a ToDo list's name.": "ToDoリストの名前を入力してください。"
 });
 define("resource/images", [], {
     "application-icon": "./image/cyclictodohex.1024.svg",
@@ -3863,6 +3865,33 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             var Operate;
             (function (Operate) {
                 var _this = this;
+                Operate.renameList = function (pass, oldName, newName, onCanceled) {
+                    if (onCanceled === void 0) { onCanceled = function () { return Render.updateWindow("operate"); }; }
+                    return __awaiter(_this, void 0, void 0, function () {
+                        var toast;
+                        var _this = this;
+                        return __generator(this, function (_a) {
+                            Storage.Title.set(pass, newName);
+                            toast = Render.makePrimaryToast({
+                                content: Render.$span("")("ToDo \u30EA\u30B9\u30C8\u306E\u540D\u524D\u3092\u5909\u66F4\u3057\u307E\u3057\u305F\uFF01\uFF1A " + oldName + " \u2192 " + newName),
+                                backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                Storage.Title.set(pass, oldName);
+                                                return [4 /*yield*/, toast.hide()];
+                                            case 1:
+                                                _a.sent();
+                                                onCanceled();
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); }),
+                            });
+                            return [2 /*return*/];
+                        });
+                    });
+                };
                 Operate.removeList = function (pass, onCanceled) {
                     if (onCanceled === void 0) { onCanceled = function () { return Render.updateWindow("operate"); }; }
                     return __awaiter(_this, void 0, void 0, function () {
@@ -5818,15 +5847,21 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 }); }); }; }
                 return Render.menuItem(Render.label("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
                     var oldTitle, newTitle;
+                    var _this = this;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 oldTitle = Storage.Title.get(pass);
-                                return [4 /*yield*/, Render.prompt("ToDoリストの名前を入力してください。", oldTitle)];
+                                return [4 /*yield*/, Render.prompt(locale.map("Input a ToDo list's name."), oldTitle)];
                             case 1:
                                 newTitle = _a.sent();
                                 if (!(null !== newTitle && 0 < newTitle.length && newTitle !== oldTitle)) return [3 /*break*/, 3];
-                                Storage.Title.set(pass, newTitle);
+                                Operate.renameList(pass, oldTitle, newTitle, function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, onRename(oldTitle)];
+                                        case 1: return [2 /*return*/, _a.sent()];
+                                    }
+                                }); }); });
                                 return [4 /*yield*/, onRename(newTitle)];
                             case 2:
                                 _a.sent();
