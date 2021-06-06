@@ -57,5 +57,7 @@
     "roll-back": "取り消す",
     "roll-backed": "取り消しました。",
     "Add to Pickup": "ピックアップに加える",
-    "Remove from Pickup": "ピックアップから外す"
+    "Remove from Pickup": "ピックアップから外す",
+    "Filter": "絞り込み",
+    "Clear Filter History": "絞り込みの履歴をクリア"
 }

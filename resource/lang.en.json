@@ -57,5 +57,7 @@
     "roll-back": "Cancel",
     "roll-backed": "Canceled.",
     "Add to Pickup": "Add to Pickup",
-    "Remove from Pickup": "Remove from Pickup"
+    "Remove from Pickup": "Remove from Pickup",
+    "Filter": "Filter",
+    "Clear Filter History": "Clear Filter History"
 }

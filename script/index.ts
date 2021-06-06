@@ -2846,7 +2846,7 @@ export module CyclicToDo
                 type: "text",
                 value: init,
                 className: "filter-text",
-                placeholder: "絞り込み",
+                placeholder: locale.map("Filter"),
                 onfocus,
                 onblur,
                 onkeyup: () => onchange(),
@@ -2880,7 +2880,7 @@ export module CyclicToDo
                         ([{
                             tag: "button",
                             className: "delete-button",
-                            children: "履歴をクリア",
+                            children: locale.map("Clear Filter History"),
                             onclick: () =>
                             {
                                 Operate.clearFilterHistory
