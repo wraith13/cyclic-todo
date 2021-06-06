@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun Jun 06 2021 01:16:57 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sun Jun 06 2021 15:02:05 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -690,6 +690,9 @@ h1.max-progress .progress-bar {
   display: flex;
   flex-direction: column;
   align-items: stretch;
+}
+.filter-frame .dropdownlist:empty {
+  display: none;
 }
 @media (prefers-color-scheme: dark) {
   .filter-frame .dropdownlist {
@@ -2840,6 +2843,7 @@ define("script/minamo.js/index", ["require", "exports"], function (require, expo
 });
 define("resource/config", [], {
     "applicationTitle": "Cyclic ToDo",
+    "repositoryUrl": "https://github.com/wraith13/cyclic-todo/",
     "timeAccuracy": 60000,
     "standardDeviationRate": 1.5,
     "sleepStandardDeviationRate": 3.0,
@@ -3950,6 +3954,31 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     switch (_a.label) {
                                         case 0:
                                             Storage.TagMember.add(pass, "@pickup", task);
+                                            return [4 /*yield*/, toast.hide()];
+                                        case 1:
+                                            _a.sent();
+                                            onCanceled();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }),
+                        });
+                        return [2 /*return*/];
+                    });
+                }); };
+                Operate.clearFilterHistory = function (onCanceled) { return __awaiter(_this, void 0, void 0, function () {
+                    var backup, toast;
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        backup = Storage.Filter.get();
+                        Storage.Filter.set([]);
+                        toast = Render.makePrimaryToast({
+                            content: Render.$span("")("\u7D5E\u308A\u8FBC\u307F\u306E\u5C65\u6B74\u3092\u30AF\u30EA\u30A2\u3057\u307E\u3057\u305F\u3002"),
+                            backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            Storage.Filter.set(backup);
                                             return [4 /*yield*/, toast.hide()];
                                         case 1:
                                             _a.sent();
@@ -5997,8 +6026,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             input.addEventListener('compositionend', onchange);
                             dropdownlist = Render.$make(HTMLDivElement)(Render.$div("dropdownlist")([]));
                             updateDropdownlist = function () {
-                                minamo_js_1.minamo.dom.replaceChildren(dropdownlist, Storage.Filter.get().map(function (i) {
-                                    return ({
+                                var history = Storage.Filter.get();
+                                minamo_js_1.minamo.dom.replaceChildren(dropdownlist, 0 < history.length ?
+                                    history.map(function (i) { return ({
                                         tag: "button",
                                         children: i,
                                         onclick: function () {
@@ -6006,8 +6036,30 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             onchange();
                                             Storage.Filter.add(i);
                                         }
-                                    });
-                                }));
+                                    }); })
+                                        .concat([{
+                                            tag: "button",
+                                            className: "delete-button",
+                                            children: "履歴をクリア",
+                                            onclick: function () {
+                                                Operate.clearFilterHistory(function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    return __generator(this, function (_a) {
+                                                        switch (_a.label) {
+                                                            case 0: 
+                                                            // すぐに反映するとこの時点では .filter-text からフォーカスが外れておらず、一瞬だけドロップダウンが表示される事になるのでちょっと wait を入れておく。
+                                                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
+                                                            case 1:
+                                                                // すぐに反映するとこの時点では .filter-text からフォーカスが外れておらず、一瞬だけドロップダウンが表示される事になるのでちょっと wait を入れておく。
+                                                                _a.sent();
+                                                                updateDropdownlist();
+                                                                return [2 /*return*/];
+                                                        }
+                                                    });
+                                                }); });
+                                                updateDropdownlist();
+                                            }
+                                        }]) :
+                                    []);
                             };
                             result = Render.$div({
                                 className: "filter-frame",
@@ -7241,7 +7293,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 children: Render.menuItem(Render.label("@deleted")),
                             }),
                             Render.externalLink({
-                                href: "https://github.com/wraith13/cyclic-todo/",
+                                href: config_json_1.default.repositoryUrl,
                                 children: Render.menuItem(Render.labelSpan("GitHub")),
                             }),
                         ]];

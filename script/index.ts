@@ -1158,6 +1158,24 @@ export module CyclicToDo
                     ),
                 });
             };
+            export const clearFilterHistory = async (onCanceled: () => unknown) =>
+            {
+                const backup = Storage.Filter.get();
+                Storage.Filter.set([]);
+                const toast = makePrimaryToast
+                ({
+                    content: $span("")(`絞り込みの履歴をクリアしました。`),
+                    backwardOperator: cancelTextButton
+                    (
+                        async () =>
+                        {
+                            Storage.Filter.set(backup);
+                            await toast.hide();
+                            onCanceled();
+                        }
+                    ),
+                });
+            };
         }
         export const cancelTextButton = (onCanceled: () => unknown) =>
         ({
@@ -2839,23 +2857,45 @@ export module CyclicToDo
             const dropdownlist = $make(HTMLDivElement)($div("dropdownlist")([]));
             const updateDropdownlist = () =>
             {
+                const history = Storage.Filter.get();
                 minamo.dom.replaceChildren
                 (
                     dropdownlist,
-                    Storage.Filter.get().map
-                    (
-                        i =>
-                        ({
+                    0 < history.length ?
+                        history.map
+                        (
+                            i => <minamo.dom.Source>
+                            {
+                                tag: "button",
+                                children: i,
+                                onclick: () =>
+                                {
+                                    input.value = i;
+                                    onchange();
+                                    Storage.Filter.add(i);
+                                }
+                            }
+                        )
+                        .concat
+                        ([{
                             tag: "button",
-                            children: i,
+                            className: "delete-button",
+                            children: "履歴をクリア",
                             onclick: () =>
                             {
-                                input.value = i;
-                                onchange();
-                                Storage.Filter.add(i);
+                                Operate.clearFilterHistory
+                                (
+                                    async () =>
+                                    {
+                                        // すぐに反映するとこの時点では .filter-text からフォーカスが外れておらず、一瞬だけドロップダウンが表示される事になるのでちょっと wait を入れておく。
+                                        await minamo.core.timeout(500);
+                                        updateDropdownlist();
+                                    }
+                                );
+                                updateDropdownlist();
                             }
-                        })
-                    )
+                        }]):
+                        []
                 );
             };
             const result = $div
@@ -3740,7 +3780,7 @@ export module CyclicToDo
             }),
             externalLink
             ({
-                href: "https://github.com/wraith13/cyclic-todo/",
+                href: config.repositoryUrl,
                 children: menuItem(labelSpan("GitHub")),
             }),
         ];
