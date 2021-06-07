@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon Jun 07 2021 19:58:21 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon Jun 07 2021 20:28:16 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -1190,7 +1190,7 @@ button.delete-button {
   flex-wrap: wrap;
   align-items: stretch;
   justify-content: stretch;
-  width: 100vw;
+  width: 100%;
 }
 .row-flex-list:not(.empty-list),
 .column-flex-list:not(.empty-list) {
@@ -1389,20 +1389,11 @@ button.delete-button {
 .list-item .item-header,
 .task-item .item-header,
 .removed-item .item-header {
-  z-index: 100;
   display: flex;
   padding: 0.5rem;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background-color: #FFFFFF;
-}
-@media (prefers-color-scheme: dark) {
-  .list-item .item-header,
-  .task-item .item-header,
-  .removed-item .item-header {
-    background-color: #000022;
-  }
 }
 .list-item .item-header .item-title,
 .task-item .item-header .item-title,
