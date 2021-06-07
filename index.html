@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon Jun 07 2021 07:51:21 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon Jun 07 2021 19:58:21 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -1384,32 +1384,37 @@ button.delete-button {
 .list-item,
 .task-item,
 .removed-item {
-  padding: 0.5rem;
+  position: relative;
 }
 .list-item .item-header,
 .task-item .item-header,
 .removed-item .item-header {
-  position: relative;
+  z-index: 100;
   display: flex;
+  padding: 0.5rem;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  background-color: #FFFFFF;
+}
+@media (prefers-color-scheme: dark) {
+  .list-item .item-header,
+  .task-item .item-header,
+  .removed-item .item-header {
+    background-color: #000022;
+  }
 }
 .list-item .item-header .item-title,
 .task-item .item-header .item-title,
 .removed-item .item-header .item-title {
   max-width: calc(100% - 180px);
 }
-.task-item .item-header {
-  padding-bottom: 0.5rem;
-}
 .task-item .item-tags {
-  width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   padding: 0.5rem;
-  margin: 0px -0.5rem;
+  margin: 0px;
   background-color: #8884;
   height: 1rem;
   position: relative;
@@ -1466,8 +1471,7 @@ button.delete-button {
 }
 .task-item .item-information {
   padding: 0.5rem;
-  margin: -0.5rem;
-  margin-top: 0px;
+  margin: 0px;
 }
 .task-item .item-information * {
   line-height: 1.4em;
@@ -1489,13 +1493,9 @@ button.delete-button {
   opacity: 0.4;
   float: right;
 }
-.removed-item .item-header {
-  padding-bottom: 0.5rem;
-}
 .removed-item .item-information {
   padding: 0.5rem;
-  margin: -0.5rem;
-  margin-top: 0rem;
+  margin: 0rem;
   background-color: rgba(128, 128, 128, 0.4);
 }
 .removed-item .item-information * {

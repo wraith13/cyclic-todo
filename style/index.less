@@ -1041,19 +1041,23 @@ button
 .task-item,
 .removed-item
 {
-    padding: 0.5rem;
+    position: relative;
+    // padding: 0.5rem;
     //min-width: calc((100vw / 8) + 1px);
     //width: 480px;
     //max-width: 100vw;
 
     .item-header
     {
-        position: relative;
+        // position: sticky;
+        // top: 0px;
+        z-index: 100;
         display: flex;
+        padding: 0.5rem;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-    
+        .positive-background-coloring-trait;
         .item-title
         {
             max-width: calc(100% - 180px);
@@ -1062,18 +1066,13 @@ button
 }
 .task-item
 {
-    .item-header
-    {
-        padding-bottom: 0.5rem;
-    }
     .item-tags
     {
-        width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         padding: 0.5rem;
-        margin: 0px -0.5rem;
+        margin: 0px;
         background-color: #8884;
         height: 1rem;
         position: relative;
@@ -1134,8 +1133,7 @@ button
     .item-information
     {
         padding: 0.5rem;
-        margin: -0.5rem;
-        margin-top: 0px;
+        margin: 0px;
         *
         {
             line-height: 1.4em;
@@ -1164,15 +1162,10 @@ button
 }
 .removed-item
 {
-    .item-header
-    {
-        padding-bottom: 0.5rem;
-    }
     .item-information
     {
         padding: 0.5rem;
-        margin: -0.5rem;
-        margin-top: 0rem;
+        margin: 0rem;
         background-color: rgba(128,128,128,0.4);
         *
         {
