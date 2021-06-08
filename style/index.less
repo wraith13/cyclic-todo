@@ -618,6 +618,19 @@ button
         {
             .primary-operator-coloring-trait;
         }
+        & > .label + .value
+        {
+            margin-left: 0.5rem;
+            text-align: right;
+            flex-grow: 1;
+        }
+        &:not(.current-item):not(:hover)
+        {
+            & > .label + .value
+            {
+                color: #888;
+            }
+        }
     }
     a button
     {

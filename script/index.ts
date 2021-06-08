@@ -2556,7 +2556,9 @@ export module CyclicToDo
                                 (
                                     [
                                         await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
-                                        labelSpan(`${Domain.tagMap(tag)} (${Storage.TagMember.get(pass, tag).length})`),
+                                        //labelSpan(`${Domain.tagMap(tag)} (${Storage.TagMember.get(pass, tag).length})`),
+                                        labelSpan(Domain.tagMap(tag)),
+                                        $span("value monospace")(`${Storage.TagMember.get(pass, tag).length}`)
                                     ],
                                     { pass, tag, },
                                     current === tag ? "current-item": undefined

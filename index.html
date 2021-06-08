@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon Jun 07 2021 20:28:16 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Jun 08 2021 19:55:02 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -981,6 +981,16 @@ button.delete-button {
     border-color: #228844;
     background-color: #228844;
   }
+}
+.menu-popup a > .label + .value,
+.menu-popup button > .label + .value {
+  margin-left: 0.5rem;
+  text-align: right;
+  flex-grow: 1;
+}
+.menu-popup a:not(.current-item):not(:hover) > .label + .value,
+.menu-popup button:not(.current-item):not(:hover) > .label + .value {
+  color: #888;
 }
 .menu-popup a button {
   width: 100%;
@@ -5692,7 +5702,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 return [4 /*yield*/, Resource.loadSvgOrCache(Storage.Tag.getIcon(tag))];
                                             case 1: return [2 /*return*/, _a.apply(void 0, [[
                                                         _b.sent(),
-                                                        Render.labelSpan(Domain.tagMap(tag) + " (" + Storage.TagMember.get(pass, tag).length + ")")
+                                                        //labelSpan(`${Domain.tagMap(tag)} (${Storage.TagMember.get(pass, tag).length})`),
+                                                        Render.labelSpan(Domain.tagMap(tag)),
+                                                        Render.$span("value monospace")("" + Storage.TagMember.get(pass, tag).length)
                                                     ], { pass: pass, tag: tag, }, current === tag ? "current-item" : undefined])];
                                         }
                                     });
