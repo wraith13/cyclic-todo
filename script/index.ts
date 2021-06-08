@@ -1080,17 +1080,18 @@ export module CyclicToDo
     {
         export module Operate
         {
-            export const renameList = async (pass: string, oldName: string, newName, onCanceled: () => unknown = () => updateWindow("operate")) =>
+            export const renameList = async (pass: string, newName, onCanceled: () => unknown = () => updateWindow("operate")) =>
             {
+                const backup = Storage.Title.get(pass);
                 Storage.Title.set(pass, newName);
                 const toast = makePrimaryToast
                 ({
-                    content: $span("")(`ToDo リストの名前を変更しました！： ${oldName} → ${newName}`),
+                    content: $span("")(`ToDo リストの名前を変更しました！： ${backup} → ${newName}`),
                     backwardOperator: cancelTextButton
                     (
                         async () =>
                         {
-                            Storage.Title.set(pass, oldName);
+                            Storage.Title.set(pass, backup);
                             await toast.hide();
                             onCanceled();
                         }
@@ -2520,7 +2521,8 @@ export module CyclicToDo
                 (
                     [
                         await Resource.loadSvgOrCache("recycle-bin-icon"),
-                        labelSpan(`${locale.map("@deleted")} (${Storage.Backup.get().length})`),
+                        labelSpan(locale.map("@deleted")),
+                        $span("value monospace")(`${Storage.Backup.get().length}`)
                     ],
                     { hash: "removed" },
                     pass === "@removed" ? "current-item": undefined
@@ -2556,7 +2558,6 @@ export module CyclicToDo
                                 (
                                     [
                                         await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
-                                        //labelSpan(`${Domain.tagMap(tag)} (${Storage.TagMember.get(pass, tag).length})`),
                                         labelSpan(Domain.tagMap(tag)),
                                         $span("value monospace")(`${Storage.TagMember.get(pass, tag).length}`)
                                     ],
@@ -2605,7 +2606,8 @@ export module CyclicToDo
                     (
                         [
                             await Resource.loadSvgOrCache("recycle-bin-icon"),
-                            labelSpan(`${locale.map("@deleted")} (${Storage.Removed.get(pass).length})`),
+                            labelSpan(locale.map("@deleted")),
+                            $span("value monospace")(`${Storage.Removed.get(pass).length}`)
                         ],
                         { pass, hash: "removed" },
                         current === "@deleted" ? "current-item": undefined
@@ -2685,7 +2687,7 @@ export module CyclicToDo
                 const newTitle = await prompt(locale.map("Input a ToDo list's name."), oldTitle);
                 if (null !== newTitle && 0 < newTitle.length && newTitle !== oldTitle)
                 {
-                    Operate.renameList(pass, oldTitle, newTitle, async () => await onRename(oldTitle));
+                    Operate.renameList(pass, newTitle, async () => await onRename(oldTitle));
                     await onRename(newTitle);
                 }
             }
