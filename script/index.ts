@@ -2400,7 +2400,7 @@ export module CyclicToDo
             data.parent ?
                 {
                     tag: "button",
-                    className: "icon-button",
+                    className: "icon-button close-button",
                     children:
                     [
                         await Resource.loadSvgOrCache("cross-icon"),
@@ -2933,7 +2933,22 @@ export module CyclicToDo
             onchange();
             return result;
         };
+        export const getFilterInputElement = () => Array.from(document.getElementsByClassName("filter-text"))[0] as HTMLInputElement;
         export const getFilterText = () => regulateFilterText
+        (
+            getFilterInputElement()?.value ?? ""
+        );
+        export const setFilterText = (text: string) =>
+        {
+            const filterInputElement = getFilterInputElement();
+            if (filterInputElement)
+            {
+                filterInputElement.value = text;
+                updateUrlFilterParam(text);
+                updateWindow("operate");
+            }
+        };
+        regulateFilterText
         (
             (Array.from(document.getElementsByClassName("filter-text"))[0] as HTMLInputElement)?.value ?? ""
         );
@@ -4224,9 +4239,30 @@ export module CyclicToDo
                             .forEach(popup => (Array.from(popup.getElementsByClassName("default-button")) as HTMLButtonElement[])?.[0]?.click());
                         break;
                     case "Escape":
-                        (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[])
-                            .filter((_i, ix, list) => (ix +1) === list.length)
-                            .forEach(i => i.click());
+                        // (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[])
+                        //     .filter((_i, ix, list) => (ix +1) === list.length)
+                        //     .forEach(i => i.click());
+                        const currentScreenCover = (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[])
+                            .filter((_i, ix, list) => (ix +1) === list.length)[0];
+                        if (currentScreenCover)
+                        {
+                            currentScreenCover.click();
+                        }
+                        else
+                        {
+                            if ("" !== getFilterText())
+                            {
+                                setFilterText("");
+                            }
+                            else
+                            {
+                                const closeButton = <HTMLButtonElement>getHeaderElement().getElementsByClassName("close-button")[0];
+                                if (closeButton)
+                                {
+                                    closeButton.click();
+                                }
+                            }
+                        }
                         break;
                 }
             }
