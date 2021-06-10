@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed Jun 09 2021 20:40:58 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu Jun 10 2021 19:36:06 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -3005,7 +3005,9 @@ define("resource/images", [], {
     "add-task-icon": "./image/add-task.1024.svg",
     "recycle-bin-icon": "./image/recycle-bin.1024.svg",
     "search-icon": "./image/search.1024.svg",
-    "cross-icon": "./image/cross.1024.svg"
+    "cross-icon": "./image/cross.1024.svg",
+    "import-icon": "./image/import.1024.svg",
+    "export-icon": "./image/export.1024.svg"
 });
 define("script/index", ["require", "exports", "script/minamo.js/index", "resource/config", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, config_json_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -5636,7 +5638,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     ], Render.newListPrompt])
                             ];
                             _e = Render.menuItem;
-                            return [4 /*yield*/, Resource.loadSvgOrCache("list-icon")];
+                            return [4 /*yield*/, Resource.loadSvgOrCache("import-icon")];
                         case 3:
                             _d = _d.concat([
                                 _e.apply(void 0, [[
@@ -5671,7 +5673,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _a = {
                                 icon: (_b = {
                                     "@removed": "recycle-bin-icon",
-                                    "@import": "list-icon", // 本来は import だけど、まだ作ってない
+                                    "@import": "import-icon",
                                 }[pass]) !== null && _b !== void 0 ? _b : "list-icon",
                                 title: (_c = {
                                     "@removed": locale.map("@deleted"),
@@ -7032,7 +7034,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _c.items = _a.concat([
                                 _d.sent(),
                                 {
-                                    icon: "list-icon",
+                                    icon: "export-icon",
                                     title: locale.map("Export"),
                                 }
                             ]);
@@ -8077,6 +8079,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
 </svg>
 </div><div id="cross-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M511.925,385.49L270.232,144.198C253.641,127.634 226.724,127.656 210.16,144.247L179.748,174.71C163.184,191.301 163.206,218.219 179.797,234.782L421.49,476.075L180.198,717.768C163.634,734.359 163.656,761.276 180.247,777.84L210.71,808.252C227.301,824.816 254.219,824.794 270.782,808.203L512.075,566.51L753.768,807.802C770.359,824.366 797.276,824.344 813.84,807.753L844.252,777.29C860.816,760.699 860.794,733.781 844.203,717.218L602.51,475.925L843.802,234.232C860.366,217.641 860.344,190.724 843.753,174.16L813.29,143.748C796.699,127.184 769.781,127.206 753.218,143.797L511.925,385.49Z"/>
+</svg>
+</div><div id="import-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M784,608C784,571.132 797.885,537.482 820.705,512C797.885,486.518 784,452.868 784,416L784,272C784,245.508 762.492,224 736,224L736,223.335C733.399,223.772 730.726,224 728,224C701.508,224 680,202.492 680,176C680,149.508 701.508,128 728,128C730.726,128 733.399,128.228 736,128.665L736,128L736.931,128.003C815.978,128.504 880,192.834 880,272L880,416L880.001,416.31C880.168,442.659 901.611,464 928,464C954.492,464 976,485.508 976,512C976,538.492 954.492,560 928,560C901.508,560 880,581.508 880,608L880,752L879.999,752.464C879.744,831.423 815.82,895.497 736.931,895.997L736.31,895.999C736.207,896 736.103,896 736,896C709.508,896 688,874.492 688,848C688,821.508 709.508,800 736,800C762.492,800 784,778.492 784,752L784,608ZM144,608C144,581.508 122.492,560 96,560C69.508,560 48,538.492 48,512C48,485.508 69.508,464 96,464C122.492,464 144,442.492 144,416L144,272C144,192.834 208.022,128.504 287.069,128.003L288,128L288,128.665C290.601,128.228 293.274,128 296,128C322.492,128 344,149.508 344,176C344,202.492 322.492,224 296,224C293.274,224 290.601,223.772 288,223.335L288,224C261.508,224 240,245.508 240,272L240,416L239.999,416.464C239.881,453.148 226.019,486.62 203.295,512C226.115,537.482 240,571.132 240,608L240,752C240,778.492 261.508,800 288,800C314.492,800 336,821.508 336,848C336,874.492 314.492,896 288,896C287.897,896 287.793,896 287.69,895.999L287.069,895.997C208.022,895.496 144,831.166 144,752L144,608ZM432,464L432,208L592,208L592,464L720,464L512,720L304,464L432,464Z"/>
+</svg>
+</div><div id="export-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M784,608C784,571.132 797.885,537.482 820.705,512C797.885,486.518 784,452.868 784,416L784,272C784,245.508 762.492,224 736,224L736,223.335C733.399,223.772 730.726,224 728,224C701.508,224 680,202.492 680,176C680,149.508 701.508,128 728,128C730.726,128 733.399,128.228 736,128.665L736,128L736.931,128.003C815.978,128.504 880,192.834 880,272L880,416L880.001,416.31C880.168,442.659 901.611,464 928,464C954.492,464 976,485.508 976,512C976,538.492 954.492,560 928,560C901.508,560 880,581.508 880,608L880,752C880,831.166 815.978,895.496 736.931,895.997L736.31,895.999C736.207,896 736.103,896 736,896C709.508,896 688,874.492 688,848C688,821.508 709.508,800 736,800C762.492,800 784,778.492 784,752L784,608ZM287.69,895.999L287.069,895.997C208.022,895.496 144,831.166 144,752L240,752C240,778.492 261.508,800 288,800C314.492,800 336,821.508 336,848C336,874.492 314.492,896 288,896C287.897,896 287.793,896 287.69,895.999ZM144,608C144,581.508 122.492,560 96,560C69.508,560 48,538.492 48,512C48,485.508 69.508,464 96,464C122.492,464 144,442.492 144,416L144,272L144.001,271.536C144.256,192.577 208.18,128.503 287.069,128.003L288,128L288,128.665C290.601,128.228 293.274,128 296,128C322.492,128 344,149.508 344,176C344,202.492 322.492,224 296,224C293.274,224 290.601,223.772 288,223.335L288,224C261.508,224 240,245.508 240,272L240,416L239.999,416.464C239.881,453.148 226.019,486.62 203.295,512C226.115,537.482 240,571.132 240,608L240,752L144,752L144,608ZM304,464L512,208L720,464L592,464L592,720L432,720L432,464L304,464Z"/>
 </svg>
 </div></div></body>
 </html>

@@ -23,5 +23,7 @@
     "add-task-icon": "./image/add-task.1024.svg",
     "recycle-bin-icon": "./image/recycle-bin.1024.svg",
     "search-icon": "./image/search.1024.svg",
-    "cross-icon": "./image/cross.1024.svg"
+    "cross-icon": "./image/cross.1024.svg",
+    "import-icon": "./image/import.1024.svg",
+    "export-icon": "./image/export.1024.svg"
 }

@@ -2511,7 +2511,7 @@ export module CyclicToDo
                 menuItem
                 (
                     [
-                        await Resource.loadSvgOrCache("list-icon"),
+                        await Resource.loadSvgOrCache("import-icon"),
                         label("Import List"),
                     ],
                     async () => await showUrl({ hash: "import", }),
@@ -2533,7 +2533,7 @@ export module CyclicToDo
             icon:
             {
                 "@removed": "recycle-bin-icon" as Resource.KeyType,
-                "@import": "list-icon" as Resource.KeyType, // 本来は import だけど、まだ作ってない
+                "@import": "import-icon" as Resource.KeyType,
             }[pass] ?? "list-icon",
             title:
             {
@@ -3588,7 +3588,7 @@ export module CyclicToDo
                     await screenHeaderHomeSegment(),
                     await screenHeaderListSegment(pass),
                     {
-                        icon: "list-icon", // 本来は export だけど、まだ作ってない
+                        icon: "export-icon",
                         title: locale.map("Export"),
                     }
                 ],
