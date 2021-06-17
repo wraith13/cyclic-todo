@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu Jun 10 2021 19:36:06 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu Jun 17 2021 19:39:45 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2914,7 +2914,8 @@ define("resource/lang.en", [], {
     "Remove from Pickup": "Remove from Pickup",
     "Filter": "Filter",
     "Clear Filter History": "Clear Filter History",
-    "Input a ToDo list's name.": "Input a ToDo list's name."
+    "Input a ToDo list's name.": "Input a ToDo list's name.",
+    "Close": "Close"
 });
 define("resource/lang.ja", [], {
     "$name": "日本語",
@@ -2978,7 +2979,8 @@ define("resource/lang.ja", [], {
     "Remove from Pickup": "ピックアップから外す",
     "Filter": "絞り込み",
     "Clear Filter History": "絞り込みの履歴をクリア",
-    "Input a ToDo list's name.": "ToDoリストの名前を入力してください。"
+    "Input a ToDo list's name.": "ToDoリストの名前を入力してください。",
+    "Close": "閉じる"
 });
 define("resource/images", [], {
     "application-icon": "./image/cyclictodohex.1024.svg",
@@ -4361,7 +4363,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     Render.$div("popup-operator")([{
                                                             tag: "button",
                                                             className: "default-button",
-                                                            children: "閉じる",
+                                                            children: Render.label("Close"),
                                                             onclick: function () {
                                                                 ui.close();
                                                             },
@@ -4463,7 +4465,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     Render.$div("popup-operator")([{
                                                             tag: "button",
                                                             className: "default-button",
-                                                            children: "閉じる",
+                                                            children: Render.label("Close"),
                                                             onclick: function () {
                                                                 ui.close();
                                                             },
@@ -4589,7 +4591,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                         Render.$div("popup-operator")([{
                                                                 tag: "button",
                                                                 className: "default-button",
-                                                                children: "閉じる",
+                                                                children: Render.label("Close"),
                                                                 onclick: function () {
                                                                     ui.close();
                                                                 },
@@ -4733,7 +4735,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                         Render.$div("popup-operator")([{
                                                                 tag: "button",
                                                                 className: "default-button",
-                                                                children: "閉じる",
+                                                                children: Render.label("Close"),
                                                                 onclick: function () {
                                                                     ui.close();
                                                                 },

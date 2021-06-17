@@ -60,5 +60,6 @@
     "Remove from Pickup": "ピックアップから外す",
     "Filter": "絞り込み",
     "Clear Filter History": "絞り込みの履歴をクリア",
-    "Input a ToDo list's name.": "ToDoリストの名前を入力してください。"
+    "Input a ToDo list's name.": "ToDoリストの名前を入力してください。",
+    "Close": "閉じる"
 }

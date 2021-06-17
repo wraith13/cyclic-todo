@@ -1500,7 +1500,7 @@ export module CyclicToDo
                             ([{
                                 tag: "button",
                                 className: "default-button",
-                                children: "閉じる",
+                                children: label("Close"),
                                 onclick: () =>
                                 {
                                     ui.close();
@@ -1583,7 +1583,7 @@ export module CyclicToDo
                             ([{
                                 tag: "button",
                                 className: "default-button",
-                                children: "閉じる",
+                                children: label("Close"),
                                 onclick: () =>
                                 {
                                     ui.close();
@@ -1666,7 +1666,7 @@ export module CyclicToDo
                             ([{
                                 tag: "button",
                                 className: "default-button",
-                                children: "閉じる",
+                                children: label("Close"),
                                 onclick: () =>
                                 {
                                     ui.close();
@@ -1752,7 +1752,7 @@ export module CyclicToDo
                         ([{
                             tag: "button",
                             className: "default-button",
-                            children: "閉じる",
+                            children: label("Close"),
                             onclick: () =>
                             {
                                 ui.close();
