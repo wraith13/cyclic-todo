@@ -1338,7 +1338,7 @@ export module CyclicToDo
         export const confirm = systemConfirm;
         export const newListPrompt = async () =>
         {
-            const newList = await prompt("ToDoリストの名前を入力してください", locale.map("ToDo List"));
+            const newList = await prompt(locale.map("Input a ToDo list's name."), locale.map("ToDo List"));
             if (null !== newList)
             {
                 const pass = Storage.Pass.generate();
@@ -1348,7 +1348,7 @@ export module CyclicToDo
         };
         export const newTagPrompt = async (pass: string) =>
         {
-            const newTag = await prompt("タグの名前を入力してください", "");
+            const newTag = await prompt(locale.map("Input a tag's name."), "");
             if (null !== newTag)
             {
                 const tag = Storage.Tag.encode(newTag.trim());

@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu Jun 17 2021 19:39:45 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Jun 22 2021 07:50:38 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2915,6 +2915,7 @@ define("resource/lang.en", [], {
     "Filter": "Filter",
     "Clear Filter History": "Clear Filter History",
     "Input a ToDo list's name.": "Input a ToDo list's name.",
+    "Input a tag's name.": "Input a tag's name.",
     "Close": "Close"
 });
 define("resource/lang.ja", [], {
@@ -2980,6 +2981,7 @@ define("resource/lang.ja", [], {
     "Filter": "絞り込み",
     "Clear Filter History": "絞り込みの履歴をクリア",
     "Input a ToDo list's name.": "ToDoリストの名前を入力してください。",
+    "Input a tag's name.": "タグの名前を入力してください。",
     "Close": "閉じる"
 });
 define("resource/images", [], {
@@ -4170,7 +4172,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var newList, pass;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, Render.prompt("ToDoリストの名前を入力してください", locale.map("ToDo List"))];
+                        case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a ToDo list's name."), locale.map("ToDo List"))];
                         case 1:
                             newList = _a.sent();
                             if (!(null !== newList)) return [3 /*break*/, 3];
@@ -4188,7 +4190,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var newTag, tag;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, Render.prompt("タグの名前を入力してください", "")];
+                        case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a tag's name."), "")];
                         case 1:
                             newTag = _a.sent();
                             if (null !== newTag) {
