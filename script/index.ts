@@ -113,10 +113,10 @@ export module CyclicToDo
         tags: { [tag: string]: string[] };
         tagSettings: { [tag: string]: TagSettings };
         histories: { [todo: string]: number[] };
-        removed: Storage.Removed.Type[];
+        removed: OldStorage.Removed.Type[];
     }
     export type HistoryEntry = number | { tick: number; memo: string; };
-    export module Storage
+    export module OldStorage
     {
         export const sessionPassPrefix = "@Session";
         export const isSessionPass = (pass: string) => pass.startsWith(sessionPassPrefix);
@@ -248,7 +248,7 @@ export module CyclicToDo
                 {
                     return generate(seed +parseInt(result));
                 }
-                Storage.Pass.add(result);
+                OldStorage.Pass.add(result);
                 return result;
             };
         }
@@ -481,7 +481,7 @@ export module CyclicToDo
             };
             export const add = (pass: string, task: string) =>
             {
-                Storage.TagMember.add(pass, "@overall", task);
+                OldStorage.TagMember.add(pass, "@overall", task);
             };
             export const rename = (pass: string, oldTask: string, newTask: string) =>
             {
@@ -513,7 +513,7 @@ export module CyclicToDo
             export const removeRaw = (pass: string, task: string) =>
             {
                 const tags = Tag.getByTodoRaw(pass, task);
-                tags.map(tag => Storage.TagMember.remove(pass, tag, task));
+                tags.map(tag => OldStorage.TagMember.remove(pass, tag, task));
                 History.removeKey(pass, task);
             };
             export const remove = (pass: string, task: string) =>
@@ -679,6 +679,9 @@ export module CyclicToDo
                 return true;
             };
         }
+    }
+    export module Storage
+    {
         export module Filter
         {
             export const key = `filter.recently`;
@@ -863,10 +866,10 @@ export module CyclicToDo
             case "@new-sublist":
                 return locale.map(tag);
             default:
-                return Storage.Tag.decode(tag);
+                return OldStorage.Tag.decode(tag);
             }
         };
-        export const getLastTick = (pass: string, task: string) => Storage.History.get(pass, task)[0] ?? 0;
+        export const getLastTick = (pass: string, task: string) => OldStorage.History.get(pass, task)[0] ?? 0;
         export const getDoneTicks = (pass: string, key: string = `pass:(${pass}).last.done.ticks`) =>
             minamo.localStorage.set
             (
@@ -879,14 +882,14 @@ export module CyclicToDo
             );
         export const done = async (pass: string, task: string, tick: number = getDoneTicks(pass)) =>
         {
-            Storage.History.add(pass, task, tick);
+            OldStorage.History.add(pass, task, tick);
             return tick;
         };
         export const tagComparer = (pass: string) => minamo.core.comparer.make<string>
         (
-            tag => -Storage.TagMember.get(pass, tag).map(todo => Storage.History.get(pass, todo).length).reduce((a, b) => a +b, 0)
+            tag => -OldStorage.TagMember.get(pass, tag).map(todo => OldStorage.History.get(pass, todo).length).reduce((a, b) => a +b, 0)
         );
-        export const todoComparer = (entry: ToDoTagEntry, sort = Storage.TagSettings.getSort(entry.pass, entry.tag)) =>
+        export const todoComparer = (entry: ToDoTagEntry, sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag)) =>
         minamo.core.comparer.make<ToDoEntry>
         (
             "smart" === sort ?
@@ -918,7 +921,7 @@ export module CyclicToDo
         export const updateTermCategory = (pass: string, item: ToDoEntry) =>
         {
             const term = getTermCategory(item);
-            if (Storage.TagMember.get(pass, term).indexOf(item.task) < 0)
+            if (OldStorage.TagMember.get(pass, term).indexOf(item.task) < 0)
             {
                 ["@short-term", "@long-term", "@irregular-term"].forEach
                 (
@@ -926,13 +929,13 @@ export module CyclicToDo
                     {
                         if (tag === term)
                         {
-                            Storage.TagMember.add(pass, term, item.task);
+                            OldStorage.TagMember.add(pass, term, item.task);
                         }
                         else
                         {
-                            if (0 <= Storage.TagMember.get(pass, tag).indexOf(item.task))
+                            if (0 <= OldStorage.TagMember.get(pass, tag).indexOf(item.task))
                             {
-                                Storage.TagMember.remove(pass, tag, item.task);
+                                OldStorage.TagMember.remove(pass, tag, item.task);
                             }
                         }
                     }
@@ -954,7 +957,7 @@ export module CyclicToDo
         export const getToDoEntry = (pass: string, task: string) =>
         {
             // const history: { recentries: number[], previous: null | number, count: number, } = getRecentlyHistory(pass, task);
-            const full = Storage.History.get(pass, task);
+            const full = OldStorage.History.get(pass, task);
             const longRecentries = Calculate.intervals(full.filter((_, index) => index < 126));
             const longRecentlyAverage = longRecentries.length <= 1 ? null: Calculate.average(longRecentries);
             const longRecentlyStandardDeviation = longRecentries.length <= 5 ?
@@ -1082,8 +1085,8 @@ export module CyclicToDo
         {
             export const renameList = async (pass: string, newName, onCanceled: () => unknown = () => updateWindow("operate")) =>
             {
-                const backup = Storage.Title.get(pass);
-                Storage.Title.set(pass, newName);
+                const backup = OldStorage.Title.get(pass);
+                OldStorage.Title.set(pass, newName);
                 const toast = makePrimaryToast
                 ({
                     content: $span("")(`ToDo リストの名前を変更しました！： ${backup} → ${newName}`),
@@ -1091,7 +1094,7 @@ export module CyclicToDo
                     (
                         async () =>
                         {
-                            Storage.Title.set(pass, backup);
+                            OldStorage.Title.set(pass, backup);
                             await toast.hide();
                             onCanceled();
                         }
@@ -1100,8 +1103,8 @@ export module CyclicToDo
             };
             export const removeList = async (pass: string, onCanceled: () => unknown = () => updateWindow("operate")) =>
             {
-                const list = JSON.parse(Storage.exportJson(pass));
-                Storage.Pass.remove(list.pass);
+                const list = JSON.parse(OldStorage.exportJson(pass));
+                OldStorage.Pass.remove(list.pass);
                 const toast = makePrimaryToast
                 ({
                     content: $span("")(`ToDo リストを削除しました！: ${list.title}`),
@@ -1109,7 +1112,7 @@ export module CyclicToDo
                     (
                         async () =>
                         {
-                            Storage.importJson(JSON.stringify(list));
+                            OldStorage.importJson(JSON.stringify(list));
                             await toast.hide();
                             onCanceled();
                         }
@@ -1119,10 +1122,10 @@ export module CyclicToDo
             export const done = async (pass: string, task: string, tick: number, onCanceled: () => unknown) =>
             {
                 Domain.done(pass, task, tick);
-                const isPickuped = 0 <= Storage.TagMember.get(pass, "@pickup").indexOf(task);
+                const isPickuped = 0 <= OldStorage.TagMember.get(pass, "@pickup").indexOf(task);
                 if (isPickuped)
                 {
-                    Storage.TagMember.remove(pass, "@pickup", task);
+                    OldStorage.TagMember.remove(pass, "@pickup", task);
                 }
                 const toast = makePrimaryToast
                 ({
@@ -1131,10 +1134,10 @@ export module CyclicToDo
                     (
                         async () =>
                         {
-                            Storage.History.removeRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
+                            OldStorage.History.removeRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
                             if (isPickuped)
                             {
-                                Storage.TagMember.add(pass, "@pickup", task);
+                                OldStorage.TagMember.add(pass, "@pickup", task);
                             }
                             await toast.hide();
                             onCanceled();
@@ -1144,7 +1147,7 @@ export module CyclicToDo
             };
             export const addToPickup = async (pass: string, task: string, onCanceled: () => unknown) =>
             {
-                Storage.TagMember.add(pass, "@pickup", task);
+                OldStorage.TagMember.add(pass, "@pickup", task);
                 const toast = makePrimaryToast
                 ({
                     content: $span("")(`ピックアップに追加！: ${task}`),
@@ -1152,7 +1155,7 @@ export module CyclicToDo
                     (
                         async () =>
                         {
-                            Storage.TagMember.remove(pass, "@pickup", task);
+                            OldStorage.TagMember.remove(pass, "@pickup", task);
                             await toast.hide();
                             onCanceled();
                         }
@@ -1161,7 +1164,7 @@ export module CyclicToDo
             };
             export const removeFromPickup = async (pass: string, task: string, onCanceled: () => unknown) =>
             {
-                Storage.TagMember.remove(pass, "@pickup", task);
+                OldStorage.TagMember.remove(pass, "@pickup", task);
                 const toast = makePrimaryToast
                 ({
                     content: $span("")(`ピックアップからハズしました！: ${task}`),
@@ -1169,7 +1172,7 @@ export module CyclicToDo
                     (
                         async () =>
                         {
-                            Storage.TagMember.add(pass, "@pickup", task);
+                            OldStorage.TagMember.add(pass, "@pickup", task);
                             await toast.hide();
                             onCanceled();
                         }
@@ -1341,8 +1344,8 @@ export module CyclicToDo
             const newList = await prompt(locale.map("Input a ToDo list's name."), locale.map("ToDo List"));
             if (null !== newList)
             {
-                const pass = Storage.Pass.generate();
-                Storage.Title.set(pass, newList);
+                const pass = OldStorage.Pass.generate();
+                OldStorage.Title.set(pass, newList);
                 await showUrl({ pass, tag: "@overall", });
             }
         };
@@ -1351,8 +1354,8 @@ export module CyclicToDo
             const newTag = await prompt(locale.map("Input a tag's name."), "");
             if (null !== newTag)
             {
-                const tag = Storage.Tag.encode(newTag.trim());
-                Storage.Tag.add(pass, tag);
+                const tag = OldStorage.Tag.encode(newTag.trim());
+                OldStorage.Tag.add(pass, tag);
                 return tag;
             }
             return null;
@@ -1429,7 +1432,7 @@ export module CyclicToDo
                         [
                             await Promise.all
                             (
-                                ["@pickup"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat("@unoverall").map
+                                ["@pickup"].concat(OldStorage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat("@unoverall").map
                                 (
                                     async tag =>
                                     {
@@ -1447,12 +1450,12 @@ export module CyclicToDo
                                                 if (0 <= result.indexOf(tag))
                                                 {
                                                     result = result.filter(i => tag !== i);
-                                                    Storage.TagMember.remove(pass, tag, item.task);
+                                                    OldStorage.TagMember.remove(pass, tag, item.task);
                                                 }
                                                 else
                                                 {
                                                     result.push(tag);
-                                                    Storage.TagMember.add(pass, tag, item.task);
+                                                    OldStorage.TagMember.add(pass, tag, item.task);
                                                 }
                                                 update();
                                             }
@@ -1480,7 +1483,7 @@ export module CyclicToDo
                                     if (null !== tag)
                                     {
                                         result.push(tag);
-                                        Storage.TagMember.add(pass, tag, item.task);
+                                        OldStorage.TagMember.add(pass, tag, item.task);
                                         hasNewTag = true;
                                         await tagButtonListUpdate();
                                     }
@@ -1529,12 +1532,12 @@ export module CyclicToDo
                         [
                             await Promise.all
                             (
-                                ["@root"].concat(Storage.Tag.get(pass).filter(tag => Storage.Tag.isSublist(tag)).sort(Domain.tagComparer(pass))).map
+                                ["@root"].concat(OldStorage.Tag.get(pass).filter(tag => OldStorage.Tag.isSublist(tag)).sort(Domain.tagComparer(pass))).map
                                 (
                                     async sublist =>
                                     ({
                                         tag: "button",
-                                        className: `check-button ${sublist === (Storage.Task.getSublist(item.task) ?? "@root") ? "checked": ""}`,
+                                        className: `check-button ${sublist === (OldStorage.Task.getSublist(item.task) ?? "@root") ? "checked": ""}`,
                                         children:
                                         [
                                             await Resource.loadSvgOrCache("check-icon"),
@@ -1542,7 +1545,7 @@ export module CyclicToDo
                                         ],
                                         onclick: () =>
                                         {
-                                            Storage.TagMember.add(pass, sublist, item.task);
+                                            OldStorage.TagMember.add(pass, sublist, item.task);
                                             result = true;
                                             ui.close();
                                         }
@@ -1562,9 +1565,9 @@ export module CyclicToDo
                                     const sublist = await prompt("サブリストの名前を入力してください", "");
                                     if (null !== sublist)
                                     {
-                                        const tag = Storage.Tag.encodeSublist(sublist.trim());
-                                        Storage.Tag.add(pass, tag);
-                                        Storage.TagMember.add(pass, tag, item.task);
+                                        const tag = OldStorage.Tag.encodeSublist(sublist.trim());
+                                        OldStorage.Tag.add(pass, tag);
+                                        OldStorage.TagMember.add(pass, tag, item.task);
                                         result = true;
                                         ui.close();
                                     }
@@ -1595,7 +1598,7 @@ export module CyclicToDo
                 }
             );
         };
-        export const localeSettingsPopup = async (settings: Settings = Storage.Settings.get()): Promise<boolean> =>
+        export const localeSettingsPopup = async (settings: Settings = OldStorage.Settings.get()): Promise<boolean> =>
         {
             return await new Promise
             (
@@ -1620,7 +1623,7 @@ export module CyclicToDo
                                     if (null !== (settings.locale ?? null))
                                     {
                                         settings.locale = null;
-                                        Storage.Settings.set(settings);
+                                        OldStorage.Settings.set(settings);
                                         result = true;
                                         await checkButtonListUpdate();
                                     }
@@ -1644,7 +1647,7 @@ export module CyclicToDo
                                             if (key !== settings.locale ?? null)
                                             {
                                                 settings.locale = key;
-                                                Storage.Settings.set(settings);
+                                                OldStorage.Settings.set(settings);
                                                 result = true;
                                                 await checkButtonListUpdate();
                                             }
@@ -1678,7 +1681,7 @@ export module CyclicToDo
                 }
             );
         };
-        export const tagSortSettingsPopup = async (pass: string, tag: string, settings: TagSettings = Storage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
+        export const tagSortSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
@@ -1700,7 +1703,7 @@ export module CyclicToDo
                                 onclick: async () =>
                                 {
                                     settings.sort = null;
-                                    Storage.TagSettings.set(pass, tag, settings);
+                                    OldStorage.TagSettings.set(pass, tag, settings);
                                     result = true;
                                     await tagButtonListUpdate();
                                 }
@@ -1717,7 +1720,7 @@ export module CyclicToDo
                             onclick: async () =>
                             {
                                 settings.sort = "smart";
-                                Storage.TagSettings.set(pass, tag, settings);
+                                OldStorage.TagSettings.set(pass, tag, settings);
                                 result = true;
                                 await tagButtonListUpdate();
                             }
@@ -1733,7 +1736,7 @@ export module CyclicToDo
                             onclick: async () =>
                             {
                                 settings.sort = "simple";
-                                Storage.TagSettings.set(pass, tag, settings);
+                                OldStorage.TagSettings.set(pass, tag, settings);
                                 result = true;
                                 await tagButtonListUpdate();
                             }
@@ -1999,7 +2002,7 @@ export module CyclicToDo
                 const newTask = await prompt("ToDo の名前を入力してください。", item.task);
                 if (null !== newTask && 0 < newTask.length && newTask !== item.task)
                 {
-                    if (Storage.Task.rename(pass, item.task, newTask))
+                    if (OldStorage.Task.rename(pass, item.task, newTask))
                     {
                         await onRename(newTask);
                         //await reload();
@@ -2013,7 +2016,7 @@ export module CyclicToDo
         );
         export const todoTagMenu = (pass: string, item: ToDoEntry) =>
         [
-            0 <= Storage.TagMember.get(pass, "@pickup").indexOf(item.task) ?
+            0 <= OldStorage.TagMember.get(pass, "@pickup").indexOf(item.task) ?
                 menuItem
                 (
                     label("Remove from Pickup"),
@@ -2037,7 +2040,7 @@ export module CyclicToDo
                 label("Add/Remove Tag"),
                 async () =>
                 {
-                    if (await addRemoveTagsPopup(pass, item, Storage.Tag.getByTodo(pass, item.task)))
+                    if (await addRemoveTagsPopup(pass, item, OldStorage.Tag.getByTodo(pass, item.task)))
                     {
                         // await reload();
                         updateWindow("operate");
@@ -2062,7 +2065,7 @@ export module CyclicToDo
             label("Delete"),
             async () =>
             {
-                Storage.Task.remove(pass, item.task);
+                OldStorage.Task.remove(pass, item.task);
                 //Storage.TagMember.add(pass, "@deleted", item.task);
                 await reload();
             },
@@ -2111,7 +2114,7 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache(getTodoIcon(item)),
-                                Storage.Tag.decode(item.task),
+                                OldStorage.Tag.decode(item.task),
                             ]
                         }),
                         $div("item-operator")
@@ -2123,7 +2126,7 @@ export module CyclicToDo
                                 onclick: async () =>
                                 {
                                     //if (isSessionPass(pass))
-                                    const fxxkingTypeScriptCompiler = Storage.isSessionPass(entry.pass);
+                                    const fxxkingTypeScriptCompiler = OldStorage.isSessionPass(entry.pass);
                                     if (fxxkingTypeScriptCompiler)
                                     {
                                         alert
@@ -2163,7 +2166,7 @@ export module CyclicToDo
                     (
                         await Promise.all
                         (
-                            Storage.Tag.getByTodo(entry.pass, item.task).map
+                            OldStorage.Tag.getByTodo(entry.pass, item.task).map
                             (
                                 async tag => internalLink
                                 ({
@@ -2171,7 +2174,7 @@ export module CyclicToDo
                                     href: { pass: entry.pass, tag, },
                                     children:
                                     [
-                                        await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
+                                        await Resource.loadSvgOrCache(OldStorage.Tag.getIcon(tag)),
                                         Domain.tagMap(tag)
                                     ],
                                 })
@@ -2191,7 +2194,7 @@ export module CyclicToDo
                 ({
                     className: "item-title",
                     href: { pass: entry.pass, todo: item.task, },
-                    children: Storage.Tag.decode(item.task)
+                    children: OldStorage.Tag.decode(item.task)
                 }),
                 $span("value monospace")(Domain.dateStringFromTick(item.tick)),
             ]),
@@ -2215,8 +2218,8 @@ export module CyclicToDo
                                 const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), item.tick));
                                 if (null !== result && item.tick !== Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
                                 {
-                                    Storage.History.removeRaw(entry.pass, item.task, item.tick);
-                                    Storage.History.add(entry.pass, item.task, Domain.getTicks(result));
+                                    OldStorage.History.removeRaw(entry.pass, item.task, item.tick);
+                                    OldStorage.History.add(entry.pass, item.task, Domain.getTicks(result));
                                     await reload();
                                 }
                             }
@@ -2226,7 +2229,7 @@ export module CyclicToDo
                             label("Delete"),
                             async () =>
                             {
-                                Storage.History.remove(entry.pass, item.task, item.tick);
+                                OldStorage.History.remove(entry.pass, item.task, item.tick);
                                 await reload();
                             },
                             "delete-button"
@@ -2279,8 +2282,8 @@ export module CyclicToDo
                             const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), tick));
                             if (null !== result && tick !== Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
                             {
-                                Storage.History.removeRaw(pass, item.task, tick);
-                                Storage.History.add(pass, item.task, Domain.getTicks(result));
+                                OldStorage.History.removeRaw(pass, item.task, tick);
+                                OldStorage.History.add(pass, item.task, Domain.getTicks(result));
                                 await reload();
                             }
                         }
@@ -2290,7 +2293,7 @@ export module CyclicToDo
                         label("Delete"),
                         async () =>
                         {
-                            Storage.History.remove(pass, item.task, tick);
+                            OldStorage.History.remove(pass, item.task, tick);
                             await reload();
                         },
                         "delete-button"
@@ -2351,7 +2354,7 @@ export module CyclicToDo
                         children: $span("history-bar-item")
                         ([
                             await Resource.loadSvgOrCache("task-icon"),
-                            Storage.Tag.decode(item.task),
+                            OldStorage.Tag.decode(item.task),
                             $span("monospace")(`(${Domain.timeLongStringFromTick(item.elapsed)})`),
                         ])
                     }),
@@ -2482,13 +2485,13 @@ export module CyclicToDo
                 (
                     await Promise.all
                     (
-                        Storage.Pass.get().map
+                        OldStorage.Pass.get().map
                         (
                             async i => menuLinkItem
                             (
                                 [
                                     await Resource.loadSvgOrCache("list-icon"),
-                                    Storage.Title.get(i),
+                                    OldStorage.Title.get(i),
                                     // labelSpan(`ToDo リスト ( pass: ${i.substr(0, 2)}****${i.substr(-2)} )`)
                                 ],
                                 { pass: i, tag: "@overall", },
@@ -2522,7 +2525,7 @@ export module CyclicToDo
                     [
                         await Resource.loadSvgOrCache("recycle-bin-icon"),
                         labelSpan(locale.map("@deleted")),
-                        $span("value monospace")(`${Storage.Backup.get().length}`)
+                        $span("value monospace")(`${OldStorage.Backup.get().length}`)
                     ],
                     { hash: "removed" },
                     pass === "@removed" ? "current-item": undefined
@@ -2539,27 +2542,27 @@ export module CyclicToDo
             {
                 "@removed": locale.map("@deleted"),
                 "@import": locale.map("Import List"),
-            }[pass] ?? Storage.Title.get(pass), // `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
+            }[pass] ?? OldStorage.Title.get(pass), // `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
             menu: await screenHeaderListSegmentMenu(pass),
         });
         export const screenHeaderTagSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
         ({
-            icon: Storage.Tag.getIcon(current),
+            icon: OldStorage.Tag.getIcon(current),
             title: Domain.tagMap(current),
             menu:
                 (
                     (
                         await Promise.all
                         (
-                            ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"].concat(Storage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@untagged"])
+                            ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"].concat(OldStorage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@untagged"])
                             .map
                             (
                                 async tag => menuLinkItem
                                 (
                                     [
-                                        await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
+                                        await Resource.loadSvgOrCache(OldStorage.Tag.getIcon(tag)),
                                         labelSpan(Domain.tagMap(tag)),
-                                        $span("value monospace")(`${Storage.TagMember.get(pass, tag).length}`)
+                                        $span("value monospace")(`${OldStorage.TagMember.get(pass, tag).length}`)
                                     ],
                                     { pass, tag, },
                                     current === tag ? "current-item": undefined
@@ -2596,8 +2599,8 @@ export module CyclicToDo
                             const sublist = await prompt("サブリストの名前を入力してください", "");
                             if (null !== sublist)
                             {
-                                const tag = Storage.Tag.encodeSublist(sublist.trim());
-                                Storage.Tag.add(pass, tag);
+                                const tag = OldStorage.Tag.encodeSublist(sublist.trim());
+                                OldStorage.Tag.add(pass, tag);
                                 await showUrl({ pass, tag, });
                             }
                         }
@@ -2607,7 +2610,7 @@ export module CyclicToDo
                         [
                             await Resource.loadSvgOrCache("recycle-bin-icon"),
                             labelSpan(locale.map("@deleted")),
-                            $span("value monospace")(`${Storage.Removed.get(pass).length}`)
+                            $span("value monospace")(`${OldStorage.Removed.get(pass).length}`)
                         ],
                         { pass, hash: "removed" },
                         current === "@deleted" ? "current-item": undefined
@@ -2617,19 +2620,19 @@ export module CyclicToDo
         export const screenHeaderTaskSegment = async (pass: string, tag: string, current: string): Promise<HeaderSegmentSource> =>
         ({
             icon: "@history" === current ? "history-icon": "task-icon",
-            title: "@history" === current ? locale.map("History"): Storage.Tag.decode(current),
+            title: "@history" === current ? locale.map("History"): OldStorage.Tag.decode(current),
             menu:
                 (
                     (
                         await Promise.all
                         (
-                            Storage.TagMember.get(pass, tag).map
+                            OldStorage.TagMember.get(pass, tag).map
                             (
                                 async task => menuLinkItem
                                 (
                                     [
                                         await Resource.loadSvgOrCache("task-icon"),
-                                        labelSpan(Storage.Tag.decode(task)),
+                                        labelSpan(OldStorage.Tag.decode(task)),
                                     ],
                                     { pass, todo: task, },
                                     current === task ? "current-item": undefined
@@ -2651,8 +2654,8 @@ export module CyclicToDo
                             const newTask = await prompt("ToDo の名前を入力してください");
                             if (null !== newTask)
                             {
-                                Storage.Task.add(pass, newTask);
-                                Storage.TagMember.add(pass, tag, newTask);
+                                OldStorage.Task.add(pass, newTask);
+                                OldStorage.TagMember.add(pass, tag, newTask);
                                 await showUrl({ pass, todo: newTask, });
                             }
                         }
@@ -2683,7 +2686,7 @@ export module CyclicToDo
             label("Rename"),
             async () =>
             {
-                const oldTitle = Storage.Title.get(pass);
+                const oldTitle = OldStorage.Title.get(pass);
                 const newTitle = await prompt(locale.map("Input a ToDo list's name."), oldTitle);
                 if (null !== newTitle && 0 < newTitle.length && newTitle !== oldTitle)
                 {
@@ -2711,7 +2714,7 @@ export module CyclicToDo
                 }
             ),
             "@overall" === entry.tag ? listRenameMenu(entry.pass): [],
-            Storage.Tag.isSystemTag(entry.tag) ? []:
+            OldStorage.Tag.isSystemTag(entry.tag) ? []:
                 menuItem
                 (
                     label("Rename"),
@@ -2720,7 +2723,7 @@ export module CyclicToDo
                         const newTag = await prompt("タグの名前を入力してください", entry.tag);
                         if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
                         {
-                            if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
+                            if (OldStorage.Tag.rename(entry.pass, entry.tag, newTag))
                             {
                                 await showUrl({ pass: entry.pass, tag: newTag });
                             }
@@ -2744,8 +2747,8 @@ export module CyclicToDo
                     const newTask = await prompt("ToDo の名前を入力してください");
                     if (null !== newTask)
                     {
-                        Storage.Task.add(entry.pass, newTask);
-                        Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                        OldStorage.Task.add(entry.pass, newTask);
+                        OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
                         await showUrl({ pass: entry.pass, todo: newTask, });
                     }
                 }
@@ -2759,13 +2762,13 @@ export module CyclicToDo
                 href: { pass: entry.pass, hash: "export" },
                 children: menuItem(label("Export")),
             }),
-            Storage.Tag.isSystemTag(entry.tag) ? []:
+            OldStorage.Tag.isSystemTag(entry.tag) ? []:
                 menuItem
                 (
                     label("Delete"),
                     async () =>
                     {
-                        Storage.Tag.remove(entry.pass, entry.tag);
+                        OldStorage.Tag.remove(entry.pass, entry.tag);
                         await showUrl({ pass: entry.pass, tag: "@overall" });
                     },
                     "delete-button"
@@ -2995,7 +2998,7 @@ export module CyclicToDo
         };
         export const isMatchToDoEntry = (filter: string, entry: ToDoTagEntry, item: ToDoEntry) =>
             isMatchTest(filter, regulateFilterText(item.task)) ||
-            Storage.Tag.getByTodo(entry.pass, item.task).some(tag => entry.tag !== tag && isMatchTest(filter, regulateFilterText(tag)));
+            OldStorage.Tag.getByTodo(entry.pass, item.task).some(tag => entry.tag !== tag && isMatchTest(filter, regulateFilterText(tag)));
         export const listScreenHeader = async (entry: ToDoTagEntry, _list: ToDoEntry[]): Promise<HeaderSource> =>
         ({
             items:
@@ -3038,8 +3041,8 @@ export module CyclicToDo
                         const newTask = await prompt("ToDo の名前を入力してください");
                         if (null !== newTask)
                         {
-                            Storage.Task.add(entry.pass, newTask);
-                            Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                            OldStorage.Task.add(entry.pass, newTask);
+                            OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
                             await showUrl({ pass: entry.pass, todo: newTask, });
                         }
                     }
@@ -3059,7 +3062,7 @@ export module CyclicToDo
         });
         export const showListScreen = async (pass: string, tag: string, urlParams: PageParams) =>
         {
-            let entry = { tag, pass, todo: Storage.TagMember.get(pass, tag) };
+            let entry = { tag, pass, todo: OldStorage.TagMember.get(pass, tag) };
             let list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task));
             Domain.updateListProgress(entry.pass, list);
             Domain.sortList(entry, list);
@@ -3127,9 +3130,9 @@ export module CyclicToDo
                         await reload();
                         break;
                     case "operate":
-                        if (0 <= Storage.Pass.get().indexOf(entry.pass))
+                        if (0 <= OldStorage.Pass.get().indexOf(entry.pass))
                         {
-                            let entry = { tag, pass, todo: Storage.TagMember.get(pass, tag) };
+                            let entry = { tag, pass, todo: OldStorage.TagMember.get(pass, tag) };
                             list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task));
                             Domain.updateListProgress(entry.pass, list);
                             Domain.sortList(entry, list);
@@ -3166,7 +3169,7 @@ export module CyclicToDo
                 label("Back to List"),
                 async () => await showUrl({ pass: entry.pass, tag: entry.tag, })
             ),
-            Storage.Tag.isSystemTag(entry.tag) ? []:
+            OldStorage.Tag.isSystemTag(entry.tag) ? []:
                 menuItem
                 (
                     label("Rename"),
@@ -3175,7 +3178,7 @@ export module CyclicToDo
                         const newTag = await prompt("タグの名前を入力してください", entry.tag);
                         if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
                         {
-                            if (Storage.Tag.rename(entry.pass, entry.tag, newTag))
+                            if (OldStorage.Tag.rename(entry.pass, entry.tag, newTag))
                             {
                                 await showUrl({ pass: entry.pass, tag: newTag, hash: "history", });
                             }
@@ -3194,8 +3197,8 @@ export module CyclicToDo
                     const newTask = await prompt("ToDo の名前を入力してください");
                     if (null !== newTask)
                     {
-                        Storage.Task.add(entry.pass, newTask);
-                        Storage.TagMember.add(entry.pass, entry.tag, newTask);
+                        OldStorage.Task.add(entry.pass, newTask);
+                        OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
                         await showUrl({ pass: entry.pass, todo: newTask, });
                     }
                 }
@@ -3278,20 +3281,20 @@ export module CyclicToDo
         export const showHistoryScreen = async (urlParams: PageParams, entry: ToDoTagEntry) =>
         {
             const histories: { [task:string]:number[] } = { };
-            let list = entry.todo.map(task => (histories[task] = Storage.History.get(entry.pass, task)).map(tick => ({ task, tick }))).reduce((a, b) => a.concat(b), []);
+            let list = entry.todo.map(task => (histories[task] = OldStorage.History.get(entry.pass, task)).map(tick => ({ task, tick }))).reduce((a, b) => a.concat(b), []);
             list.sort(minamo.core.comparer.make(a => -a.tick));
             list = list.concat(entry.todo.filter(task => histories[task].length <= 0).map(task => ({ task, tick: null })));
             const filter = regulateFilterText(urlParams.filter ?? "");
             await showWindow(await historyScreen(entry, list, filter));
         };
-        export const removedItem = async (pass: string, item: Storage.Removed.Type) => $div("removed-item flex-item")
+        export const removedItem = async (pass: string, item: OldStorage.Removed.Type) => $div("removed-item flex-item")
         ([
             $div("item-header")
             ([
                 $div("item-title")
                 ([
-                    await Resource.loadSvgOrCache(Storage.Removed.getIcon(item)),
-                    `${Storage.Removed.getTypeName(item)}: ${Storage.Removed.getName(item)}`,
+                    await Resource.loadSvgOrCache(OldStorage.Removed.getIcon(item)),
+                    `${OldStorage.Removed.getTypeName(item)}: ${OldStorage.Removed.getName(item)}`,
                 ]),
                 $div("item-operator")
                 ([{
@@ -3300,7 +3303,7 @@ export module CyclicToDo
                     children: "復元",
                     onclick: async () =>
                     {
-                        if (Storage.Removed.restore(pass, item))
+                        if (OldStorage.Removed.restore(pass, item))
                         {
                             await reload();
                         }
@@ -3332,13 +3335,13 @@ export module CyclicToDo
                 "完全に削除",
                 async () =>
                 {
-                    Storage.Removed.clear(pass);
+                    OldStorage.Removed.clear(pass);
                     await reload();
                 },
                 "delete-button"
             ),
         ];
-        export const removedScreen = async (pass: string, list: Storage.Removed.Type[]) =>
+        export const removedScreen = async (pass: string, list: OldStorage.Removed.Type[]) =>
         ({
             className: "removed-screen",
             header:
@@ -3381,7 +3384,7 @@ export module CyclicToDo
                             {
                                 if (systemConfirm("この操作は取り消せません。続行しますか？"))
                                 {
-                                    Storage.Removed.clear(pass);
+                                    OldStorage.Removed.clear(pass);
                                     await reload();
                                 }
                             },
@@ -3391,7 +3394,7 @@ export module CyclicToDo
             ]
         });
         export const showRemovedScreen = async (pass: string) =>
-            await showWindow(await removedScreen(pass, Storage.Removed.get(pass)));
+            await showWindow(await removedScreen(pass, OldStorage.Removed.get(pass)));
         export const todoScreenMenu = async (pass: string, item: ToDoEntry) =>
         [
             todoDoneMenu(pass, item),
@@ -3431,7 +3434,7 @@ export module CyclicToDo
         };
         export const todoScreenBody = async (pass: string, item: ToDoEntry, ticks: number[], _tag: string, max: number | null = getIntervalsMax(Calculate.intervals(ticks))) =>
         ([
-            Storage.isSessionPass(pass) ?
+            OldStorage.isSessionPass(pass) ?
                 []:
                 $div("button-list")
                 ({
@@ -3458,7 +3461,7 @@ export module CyclicToDo
                     (
                         await Promise.all
                         (
-                            Storage.Tag.getByTodo(pass, item.task).map
+                            OldStorage.Tag.getByTodo(pass, item.task).map
                             (
                                 async tag => internalLink
                                 ({
@@ -3466,7 +3469,7 @@ export module CyclicToDo
                                     href: { pass, tag, },
                                     children:
                                     [
-                                        await Resource.loadSvgOrCache(Storage.Tag.getIcon(tag)),
+                                        await Resource.loadSvgOrCache(OldStorage.Tag.getIcon(tag)),
                                         Domain.tagMap(tag)
                                     ],
                                 })
@@ -3514,15 +3517,15 @@ export module CyclicToDo
                         "@overall": 5,
                         "@untagged": 3,
                     }
-                    [tag] ?? (Storage.Tag.isSublist(tag) ? 0: 2)
+                    [tag] ?? (OldStorage.Tag.isSublist(tag) ? 0: 2)
                 )
             )
         )[0];
         export const showTodoScreen = async (pass: string, task: string) =>
         {
             let item = Domain.getToDoEntry(pass, task);
-            let tag: string = getPrimaryTag(Storage.Tag.getByTodo(pass, item.task));
-            let ticks = Storage.History.get(pass, task);
+            let tag: string = getPrimaryTag(OldStorage.Tag.getByTodo(pass, item.task));
+            let ticks = OldStorage.History.get(pass, task);
             Domain.updateProgress(pass, item);
             const updateWindow = async (event: UpdateWindowEventEype) =>
             {
@@ -3542,8 +3545,8 @@ export module CyclicToDo
                         break;
                     case "operate":
                         item = Domain.getToDoEntry(pass, task);
-                        tag = Storage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0];
-                        ticks = Storage.History.get(pass, task);
+                        tag = OldStorage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0];
+                        ticks = OldStorage.History.get(pass, task);
                         Domain.updateProgress(pass, item);
                         replaceScreenBody(await todoScreenBody(pass, item, ticks, tag));
                         resizeFlexList();
@@ -3597,7 +3600,7 @@ export module CyclicToDo
             },
             body:
             [
-                $tag("textarea")("json")(Storage.exportJson(pass)),
+                $tag("textarea")("json")(OldStorage.exportJson(pass)),
             ]
         });
         export const showImportScreen = async () =>
@@ -3634,7 +3637,7 @@ export module CyclicToDo
                     onclick: async () =>
                     {
                         const textarea = document.getElementsByClassName("json")[0] as HTMLTextAreaElement;
-                        const pass = Storage.importJson(textarea.value);
+                        const pass = OldStorage.importJson(textarea.value);
                         if (null !== pass)
                         {
                             showUrl({ pass, tag: "@overall", });
@@ -3659,7 +3662,7 @@ export module CyclicToDo
                     children: "復元",
                     onclick: async () =>
                     {
-                        const pass = Storage.importJson(JSON.stringify(list));
+                        const pass = OldStorage.importJson(JSON.stringify(list));
                         if (null !== pass)
                         {
                             showUrl({ pass, tag: "@overall", });
@@ -3673,7 +3676,7 @@ export module CyclicToDo
             ]),
         ]);
         export const showRemovedListScreen = async () =>
-            await showWindow(await removedListScreen(Storage.Backup.get().map(json => JSON.parse(json) as ToDoList)));
+            await showWindow(await removedListScreen(OldStorage.Backup.get().map(json => JSON.parse(json) as ToDoList)));
         export const removedListScreenMenu = async () =>
         [
             menuItem
@@ -3716,7 +3719,7 @@ export module CyclicToDo
                             {
                                 if (systemConfirm("この操作は取り消せません。続行しますか？"))
                                 {
-                                    Storage.Backup.clear();
+                                    OldStorage.Backup.clear();
                                     await reload();
                                 }
                             },
@@ -3841,7 +3844,7 @@ export module CyclicToDo
                 ([
                     {
                         tag: "button",
-                        className: Storage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
+                        className: OldStorage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
                         children: label("New ToDo List"),
                         onclick: newListPrompt,
                     },
@@ -3860,7 +3863,7 @@ export module CyclicToDo
                     ]),
                 ]),
                 $div("row-flex-list compact-flex-list list-list")
-                    (await Promise.all(Storage.Pass.get().map(pass => listItem(JSON.parse(Storage.exportJson(pass)) as ToDoList)))),
+                    (await Promise.all(OldStorage.Pass.get().map(pass => listItem(JSON.parse(OldStorage.exportJson(pass)) as ToDoList)))),
             ]
         });
         export const showWelcomeScreen = async () =>
@@ -4198,13 +4201,13 @@ export module CyclicToDo
         let onUpdateStorageCount = 0;
         export const onUpdateStorage = () =>
         {
-            const lastUpdate = Storage.lastUpdate = new Date().getTime();
+            const lastUpdate = OldStorage.lastUpdate = new Date().getTime();
             const onUpdateStorageCountCopy = onUpdateStorageCount = onUpdateStorageCount +1;
             setTimeout
             (
                 () =>
                 {
-                    if (lastUpdate === Storage.lastUpdate && onUpdateStorageCountCopy === onUpdateStorageCount)
+                    if (lastUpdate === OldStorage.lastUpdate && onUpdateStorageCountCopy === onUpdateStorageCount)
                     {
                         updateWindow?.("storage");
                     }
@@ -4325,7 +4328,7 @@ export module CyclicToDo
     export const start = async () =>
     {
         console.log("start!!!");
-        locale.setLocale(Storage.Settings.get().locale);
+        locale.setLocale(OldStorage.Settings.get().locale);
         window.onpopstate = () => showPage();
         window.addEventListener('resize', Render.onWindowResize);
         window.addEventListener('focus', Render.onWindowFocus);
@@ -4362,7 +4365,7 @@ export module CyclicToDo
         const hash = getUrlHash(url);
         const tag = urlParams["tag"];
         const todo = urlParams["todo"];
-        const pass = urlParams["pass"] ?? `${Storage.sessionPassPrefix}:${new Date().getTime()}`;
+        const pass = urlParams["pass"] ?? `${OldStorage.sessionPassPrefix}:${new Date().getTime()}`;
         // const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
         // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
         if (pass && todo)
@@ -4371,7 +4374,7 @@ export module CyclicToDo
             await Render.showTodoScreen(pass, todo);
         }
         else
-        if (Storage.isSessionPass(pass) && ! tag)
+        if (OldStorage.isSessionPass(pass) && ! tag)
         {
             switch(hash)
             {
@@ -4400,7 +4403,7 @@ export module CyclicToDo
             {
             case "history":
                 console.log("show history screen");
-                Render.showHistoryScreen(urlParams, { tag: tag, pass, todo: Storage.TagMember.get(pass, tag) });
+                Render.showHistoryScreen(urlParams, { tag: tag, pass, todo: OldStorage.TagMember.get(pass, tag) });
                 break;
             // case "statistics":
             //     dom.updateStatisticsScreen(title, pass, todo);
@@ -4418,7 +4421,7 @@ export module CyclicToDo
                 Render.showExportScreen(pass);
                 break;
             default:
-                if (0 <= Storage.Pass.get().indexOf(pass))
+                if (0 <= OldStorage.Pass.get().indexOf(pass))
                 {
                     console.log("show list screen");
                     Render.showListScreen(pass, tag ?? "@overall", urlParams);
