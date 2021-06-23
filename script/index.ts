@@ -2651,7 +2651,7 @@ export module CyclicToDo
                         ],
                         async () =>
                         {
-                            const newTask = await prompt("ToDo の名前を入力してください");
+                            const newTask = await prompt(locale.map("Input a ToDo's name."));
                             if (null !== newTask)
                             {
                                 OldStorage.Task.add(pass, newTask);
@@ -2720,7 +2720,7 @@ export module CyclicToDo
                     label("Rename"),
                     async () =>
                     {
-                        const newTag = await prompt("タグの名前を入力してください", entry.tag);
+                        const newTag = await prompt(locale.map("Input a tag's name."), entry.tag);
                         if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
                         {
                             if (OldStorage.Tag.rename(entry.pass, entry.tag, newTag))
@@ -2744,7 +2744,7 @@ export module CyclicToDo
                 label("New ToDo"),
                 async () =>
                 {
-                    const newTask = await prompt("ToDo の名前を入力してください");
+                    const newTask = await prompt(locale.map("Input a ToDo's name."));
                     if (null !== newTask)
                     {
                         OldStorage.Task.add(entry.pass, newTask);
