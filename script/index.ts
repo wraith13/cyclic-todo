@@ -67,8 +67,10 @@ export module Calculate
     export const average = (ticks: number[]) => ticks.length <= 0 ?
         null:
         sum(ticks) /ticks.length;
+    // export const standardDeviationOld = (ticks: number[], average: number = Calculate.average(ticks)) =>
+    //     Math.sqrt(Calculate.average(ticks.map(i => (i -average) ** 2)));
     export const standardDeviation = (ticks: number[], average: number = Calculate.average(ticks)) =>
-        Math.sqrt(Calculate.average(ticks.map(i => (i -average) ** 2)));
+        Math.sqrt(Calculate.average(ticks.map(i => i ** 2)) -(average ** 2));
     export const standardScore = (average: number, standardDeviation: number, target: number) =>
         (10 * (target -average) /standardDeviation) +50;
 }
