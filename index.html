@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu Jun 24 2021 20:32:19 GMT+0900 (GMT+09:00) -->
+<!-- build at: Fri Jun 25 2021 21:08:26 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2880,6 +2880,7 @@ define("resource/lang.en", [], {
     "Rename": "Rename",
     "Delete": "Move to Recycle bin",
     "Restore": "Restore",
+    "Permanently Delete": "Permanently Delete",
     "History": "History",
     "Back to List": "Back to List",
     "Add/Remove Tag": "Add/Remove Tag",
@@ -2947,6 +2948,7 @@ define("resource/lang.ja", [], {
     "Rename": "名前を変更",
     "Delete": "ごみ箱へ入れる",
     "Restore": "復元",
+    "Permanently Delete": "完全に削除",
     "History": "履歴",
     "Back to List": "リストに戻る",
     "Add/Remove Tag": "タグの追加/削除",
@@ -4997,7 +4999,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     var newTask;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください。", item.task)];
+                            case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a ToDo's name."), item.task)];
                             case 1:
                                 newTask = _a.sent();
                                 if (!(null !== newTask && 0 < newTask.length && newTask !== item.task)) return [3 /*break*/, 4];
@@ -6253,7 +6255,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             var newTask;
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
+                                                    case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a ToDo's name."))];
                                                     case 1:
                                                         newTask = _a.sent();
                                                         if (!(null !== newTask)) return [3 /*break*/, 3];
@@ -6424,7 +6426,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     var newTag;
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
-                                            case 0: return [4 /*yield*/, Render.prompt("タグの名前を入力してください", entry.tag)];
+                                            case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a tag's name."), entry.tag)];
                                             case 1:
                                                 newTag = _a.sent();
                                                 if (!(null !== newTag && 0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 4];
@@ -6444,7 +6446,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 var newTask;
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
-                                        case 0: return [4 /*yield*/, Render.prompt("ToDo の名前を入力してください")];
+                                        case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a ToDo's name."))];
                                         case 1:
                                             newTask = _a.sent();
                                             if (!(null !== newTask)) return [3 /*break*/, 3];
@@ -6623,7 +6625,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             Render.$div("item-operator")([{
                                                     tag: "button",
                                                     className: "main-button",
-                                                    children: "復元",
+                                                    children: Render.label("Restore"),
                                                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                         return __generator(this, function (_a) {
                                                             switch (_a.label) {
@@ -6664,7 +6666,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     case 1: return [2 /*return*/, _a.sent()];
                                 }
                             }); }); }),
-                            Render.menuItem("完全に削除", function () { return __awaiter(_this, void 0, void 0, function () {
+                            Render.menuItem(Render.label("Permanently Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
@@ -6732,7 +6734,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         {
                                             tag: "button",
                                             className: "main-button long-button delete-button",
-                                            children: "完全に削除",
+                                            children: Render.label("Permanently Delete"),
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
@@ -7150,7 +7152,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             Render.$div("item-operator")([{
                                                     tag: "button",
                                                     className: "default-button main-button",
-                                                    children: "復元",
+                                                    children: Render.label("Restore"),
                                                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                         var pass;
                                                         return __generator(this, function (_a) {
@@ -7238,7 +7240,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         {
                                             tag: "button",
                                             className: "main-button long-button delete-button",
-                                            children: "完全に削除",
+                                            children: Render.label("Permanently Delete"),
                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {

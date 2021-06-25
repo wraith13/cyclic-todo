@@ -3040,7 +3040,7 @@ export module CyclicToDo
                     children: label("New ToDo"),
                     onclick: async () =>
                     {
-                        const newTask = await prompt("ToDo の名前を入力してください");
+                        const newTask = await prompt(locale.map("Input a ToDo's name."));
                         if (null !== newTask)
                         {
                             OldStorage.Task.add(entry.pass, newTask);
@@ -3302,7 +3302,7 @@ export module CyclicToDo
                 ([{
                     tag: "button",
                     className: "main-button",
-                    children: "復元",
+                    children: label("Restore"),
                     onclick: async () =>
                     {
                         if (OldStorage.Removed.restore(pass, item))
@@ -3334,7 +3334,7 @@ export module CyclicToDo
             ),
             menuItem
             (
-                "完全に削除",
+                label("Permanently Delete"),
                 async () =>
                 {
                     OldStorage.Removed.clear(pass);
@@ -3381,7 +3381,7 @@ export module CyclicToDo
                         {
                             tag: "button",
                             className: "main-button long-button delete-button",
-                            children: "完全に削除",
+                            children: label("Permanently Delete"),
                             onclick: async () =>
                             {
                                 if (systemConfirm("この操作は取り消せません。続行しますか？"))
@@ -3661,7 +3661,7 @@ export module CyclicToDo
                 ([{
                     tag: "button",
                     className: "default-button main-button",
-                    children: "復元",
+                    children: label("Restore"),
                     onclick: async () =>
                     {
                         const pass = OldStorage.importJson(JSON.stringify(list));
@@ -3716,7 +3716,7 @@ export module CyclicToDo
                         {
                             tag: "button",
                             className: "main-button long-button delete-button",
-                            children: "完全に削除",
+                            children: label("Permanently Delete"),
                             onclick: async () =>
                             {
                                 if (systemConfirm("この操作は取り消せません。続行しますか？"))
