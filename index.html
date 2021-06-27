@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Fri Jun 25 2021 21:08:26 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sun Jun 27 2021 19:31:28 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -247,10 +247,12 @@ a {
 .locale-parallel-on .locale-parallel {
   display: initial;
 }
-.locale-parallel-off .locale-map {
+.locale-parallel-off .locale-map,
+.menu-popup .locale-map {
   display: initial;
 }
-.locale-parallel-off .locale-parallel {
+.locale-parallel-off .locale-parallel,
+.menu-popup .locale-parallel {
   display: none;
 }
 h1 {
@@ -2859,6 +2861,7 @@ define("resource/lang.en", [], {
     "elapsed time": "elapsed time",
     "count": "count",
     "Done": "Done",
+    "Done with timestamp or memo": "Done with timestamp or memo",
     "Open": "Open",
     "days": "days",
     "@overall": "Home",
@@ -2927,6 +2930,7 @@ define("resource/lang.ja", [], {
     "elapsed time": "経過時間",
     "count": "回数",
     "Done": "完了",
+    "Done with timestamp or memo": "日時やメモを指定して完了",
     "Open": "開く",
     "days": "日",
     "@overall": "ホーム",
@@ -4968,7 +4972,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 1: return [2 /*return*/, _a.sent()];
                     }
                 }); }); }; }
-                return Render.menuItem("日時やメモを指定して完了", function () { return __awaiter(_this, void 0, void 0, function () {
+                return Render.menuItem(Render.label("Done with timestamp or memo"), function () { return __awaiter(_this, void 0, void 0, function () {
                     var result, _a, _b;
                     return __generator(this, function (_c) {
                         switch (_c.label) {
@@ -5958,10 +5962,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     }
                                 });
                             }); }),
-                            {
-                                tag: "button",
-                                children: "🚫 リストをシェア",
-                            },
+                            // {
+                            //     tag: "button",
+                            //     children: "🚫 リストをシェア",
+                            // },
                             Render.internalLink({
                                 href: { pass: entry.pass, hash: "export" },
                                 children: Render.menuItem(Render.label("Export")),
@@ -6460,10 +6464,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     }
                                 });
                             }); }),
-                            {
-                                tag: "button",
-                                children: "🚫 リストをシェア",
-                            },
+                            // {
+                            //     tag: "button",
+                            //     children: "🚫 リストをシェア",
+                            // },
                             Render.menuItem(Render.label("Export"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, hash: "export", })];
@@ -6779,10 +6783,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             }); }); }),
                             Render.todoTagMenu(pass, item),
                             Render.todoDeleteMenu(pass, item),
-                            {
-                                tag: "button",
-                                children: "🚫 ToDo をシェア",
-                            },
+                            // {
+                            //     tag: "button",
+                            //     children: "🚫 ToDo をシェア",
+                            // },
                             Render.menuItem(Render.label("Export"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, hash: "export", })];

@@ -1973,7 +1973,7 @@ export module CyclicToDo
         ) =>
         menuItem
         (
-            "日時やメモを指定して完了",
+            label("Done with timestamp or memo"),
             async () =>
             {
                 const result = Domain.parseDate(await dateTimePrompt(item.task, Domain.getTicks()));
@@ -2755,10 +2755,10 @@ export module CyclicToDo
                     }
                 }
             ),
-            {
-                tag: "button",
-                children: "🚫 リストをシェア",
-            },
+            // {
+            //     tag: "button",
+            //     children: "🚫 リストをシェア",
+            // },
             internalLink
             ({
                 href: { pass: entry.pass, hash: "export" },
@@ -3205,10 +3205,10 @@ export module CyclicToDo
                     }
                 }
             ),
-            {
-                tag: "button",
-                children: "🚫 リストをシェア",
-            },
+            // {
+            //     tag: "button",
+            //     children: "🚫 リストをシェア",
+            // },
             menuItem
             (
                 label("Export"),
@@ -3403,10 +3403,10 @@ export module CyclicToDo
             todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
             todoTagMenu(pass, item),
             todoDeleteMenu(pass, item),
-            {
-                tag: "button",
-                children: "🚫 ToDo をシェア",
-            },
+            // {
+            //     tag: "button",
+            //     children: "🚫 ToDo をシェア",
+            // },
             menuItem
             (
                 label("Export"),
