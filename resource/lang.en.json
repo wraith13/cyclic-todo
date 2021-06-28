@@ -65,5 +65,6 @@
     "Input a ToDo list's name.": "Input a ToDo list's name.",
     "Input a tag's name.": "Input a tag's name.",
     "Input a ToDo's name.": "Input a ToDo's name.",
+    "This action cannot be undone. Do you want to continue?": "This action cannot be undone. Do you want to continue?",
     "Close": "Close"
 }

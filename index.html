@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun Jun 27 2021 19:31:28 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon Jun 28 2021 10:24:50 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2921,6 +2921,7 @@ define("resource/lang.en", [], {
     "Input a ToDo list's name.": "Input a ToDo list's name.",
     "Input a tag's name.": "Input a tag's name.",
     "Input a ToDo's name.": "Input a ToDo's name.",
+    "This action cannot be undone. Do you want to continue?": "This action cannot be undone. Do you want to continue?",
     "Close": "Close"
 });
 define("resource/lang.ja", [], {
@@ -2990,6 +2991,7 @@ define("resource/lang.ja", [], {
     "Input a ToDo list's name.": "ToDoリストの名前を入力してください。",
     "Input a tag's name.": "タグの名前を入力してください。",
     "Input a ToDo's name.": "ToDoの名前を入力してください。",
+    "This action cannot be undone. Do you want to continue?": "この操作は取り消せません。続行しますか？",
     "Close": "閉じる"
 });
 define("resource/images", [], {
@@ -6743,7 +6745,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
                                                         case 0:
-                                                            if (!Render.systemConfirm("この操作は取り消せません。続行しますか？")) return [3 /*break*/, 2];
+                                                            if (!Render.systemConfirm(locale.map("This action cannot be undone. Do you want to continue?"))) return [3 /*break*/, 2];
                                                             OldStorage.Removed.clear(pass);
                                                             return [4 /*yield*/, CyclicToDo.reload()];
                                                         case 1:
@@ -7249,7 +7251,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
                                                         case 0:
-                                                            if (!Render.systemConfirm("この操作は取り消せません。続行しますか？")) return [3 /*break*/, 2];
+                                                            if (!Render.systemConfirm(locale.map("This action cannot be undone. Do you want to continue?"))) return [3 /*break*/, 2];
                                                             OldStorage.Backup.clear();
                                                             return [4 /*yield*/, CyclicToDo.reload()];
                                                         case 1:

@@ -3384,7 +3384,7 @@ export module CyclicToDo
                             children: label("Permanently Delete"),
                             onclick: async () =>
                             {
-                                if (systemConfirm("この操作は取り消せません。続行しますか？"))
+                                if (systemConfirm(locale.map("This action cannot be undone. Do you want to continue?")))
                                 {
                                     OldStorage.Removed.clear(pass);
                                     await reload();
@@ -3719,7 +3719,7 @@ export module CyclicToDo
                             children: label("Permanently Delete"),
                             onclick: async () =>
                             {
-                                if (systemConfirm("この操作は取り消せません。続行しますか？"))
+                                if (systemConfirm(locale.map("This action cannot be undone. Do you want to continue?")))
                                 {
                                     OldStorage.Backup.clear();
                                     await reload();
