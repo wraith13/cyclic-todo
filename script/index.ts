@@ -117,6 +117,12 @@ export module CyclicToDo
         histories: { [todo: string]: number[] };
         removed: OldStorage.Removed.Type[];
     }
+    export interface ToDoDocument
+    {
+        type: "oldLocalDb" | "localDb" | "OneDrive" | "file";
+        title: string;
+        uri: string;
+    }
     export type HistoryEntry = number | { tick: number; memo: string; };
     export module OldStorage
     {
@@ -684,6 +690,22 @@ export module CyclicToDo
     }
     export module Storage
     {
+        export module ToDoDocument
+        {
+            export const key = `document.list`;
+            export const get = () => minamo.localStorage.getOrNull<ToDoDocument[]>(key) ?? [];
+            const set = (list: ToDoDocument[]) => minamo.localStorage.set(key, list);
+            export const add = (entry: ToDoDocument) =>
+            {
+                set(get().filter(i => entry.uri !== i.uri).concat([ entry ]));
+                // Backup.remove(pass);
+            };
+            export const remove = (entry: ToDoDocument) =>
+            {
+                // Backup.add(exportJson(pass));
+                set(get().filter(i => entry.uri !== i.uri));
+            };
+        }
         export module Filter
         {
             export const key = `filter.recently`;
