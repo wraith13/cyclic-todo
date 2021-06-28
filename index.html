@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon Jun 28 2021 10:24:50 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Jun 29 2021 07:51:26 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2908,6 +2908,7 @@ define("resource/lang.en", [], {
     "sort.home": "Same order as Home",
     "sort.smart": "Smart",
     "sort.simple": "Simple",
+    "sort.limit": "Limit",
     "language.auto": "Auto",
     "please input": "Please input.",
     "Sort order setting": "Sort order setting",
@@ -2978,6 +2979,7 @@ define("resource/lang.ja", [], {
     "sort.home": "ホームと同じ並び順",
     "sort.smart": "スマート",
     "sort.simple": "シンプル",
+    "sort.limit": "リミット",
     "language.auto": "自動",
     "please input": "入力してください。",
     "Sort order setting": "並び順設定",
@@ -3550,6 +3552,20 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
         })(OldStorage = CyclicToDo.OldStorage || (CyclicToDo.OldStorage = {}));
         var Storage;
         (function (Storage) {
+            var ToDoDocument;
+            (function (ToDoDocument) {
+                ToDoDocument.key = "document.list";
+                ToDoDocument.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(ToDoDocument.key)) !== null && _a !== void 0 ? _a : []; };
+                var set = function (list) { return minamo_js_1.minamo.localStorage.set(ToDoDocument.key, list); };
+                ToDoDocument.add = function (entry) {
+                    set(ToDoDocument.get().filter(function (i) { return entry.uri !== i.uri; }).concat([entry]));
+                    // Backup.remove(pass);
+                };
+                ToDoDocument.remove = function (entry) {
+                    // Backup.add(exportJson(pass));
+                    set(ToDoDocument.get().filter(function (i) { return entry.uri !== i.uri; }));
+                };
+            })(ToDoDocument = Storage.ToDoDocument || (Storage.ToDoDocument = {}));
             var Filter;
             (function (Filter) {
                 Filter.key = "filter.recently";
@@ -3722,26 +3738,43 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Domain.tagComparer = function (pass) { return minamo_js_1.minamo.core.comparer.make(function (tag) { return -OldStorage.TagMember.get(pass, tag).map(function (todo) { return OldStorage.History.get(pass, todo).length; }).reduce(function (a, b) { return a + b; }, 0); }); };
             Domain.todoComparer = function (entry, sort) {
                 if (sort === void 0) { sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag); }
-                return minamo_js_1.minamo.core.comparer.make("smart" === sort ?
-                    [
-                        function (item) { var _a, _b; return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ? -1 : 1; },
-                        function (item) {
-                            var _a, _b, _c;
-                            return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ?
-                                item.smartRest :
-                                -((_c = item.progress) !== null && _c !== void 0 ? _c : -1);
-                        },
-                        function (item) { return 1 < item.count ? -2 : -item.count; },
-                        function (item) { var _a, _b; return 1 < item.count ? (item.elapsed - item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate)) : -((_b = item.elapsed) !== null && _b !== void 0 ? _b : 0); },
-                        function (item) { return entry.todo.indexOf(item.task); },
-                        function (item) { return item.task; },
-                    ] :
-                    [
-                        function (item) { var _a; return (_a = item.previous) !== null && _a !== void 0 ? _a : 0; },
-                        function (item) { return item.count; },
-                        function (item) { return entry.todo.indexOf(item.task); },
-                        function (item) { return item.task; },
-                    ]);
+                switch (sort) {
+                    case "smart":
+                        return minamo_js_1.minamo.core.comparer.make([
+                            function (item) { var _a, _b; return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ? -1 : 1; },
+                            function (item) {
+                                var _a, _b, _c;
+                                return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ?
+                                    item.smartRest :
+                                    -((_c = item.progress) !== null && _c !== void 0 ? _c : -1);
+                            },
+                            function (item) { return 1 < item.count ? -2 : -item.count; },
+                            function (item) { var _a, _b; return 1 < item.count ? (item.elapsed - item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate)) : -((_b = item.elapsed) !== null && _b !== void 0 ? _b : 0); },
+                            function (item) { return entry.todo.indexOf(item.task); },
+                            function (item) { return item.task; },
+                        ]);
+                    case "simple":
+                        return minamo_js_1.minamo.core.comparer.make([
+                            function (item) { var _a; return (_a = item.previous) !== null && _a !== void 0 ? _a : 0; },
+                            function (item) { return item.count; },
+                            function (item) { return entry.todo.indexOf(item.task); },
+                            function (item) { return item.task; },
+                        ]);
+                    case "limit":
+                        return minamo_js_1.minamo.core.comparer.make([
+                            function (item) { var _a, _b; return 0 < ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ? -1 : 1; },
+                            function (item) {
+                                var _a, _b, _c, _d;
+                                return 0 < ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ?
+                                    item.RecentlySmartAverage + (((_c = item.RecentlyStandardDeviation) !== null && _c !== void 0 ? _c : 0) * Domain.standardDeviationRate) - item.elapsed :
+                                    -((_d = item.progress) !== null && _d !== void 0 ? _d : -1);
+                            },
+                            function (item) { return 1 < item.count ? -2 : -item.count; },
+                            function (item) { var _a, _b; return 1 < item.count ? (item.elapsed - item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate)) : -((_b = item.elapsed) !== null && _b !== void 0 ? _b : 0); },
+                            function (item) { return entry.todo.indexOf(item.task); },
+                            function (item) { return item.task; },
+                        ]);
+                }
             };
             Domain.getTermCategory = function (item) {
                 return null !== item.smartRest ?
@@ -4643,23 +4676,23 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 tagButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
                                                 tagButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
                                                     var _a, _b, _c, _d, _e;
-                                                    var _f, _g, _h;
+                                                    var _f, _g, _h, _j;
                                                     var _this = this;
-                                                    var _j, _k, _l;
-                                                    return __generator(this, function (_m) {
-                                                        switch (_m.label) {
+                                                    var _k, _l, _m, _o;
+                                                    return __generator(this, function (_p) {
+                                                        switch (_p.label) {
                                                             case 0:
                                                                 _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                                                 _c = [tagButtonList];
                                                                 if (!("@overall" !== tag)) return [3 /*break*/, 2];
                                                                 _f = {
                                                                     tag: "button",
-                                                                    className: "check-button " + ("@home" === ((_j = settings.sort) !== null && _j !== void 0 ? _j : "@home") ? "checked" : "")
+                                                                    className: "check-button " + ("@home" === ((_k = settings.sort) !== null && _k !== void 0 ? _k : "@home") ? "checked" : "")
                                                                 };
                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                             case 1:
                                                                 _d = (_f.children = [
-                                                                    _m.sent(),
+                                                                    _p.sent(),
                                                                     Render.$span("")(Render.label("sort.home"))
                                                                 ],
                                                                     _f.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -4680,20 +4713,20 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                 return [3 /*break*/, 3];
                                                             case 2:
                                                                 _d = [];
-                                                                _m.label = 3;
+                                                                _p.label = 3;
                                                             case 3:
                                                                 _e = [
                                                                     _d
                                                                 ];
                                                                 _g = {
                                                                     tag: "button",
-                                                                    className: "check-button " + ("smart" === ((_k = settings.sort) !== null && _k !== void 0 ? _k : ("@overall" === tag ? "smart" : "@home")) ? "checked" : "")
+                                                                    className: "check-button " + ("smart" === ((_l = settings.sort) !== null && _l !== void 0 ? _l : ("@overall" === tag ? "smart" : "@home")) ? "checked" : "")
                                                                 };
                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                             case 4:
                                                                 _e = _e.concat([
                                                                     (_g.children = [
-                                                                        _m.sent(),
+                                                                        _p.sent(),
                                                                         Render.$span("")(Render.label("sort.smart"))
                                                                     ],
                                                                         _g.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -4714,19 +4747,46 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                 ]);
                                                                 _h = {
                                                                     tag: "button",
-                                                                    className: "check-button " + ("simple" === ((_l = settings.sort) !== null && _l !== void 0 ? _l : "smart") ? "checked" : "")
+                                                                    className: "check-button " + ("simple" === ((_m = settings.sort) !== null && _m !== void 0 ? _m : "smart") ? "checked" : "")
                                                                 };
                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
-                                                            case 5: return [2 /*return*/, _b.apply(_a, _c.concat([_e.concat([
-                                                                        (_h.children = [
-                                                                            _m.sent(),
-                                                                            Render.$span("")(Render.label("sort.simple"))
+                                                            case 5:
+                                                                _e = _e.concat([
+                                                                    (_h.children = [
+                                                                        _p.sent(),
+                                                                        Render.$span("")(Render.label("sort.simple"))
+                                                                    ],
+                                                                        _h.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            return __generator(this, function (_a) {
+                                                                                switch (_a.label) {
+                                                                                    case 0:
+                                                                                        settings.sort = "simple";
+                                                                                        OldStorage.TagSettings.set(pass, tag, settings);
+                                                                                        result = true;
+                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                    case 1:
+                                                                                        _a.sent();
+                                                                                        return [2 /*return*/];
+                                                                                }
+                                                                            });
+                                                                        }); },
+                                                                        _h)
+                                                                ]);
+                                                                _j = {
+                                                                    tag: "button",
+                                                                    className: "check-button " + ("limit" === ((_o = settings.sort) !== null && _o !== void 0 ? _o : "smart") ? "checked" : "")
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 6: return [2 /*return*/, _b.apply(_a, _c.concat([_e.concat([
+                                                                        (_j.children = [
+                                                                            _p.sent(),
+                                                                            Render.$span("")(Render.label("sort.limit"))
                                                                         ],
-                                                                            _h.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            _j.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
                                                                                 return __generator(this, function (_a) {
                                                                                     switch (_a.label) {
                                                                                         case 0:
-                                                                                            settings.sort = "simple";
+                                                                                            settings.sort = "limit";
                                                                                             OldStorage.TagSettings.set(pass, tag, settings);
                                                                                             result = true;
                                                                                             return [4 /*yield*/, tagButtonListUpdate()];
@@ -4736,7 +4796,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                                     }
                                                                                 });
                                                                             }); },
-                                                                            _h)
+                                                                            _j)
                                                                     ])]))];
                                                         }
                                                     });

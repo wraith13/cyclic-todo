@@ -103,7 +103,7 @@ export module CyclicToDo
     }
     export interface TagSettings
     {
-        sort?: "smart" | "simple";
+        sort?: "smart" | "simple" | "limit";
     }
     export interface ToDoList
     {
@@ -914,26 +914,43 @@ export module CyclicToDo
             tag => -OldStorage.TagMember.get(pass, tag).map(todo => OldStorage.History.get(pass, todo).length).reduce((a, b) => a +b, 0)
         );
         export const todoComparer = (entry: ToDoTagEntry, sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag)) =>
-        minamo.core.comparer.make<ToDoEntry>
-        (
-            "smart" === sort ?
-            [
-                item => (2.0 /3.0) <= (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
-                item => (2.0 /3.0) <= (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
-                    item.smartRest:
-                    -(item.progress ?? -1),
-                item => 1 < item.count ? -2: -item.count,
-                item => 1 < item.count ? (item.elapsed -item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate)): -(item.elapsed ?? 0),
-                item => entry.todo.indexOf(item.task),
-                item => item.task,
-            ]:
-            [
-                item => item.previous ?? 0,
-                item => item.count,
-                item => entry.todo.indexOf(item.task),
-                item => item.task,
-            ]
-        );
+        {
+            switch(sort)
+            {
+                case "smart":
+                    return minamo.core.comparer.make<ToDoEntry>
+                    ([
+                        item => (2.0 /3.0) <= (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
+                        item => (2.0 /3.0) <= (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
+                            item.smartRest:
+                            -(item.progress ?? -1),
+                        item => 1 < item.count ? -2: -item.count,
+                        item => 1 < item.count ? (item.elapsed -item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate)): -(item.elapsed ?? 0),
+                        item => entry.todo.indexOf(item.task),
+                        item => item.task,
+                    ]);
+                case "simple":
+                    return minamo.core.comparer.make<ToDoEntry>
+                    ([
+                        item => item.previous ?? 0,
+                        item => item.count,
+                        item => entry.todo.indexOf(item.task),
+                        item => item.task,
+                    ]);
+                case "limit":
+                    return minamo.core.comparer.make<ToDoEntry>
+                    ([
+                        item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
+                        item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
+                            item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate) -item.elapsed:
+                            -(item.progress ?? -1),
+                        item => 1 < item.count ? -2: -item.count,
+                        item => 1 < item.count ? (item.elapsed -item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate)): -(item.elapsed ?? 0),
+                        item => entry.todo.indexOf(item.task),
+                        item => item.task,
+                    ]);
+            }
+        };
         export const getTermCategory = (item: ToDoEntry) =>
             null !== item.smartRest ?
                 (
@@ -1760,6 +1777,22 @@ export module CyclicToDo
                             onclick: async () =>
                             {
                                 settings.sort = "simple";
+                                OldStorage.TagSettings.set(pass, tag, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                        {
+                            tag: "button",
+                            className: `check-button ${"limit" === (settings.sort ?? "smart") ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")(label("sort.limit")),
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.sort = "limit";
                                 OldStorage.TagSettings.set(pass, tag, settings);
                                 result = true;
                                 await tagButtonListUpdate();
