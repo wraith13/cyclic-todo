@@ -2412,7 +2412,7 @@ export module CyclicToDo
                         ([
                             await Resource.loadSvgOrCache("task-icon"),
                             OldStorage.Tag.decode(item.task),
-                            $span("monospace")(`(${Domain.timeLongStringFromTick(item.elapsed)})`),
+                            $span("monospace")(`(${Domain.timeShortStringFromTick(item.elapsed)})`),
                         ])
                     }),
                 )
