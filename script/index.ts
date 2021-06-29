@@ -94,6 +94,7 @@ export module CyclicToDo
         progress: null | number;
         previous: null | number;
         elapsed: null | number;
+        rest: null | number;
         // overallAverage: null | number;
         RecentlyStandardDeviation: null | number;
         RecentlySmartAverage: null | number;
@@ -942,7 +943,7 @@ export module CyclicToDo
                     ([
                         item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
                         item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
-                            item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate) -item.elapsed:
+                            item.rest:
                             -(item.progress ?? -1),
                         item => 1 < item.count ? -2: -item.count,
                         item => 1 < item.count ? (item.elapsed -item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate)): -(item.elapsed ?? 0),
@@ -951,7 +952,7 @@ export module CyclicToDo
                     ]);
             }
         };
-        export const getTermCategory = (item: ToDoEntry) =>
+        export const getTermCategoryByAverage = (item: ToDoEntry) =>
             null !== item.smartRest ?
                 (
                     item.RecentlySmartAverage < config.maxShortTermMinutes ?
@@ -959,6 +960,15 @@ export module CyclicToDo
                         "@long-term"
                 ):
                 "@irregular-term";
+        export const getTermCategoryByRest = (item: ToDoEntry) =>
+            null !== item.smartRest ?
+                (
+                    item.rest < 24 *60 ?
+                        "@short-term":
+                        "@long-term"
+                ):
+                "@irregular-term";
+        export const getTermCategory = getTermCategoryByRest;
         export const updateTermCategory = (pass: string, item: ToDoEntry) =>
         {
             const term = getTermCategory(item);
@@ -1035,6 +1045,7 @@ export module CyclicToDo
                 progress: null,
                 previous: history.previous,
                 elapsed: null,
+                rest: null,
                 RecentlyStandardDeviation: history.intervals.length <= 0 ?
                     null:
                     history.intervals.length <= 1 ?
@@ -1080,6 +1091,7 @@ export module CyclicToDo
                 {
                     const short = Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate));
                     const long = item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
+                    item.rest = long -item.elapsed;
                     item.isDefault = short <= item.elapsed;
                     const shortOneThird = short /3.0;
                     if (item.elapsed < shortOneThird)

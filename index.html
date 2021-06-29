@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue Jun 29 2021 20:14:44 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed Jun 30 2021 06:08:18 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -3764,10 +3764,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         return minamo_js_1.minamo.core.comparer.make([
                             function (item) { var _a, _b; return 0 < ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ? -1 : 1; },
                             function (item) {
-                                var _a, _b, _c, _d;
+                                var _a, _b, _c;
                                 return 0 < ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ?
-                                    item.RecentlySmartAverage + (((_c = item.RecentlyStandardDeviation) !== null && _c !== void 0 ? _c : 0) * Domain.standardDeviationRate) - item.elapsed :
-                                    -((_d = item.progress) !== null && _d !== void 0 ? _d : -1);
+                                    item.rest :
+                                    -((_c = item.progress) !== null && _c !== void 0 ? _c : -1);
                             },
                             function (item) { return 1 < item.count ? -2 : -item.count; },
                             function (item) { var _a, _b; return 1 < item.count ? (item.elapsed - item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate)) : -((_b = item.elapsed) !== null && _b !== void 0 ? _b : 0); },
@@ -3776,13 +3776,21 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         ]);
                 }
             };
-            Domain.getTermCategory = function (item) {
+            Domain.getTermCategoryByAverage = function (item) {
                 return null !== item.smartRest ?
                     (item.RecentlySmartAverage < config_json_1.default.maxShortTermMinutes ?
                         "@short-term" :
                         "@long-term") :
                     "@irregular-term";
             };
+            Domain.getTermCategoryByRest = function (item) {
+                return null !== item.smartRest ?
+                    (item.rest < 24 * 60 ?
+                        "@short-term" :
+                        "@long-term") :
+                    "@irregular-term";
+            };
+            Domain.getTermCategory = Domain.getTermCategoryByRest;
             Domain.updateTermCategory = function (pass, item) {
                 var term = Domain.getTermCategory(item);
                 if (OldStorage.TagMember.get(pass, term).indexOf(item.task) < 0) {
@@ -3842,6 +3850,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     progress: null,
                     previous: history.previous,
                     elapsed: null,
+                    rest: null,
                     RecentlyStandardDeviation: history.intervals.length <= 0 ?
                         null :
                         history.intervals.length <= 1 ?
@@ -3879,6 +3888,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     if (null !== item.RecentlySmartAverage) {
                         var short = Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate));
                         var long = item.RecentlySmartAverage + (((_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * Domain.standardDeviationRate);
+                        item.rest = long - item.elapsed;
                         item.isDefault = short <= item.elapsed;
                         var shortOneThird = short / 3.0;
                         if (item.elapsed < shortOneThird) {
