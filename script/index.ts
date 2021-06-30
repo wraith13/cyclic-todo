@@ -692,7 +692,7 @@ export module CyclicToDo
     }
     export module Storage
     {
-        export module ToDoDocument
+        export module ToDoDocumentList
         {
             export const key = `document.list`;
             export const get = () => minamo.localStorage.getOrNull<ToDoDocument[]>(key) ?? [];
@@ -706,6 +706,16 @@ export module CyclicToDo
             {
                 // Backup.add(exportJson(pass));
                 set(get().filter(i => entry.uri !== i.uri));
+            };
+        }
+        export module ToDoDocument
+        {
+            export const makeKey = (pass: string) => `document:(${pass})`;
+            export const get = (pass: string) => minamo.localStorage.getOrNull<ToDoList>(makeKey(pass)) ?? [];
+            export const set = (pass: string, list: ToDoList) => minamo.localStorage.set(makeKey(pass), list);
+            export const remove = (pass: string) =>
+            {
+                minamo.localStorage.remove(makeKey(pass));
             };
         }
         export module Filter
