@@ -104,7 +104,8 @@ export module CyclicToDo
     }
     export interface TagSettings
     {
-        sort?: "smart" | "simple" | "limit";
+        // sort?: "smart" | "simple" | "limit";
+        sort?: "smart" | "simple";
     }
     export interface ToDoList
     {
@@ -938,18 +939,20 @@ export module CyclicToDo
                         item => entry.todo.indexOf(item.task),
                         item => item.task,
                     ]);
-                case "limit":
-                    return minamo.core.comparer.make<ToDoEntry>
-                    ([
-                        item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
-                        item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
-                            item.rest:
-                            -(item.progress ?? -1),
-                        item => 1 < item.count ? -2: -item.count,
-                        item => 1 < item.count ? (item.elapsed -item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate)): -(item.elapsed ?? 0),
-                        item => entry.todo.indexOf(item.task),
-                        item => item.task,
-                    ]);
+                // case "limit":
+                //     return minamo.core.comparer.make<ToDoEntry>
+                //     ([
+                //         item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
+                //         item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
+                //             item.rest:
+                //             -(item.progress ?? -1),
+                //         item => 1 < item.count ? -2: -item.count,
+                //         item => 1 < item.count ? (item.elapsed -item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate)): -(item.elapsed ?? 0),
+                //         item => entry.todo.indexOf(item.task),
+                //         item => item.task,
+                //     ]);
+                default:
+                    return todoComparer(entry, "smart");
             }
         };
         export const getTermCategoryByAverage = (item: ToDoEntry) =>
@@ -1794,22 +1797,22 @@ export module CyclicToDo
                                 await tagButtonListUpdate();
                             }
                         },
-                        {
-                            tag: "button",
-                            className: `check-button ${"limit" === (settings.sort ?? "smart") ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("sort.limit")),
-                            ],
-                            onclick: async () =>
-                            {
-                                settings.sort = "limit";
-                                OldStorage.TagSettings.set(pass, tag, settings);
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
+                        // {
+                        //     tag: "button",
+                        //     className: `check-button ${"limit" === (settings.sort ?? "smart") ? "checked": ""}`,
+                        //     children:
+                        //     [
+                        //         await Resource.loadSvgOrCache("check-icon"),
+                        //         $span("")(label("sort.limit")),
+                        //     ],
+                        //     onclick: async () =>
+                        //     {
+                        //         settings.sort = "limit";
+                        //         OldStorage.TagSettings.set(pass, tag, settings);
+                        //         result = true;
+                        //         await tagButtonListUpdate();
+                        //     }
+                        // },
                     ]
                 );
                 await tagButtonListUpdate();
