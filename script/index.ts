@@ -708,11 +708,11 @@ export module CyclicToDo
                 set(get().filter(i => entry.uri !== i.uri));
             };
         }
-        export module ToDoDocument
+        export module ToDoList
         {
             export const makeKey = (pass: string) => `document:(${pass})`;
-            export const get = (pass: string) => minamo.localStorage.getOrNull<ToDoList>(makeKey(pass)) ?? [];
-            export const set = (pass: string, list: ToDoList) => minamo.localStorage.set(makeKey(pass), list);
+            export const get = (pass: string) => minamo.localStorage.getOrNull<CyclicToDo.ToDoList>(makeKey(pass)) ?? [];
+            export const set = (pass: string, list: CyclicToDo.ToDoList) => minamo.localStorage.set(makeKey(pass), list);
             export const remove = (pass: string) =>
             {
                 minamo.localStorage.remove(makeKey(pass));
@@ -732,6 +732,14 @@ export module CyclicToDo
                         .filter((_i, ix) => ix < 30)
                 );
             };
+        }
+    }
+    export module Model
+    {
+        export interface Instance
+        {
+            document: ToDoDocument;
+            list: ToDoList;
         }
     }
     export module Domain
