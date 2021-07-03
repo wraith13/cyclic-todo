@@ -741,22 +741,48 @@ export module CyclicToDo
             document: ToDoDocument;
             list: ToDoList;
         }
-        export const load = (document: ToDoDocument): Instance | undefined =>
+        export const load = async (document: ToDoDocument): Promise<Instance | undefined> =>
         {
+            let result : Instance | undefined;
             switch(document.type)
             {
             case "oldLocalDb":
-                return {
+                result =
+                {
                     document,
                     list: JSON.parse(OldStorage.exportJson(document.uri)) as ToDoList,
                 };
+                break;
             case "localDb":
-                return {
+                result =
+                {
                     document,
                     list: Storage.ToDoList.get(document.uri),
                 };
+                break;
             }
-            return undefined;
+            return result;
+        };
+        export const save = async (instance: Instance): Promise<true | string> =>
+        // export const save = async (instance: Instance): Promise<true | locale.LocaleKeyType> =>
+        {
+            let result : true | string = "";
+            // let result : true | locale.LocaleKeyType = "";
+            switch(instance.document.type)
+            {
+            case "oldLocalDb":
+                OldStorage.importJson(JSON.stringify(instance.list));
+                result = true;
+                break;
+            case "localDb":
+                Storage.ToDoList.set(instance.document.uri, instance.list);
+                result = true;
+                break;
+            default:
+                result = "Unsupported storage type";
+                break;
+            }
+            return result;
         };
     }
     export module Domain
