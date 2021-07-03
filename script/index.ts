@@ -707,6 +707,7 @@ export module CyclicToDo
                 // Backup.add(exportJson(pass));
                 set(get().filter(i => entry.uri !== i.uri));
             };
+            export const update = add;
         }
         export module ToDoList
         {
@@ -761,6 +762,10 @@ export module CyclicToDo
                 };
                 break;
             }
+            if (result)
+            {
+                update(result);
+            }
             return result;
         };
         export const save = async (instance: Instance): Promise<true | string> =>
@@ -782,7 +787,16 @@ export module CyclicToDo
                 result = "Unsupported storage type";
                 break;
             }
+            if (true === result)
+            {
+                update(instance);
+            }
             return result;
+        };
+        const update = (instance: Model.Instance) =>
+        {
+            instance.document.title = instance.list.title;
+            Storage.ToDoDocumentList.update(instance.document);
         };
     }
     export module Domain
