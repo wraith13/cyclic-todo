@@ -215,14 +215,6 @@ export module CyclicToDo
             }
             return null;
         };
-        export module Settings
-        {
-            export const makeKey = () => `settings`;
-            export const get = () =>
-                minamo.localStorage.getOrNull<CyclicToDo.Settings>(makeKey()) ?? { };
-            export const set = (settings: CyclicToDo.Settings) =>
-                minamo.localStorage.set(makeKey(), settings);
-        }
         export module Backup
         {
             export const key = `backup`;
@@ -247,7 +239,7 @@ export module CyclicToDo
                 Backup.add(exportJson(pass));
                 set(get().filter(i => pass !== i));
                 TagMember.getRaw(pass, "@overall").forEach(task => History.removeKey(pass, task));
-                Tag.get(pass).filter(tag => ! Tag.isSystemTag(tag) && ! Tag.isSublist(tag)).forEach(tag => TagMember.removeKey(pass, tag));
+                Tag.get(pass).filter(tag => ! Model.isSystemTag(tag) && ! Model.isSublist(tag)).forEach(tag => TagMember.removeKey(pass, tag));
                 Tag.removeKey(pass);
                 Removed.clear(pass);
             };
@@ -272,8 +264,6 @@ export module CyclicToDo
         }
         export module Tag
         {
-            export const isSystemTag = (tag: string) => tag.startsWith("@") && ! tag.startsWith("@=") && ! isSublist(tag);
-            export const isSublist = (tag: string) => tag.endsWith("@:");
             export const getIcon = (tag: string): keyof typeof resource =>
             {
                 switch(tag)
@@ -295,7 +285,7 @@ export module CyclicToDo
                     case "@deleted":
                         return "recycle-bin-icon";
                     default:
-                        return isSublist(tag) ?
+                        return Model.isSublist(tag) ?
                             "folder-icon":
                             "tag-icon";
                 }
@@ -307,14 +297,14 @@ export module CyclicToDo
             export const get = (pass: string) =>
                 getStorage(pass).getOrNull<string[]>(makeKey(pass)) ?? [];
             export const set = (pass: string, list: string[]) =>
-                getStorage(pass).set(makeKey(pass), list.filter(i => ! isSystemTag(i))); // システムタグは万が一にも登録させない
+                getStorage(pass).set(makeKey(pass), list.filter(i => ! Model.isSystemTag(i))); // システムタグは万が一にも登録させない
             export const add = (pass: string, tag: string) => set(pass, get(pass).concat([ tag ]).filter(uniqueFilter));
             export const removeRaw = (pass: string, tag: string) => set(pass, get(pass).filter(i => tag !== i));
             export const remove = (pass: string, tag: string) =>
             {
-                if ( ! isSystemTag(tag))
+                if ( ! Model.isSystemTag(tag))
                 {
-                    if (isSublist(tag))
+                    if (Model.isSublist(tag))
                     {
                         const tasks = TagMember.getRaw(pass, tag).map(task => Task.serialize(pass, task));
                         const settings = TagSettings.get(pass, tag);
@@ -357,7 +347,7 @@ export module CyclicToDo
             };
             export const restore = (pass: string, item: Removed.Tag | Removed.Sublist) =>
             {
-                let result = ("Tag" === item.type || "Sublist" === item.type) && ! isSystemTag(item.name) && get(pass).indexOf(item.name) < 0;
+                let result = ("Tag" === item.type || "Sublist" === item.type) && ! Model.isSystemTag(item.name) && get(pass).indexOf(item.name) < 0;
                 if (result)
                 {
                     switch(item.type)
@@ -382,7 +372,7 @@ export module CyclicToDo
                     .concat(get(pass))
                     .concat(["@unoverall", "@untagged"])
                     .filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length)
-                    .sort(minamo.core.comparer.make(tag => isSublist(tag) ? 0: 1));
+                    .sort(minamo.core.comparer.make(tag => Model.isSublist(tag) ? 0: 1));
             export const getByTodoRaw = (pass: string, todo: string) =>
                 ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"]
                     .concat(get(pass))
@@ -390,7 +380,7 @@ export module CyclicToDo
                     .filter(tag => 0 < TagMember.getRaw(pass, tag).filter(i => todo === i).length);
             export const rename = (pass: string, oldTag: string, newTag: string) =>
             {
-                if (0 < newTag.length && ! isSystemTag(oldTag) && ! isSystemTag(newTag) && oldTag !== newTag && get(pass).indexOf(newTag) < 0)
+                if (0 < newTag.length && ! Model.isSystemTag(oldTag) && ! Model.isSystemTag(newTag) && oldTag !== newTag && get(pass).indexOf(newTag) < 0)
                 {
                     add(pass, newTag);
                     TagMember.set(pass, newTag, TagMember.getRaw(pass, oldTag));
@@ -425,7 +415,7 @@ export module CyclicToDo
                     }
                 case "@unoverall":
                 default:
-                    return Tag.isSublist(tag) ?
+                    return Model.isSublist(tag) ?
                         getRaw(pass, "@overall").filter(i => tag === Task.getSublist(i)):
                         getRaw(pass, tag);
                 }
@@ -435,7 +425,7 @@ export module CyclicToDo
             export const removeKey = (pass: string, tag: string) => getStorage(pass).remove(makeKey(pass, tag));
             export const add = (pass: string, tag: string, todo: string) =>
             {
-                if (Tag.isSublist(tag))
+                if (Model.isSublist(tag))
                 {
                     if (tag !== Task.getSublist(todo))
                     {
@@ -451,7 +441,7 @@ export module CyclicToDo
             //export const merge = (pass: string, tag: string, list: string[]) => set(pass, tag, get(pass, tag).concat(list).filter(uniqueFilter));
             export const remove = (pass: string, tag: string, todo: string) =>
             {
-                if (Tag.isSublist(tag))
+                if (Model.isSublist(tag))
                 {
                     if (null !== Task.getSublist(todo))
                     {
@@ -504,7 +494,7 @@ export module CyclicToDo
                         tag =>
                         {
                             TagMember.remove(pass, tag, oldTask);
-                            if ( ! Tag.isSublist(tag) || oldSublist === newSublist)
+                            if ( ! Model.isSublist(tag) || oldSublist === newSublist)
                             {
                                 TagMember.add(pass, tag, newTask);
                             }
@@ -692,6 +682,14 @@ export module CyclicToDo
     }
     export module Storage
     {
+        export module Settings
+        {
+            export const makeKey = () => `settings`;
+            export const get = () =>
+                minamo.localStorage.getOrNull<CyclicToDo.Settings>(makeKey()) ?? { };
+            export const set = (settings: CyclicToDo.Settings) =>
+                minamo.localStorage.set(makeKey(), settings);
+        }
         export module ToDoDocumentList
         {
             export const key = `document.list`;
@@ -737,6 +735,8 @@ export module CyclicToDo
     }
     export module Model
     {
+        export const isSystemTag = (tag: string) => tag.startsWith("@") && ! tag.startsWith("@=") && ! isSublist(tag);
+        export const isSublist = (tag: string) => tag.endsWith("@:");
         export interface Instance
         {
             document: ToDoDocument;
@@ -1663,7 +1663,7 @@ export module CyclicToDo
                         [
                             await Promise.all
                             (
-                                ["@root"].concat(OldStorage.Tag.get(pass).filter(tag => OldStorage.Tag.isSublist(tag)).sort(Domain.tagComparer(pass))).map
+                                ["@root"].concat(OldStorage.Tag.get(pass).filter(tag => Model.isSublist(tag)).sort(Domain.tagComparer(pass))).map
                                 (
                                     async sublist =>
                                     ({
@@ -1729,7 +1729,7 @@ export module CyclicToDo
                 }
             );
         };
-        export const localeSettingsPopup = async (settings: Settings = OldStorage.Settings.get()): Promise<boolean> =>
+        export const localeSettingsPopup = async (settings: Settings = Storage.Settings.get()): Promise<boolean> =>
         {
             return await new Promise
             (
@@ -1754,7 +1754,7 @@ export module CyclicToDo
                                     if (null !== (settings.locale ?? null))
                                     {
                                         settings.locale = null;
-                                        OldStorage.Settings.set(settings);
+                                        Storage.Settings.set(settings);
                                         result = true;
                                         await checkButtonListUpdate();
                                     }
@@ -1778,7 +1778,7 @@ export module CyclicToDo
                                             if (key !== settings.locale ?? null)
                                             {
                                                 settings.locale = key;
-                                                OldStorage.Settings.set(settings);
+                                                Storage.Settings.set(settings);
                                                 result = true;
                                                 await checkButtonListUpdate();
                                             }
@@ -2861,7 +2861,7 @@ export module CyclicToDo
                 }
             ),
             "@overall" === entry.tag ? listRenameMenu(entry.pass): [],
-            OldStorage.Tag.isSystemTag(entry.tag) ? []:
+            Model.isSystemTag(entry.tag) ? []:
                 menuItem
                 (
                     label("Rename"),
@@ -2909,7 +2909,7 @@ export module CyclicToDo
                 href: { pass: entry.pass, hash: "export" },
                 children: menuItem(label("Export")),
             }),
-            OldStorage.Tag.isSystemTag(entry.tag) ? []:
+            Model.isSystemTag(entry.tag) ? []:
                 menuItem
                 (
                     label("Delete"),
@@ -3316,7 +3316,7 @@ export module CyclicToDo
                 label("Back to List"),
                 async () => await showUrl({ pass: entry.pass, tag: entry.tag, })
             ),
-            OldStorage.Tag.isSystemTag(entry.tag) ? []:
+            Model.isSystemTag(entry.tag) ? []:
                 menuItem
                 (
                     label("Rename"),
@@ -3664,7 +3664,7 @@ export module CyclicToDo
                         "@overall": 5,
                         "@untagged": 3,
                     }
-                    [tag] ?? (OldStorage.Tag.isSublist(tag) ? 0: 2)
+                    [tag] ?? (Model.isSublist(tag) ? 0: 2)
                 )
             )
         )[0];
@@ -4475,7 +4475,7 @@ export module CyclicToDo
     export const start = async () =>
     {
         console.log("start!!!");
-        locale.setLocale(OldStorage.Settings.get().locale);
+        locale.setLocale(Storage.Settings.get().locale);
         window.onpopstate = () => showPage();
         window.addEventListener('resize', Render.onWindowResize);
         window.addEventListener('focus', Render.onWindowFocus);
