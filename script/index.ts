@@ -121,7 +121,7 @@ export module CyclicToDo
     }
     export interface ToDoDocument
     {
-        type: "oldLocalDb" | "localDb" | "OneDrive" | "file";
+        type: "oldLocalDb" | "session" | "localDb" | "OneDrive" | "file";
         title: string;
         uri: string;
     }
@@ -264,9 +264,6 @@ export module CyclicToDo
         }
         export module Tag
         {
-            export const encode = (tag: string) => tag.replace(/@/g, "@=");
-            export const encodeSublist = (tag: string) => encode(tag) +"@:";
-            export const decode = (tag: string) => tag.replace(/@\:/g, ": ").replace(/@=/g, "@");
             export const makeKey = (pass: string) => `pass:(${pass}).tag.list`;
             export const get = (pass: string) =>
                 getStorage(pass).getOrNull<string[]>(makeKey(pass)) ?? [];
@@ -707,10 +704,26 @@ export module CyclicToDo
             };
         }
     }
+    export module SessionStorage
+    {
+        export module ToDoList
+        {
+            export const makeKey = (pass: string) => `document:(${pass})`;
+            export const get = (pass: string) => minamo.sessionStorage.getOrNull<CyclicToDo.ToDoList>(makeKey(pass));
+            export const set = (pass: string, list: CyclicToDo.ToDoList) => minamo.sessionStorage.set(makeKey(pass), list);
+            export const remove = (pass: string) =>
+            {
+                minamo.sessionStorage.remove(makeKey(pass));
+            };
+        }
+    }
     export module Model
     {
         export const isSystemTag = (tag: string) => tag.startsWith("@") && ! tag.startsWith("@=") && ! isSublist(tag);
         export const isSublist = (tag: string) => tag.endsWith("@:");
+        export const encode = (tag: string) => tag.replace(/@/g, "@=");
+        export const encodeSublist = (tag: string) => encode(tag) +"@:";
+        export const decode = (tag: string) => tag.replace(/@\:/g, ": ").replace(/@=/g, "@");
         export interface Instance
         {
             document: ToDoDocument;
@@ -726,6 +739,13 @@ export module CyclicToDo
                 {
                     document,
                     list: JSON.parse(OldStorage.exportJson(document.uri)) as ToDoList,
+                };
+                break;
+            case "session":
+                result =
+                {
+                    document,
+                    list: SessionStorage.ToDoList.get(document.uri),
                 };
                 break;
             case "localDb":
@@ -753,6 +773,10 @@ export module CyclicToDo
                 OldStorage.importJson(JSON.stringify(instance.list));
                 result = true;
                 break;
+            case "session":
+                SessionStorage.ToDoList.set(instance.document.uri, instance.list);
+                result = true;
+                break;
             case "localDb":
                 Storage.ToDoList.set(instance.document.uri, instance.list);
                 result = true;
@@ -770,7 +794,10 @@ export module CyclicToDo
         const update = (instance: Model.Instance) =>
         {
             instance.document.title = instance.list.title;
-            Storage.ToDoDocumentList.update(instance.document);
+            if ("session" !== instance.document.type)
+            {
+                Storage.ToDoDocumentList.update(instance.document);
+            }
         };
     }
     export module Domain
@@ -941,7 +968,7 @@ export module CyclicToDo
             case "@new-sublist":
                 return locale.map(tag);
             default:
-                return OldStorage.Tag.decode(tag);
+                return Model.decode(tag);
             }
         };
         export const getLastTick = (pass: string, task: string) => OldStorage.History.get(pass, task)[0] ?? 0;
@@ -1459,7 +1486,7 @@ export module CyclicToDo
             const newTag = await prompt(locale.map("Input a tag's name."), "");
             if (null !== newTag)
             {
-                const tag = OldStorage.Tag.encode(newTag.trim());
+                const tag = Model.encode(newTag.trim());
                 OldStorage.Tag.add(pass, tag);
                 return tag;
             }
@@ -1670,7 +1697,7 @@ export module CyclicToDo
                                     const sublist = await prompt("サブリストの名前を入力してください", "");
                                     if (null !== sublist)
                                     {
-                                        const tag = OldStorage.Tag.encodeSublist(sublist.trim());
+                                        const tag = Model.encodeSublist(sublist.trim());
                                         OldStorage.Tag.add(pass, tag);
                                         OldStorage.TagMember.add(pass, tag, item.task);
                                         result = true;
@@ -2235,7 +2262,7 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache(getTodoIcon(item)),
-                                OldStorage.Tag.decode(item.task),
+                                Model.decode(item.task),
                             ]
                         }),
                         $div("item-operator")
@@ -2315,7 +2342,7 @@ export module CyclicToDo
                 ({
                     className: "item-title",
                     href: { pass: entry.pass, todo: item.task, },
-                    children: OldStorage.Tag.decode(item.task)
+                    children: Model.decode(item.task)
                 }),
                 $span("value monospace")(Domain.dateStringFromTick(item.tick)),
             ]),
@@ -2475,7 +2502,7 @@ export module CyclicToDo
                         children: $span("history-bar-item")
                         ([
                             await Resource.loadSvgOrCache("task-icon"),
-                            OldStorage.Tag.decode(item.task),
+                            Model.decode(item.task),
                             $span("monospace")(`(${Domain.timeShortStringFromTick(item.elapsed)})`),
                         ])
                     }),
@@ -2720,7 +2747,7 @@ export module CyclicToDo
                             const sublist = await prompt("サブリストの名前を入力してください", "");
                             if (null !== sublist)
                             {
-                                const tag = OldStorage.Tag.encodeSublist(sublist.trim());
+                                const tag = Model.encodeSublist(sublist.trim());
                                 OldStorage.Tag.add(pass, tag);
                                 await showUrl({ pass, tag, });
                             }
@@ -2741,7 +2768,7 @@ export module CyclicToDo
         export const screenHeaderTaskSegment = async (pass: string, tag: string, current: string): Promise<HeaderSegmentSource> =>
         ({
             icon: "@history" === current ? "history-icon": "task-icon",
-            title: "@history" === current ? locale.map("History"): OldStorage.Tag.decode(current),
+            title: "@history" === current ? locale.map("History"): Model.decode(current),
             menu:
                 (
                     (
@@ -2753,7 +2780,7 @@ export module CyclicToDo
                                 (
                                     [
                                         await Resource.loadSvgOrCache("task-icon"),
-                                        labelSpan(OldStorage.Tag.decode(task)),
+                                        labelSpan(Model.decode(task)),
                                     ],
                                     { pass, todo: task, },
                                     current === task ? "current-item": undefined
