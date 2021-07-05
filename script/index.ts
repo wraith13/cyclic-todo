@@ -264,32 +264,6 @@ export module CyclicToDo
         }
         export module Tag
         {
-            export const getIcon = (tag: string): keyof typeof resource =>
-            {
-                switch(tag)
-                {
-                    case "@overall":
-                        return "home-icon";
-                    case "@pickup":
-                        return "pickup-icon";
-                    case "@short-term":
-                        return "short-term-icon";
-                    case "@long-term":
-                        return "long-term-icon";
-                    case "@irregular-term":
-                        return "sleep-icon";
-                    case "@unoverall":
-                        return "anti-home-icon";
-                    case "@untagged":
-                        return "ghost-tag-icon";
-                    case "@deleted":
-                        return "recycle-bin-icon";
-                    default:
-                        return Model.isSublist(tag) ?
-                            "folder-icon":
-                            "tag-icon";
-                }
-            };
             export const encode = (tag: string) => tag.replace(/@/g, "@=");
             export const encodeSublist = (tag: string) => encode(tag) +"@:";
             export const decode = (tag: string) => tag.replace(/@\:/g, ": ").replace(/@=/g, "@");
@@ -2321,7 +2295,7 @@ export module CyclicToDo
                                     href: { pass: entry.pass, tag, },
                                     children:
                                     [
-                                        await Resource.loadSvgOrCache(OldStorage.Tag.getIcon(tag)),
+                                        await Resource.loadTagSvgOrCache(tag),
                                         Domain.tagMap(tag)
                                     ],
                                 })
@@ -2694,7 +2668,7 @@ export module CyclicToDo
         });
         export const screenHeaderTagSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
         ({
-            icon: OldStorage.Tag.getIcon(current),
+            icon: Resource.getTagIcon(current),
             title: Domain.tagMap(current),
             menu:
                 (
@@ -2707,7 +2681,7 @@ export module CyclicToDo
                                 async tag => menuLinkItem
                                 (
                                     [
-                                        await Resource.loadSvgOrCache(OldStorage.Tag.getIcon(tag)),
+                                        await Resource.loadTagSvgOrCache(tag),
                                         labelSpan(Domain.tagMap(tag)),
                                         $span("value monospace")(`${OldStorage.TagMember.get(pass, tag).length}`)
                                     ],
@@ -3616,7 +3590,7 @@ export module CyclicToDo
                                     href: { pass, tag, },
                                     children:
                                     [
-                                        await Resource.loadSvgOrCache(OldStorage.Tag.getIcon(tag)),
+                                        await Resource.loadTagSvgOrCache(tag),
                                         Domain.tagMap(tag)
                                     ],
                                 })
@@ -3717,6 +3691,33 @@ export module CyclicToDo
                     throw error;
                 }
             };
+            export const getTagIcon = (tag: string): keyof typeof resource =>
+            {
+                switch(tag)
+                {
+                    case "@overall":
+                        return "home-icon";
+                    case "@pickup":
+                        return "pickup-icon";
+                    case "@short-term":
+                        return "short-term-icon";
+                    case "@long-term":
+                        return "long-term-icon";
+                    case "@irregular-term":
+                        return "sleep-icon";
+                    case "@unoverall":
+                        return "anti-home-icon";
+                    case "@untagged":
+                        return "ghost-tag-icon";
+                    case "@deleted":
+                        return "recycle-bin-icon";
+                    default:
+                        return Model.isSublist(tag) ?
+                            "folder-icon":
+                            "tag-icon";
+                }
+            };
+            export const loadTagSvgOrCache = async (tag: string): Promise<SVGElement> => loadSvgOrCache(getTagIcon(tag));
         }
         export const showExportScreen = async (pass: string) =>
             await showWindow(await exportScreen(pass));
