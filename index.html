@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue Jul 06 2021 20:16:31 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed Jul 07 2021 07:20:55 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -3938,8 +3938,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 };
                 if (null !== item.RecentlySmartAverage) {
                     var base = inflatedRecentrlyIntervals.length / 2;
-                    var lows = inflatedRecentrlyIntervals.filter(function (i) { return i < item.RecentlySmartAverage; }).length;
-                    var highs = inflatedRecentrlyIntervals.filter(function (i) { return item.RecentlySmartAverage < i; }).length;
+                    var lows = Math.max(inflatedRecentrlyIntervals.filter(function (i) { return i < item.RecentlySmartAverage; }).length, 1);
+                    var highs = Math.max(inflatedRecentrlyIntervals.filter(function (i) { return item.RecentlySmartAverage < i; }).length, 1);
                     item.expectedInterval =
                         {
                             min: Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate * highs / base)),
@@ -3958,8 +3958,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             };
             Domain.calcSmartRest = function (item) {
                 var _a;
-                return Domain.calcSmartRestCore(item.expectedInterval.max, //item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate),
-                (_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : (item.RecentlySmartAverage * 0.1), item.elapsed);
+                return Domain.calcSmartRestCore(item.expectedInterval.max, (_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : (item.RecentlySmartAverage * 0.1), item.elapsed);
             };
             Domain.updateProgress = function (pass, item, now) {
                 if (now === void 0) { now = Domain.getTicks(); }
@@ -3967,8 +3966,6 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
                     item.elapsed = Math.max(0.0, now - item.previous);
                     if (null !== item.RecentlySmartAverage) {
-                        // const short = Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate));
-                        // const long = item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
                         var short = item.expectedInterval.min;
                         var long = item.expectedInterval.max;
                         item.rest = long - item.elapsed;
