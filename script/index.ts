@@ -101,6 +101,7 @@ export module CyclicToDo
         RecentlyAverage: null | number;
         smartRest: null | number;
         count: number;
+        expectedInterval: null | { min: number; max:number; };
     }
     export interface TagSettings
     {
@@ -1117,7 +1118,8 @@ export module CyclicToDo
                 intervals.filter((_, ix) => ix < 5).concat(intervals);
             // const calcAverage = (ticks: number[], maxLength: number = ticks.length, length = Math.min(maxLength, ticks.length)) =>
             //     ((ticks[0] -ticks[length -1]) /(length -1));
-            const result: ToDoEntry =
+            const inflatedRecentrlyIntervals = inflateRecentrly(history.intervals);
+            const item: ToDoEntry =
             {
                 task,
                 isDefault: false,
@@ -1129,17 +1131,29 @@ export module CyclicToDo
                     null:
                     history.intervals.length <= 1 ?
                         Calculate.average(history.intervals) *0.05: // この値を標準偏差として代用
-                        Calculate.standardDeviation(inflateRecentrly(history.intervals)),
+                        Calculate.standardDeviation(inflatedRecentrlyIntervals),
                 count: history.count,
                 RecentlySmartAverage: history.intervals.length <= 0 ?
                     null:
-                    Calculate.average(inflateRecentrly(history.intervals)),
+                    Calculate.average(inflatedRecentrlyIntervals),
                 RecentlyAverage: history.intervals.length <= 0 ?
                     null:
                     Calculate.average(history.intervals),
                 smartRest: null,
+                expectedInterval: null,
             };
-            return result;
+            if (null !== item.RecentlySmartAverage)
+            {
+                const base = inflatedRecentrlyIntervals.length /2;
+                const lows = inflatedRecentrlyIntervals.filter(i => i < item.RecentlySmartAverage).length;
+                const highs = inflatedRecentrlyIntervals.filter(i => item.RecentlySmartAverage < i).length;
+                item.expectedInterval =
+                {
+                    min: Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate *highs /base)),
+                    max: item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate *lows /base),
+                };
+            }
+            return item;
         };
         export const calcSmartRestCore =
         (
@@ -1153,10 +1167,10 @@ export module CyclicToDo
             0 < rest ?
                 advancedRest *Math.max(Math.log((advancedRest /standardDeviation) *100), 0.1):
                 rest;
-        export const calcSmartRest = (item: { RecentlySmartAverage: number, RecentlyStandardDeviation: null | number, elapsed: number}) =>
+        export const calcSmartRest = (item: ToDoEntry) =>
             calcSmartRestCore
             (
-                item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate),
+                item.expectedInterval.max,//item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate),
                 item.RecentlyStandardDeviation ?? (item.RecentlySmartAverage *0.1),
                 item.elapsed
             );
@@ -1168,8 +1182,10 @@ export module CyclicToDo
                 item.elapsed = Math.max(0.0, now -item.previous);
                 if (null !== item.RecentlySmartAverage)
                 {
-                    const short = Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate));
-                    const long = item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
+                    // const short = Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate));
+                    // const long = item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
+                    const short = item.expectedInterval.min;
+                    const long = item.expectedInterval.max;
                     item.rest = long -item.elapsed;
                     item.isDefault = short <= item.elapsed;
                     const shortOneThird = short /3.0;
@@ -2077,8 +2093,10 @@ export module CyclicToDo
                         Domain.timeLongStringFromTick(item.RecentlySmartAverage):
                         Domain.timeRangeStringFromTick
                         (
-                            Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
-                            item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
+                            item.expectedInterval.min,
+                            item.expectedInterval.max
+                            // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
+                            // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
                         )
                 )
             ]),

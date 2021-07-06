@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed Jun 30 2021 06:18:17 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Jul 06 2021 20:16:31 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -3172,14 +3172,6 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 }
                 return null;
             };
-            var Settings;
-            (function (Settings) {
-                Settings.makeKey = function () { return "settings"; };
-                Settings.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Settings.makeKey())) !== null && _a !== void 0 ? _a : {}; };
-                Settings.set = function (settings) {
-                    return minamo_js_1.minamo.localStorage.set(Settings.makeKey(), settings);
-                };
-            })(Settings = OldStorage.Settings || (OldStorage.Settings = {}));
             var Backup;
             (function (Backup) {
                 Backup.key = "backup";
@@ -3202,7 +3194,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     Backup.add(OldStorage.exportJson(pass));
                     Pass.set(Pass.get().filter(function (i) { return pass !== i; }));
                     TagMember.getRaw(pass, "@overall").forEach(function (task) { return History.removeKey(pass, task); });
-                    Tag.get(pass).filter(function (tag) { return !Tag.isSystemTag(tag) && !Tag.isSublist(tag); }).forEach(function (tag) { return TagMember.removeKey(pass, tag); });
+                    Tag.get(pass).filter(function (tag) { return !Model.isSystemTag(tag) && !Model.isSublist(tag); }).forEach(function (tag) { return TagMember.removeKey(pass, tag); });
                     Tag.removeKey(pass);
                     Removed.clear(pass);
                 };
@@ -3226,45 +3218,16 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             })(Title = OldStorage.Title || (OldStorage.Title = {}));
             var Tag;
             (function (Tag) {
-                Tag.isSystemTag = function (tag) { return tag.startsWith("@") && !tag.startsWith("@=") && !Tag.isSublist(tag); };
-                Tag.isSublist = function (tag) { return tag.endsWith("@:"); };
-                Tag.getIcon = function (tag) {
-                    switch (tag) {
-                        case "@overall":
-                            return "home-icon";
-                        case "@pickup":
-                            return "pickup-icon";
-                        case "@short-term":
-                            return "short-term-icon";
-                        case "@long-term":
-                            return "long-term-icon";
-                        case "@irregular-term":
-                            return "sleep-icon";
-                        case "@unoverall":
-                            return "anti-home-icon";
-                        case "@untagged":
-                            return "ghost-tag-icon";
-                        case "@deleted":
-                            return "recycle-bin-icon";
-                        default:
-                            return Tag.isSublist(tag) ?
-                                "folder-icon" :
-                                "tag-icon";
-                    }
-                };
-                Tag.encode = function (tag) { return tag.replace(/@/g, "@="); };
-                Tag.encodeSublist = function (tag) { return Tag.encode(tag) + "@:"; };
-                Tag.decode = function (tag) { return tag.replace(/@\:/g, ": ").replace(/@=/g, "@"); };
                 Tag.makeKey = function (pass) { return "pass:(" + pass + ").tag.list"; };
                 Tag.get = function (pass) { var _a; return (_a = OldStorage.getStorage(pass).getOrNull(Tag.makeKey(pass))) !== null && _a !== void 0 ? _a : []; };
                 Tag.set = function (pass, list) {
-                    return OldStorage.getStorage(pass).set(Tag.makeKey(pass), list.filter(function (i) { return !Tag.isSystemTag(i); }));
+                    return OldStorage.getStorage(pass).set(Tag.makeKey(pass), list.filter(function (i) { return !Model.isSystemTag(i); }));
                 }; // システムタグは万が一にも登録させない
                 Tag.add = function (pass, tag) { return Tag.set(pass, Tag.get(pass).concat([tag]).filter(exports.uniqueFilter)); };
                 Tag.removeRaw = function (pass, tag) { return Tag.set(pass, Tag.get(pass).filter(function (i) { return tag !== i; })); };
                 Tag.remove = function (pass, tag) {
-                    if (!Tag.isSystemTag(tag)) {
-                        if (Tag.isSublist(tag)) {
+                    if (!Model.isSystemTag(tag)) {
+                        if (Model.isSublist(tag)) {
                             var tasks = TagMember.getRaw(pass, tag).map(function (task) { return Task.serialize(pass, task); });
                             var settings = TagSettings.get(pass, tag);
                             Removed.add(pass, {
@@ -3296,7 +3259,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 };
                 Tag.restore = function (pass, item) {
-                    var result = ("Tag" === item.type || "Sublist" === item.type) && !Tag.isSystemTag(item.name) && Tag.get(pass).indexOf(item.name) < 0;
+                    var result = ("Tag" === item.type || "Sublist" === item.type) && !Model.isSystemTag(item.name) && Tag.get(pass).indexOf(item.name) < 0;
                     if (result) {
                         switch (item.type) {
                             case "Tag":
@@ -3319,7 +3282,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         .concat(Tag.get(pass))
                         .concat(["@unoverall", "@untagged"])
                         .filter(function (tag) { return 0 < TagMember.get(pass, tag).filter(function (i) { return todo === i; }).length; })
-                        .sort(minamo_js_1.minamo.core.comparer.make(function (tag) { return Tag.isSublist(tag) ? 0 : 1; }));
+                        .sort(minamo_js_1.minamo.core.comparer.make(function (tag) { return Model.isSublist(tag) ? 0 : 1; }));
                 };
                 Tag.getByTodoRaw = function (pass, todo) {
                     return ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"]
@@ -3328,7 +3291,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         .filter(function (tag) { return 0 < TagMember.getRaw(pass, tag).filter(function (i) { return todo === i; }).length; });
                 };
                 Tag.rename = function (pass, oldTag, newTag) {
-                    if (0 < newTag.length && !Tag.isSystemTag(oldTag) && !Tag.isSystemTag(newTag) && oldTag !== newTag && Tag.get(pass).indexOf(newTag) < 0) {
+                    if (0 < newTag.length && !Model.isSystemTag(oldTag) && !Model.isSystemTag(newTag) && oldTag !== newTag && Tag.get(pass).indexOf(newTag) < 0) {
                         Tag.add(pass, newTag);
                         TagMember.set(pass, newTag, TagMember.getRaw(pass, oldTag));
                         TagSettings.set(pass, newTag, TagSettings.get(pass, oldTag));
@@ -3359,7 +3322,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             }
                         case "@unoverall":
                         default:
-                            return Tag.isSublist(tag) ?
+                            return Model.isSublist(tag) ?
                                 TagMember.getRaw(pass, "@overall").filter(function (i) { return tag === Task.getSublist(i); }) :
                                 TagMember.getRaw(pass, tag);
                     }
@@ -3369,7 +3332,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 };
                 TagMember.removeKey = function (pass, tag) { return OldStorage.getStorage(pass).remove(TagMember.makeKey(pass, tag)); };
                 TagMember.add = function (pass, tag, todo) {
-                    if (Tag.isSublist(tag)) {
+                    if (Model.isSublist(tag)) {
                         if (tag !== Task.getSublist(todo)) {
                             console.log("Task.rename(" + pass + ", " + todo + ", \"" + tag + Task.getBody(todo) + "\")");
                             Task.rename(pass, todo, "" + tag + Task.getBody(todo));
@@ -3381,7 +3344,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 };
                 //export const merge = (pass: string, tag: string, list: string[]) => set(pass, tag, get(pass, tag).concat(list).filter(uniqueFilter));
                 TagMember.remove = function (pass, tag, todo) {
-                    if (Tag.isSublist(tag)) {
+                    if (Model.isSublist(tag)) {
                         if (null !== Task.getSublist(todo)) {
                             Task.rename(pass, todo, Task.getBody(todo));
                         }
@@ -3422,7 +3385,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         var newSublist_1 = Task.getSublist(newTask);
                         Tag.getByTodoRaw(pass, oldTask).forEach(function (tag) {
                             TagMember.remove(pass, tag, oldTask);
-                            if (!Tag.isSublist(tag) || oldSublist_1 === newSublist_1) {
+                            if (!Model.isSublist(tag) || oldSublist_1 === newSublist_1) {
                                 TagMember.add(pass, tag, newTask);
                             }
                         });
@@ -3552,20 +3515,38 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
         })(OldStorage = CyclicToDo.OldStorage || (CyclicToDo.OldStorage = {}));
         var Storage;
         (function (Storage) {
-            var ToDoDocument;
-            (function (ToDoDocument) {
-                ToDoDocument.key = "document.list";
-                ToDoDocument.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(ToDoDocument.key)) !== null && _a !== void 0 ? _a : []; };
-                var set = function (list) { return minamo_js_1.minamo.localStorage.set(ToDoDocument.key, list); };
-                ToDoDocument.add = function (entry) {
-                    set(ToDoDocument.get().filter(function (i) { return entry.uri !== i.uri; }).concat([entry]));
+            var Settings;
+            (function (Settings) {
+                Settings.makeKey = function () { return "settings"; };
+                Settings.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Settings.makeKey())) !== null && _a !== void 0 ? _a : {}; };
+                Settings.set = function (settings) {
+                    return minamo_js_1.minamo.localStorage.set(Settings.makeKey(), settings);
+                };
+            })(Settings = Storage.Settings || (Storage.Settings = {}));
+            var ToDoDocumentList;
+            (function (ToDoDocumentList) {
+                ToDoDocumentList.key = "document.list";
+                ToDoDocumentList.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(ToDoDocumentList.key)) !== null && _a !== void 0 ? _a : []; };
+                var set = function (list) { return minamo_js_1.minamo.localStorage.set(ToDoDocumentList.key, list); };
+                ToDoDocumentList.add = function (entry) {
+                    set(ToDoDocumentList.get().filter(function (i) { return entry.uri !== i.uri; }).concat([entry]));
                     // Backup.remove(pass);
                 };
-                ToDoDocument.remove = function (entry) {
+                ToDoDocumentList.remove = function (entry) {
                     // Backup.add(exportJson(pass));
-                    set(ToDoDocument.get().filter(function (i) { return entry.uri !== i.uri; }));
+                    set(ToDoDocumentList.get().filter(function (i) { return entry.uri !== i.uri; }));
                 };
-            })(ToDoDocument = Storage.ToDoDocument || (Storage.ToDoDocument = {}));
+                ToDoDocumentList.update = ToDoDocumentList.add;
+            })(ToDoDocumentList = Storage.ToDoDocumentList || (Storage.ToDoDocumentList = {}));
+            var ToDoList;
+            (function (ToDoList) {
+                ToDoList.makeKey = function (pass) { return "document:(" + pass + ")"; };
+                ToDoList.get = function (pass) { return minamo_js_1.minamo.localStorage.getOrNull(ToDoList.makeKey(pass)); };
+                ToDoList.set = function (pass, list) { return minamo_js_1.minamo.localStorage.set(ToDoList.makeKey(pass), list); };
+                ToDoList.remove = function (pass) {
+                    minamo_js_1.minamo.localStorage.remove(ToDoList.makeKey(pass));
+                };
+            })(ToDoList = Storage.ToDoList || (Storage.ToDoList = {}));
             var Filter;
             (function (Filter) {
                 Filter.key = "filter.recently";
@@ -3578,6 +3559,93 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 };
             })(Filter = Storage.Filter || (Storage.Filter = {}));
         })(Storage = CyclicToDo.Storage || (CyclicToDo.Storage = {}));
+        var SessionStorage;
+        (function (SessionStorage) {
+            var ToDoList;
+            (function (ToDoList) {
+                ToDoList.makeKey = function (pass) { return "document:(" + pass + ")"; };
+                ToDoList.get = function (pass) { return minamo_js_1.minamo.sessionStorage.getOrNull(ToDoList.makeKey(pass)); };
+                ToDoList.set = function (pass, list) { return minamo_js_1.minamo.sessionStorage.set(ToDoList.makeKey(pass), list); };
+                ToDoList.remove = function (pass) {
+                    minamo_js_1.minamo.sessionStorage.remove(ToDoList.makeKey(pass));
+                };
+            })(ToDoList = SessionStorage.ToDoList || (SessionStorage.ToDoList = {}));
+        })(SessionStorage = CyclicToDo.SessionStorage || (CyclicToDo.SessionStorage = {}));
+        var Model;
+        (function (Model) {
+            var _this = this;
+            Model.isSystemTag = function (tag) { return tag.startsWith("@") && !tag.startsWith("@=") && !Model.isSublist(tag); };
+            Model.isSublist = function (tag) { return tag.endsWith("@:"); };
+            Model.encode = function (tag) { return tag.replace(/@/g, "@="); };
+            Model.encodeSublist = function (tag) { return Model.encode(tag) + "@:"; };
+            Model.decode = function (tag) { return tag.replace(/@\:/g, ": ").replace(/@=/g, "@"); };
+            Model.load = function (document) { return __awaiter(_this, void 0, void 0, function () {
+                var result;
+                return __generator(this, function (_a) {
+                    switch (document.type) {
+                        case "oldLocalDb":
+                            result =
+                                {
+                                    document: document,
+                                    list: JSON.parse(OldStorage.exportJson(document.uri)),
+                                };
+                            break;
+                        case "session":
+                            result =
+                                {
+                                    document: document,
+                                    list: SessionStorage.ToDoList.get(document.uri),
+                                };
+                            break;
+                        case "localDb":
+                            result =
+                                {
+                                    document: document,
+                                    list: Storage.ToDoList.get(document.uri),
+                                };
+                            break;
+                    }
+                    if (result) {
+                        update(result);
+                    }
+                    return [2 /*return*/, result];
+                });
+            }); };
+            Model.save = function (instance) { return __awaiter(_this, void 0, void 0, function () {
+                var result;
+                return __generator(this, function (_a) {
+                    result = "";
+                    // let result : true | locale.LocaleKeyType = "";
+                    switch (instance.document.type) {
+                        case "oldLocalDb":
+                            OldStorage.importJson(JSON.stringify(instance.list));
+                            result = true;
+                            break;
+                        case "session":
+                            SessionStorage.ToDoList.set(instance.document.uri, instance.list);
+                            result = true;
+                            break;
+                        case "localDb":
+                            Storage.ToDoList.set(instance.document.uri, instance.list);
+                            result = true;
+                            break;
+                        default:
+                            result = "Unsupported storage type";
+                            break;
+                    }
+                    if (true === result) {
+                        update(instance);
+                    }
+                    return [2 /*return*/, result];
+                });
+            }); };
+            var update = function (instance) {
+                instance.document.title = instance.list.title;
+                if ("session" !== instance.document.type) {
+                    Storage.ToDoDocumentList.update(instance.document);
+                }
+            };
+        })(Model = CyclicToDo.Model || (CyclicToDo.Model = {}));
         var Domain;
         (function (Domain) {
             var _this = this;
@@ -3717,7 +3785,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     case "@new-sublist":
                         return locale.map(tag);
                     default:
-                        return OldStorage.Tag.decode(tag);
+                        return Model.decode(tag);
                 }
             };
             Domain.getLastTick = function (pass, task) { var _a; return (_a = OldStorage.History.get(pass, task)[0]) !== null && _a !== void 0 ? _a : 0; };
@@ -3819,6 +3887,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             //     return result;
             // };
             Domain.getToDoEntry = function (pass, task) {
+                var _a, _b;
                 // const history: { recentries: number[], previous: null | number, count: number, } = getRecentlyHistory(pass, task);
                 var full = OldStorage.History.get(pass, task);
                 var longRecentries = Calculate.intervals(full.filter(function (_, index) { return index < 126; }));
@@ -3844,7 +3913,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     intervals.filter(function (_, ix) { return ix < 5; }).concat(intervals); };
                 // const calcAverage = (ticks: number[], maxLength: number = ticks.length, length = Math.min(maxLength, ticks.length)) =>
                 //     ((ticks[0] -ticks[length -1]) /(length -1));
-                var result = {
+                var inflatedRecentrlyIntervals = inflateRecentrly(history.intervals);
+                var item = {
                     task: task,
                     isDefault: false,
                     progress: null,
@@ -3855,17 +3925,28 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         null :
                         history.intervals.length <= 1 ?
                             Calculate.average(history.intervals) * 0.05 : // この値を標準偏差として代用
-                            Calculate.standardDeviation(inflateRecentrly(history.intervals)),
+                            Calculate.standardDeviation(inflatedRecentrlyIntervals),
                     count: history.count,
                     RecentlySmartAverage: history.intervals.length <= 0 ?
                         null :
-                        Calculate.average(inflateRecentrly(history.intervals)),
+                        Calculate.average(inflatedRecentrlyIntervals),
                     RecentlyAverage: history.intervals.length <= 0 ?
                         null :
                         Calculate.average(history.intervals),
                     smartRest: null,
+                    expectedInterval: null,
                 };
-                return result;
+                if (null !== item.RecentlySmartAverage) {
+                    var base = inflatedRecentrlyIntervals.length / 2;
+                    var lows = inflatedRecentrlyIntervals.filter(function (i) { return i < item.RecentlySmartAverage; }).length;
+                    var highs = inflatedRecentrlyIntervals.filter(function (i) { return item.RecentlySmartAverage < i; }).length;
+                    item.expectedInterval =
+                        {
+                            min: Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate * highs / base)),
+                            max: item.RecentlySmartAverage + (((_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * Domain.standardDeviationRate * lows / base),
+                        };
+                }
+                return item;
             };
             Domain.calcSmartRestCore = function (span, standardDeviation, elapsed, rest, delta, advancedRest) {
                 if (rest === void 0) { rest = span - elapsed; }
@@ -3876,18 +3957,20 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     rest;
             };
             Domain.calcSmartRest = function (item) {
-                var _a, _b;
-                return Domain.calcSmartRestCore(item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate), (_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : (item.RecentlySmartAverage * 0.1), item.elapsed);
+                var _a;
+                return Domain.calcSmartRestCore(item.expectedInterval.max, //item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate),
+                (_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : (item.RecentlySmartAverage * 0.1), item.elapsed);
             };
             Domain.updateProgress = function (pass, item, now) {
-                var _a, _b;
                 if (now === void 0) { now = Domain.getTicks(); }
                 if (0 < item.count) {
                     // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
                     item.elapsed = Math.max(0.0, now - item.previous);
                     if (null !== item.RecentlySmartAverage) {
-                        var short = Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate));
-                        var long = item.RecentlySmartAverage + (((_b = item.RecentlyStandardDeviation) !== null && _b !== void 0 ? _b : 0) * Domain.standardDeviationRate);
+                        // const short = Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate));
+                        // const long = item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate);
+                        var short = item.expectedInterval.min;
+                        var long = item.expectedInterval.max;
                         item.rest = long - item.elapsed;
                         item.isDefault = short <= item.elapsed;
                         var shortOneThird = short / 3.0;
@@ -4252,7 +4335,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 1:
                             newTag = _a.sent();
                             if (null !== newTag) {
-                                tag = OldStorage.Tag.encode(newTag.trim());
+                                tag = Model.encode(newTag.trim());
                                 OldStorage.Tag.add(pass, tag);
                                 return [2 /*return*/, tag];
                             }
@@ -4458,7 +4541,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             tagButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
                                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                             _c = [tagButtonList];
-                                            return [4 /*yield*/, Promise.all(["@root"].concat(OldStorage.Tag.get(pass).filter(function (tag) { return OldStorage.Tag.isSublist(tag); }).sort(Domain.tagComparer(pass))).map(function (sublist) { return __awaiter(_this, void 0, void 0, function () {
+                                            return [4 /*yield*/, Promise.all(["@root"].concat(OldStorage.Tag.get(pass).filter(function (tag) { return Model.isSublist(tag); }).sort(Domain.tagComparer(pass))).map(function (sublist) { return __awaiter(_this, void 0, void 0, function () {
                                                     var _a;
                                                     var _b;
                                                     return __generator(this, function (_c) {
@@ -4505,7 +4588,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                     case 1:
                                                                         sublist = _a.sent();
                                                                         if (null !== sublist) {
-                                                                            tag = OldStorage.Tag.encodeSublist(sublist.trim());
+                                                                            tag = Model.encodeSublist(sublist.trim());
                                                                             OldStorage.Tag.add(pass, tag);
                                                                             OldStorage.TagMember.add(pass, tag, item.task);
                                                                             result = true;
@@ -4544,7 +4627,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             Render.localeSettingsPopup = function (settings) {
-                if (settings === void 0) { settings = OldStorage.Settings.get(); }
+                if (settings === void 0) { settings = Storage.Settings.get(); }
                 return __awaiter(_this, void 0, void 0, function () {
                     var _this = this;
                     return __generator(this, function (_a) {
@@ -4585,7 +4668,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                                     case 0:
                                                                                         if (!(null !== ((_a = settings.locale) !== null && _a !== void 0 ? _a : null))) return [3 /*break*/, 2];
                                                                                         settings.locale = null;
-                                                                                        OldStorage.Settings.set(settings);
+                                                                                        Storage.Settings.set(settings);
                                                                                         result = true;
                                                                                         return [4 /*yield*/, checkButtonListUpdate()];
                                                                                     case 1:
@@ -4620,7 +4703,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                                                     case 0:
                                                                                                         if (!((_a = key !== settings.locale) !== null && _a !== void 0 ? _a : null)) return [3 /*break*/, 2];
                                                                                                         settings.locale = key;
-                                                                                                        OldStorage.Settings.set(settings);
+                                                                                                        Storage.Settings.set(settings);
                                                                                                         result = true;
                                                                                                         return [4 /*yield*/, checkButtonListUpdate()];
                                                                                                     case 1:
@@ -4976,7 +5059,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     Render.label("expected interval"),
                     Render.$span("value monospace")(null === item.RecentlyStandardDeviation ?
                         Domain.timeLongStringFromTick(item.RecentlySmartAverage) :
-                        Domain.timeRangeStringFromTick(Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (item.RecentlyStandardDeviation * Domain.standardDeviationRate)), item.RecentlySmartAverage + (item.RecentlyStandardDeviation * Domain.standardDeviationRate)))
+                        Domain.timeRangeStringFromTick(item.expectedInterval.min, item.expectedInterval.max
+                        // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
+                        // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
+                        ))
                 ]),
                 Render.$div("task-elapsed-time")([
                     Render.label("elapsed time"),
@@ -5186,7 +5272,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _e = [
                                 _d.apply(void 0, [(_k.children = [
                                         _l.sent(),
-                                        OldStorage.Tag.decode(item.task)
+                                        Model.decode(item.task)
                                     ],
                                         _k)])
                             ];
@@ -5245,7 +5331,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                     className: "tag",
                                                     href: { pass: entry.pass, tag: tag, }
                                                 };
-                                                return [4 /*yield*/, Resource.loadSvgOrCache(OldStorage.Tag.getIcon(tag))];
+                                                return [4 /*yield*/, Resource.loadTagSvgOrCache(tag)];
                                             case 1: return [2 /*return*/, _a.apply(void 0, [(_b.children = [
                                                         _c.sent(),
                                                         Domain.tagMap(tag)
@@ -5274,7 +5360,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     Render.internalLink({
                                         className: "item-title",
                                         href: { pass: entry.pass, todo: item.task, },
-                                        children: OldStorage.Tag.decode(item.task)
+                                        children: Model.decode(item.task)
                                     }),
                                     Render.$span("value monospace")(Domain.dateStringFromTick(item.tick)),
                                 ])];
@@ -5486,7 +5572,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 return [4 /*yield*/, Resource.loadSvgOrCache("task-icon")];
                                             case 1: return [2 /*return*/, _a.apply(void 0, [(_c.children = _b.apply(void 0, [[
                                                             _d.sent(),
-                                                            OldStorage.Tag.decode(item.task),
+                                                            Model.decode(item.task),
                                                             Render.$span("monospace")("(" + Domain.timeShortStringFromTick(item.elapsed) + ")")
                                                         ]]),
                                                         _c)])];
@@ -5756,7 +5842,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     switch (_h.label) {
                         case 0:
                             _g = {
-                                icon: OldStorage.Tag.getIcon(current),
+                                icon: Resource.getTagIcon(current),
                                 title: Domain.tagMap(current)
                             };
                             return [4 /*yield*/, Promise.all(["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"].concat(OldStorage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@untagged"])
@@ -5766,7 +5852,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         switch (_b.label) {
                                             case 0:
                                                 _a = Render.menuLinkItem;
-                                                return [4 /*yield*/, Resource.loadSvgOrCache(OldStorage.Tag.getIcon(tag))];
+                                                return [4 /*yield*/, Resource.loadTagSvgOrCache(tag)];
                                             case 1: return [2 /*return*/, _a.apply(void 0, [[
                                                         _b.sent(),
                                                         Render.labelSpan(Domain.tagMap(tag)),
@@ -5817,7 +5903,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 case 1:
                                                     sublist = _a.sent();
                                                     if (!(null !== sublist)) return [3 /*break*/, 3];
-                                                    tag = OldStorage.Tag.encodeSublist(sublist.trim());
+                                                    tag = Model.encodeSublist(sublist.trim());
                                                     OldStorage.Tag.add(pass, tag);
                                                     return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, tag: tag, })];
                                                 case 2:
@@ -5850,7 +5936,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 0:
                             _f = {
                                 icon: "@history" === current ? "history-icon" : "task-icon",
-                                title: "@history" === current ? locale.map("History") : OldStorage.Tag.decode(current)
+                                title: "@history" === current ? locale.map("History") : Model.decode(current)
                             };
                             return [4 /*yield*/, Promise.all(OldStorage.TagMember.get(pass, tag).map(function (task) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
@@ -5861,7 +5947,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 return [4 /*yield*/, Resource.loadSvgOrCache("task-icon")];
                                             case 1: return [2 /*return*/, _a.apply(void 0, [[
                                                         _b.sent(),
-                                                        Render.labelSpan(OldStorage.Tag.decode(task))
+                                                        Render.labelSpan(Model.decode(task))
                                                     ], { pass: pass, todo: task, }, current === task ? "current-item" : undefined])];
                                         }
                                     });
@@ -5964,7 +6050,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 });
                             }); }),
                             "@overall" === entry.tag ? Render.listRenameMenu(entry.pass) : [],
-                            OldStorage.Tag.isSystemTag(entry.tag) ? [] :
+                            Model.isSystemTag(entry.tag) ? [] :
                                 Render.menuItem(Render.label("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
                                     var newTag;
                                     return __generator(this, function (_a) {
@@ -6015,7 +6101,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 href: { pass: entry.pass, hash: "export" },
                                 children: Render.menuItem(Render.label("Export")),
                             }),
-                            OldStorage.Tag.isSystemTag(entry.tag) ? [] :
+                            Model.isSystemTag(entry.tag) ? [] :
                                 Render.menuItem(Render.label("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
@@ -6470,7 +6556,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     case 1: return [2 /*return*/, _a.sent()];
                                 }
                             }); }); }),
-                            OldStorage.Tag.isSystemTag(entry.tag) ? [] :
+                            Model.isSystemTag(entry.tag) ? [] :
                                 Render.menuItem(Render.label("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
                                     var newTag;
                                     return __generator(this, function (_a) {
@@ -6919,7 +7005,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                         className: "tag",
                                                         href: { pass: pass, tag: tag, }
                                                     };
-                                                    return [4 /*yield*/, Resource.loadSvgOrCache(OldStorage.Tag.getIcon(tag))];
+                                                    return [4 /*yield*/, Resource.loadTagSvgOrCache(tag)];
                                                 case 1: return [2 /*return*/, _a.apply(void 0, [(_b.children = [
                                                             _c.sent(),
                                                             Domain.tagMap(tag)
@@ -6972,7 +7058,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     "@irregular-term": 4,
                     "@overall": 5,
                     "@untagged": 3,
-                }[tag]) !== null && _a !== void 0 ? _a : (OldStorage.Tag.isSublist(tag) ? 0 : 2));
+                }[tag]) !== null && _a !== void 0 ? _a : (Model.isSublist(tag) ? 0 : 2));
             }))[0]; };
             Render.showTodoScreen = function (pass, task) { return __awaiter(_this, void 0, void 0, function () {
                 var item, tag, ticks, updateWindow, _a;
@@ -7048,6 +7134,33 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         return [2 /*return*/];
                     });
                 }); };
+                Resource.getTagIcon = function (tag) {
+                    switch (tag) {
+                        case "@overall":
+                            return "home-icon";
+                        case "@pickup":
+                            return "pickup-icon";
+                        case "@short-term":
+                            return "short-term-icon";
+                        case "@long-term":
+                            return "long-term-icon";
+                        case "@irregular-term":
+                            return "sleep-icon";
+                        case "@unoverall":
+                            return "anti-home-icon";
+                        case "@untagged":
+                            return "ghost-tag-icon";
+                        case "@deleted":
+                            return "recycle-bin-icon";
+                        default:
+                            return Model.isSublist(tag) ?
+                                "folder-icon" :
+                                "tag-icon";
+                    }
+                };
+                Resource.loadTagSvgOrCache = function (tag) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                    return [2 /*return*/, Resource.loadSvgOrCache(Resource.getTagIcon(tag))];
+                }); }); };
             })(Resource = Render.Resource || (Render.Resource = {}));
             Render.showExportScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () { var _a; return __generator(this, function (_b) {
                 switch (_b.label) {
@@ -7899,7 +8012,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 switch (_a.label) {
                     case 0:
                         console.log("start!!!");
-                        locale.setLocale(OldStorage.Settings.get().locale);
+                        locale.setLocale(Storage.Settings.get().locale);
                         window.onpopstate = function () { return CyclicToDo.showPage(); };
                         window.addEventListener('resize', Render.onWindowResize);
                         window.addEventListener('focus', Render.onWindowFocus);
