@@ -108,7 +108,13 @@ export module CyclicToDo
         // sort?: "smart" | "simple" | "limit";
         sort?: "smart" | "simple";
     }
-    export interface ToDoList
+    export interface ToDoDocument
+    {
+        type: "oldLocalDb" | "session" | "localDb" | "OneDrive" | "file";
+        title: string;
+        uri: string;
+    }
+    export interface ToDoContent
     {
         specification: "https://github.com/wraith13/cyclic-todo/README.md";
         title: string;
@@ -119,12 +125,6 @@ export module CyclicToDo
         tagSettings: { [tag: string]: TagSettings };
         histories: { [todo: string]: number[] };
         removed: OldStorage.Removed.Type[];
-    }
-    export interface ToDoDocument
-    {
-        type: "oldLocalDb" | "session" | "localDb" | "OneDrive" | "file";
-        title: string;
-        uri: string;
     }
     export type HistoryEntry = number | { tick: number; memo: string; };
     export module OldStorage
@@ -167,7 +167,7 @@ export module CyclicToDo
                 todo => histories[todo] = History.get(pass, todo)
             );
             const removed = Removed.get(pass);
-            const result: ToDoList =
+            const result: ToDoContent =
             {
                 specification,
                 title,
@@ -185,7 +185,7 @@ export module CyclicToDo
         {
             try
             {
-                const data = JSON.parse(json) as ToDoList;
+                const data = JSON.parse(json) as ToDoContent;
                 if
                 (
                     "https://github.com/wraith13/cyclic-todo/README.md" === data.specification &&
@@ -222,7 +222,7 @@ export module CyclicToDo
             export const get = () => minamo.localStorage.getOrNull<string[]>(key) ?? [];
             const set = (backupList: string[]) => minamo.localStorage.set(key, backupList);
             export const add = (json: string) => set(get().concat([ json ]));
-            export const remove = (pass: string) => set(get().filter(i => pass !== (JSON.parse(i) as ToDoList).pass));
+            export const remove = (pass: string) => set(get().filter(i => pass !== (JSON.parse(i) as ToDoContent).pass));
             export const clear = () => set([]);
         }
         export module Pass
@@ -682,8 +682,8 @@ export module CyclicToDo
         export module ToDoList
         {
             export const makeKey = (pass: string) => `document:(${pass})`;
-            export const get = (pass: string) => minamo.localStorage.getOrNull<CyclicToDo.ToDoList>(makeKey(pass));
-            export const set = (pass: string, list: CyclicToDo.ToDoList) => minamo.localStorage.set(makeKey(pass), list);
+            export const get = (pass: string) => minamo.localStorage.getOrNull<CyclicToDo.ToDoContent>(makeKey(pass));
+            export const set = (pass: string, list: CyclicToDo.ToDoContent) => minamo.localStorage.set(makeKey(pass), list);
             export const remove = (pass: string) =>
             {
                 minamo.localStorage.remove(makeKey(pass));
@@ -710,8 +710,8 @@ export module CyclicToDo
         export module ToDoList
         {
             export const makeKey = (pass: string) => `document:(${pass})`;
-            export const get = (pass: string) => minamo.sessionStorage.getOrNull<CyclicToDo.ToDoList>(makeKey(pass));
-            export const set = (pass: string, list: CyclicToDo.ToDoList) => minamo.sessionStorage.set(makeKey(pass), list);
+            export const get = (pass: string) => minamo.sessionStorage.getOrNull<CyclicToDo.ToDoContent>(makeKey(pass));
+            export const set = (pass: string, list: CyclicToDo.ToDoContent) => minamo.sessionStorage.set(makeKey(pass), list);
             export const remove = (pass: string) =>
             {
                 minamo.sessionStorage.remove(makeKey(pass));
@@ -725,24 +725,30 @@ export module CyclicToDo
         export const encode = (tag: string) => tag.replace(/@/g, "@=");
         export const encodeSublist = (tag: string) => encode(tag) +"@:";
         export const decode = (tag: string) => tag.replace(/@\:/g, ": ").replace(/@=/g, "@");
+        export interface Live
+        {
+            tasks: ToDoEntry[];
+        }
         export interface Instance
         {
             document: ToDoDocument;
-            list: ToDoList;
+            content: ToDoContent;
+            // live: Live;
         }
         export const invokeFromOldStorage = (pass: string): Instance =>
         {
-            const list = JSON.parse(OldStorage.exportJson(pass)) as ToDoList;
+            const content = JSON.parse(OldStorage.exportJson(pass)) as ToDoContent;
+            // const live = content.todos.map(task => Domain.getToDoEntry(entry.pass, task));
             const document: ToDoDocument =
             {
                 type: "oldLocalDb",
-                title: list.title,
+                title: content.title,
                 uri: pass,
             };
             const result =
             {
                 document,
-                list,
+                list: content,
             };
             return result;
         };
@@ -755,21 +761,21 @@ export module CyclicToDo
                 result =
                 {
                     document,
-                    list: JSON.parse(OldStorage.exportJson(document.uri)) as ToDoList,
+                    content: JSON.parse(OldStorage.exportJson(document.uri)) as ToDoContent,
                 };
                 break;
             case "session":
                 result =
                 {
                     document,
-                    list: SessionStorage.ToDoList.get(document.uri),
+                    content: SessionStorage.ToDoList.get(document.uri),
                 };
                 break;
             case "localDb":
                 result =
                 {
                     document,
-                    list: Storage.ToDoList.get(document.uri),
+                    content: Storage.ToDoList.get(document.uri),
                 };
                 break;
             }
@@ -787,15 +793,15 @@ export module CyclicToDo
             switch(instance.document.type)
             {
             case "oldLocalDb":
-                OldStorage.importJson(JSON.stringify(instance.list));
+                OldStorage.importJson(JSON.stringify(instance.content));
                 result = true;
                 break;
             case "session":
-                SessionStorage.ToDoList.set(instance.document.uri, instance.list);
+                SessionStorage.ToDoList.set(instance.document.uri, instance.content);
                 result = true;
                 break;
             case "localDb":
-                Storage.ToDoList.set(instance.document.uri, instance.list);
+                Storage.ToDoList.set(instance.document.uri, instance.content);
                 result = true;
                 break;
             default:
@@ -810,7 +816,7 @@ export module CyclicToDo
         };
         const update = (instance: Model.Instance) =>
         {
-            instance.document.title = instance.list.title;
+            instance.document.title = instance.content.title;
             if ("session" !== instance.document.type)
             {
                 Storage.ToDoDocumentList.update(instance.document);
@@ -819,10 +825,10 @@ export module CyclicToDo
         export module Title
         {
             export const get = (instance: Model.Instance) =>
-                instance.list.title ?? "ToDo リスト";
+                instance.content.title ?? "ToDo リスト";
             export const set = (instance: Model.Instance, title: string) =>
             {
-                instance.list.title = title;
+                instance.content.title = title;
                 save(instance);
             };
         }
@@ -3863,7 +3869,7 @@ export module CyclicToDo
                 }),
             ]
         });
-        export const removedListItem = async (list: ToDoList) => $div("list-item flex-item")
+        export const removedListItem = async (list: ToDoContent) => $div("list-item flex-item")
         ([
             $div("item-header")
             ([
@@ -3893,7 +3899,7 @@ export module CyclicToDo
             ]),
         ]);
         export const showRemovedListScreen = async () =>
-            await showWindow(await removedListScreen(OldStorage.Backup.get().map(json => JSON.parse(json) as ToDoList)));
+            await showWindow(await removedListScreen(OldStorage.Backup.get().map(json => JSON.parse(json) as ToDoContent)));
         export const removedListScreenMenu = async () =>
         [
             menuItem
@@ -3902,7 +3908,7 @@ export module CyclicToDo
                 async () => await showUrl({ }),
             )
         ];
-        export const removedListScreen = async (list: ToDoList[]) =>
+        export const removedListScreen = async (list: ToDoContent[]) =>
         ({
             className: "remove-list-screen",
             header:
@@ -3949,7 +3955,7 @@ export module CyclicToDo
             $div("application-icon icon")(await Resource.loadSvgOrCache("application-icon"));
         // export const applicationColorIcon = async () =>
         //     $div("application-icon icon")(await Resource.loadSvgOrCache("application-color-icon"));
-        export const listItem = async (list: ToDoList) => $div("list-item flex-item")
+        export const listItem = async (list: ToDoContent) => $div("list-item flex-item")
         ([
             $div("item-header")
             ([
@@ -4080,7 +4086,7 @@ export module CyclicToDo
                     ]),
                 ]),
                 $div("row-flex-list compact-flex-list list-list")
-                    (await Promise.all(OldStorage.Pass.get().map(pass => listItem(JSON.parse(OldStorage.exportJson(pass)) as ToDoList)))),
+                    (await Promise.all(OldStorage.Pass.get().map(pass => listItem(JSON.parse(OldStorage.exportJson(pass)) as ToDoContent)))),
             ]
         });
         export const showWelcomeScreen = async () =>
