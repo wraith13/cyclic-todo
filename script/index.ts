@@ -748,7 +748,7 @@ export module CyclicToDo
             const result =
             {
                 document,
-                list: content,
+                content,
             };
             return result;
         };
