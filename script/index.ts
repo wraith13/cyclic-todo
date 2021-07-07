@@ -730,6 +730,22 @@ export module CyclicToDo
             document: ToDoDocument;
             list: ToDoList;
         }
+        export const invokeFromOldStorage = (pass: string): Instance =>
+        {
+            const list = JSON.parse(OldStorage.exportJson(pass)) as ToDoList;
+            const document: ToDoDocument =
+            {
+                type: "oldLocalDb",
+                title: list.title,
+                uri: pass,
+            };
+            const result =
+            {
+                document,
+                list,
+            };
+            return result;
+        };
         export const load = async (document: ToDoDocument): Promise<Instance | undefined> =>
         {
             let result : Instance | undefined;
@@ -800,6 +816,16 @@ export module CyclicToDo
                 Storage.ToDoDocumentList.update(instance.document);
             }
         };
+        export module Title
+        {
+            export const get = (instance: Model.Instance) =>
+                instance.list.title ?? "ToDo リスト";
+            export const set = (instance: Model.Instance, title: string) =>
+            {
+                instance.list.title = title;
+                save(instance);
+            };
+        }
     }
     export module Domain
     {
