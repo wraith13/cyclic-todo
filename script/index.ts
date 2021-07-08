@@ -1009,8 +1009,7 @@ export module CyclicToDo
                 return Model.decode(tag);
             }
         };
-        export const getLastTick = (pass: string, task: string) => OldStorage.History.get(pass, task)[0] ?? 0;
-        export const getDoneTicks = (pass: string, key: string = `pass:(${pass}).last.done.ticks`) =>
+        export const getDoneTicksOld = (pass: string, key: string = `pass:(${pass}).last.done.ticks`) =>
             minamo.localStorage.set
             (
                 key,
@@ -1020,9 +1019,17 @@ export module CyclicToDo
                     getTicks() -1
                 ) +1
             );
-        export const done = async (pass: string, task: string, tick: number = getDoneTicks(pass)) =>
+        export const getDoneTicks = (instance: Model.Instance) =>
+            Math.max.apply(null, instance.live.tasks.map(i => i.previous).filter(i => i).concat[getTicks() -1]) +1;
+        export const doneOld = async (pass: string, task: string, tick: number = getDoneTicksOld(pass)) =>
         {
             OldStorage.History.add(pass, task, tick);
+            return tick;
+        };
+        export const done = async (instance: Model.Instance, task: string, tick: number = getDoneTicks(instance)) =>
+        {
+            instance.content.histories[task] = (instance.content.histories[task] ?? []).concat(tick);
+            await Model.save(instance);
             return tick;
         };
         export const tagComparer = (pass: string) => minamo.core.comparer.make<string>
@@ -1305,7 +1312,7 @@ export module CyclicToDo
             };
             export const done = async (pass: string, task: string, tick: number, onCanceled: () => unknown) =>
             {
-                Domain.done(pass, task, tick);
+                Domain.doneOld(pass, task, tick);
                 const isPickuped = 0 <= OldStorage.TagMember.get(pass, "@pickup").indexOf(task);
                 if (isPickuped)
                 {
@@ -2347,7 +2354,7 @@ export module CyclicToDo
                                             (
                                                 entry.pass,
                                                 item.task,
-                                                Domain.getDoneTicks(entry.pass),
+                                                Domain.getDoneTicksOld(entry.pass),
                                                 onUpdate
                                             );
                                             await onDone();
@@ -3649,7 +3656,7 @@ export module CyclicToDo
                         (
                             pass,
                             item.task,
-                            Domain.getDoneTicks(pass),
+                            Domain.getDoneTicksOld(pass),
                             () => updateWindow("operate")
                         );
                         updateWindow("operate");
