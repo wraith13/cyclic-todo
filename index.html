@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed Jul 07 2021 07:20:55 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu Jul 08 2021 18:08:58 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -3579,33 +3579,49 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Model.encode = function (tag) { return tag.replace(/@/g, "@="); };
             Model.encodeSublist = function (tag) { return Model.encode(tag) + "@:"; };
             Model.decode = function (tag) { return tag.replace(/@\:/g, ": ").replace(/@=/g, "@"); };
+            Model.invokeFromOldStorage = function (pass) {
+                var content = JSON.parse(OldStorage.exportJson(pass));
+                var tasks = content.todos.map(function (task) { return Domain.getToDoEntry(task, content.histories[task]); });
+                var live = {
+                    tasks: tasks,
+                };
+                var document = {
+                    type: "oldLocalDb",
+                    title: content.title,
+                    uri: pass,
+                };
+                var result = {
+                    document: document,
+                    content: content,
+                    live: live,
+                };
+                return result;
+            };
             Model.load = function (document) { return __awaiter(_this, void 0, void 0, function () {
-                var result;
+                var content, result, tasks, live;
                 return __generator(this, function (_a) {
                     switch (document.type) {
                         case "oldLocalDb":
-                            result =
-                                {
-                                    document: document,
-                                    list: JSON.parse(OldStorage.exportJson(document.uri)),
-                                };
+                            content = JSON.parse(OldStorage.exportJson(document.uri));
                             break;
                         case "session":
-                            result =
-                                {
-                                    document: document,
-                                    list: SessionStorage.ToDoList.get(document.uri),
-                                };
+                            content = SessionStorage.ToDoList.get(document.uri);
                             break;
                         case "localDb":
-                            result =
-                                {
-                                    document: document,
-                                    list: Storage.ToDoList.get(document.uri),
-                                };
+                            content = Storage.ToDoList.get(document.uri);
                             break;
                     }
-                    if (result) {
+                    if (content) {
+                        tasks = content.todos.map(function (task) { return Domain.getToDoEntry(task, content.histories[task]); });
+                        live = {
+                            tasks: tasks,
+                        };
+                        result =
+                            {
+                                document: document,
+                                content: content,
+                                live: live,
+                            };
                         update(result);
                     }
                     return [2 /*return*/, result];
@@ -3618,15 +3634,15 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     // let result : true | locale.LocaleKeyType = "";
                     switch (instance.document.type) {
                         case "oldLocalDb":
-                            OldStorage.importJson(JSON.stringify(instance.list));
+                            OldStorage.importJson(JSON.stringify(instance.content));
                             result = true;
                             break;
                         case "session":
-                            SessionStorage.ToDoList.set(instance.document.uri, instance.list);
+                            SessionStorage.ToDoList.set(instance.document.uri, instance.content);
                             result = true;
                             break;
                         case "localDb":
-                            Storage.ToDoList.set(instance.document.uri, instance.list);
+                            Storage.ToDoList.set(instance.document.uri, instance.content);
                             result = true;
                             break;
                         default:
@@ -3640,11 +3656,19 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             var update = function (instance) {
-                instance.document.title = instance.list.title;
+                instance.document.title = instance.content.title;
                 if ("session" !== instance.document.type) {
                     Storage.ToDoDocumentList.update(instance.document);
                 }
             };
+            var Title;
+            (function (Title) {
+                Title.get = function (instance) { var _a; return (_a = instance.content.title) !== null && _a !== void 0 ? _a : "ToDo リスト"; };
+                Title.set = function (instance, title) {
+                    instance.content.title = title;
+                    Model.save(instance);
+                };
+            })(Title = Model.Title || (Model.Title = {}));
         })(Model = CyclicToDo.Model || (CyclicToDo.Model = {}));
         var Domain;
         (function (Domain) {
@@ -3886,10 +3910,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             //     };
             //     return result;
             // };
-            Domain.getToDoEntry = function (pass, task) {
+            Domain.getToDoEntryOld = function (pass, task) { return Domain.getToDoEntry(task, OldStorage.History.get(pass, task)); };
+            Domain.getToDoEntry = function (task, full) {
                 var _a, _b;
                 // const history: { recentries: number[], previous: null | number, count: number, } = getRecentlyHistory(pass, task);
-                var full = OldStorage.History.get(pass, task);
+                // const full = OldStorage.History.get(pass, task);
                 var longRecentries = Calculate.intervals(full.filter(function (_, index) { return index < 126; }));
                 var longRecentlyAverage = longRecentries.length <= 1 ? null : Calculate.average(longRecentries);
                 var longRecentlyStandardDeviation = longRecentries.length <= 5 ?
@@ -5238,7 +5263,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             isFirst = true;
                             onUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
-                                    Object.assign(item, Domain.getToDoEntry(entry.pass, item.task));
+                                    Object.assign(item, Domain.getToDoEntryOld(entry.pass, item.task));
                                     Render.updateWindow("operate");
                                     return [2 /*return*/];
                                 });
@@ -6436,7 +6461,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     switch (_d.label) {
                         case 0:
                             entry = { tag: tag, pass: pass, todo: OldStorage.TagMember.get(pass, tag) };
-                            list = entry.todo.map(function (task) { return Domain.getToDoEntry(entry.pass, task); });
+                            list = entry.todo.map(function (task) { return Domain.getToDoEntryOld(entry.pass, task); });
                             Domain.updateListProgress(entry.pass, list);
                             Domain.sortList(entry, list);
                             isDirty = false;
@@ -6507,7 +6532,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         case 7:
                                             if (!(0 <= OldStorage.Pass.get().indexOf(entry.pass))) return [3 /*break*/, 9];
                                             entry_1 = { tag: tag, pass: pass, todo: OldStorage.TagMember.get(pass, tag) };
-                                            list = entry_1.todo.map(function (task) { return Domain.getToDoEntry(entry_1.pass, task); });
+                                            list = entry_1.todo.map(function (task) { return Domain.getToDoEntryOld(entry_1.pass, task); });
                                             Domain.updateListProgress(entry_1.pass, list);
                                             Domain.sortList(entry_1, list);
                                             isDirty = false;
@@ -7063,7 +7088,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            item = Domain.getToDoEntry(pass, task);
+                            item = Domain.getToDoEntryOld(pass, task);
                             tag = Render.getPrimaryTag(OldStorage.Tag.getByTodo(pass, item.task));
                             ticks = OldStorage.History.get(pass, task);
                             Domain.updateProgress(pass, item);
@@ -7093,7 +7118,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             _c.sent();
                                             return [3 /*break*/, 6];
                                         case 4:
-                                            item = Domain.getToDoEntry(pass, task);
+                                            item = Domain.getToDoEntryOld(pass, task);
                                             tag = OldStorage.Tag.getByTodo(pass, item.task).filter(function (tag) { return "@overall" !== tag; }).concat("@overall")[0];
                                             ticks = OldStorage.History.get(pass, task);
                                             Domain.updateProgress(pass, item);

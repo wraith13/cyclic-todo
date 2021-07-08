@@ -733,12 +733,16 @@ export module CyclicToDo
         {
             document: ToDoDocument;
             content: ToDoContent;
-            // live: Live;
+            live: Live;
         }
         export const invokeFromOldStorage = (pass: string): Instance =>
         {
             const content = JSON.parse(OldStorage.exportJson(pass)) as ToDoContent;
-            // const live = content.todos.map(task => Domain.getToDoEntry(entry.pass, task));
+            const tasks = content.todos.map(task => Domain.getToDoEntry(task, content.histories[task]));
+            const live =
+            {
+                tasks,
+            };
             const document: ToDoDocument =
             {
                 type: "oldLocalDb",
@@ -749,38 +753,39 @@ export module CyclicToDo
             {
                 document,
                 content,
+                live,
             };
             return result;
         };
         export const load = async (document: ToDoDocument): Promise<Instance | undefined> =>
         {
-            let result : Instance | undefined;
+            let content: ToDoContent | undefined;
             switch(document.type)
             {
             case "oldLocalDb":
-                result =
-                {
-                    document,
-                    content: JSON.parse(OldStorage.exportJson(document.uri)) as ToDoContent,
-                };
+                content = JSON.parse(OldStorage.exportJson(document.uri)) as ToDoContent;
                 break;
             case "session":
-                result =
-                {
-                    document,
-                    content: SessionStorage.ToDoList.get(document.uri),
-                };
+                content = SessionStorage.ToDoList.get(document.uri);
                 break;
             case "localDb":
+                content = Storage.ToDoList.get(document.uri);
+                break;
+            }
+            let result : Instance | undefined;
+            if (content)
+            {
+                const tasks = content.todos.map(task => Domain.getToDoEntry(task, content.histories[task]));
+                const live =
+                {
+                    tasks,
+                };
                 result =
                 {
                     document,
-                    content: Storage.ToDoList.get(document.uri),
+                    content,
+                    live,
                 };
-                break;
-            }
-            if (result)
-            {
                 update(result);
             }
             return result;
@@ -1117,10 +1122,11 @@ export module CyclicToDo
         //     };
         //     return result;
         // };
-        export const getToDoEntry = (pass: string, task: string) =>
+        export const getToDoEntryOld = (pass: string, task: string) => getToDoEntry(task, OldStorage.History.get(pass, task));
+        export const getToDoEntry = (task: string, full: number[]) =>
         {
             // const history: { recentries: number[], previous: null | number, count: number, } = getRecentlyHistory(pass, task);
-            const full = OldStorage.History.get(pass, task);
+            // const full = OldStorage.History.get(pass, task);
             const longRecentries = Calculate.intervals(full.filter((_, index) => index < 126));
             const longRecentlyAverage = longRecentries.length <= 1 ? null: Calculate.average(longRecentries);
             const longRecentlyStandardDeviation = longRecentries.length <= 5 ?
@@ -2288,7 +2294,7 @@ export module CyclicToDo
             let isFirst = true;
             const onUpdate = async () =>
             {
-                Object.assign(item, Domain.getToDoEntry(entry.pass, item.task));
+                Object.assign(item, Domain.getToDoEntryOld(entry.pass, item.task));
                 updateWindow("operate");
             };
             const onDone = async () =>
@@ -3259,7 +3265,7 @@ export module CyclicToDo
         export const showListScreen = async (pass: string, tag: string, urlParams: PageParams) =>
         {
             let entry = { tag, pass, todo: OldStorage.TagMember.get(pass, tag) };
-            let list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task));
+            let list = entry.todo.map(task => Domain.getToDoEntryOld(entry.pass, task));
             Domain.updateListProgress(entry.pass, list);
             Domain.sortList(entry, list);
             let isDirty = false;
@@ -3329,7 +3335,7 @@ export module CyclicToDo
                         if (0 <= OldStorage.Pass.get().indexOf(entry.pass))
                         {
                             let entry = { tag, pass, todo: OldStorage.TagMember.get(pass, tag) };
-                            list = entry.todo.map(task => Domain.getToDoEntry(entry.pass, task));
+                            list = entry.todo.map(task => Domain.getToDoEntryOld(entry.pass, task));
                             Domain.updateListProgress(entry.pass, list);
                             Domain.sortList(entry, list);
                             isDirty = false;
@@ -3719,7 +3725,7 @@ export module CyclicToDo
         )[0];
         export const showTodoScreen = async (pass: string, task: string) =>
         {
-            let item = Domain.getToDoEntry(pass, task);
+            let item = Domain.getToDoEntryOld(pass, task);
             let tag: string = getPrimaryTag(OldStorage.Tag.getByTodo(pass, item.task));
             let ticks = OldStorage.History.get(pass, task);
             Domain.updateProgress(pass, item);
@@ -3740,7 +3746,7 @@ export module CyclicToDo
                         await reload();
                         break;
                     case "operate":
-                        item = Domain.getToDoEntry(pass, task);
+                        item = Domain.getToDoEntryOld(pass, task);
                         tag = OldStorage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0];
                         ticks = OldStorage.History.get(pass, task);
                         Domain.updateProgress(pass, item);
