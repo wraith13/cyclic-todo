@@ -81,7 +81,7 @@ export module CyclicToDo
     {
         locale?: locale.LocaleType;
     }
-    export interface ToDoTagEntry
+    export interface ToDoTagEntryOld
     {
         pass: string;
         tag: string;
@@ -729,6 +729,18 @@ export module CyclicToDo
         {
             tasks: ToDoEntry[];
         }
+        export class Tag
+        {
+            public constructor(private document: Document, private name: string)
+            {
+            }
+            getName = () => this.name;
+            isSystemTag = () => this.name.startsWith("@") && ! this.name.startsWith("@=") && ! this.isSublist();
+            isSublist = () => this.name.endsWith("@:");
+            getSettings = () => this.document.tagSettings.get(this);
+            setSettings = (settings: CyclicToDo.TagSettings) => this.document.tagSettings.set(this, settings);
+            resetSettings = () => this.document.tagSettings.reset(this);
+        }
         export class Document
         {
             private live: Live;
@@ -787,13 +799,74 @@ export module CyclicToDo
                     await this.save();
                 },
             };
+            tag =
+            {
+                getList: () => Object.keys(this.content.tags).map(i => new Tag(this, i)),
+            };
+            tagSettings =
+            {
+                get: (tag: Tag) => this.content.tagSettings[tag.getName()] ?? { },
+                set: async (tag: Tag, settings: CyclicToDo.TagSettings) =>
+                {
+                    this.content.tagSettings[tag.getName()] = settings;
+                    return await this.save();
+                },
+                reset: async (tag: Tag) =>
+                {
+                    delete this.content.tagSettings[tag.getName()];
+                    return await this.save();
+                },
+            };
             getDoneTicks = () =>
                 Math.max.apply(null, this.live.tasks.map(i => i.previous).filter(i => i).concat[Domain.getTicks() -1]) +1
             done = async (task: string, tick: number = this.getDoneTicks()) =>
             {
                 this.content.histories[task] = (this.content.histories[task] ?? []).concat(tick);
-                await this.save();
-                return tick;
+                return await this.save();
+            }
+            tagComparer = () => minamo.core.comparer.make<string>
+            (
+                tag => -this.content.tags[tag].map(todo => this.content.histories[todo].length).reduce((a, b) => a +b, 0)
+            )
+            todoComparer = (entry: ToDoTagEntryOld, sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag)) =>
+            {
+                switch(sort)
+                {
+                    case "smart":
+                        return minamo.core.comparer.make<ToDoEntry>
+                        ([
+                            item => (2.0 /3.0) <= (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
+                            item => (2.0 /3.0) <= (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
+                                item.smartRest:
+                                -(item.progress ?? -1),
+                            item => 1 < item.count ? -2: -item.count,
+                            item => 1 < item.count ? (item.elapsed -item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate)): -(item.elapsed ?? 0),
+                            item => entry.todo.indexOf(item.task),
+                            item => item.task,
+                        ]);
+                    case "simple":
+                        return minamo.core.comparer.make<ToDoEntry>
+                        ([
+                            item => item.previous ?? 0,
+                            item => item.count,
+                            item => entry.todo.indexOf(item.task),
+                            item => item.task,
+                        ]);
+                    // case "limit":
+                    //     return minamo.core.comparer.make<ToDoEntry>
+                    //     ([
+                    //         item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
+                    //         item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
+                    //             item.rest:
+                    //             -(item.progress ?? -1),
+                    //         item => 1 < item.count ? -2: -item.count,
+                    //         item => 1 < item.count ? (item.elapsed -item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate)): -(item.elapsed ?? 0),
+                    //         item => entry.todo.indexOf(item.task),
+                    //         item => item.task,
+                    //     ]);
+                    default:
+                        return this.todoComparer(entry, "smart");
+                }
             }
         }
         export const invokeFromOldStorage = (pass: string): Document =>
@@ -1025,11 +1098,11 @@ export module CyclicToDo
             OldStorage.History.add(pass, task, tick);
             return tick;
         };
-        export const tagComparer = (pass: string) => minamo.core.comparer.make<string>
+        export const tagComparerOld = (pass: string) => minamo.core.comparer.make<string>
         (
             tag => -OldStorage.TagMember.get(pass, tag).map(todo => OldStorage.History.get(pass, todo).length).reduce((a, b) => a +b, 0)
         );
-        export const todoComparer = (entry: ToDoTagEntry, sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag)) =>
+        export const todoComparerOld = (entry: ToDoTagEntryOld, sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag)) =>
         {
             switch(sort)
             {
@@ -1066,7 +1139,7 @@ export module CyclicToDo
                 //         item => item.task,
                 //     ]);
                 default:
-                    return todoComparer(entry, "smart");
+                    return todoComparerOld(entry, "smart");
             }
         };
         export const getTermCategoryByAverage = (item: ToDoEntry) =>
@@ -1256,10 +1329,10 @@ export module CyclicToDo
         };
         export const updateListProgress = (pass: string, list: ToDoEntry[], now: number = Domain.getTicks()) =>
             list.forEach(item => updateProgress(pass, item, now));
-        export const sortList = (entry: ToDoTagEntry, list: ToDoEntry[]) =>
+        export const sortList = (entry: ToDoTagEntryOld, list: ToDoEntry[]) =>
         {
             const tasks = JSON.stringify(list.map(i => i.task));
-            list.sort(Domain.todoComparer(entry));
+            list.sort(Domain.todoComparerOld(entry));
             return tasks === JSON.stringify(list.map(i => i.task));
         };
     }
@@ -1616,7 +1689,7 @@ export module CyclicToDo
                         [
                             await Promise.all
                             (
-                                ["@pickup"].concat(OldStorage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat("@unoverall").map
+                                ["@pickup"].concat(OldStorage.Tag.get(pass).sort(Domain.tagComparerOld(pass))).concat("@unoverall").map
                                 (
                                     async tag =>
                                     {
@@ -1716,7 +1789,7 @@ export module CyclicToDo
                         [
                             await Promise.all
                             (
-                                ["@root"].concat(OldStorage.Tag.get(pass).filter(tag => Model.isSublist(tag)).sort(Domain.tagComparer(pass))).map
+                                ["@root"].concat(OldStorage.Tag.get(pass).filter(tag => Model.isSublist(tag)).sort(Domain.tagComparerOld(pass))).map
                                 (
                                     async sublist =>
                                     ({
@@ -2289,7 +2362,7 @@ export module CyclicToDo
             }
             return "task-icon";
         };
-        export const todoItem = async (entry: ToDoTagEntry, item: ToDoEntry) =>
+        export const todoItem = async (entry: ToDoTagEntryOld, item: ToDoEntry) =>
         {
             let isFirst = true;
             const onUpdate = async () =>
@@ -2388,7 +2461,7 @@ export module CyclicToDo
             );
             return itemDom;
         };
-        export const historyItem = async (entry: ToDoTagEntry, item: { task: string, tick: number }) => $div("history-item flex-item ")
+        export const historyItem = async (entry: ToDoTagEntryOld, item: { task: string, tick: number }) => $div("history-item flex-item ")
         ([
             $div("item-information")
             ([
@@ -2535,7 +2608,7 @@ export module CyclicToDo
             ]);
             return result;
         };
-        export const historyBar = async (entry: ToDoTagEntry, list: ToDoEntry[]) => $div("horizontal-list history-bar")
+        export const historyBar = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) => $div("horizontal-list history-bar")
         ([
             internalLink
             ({
@@ -2756,7 +2829,7 @@ export module CyclicToDo
                     (
                         await Promise.all
                         (
-                            ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"].concat(OldStorage.Tag.get(pass).sort(Domain.tagComparer(pass))).concat(["@unoverall", "@untagged"])
+                            ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"].concat(OldStorage.Tag.get(pass).sort(Domain.tagComparerOld(pass))).concat(["@unoverall", "@untagged"])
                             .map
                             (
                                 async tag => menuLinkItem
@@ -2897,7 +2970,7 @@ export module CyclicToDo
                 }
             }
         );
-        export const listScreenMenu = async (entry: ToDoTagEntry) =>
+        export const listScreenMenu = async (entry: ToDoTagEntryOld) =>
         [
             internalLink
             ({
@@ -3198,10 +3271,10 @@ export module CyclicToDo
             }
             history.pushState(null, document.title, makeUrl(urlParams));
         };
-        export const isMatchToDoEntry = (filter: string, entry: ToDoTagEntry, item: ToDoEntry) =>
+        export const isMatchToDoEntry = (filter: string, entry: ToDoTagEntryOld, item: ToDoEntry) =>
             isMatchTest(filter, regulateFilterText(item.task)) ||
             OldStorage.Tag.getByTodo(entry.pass, item.task).some(tag => entry.tag !== tag && isMatchTest(filter, regulateFilterText(tag)));
-        export const listScreenHeader = async (entry: ToDoTagEntry, _list: ToDoEntry[]): Promise<HeaderSource> =>
+        export const listScreenHeader = async (entry: ToDoTagEntryOld, _list: ToDoEntry[]): Promise<HeaderSource> =>
         ({
             items:
             [
@@ -3221,7 +3294,7 @@ export module CyclicToDo
             ),
             parent: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall", }
         });
-        export const listScreenBody = async (entry: ToDoTagEntry, list: ToDoEntry[]) =>
+        export const listScreenBody = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) =>
         ([
             await historyBar(entry, list),
             $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item)))),
@@ -3256,7 +3329,7 @@ export module CyclicToDo
                 }),
             ])
         ]);
-        export const listScreen = async (entry: ToDoTagEntry, list: ToDoEntry[], filter: string) =>
+        export const listScreen = async (entry: ToDoTagEntryOld, list: ToDoEntry[], filter: string) =>
         ({
             className: "list-screen",
             header: await listScreenHeader(entry, list),
@@ -3364,7 +3437,7 @@ export module CyclicToDo
                 }
             );
         };
-        export const historyScreenMenu = async (entry: ToDoTagEntry) =>
+        export const historyScreenMenu = async (entry: ToDoTagEntryOld) =>
         [
             menuItem
             (
@@ -3436,10 +3509,10 @@ export module CyclicToDo
             //     ):
             //     [],
         ];
-        export const isMatchHistoryItem = (filter: string, _entry: ToDoTagEntry, item: { task: string, tick: number | null }) =>
+        export const isMatchHistoryItem = (filter: string, _entry: ToDoTagEntryOld, item: { task: string, tick: number | null }) =>
             isMatchTest(filter, regulateFilterText(item.task)) ||
             isMatchTest(filter, regulateFilterText(Domain.dateStringFromTick(item.tick)));
-        export const historyScreenHeader = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[]): Promise<HeaderSource> =>
+        export const historyScreenHeader = async (entry: ToDoTagEntryOld, list: { task: string, tick: number | null }[]): Promise<HeaderSource> =>
         ({
             items:
             [
@@ -3462,7 +3535,7 @@ export module CyclicToDo
             ),
             parent: { pass: entry.pass, tag: entry.tag, },
         });
-        export const historyScreenBody = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[]) =>
+        export const historyScreenBody = async (entry: ToDoTagEntryOld, list: { task: string, tick: number | null }[]) =>
         ([
             $div("column-flex-list history-list")(await Promise.all(list.map(item => historyItem(entry, item)))),
             $div("button-list")
@@ -3474,13 +3547,13 @@ export module CyclicToDo
                 })
             ),
         ]);
-        export const historyScreen = async (entry: ToDoTagEntry, list: { task: string, tick: number | null }[], filter: string): Promise<ScreenSource> =>
+        export const historyScreen = async (entry: ToDoTagEntryOld, list: { task: string, tick: number | null }[], filter: string): Promise<ScreenSource> =>
         ({
             className: "history-screen",
             header: await historyScreenHeader(entry, list),
             body: await historyScreenBody(entry, list.filter(item => isMatchHistoryItem(filter, entry, item)))
         });
-        export const showHistoryScreen = async (urlParams: PageParams, entry: ToDoTagEntry) =>
+        export const showHistoryScreen = async (urlParams: PageParams, entry: ToDoTagEntryOld) =>
         {
             const histories: { [task:string]:number[] } = { };
             let list = entry.todo.map(task => (histories[task] = OldStorage.History.get(entry.pass, task)).map(tick => ({ task, tick }))).reduce((a, b) => a.concat(b), []);
