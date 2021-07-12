@@ -751,6 +751,7 @@ export module CyclicToDo
                 {
                     tasks,
                 };
+                this.update();
             }
             update = () =>
             {
@@ -764,7 +765,7 @@ export module CyclicToDo
             {
                 const content = minamo.core.simpleDeepCopy(this.content);
                 updator(content);
-                let result = await Model.save(this.card, content);
+                let result = await Model.saveContent(this.card, content);
                 if (true === result)
                 {
                     this.content = content;
@@ -855,34 +856,24 @@ export module CyclicToDo
                 content
             );
         };
-        export const load = async (card: DocumentCard): Promise<Document | undefined> =>
+        export const loadContent = async (card: DocumentCard): Promise<Content | undefined> =>
         {
-            let content: Content | undefined;
+            let result: Content | undefined;
             switch(card.type)
             {
             case "oldLocalDb":
-                content = JSON.parse(OldStorage.exportJson(card.uri)) as Content;
+                result = JSON.parse(OldStorage.exportJson(card.uri)) as Content;
                 break;
             case "session":
-                content = SessionStorage.ToDoList.get(card.uri);
+                result = SessionStorage.ToDoList.get(card.uri);
                 break;
             case "localDb":
-                content = Storage.ToDoList.get(card.uri);
+                result = Storage.ToDoList.get(card.uri);
                 break;
-            }
-            let result : Document | undefined;
-            if (content)
-            {
-                result = new Document
-                (
-                    card,
-                    content
-                );
-                result.update();
             }
             return result;
         };
-        export const save = async (card: DocumentCard, content: Content): Promise<true | string> =>
+        export const saveContent = async (card: DocumentCard, content: Content): Promise<true | string> =>
         {
             let result: true | string = "";
             switch(card.type)
