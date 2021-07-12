@@ -762,27 +762,9 @@ export module CyclicToDo
             }
             save = async (updator: (content: Content) => unknown): Promise<true | string> =>
             {
-                let result : true | string = "";
                 const content = minamo.core.simpleDeepCopy(this.content);
                 updator(content);
-                switch(this.card.type)
-                {
-                case "oldLocalDb":
-                    OldStorage.importJson(JSON.stringify(content));
-                    result = true;
-                    break;
-                case "session":
-                    SessionStorage.ToDoList.set(this.card.uri, content);
-                    result = true;
-                    break;
-                case "localDb":
-                    Storage.ToDoList.set(this.card.uri, content);
-                    result = true;
-                    break;
-                default:
-                    result = "Unsupported storage type";
-                    break;
-                }
+                let result = await Model.save(this.card, content);
                 if (true === result)
                 {
                     this.content = content;
@@ -897,6 +879,29 @@ export module CyclicToDo
                     content
                 );
                 result.update();
+            }
+            return result;
+        };
+        export const save = async (card: DocumentCard, content: Content): Promise<true | string> =>
+        {
+            let result: true | string = "";
+            switch(card.type)
+            {
+            case "oldLocalDb":
+                OldStorage.importJson(JSON.stringify(content));
+                result = true;
+                break;
+            case "session":
+                SessionStorage.ToDoList.set(card.uri, content);
+                result = true;
+                break;
+            case "localDb":
+                Storage.ToDoList.set(card.uri, content);
+                result = true;
+                break;
+            default:
+                result = "Unsupported storage type";
+                break;
             }
             return result;
         };
