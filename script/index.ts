@@ -746,12 +746,39 @@ export module CyclicToDo
             private live: Live;
             public constructor(private card: DocumentCard, private content: Content)
             {
-                const tasks = content.todos.map(task => Domain.getToDoEntry(task, content.histories[task]));
+                const tasks = content.todos.map(task => Domain.getToDoEntryRaw(task, content.histories[task]));
                 this.live =
                 {
                     tasks,
                 };
                 this.update();
+            }
+            getToDoEntry = (task: string) => this.live.tasks.filter(i => task === i.task)[0];
+            updateTermCategory = (item: ToDoEntry) =>
+            {
+                // 🔥 ここでイチイチ save するのはナンセンスだけど、 save しておかないと差分チェックの邪魔になる、、、
+                // 🤔 "@short-term", "@long-term", "@irregular-term"　のタグメンバーは this.live に持たせるかねぇ、、、
+                const term = Domain.getTermCategory(item);
+                if ((this.content.tags[term] ?? []).indexOf(item.task) < 0)
+                {
+                    ["@short-term", "@long-term", "@irregular-term"].forEach
+                    (
+                        tag =>
+                        {
+                            if (tag === term)
+                            {
+                                this.content.tags[term] = (this.content.tags[term] ?? []).concat([ item.task, ]);
+                            }
+                            else
+                            {
+                                if (0 <= (this.content.tags[tag] ?? []).indexOf(item.task))
+                                {
+                                    this.content.tags[term] = (this.content.tags[term] ?? []).filter(i => i !== item.task);
+                                }
+                            }
+                        }
+                    );
+                }
             }
             update = () =>
             {
@@ -792,7 +819,7 @@ export module CyclicToDo
                 reset: async (tag: Tag) =>
                     await this.save(content => delete content.tagSettings[tag.getName()]),
             };
-            getDoneTicks = () =>
+            getDoneTicks = (): number =>
                 Math.max.apply(null, this.live.tasks.map(i => i.previous).filter(i => i).concat[Domain.getTicks() -1]) +1
             done = async (task: string, tick: number = this.getDoneTicks()) =>
                 await this.save(content => content.histories[task] = (this.content.histories[task] ?? []).concat(tick))
@@ -1078,11 +1105,18 @@ export module CyclicToDo
                     getTicks() -1
                 ) +1
             );
-        export const doneOld = async (pass: string, task: string, tick: number = getDoneTicksOld(pass)) =>
+        export const getDoneTicks = (pass: string | Model.Document) => "string" === typeof pass ?
+            getDoneTicksOld(pass):
+            pass.getDoneTicks();
+        export const doneOld = async (pass: string, task: string, tick: number = getDoneTicks(pass)) =>
         {
             OldStorage.History.add(pass, task, tick);
             return tick;
         };
+        export const done = async (pass: string | Model.Document, task: string, tick: number = getDoneTicks(pass)) =>
+            "string" === typeof pass ?
+                doneOld(pass, task, tick):
+                await pass.done(task, tick);
         export const tagComparerOld = (pass: string) => minamo.core.comparer.make<string>
         (
             tag => -OldStorage.TagMember.get(pass, tag).map(todo => OldStorage.History.get(pass, todo).length).reduce((a, b) => a +b, 0)
@@ -1144,7 +1178,7 @@ export module CyclicToDo
                 ):
                 "@irregular-term";
         export const getTermCategory = getTermCategoryByRest;
-        export const updateTermCategory = (pass: string, item: ToDoEntry) =>
+        export const updateTermCategoryOld = (pass: string, item: ToDoEntry) =>
         {
             const term = getTermCategory(item);
             if (OldStorage.TagMember.get(pass, term).indexOf(item.task) < 0)
@@ -1165,9 +1199,13 @@ export module CyclicToDo
                             }
                         }
                     }
-                );
+             );
             }
         };
+        export const updateTermCategory = (pass: string | Model.Document, item: ToDoEntry) =>
+            "string" === typeof pass ?
+                updateTermCategoryOld(pass, item):
+                pass.updateTermCategory(item);
         // export const getRecentlyHistory = (pass: string, task: string) =>
         // {
         //     const full = Storage.History.get(pass, task);
@@ -1180,8 +1218,11 @@ export module CyclicToDo
         //     };
         //     return result;
         // };
-        export const getToDoEntryOld = (pass: string, task: string) => getToDoEntry(task, OldStorage.History.get(pass, task));
-        export const getToDoEntry = (task: string, full: number[]) =>
+        export const getToDoEntryOld = (pass: string | Model.Document, task: string): ToDoEntry =>
+            "string" === typeof pass ?
+                getToDoEntryRaw(task, OldStorage.History.get(pass, task)):
+                pass.getToDoEntry(task);
+        export const getToDoEntryRaw = (task: string, full: number[]) =>
         {
             // const history: { recentries: number[], previous: null | number, count: number, } = getRecentlyHistory(pass, task);
             // const full = OldStorage.History.get(pass, task);
@@ -1270,7 +1311,7 @@ export module CyclicToDo
                 item.RecentlyStandardDeviation ?? (item.RecentlySmartAverage *0.1),
                 item.elapsed
             );
-        export const updateProgress = (pass: string, item: ToDoEntry, now: number = Domain.getTicks()) =>
+        export const updateProgress = (pass: string | Model.Document, item: ToDoEntry, now: number = Domain.getTicks()) =>
         {
             if (0 < item.count)
             {
@@ -1363,7 +1404,7 @@ export module CyclicToDo
             };
             export const done = async (pass: string, task: string, tick: number, onCanceled: () => unknown) =>
             {
-                Domain.doneOld(pass, task, tick);
+                Domain.done(pass, task, tick);
                 const isPickuped = 0 <= OldStorage.TagMember.get(pass, "@pickup").indexOf(task);
                 if (isPickuped)
                 {
@@ -2405,7 +2446,7 @@ export module CyclicToDo
                                             (
                                                 entry.pass,
                                                 item.task,
-                                                Domain.getDoneTicksOld(entry.pass),
+                                                Domain.getDoneTicks(entry.pass),
                                                 onUpdate
                                             );
                                             await onDone();
@@ -3707,7 +3748,7 @@ export module CyclicToDo
                         (
                             pass,
                             item.task,
-                            Domain.getDoneTicksOld(pass),
+                            Domain.getDoneTicks(pass),
                             () => updateWindow("operate")
                         );
                         updateWindow("operate");
