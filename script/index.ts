@@ -124,7 +124,40 @@ export module CyclicToDo
         tags: { [tag: string]: string[] };
         tagSettings: { [tag: string]: TagSettings };
         histories: { [todo: string]: number[] };
-        removed: OldStorage.Removed.Type[];
+        removed: RemovedType[];
+    }
+    export type RemovedType = RemovedTag | RemovedSublist | RemovedTask | RemovedTick;
+    export interface RemovedBase
+    {
+        type: "Tag" | "Sublist" | "Task" | "Tick";
+        deteledAt: number;
+    }
+    export interface RemovedTag extends RemovedBase
+    {
+        type: "Tag";
+        name: string;
+        tasks: string[];
+        settings: TagSettings;
+    }
+    export interface RemovedSublist extends RemovedBase
+    {
+        type: "Sublist";
+        name: string;
+        tasks: RemovedTask[];
+        settings: TagSettings;
+    }
+    export interface RemovedTask extends RemovedBase
+    {
+        type: "Task";
+        name: string;
+        tags: string[];
+        ticks: number[];
+    }
+    export interface RemovedTick extends RemovedBase
+    {
+        type: "Tick";
+        task: string;
+        tick: number;
     }
     export type HistoryEntry = number | { tick: number; memo: string; };
     export module OldStorage
@@ -317,7 +350,7 @@ export module CyclicToDo
                     }
                 }
             };
-            export const restore = (pass: string, item: Removed.Tag | Removed.Sublist) =>
+            export const restore = (pass: string, item: RemovedTag | RemovedSublist) =>
             {
                 let result = ("Tag" === item.type || "Sublist" === item.type) && ! Model.isSystemTagOld(item.name) && get(pass).indexOf(item.name) < 0;
                 if (result)
@@ -497,7 +530,7 @@ export module CyclicToDo
                 );
                 removeRaw(pass, task);
             };
-            export const restore = (pass: string, item: Removed.Task) =>
+            export const restore = (pass: string, item: RemovedTask) =>
             {
                 const sublist = Task.getSublist(item.name);
                 let result = TagMember.getRaw(pass, "@overall").indexOf(item.name) < 0 && (null === sublist || 0 <= Tag.get(pass).indexOf(sublist));
@@ -512,7 +545,7 @@ export module CyclicToDo
             {
                 const tags = Tag.getByTodoRaw(pass, task);
                 const ticks = History.get(pass, task);
-                const result: Removed.Task =
+                const result: RemovedTask =
                 {
                     type: "Task",
                     deteledAt: Domain.getTicks(),
@@ -550,7 +583,7 @@ export module CyclicToDo
                 );
                 removeRaw(pass, task, tick);
             };
-            export const restore = (pass: string, item: Removed.Tick) =>
+            export const restore = (pass: string, item: RemovedTick) =>
             {
                 let result = get(pass, item.task).indexOf(item.tick) < 0;
                 if (result)
@@ -562,48 +595,15 @@ export module CyclicToDo
         }
         export module Removed
         {
-            export interface Base
-            {
-                type: "Tag" | "Sublist" | "Task" | "Tick";
-                deteledAt: number;
-            }
-            export interface Tag extends Base
-            {
-                type: "Tag";
-                name: string;
-                tasks: string[];
-                settings: TagSettings;
-            }
-            export interface Sublist extends Base
-            {
-                type: "Sublist";
-                name: string;
-                tasks: Task[];
-                settings: TagSettings;
-            }
-            export interface Task extends Base
-            {
-                type: "Task";
-                name: string;
-                tags: string[];
-                ticks: number[];
-            }
-            export interface Tick extends Base
-            {
-                type: "Tick";
-                task: string;
-                tick: number;
-            }
-            export type Type = Tag | Sublist | Task | Tick;
             export const makeKey = (pass: string) => `pass:(${pass}).removed`;
             export const getRaw = (pass: string) => minamo.localStorage.getOrNull<string[]>(makeKey(pass)) ?? [];
-            export const get = (pass: string) => getRaw(pass).map(i => JSON.parse(i) as Type);
+            export const get = (pass: string) => getRaw(pass).map(i => JSON.parse(i) as RemovedType);
             export const set = (pass: string, list: string[]) => minamo.localStorage.set(makeKey(pass), list);
-            export const add = (pass: string, target: Type) => set(pass, getRaw(pass).concat([ JSON.stringify(target) ]));
+            export const add = (pass: string, target: RemovedType) => set(pass, getRaw(pass).concat([ JSON.stringify(target) ]));
             const remove = (pass: string, target: string) => set(pass, getRaw(pass).filter(i => target !== i));
             export const clear = (pass: string) => set(pass, []);
-            export const getTypeName = (item: Type) => locale.map(item.type);
-            export const getIcon = (item: Type): keyof typeof resource =>
+            export const getTypeName = (item: RemovedType) => locale.map(item.type);
+            export const getIcon = (item: RemovedType): keyof typeof resource =>
             {
                 switch(item.type)
                 {
@@ -617,7 +617,7 @@ export module CyclicToDo
                     return "tick-icon";
                 }
             };
-            export const getName = (item: Type) =>
+            export const getName = (item: RemovedType) =>
             {
                 if ("Tick" === item.type)
                 {
@@ -628,7 +628,7 @@ export module CyclicToDo
                     return item.name;
                 }
             };
-            export const restore = (pass: string, item: Type) =>
+            export const restore = (pass: string, item: RemovedType) =>
             {
                 let result = false;
                 switch(item.type)
@@ -3547,7 +3547,7 @@ export module CyclicToDo
             const filter = regulateFilterText(urlParams.filter ?? "");
             await showWindow(await historyScreen(entry, list, filter));
         };
-        export const removedItem = async (pass: string, item: OldStorage.Removed.Type) => $div("removed-item flex-item")
+        export const removedItem = async (pass: string, item: RemovedType) => $div("removed-item flex-item")
         ([
             $div("item-header")
             ([
@@ -3601,7 +3601,7 @@ export module CyclicToDo
                 "delete-button"
             ),
         ];
-        export const removedScreen = async (pass: string, list: OldStorage.Removed.Type[]) =>
+        export const removedScreen = async (pass: string, list: RemovedType[]) =>
         ({
             className: "removed-screen",
             header:
