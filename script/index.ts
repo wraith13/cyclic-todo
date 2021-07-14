@@ -924,7 +924,21 @@ export module CyclicToDo
             return result;
         };
     }
-    export module Domain
+    export module MigrateBridge
+    {
+        export module Title
+        {
+            export const get = (pass: string | Model.Document) =>
+                "string" === typeof pass ?
+                    OldStorage.Title.get(pass):
+                    pass.title.get();
+            export const set = async (pass: string | Model.Document, title: string) =>
+                "string" === typeof pass ?
+                    (OldStorage.Title.set(pass, title), true):
+                    await pass.title.set(title);
+        }
+    }
+export module Domain
     {
         // export const merge = (pass: string, tag: string, todo: string[], _ticks: (number | null)[]) =>
         // {
@@ -1366,10 +1380,10 @@ export module CyclicToDo
     {
         export module Operate
         {
-            export const renameList = async (pass: string, newName, onCanceled: () => unknown = () => updateWindow("operate")) =>
+            export const renameList = async (pass: string | Model.Document, newName, onCanceled: () => unknown = () => updateWindow("operate")) =>
             {
-                const backup = OldStorage.Title.get(pass);
-                OldStorage.Title.set(pass, newName);
+                const backup = MigrateBridge.Title.get(pass);
+                await MigrateBridge.Title.set(pass, newName);
                 const toast = makePrimaryToast
                 ({
                     content: $span("")(`ToDo リストの名前を変更しました！： ${backup} → ${newName}`),
@@ -1377,7 +1391,7 @@ export module CyclicToDo
                     (
                         async () =>
                         {
-                            OldStorage.Title.set(pass, backup);
+                            await MigrateBridge.Title.set(pass, backup);
                             await toast.hide();
                             onCanceled();
                         }
