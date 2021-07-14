@@ -1353,7 +1353,7 @@ export module CyclicToDo
             }
             updateTermCategory(pass, item);
         };
-        export const updateListProgress = (pass: string, list: ToDoEntry[], now: number = Domain.getTicks()) =>
+        export const updateListProgress = (pass: string | Model.Document, list: ToDoEntry[], now: number = Domain.getTicks()) =>
             list.forEach(item => updateProgress(pass, item, now));
         export const sortList = (entry: ToDoTagEntryOld, list: ToDoEntry[]) =>
         {
