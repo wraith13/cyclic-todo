@@ -937,6 +937,21 @@ export module CyclicToDo
                     (OldStorage.Title.set(pass, title), true):
                     await pass.title.set(title);
         }
+        export const getDoneTicks = (pass: string | Model.Document) => "string" === typeof pass ?
+            Domain.getDoneTicksOld(pass):
+            pass.getDoneTicks();
+        export const done = async (pass: string | Model.Document, task: string, tick: number = getDoneTicks(pass)) =>
+            "string" === typeof pass ?
+            Domain.doneOld(pass, task, tick):
+                await pass.done(task, tick);
+        export const updateTermCategory = (pass: string | Model.Document, item: ToDoEntry) =>
+            "string" === typeof pass ?
+                Domain.updateTermCategoryOld(pass, item):
+                pass.updateTermCategory(item);
+        export const getToDoEntry = (pass: string | Model.Document, task: string): ToDoEntry =>
+            "string" === typeof pass ?
+                Domain.getToDoEntryRaw(task, OldStorage.History.get(pass, task)):
+                pass.getToDoEntry(task);
     }
 export module Domain
     {
@@ -1119,18 +1134,11 @@ export module Domain
                     getTicks() -1
                 ) +1
             );
-        export const getDoneTicks = (pass: string | Model.Document) => "string" === typeof pass ?
-            getDoneTicksOld(pass):
-            pass.getDoneTicks();
-        export const doneOld = async (pass: string, task: string, tick: number = getDoneTicks(pass)) =>
+        export const doneOld = async (pass: string, task: string, tick: number = getDoneTicksOld(pass)) =>
         {
             OldStorage.History.add(pass, task, tick);
             return tick;
         };
-        export const done = async (pass: string | Model.Document, task: string, tick: number = getDoneTicks(pass)) =>
-            "string" === typeof pass ?
-                doneOld(pass, task, tick):
-                await pass.done(task, tick);
         export const tagComparerOld = (pass: string) => minamo.core.comparer.make<string>
         (
             tag => -OldStorage.TagMember.get(pass, tag).map(todo => OldStorage.History.get(pass, todo).length).reduce((a, b) => a +b, 0)
@@ -1216,10 +1224,6 @@ export module Domain
              );
             }
         };
-        export const updateTermCategory = (pass: string | Model.Document, item: ToDoEntry) =>
-            "string" === typeof pass ?
-                updateTermCategoryOld(pass, item):
-                pass.updateTermCategory(item);
         // export const getRecentlyHistory = (pass: string, task: string) =>
         // {
         //     const full = Storage.History.get(pass, task);
@@ -1232,10 +1236,8 @@ export module Domain
         //     };
         //     return result;
         // };
-        export const getToDoEntryOld = (pass: string | Model.Document, task: string): ToDoEntry =>
-            "string" === typeof pass ?
-                getToDoEntryRaw(task, OldStorage.History.get(pass, task)):
-                pass.getToDoEntry(task);
+        export const getToDoEntryOld = (pass: string, task: string): ToDoEntry =>
+                getToDoEntryRaw(task, OldStorage.History.get(pass, task));
         export const getToDoEntryRaw = (task: string, full: number[]) =>
         {
             // const history: { recentries: number[], previous: null | number, count: number, } = getRecentlyHistory(pass, task);
@@ -1365,7 +1367,7 @@ export module Domain
                     }
                 }
             }
-            updateTermCategory(pass, item);
+            MigrateBridge.updateTermCategory(pass, item);
         };
         export const updateListProgress = (pass: string | Model.Document, list: ToDoEntry[], now: number = Domain.getTicks()) =>
             list.forEach(item => updateProgress(pass, item, now));
@@ -1418,7 +1420,7 @@ export module Domain
             };
             export const done = async (pass: string, task: string, tick: number, onCanceled: () => unknown) =>
             {
-                Domain.done(pass, task, tick);
+                MigrateBridge.done(pass, task, tick);
                 const isPickuped = 0 <= OldStorage.TagMember.get(pass, "@pickup").indexOf(task);
                 if (isPickuped)
                 {
@@ -2460,7 +2462,7 @@ export module Domain
                                             (
                                                 entry.pass,
                                                 item.task,
-                                                Domain.getDoneTicks(entry.pass),
+                                                MigrateBridge.getDoneTicks(entry.pass),
                                                 onUpdate
                                             );
                                             await onDone();
@@ -3762,7 +3764,7 @@ export module Domain
                         (
                             pass,
                             item.task,
-                            Domain.getDoneTicks(pass),
+                            MigrateBridge.getDoneTicks(pass),
                             () => updateWindow("operate")
                         );
                         updateWindow("operate");
