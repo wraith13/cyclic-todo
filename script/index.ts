@@ -740,6 +740,7 @@ export module CyclicToDo
             getSettings = () => this.document.tagSettings.get(this);
             setSettings = (settings: CyclicToDo.TagSettings) => this.document.tagSettings.set(this, settings);
             resetSettings = () => this.document.tagSettings.reset(this);
+            getMember = () => this.document.tagMember.get(this);
         }
         export class Document
         {
@@ -810,6 +811,7 @@ export module CyclicToDo
             tag =
             {
                 getList: () => Object.keys(this.content.tags).map(i => new Tag(this, i)),
+                get: (tag: string) => new Tag(this, tag),
             };
             tagSettings =
             {
@@ -818,6 +820,10 @@ export module CyclicToDo
                     await this.save(content => content.tagSettings[tag.getName()] = settings),
                 reset: async (tag: Tag) =>
                     await this.save(content => delete content.tagSettings[tag.getName()]),
+            };
+            tagMember =
+            {
+                get: (tag: Tag) => this.content.tags[tag.getName()] ?? [ ],
             };
             getDoneTicks = (): number =>
                 Math.max.apply(null, this.live.tasks.map(i => i.previous).filter(i => i).concat[Domain.getTicks() -1]) +1
@@ -952,6 +958,10 @@ export module CyclicToDo
             "string" === typeof pass ?
                 Domain.getToDoEntryRaw(task, OldStorage.History.get(pass, task)):
                 pass.getToDoEntry(task);
+        export const getTagMember = (pass: string | Model.Document, tag: string) =>
+            "string" === typeof pass ?
+                OldStorage.TagMember.get(pass, tag):
+                pass.tag.get(tag).getMember();
     }
 export module Domain
     {
@@ -1421,7 +1431,7 @@ export module Domain
             export const done = async (pass: string, task: string, tick: number, onCanceled: () => unknown) =>
             {
                 MigrateBridge.done(pass, task, tick);
-                const isPickuped = 0 <= OldStorage.TagMember.get(pass, "@pickup").indexOf(task);
+                const isPickuped = 0 <= MigrateBridge.getTagMember(pass, "@pickup").indexOf(task);
                 if (isPickuped)
                 {
                     OldStorage.TagMember.remove(pass, "@pickup", task);
