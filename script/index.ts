@@ -740,7 +740,25 @@ export module CyclicToDo
             getSettings = () => this.document.tagSettings.get(this);
             setSettings = (settings: CyclicToDo.TagSettings) => this.document.tagSettings.set(this, settings);
             resetSettings = () => this.document.tagSettings.reset(this);
+            getRawMember = () => this.document.tagMember.getRaw(this);
             getMember = () => this.document.tagMember.get(this);
+        }
+        export class Task
+        {
+            public constructor(private document: Document, private name: string)
+            {
+            }
+            getName = () => this.name;
+            getSublist = () =>
+            {
+                const split = this.name.split("@:");
+                return 2 <= split.length ? new Tag(this.document, `${split[0]}@:`): null;
+            }
+            getBody = () =>
+            {
+                const split = this.name.split("@:");
+                return 2 <= split.length ? split[split.length -1]: this.name;
+            }
         }
         export class Document
         {
@@ -823,7 +841,29 @@ export module CyclicToDo
             };
             tagMember =
             {
-                get: (tag: Tag) => this.content.tags[tag.getName()] ?? [ ],
+                getRaw: (tag: Tag) => (this.content.tags[tag.getName()] ?? [ ]).map(i => new Task(this, i)),
+                get: (tag: Tag) =>
+                {
+                    switch(tag.getName())
+                    {
+                    case "@overall":
+                        {
+                            const unoverall = new Tag(this, "@unoverall").getRawMember().map(i => i.getName());
+                            return tag.getRawMember().filter(i => unoverall.indexOf(i.getName()) < 0);
+                        }
+                    case "@untagged":
+                        {
+                            const tagged = Object.keys(this.content.tags).map(tag => this.content.tags[tag]).reduce((a, b) => a.concat(b), []);
+                            return new Tag(this, "@overall").getRawMember().filter(i => tagged.indexOf(i.getName()) < 0);
+                        }
+                    case "@unoverall":
+                    default:
+                        return tag.isSublist() ?
+                            new Tag(this, "@overall").getRawMember().filter(i => tag.getName() === i.getSublist().getName()):
+                            tag.getRawMember();
+                    }
+                },
+                set: (tag: Tag, list: Task[]) => this.save(content => content.tags[tag.getName()] = list.map(i => i.getName())),
             };
             getDoneTicks = (): number =>
                 Math.max.apply(null, this.live.tasks.map(i => i.previous).filter(i => i).concat[Domain.getTicks() -1]) +1
@@ -961,7 +1001,7 @@ export module CyclicToDo
         export const getTagMember = (pass: string | Model.Document, tag: string) =>
             "string" === typeof pass ?
                 OldStorage.TagMember.get(pass, tag):
-                pass.tag.get(tag).getMember();
+                pass.tag.get(tag).getMember().map(i => i.getName());
     }
 export module Domain
     {
