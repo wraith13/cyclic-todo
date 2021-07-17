@@ -729,6 +729,16 @@ export module CyclicToDo
         {
             tasks: ToDoEntry[];
         }
+        type updator_type = (content: Content) => unknown;
+        export class Transaction
+        {
+            updators: updator_type[] = [];
+            public constructor(private document: Document)
+            {
+            }
+            add = (updator: updator_type) => this.updators.push(updator);
+            commit = () => this.document.save(async content => await Promise.all(this.updators.map(async i => await i(content))));
+        }
         export class Tag
         {
             public constructor(private document: Document, private name: string)
@@ -807,10 +817,10 @@ export module CyclicToDo
                     Storage.ToDoDocumentList.update(this.card);
                 }
             }
-            save = async (updator: (content: Content) => unknown): Promise<true | string> =>
+            save = async (updator: updator_type): Promise<true | string> =>
             {
                 const content = minamo.core.simpleDeepCopy(this.content);
-                updator(content);
+                await updator(content);
                 let result = await Model.saveContent(this.card, content);
                 if (true === result)
                 {
@@ -819,6 +829,10 @@ export module CyclicToDo
                 }
                 return result;
             }
+            transaction =
+            {
+                make: () => new Transaction(this),
+            };
             title =
             {
                 get: () =>
@@ -828,8 +842,19 @@ export module CyclicToDo
             };
             tag =
             {
-                getList: () => Object.keys(this.content.tags).map(i => new Tag(this, i)),
                 get: (tag: string) => new Tag(this, tag),
+                getList: () => Object.keys(this.content.tags).map(i => new Tag(this, i)),
+                getByTask: (task: Task) =>
+                    ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"].map(i => this.tag.get(i))
+                    .concat(this.tag.getList())
+                    .concat(["@unoverall", "@untagged"].map(i => this.tag.get(i)))
+                    .filter(tag => 0 < tag.getMember().filter(i => task.getName() === i.getName()).length)
+                    .sort(minamo.core.comparer.make(tag => tag.isSublist() ? 0: 1)),
+                getByTaskRaw: (task: Task) =>
+                    ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"].map(i => this.tag.get(i))
+                    .concat(this.tag.getList())
+                    .concat(["@unoverall", "@untagged"].map(i => this.tag.get(i)))
+                    .filter(tag => 0 < tag.getRawMember().filter(i => task.getName() === i.getName()).length),
             };
             tagSettings =
             {
@@ -841,7 +866,7 @@ export module CyclicToDo
             };
             tagMember =
             {
-                getRaw: (tag: Tag) => (this.content.tags[tag.getName()] ?? [ ]).map(i => new Task(this, i)),
+                getRaw: (tag: Tag) => (this.content.tags[tag.getName()] ?? [ ]).map(i => this.task.get(i)),
                 get: (tag: Tag) =>
                 {
                     switch(tag.getName())
@@ -864,6 +889,10 @@ export module CyclicToDo
                     }
                 },
                 set: (tag: Tag, list: Task[]) => this.save(content => content.tags[tag.getName()] = list.map(i => i.getName())),
+            };
+            task =
+            {
+                get: (task: string) => new Task(this, task),
             };
             getDoneTicks = (): number =>
                 Math.max.apply(null, this.live.tasks.map(i => i.previous).filter(i => i).concat[Domain.getTicks() -1]) +1
