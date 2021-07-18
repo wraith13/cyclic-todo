@@ -730,14 +730,25 @@ export module CyclicToDo
             tasks: ToDoEntry[];
         }
         type updator_type = (content: Content) => unknown;
+        export type updator_type = (content: Content) => unknown;
         export class Transaction
         {
             updators: updator_type[] = [];
             public constructor(private document: Document)
             {
             }
-            add = (updator: updator_type) => this.updators.push(updator);
-            commit = () => this.document.save(async content => await Promise.all(this.updators.map(async i => await i(content))));
+            add = (updator: updator_type) => (this.updators.push(updator), this);
+            commit = async () =>
+            {
+                if (0 < this.updators.length)
+                {
+                    const updators = this.updators;
+                    this.updators = [];
+                    const result = await this.document.save(async content => await Promise.all(updators.map(async i => await i(content))));
+                    return result;
+                }
+                return null;
+            }
         }
         export class Tag
         {
