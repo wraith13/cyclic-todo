@@ -1012,6 +1012,19 @@ export module CyclicToDo
     }
     export module MigrateBridge
     {
+        export class Transaction
+        {
+            body: Model.Transaction;
+            constructor(pass: string | Model.Document)
+            {
+                if ("string" !== typeof pass)
+                {
+                    this.body = pass.transaction.make();
+                }
+            }
+            add = (updator: Model.updator_type) => (this.body.add(updator), this);
+            commit = async () => await this.body.commit();
+        }
         export module Title
         {
             export const get = (pass: string | Model.Document) =>
