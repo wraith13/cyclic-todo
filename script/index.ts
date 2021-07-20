@@ -1033,6 +1033,7 @@ export module CyclicToDo
         }
         export class Transaction
         {
+            oldBody: OldTransaction;
             body: Model.Transaction;
             constructor(pass: string | Model.Document)
             {
@@ -1040,9 +1041,21 @@ export module CyclicToDo
                 {
                     this.body = pass.transaction.make();
                 }
+                else
+                {
+                    this.oldBody = new OldTransaction();
+                }
             }
-            add = (updator: Model.updator_type) => (this.body.add(updator), this);
-            commit = async () => await this.body.commit();
+            add = (updator: Model.updator_type | old_updator_type) =>
+            (
+                this.body ?
+                    this.body.add(updator):
+                    this.oldBody.add(updator as old_updator_type),
+                this
+            )
+            commit = async () => this.body ?
+                await this.body.commit():
+                await this.oldBody.commit()
         }
         export module Title
         {
