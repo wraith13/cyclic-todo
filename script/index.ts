@@ -729,7 +729,6 @@ export module CyclicToDo
         {
             tasks: ToDoEntry[];
         }
-        type updator_type = (content: Content) => unknown;
         export type updator_type = (content: Content) => unknown;
         export class Transaction
         {
@@ -848,8 +847,8 @@ export module CyclicToDo
             {
                 get: () =>
                     this.content.title ?? "ToDo リスト",
-                set: async (title: string) =>
-                    await this.save(content => content.title = title),
+                updator: (title: string) =>
+                    (content: Content) => content.title = title,
             };
             tag =
             {
@@ -1012,6 +1011,26 @@ export module CyclicToDo
     }
     export module MigrateBridge
     {
+        export type old_updator_type = () => unknown;
+        export class OldTransaction
+        {
+            updators: old_updator_type[] = [];
+            public constructor()
+            {
+            }
+            add = (updator: old_updator_type) => (this.updators.push(updator), this);
+            commit = async () =>
+            {
+                if (0 < this.updators.length)
+                {
+                    const updators = this.updators;
+                    this.updators = [];
+                    await Promise.all(updators.map(async i => await i()));
+                    return true;
+                }
+                return null;
+            }
+        }
         export class Transaction
         {
             body: Model.Transaction;
