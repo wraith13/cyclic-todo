@@ -4537,22 +4537,22 @@ export module Domain
             }
             return latestPrimaryToast = makeToast(data);
         };
-        export const setProgressStyoleRaw = (className: string) => document.getElementById("screen-header").className = `segmented ${className}`;
+        export const setProgressStyleRaw = (className: string) => document.getElementById("screen-header").className = `segmented ${className}`;
         let lastSetProgressAt = 0;
-        export const setProgressStyole = async (className: string, timeout: number) =>
+        export const setProgressStyle = async (className: string, timeout: number) =>
         {
             const timestamp = lastSetProgressAt = new Date().getTime();
-            setProgressStyoleRaw(className);
+            setProgressStyleRaw(className);
             if (0 < timeout)
             {
                 await minamo.core.timeout(timeout);
                 if (timestamp === lastSetProgressAt)
                 {
-                    setProgressStyoleRaw("max-progress");
+                    setProgressStyleRaw("max-progress");
                     await minamo.core.timeout(100);
                     if (timestamp === lastSetProgressAt)
                     {
-                        setProgressStyoleRaw("");
+                        setProgressStyleRaw("");
                     }
                 }
             }
