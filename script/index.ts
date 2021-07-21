@@ -1063,10 +1063,10 @@ export module CyclicToDo
                 "string" === typeof pass ?
                     OldStorage.Title.get(pass):
                     pass.title.get();
-            export const set = async (pass: string | Model.Document, title: string) =>
+            export const updator = (pass: string | Model.Document, title: string) =>
                 "string" === typeof pass ?
-                    (OldStorage.Title.set(pass, title), true):
-                    await pass.title.set(title);
+                    () => (OldStorage.Title.set(pass, title), true):
+                    pass.title.updator(title);
         }
         export const getDoneTicks = (pass: string | Model.Document) => "string" === typeof pass ?
             Domain.getDoneTicksOld(pass):
@@ -1520,7 +1520,9 @@ export module Domain
             export const renameList = async (pass: string | Model.Document, newName, onCanceled: () => unknown = () => updateWindow("operate")) =>
             {
                 const backup = MigrateBridge.Title.get(pass);
-                await MigrateBridge.Title.set(pass, newName);
+                await new MigrateBridge.Transaction(pass)
+                    .add(MigrateBridge.Title.updator(pass, newName))
+                    .commit();
                 const toast = makePrimaryToast
                 ({
                     content: $span("")(`ToDo リストの名前を変更しました！： ${backup} → ${newName}`),
@@ -1528,7 +1530,9 @@ export module Domain
                     (
                         async () =>
                         {
-                            await MigrateBridge.Title.set(pass, backup);
+                            await new MigrateBridge.Transaction(pass)
+                                .add(MigrateBridge.Title.updator(pass, backup))
+                                .commit();
                             await toast.hide();
                             onCanceled();
                         }
