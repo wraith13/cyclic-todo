@@ -4557,6 +4557,21 @@ export module Domain
                 }
             }
         };
+        export const withProgress = async <T>(className: string, content: minamo.dom.Source, task: Promise<T>): Promise<T> =>
+        {
+            setProgressStyle(className, 0);
+            const toast = makePrimaryToast
+            ({
+                content,
+                wait: 0,
+            });
+            const result = await task;
+            setProgressStyle("", 0);
+            toast.hide();
+            return result;
+        };
+        export const withUpdateProgress = async <T>(content: minamo.dom.Source, task: Promise<T>): Promise<T> =>
+            await withProgress("update", content, task);
         export const resizeFlexList = () =>
         {
             const minColumns = 1 +Math.floor(window.innerWidth / 780);
