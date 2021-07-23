@@ -1520,9 +1520,13 @@ export module Domain
             export const renameList = async (pass: string | Model.Document, newName, onCanceled: () => unknown = () => updateWindow("operate")) =>
             {
                 const backup = MigrateBridge.Title.get(pass);
-                await new MigrateBridge.Transaction(pass)
-                    .add(MigrateBridge.Title.updator(pass, newName))
-                    .commit();
+                await withUpdateProgress
+                (
+                    $span("")(`保存中`),
+                    new MigrateBridge.Transaction(pass)
+                        .add(MigrateBridge.Title.updator(pass, newName))
+                        .commit()
+                );
                 const toast = makePrimaryToast
                 ({
                     content: $span("")(`ToDo リストの名前を変更しました！： ${backup} → ${newName}`),
@@ -1530,9 +1534,13 @@ export module Domain
                     (
                         async () =>
                         {
-                            await new MigrateBridge.Transaction(pass)
-                                .add(MigrateBridge.Title.updator(pass, backup))
-                                .commit();
+                            await withUpdateProgress
+                            (
+                                $span("")(`保存中`),
+                                new MigrateBridge.Transaction(pass)
+                                    .add(MigrateBridge.Title.updator(pass, backup))
+                                    .commit()
+                            );
                             await toast.hide();
                             onCanceled();
                         }
