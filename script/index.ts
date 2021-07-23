@@ -952,6 +952,7 @@ export module CyclicToDo
                         return this.todoComparer(entry, "smart");
                 }
             }
+            exportJson = () => JSON.stringify(this.content);
         }
         export const invokeFromOldStorage = (pass: string): Document =>
         {
@@ -1087,6 +1088,14 @@ export module CyclicToDo
             "string" === typeof pass ?
                 OldStorage.TagMember.get(pass, tag):
                 pass.tag.get(tag).getMember().map(i => i.getName());
+        // export const addTagMember = (pass: string | Model.Document, tag: string, task: string) =>
+        //     "string" === typeof pass ?
+        //         OldStorage.TagMember.add(pass, tag, task):
+        //         pass.tag.get(tag).addMember(task);
+        export const exportJson = (pass: string | Model.Document) =>
+            "string" === typeof pass ?
+                OldStorage.exportJson(pass):
+                pass.exportJson();
     }
 export module Domain
     {
