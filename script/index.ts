@@ -678,6 +678,16 @@ export module CyclicToDo
                 set(get().filter(i => entry.uri !== i.uri));
             };
             export const update = add;
+
+            export module Backup
+            {
+                export const key = `document.list.backup`;
+                export const get = () => minamo.localStorage.getOrNull<DocumentCard[]>(key) ?? [];
+                const set = (backupList: DocumentCard[]) => minamo.localStorage.set(key, backupList);
+                export const add = (card: DocumentCard) => set(get().filter(i => ! (card.type === i.type && card.uri === i.uri)).concat([ card ]));
+                export const remove = (card: DocumentCard) => set(get().filter(i => ! (card.type === i.type && card.uri === i.uri)));
+                export const clear = () => set([]);
+            }
         }
         export module ToDoList
         {
