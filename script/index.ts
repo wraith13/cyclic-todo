@@ -670,11 +670,11 @@ export module CyclicToDo
             export const add = (entry: DocumentCard) =>
             {
                 set(get().filter(i => entry.uri !== i.uri).concat([ entry ]));
-                // Backup.remove(pass);
+                Backup.remove(entry);
             };
             export const remove = (entry: DocumentCard) =>
             {
-                // Backup.add(exportJson(pass));
+                Backup.add(entry);
                 set(get().filter(i => entry.uri !== i.uri));
             };
             export const update = add;
