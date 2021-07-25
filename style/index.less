@@ -235,6 +235,22 @@ h1
             width: 100vw;
         }
     }
+    &.obsolescence
+    {
+        .progress-bar
+        {
+            .modest-active-background-coloring-trait;
+            left: initial;
+            right: 0px;
+            background-color: @active-color;
+            animation-name: update-progress;
+            animation-direction: normal;
+            animation-delay: 0s;
+            animation-duration: 600.0s;
+            animation-timing-function: ease-in-out;
+            animation-fill-mode: both;
+        }
+    }
 }
 @keyframes update-progress
 {

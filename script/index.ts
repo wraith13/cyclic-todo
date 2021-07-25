@@ -1353,7 +1353,7 @@ export module Domain
                         "@long-term"
                 ):
                 "@irregular-term";
-        export const getTermCategory = getTermCategoryByRest;
+        export const getTermCategory = getTermCategoryByAverage;
         export const updateTermCategoryOld = (pass: string, item: ToDoEntry) =>
         {
             const term = getTermCategory(item);
@@ -2460,7 +2460,7 @@ export module Domain
                 const result = Domain.parseDate(await dateTimePrompt(item.task, Domain.getTicks()));
                 if (null !== result && Domain.getTicks(result) <= Domain.getTicks())
                 {
-                    Operate.done
+                    await Operate.done
                     (
                         pass,
                         item.task,
@@ -2624,7 +2624,7 @@ export module Domain
                                         if (isFirst) // チャタリング防止
                                         {
                                             isFirst = false;
-                                            Operate.done
+                                            await Operate.done
                                             (
                                                 entry.pass,
                                                 item.task,
@@ -3557,6 +3557,10 @@ export module Domain
                     case "timer":
                         Domain.updateListProgress(entry.pass, list);
                         isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[]));
+                        if (isDirty)
+                        {
+                            setProgressStyle("obsolescence", 0);
+                        }
                         if
                         (
                             isDirty &&
@@ -3615,6 +3619,7 @@ export module Domain
                     case "operate":
                         if (0 <= OldStorage.Pass.get().indexOf(entry.pass))
                         {
+                            removeProgressStyle("obsolescence");
                             let entry = { tag, pass, todo: OldStorage.TagMember.get(pass, tag) };
                             list = entry.todo.map(task => Domain.getToDoEntryOld(entry.pass, task));
                             Domain.updateListProgress(entry.pass, list);
@@ -3626,6 +3631,7 @@ export module Domain
                         }
                         else
                         {
+                            removeProgressStyle("obsolescence");
                             await showUrl({ });
                         }
                         break;
@@ -3926,7 +3932,7 @@ export module Domain
                     children: label("Done"),
                     onclick: async () =>
                     {
-                        Operate.done
+                        await Operate.done
                         (
                             pass,
                             item.task,
@@ -4564,7 +4570,8 @@ export module Domain
             }
             return latestPrimaryToast = makeToast(data);
         };
-        export const setProgressStyleRaw = (className: string) => document.getElementById("screen-header").className = `segmented ${className}`;
+        export const getProgressElement = () => document.getElementById("screen-header");
+        export const setProgressStyleRaw = (className: string) => getProgressElement().className = `segmented ${className}`;
         let lastSetProgressAt = 0;
         export const setProgressStyle = async (className: string, timeout: number) =>
         {
@@ -4584,6 +4591,7 @@ export module Domain
                 }
             }
         };
+        export const removeProgressStyle = (className: string) => getProgressElement().classList.remove(className);
         export const withProgress = async <T>(className: string, content: minamo.dom.Source, task: Promise<T>): Promise<T> =>
         {
             setProgressStyle(className, 0);

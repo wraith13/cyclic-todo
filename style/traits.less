@@ -156,3 +156,11 @@
         }
     }
 }
+.modest-active-background-coloring-trait
+{
+    background-color: mix(@active-color, @main-color, 50%);
+    @media (prefers-color-scheme: dark)
+    {
+        background-color: mix(@active-color, @dark-main-color, 50%);
+    }
+}
