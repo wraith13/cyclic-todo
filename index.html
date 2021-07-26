@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon Jul 26 2021 00:52:32 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon Jul 26 2021 22:12:54 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -418,7 +418,7 @@ h1 button.menu-button {
   cursor: pointer;
   color: #FFFFFF;
   fill: #FFFFFF;
-  border-color: transparent;
+  border-color: transparent !important;
   right: 0.25rem;
   position: absolute;
 }
@@ -4353,9 +4353,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     expectedInterval: null,
                 };
                 if (null !== item.RecentlySmartAverage) {
-                    var base = inflatedRecentrlyIntervals.length / 2;
-                    var lows = Math.max(inflatedRecentrlyIntervals.filter(function (i) { return i < item.RecentlySmartAverage; }).length, 1);
-                    var highs = Math.max(inflatedRecentrlyIntervals.filter(function (i) { return item.RecentlySmartAverage < i; }).length, 1);
+                    var base = inflatedRecentrlyIntervals.length;
+                    var lows = (base / 2) + Math.max(inflatedRecentrlyIntervals.filter(function (i) { return i < item.RecentlySmartAverage; }).length, 1);
+                    var highs = (base / 2) + Math.max(inflatedRecentrlyIntervals.filter(function (i) { return item.RecentlySmartAverage < i; }).length, 1);
                     item.expectedInterval =
                         {
                             min: Math.max(item.RecentlySmartAverage / 10, item.RecentlySmartAverage - (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate * highs / base)),

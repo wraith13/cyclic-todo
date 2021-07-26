@@ -1451,9 +1451,9 @@ export module Domain
             };
             if (null !== item.RecentlySmartAverage)
             {
-                const base = inflatedRecentrlyIntervals.length /2;
-                const lows = Math.max(inflatedRecentrlyIntervals.filter(i => i < item.RecentlySmartAverage).length, 1);
-                const highs = Math.max(inflatedRecentrlyIntervals.filter(i => item.RecentlySmartAverage < i).length, 1);
+                const base = inflatedRecentrlyIntervals.length;
+                const lows = (base /2) +Math.max(inflatedRecentrlyIntervals.filter(i => i < item.RecentlySmartAverage).length, 1);
+                const highs = (base /2) +Math.max(inflatedRecentrlyIntervals.filter(i => item.RecentlySmartAverage < i).length, 1);
                 item.expectedInterval =
                 {
                     min: Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate *highs /base)),
