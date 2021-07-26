@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun Jul 25 2021 23:35:50 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon Jul 26 2021 00:52:32 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -179,14 +179,6 @@
 @media (hover: none) and (prefers-color-scheme: dark) {
   .delete-operator-coloring-trait {
     background-color: #000022;
-  }
-}
-.modest-active-background-coloring-trait {
-  background-color: #384011;
-}
-@media (prefers-color-scheme: dark) {
-  .modest-active-background-coloring-trait {
-    background-color: #b7bf80;
   }
 }
 * {
@@ -426,6 +418,7 @@ h1 button.menu-button {
   cursor: pointer;
   color: #FFFFFF;
   fill: #FFFFFF;
+  border-color: transparent;
   right: 0.25rem;
   position: absolute;
 }
@@ -493,21 +486,15 @@ h1.max-progress .progress-bar {
   width: 100vw;
 }
 h1.obsolescence .progress-bar {
-  background-color: #384011;
   left: initial;
   right: 0px;
-  background-color: #6F7F00;
+  background-color: #888;
   animation-name: update-progress;
   animation-direction: normal;
   animation-delay: 0s;
   animation-duration: 600s;
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
-}
-@media (prefers-color-scheme: dark) {
-  h1.obsolescence .progress-bar {
-    background-color: #b7bf80;
-  }
 }
 @keyframes update-progress {
   0% {
@@ -6903,16 +6890,17 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         case 1:
                                             Domain.updateListProgress(entry.pass, list);
                                             isDirty = isDirty || (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list)));
+                                            if (isDirty) {
+                                                Render.setProgressStyle("obsolescence", 0);
+                                            }
                                             if (isDirty &&
                                                 document.body.scrollTop <= 0 &&
                                                 ((_d = (_c = document.getElementsByClassName("screen-body")[0]) === null || _c === void 0 ? void 0 : _c.scrollTop) !== null && _d !== void 0 ? _d : 0) <= 9 &&
                                                 !Render.hasScreenCover() &&
                                                 !((_e = Render.getHeaderElement().classList.contains("header-operator-has-focus")) !== null && _e !== void 0 ? _e : false)) {
                                                 //await updateWindow("operate");
-                                                Render.setProgressStyle("obsolescence", 0);
                                             }
                                             else {
-                                                Render.removeProgressStyle("obsolescence");
                                                 filter_1 = Render.getFilterText();
                                                 filteredList_1 = list.filter(function (item) { return Render.isMatchToDoEntry(filter_1, entry, item); });
                                                 Array.from(document
