@@ -963,6 +963,33 @@ export module CyclicToDo
                 }
             }
             exportJson = () => JSON.stringify(this.content);
+            remove = () =>
+            {
+                let result: true | string = "";
+                switch(this.card.type)
+                {
+                case "oldLocalDb":
+                    OldStorage.Pass.remove(this.card.uri);
+                    result = true;
+                    break;
+                case "session":
+                    SessionStorage.ToDoList.remove(this.card.uri);
+                    result = true;
+                    break;
+                case "localDb":
+                    Storage.ToDoList.remove(this.card.uri);
+                    result = true;
+                    break;
+                default:
+                    result = "Unsupported storage type";
+                    break;
+                }
+                if (true === result)
+                {
+                    Storage.ToDoDocumentList.remove(this.card);
+                }
+                return result;
+            }
         }
         export const invokeFromOldStorage = (pass: string): Document =>
         {
@@ -1107,7 +1134,7 @@ export module CyclicToDo
                 OldStorage.exportJson(pass):
                 pass.exportJson();
     }
-export module Domain
+    export module Domain
     {
         // export const merge = (pass: string, tag: string, todo: string[], _ticks: (number | null)[]) =>
         // {
