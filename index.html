@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon Jul 26 2021 22:12:54 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed Jul 28 2021 07:17:29 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2863,7 +2863,7 @@ define("resource/config", [], {
     "standardDeviationRate": 1.5,
     "sleepStandardDeviationRate": 3.0,
     "granceMinutes": 1440,
-    "maxRestAdjustMinutes": 60,
+    "maxRestAdjustMinutes": 180,
     "maxShortTermMinutes": 14400
 });
 define("resource/lang.en", [], {
@@ -3868,6 +3868,30 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         }
                     };
                     this.exportJson = function () { return JSON.stringify(_this.content); };
+                    this.remove = function () {
+                        var result = "";
+                        switch (_this.card.type) {
+                            case "oldLocalDb":
+                                OldStorage.Pass.remove(_this.card.uri);
+                                result = true;
+                                break;
+                            case "session":
+                                SessionStorage.ToDoList.remove(_this.card.uri);
+                                result = true;
+                                break;
+                            case "localDb":
+                                Storage.ToDoList.remove(_this.card.uri);
+                                result = true;
+                                break;
+                            default:
+                                result = "Unsupported storage type";
+                                break;
+                        }
+                        if (true === result) {
+                            Storage.ToDoDocumentList.remove(_this.card);
+                        }
+                        return result;
+                    };
                     var tasks = content.todos.map(function (task) { return Domain.getToDoEntryRaw(task, content.histories[task]); });
                     this.live =
                         {
@@ -4058,6 +4082,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 return "string" === typeof pass ?
                     OldStorage.exportJson(pass) :
                     pass.exportJson();
+            };
+            MigrateBridge.removeList = function (pass) {
+                return "string" === typeof pass ?
+                    OldStorage.Pass.remove(pass) :
+                    pass.remove();
             };
         })(MigrateBridge = CyclicToDo.MigrateBridge || (CyclicToDo.MigrateBridge = {}));
         var Domain;
