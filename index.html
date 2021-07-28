@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed Jul 28 2021 07:17:29 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu Jul 29 2021 03:06:45 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -6902,9 +6902,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
                                 var _a, filter_1, filteredList_1, entry_1, filter_2, _b;
                                 var _this = this;
-                                var _c, _d, _e;
-                                return __generator(this, function (_f) {
-                                    switch (_f.label) {
+                                return __generator(this, function (_c) {
+                                    switch (_c.label) {
                                         case 0:
                                             _a = event;
                                             switch (_a) {
@@ -6922,36 +6921,28 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             if (isDirty) {
                                                 Render.setProgressStyle("obsolescence", 0);
                                             }
-                                            if (isDirty &&
-                                                document.body.scrollTop <= 0 &&
-                                                ((_d = (_c = document.getElementsByClassName("screen-body")[0]) === null || _c === void 0 ? void 0 : _c.scrollTop) !== null && _d !== void 0 ? _d : 0) <= 9 &&
-                                                !Render.hasScreenCover() &&
-                                                !((_e = Render.getHeaderElement().classList.contains("header-operator-has-focus")) !== null && _e !== void 0 ? _e : false)) {
-                                                //await updateWindow("operate");
-                                            }
-                                            else {
-                                                filter_1 = Render.getFilterText();
-                                                filteredList_1 = list.filter(function (item) { return Render.isMatchToDoEntry(filter_1, entry, item); });
-                                                Array.from(document
-                                                    .getElementsByClassName("list-screen")[0]
-                                                    .getElementsByClassName("todo-list")[0].childNodes).forEach(function (dom, index) {
-                                                    var item = filteredList_1[index];
-                                                    var button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0];
-                                                    button.classList.toggle("default-button", item.isDefault);
-                                                    var information = dom.getElementsByClassName("item-information")[0];
-                                                    information.setAttribute("style", Render.progressStyle(item.progress));
-                                                    information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
-                                                });
-                                                Array.from(document.getElementsByClassName("history-bar")).forEach(function (dom) { return __awaiter(_this, void 0, void 0, function () { var _a, _b, _c; return __generator(this, function (_d) {
-                                                    switch (_d.label) {
-                                                        case 0:
-                                                            _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
-                                                            _c = [dom];
-                                                            return [4 /*yield*/, Render.historyBar(entry, filteredList_1)];
-                                                        case 1: return [2 /*return*/, _b.apply(_a, _c.concat([(_d.sent()).children]))];
-                                                    }
-                                                }); }); });
-                                            }
+                                            filter_1 = Render.getFilterText();
+                                            filteredList_1 = list.filter(function (item) { return Render.isMatchToDoEntry(filter_1, entry, item); });
+                                            Array.from(document
+                                                .getElementsByClassName("list-screen")[0]
+                                                .getElementsByClassName("todo-list")[0].childNodes).forEach(function (dom, index) {
+                                                var item = filteredList_1[index];
+                                                var button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0];
+                                                button.classList.toggle("default-button", item.isDefault);
+                                                var information = dom.getElementsByClassName("item-information")[0];
+                                                information.setAttribute("style", Render.progressStyle(item.progress));
+                                                information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
+                                            });
+                                            Array.from(document.getElementsByClassName("history-bar")).forEach(function (dom) { return __awaiter(_this, void 0, void 0, function () { var _a, _b, _c; return __generator(this, function (_d) {
+                                                switch (_d.label) {
+                                                    case 0:
+                                                        _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                        _c = [dom];
+                                                        return [4 /*yield*/, Render.historyBar(entry, filteredList_1)];
+                                                    case 1: return [2 /*return*/, _b.apply(_a, _c.concat([(_d.sent()).children]))];
+                                                }
+                                            }); }); });
+                                            // }
                                             return [3 /*break*/, 12];
                                         case 2:
                                             Domain.updateListProgress(entry.pass, list);
@@ -6959,12 +6950,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             if (!isDirty) return [3 /*break*/, 4];
                                             return [4 /*yield*/, updateWindow("operate")];
                                         case 3:
-                                            _f.sent();
-                                            _f.label = 4;
+                                            _c.sent();
+                                            _c.label = 4;
                                         case 4: return [3 /*break*/, 12];
                                         case 5: return [4 /*yield*/, CyclicToDo.reload()];
                                         case 6:
-                                            _f.sent();
+                                            _c.sent();
                                             return [3 /*break*/, 12];
                                         case 7:
                                             if (!(0 <= OldStorage.Pass.get().indexOf(entry.pass))) return [3 /*break*/, 9];
@@ -6978,15 +6969,15 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             _b = Render.replaceScreenBody;
                                             return [4 /*yield*/, Render.listScreenBody(entry_1, list.filter(function (item) { return Render.isMatchToDoEntry(filter_2, entry_1, item); }))];
                                         case 8:
-                                            _b.apply(void 0, [_f.sent()]);
+                                            _b.apply(void 0, [_c.sent()]);
                                             Render.resizeFlexList();
                                             return [3 /*break*/, 11];
                                         case 9:
                                             Render.removeProgressStyle("obsolescence");
                                             return [4 /*yield*/, CyclicToDo.showUrl({})];
                                         case 10:
-                                            _f.sent();
-                                            _f.label = 11;
+                                            _c.sent();
+                                            _c.label = 11;
                                         case 11: return [3 /*break*/, 12];
                                         case 12: return [2 /*return*/];
                                     }

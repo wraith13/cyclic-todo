@@ -3588,19 +3588,19 @@ export module CyclicToDo
                         {
                             setProgressStyle("obsolescence", 0);
                         }
-                        if
-                        (
-                            isDirty &&
-                            document.body.scrollTop <= 0 &&
-                            (document.getElementsByClassName("screen-body")[0]?.scrollTop ?? 0) <= 9 &&
-                            ! hasScreenCover() &&
-                            ! (getHeaderElement().classList.contains("header-operator-has-focus") ?? false)
-                        )
-                        {
-                            //await updateWindow("operate");
-                        }
-                        else
-                        {
+                        // if
+                        // (
+                        //     isDirty &&
+                        //     document.body.scrollTop <= 0 &&
+                        //     (document.getElementsByClassName("screen-body")[0]?.scrollTop ?? 0) <= 0 &&
+                        //     ! hasScreenCover() &&
+                        //     ! (getHeaderElement().classList.contains("header-operator-has-focus") ?? false)
+                        // )
+                        // {
+                        //     //await updateWindow("operate");
+                        // }
+                        // else
+                        // {
                             const filter = getFilterText();
                             const filteredList = list.filter(item => isMatchToDoEntry(filter, entry, item));
                             (
@@ -3628,7 +3628,7 @@ export module CyclicToDo
                             (
                                 async dom => minamo.dom.replaceChildren(dom, (await historyBar(entry, filteredList)).children)
                             );
-                        }
+                        // }
                         break;
                     case "focus":
                     case "blur":
