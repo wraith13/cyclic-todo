@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu Jul 29 2021 03:06:45 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu Jul 29 2021 19:48:58 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -6972,9 +6972,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             _b.apply(void 0, [_c.sent()]);
                                             Render.resizeFlexList();
                                             return [3 /*break*/, 11];
-                                        case 9:
-                                            Render.removeProgressStyle("obsolescence");
-                                            return [4 /*yield*/, CyclicToDo.showUrl({})];
+                                        case 9: return [4 /*yield*/, CyclicToDo.showUrl({})];
                                         case 10:
                                             _c.sent();
                                             _c.label = 11;
@@ -8146,6 +8144,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 return __generator(this, function (_d) {
                     switch (_d.label) {
                         case 0:
+                            Render.removeProgressStyle("obsolescence");
                             if (undefined !== updateWindow) {
                                 Render.updateWindow = updateWindow;
                             }

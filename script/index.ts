@@ -3658,7 +3658,6 @@ export module CyclicToDo
                         }
                         else
                         {
-                            removeProgressStyle("obsolescence");
                             await showUrl({ });
                         }
                         break;
@@ -4470,6 +4469,7 @@ export module CyclicToDo
         export const getHeaderElement = () => document.getElementById("screen-header") as HTMLDivElement;
         export const showWindow = async (screen: ScreenSource, updateWindow?: (event: UpdateWindowEventEype) => unknown) =>
         {
+            removeProgressStyle("obsolescence");
             if (undefined !== updateWindow)
             {
                 Render.updateWindow = updateWindow;
