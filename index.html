@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu Jul 29 2021 19:48:58 GMT+0900 (GMT+09:00) -->
+<!-- build at: Fri Jul 30 2021 15:54:31 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -6223,7 +6223,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             return [4 /*yield*/, Resource.loadSvgOrCache("list-icon")];
                                         case 1: return [2 /*return*/, _a.apply(void 0, [[
                                                     _b.sent(),
-                                                    OldStorage.Title.get(i)
+                                                    Render.labelSpan(OldStorage.Title.get(i))
                                                 ], { pass: i, tag: "@overall", },
                                                 pass === i ? "current-item" : undefined])];
                                     }

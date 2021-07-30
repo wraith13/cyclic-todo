@@ -3001,7 +3001,7 @@ export module CyclicToDo
                             (
                                 [
                                     await Resource.loadSvgOrCache("list-icon"),
-                                    OldStorage.Title.get(i),
+                                    labelSpan(OldStorage.Title.get(i)),
                                     // labelSpan(`ToDo リスト ( pass: ${i.substr(0, 2)}****${i.substr(-2)} )`)
                                 ],
                                 { pass: i, tag: "@overall", },
