@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sat Jul 31 2021 02:26:56 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sun Aug 01 2021 00:37:01 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -6076,7 +6076,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             ],
                                 _d.onclick = function (event) {
                                     event.stopPropagation();
-                                    CyclicToDo.showUrl(data.parent);
+                                    if ("" !== Render.getFilterText()) {
+                                        Render.setFilterText("");
+                                    }
+                                    else {
+                                        CyclicToDo.showUrl(data.parent);
+                                    }
                                 },
                                 _d);
                             return [3 /*break*/, 4];

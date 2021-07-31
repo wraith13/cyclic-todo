@@ -2921,7 +2921,14 @@ export module CyclicToDo
                     onclick: (event: MouseEvent) =>
                     {
                         event.stopPropagation();
-                        showUrl(data.parent);
+                        if ("" !== getFilterText())
+                        {
+                            setFilterText("");
+                        }
+                        else
+                        {
+                            showUrl(data.parent);
+                        }
                     },
                 }:
                 [],
