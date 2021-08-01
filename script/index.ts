@@ -2921,9 +2921,10 @@ export module CyclicToDo
                     onclick: (event: MouseEvent) =>
                     {
                         event.stopPropagation();
-                        if ("" !== getFilterText())
+                        if ("" !== getFilterText() || getHeaderElement().classList.contains("header-operator-has-focus"))
                         {
                             setFilterText("");
+                            blurFilterInputElement();
                         }
                         else
                         {
@@ -3454,6 +3455,12 @@ export module CyclicToDo
             return result;
         };
         export const getFilterInputElement = () => Array.from(document.getElementsByClassName("filter-text"))[0] as HTMLInputElement;
+        export const blurFilterInputElement = () =>
+        {
+            getFilterInputElement().blur();
+            // 本当に FilterInputElement にフォーカスが当たっている時でないと上の blur() で "header-operator-has-focus" クラスがハズレない為。
+            getHeaderElement().classList.remove("header-operator-has-focus");
+        };
         export const getFilterText = () => regulateFilterText
         (
             getFilterInputElement()?.value ?? ""
@@ -4820,9 +4827,10 @@ export module CyclicToDo
                         }
                         else
                         {
-                            if ("" !== getFilterText())
+                            if ("" !== getFilterText() || getHeaderElement().classList.contains("header-operator-has-focus"))
                             {
                                 setFilterText("");
+                                blurFilterInputElement();
                             }
                             else
                             {

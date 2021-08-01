@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun Aug 01 2021 00:37:01 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sun Aug 01 2021 21:33:02 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -6076,8 +6076,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             ],
                                 _d.onclick = function (event) {
                                     event.stopPropagation();
-                                    if ("" !== Render.getFilterText()) {
+                                    if ("" !== Render.getFilterText() || Render.getHeaderElement().classList.contains("header-operator-has-focus")) {
                                         Render.setFilterText("");
+                                        Render.blurFilterInputElement();
                                     }
                                     else {
                                         CyclicToDo.showUrl(data.parent);
@@ -6732,6 +6733,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             Render.getFilterInputElement = function () { return Array.from(document.getElementsByClassName("filter-text"))[0]; };
+            Render.blurFilterInputElement = function () {
+                Render.getFilterInputElement().blur();
+                // 本当に FilterInputElement にフォーカスが当たっている時でないと上の blur() で "header-operator-has-focus" クラスがハズレない為。
+                Render.getHeaderElement().classList.remove("header-operator-has-focus");
+            };
             Render.getFilterText = function () {
                 var _a, _b;
                 return Render.regulateFilterText((_b = (_a = Render.getFilterInputElement()) === null || _a === void 0 ? void 0 : _a.value) !== null && _b !== void 0 ? _b : "");
@@ -8423,8 +8429,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 currentScreenCover.click();
                             }
                             else {
-                                if ("" !== Render.getFilterText()) {
+                                if ("" !== Render.getFilterText() || Render.getHeaderElement().classList.contains("header-operator-has-focus")) {
                                     Render.setFilterText("");
+                                    Render.blurFilterInputElement();
                                 }
                                 else {
                                     var closeButton = Render.getHeaderElement().getElementsByClassName("close-button")[0];
