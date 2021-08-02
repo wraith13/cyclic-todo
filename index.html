@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon Aug 02 2021 20:47:20 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Aug 03 2021 08:08:52 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2935,7 +2935,8 @@ define("resource/lang.en", [], {
     "Input a tag's name.": "Input a tag's name.",
     "Input a ToDo's name.": "Input a ToDo's name.",
     "This action cannot be undone. Do you want to continue?": "This action cannot be undone. Do you want to continue?",
-    "Close": "Close"
+    "Close": "Close",
+    "Done!": "Done!"
 });
 define("resource/lang.ja", [], {
     "$name": "日本語",
@@ -3006,7 +3007,8 @@ define("resource/lang.ja", [], {
     "Input a tag's name.": "タグの名前を入力してください。",
     "Input a ToDo's name.": "ToDoの名前を入力してください。",
     "This action cannot be undone. Do you want to continue?": "この操作は取り消せません。続行しますか？",
-    "Close": "閉じる"
+    "Close": "閉じる",
+    "Done!": "完了！"
 });
 define("resource/images", [], {
     "application-icon": "./image/cyclictodohex.1024.svg",
@@ -4532,7 +4534,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             OldStorage.TagMember.remove(pass, "@pickup", task);
                         }
                         toast = Render.makePrimaryToast({
-                            content: Render.$span("")("\u5B8C\u4E86\uFF01: " + task),
+                            content: Render.$span("")(locale.map("Done!") + ": " + task),
                             backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {

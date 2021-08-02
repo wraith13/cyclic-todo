@@ -1621,7 +1621,7 @@ export module CyclicToDo
                 }
                 const toast = makePrimaryToast
                 ({
-                    content: $span("")(`完了！: ${task}`),
+                    content: $span("")(`${locale.map("Done!")}: ${task}`),
                     backwardOperator: cancelTextButton
                     (
                         async () =>
