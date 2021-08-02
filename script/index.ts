@@ -2936,6 +2936,7 @@ export module CyclicToDo
             data.menu ? await menuButton(data.menu): [],
             data.operator ? $div("header-operator")(data.operator): [],
         ];
+        export const getCloseButton = () => getHeaderElement().getElementsByClassName("close-button")[0] as HTMLButtonElement;
         export const screenHeaderSegmentCore = async (item: HeaderSegmentSource) =>
         [
             $div("icon")(await Resource.loadSvgOrCache(item.icon)),
@@ -4827,19 +4828,7 @@ export module CyclicToDo
                         }
                         else
                         {
-                            if ("" !== getFilterText() || getHeaderElement().classList.contains("header-operator-has-focus"))
-                            {
-                                setFilterText("");
-                                blurFilterInputElement();
-                            }
-                            else
-                            {
-                                const closeButton = <HTMLButtonElement>getHeaderElement().getElementsByClassName("close-button")[0];
-                                if (closeButton)
-                                {
-                                    closeButton.click();
-                                }
-                            }
+                            getCloseButton()?.click();
                         }
                         break;
                 }
