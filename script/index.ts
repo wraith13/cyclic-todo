@@ -2304,7 +2304,9 @@ export module CyclicToDo
             };
             return result;
         };
-        export const hasScreenCover = () => 0 < document.getElementsByClassName("screen-cover").length;
+        export const getScreenCoverList = () => Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[];
+        export const getScreenCover = () => getScreenCoverList().filter((_i, ix, list) => (ix +1) === list.length)[0];
+        export const hasScreenCover = () => 0 < getScreenCoverList().length;
         export const popup =
         (
             data:
@@ -4817,19 +4819,7 @@ export module CyclicToDo
                             .forEach(popup => (Array.from(popup.getElementsByClassName("default-button")) as HTMLButtonElement[])?.[0]?.click());
                         break;
                     case "Escape":
-                        // (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[])
-                        //     .filter((_i, ix, list) => (ix +1) === list.length)
-                        //     .forEach(i => i.click());
-                        const currentScreenCover = (Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[])
-                            .filter((_i, ix, list) => (ix +1) === list.length)[0];
-                        if (currentScreenCover)
-                        {
-                            currentScreenCover.click();
-                        }
-                        else
-                        {
-                            getCloseButton()?.click();
-                        }
+                        (getScreenCover() ?? getCloseButton())?.click();
                         break;
                 }
             }
