@@ -68,5 +68,6 @@
     "Input a ToDo's name.": "ToDoの名前を入力してください。",
     "This action cannot be undone. Do you want to continue?": "この操作は取り消せません。続行しますか？",
     "Close": "閉じる",
-    "Done!": "完了！"
+    "Done!": "完了！",
+    "Storing": "保存中"
 }

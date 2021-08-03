@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue Aug 03 2021 08:08:52 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Aug 03 2021 19:48:05 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2936,7 +2936,8 @@ define("resource/lang.en", [], {
     "Input a ToDo's name.": "Input a ToDo's name.",
     "This action cannot be undone. Do you want to continue?": "This action cannot be undone. Do you want to continue?",
     "Close": "Close",
-    "Done!": "Done!"
+    "Done!": "Done!",
+    "Storing": "Storing"
 });
 define("resource/lang.ja", [], {
     "$name": "日本語",
@@ -3008,7 +3009,8 @@ define("resource/lang.ja", [], {
     "Input a ToDo's name.": "ToDoの名前を入力してください。",
     "This action cannot be undone. Do you want to continue?": "この操作は取り消せません。続行しますか？",
     "Close": "閉じる",
-    "Done!": "完了！"
+    "Done!": "完了！",
+    "Storing": "保存中"
 });
 define("resource/images", [], {
     "application-icon": "./image/cyclictodohex.1024.svg",
@@ -4467,7 +4469,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             switch (_a.label) {
                                 case 0:
                                     backup = MigrateBridge.Title.get(pass);
-                                    return [4 /*yield*/, Render.withUpdateProgress(Render.$span("")("\u4FDD\u5B58\u4E2D"), new MigrateBridge.Transaction(pass)
+                                    return [4 /*yield*/, Render.withUpdateProgress(Render.$span("")(locale.map("Storing")), new MigrateBridge.Transaction(pass)
                                             .add(MigrateBridge.Title.updator(pass, newName))
                                             .commit())];
                                 case 1:
@@ -4477,7 +4479,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, Render.withUpdateProgress(Render.$span("")("\u4FDD\u5B58\u4E2D"), new MigrateBridge.Transaction(pass)
+                                                    case 0: return [4 /*yield*/, Render.withUpdateProgress(Render.$span("")(locale.map("Storing")), new MigrateBridge.Transaction(pass)
                                                             .add(MigrateBridge.Title.updator(pass, backup))
                                                             .commit())];
                                                     case 1:

@@ -1568,7 +1568,7 @@ export module CyclicToDo
                 const backup = MigrateBridge.Title.get(pass);
                 await withUpdateProgress
                 (
-                    $span("")(`保存中`),
+                    $span("")(locale.map("Storing")),
                     new MigrateBridge.Transaction(pass)
                         .add(MigrateBridge.Title.updator(pass, newName))
                         .commit()
@@ -1582,7 +1582,7 @@ export module CyclicToDo
                         {
                             await withUpdateProgress
                             (
-                                $span("")(`保存中`),
+                                $span("")(locale.map("Storing")),
                                 new MigrateBridge.Transaction(pass)
                                     .add(MigrateBridge.Title.updator(pass, backup))
                                     .commit()
