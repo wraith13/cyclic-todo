@@ -2054,7 +2054,7 @@ export module CyclicToDo
                                 ],
                                 onclick: async () =>
                                 {
-                                    const sublist = await prompt("サブリストの名前を入力してください", "");
+                                    const sublist = await prompt(locale.map("Input a Sublist's name."), "");
                                     if (null !== sublist)
                                     {
                                         const tag = Model.encodeSublist(sublist.trim());

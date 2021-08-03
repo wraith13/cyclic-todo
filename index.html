@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue Aug 03 2021 19:48:05 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed Aug 04 2021 07:59:38 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2934,6 +2934,7 @@ define("resource/lang.en", [], {
     "Input a ToDo list's name.": "Input a ToDo list's name.",
     "Input a tag's name.": "Input a tag's name.",
     "Input a ToDo's name.": "Input a ToDo's name.",
+    "Input a Sublist's name.": "Input a Sublist's name.",
     "This action cannot be undone. Do you want to continue?": "This action cannot be undone. Do you want to continue?",
     "Close": "Close",
     "Done!": "Done!",
@@ -3007,6 +3008,7 @@ define("resource/lang.ja", [], {
     "Input a ToDo list's name.": "ToDoリストの名前を入力してください。",
     "Input a tag's name.": "タグの名前を入力してください。",
     "Input a ToDo's name.": "ToDoの名前を入力してください。",
+    "Input a Sublist's name.": "サブリストの名前を入力してください。",
     "This action cannot be undone. Do you want to continue?": "この操作は取り消せません。続行しますか？",
     "Close": "閉じる",
     "Done!": "完了！",
@@ -5040,7 +5042,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                             var sublist, tag;
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
-                                                                    case 0: return [4 /*yield*/, Render.prompt("サブリストの名前を入力してください", "")];
+                                                                    case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a Sublist's name."), "")];
                                                                     case 1:
                                                                         sublist = _a.sent();
                                                                         if (null !== sublist) {
