@@ -3546,40 +3546,41 @@ export module CyclicToDo
             ),
             parent: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall", }
         });
-        export const listScreenBody = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) =>
+        export const listScreenFooter = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) => $div("button-list")
+        ([
+            "@overall" !== entry.tag ?
+                internalLink
+                ({
+                    href: { pass: entry.pass, tag: "@overall", },
+                    children: $tag("button")(list.length <= 0 ? "main-button long-button": "default-button main-button long-button")(label("Back to Home")),
+                }):
+                [],
+            {
+                tag: "button",
+                className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
+                children: label("New ToDo"),
+                onclick: async () =>
+                {
+                    const newTask = await prompt(locale.map("Input a ToDo's name."));
+                    if (null !== newTask)
+                    {
+                        OldStorage.Task.add(entry.pass, newTask);
+                        OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
+                        await showUrl({ pass: entry.pass, todo: newTask, });
+                    }
+                }
+            },
+            internalLink
+            ({
+                href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                children: $tag("button")("main-button long-button")(label("History")),
+            }),
+        ]);
+         export const listScreenBody = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) =>
         ([
             await historyBar(entry, list),
             $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item)))),
-            $div("button-list")
-            ([
-                "@overall" !== entry.tag ?
-                    internalLink
-                    ({
-                        href: { pass: entry.pass, tag: "@overall", },
-                        children: $tag("button")(list.length <= 0 ? "main-button long-button": "default-button main-button long-button")(label("Back to Home")),
-                    }):
-                    [],
-                {
-                    tag: "button",
-                    className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
-                    children: label("New ToDo"),
-                    onclick: async () =>
-                    {
-                        const newTask = await prompt(locale.map("Input a ToDo's name."));
-                        if (null !== newTask)
-                        {
-                            OldStorage.Task.add(entry.pass, newTask);
-                            OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
-                            await showUrl({ pass: entry.pass, todo: newTask, });
-                        }
-                    }
-                },
-                internalLink
-                ({
-                    href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                    children: $tag("button")("main-button long-button")(label("History")),
-                }),
-            ])
+            await listScreenFooter(entry, list)
         ]);
         export const listScreen = async (entry: ToDoTagEntryOld, list: ToDoEntry[], filter: string) =>
         ({
