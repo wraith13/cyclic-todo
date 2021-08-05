@@ -3582,6 +3582,41 @@ export module CyclicToDo
             $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item)))),
             await listScreenFooter(entry, list)
         ]);
+        export const listScreenHomeColumn = async (entry: ToDoTagEntryOld, list: ToDoEntry[], tag: string, member = OldStorage.TagMember.get(entry.pass, tag)) =>
+        {
+            const currentList = list.filter(i => 0 <= member.indexOf(i.task));
+            Domain.sortList
+            (
+                {
+                    tag,
+                    pass: entry.pass,
+                    todo: member,
+                },
+                currentList
+            );
+            const result = $div("tag-column")
+            ([
+                $div("tag-column-header")(tag),
+                $div("column-flex-list todo-list")
+                (
+                    await Promise.all(currentList.map(item => todoItem(entry, item)))
+                )
+            ]);
+            return result;
+        };
+        export const listScreenHomeBody = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) =>
+        ([
+            await historyBar(entry, list),
+            $div("tag-column-list column-flex-list")
+            (
+                await Promise.all
+                (
+                    ["@pickup", "@short-term", "@long-term", "@irregular-term"].concat(OldStorage.Tag.get(entry.pass).sort(Domain.tagComparerOld(entry.pass))).concat(["@unoverall", "@untagged"])
+                    .map(tag => listScreenHomeColumn(entry, list, tag))
+                )
+            ),
+            await listScreenFooter(entry, list)
+        ]);
         export const listScreen = async (entry: ToDoTagEntryOld, list: ToDoEntry[], filter: string) =>
         ({
             className: "list-screen",
