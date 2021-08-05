@@ -3576,7 +3576,7 @@ export module CyclicToDo
                 children: $tag("button")("main-button long-button")(label("History")),
             }),
         ]);
-         export const listScreenBody = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) =>
+        export const listScreenBody = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) =>
         ([
             await historyBar(entry, list),
             $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item)))),
@@ -3621,7 +3621,13 @@ export module CyclicToDo
         ({
             className: "list-screen",
             header: await listScreenHeader(entry, list),
-            body: await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item)))
+            body: await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))),
+        });
+        export const listHomeScreen = async (entry: ToDoTagEntryOld, list: ToDoEntry[], filter: string) =>
+        ({
+            className: "list-screen",
+            header: await listScreenHeader(entry, list),
+            body: await listScreenHomeBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item)),
         });
         export const showListScreen = async (pass: string, tag: string, urlParams: PageParams) =>
         {
