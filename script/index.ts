@@ -3627,7 +3627,7 @@ export module CyclicToDo
         ({
             className: "list-screen",
             header: await listScreenHeader(entry, list),
-            body: await listScreenHomeBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item)),
+            body: await listScreenHomeBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))),
         });
         export const showListScreen = async (pass: string, tag: string, urlParams: PageParams) =>
         {
