@@ -1445,8 +1445,6 @@ export module CyclicToDo
                 //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
                 count: full.length,
             };
-
-
             const inflateRecentrly = (intervals: number[]) => 20 <= intervals.length ?
                 intervals.filter((_, ix) => ix < 5).concat(intervals.filter((_, ix) => ix < 10), intervals):
                 intervals.filter((_, ix) => ix < 5).concat(intervals);
@@ -2155,7 +2153,7 @@ export module CyclicToDo
                         className: "add-remove-tags-popup",
                         children:
                         [
-                            $tag("h2")("")(label("Display language setting")),
+                            $tag("h2")("")(label("Language setting")),
                             checkButtonList,
                             $div("popup-operator")
                             ([{
@@ -2355,7 +2353,7 @@ export module CyclicToDo
             };
             return result;
         };
-        export const menuButton = async (menu: minamo.dom.Source) =>
+        export const menuButton = async (menu: minamo.dom.Source | (() => Promise<minamo.dom.Source>)) =>
         {
             let cover: { dom: HTMLDivElement, close: () => Promise<unknown> };
             const close = () =>
@@ -2367,7 +2365,7 @@ export module CyclicToDo
             ({
                 tag: "div",
                 className: "menu-popup",
-                children: menu,
+                children: "function" !== typeof menu ? menu: [ ],
                 onclick: async (event: MouseEvent) =>
                 {
                     event.stopPropagation();
@@ -2384,10 +2382,14 @@ export module CyclicToDo
                 [
                     await Resource.loadSvgOrCache("ellipsis-icon"),
                 ],
-                onclick: (event: MouseEvent) =>
+                onclick: async (event: MouseEvent) =>
                 {
                     event.stopPropagation();
                     console.log("menu-button.click!");
+                    if ("function" === typeof menu)
+                    {
+                        minamo.dom.replaceChildren(popup, await menu());
+                    }
                     popup.classList.add("show");
                     cover = screenCover
                     ({
@@ -2728,7 +2730,7 @@ export module CyclicToDo
                             async () =>
                             {
                                 const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), item.tick));
-                                if (null !== result && item.tick !== Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
+                                if (null !== result && item.tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
                                 {
                                     OldStorage.History.removeRaw(entry.pass, item.task, item.tick);
                                     OldStorage.History.add(entry.pass, item.task, Domain.getTicks(result));
@@ -2792,7 +2794,7 @@ export module CyclicToDo
                         async () =>
                         {
                             const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), tick));
-                            if (null !== result && tick !== Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
+                            if (null !== result && tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
                             {
                                 OldStorage.History.removeRaw(pass, item.task, tick);
                                 OldStorage.History.add(pass, item.task, Domain.getTicks(result));
@@ -2878,12 +2880,12 @@ export module CyclicToDo
             icon: Resource.KeyType;
             title: string;
             href?: PageParams;
-            menu?: minamo.dom.Source;
+            menu?: minamo.dom.Source | (() => Promise<minamo.dom.Source>);
         }
         export interface HeaderSource
         {
             items: HeaderSegmentSource[];
-            menu?: minamo.dom.Source;
+            menu?: minamo.dom.Source | (() => Promise<minamo.dom.Source>);
             operator?: minamo.dom.Source;
             parent?: PageParams;
         }
@@ -2964,7 +2966,7 @@ export module CyclicToDo
             ({
                 tag: "div",
                 className: "menu-popup segment-popup",
-                children: item.menu,
+                children: "function" !== typeof item.menu ? item.menu: [ ],
                 onclick: async (event: MouseEvent) =>
                 {
                     event.stopPropagation();
@@ -2978,10 +2980,14 @@ export module CyclicToDo
                 tag: "div",
                 className: `segment ${className}`,
                 children: await screenHeaderSegmentCore(item),
-                onclick: (event: MouseEvent) =>
+                onclick: async (event: MouseEvent) =>
                 {
                     event.stopPropagation();
                     console.log("menu-button.click!");
+                    if ("function" === typeof item.menu)
+                    {
+                        minamo.dom.replaceChildren(popup, await item.menu());
+                    }
                     popup.classList.add("show");
                     //popup.style.height = `${popup.offsetHeight -2}px`;
                     popup.style.width = `${popup.offsetWidth -2}px`;
@@ -3216,8 +3222,25 @@ export module CyclicToDo
                 }
             }
         );
+        export const fullscreenMenuItem = () =>
+            document.fullscreenEnabled ?
+            (
+                null === document.fullscreenElement ?
+                    menuItem
+                    (
+                        label("Full screen"),
+                        async () => await document.body.requestFullscreen(),
+                    ):
+                    menuItem
+                    (
+                        label("Cancel full screen"),
+                        async () => await document.exitFullscreen(),
+                    )
+            ):
+            [];
         export const listScreenMenu = async (entry: ToDoTagEntryOld) =>
         [
+            fullscreenMenuItem(),
             internalLink
             ({
                 href: { pass: entry.pass, tag: entry.tag, hash: "history" },
@@ -3534,7 +3557,7 @@ export module CyclicToDo
                 await screenHeaderListSegment(entry.pass),
                 await screenHeaderTagSegment(entry.pass, entry.tag),
             ],
-            menu: await listScreenMenu(entry),
+            menu: () => listScreenMenu(entry),
             operator: await filter
             (
                 getUrlParams().filter ?? "",
@@ -4394,11 +4417,12 @@ export module CyclicToDo
         [
             menuItem
             (
-                label("Display language setting"),
+                label("Language setting"),
                 async () =>
                 {
                     if (await localeSettingsPopup())
                     {
+                        locale.setLocale(Storage.Settings.get().locale);
                         await reload();
                     }
                 }
@@ -4599,7 +4623,12 @@ export module CyclicToDo
             ({
                 tag: "div",
                 className: "item slide-up-in",
-                children:
+                children: data.isWideContent ?
+                [
+                    data.backwardOperator,
+                    data.content,
+                    data.forwardOperator,
+                ].filter(i => undefined !== i):
                 [
                     data.backwardOperator ?? $span("dummy")([]),
                     data.content,
@@ -4646,6 +4675,7 @@ export module CyclicToDo
                 content: minamo.dom.Source,
                 backwardOperator?: minamo.dom.Source,
                 forwardOperator?: minamo.dom.Source,
+                isWideContent?: boolean,
                 wait?: number,
             }
         ): Toast =>

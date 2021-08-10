@@ -1,5 +1,7 @@
 {
     "$name": "日本語",
+    "Full screen": "フルスクリーン表示",
+    "Cancel full screen": "フルスクリーン解除",
     "previous": "前回",
     "expected interval": "予想間隔",
     "elapsed time": "経過時間",
@@ -56,7 +58,7 @@
     "language.auto": "自動",
     "please input": "入力してください。",
     "Sort order setting": "並び順設定",
-    "Display language setting": "言語設定",
+    "Language setting": "言語設定",
     "roll-back": "取り消す",
     "roll-backed": "取り消しました。",
     "Add to Pickup": "ピックアップに加える",

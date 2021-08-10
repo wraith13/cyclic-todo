@@ -771,24 +771,21 @@ button
         opacity: 0.0;
     }
 }
-.add-remove-tags-popup
+.check-button-list
 {
-    .check-button-list
-    {
-        display: flex;
-        position: relative;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: stretch;
-        justify-content: stretch;
-        flex-direction: column;
+    display: flex;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: stretch;
+    flex-direction: column;
 
-        button
-        {
-            border-color: rgba(128,128,128,0.5);
-            border-style: solid;
-            border-width: 0px 0px 1px 0px;
-        }
+    button
+    {
+        border-color: rgba(128,128,128,0.5);
+        border-style: solid;
+        border-width: 0px 0px 1px 0px;
     }
 }
 .button-list
@@ -900,6 +897,7 @@ button
     align-items: stretch;
     justify-content: stretch;
     width: 100%;
+    box-sizing: border-box;
     &:not(.empty-list)
     {
         border-color: rgba(128,128,128,0.5);
@@ -1323,6 +1321,8 @@ button
 }
 .screen
 {
+    .positive-foreground-coloring-trait;
+    .positive-background-coloring-trait;
     display: flex;
     flex-direction: column;
     position: absolute;

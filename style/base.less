@@ -7,17 +7,18 @@
     font: -apple-system-body;
     outline:none;
 }
+body, input, textarea
+{
+    .positive-foreground-coloring-trait;
+    .positive-background-coloring-trait;
+}
 body
 {
     margin: 0px;
     margin-bottom: 5rem; // for iOS Safari
     line-height: 100%;
     overflow: hidden;
-}
-body, input, textarea
-{
-    .positive-foreground-coloring-trait;
-    .positive-background-coloring-trait;
+    background-color: fade(@accent-color, 95%);
 }
 @media (prefers-color-scheme: dark)
 {
