@@ -4615,6 +4615,7 @@ export module CyclicToDo
                 content: minamo.dom.Source,
                 backwardOperator?: minamo.dom.Source,
                 forwardOperator?: minamo.dom.Source,
+                isWideContent?: boolean,
                 wait?: number,
             }
         ): Toast =>
