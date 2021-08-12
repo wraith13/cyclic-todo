@@ -2,6 +2,111 @@
 @import "traits.less";
 @import "base.less";
 
+body.flash
+{
+    .screen
+    {
+        animation-name: flash;
+        animation-direction: normal;
+        animation-delay: 0s;
+        animation-duration: 0.75s;
+        animation-timing-function: ease-in-out;
+        animation-fill-mode: both;
+    }
+}
+@keyframes flash
+{
+    0% { background: radial-gradient(@accent-color 0%, transparent 0%); }
+    1.25% { background: radial-gradient(@accent-color 0%, transparent 5%); }
+    2.5% { background: radial-gradient(@accent-color 0%, transparent 10%); }
+    3.75% { background: radial-gradient(@accent-color 0%, transparent 15%); }
+    5% { background: radial-gradient(@accent-color 0%, transparent 20%); }
+    6.25% { background: radial-gradient(@accent-color 0%, transparent 25%); }
+    7.5% { background: radial-gradient(@accent-color 0%, transparent 30%); }
+    8.75% { background: radial-gradient(@accent-color 0%, transparent 35%); }
+    10% { background: radial-gradient(@accent-color 0%, transparent 40%); }
+    11.25% { background: radial-gradient(@accent-color 0%, transparent 45%); }
+    12.5% { background: radial-gradient(@accent-color 0%, transparent 50%); }
+    13.75% { background: radial-gradient(@accent-color 0%, transparent 55%); }
+    15.0% { background: radial-gradient(@accent-color 0%, transparent 60%); }
+    16.25% { background: radial-gradient(@accent-color 0%, transparent 65%); }
+    17.5% { background: radial-gradient(@accent-color 0%, transparent 70%); }
+    18.75% { background: radial-gradient(@accent-color 0%, transparent 75%); }
+    20% { background: radial-gradient(@accent-color 0%, transparent 80%); }
+    21.25% { background: radial-gradient(@accent-color 0%, transparent 85%); }
+    22.5% { background: radial-gradient(@accent-color 0%, transparent 90%); }
+    23.75% { background: radial-gradient(@accent-color 0%, transparent 95%); }
+    25% { background: radial-gradient(@accent-color 0%, transparent 100%); }
+    26.25% { background: radial-gradient(@accent-color 5%, transparent 100%); }
+    27.5% { background: radial-gradient(@accent-color 10%, transparent 100%); }
+    28.75% { background: radial-gradient(@accent-color 15%, transparent 100%); }
+    30% { background: radial-gradient(@accent-color 20%, transparent 100%); }
+    31.25% { background: radial-gradient(@accent-color 25%, transparent 100%); }
+    32.5% { background: radial-gradient(@accent-color 30%, transparent 100%); }
+    33.75% { background: radial-gradient(@accent-color 35%, transparent 100%); }
+    35% { background: radial-gradient(@accent-color 40%, transparent 100%); }
+    36.25% { background: radial-gradient(@accent-color 45%, transparent 100%); }
+    37.5% { background: radial-gradient(@accent-color 50%, transparent 100%); }
+    38.25% { background: radial-gradient(@accent-color 55%, transparent 100%); }
+    40% { background: radial-gradient(@accent-color 60%, transparent 100%); }
+    41.25% { background: radial-gradient(@accent-color 65%, transparent 100%); }
+    42.5% { background: radial-gradient(@accent-color 70%, transparent 100%); }
+    43.75% { background: radial-gradient(@accent-color 75%, transparent 100%); }
+    45% { background: radial-gradient(@accent-color 80%, transparent 100%); }
+    46.25% { background: radial-gradient(@accent-color 85%, transparent 100%); }
+    47.5% { background: radial-gradient(@accent-color 90%, transparent 100%); }
+    48.75% { background: radial-gradient(@accent-color 95%, transparent 100%); }
+    50% { background: radial-gradient(transparent 0%, @accent-color 0%); }
+    51.25% { background: radial-gradient(transparent 0%, @accent-color 5%); }
+    52.5% { background: radial-gradient(transparent 0%, @accent-color 10%); }
+    53.75% { background: radial-gradient(transparent 0%, @accent-color 15%); }
+    55% { background: radial-gradient(transparent 0%, @accent-color 20%); }
+    56.25% { background: radial-gradient(transparent 0%, @accent-color 25%); }
+    57.5% { background: radial-gradient(transparent 0%, @accent-color 30%); }
+    58.75% { background: radial-gradient(transparent 0%, @accent-color 35%); }
+    60% { background: radial-gradient(transparent 0%, @accent-color 40%); }
+    61.25% { background: radial-gradient(transparent 0%, @accent-color 45%); }
+    62.5% { background: radial-gradient(transparent 0%, @accent-color 50%); }
+    63.75% { background: radial-gradient(transparent 0%, @accent-color 55%); }
+    65% { background: radial-gradient(transparent 0%, @accent-color 60%); }
+    66.25% { background: radial-gradient(transparent 0%, @accent-color 65%); }
+    67.5% { background: radial-gradient(transparent 0%, @accent-color 70%); }
+    68.75% { background: radial-gradient(transparent 0%, @accent-color 75%); }
+    70% { background: radial-gradient(transparent 0%, @accent-color 80%); }
+    71.25% { background: radial-gradient(transparent 0%, @accent-color 85%); }
+    72.5% { background: radial-gradient(transparent 0%, @accent-color 90%); }
+    73.75% { background: radial-gradient(transparent 0%, @accent-color 95%); }
+    75% { background: radial-gradient(transparent 0%, @accent-color 100%); }
+    76.25% { background: radial-gradient(transparent 5%, @accent-color 100%); }
+    77.5% { background: radial-gradient(transparent 10%, @accent-color 100%); }
+    78.25% { background: radial-gradient(transparent 15%, @accent-color 100%); }
+    80% { background: radial-gradient(transparent 20%, @accent-color 100%); }
+    81.25% { background: radial-gradient(transparent 25%, @accent-color 100%); }
+    82.5% { background: radial-gradient(transparent 30%, @accent-color 100%); }
+    83.75% { background: radial-gradient(transparent 35%, @accent-color 100%); }
+    85% { background: radial-gradient(transparent 40%, @accent-color 100%); }
+    86.25% { background: radial-gradient(transparent 45%, @accent-color 100%); }
+    87.5% { background: radial-gradient(transparent 50%, @accent-color 100%); }
+    88.75% { background: radial-gradient(transparent 55%, @accent-color 100%); }
+    90% { background: radial-gradient(transparent 60%, @accent-color 100%); }
+    91.25% { background: radial-gradient(transparent 65%, @accent-color 100%); }
+    92.5% { background: radial-gradient(transparent 70%, @accent-color 100%); }
+    93.75% { background: radial-gradient(transparent 75%, @accent-color 100%); }
+    95% { background: radial-gradient(transparent 80%, @accent-color 100%); }
+    96.25% { background: radial-gradient(transparent 85%, @accent-color 100%); }
+    97.5% { background: radial-gradient(transparent 90%, @accent-color 100%); }
+    98.75% { background: radial-gradient(transparent 95%, @accent-color 100%); }
+    100% { background: radial-gradient(transparent 100%, @accent-color 100%); }
+}
+#foundation
+{
+    .positive-background-coloring-trait;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+}
 .monospace
 {
     .monospace-trait;
@@ -1321,7 +1426,6 @@ button
 }
 .screen
 {
-    .positive-foreground-coloring-trait;
     .positive-background-coloring-trait;
     display: flex;
     flex-direction: column;

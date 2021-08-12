@@ -1611,6 +1611,8 @@ export module CyclicToDo
             };
             export const done = async (pass: string, task: string, tick: number, onCanceled: () => unknown) =>
             {
+                document.body.classList.add("flash");
+                setTimeout(() => document.body.classList.remove("flash"), 1500);
                 MigrateBridge.done(pass, task, tick);
                 const isPickuped = 0 <= MigrateBridge.getTagMember(pass, "@pickup").indexOf(task);
                 if (isPickuped)
