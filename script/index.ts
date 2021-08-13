@@ -79,6 +79,7 @@ export module CyclicToDo
     export const applicationTitle = config.applicationTitle;
     export interface Settings
     {
+        theme?: "auto" | "light" | "dark";
         locale?: locale.LocaleType;
     }
     export interface ToDoTagEntryOld
@@ -2074,6 +2075,71 @@ export module CyclicToDo
                         [
                             $tag("h2")("")(item.task),
                             tagButtonList,
+                            $div("popup-operator")
+                            ([{
+                                tag: "button",
+                                className: "default-button",
+                                children: label("Close"),
+                                onclick: () =>
+                                {
+                                    ui.close();
+                                },
+                            }])
+                        ],
+                        onClose: async () => resolve(result),
+                    });
+                }
+            );
+        };
+        export const themeSettingsPopup = async (settings: Settings = Storage.Settings.get()): Promise<boolean> =>
+        {
+            return await new Promise
+            (
+                async resolve =>
+                {
+                    let result = false;
+                    const checkButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
+                    const checkButtonListUpdate = async () => minamo.dom.replaceChildren
+                    (
+                        checkButtonList,
+                        [
+                            await Promise.all
+                            (
+                                ["auto", "light", "dark"].map
+                                (
+                                    async (key: "auto" | "light" | "dark") =>
+                                    ({
+                                        tag: "button",
+                                        className: `check-button ${key === (settings.theme ?? "auto") ? "checked": ""}`,
+                                        children:
+                                        [
+                                            await Resource.loadSvgOrCache("check-icon"),
+                                            $span("")(label(<"theme.auto" | "theme.light" | "theme.dark">`theme.${key}`)),
+                                        ],
+                                        onclick: async () =>
+                                        {
+                                            if (key !== (settings.theme ?? "auto"))
+                                            {
+                                                settings.theme = key;
+                                                Storage.Settings.set(settings);
+                                                result = true;
+                                                await checkButtonListUpdate();
+                                                updateStyle();
+                                            }
+                                        }
+                                    })
+                                )
+                            )
+                        ]
+                    );
+                    await checkButtonListUpdate();
+                    const ui = popup
+                    ({
+                        // className: "add-remove-tags-popup",
+                        children:
+                        [
+                            $tag("h2")("")(label("Theme setting")),
+                            checkButtonList,
                             $div("popup-operator")
                             ([{
                                 tag: "button",
@@ -4419,6 +4485,11 @@ export module CyclicToDo
         [
             menuItem
             (
+                label("Theme setting"),
+                async () => await themeSettingsPopup()
+            ),
+            menuItem
+            (
                 label("Language setting"),
                 async () =>
                 {
@@ -4954,6 +5025,43 @@ export module CyclicToDo
     //         url
     //     );
     // };
+    const originalStyle = document.getElementById("style").innerText;
+    const makeRegExpPart = (text: string) => text.replace(/([\\\/\.\+\?\*\[\]\(\)\{\}\|])/gmu, "\\$1");
+    export const updateStyle = () =>
+    {
+        const setting = Storage.Settings.get().theme ?? "auto";
+        const system = window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark": "light";
+        const theme = "auto" === setting ? system: setting;
+        let style = originalStyle;
+        Object.keys(config.theme.original).forEach
+        (
+            key => style = style.replace
+            (
+                new RegExp
+                (
+                    makeRegExpPart(config.theme.original[key]),
+                    "gmu"
+                ),
+                key
+            )
+        );
+        Object.keys(config.theme.original).forEach
+        (
+            key => style = style.replace
+            (
+                new RegExp
+                (
+                    makeRegExpPart(key),
+                    "gmu"
+                ),
+                config.theme[theme][key] ?? config.theme.original[key]
+            )
+        );
+        if (document.getElementById("style").innerText !== style)
+        {
+            document.getElementById("style").innerText = style;
+        }
+    };
     export const start = async () =>
     {
         console.log("start!!!");
@@ -4982,6 +5090,8 @@ export module CyclicToDo
                 body.scrollTo(0, 0);
             }
         );
+        window.matchMedia('(prefers-color-scheme: dark)').addListener(updateStyle);
+        updateStyle();
         await Render.showUpdatingScreen(location.href);
         await showPage();
     };

@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu Aug 12 2021 22:29:27 GMT+0900 (GMT+09:00) -->
+<!-- build at: Fri Aug 13 2021 22:38:04 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -11,7 +11,7 @@
 <title>Cyclic ToDo</title>
 <link id="favicon" rel="shortcut icon" href="./image/cyclictodohex.1024.png">
 <link rel="apple-touch-icon" href="./image/cyclictodohex-ios.1024.png">
-<style type="text/css">
+<style type="text/css" id="style">
 .clickable-trait {
   cursor: pointer;
 }
@@ -41,40 +41,17 @@
   color: #000022;
   fill: #000022;
 }
-@media (prefers-color-scheme: dark) {
-  .positive-foreground-coloring-trait {
-    color: #FFFFFF;
-    fill: #FFFFFF;
-  }
-}
 .positive-background-coloring-trait {
   background-color: #FFFFFF;
-}
-@media (prefers-color-scheme: dark) {
-  .positive-background-coloring-trait {
-    background-color: #000022;
-  }
 }
 .negative-foreground-coloring-trait {
   color: #FFFFFF;
   fill: #FFFFFF;
 }
-@media (prefers-color-scheme: dark) {
-  .negative-foreground-coloring-trait {
-    color: #000022;
-    fill: #000022;
-  }
-}
 .primary-operator-coloring-trait {
   cursor: pointer;
   color: #FFFFFF;
   fill: #FFFFFF;
-}
-@media (prefers-color-scheme: dark) {
-  .primary-operator-coloring-trait {
-    color: #000022;
-    fill: #000022;
-  }
 }
 @media (hover: hover) {
   .primary-operator-coloring-trait:not(:hover) {
@@ -109,28 +86,12 @@
     background-color: #6F7F00;
   }
 }
-@media (hover: hover) and (prefers-color-scheme: dark) {
-  .secondary-operator-coloring-trait:not(:hover) {
-    background-color: #000022;
-  }
-}
-@media (hover: hover) and (prefers-color-scheme: dark) {
-  .secondary-operator-coloring-trait:hover {
-    color: #000022;
-    fill: #000022;
-  }
-}
 @media (hover: none) {
   .secondary-operator-coloring-trait {
     color: #228844;
     fill: #228844;
     border-color: #228844;
     background-color: #FFFFFF;
-  }
-}
-@media (hover: none) and (prefers-color-scheme: dark) {
-  .secondary-operator-coloring-trait {
-    background-color: #000022;
   }
 }
 .tertiary-operator-coloring-trait {
@@ -159,28 +120,12 @@
     background-color: #831B50;
   }
 }
-@media (hover: hover) and (prefers-color-scheme: dark) {
-  .delete-operator-coloring-trait:not(:hover) {
-    background-color: #000022;
-  }
-}
-@media (hover: hover) and (prefers-color-scheme: dark) {
-  .delete-operator-coloring-trait:hover {
-    color: #000022;
-    fill: #000022;
-  }
-}
 @media (hover: none) {
   .delete-operator-coloring-trait {
     color: #831B50;
     fill: #831B50;
     border-color: #831B50;
     background-color: #FFFFFF;
-  }
-}
-@media (hover: none) and (prefers-color-scheme: dark) {
-  .delete-operator-coloring-trait {
-    background-color: #000022;
   }
 }
 * {
@@ -195,21 +140,6 @@ textarea {
   fill: #000022;
   background-color: #FFFFFF;
 }
-@media (prefers-color-scheme: dark) {
-  body,
-  input,
-  textarea {
-    color: #FFFFFF;
-    fill: #FFFFFF;
-  }
-}
-@media (prefers-color-scheme: dark) {
-  body,
-  input,
-  textarea {
-    background-color: #000022;
-  }
-}
 body {
   margin: 0px;
   margin-bottom: 5rem;
@@ -217,10 +147,8 @@ body {
   overflow: hidden;
   background-color: rgba(34, 136, 68, 0.95);
 }
-@media (prefers-color-scheme: dark) {
-  ::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-  }
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }
 a {
   cursor: pointer;
@@ -502,11 +430,6 @@ body.flash .screen {
   right: 0px;
   left: 0px;
 }
-@media (prefers-color-scheme: dark) {
-  #foundation {
-    background-color: #000022;
-  }
-}
 .monospace {
   font-family: monospace;
 }
@@ -573,22 +496,10 @@ h1 .segment.label-segment {
   fill: #FFFFFF;
   background-color: #228844;
 }
-@media (prefers-color-scheme: dark) {
-  h1 .segment.label-segment {
-    color: #000022;
-    fill: #000022;
-  }
-}
 h1 .segment:not(.label-segment) {
   cursor: pointer;
   color: #FFFFFF;
   fill: #FFFFFF;
-}
-@media (prefers-color-scheme: dark) {
-  h1 .segment:not(.label-segment) {
-    color: #000022;
-    fill: #000022;
-  }
 }
 @media (hover: hover) {
   h1 .segment:not(.label-segment):not(:hover) {
@@ -625,12 +536,6 @@ h1 .segment + .menu-popup + .segment {
   border-left-style: solid;
   border-left-width: 1px;
   border-left-color: #FFFFFF !important;
-}
-@media (prefers-color-scheme: dark) {
-  h1 .segment + .segment,
-  h1 .segment + .menu-popup + .segment {
-    border-left-color: #000022 !important;
-  }
 }
 h1 .segment + .segment .icon,
 h1 .segment + .menu-popup + .segment .icon {
@@ -674,12 +579,6 @@ h1 .segment + .menu-popup {
     max-width: initial;
   }
 }
-@media (max-width: 780px) and (prefers-color-scheme: dark) {
-  h1:not(.header-operator-has-focus) .filter-frame .filter-icon svg {
-    color: #000022;
-    fill: #000022;
-  }
-}
 h1 button.icon-button,
 h1 button.menu-button {
   margin: 0px;
@@ -690,13 +589,6 @@ h1 button.menu-button {
   border-color: transparent !important;
   right: 0.25rem;
   position: absolute;
-}
-@media (prefers-color-scheme: dark) {
-  h1 button.icon-button,
-  h1 button.menu-button {
-    color: #000022;
-    fill: #000022;
-  }
 }
 @media (hover: hover) {
   h1 button.icon-button:not(:hover),
@@ -776,11 +668,6 @@ h1.obsolescence .progress-bar {
 #screen-toast {
   filter: drop-shadow(0rem 0rem 3rem #228844);
   background-color: #FFFFFF;
-}
-@media (prefers-color-scheme: dark) {
-  #screen-toast {
-    background-color: #000022;
-  }
 }
 #screen-toast .item {
   border-top-color: #228844;
@@ -934,17 +821,6 @@ h1.obsolescence .progress-bar {
   font-size: 1rem;
   max-width: 240px;
 }
-@media (prefers-color-scheme: dark) {
-  .filter-frame {
-    color: #FFFFFF;
-    fill: #FFFFFF;
-  }
-}
-@media (prefers-color-scheme: dark) {
-  .filter-frame {
-    background-color: #000022;
-  }
-}
 .filter-frame svg {
   color: #888;
   fill: #888;
@@ -977,11 +853,6 @@ h1.obsolescence .progress-bar {
 .filter-frame .dropdownlist:empty {
   display: none;
 }
-@media (prefers-color-scheme: dark) {
-  .filter-frame .dropdownlist {
-    background-color: #000022;
-  }
-}
 .filter-frame .dropdownlist button {
   border-width: 0px;
   border-style: none;
@@ -1009,13 +880,6 @@ h2 {
   fill: #FFFFFF;
   background-color: #228844;
   text-decoration: none;
-}
-@media (prefers-color-scheme: dark) {
-  h1,
-  h2 {
-    color: #000022;
-    fill: #000022;
-  }
 }
 label {
   cursor: pointer;
@@ -1059,17 +923,6 @@ button {
     background-color: #6F7F00;
   }
 }
-@media (hover: hover) and (prefers-color-scheme: dark) {
-  button:not(:hover) {
-    background-color: #000022;
-  }
-}
-@media (hover: hover) and (prefers-color-scheme: dark) {
-  button:hover {
-    color: #000022;
-    fill: #000022;
-  }
-}
 @media (hover: none) {
   button {
     color: #228844;
@@ -1078,21 +931,10 @@ button {
     background-color: #FFFFFF;
   }
 }
-@media (hover: none) and (prefers-color-scheme: dark) {
-  button {
-    background-color: #000022;
-  }
-}
 button.default-button {
   cursor: pointer;
   color: #FFFFFF;
   fill: #FFFFFF;
-}
-@media (prefers-color-scheme: dark) {
-  button.default-button {
-    color: #000022;
-    fill: #000022;
-  }
 }
 @media (hover: hover) {
   button.default-button:not(:hover) {
@@ -1150,28 +992,12 @@ button.delete-button {
     background-color: #831B50;
   }
 }
-@media (hover: hover) and (prefers-color-scheme: dark) {
-  button.delete-button:not(:hover) {
-    background-color: #000022;
-  }
-}
-@media (hover: hover) and (prefers-color-scheme: dark) {
-  button.delete-button:hover {
-    color: #000022;
-    fill: #000022;
-  }
-}
 @media (hover: none) {
   button.delete-button {
     color: #831B50;
     fill: #831B50;
     border-color: #831B50;
     background-color: #FFFFFF;
-  }
-}
-@media (hover: none) and (prefers-color-scheme: dark) {
-  button.delete-button {
-    background-color: #000022;
   }
 }
 .long-button {
@@ -1207,11 +1033,6 @@ button.delete-button {
   justify-content: stretch;
   flex-direction: column;
 }
-@media (prefers-color-scheme: dark) {
-  .menu-popup {
-    background-color: #000022;
-  }
-}
 .menu-popup a,
 .menu-popup button {
   border-radius: 0px;
@@ -1238,13 +1059,6 @@ button.delete-button {
   cursor: pointer;
   color: #FFFFFF;
   fill: #FFFFFF;
-}
-@media (prefers-color-scheme: dark) {
-  .menu-popup a.current-item,
-  .menu-popup button.current-item {
-    color: #000022;
-    fill: #000022;
-  }
 }
 @media (hover: hover) {
   .menu-popup a.current-item:not(:hover),
@@ -1277,11 +1091,6 @@ button.delete-button {
 }
 .menu-popup a button {
   width: 100%;
-}
-@media (prefers-color-scheme: dark) {
-  .menu-popup {
-    background-color: #000022;
-  }
 }
 .hide {
   display: none;
@@ -1317,11 +1126,6 @@ button.delete-button {
   overflow: auto;
   min-width: 360px;
   max-width: calc(100vw - 16px);
-}
-@media (prefers-color-scheme: dark) {
-  .popup {
-    background-color: #000022;
-  }
 }
 .popup input {
   width: calc(100% - 8px);
@@ -1440,12 +1244,6 @@ button.delete-button {
   fill: #000022;
   opacity: 0.6;
   cursor: pointer;
-}
-@media (prefers-color-scheme: dark) {
-  .history-bar a {
-    color: #FFFFFF;
-    fill: #FFFFFF;
-  }
 }
 @media (hover: hover) {
   .history-bar a:hover {
@@ -1635,12 +1433,6 @@ button.delete-button {
   min-height: 1.4em;
   margin-right: 4px;
 }
-@media (prefers-color-scheme: dark) {
-  .item-title {
-    color: #FFFFFF;
-    fill: #FFFFFF;
-  }
-}
 @media (hover: hover) {
   .item-title:hover {
     color: #6F7F00;
@@ -1668,12 +1460,6 @@ button.delete-button {
   color: #000022;
   fill: #000022;
   text-decoration: none;
-}
-@media (prefers-color-scheme: dark) {
-  .removed-item .item-title {
-    color: #FFFFFF;
-    fill: #FFFFFF;
-  }
 }
 .list-item,
 .task-item,
@@ -1731,24 +1517,12 @@ button.delete-button {
     fill: #6F7F00;
   }
 }
-@media (hover: hover) and (prefers-color-scheme: dark) {
-  .task-item .item-tags a:not(:hover) {
-    color: #FFFFFF;
-    fill: #FFFFFF;
-  }
-}
 @media (hover: none) {
   .task-item .item-tags a {
     opacity: 0.6;
     text-decoration: none;
     color: #000022;
     fill: #000022;
-  }
-}
-@media (hover: none) and (prefers-color-scheme: dark) {
-  .task-item .item-tags a {
-    color: #FFFFFF;
-    fill: #FFFFFF;
   }
 }
 .task-item .item-tags a + a {
@@ -1852,16 +1626,6 @@ button.delete-button {
 .history-list .history-item .item-operator {
   padding-left: 0.5rem;
 }
-@media (prefers-color-scheme: dark) and (hover: hover) {
-  .history-list .history-item .item-title:not(:hover) {
-    color: #FFFFFF;
-  }
-}
-@media (prefers-color-scheme: dark) and (hover: none) {
-  .history-list .history-item .item-title {
-    color: #FFFFFF;
-  }
-}
 .screen {
   background-color: #FFFFFF;
   display: flex;
@@ -1873,11 +1637,6 @@ button.delete-button {
   left: 0px;
   max-width: 100vw;
   max-height: 100vh;
-}
-@media (prefers-color-scheme: dark) {
-  .screen {
-    background-color: #000022;
-  }
 }
 .screen > :not(.screen-body) {
   flex-shrink: 0;
@@ -3141,7 +2900,27 @@ define("resource/config", [], {
     "sleepStandardDeviationRate": 3.0,
     "granceMinutes": 1440,
     "maxRestAdjustMinutes": 180,
-    "maxShortTermMinutes": 14400
+    "maxShortTermMinutes": 14400,
+    "theme": {
+        "original": {
+            "@main-color": "#000022",
+            "@base-color": "#FFFFFF",
+            "@accent-color": "#5F42A7",
+            "::-webkit-calendar-picker-indicator": "::-webkit-calendar-picker-indicator"
+        },
+        "light": {
+            "@main-color": "#000022",
+            "@base-color": "#FFFFFF",
+            "@accent-color": "#5F42A7",
+            "::-webkit-calendar-picker-indicator": ".dummy-invalid-class"
+        },
+        "dark": {
+            "@main-color": "#FFFFFF",
+            "@base-color": "#000022",
+            "@accent-color": "#5F42A7",
+            "::-webkit-calendar-picker-indicator": "::-webkit-calendar-picker-indicator"
+        }
+    }
 });
 define("resource/lang.en", [], {
     "$name": "English",
@@ -3200,6 +2979,10 @@ define("resource/lang.en", [], {
     "sort.smart": "Smart",
     "sort.simple": "Simple",
     "sort.limit": "Limit",
+    "Theme setting": "Theme setting",
+    "theme.auto": "Auto ( Follows System )",
+    "theme.light": "Light",
+    "theme.dark": "Dark",
     "language.auto": "Auto",
     "please input": "Please input.",
     "Sort order setting": "Sort order setting",
@@ -3276,6 +3059,10 @@ define("resource/lang.ja", [], {
     "sort.smart": "スマート",
     "sort.simple": "シンプル",
     "sort.limit": "リミット",
+    "Theme setting": "テーマ設定",
+    "theme.auto": "自動 ( システムに従う )",
+    "theme.light": "ライト",
+    "theme.dark": "ダーク",
     "language.auto": "自動",
     "please input": "入力してください。",
     "Sort order setting": "並び順設定",
@@ -5367,6 +5154,102 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); };
+            Render.themeSettingsPopup = function (settings) {
+                if (settings === void 0) { settings = Storage.Settings.get(); }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                    var result, checkButtonList, checkButtonListUpdate, ui;
+                                    var _this = this;
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                result = false;
+                                                checkButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
+                                                checkButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    var _a, _b, _c;
+                                                    var _this = this;
+                                                    return __generator(this, function (_d) {
+                                                        switch (_d.label) {
+                                                            case 0:
+                                                                _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                                _c = [checkButtonList];
+                                                                return [4 /*yield*/, Promise.all(["auto", "light", "dark"].map(function (key) { return __awaiter(_this, void 0, void 0, function () {
+                                                                        var _a;
+                                                                        var _this = this;
+                                                                        var _b;
+                                                                        return __generator(this, function (_c) {
+                                                                            switch (_c.label) {
+                                                                                case 0:
+                                                                                    _a = {
+                                                                                        tag: "button",
+                                                                                        className: "check-button " + (key === ((_b = settings.theme) !== null && _b !== void 0 ? _b : "auto") ? "checked" : "")
+                                                                                    };
+                                                                                    return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                                                case 1: return [2 /*return*/, (_a.children = [
+                                                                                        _c.sent(),
+                                                                                        Render.$span("")(Render.label("theme." + key))
+                                                                                    ],
+                                                                                        _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                            var _a;
+                                                                                            return __generator(this, function (_b) {
+                                                                                                switch (_b.label) {
+                                                                                                    case 0:
+                                                                                                        if (!(key !== ((_a = settings.theme) !== null && _a !== void 0 ? _a : "auto"))) return [3 /*break*/, 2];
+                                                                                                        settings.theme = key;
+                                                                                                        Storage.Settings.set(settings);
+                                                                                                        result = true;
+                                                                                                        return [4 /*yield*/, checkButtonListUpdate()];
+                                                                                                    case 1:
+                                                                                                        _b.sent();
+                                                                                                        CyclicToDo.updateStyle();
+                                                                                                        _b.label = 2;
+                                                                                                    case 2: return [2 /*return*/];
+                                                                                                }
+                                                                                            });
+                                                                                        }); },
+                                                                                        _a)];
+                                                                            }
+                                                                        });
+                                                                    }); }))];
+                                                            case 1: return [2 /*return*/, _b.apply(_a, _c.concat([[
+                                                                        _d.sent()
+                                                                    ]]))];
+                                                        }
+                                                    });
+                                                }); };
+                                                return [4 /*yield*/, checkButtonListUpdate()];
+                                            case 1:
+                                                _a.sent();
+                                                ui = Render.popup({
+                                                    // className: "add-remove-tags-popup",
+                                                    children: [
+                                                        Render.$tag("h2")("")(Render.label("Theme setting")),
+                                                        checkButtonList,
+                                                        Render.$div("popup-operator")([{
+                                                                tag: "button",
+                                                                className: "default-button",
+                                                                children: Render.label("Close"),
+                                                                onclick: function () {
+                                                                    ui.close();
+                                                                },
+                                                            }])
+                                                    ],
+                                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                        return [2 /*return*/, resolve(result)];
+                                                    }); }); },
+                                                });
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); })];
+                            case 1: return [2 /*return*/, _a.sent()];
+                        }
+                    });
+                });
+            };
             Render.localeSettingsPopup = function (settings) {
                 if (settings === void 0) { settings = Storage.Settings.get(); }
                 return __awaiter(_this, void 0, void 0, function () {
@@ -8491,6 +8374,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var _this = this;
                 return __generator(this, function (_a) {
                     return [2 /*return*/, [
+                            Render.menuItem(Render.label("Theme setting"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, Render.themeSettingsPopup()];
+                                    case 1: return [2 /*return*/, _a.sent()];
+                                }
+                            }); }); }),
                             Render.menuItem(Render.label("Language setting"), function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
@@ -9014,6 +8903,23 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
         //         url
         //     );
         // };
+        var originalStyle = document.getElementById("style").innerText;
+        var makeRegExpPart = function (text) { return text.replace(/([\\\/\.\+\?\*\[\]\(\)\{\}\|])/gmu, "\\$1"); };
+        CyclicToDo.updateStyle = function () {
+            var _a;
+            var setting = (_a = Storage.Settings.get().theme) !== null && _a !== void 0 ? _a : "auto";
+            var system = window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light";
+            var theme = "auto" === setting ? system : setting;
+            var style = originalStyle;
+            Object.keys(config_json_1.default.theme.original).forEach(function (key) { return style = style.replace(new RegExp(makeRegExpPart(config_json_1.default.theme.original[key]), "gmu"), key); });
+            Object.keys(config_json_1.default.theme.original).forEach(function (key) {
+                var _a;
+                return style = style.replace(new RegExp(makeRegExpPart(key), "gmu"), (_a = config_json_1.default.theme[theme][key]) !== null && _a !== void 0 ? _a : config_json_1.default.theme.original[key]);
+            });
+            if (document.getElementById("style").innerText !== style) {
+                document.getElementById("style").innerText = style;
+            }
+        };
         CyclicToDo.start = function () { return __awaiter(_this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
@@ -9055,6 +8961,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 }
                             });
                         }); });
+                        window.matchMedia('(prefers-color-scheme: dark)').addListener(CyclicToDo.updateStyle);
+                        CyclicToDo.updateStyle();
                         return [4 /*yield*/, Render.showUpdatingScreen(location.href)];
                     case 1:
                         _a.sent();

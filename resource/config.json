@@ -7,5 +7,29 @@
     "sleepStandardDeviationRate": 3.0,
     "granceMinutes": 1440,
     "maxRestAdjustMinutes": 180,
-    "maxShortTermMinutes": 14400
+    "maxShortTermMinutes": 14400,
+    "theme":
+    {
+        "original":
+        {
+            "@main-color": "#000022",
+            "@base-color": "#FFFFFF",
+            "@accent-color": "#5F42A7",
+            "::-webkit-calendar-picker-indicator": "::-webkit-calendar-picker-indicator"
+        },
+        "light":
+        {
+            "@main-color": "#000022",
+            "@base-color": "#FFFFFF",
+            "@accent-color": "#5F42A7",
+            "::-webkit-calendar-picker-indicator": ".dummy-invalid-class"
+        },
+        "dark":
+        {
+            "@main-color": "#FFFFFF",
+            "@base-color": "#000022",
+            "@accent-color": "#5F42A7",
+            "::-webkit-calendar-picker-indicator": "::-webkit-calendar-picker-indicator"
+        }
+    }
 }
