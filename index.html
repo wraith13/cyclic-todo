@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sun Aug 15 2021 02:34:46 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon Aug 16 2021 22:31:47 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -1124,7 +1124,7 @@ button.delete-button {
   border-color: #228844;
   background-color: #FFFFFF;
   overflow: auto;
-  min-width: 360px;
+  min-width: 240px;
   max-width: calc(100vw - 16px);
 }
 .popup input {
@@ -5157,95 +5157,98 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Render.themeSettingsPopup = function (settings) {
                 if (settings === void 0) { settings = Storage.Settings.get(); }
                 return __awaiter(_this, void 0, void 0, function () {
+                    var init;
                     var _this = this;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
-                                    var result, checkButtonList, checkButtonListUpdate, ui;
-                                    var _this = this;
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                result = false;
-                                                checkButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
-                                                checkButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
-                                                    var _a, _b, _c;
-                                                    var _this = this;
-                                                    return __generator(this, function (_d) {
-                                                        switch (_d.label) {
-                                                            case 0:
-                                                                _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
-                                                                _c = [checkButtonList];
-                                                                return [4 /*yield*/, Promise.all(["auto", "light", "dark"].map(function (key) { return __awaiter(_this, void 0, void 0, function () {
-                                                                        var _a;
-                                                                        var _this = this;
-                                                                        var _b;
-                                                                        return __generator(this, function (_c) {
-                                                                            switch (_c.label) {
-                                                                                case 0:
-                                                                                    _a = {
-                                                                                        tag: "button",
-                                                                                        className: "check-button " + (key === ((_b = settings.theme) !== null && _b !== void 0 ? _b : "auto") ? "checked" : "")
-                                                                                    };
-                                                                                    return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
-                                                                                case 1: return [2 /*return*/, (_a.children = [
-                                                                                        _c.sent(),
-                                                                                        Render.$span("")(Render.label("theme." + key))
-                                                                                    ],
-                                                                                        _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                                            var _a;
-                                                                                            return __generator(this, function (_b) {
-                                                                                                switch (_b.label) {
-                                                                                                    case 0:
-                                                                                                        if (!(key !== ((_a = settings.theme) !== null && _a !== void 0 ? _a : "auto"))) return [3 /*break*/, 2];
-                                                                                                        settings.theme = key;
-                                                                                                        Storage.Settings.set(settings);
-                                                                                                        result = true;
-                                                                                                        return [4 /*yield*/, checkButtonListUpdate()];
-                                                                                                    case 1:
-                                                                                                        _b.sent();
-                                                                                                        CyclicToDo.updateStyle();
-                                                                                                        _b.label = 2;
-                                                                                                    case 2: return [2 /*return*/];
-                                                                                                }
-                                                                                            });
-                                                                                        }); },
-                                                                                        _a)];
-                                                                            }
-                                                                        });
-                                                                    }); }))];
-                                                            case 1: return [2 /*return*/, _b.apply(_a, _c.concat([[
-                                                                        _d.sent()
-                                                                    ]]))];
-                                                        }
+                    var _a;
+                    return __generator(this, function (_b) {
+                        switch (_b.label) {
+                            case 0:
+                                init = (_a = settings.theme) !== null && _a !== void 0 ? _a : "auto";
+                                return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                        var result, checkButtonList, checkButtonListUpdate, ui;
+                                        var _this = this;
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0:
+                                                    result = false;
+                                                    checkButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
+                                                    checkButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        var _a, _b, _c;
+                                                        var _this = this;
+                                                        return __generator(this, function (_d) {
+                                                            switch (_d.label) {
+                                                                case 0:
+                                                                    _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                                    _c = [checkButtonList];
+                                                                    return [4 /*yield*/, Promise.all(["auto", "light", "dark"].map(function (key) { return __awaiter(_this, void 0, void 0, function () {
+                                                                            var _a;
+                                                                            var _this = this;
+                                                                            var _b;
+                                                                            return __generator(this, function (_c) {
+                                                                                switch (_c.label) {
+                                                                                    case 0:
+                                                                                        _a = {
+                                                                                            tag: "button",
+                                                                                            className: "check-button " + (key === ((_b = settings.theme) !== null && _b !== void 0 ? _b : "auto") ? "checked" : "")
+                                                                                        };
+                                                                                        return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                                                    case 1: return [2 /*return*/, (_a.children = [
+                                                                                            _c.sent(),
+                                                                                            Render.$span("")(Render.label("theme." + key))
+                                                                                        ],
+                                                                                            _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                                var _a;
+                                                                                                return __generator(this, function (_b) {
+                                                                                                    switch (_b.label) {
+                                                                                                        case 0:
+                                                                                                            if (!(key !== ((_a = settings.theme) !== null && _a !== void 0 ? _a : "auto"))) return [3 /*break*/, 2];
+                                                                                                            settings.theme = key;
+                                                                                                            Storage.Settings.set(settings);
+                                                                                                            return [4 /*yield*/, checkButtonListUpdate()];
+                                                                                                        case 1:
+                                                                                                            _b.sent();
+                                                                                                            result = init !== key;
+                                                                                                            _b.label = 2;
+                                                                                                        case 2: return [2 /*return*/];
+                                                                                                    }
+                                                                                                });
+                                                                                            }); },
+                                                                                            _a)];
+                                                                                }
+                                                                            });
+                                                                        }); }))];
+                                                                case 1: return [2 /*return*/, _b.apply(_a, _c.concat([[
+                                                                            _d.sent()
+                                                                        ]]))];
+                                                            }
+                                                        });
+                                                    }); };
+                                                    return [4 /*yield*/, checkButtonListUpdate()];
+                                                case 1:
+                                                    _a.sent();
+                                                    ui = Render.popup({
+                                                        // className: "add-remove-tags-popup",
+                                                        children: [
+                                                            Render.$tag("h2")("")(Render.label("Theme setting")),
+                                                            checkButtonList,
+                                                            Render.$div("popup-operator")([{
+                                                                    tag: "button",
+                                                                    className: "default-button",
+                                                                    children: Render.label("Close"),
+                                                                    onclick: function () {
+                                                                        ui.close();
+                                                                    },
+                                                                }])
+                                                        ],
+                                                        onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                            return [2 /*return*/, resolve(result)];
+                                                        }); }); },
                                                     });
-                                                }); };
-                                                return [4 /*yield*/, checkButtonListUpdate()];
-                                            case 1:
-                                                _a.sent();
-                                                ui = Render.popup({
-                                                    // className: "add-remove-tags-popup",
-                                                    children: [
-                                                        Render.$tag("h2")("")(Render.label("Theme setting")),
-                                                        checkButtonList,
-                                                        Render.$div("popup-operator")([{
-                                                                tag: "button",
-                                                                className: "default-button",
-                                                                children: Render.label("Close"),
-                                                                onclick: function () {
-                                                                    ui.close();
-                                                                },
-                                                            }])
-                                                    ],
-                                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                        return [2 /*return*/, resolve(result)];
-                                                    }); }); },
-                                                });
-                                                return [2 /*return*/];
-                                        }
-                                    });
-                                }); })];
-                            case 1: return [2 /*return*/, _a.sent()];
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); })];
+                            case 1: return [2 /*return*/, _b.sent()];
                         }
                     });
                 });
@@ -5351,7 +5354,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             case 1:
                                                 _a.sent();
                                                 ui = Render.popup({
-                                                    className: "add-remove-tags-popup",
+                                                    // className: "add-remove-tags-popup",
                                                     children: [
                                                         Render.$tag("h2")("")(Render.label("Language setting")),
                                                         checkButtonList,
@@ -5495,7 +5498,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             case 1:
                                                 _a.sent();
                                                 ui = Render.popup({
-                                                    className: "add-remove-tags-popup",
+                                                    // className: "add-remove-tags-popup",
                                                     children: [
                                                         Render.$tag("h2")("")(locale.map("Sort order setting") + ": " + Domain.tagMap(tag)),
                                                         tagButtonList,
@@ -8374,12 +8377,18 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var _this = this;
                 return __generator(this, function (_a) {
                     return [2 /*return*/, [
-                            Render.menuItem(Render.label("Theme setting"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4 /*yield*/, Render.themeSettingsPopup()];
-                                    case 1: return [2 /*return*/, _a.sent()];
-                                }
-                            }); }); }),
+                            Render.menuItem(Render.label("Theme setting"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, Render.themeSettingsPopup()];
+                                        case 1:
+                                            if (_a.sent()) {
+                                                CyclicToDo.updateStyle();
+                                            }
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }),
                             Render.menuItem(Render.label("Language setting"), function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {

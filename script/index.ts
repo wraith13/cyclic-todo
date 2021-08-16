@@ -2093,6 +2093,7 @@ export module CyclicToDo
         };
         export const themeSettingsPopup = async (settings: Settings = Storage.Settings.get()): Promise<boolean> =>
         {
+            const init = settings.theme ?? "auto";
             return await new Promise
             (
                 async resolve =>
@@ -2122,9 +2123,8 @@ export module CyclicToDo
                                             {
                                                 settings.theme = key;
                                                 Storage.Settings.set(settings);
-                                                result = true;
                                                 await checkButtonListUpdate();
-                                                updateStyle();
+                                                result = init !== key;
                                             }
                                         }
                                     })
@@ -2218,7 +2218,7 @@ export module CyclicToDo
                     await checkButtonListUpdate();
                     const ui = popup
                     ({
-                        className: "add-remove-tags-popup",
+                        // className: "add-remove-tags-popup",
                         children:
                         [
                             $tag("h2")("")(label("Language setting")),
@@ -2320,7 +2320,7 @@ export module CyclicToDo
                 await tagButtonListUpdate();
                 const ui = popup
                 ({
-                    className: "add-remove-tags-popup",
+                    // className: "add-remove-tags-popup",
                     children:
                     [
                         $tag("h2")("")(`${locale.map("Sort order setting")}: ${Domain.tagMap(tag)}`),
@@ -4486,7 +4486,13 @@ export module CyclicToDo
             menuItem
             (
                 label("Theme setting"),
-                async () => await themeSettingsPopup()
+                async () =>
+                {
+                    if (await themeSettingsPopup())
+                    {
+                        updateStyle();
+                    }
+                }
             ),
             menuItem
             (
