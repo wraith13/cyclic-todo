@@ -4968,6 +4968,23 @@ export module CyclicToDo
                         (getScreenCover() ?? getCloseButton())?.click();
                         break;
                 }
+                const focusedElementTagName = document.activeElement?.tagName?.toLowerCase() ?? "";
+                if (["input", "textarea"].indexOf(focusedElementTagName) < 0)
+                {
+                    switch(event.key.toLowerCase())
+                    {
+                        case "f":
+                            if(null === document.fullscreenElement)
+                            {
+                                document.body.requestFullscreen();
+                            }
+                            else
+                            {
+                                document.exitFullscreen();
+                            }
+                            break;
+                    }
+                }
             }
         };
     }
