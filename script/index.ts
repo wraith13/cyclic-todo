@@ -5007,11 +5007,13 @@ export module CyclicToDo
         return result as Render.PageParams;
     };
     export const getUrlHash = (url: string = location.href) => url.replace(/[^#]*#?/, "");
+    export const regulateUrl = (url: string) => url.replace(/#$/, "").replace(/\?$/, "");
     export const makeUrl =
     (
         args: {[key: string]: string} | Render.PageParams,
         href: string = location.href
-    ) =>
+    ) => regulateUrl
+    (
         href
             .replace(/\?.*/, "")
             .replace(/#.*/, "")
@@ -5021,7 +5023,8 @@ export module CyclicToDo
                 .filter(i => "hash" !== i)
                 .map(i => `${i}=${encodeURIComponent(args[i])}`)
                 .join("&")
-            +`#${args["hash"] ?? ""}`;
+            +`#${args["hash"] ?? ""}`
+    );
     // export const makeUrl =
     // (
     //     args: {[key: string]: string},

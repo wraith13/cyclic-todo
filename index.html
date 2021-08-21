@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon Aug 16 2021 22:31:47 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sat Aug 21 2021 20:56:05 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -465,11 +465,11 @@ h1.segmented {
 }
 h1 .icon {
   display: inline-block;
-  margin-right: 0.25rem;
+  padding: 0.25rem;
 }
 h1 .icon svg {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2rem;
+  height: 2rem;
 }
 h1 .segment {
   position: relative;
@@ -8885,10 +8885,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             if (url === void 0) { url = location.href; }
             return url.replace(/[^#]*#?/, "");
         };
+        CyclicToDo.regulateUrl = function (url) { return url.replace(/#$/, "").replace(/\?$/, ""); };
         CyclicToDo.makeUrl = function (args, href) {
             var _a;
             if (href === void 0) { href = location.href; }
-            return href
+            return CyclicToDo.regulateUrl(href
                 .replace(/\?.*/, "")
                 .replace(/#.*/, "")
                 + "?"
@@ -8897,7 +8898,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     .filter(function (i) { return "hash" !== i; })
                     .map(function (i) { return i + "=" + encodeURIComponent(args[i]); })
                     .join("&")
-                + ("#" + ((_a = args["hash"]) !== null && _a !== void 0 ? _a : ""));
+                + ("#" + ((_a = args["hash"]) !== null && _a !== void 0 ? _a : "")));
         };
         // export const makeUrl =
         // (
