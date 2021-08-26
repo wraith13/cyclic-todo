@@ -1471,7 +1471,7 @@ export module CyclicToDo
                     Calculate.average(inflatedRecentrlyIntervals),
                 RecentlyAverage: history.intervals.length <= 0 ?
                     null:
-                    Calculate.average(history.intervals),
+                    Calculate.average(longRecentries.filter((_, index) => index < 10)),
                 smartRest: null,
                 expectedInterval: null,
             };
@@ -2500,6 +2500,16 @@ export module CyclicToDo
                 label("previous"),
                 $span("value monospace")(Domain.dateStringFromTick(item.previous)),
             ]),
+            $div("task-elapsed-time")
+            ([
+                label("elapsed time"),
+                $span("value monospace")(Domain.timeLongStringFromTick(item.elapsed)),
+            ]),
+            $div("task-interval-average")
+            ([
+                label("recentrly interval average"),
+                $span("value monospace")(Domain.timeLongStringFromTick(item.RecentlyAverage)),
+            ]),
             $div("task-interval-average")
             ([
                 label("expected interval"),
@@ -2516,22 +2526,12 @@ export module CyclicToDo
                         )
                 )
             ]),
-            $div("task-elapsed-time")
-            ([
-                label("elapsed time"),
-                $span("value monospace")(Domain.timeLongStringFromTick(item.elapsed)),
-            ]),
             /*
-            div("task-interval-average")
+            $div("task-interval-average")
             ([
-                span("label")("expected interval average (予想間隔平均):"),
-                span("value monospace")(renderTime(item.smartAverage)),
+                $span("label")("expected interval average (予想間隔平均):"),
+                $span("value monospace")(renderTime(item.smartAverage)),
             ])
-            div("task-interval-average")
-            ([
-                span("label")("recentrly interval average (直近間隔平均):"),
-                span("value monospace")(renderTime(item.average)),
-            ]),
             */
             $div("task-count")
             ([

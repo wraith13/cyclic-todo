@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Sat Aug 21 2021 20:56:05 GMT+0900 (GMT+09:00) -->
+<!-- build at: Tue Aug 24 2021 21:41:13 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2927,6 +2927,7 @@ define("resource/lang.en", [], {
     "Full screen": "Full screen",
     "Cancel full screen": "Cancel full screen",
     "previous": "previous",
+    "recentrly interval average": "recentrly interval average",
     "expected interval": "expected interval",
     "elapsed time": "elapsed time",
     "count": "count",
@@ -3007,6 +3008,7 @@ define("resource/lang.ja", [], {
     "Full screen": "フルスクリーン表示",
     "Cancel full screen": "フルスクリーン解除",
     "previous": "前回",
+    "recentrly interval average": "直近間隔平均",
     "expected interval": "予想間隔",
     "elapsed time": "経過時間",
     "count": "回数",
@@ -4451,7 +4453,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         Calculate.average(inflatedRecentrlyIntervals),
                     RecentlyAverage: history.intervals.length <= 0 ?
                         null :
-                        Calculate.average(history.intervals),
+                        Calculate.average(longRecentries.filter(function (_, index) { return index < 10; })),
                     smartRest: null,
                     expectedInterval: null,
                 };
@@ -5699,6 +5701,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     Render.label("previous"),
                     Render.$span("value monospace")(Domain.dateStringFromTick(item.previous)),
                 ]),
+                Render.$div("task-elapsed-time")([
+                    Render.label("elapsed time"),
+                    Render.$span("value monospace")(Domain.timeLongStringFromTick(item.elapsed)),
+                ]),
+                Render.$div("task-interval-average")([
+                    Render.label("recentrly interval average"),
+                    Render.$span("value monospace")(Domain.timeLongStringFromTick(item.RecentlyAverage)),
+                ]),
                 Render.$div("task-interval-average")([
                     Render.label("expected interval"),
                     Render.$span("value monospace")(null === item.RecentlyStandardDeviation ?
@@ -5708,21 +5718,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
                         ))
                 ]),
-                Render.$div("task-elapsed-time")([
-                    Render.label("elapsed time"),
-                    Render.$span("value monospace")(Domain.timeLongStringFromTick(item.elapsed)),
-                ]),
                 /*
-                div("task-interval-average")
+                $div("task-interval-average")
                 ([
-                    span("label")("expected interval average (予想間隔平均):"),
-                    span("value monospace")(renderTime(item.smartAverage)),
+                    $span("label")("expected interval average (予想間隔平均):"),
+                    $span("value monospace")(renderTime(item.smartAverage)),
                 ])
-                div("task-interval-average")
-                ([
-                    span("label")("recentrly interval average (直近間隔平均):"),
-                    span("value monospace")(renderTime(item.average)),
-                ]),
                 */
                 Render.$div("task-count")([
                     Render.label("count"),
