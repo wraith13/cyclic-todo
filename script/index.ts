@@ -1560,6 +1560,32 @@ export module CyclicToDo
     }
     export module Render
     {
+        export const fullscreenEnabled = () => document.fullscreenEnabled ?? (document as any).webkitFullscreenEnabled;
+        export const fullscreenElement = () => (document.fullscreenElement ?? ((document as any).webkitFullscreenElement) ?? null);
+        export const requestFullscreen = async (element: Element = document.documentElement) =>
+        {
+            if (element.requestFullscreen)
+            {
+                await element.requestFullscreen();
+            }
+            else
+            if ((element as any).webkitRequestFullscreen)
+            {
+                await ((element as any).webkitRequestFullscreen)();
+            }
+        };
+        export const exitFullscreen = async () =>
+        {
+            if (document.exitFullscreen)
+            {
+                await document.exitFullscreen();
+            }
+            else
+            if ((document as any).webkitCancelFullScreen)
+            {
+                await ((document as any).webkitCancelFullScreen)();
+            }
+        };
         export module Operate
         {
             export const renameList = async (pass: string | Model.Document, newName, onCanceled: () => unknown = () => updateWindow("operate")) =>
@@ -3290,25 +3316,24 @@ export module CyclicToDo
                 }
             }
         );
-        export const fullscreenMenuItem = () =>
-            document.fullscreenEnabled ?
+        export const fullscreenMenuItem = async () => fullscreenEnabled() ?
             (
-                null === document.fullscreenElement ?
+                null === fullscreenElement() ?
                     menuItem
                     (
                         label("Full screen"),
-                        async () => await document.body.requestFullscreen(),
+                        async () => await requestFullscreen()
                     ):
                     menuItem
                     (
                         label("Cancel full screen"),
-                        async () => await document.exitFullscreen(),
+                        async () => await exitFullscreen()
                     )
             ):
             [];
         export const listScreenMenu = async (entry: ToDoTagEntryOld) =>
         [
-            fullscreenMenuItem(),
+            await fullscreenMenuItem(),
             internalLink
             ({
                 href: { pass: entry.pass, tag: entry.tag, hash: "history" },
@@ -4483,6 +4508,7 @@ export module CyclicToDo
         ]);
         export const welcomeScreenMenu = async () =>
         [
+            await fullscreenMenuItem(),
             menuItem
             (
                 label("Theme setting"),
@@ -4980,17 +5006,32 @@ export module CyclicToDo
                     switch(event.key.toLowerCase())
                     {
                         case "f":
-                            if(null === document.fullscreenElement)
+                            if (fullscreenEnabled())
                             {
-                                document.body.requestFullscreen();
-                            }
-                            else
-                            {
-                                document.exitFullscreen();
+                                if(null === fullscreenElement())
+                                {
+                                    requestFullscreen();
+                                }
+                                else
+                                {
+                                    exitFullscreen();
+                                }
                             }
                             break;
                     }
                 }
+            }
+        };
+        export const onFullscreenChange = (_event: Event) =>
+        {
+            onWindowResize();
+        };
+        export const onWebkitFullscreenChange = (_event: Event) =>
+        {
+            onWindowResize();
+            if (0 <= navigator.userAgent.indexOf("iPad") || (0 <= navigator.userAgent.indexOf("Macintosh") && "ontouchend" in document))
+            {
+                document.body.classList.toggle("fxxking-ipad-fullscreen", fullscreenElement());
             }
         };
     }
@@ -5116,6 +5157,8 @@ export module CyclicToDo
                 body.scrollTo(0, 0);
             }
         );
+        document.addEventListener('fullscreenchange', Render.onFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', Render.onWebkitFullscreenChange);
         window.matchMedia('(prefers-color-scheme: dark)').addListener(updateStyle);
         updateStyle();
         await Render.showUpdatingScreen(location.href);

@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Tue Aug 24 2021 21:41:13 GMT+0900 (GMT+09:00) -->
+<!-- build at: Fri Aug 27 2021 05:36:35 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -423,7 +423,6 @@ body.flash .screen {
   }
 }
 #foundation {
-  background-color: #FFFFFF;
   position: absolute;
   top: 0px;
   bottom: 0px;
@@ -1626,11 +1625,15 @@ button.delete-button {
 .history-list .history-item .item-operator {
   padding-left: 0.5rem;
 }
+body.fxxking-ipad-fullscreen .screen {
+  padding-top: 21px;
+}
 .screen {
   background-color: #FFFFFF;
   display: flex;
   flex-direction: column;
   position: absolute;
+  background-color: transparent;
   top: 0px;
   bottom: 0px;
   right: 0px;
@@ -1680,6 +1683,9 @@ button.delete-button {
 }
 .todo-screen .tick-list .tick-item .item-operator {
   padding-left: 0.5rem;
+}
+body:not(.tektite) .screen .screen-body {
+  background-color: #FFFFFF;
 }
 .welcome-screen .screen-body .list-list:not(:empty) {
   margin-top: 2rem;
@@ -4529,6 +4535,49 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
         (function (Render) {
             var _this = this;
             var _a, _b;
+            Render.fullscreenEnabled = function () { var _a; return (_a = document.fullscreenEnabled) !== null && _a !== void 0 ? _a : document.webkitFullscreenEnabled; };
+            Render.fullscreenElement = function () { var _a, _b; return ((_b = (_a = document.fullscreenElement) !== null && _a !== void 0 ? _a : (document.webkitFullscreenElement)) !== null && _b !== void 0 ? _b : null); };
+            Render.requestFullscreen = function (element) {
+                if (element === void 0) { element = document.documentElement; }
+                return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                if (!element.requestFullscreen) return [3 /*break*/, 2];
+                                return [4 /*yield*/, element.requestFullscreen()];
+                            case 1:
+                                _a.sent();
+                                return [3 /*break*/, 4];
+                            case 2:
+                                if (!element.webkitRequestFullscreen) return [3 /*break*/, 4];
+                                return [4 /*yield*/, (element.webkitRequestFullscreen)()];
+                            case 3:
+                                _a.sent();
+                                _a.label = 4;
+                            case 4: return [2 /*return*/];
+                        }
+                    });
+                });
+            };
+            Render.exitFullscreen = function () { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            if (!document.exitFullscreen) return [3 /*break*/, 2];
+                            return [4 /*yield*/, document.exitFullscreen()];
+                        case 1:
+                            _a.sent();
+                            return [3 /*break*/, 4];
+                        case 2:
+                            if (!document.webkitCancelFullScreen) return [3 /*break*/, 4];
+                            return [4 /*yield*/, (document.webkitCancelFullScreen)()];
+                        case 3:
+                            _a.sent();
+                            _a.label = 4;
+                        case 4: return [2 /*return*/];
+                    }
+                });
+            }); };
             var Operate;
             (function (Operate) {
                 var _this = this;
@@ -6698,128 +6747,134 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     });
                 }); });
             };
-            Render.fullscreenMenuItem = function () {
-                return document.fullscreenEnabled ?
-                    (null === document.fullscreenElement ?
-                        Render.menuItem(Render.label("Full screen"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, document.body.requestFullscreen()];
-                                case 1: return [2 /*return*/, _a.sent()];
-                            }
-                        }); }); }) :
-                        Render.menuItem(Render.label("Cancel full screen"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, document.exitFullscreen()];
-                                case 1: return [2 /*return*/, _a.sent()];
-                            }
-                        }); }); })) :
-                    [];
-            };
+            Render.fullscreenMenuItem = function () { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, Render.fullscreenEnabled() ?
+                            (null === Render.fullscreenElement() ?
+                                Render.menuItem(Render.label("Full screen"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, Render.requestFullscreen()];
+                                        case 1: return [2 /*return*/, _a.sent()];
+                                    }
+                                }); }); }) :
+                                Render.menuItem(Render.label("Cancel full screen"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, Render.exitFullscreen()];
+                                        case 1: return [2 /*return*/, _a.sent()];
+                                    }
+                                }); }); })) :
+                            []];
+                });
+            }); };
             Render.listScreenMenu = function (entry) { return __awaiter(_this, void 0, void 0, function () {
                 var _this = this;
                 return __generator(this, function (_a) {
-                    return [2 /*return*/, [
-                            Render.fullscreenMenuItem(),
-                            Render.internalLink({
-                                href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                                children: Render.menuItem(Render.label("History")),
-                            }),
-                            Render.menuItem(Render.label("Sort order setting"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                return __generator(this, function (_a) {
-                                    switch (_a.label) {
-                                        case 0: return [4 /*yield*/, Render.tagSortSettingsPopup(entry.pass, entry.tag)];
-                                        case 1:
-                                            if (!_a.sent()) return [3 /*break*/, 3];
-                                            return [4 /*yield*/, CyclicToDo.reload()];
-                                        case 2:
-                                            _a.sent();
-                                            _a.label = 3;
-                                        case 3: return [2 /*return*/];
-                                    }
-                                });
-                            }); }),
-                            "@overall" === entry.tag ? Render.listRenameMenu(entry.pass) : [],
-                            Model.isSystemTagOld(entry.tag) ? [] :
-                                Render.menuItem(Render.label("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                    var newTag;
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, Render.fullscreenMenuItem()];
+                        case 1: return [2 /*return*/, [
+                                _a.sent(),
+                                Render.internalLink({
+                                    href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                                    children: Render.menuItem(Render.label("History")),
+                                }),
+                                Render.menuItem(Render.label("Sort order setting"), function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
-                                            case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a tag's name."), entry.tag)];
+                                            case 0: return [4 /*yield*/, Render.tagSortSettingsPopup(entry.pass, entry.tag)];
                                             case 1:
-                                                newTag = _a.sent();
-                                                if (!(null !== newTag && 0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 4];
-                                                if (!OldStorage.Tag.rename(entry.pass, entry.tag, newTag)) return [3 /*break*/, 3];
-                                                return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: newTag })];
+                                                if (!_a.sent()) return [3 /*break*/, 3];
+                                                return [4 /*yield*/, CyclicToDo.reload()];
                                             case 2:
                                                 _a.sent();
-                                                return [3 /*break*/, 4];
-                                            case 3:
-                                                Render.alert("その名前のタグは既に存在しています。");
-                                                _a.label = 4;
-                                            case 4: return [2 /*return*/];
+                                                _a.label = 3;
+                                            case 3: return [2 /*return*/];
                                         }
                                     });
                                 }); }),
-                            Render.internalLink({
-                                href: { pass: entry.pass, hash: "removed" },
-                                children: Render.menuItem(Render.label("@deleted")),
-                            }),
-                            Render.menuItem(Render.label("New ToDo"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                var newTask;
-                                return __generator(this, function (_a) {
-                                    switch (_a.label) {
-                                        case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a ToDo's name."))];
-                                        case 1:
-                                            newTask = _a.sent();
-                                            if (!(null !== newTask)) return [3 /*break*/, 3];
-                                            OldStorage.Task.add(entry.pass, newTask);
-                                            OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
-                                            return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, todo: newTask, })];
-                                        case 2:
-                                            _a.sent();
-                                            _a.label = 3;
-                                        case 3: return [2 /*return*/];
-                                    }
-                                });
-                            }); }),
-                            // {
-                            //     tag: "button",
-                            //     children: "🚫 リストをシェア",
-                            // },
-                            Render.internalLink({
-                                href: { pass: entry.pass, hash: "export" },
-                                children: Render.menuItem(Render.label("Export")),
-                            }),
-                            Model.isSystemTagOld(entry.tag) ? [] :
-                                Render.menuItem(Render.label("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                "@overall" === entry.tag ? Render.listRenameMenu(entry.pass) : [],
+                                Model.isSystemTagOld(entry.tag) ? [] :
+                                    Render.menuItem(Render.label("Rename"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                        var newTag;
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a tag's name."), entry.tag)];
+                                                case 1:
+                                                    newTag = _a.sent();
+                                                    if (!(null !== newTag && 0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 4];
+                                                    if (!OldStorage.Tag.rename(entry.pass, entry.tag, newTag)) return [3 /*break*/, 3];
+                                                    return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: newTag })];
+                                                case 2:
+                                                    _a.sent();
+                                                    return [3 /*break*/, 4];
+                                                case 3:
+                                                    Render.alert("その名前のタグは既に存在しています。");
+                                                    _a.label = 4;
+                                                case 4: return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }),
+                                Render.internalLink({
+                                    href: { pass: entry.pass, hash: "removed" },
+                                    children: Render.menuItem(Render.label("@deleted")),
+                                }),
+                                Render.menuItem(Render.label("New ToDo"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                    var newTask;
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
-                                            case 0:
-                                                OldStorage.Tag.remove(entry.pass, entry.tag);
-                                                return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: "@overall" })];
+                                            case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a ToDo's name."))];
                                             case 1:
+                                                newTask = _a.sent();
+                                                if (!(null !== newTask)) return [3 /*break*/, 3];
+                                                OldStorage.Task.add(entry.pass, newTask);
+                                                OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
+                                                return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, todo: newTask, })];
+                                            case 2:
                                                 _a.sent();
-                                                return [2 /*return*/];
+                                                _a.label = 3;
+                                            case 3: return [2 /*return*/];
                                         }
                                     });
-                                }); }, "delete-button"),
-                            "@overall" === entry.tag ?
-                                Render.menuItem(Render.label("Delete this List"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                    var backup;
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                backup = location.href;
-                                                Operate.removeList(entry.pass, function () { return CyclicToDo.showPage(backup); });
-                                                return [4 /*yield*/, CyclicToDo.showUrl({})];
-                                            case 1:
-                                                _a.sent();
-                                                return [2 /*return*/];
-                                        }
-                                    });
-                                }); }, "delete-button") :
-                                [],
-                        ]];
+                                }); }),
+                                // {
+                                //     tag: "button",
+                                //     children: "🚫 リストをシェア",
+                                // },
+                                Render.internalLink({
+                                    href: { pass: entry.pass, hash: "export" },
+                                    children: Render.menuItem(Render.label("Export")),
+                                }),
+                                Model.isSystemTagOld(entry.tag) ? [] :
+                                    Render.menuItem(Render.label("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0:
+                                                    OldStorage.Tag.remove(entry.pass, entry.tag);
+                                                    return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: "@overall" })];
+                                                case 1:
+                                                    _a.sent();
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }, "delete-button"),
+                                "@overall" === entry.tag ?
+                                    Render.menuItem(Render.label("Delete this List"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                        var backup;
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0:
+                                                    backup = location.href;
+                                                    Operate.removeList(entry.pass, function () { return CyclicToDo.showPage(backup); });
+                                                    return [4 /*yield*/, CyclicToDo.showUrl({})];
+                                                case 1:
+                                                    _a.sent();
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }, "delete-button") :
+                                    []
+                            ]];
+                    }
                 });
             }); };
             Render.softRegulateFilterText = function (filter) { return filter
@@ -8377,48 +8432,52 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Render.welcomeScreenMenu = function () { return __awaiter(_this, void 0, void 0, function () {
                 var _this = this;
                 return __generator(this, function (_a) {
-                    return [2 /*return*/, [
-                            Render.menuItem(Render.label("Theme setting"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                return __generator(this, function (_a) {
-                                    switch (_a.label) {
-                                        case 0: return [4 /*yield*/, Render.themeSettingsPopup()];
-                                        case 1:
-                                            if (_a.sent()) {
-                                                CyclicToDo.updateStyle();
-                                            }
-                                            return [2 /*return*/];
-                                    }
-                                });
-                            }); }),
-                            Render.menuItem(Render.label("Language setting"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                return __generator(this, function (_a) {
-                                    switch (_a.label) {
-                                        case 0: return [4 /*yield*/, Render.localeSettingsPopup()];
-                                        case 1:
-                                            if (!_a.sent()) return [3 /*break*/, 3];
-                                            locale.setLocale(Storage.Settings.get().locale);
-                                            return [4 /*yield*/, CyclicToDo.reload()];
-                                        case 2:
-                                            _a.sent();
-                                            _a.label = 3;
-                                        case 3: return [2 /*return*/];
-                                    }
-                                });
-                            }); }),
-                            Render.menuItem(Render.label("New ToDo List"), Render.newListPrompt),
-                            Render.internalLink({
-                                href: { hash: "import", },
-                                children: Render.menuItem(Render.label("Import List")),
-                            }),
-                            Render.internalLink({
-                                href: { hash: "removed", },
-                                children: Render.menuItem(Render.label("@deleted")),
-                            }),
-                            Render.externalLink({
-                                href: config_json_1.default.repositoryUrl,
-                                children: Render.menuItem(Render.labelSpan("GitHub")),
-                            }),
-                        ]];
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, Render.fullscreenMenuItem()];
+                        case 1: return [2 /*return*/, [
+                                _a.sent(),
+                                Render.menuItem(Render.label("Theme setting"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, Render.themeSettingsPopup()];
+                                            case 1:
+                                                if (_a.sent()) {
+                                                    CyclicToDo.updateStyle();
+                                                }
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); }),
+                                Render.menuItem(Render.label("Language setting"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, Render.localeSettingsPopup()];
+                                            case 1:
+                                                if (!_a.sent()) return [3 /*break*/, 3];
+                                                locale.setLocale(Storage.Settings.get().locale);
+                                                return [4 /*yield*/, CyclicToDo.reload()];
+                                            case 2:
+                                                _a.sent();
+                                                _a.label = 3;
+                                            case 3: return [2 /*return*/];
+                                        }
+                                    });
+                                }); }),
+                                Render.menuItem(Render.label("New ToDo List"), Render.newListPrompt),
+                                Render.internalLink({
+                                    href: { hash: "import", },
+                                    children: Render.menuItem(Render.label("Import List")),
+                                }),
+                                Render.internalLink({
+                                    href: { hash: "removed", },
+                                    children: Render.menuItem(Render.label("@deleted")),
+                                }),
+                                Render.externalLink({
+                                    href: config_json_1.default.repositoryUrl,
+                                    children: Render.menuItem(Render.labelSpan("GitHub")),
+                                })
+                            ]];
+                    }
                 });
             }); };
             Render.welcomeScreen = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -8858,15 +8917,26 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     if (["input", "textarea"].indexOf(focusedElementTagName) < 0) {
                         switch (event.key.toLowerCase()) {
                             case "f":
-                                if (null === document.fullscreenElement) {
-                                    document.body.requestFullscreen();
-                                }
-                                else {
-                                    document.exitFullscreen();
+                                if (Render.fullscreenEnabled()) {
+                                    if (null === Render.fullscreenElement()) {
+                                        Render.requestFullscreen();
+                                    }
+                                    else {
+                                        Render.exitFullscreen();
+                                    }
                                 }
                                 break;
                         }
                     }
+                }
+            };
+            Render.onFullscreenChange = function (_event) {
+                Render.onWindowResize();
+            };
+            Render.onWebkitFullscreenChange = function (_event) {
+                Render.onWindowResize();
+                if (0 <= navigator.userAgent.indexOf("iPad") || (0 <= navigator.userAgent.indexOf("Macintosh") && "ontouchend" in document)) {
+                    document.body.classList.toggle("fxxking-ipad-fullscreen", Render.fullscreenElement());
                 }
             };
         })(Render = CyclicToDo.Render || (CyclicToDo.Render = {}));
@@ -8985,6 +9055,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 }
                             });
                         }); });
+                        document.addEventListener('fullscreenchange', Render.onFullscreenChange);
+                        document.addEventListener('webkitfullscreenchange', Render.onWebkitFullscreenChange);
                         window.matchMedia('(prefers-color-scheme: dark)').addListener(CyclicToDo.updateStyle);
                         CyclicToDo.updateStyle();
                         return [4 /*yield*/, Render.showUpdatingScreen(location.href)];

@@ -100,7 +100,7 @@ body.flash
 }
 #foundation
 {
-    .positive-background-coloring-trait;
+    // .positive-background-coloring-trait;
     position: absolute;
     top: 0px;
     bottom: 0px;
@@ -1382,12 +1382,21 @@ button
         // }
     }
 }
+body.fxxking-ipad-fullscreen
+{
+    .screen
+    {
+        // padding-top: env(safe-area-inset-top, 0px); // do not work safe-area-inset-top on iPad safari fullscreen mode.
+        padding-top: 21px;
+    }
+}
 .screen
 {
     .positive-background-coloring-trait;
     display: flex;
     flex-direction: column;
     position: absolute;
+    background-color: transparent;
     top: 0px;
     bottom: 0px;
     right: 0px;
@@ -1455,6 +1464,16 @@ button
             {
                 padding-left: 0.5rem;
             }
+        }
+    }
+}
+body:not(.tektite)
+{
+    .screen
+    {
+        .screen-body
+        {
+            background-color: @base-color;
         }
     }
 }
