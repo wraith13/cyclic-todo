@@ -1761,14 +1761,14 @@ export module CyclicToDo
             children: data.children,
         });
         export const $make = minamo.dom.make;
-        export const $tag = (tag: string) => (className: string | object) => (children: minamo.dom.Source) =>
+        export const $tag = (tag: string) => (className: string | minamo.dom.AlphaObjectSource) => (children: minamo.dom.Source) =>
             "string" === typeof className ?
             {
                 tag,
                 children,
                 className,
             }:
-            Object.assign
+            <minamo.dom.ObjectSource>Object.assign
             (
                 {
                     tag,
@@ -4679,12 +4679,12 @@ export module CyclicToDo
                     () => Render.updateWindow?.("timer"),
                     Domain.timeAccuracy
                 );
-                document.addEventListener
+                document.getElementsByClassName("screen-body")[0]?.addEventListener
                 (
                     "scroll",
                     () =>
                     {
-                        if (document.body.scrollTop <= 0)
+                        if ((document.getElementsByClassName("screen-body")[0]?.scrollTop ?? 0) <= 0)
                         {
                             Render.updateWindow?.("scroll");
                         }

@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Fri Aug 27 2021 05:36:35 GMT+0900 (GMT+09:00) -->
+<!-- build at: Mon Aug 30 2021 20:39:25 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -2933,7 +2933,7 @@ define("resource/lang.en", [], {
     "Full screen": "Full screen",
     "Cancel full screen": "Cancel full screen",
     "previous": "previous",
-    "recentrly interval average": "recentrly interval average",
+    "recentrly interval average": "recentrly average",
     "expected interval": "expected interval",
     "elapsed time": "elapsed time",
     "count": "count",
@@ -7256,9 +7256,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Render.showListScreen = function (pass, tag, urlParams) { return __awaiter(_this, void 0, void 0, function () {
                 var entry, list, isDirty, updateWindow, filter, _a;
                 var _this = this;
-                var _b, _c;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                var _b;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             entry = { tag: tag, pass: pass, todo: OldStorage.TagMember.get(pass, tag) };
                             list = entry.todo.map(function (task) { return Domain.getToDoEntryOld(entry.pass, task); });
@@ -7350,15 +7350,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             filter = Render.regulateFilterText((_b = urlParams.filter) !== null && _b !== void 0 ? _b : "");
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.listScreen(entry, list, filter)];
-                        case 1: return [4 /*yield*/, _a.apply(void 0, [_d.sent(), updateWindow])];
+                        case 1: return [4 /*yield*/, _a.apply(void 0, [_c.sent(), updateWindow])];
                         case 2:
-                            _d.sent();
-                            (_c = document.getElementsByClassName("screen-body")[0]) === null || _c === void 0 ? void 0 : _c.addEventListener("scroll", function () {
-                                var _a, _b, _c;
-                                if (((_b = (_a = document.getElementsByClassName("screen-body")[0]) === null || _a === void 0 ? void 0 : _a.scrollTop) !== null && _b !== void 0 ? _b : 0) <= 0) {
-                                    (_c = Render.updateWindow) === null || _c === void 0 ? void 0 : _c.call(Render, "scroll");
-                                }
-                            });
+                            _c.sent();
                             return [2 /*return*/];
                     }
                 });
@@ -7366,9 +7360,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Render.showListHomeScreen = function (pass, urlParams) { return __awaiter(_this, void 0, void 0, function () {
                 var tag, entry, list, isDirty, updateWindow, filter, _a;
                 var _this = this;
-                var _b, _c;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                var _b;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
                             tag = "@overall";
                             entry = { tag: tag, pass: pass, todo: OldStorage.TagMember.get(pass, tag) };
@@ -7461,15 +7455,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             filter = Render.regulateFilterText((_b = urlParams.filter) !== null && _b !== void 0 ? _b : "");
                             _a = Render.showWindow;
                             return [4 /*yield*/, Render.listScreen(entry, list, filter)];
-                        case 1: return [4 /*yield*/, _a.apply(void 0, [_d.sent(), updateWindow])];
+                        case 1: return [4 /*yield*/, _a.apply(void 0, [_c.sent(), updateWindow])];
                         case 2:
-                            _d.sent();
-                            (_c = document.getElementsByClassName("screen-body")[0]) === null || _c === void 0 ? void 0 : _c.addEventListener("scroll", function () {
-                                var _a, _b, _c;
-                                if (((_b = (_a = document.getElementsByClassName("screen-body")[0]) === null || _a === void 0 ? void 0 : _a.scrollTop) !== null && _b !== void 0 ? _b : 0) <= 0) {
-                                    (_c = Render.updateWindow) === null || _c === void 0 ? void 0 : _c.call(Render, "scroll");
-                                }
-                            });
+                            _c.sent();
                             return [2 /*return*/];
                     }
                 });
@@ -8635,8 +8623,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Render.showWindow = function (screen, updateWindow) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c;
                 var _this = this;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                var _d;
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
                         case 0:
                             Render.removeProgressStyle("obsolescence");
                             if (undefined !== updateWindow) {
@@ -8659,10 +8648,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             }
                             if (undefined === updateWindowTimer) {
                                 updateWindowTimer = setInterval(function () { var _a; return (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render, "timer"); }, Domain.timeAccuracy);
-                                document.addEventListener("scroll", function () {
-                                    var _a;
-                                    if (document.body.scrollTop <= 0) {
-                                        (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render, "scroll");
+                                (_d = document.getElementsByClassName("screen-body")[0]) === null || _d === void 0 ? void 0 : _d.addEventListener("scroll", function () {
+                                    var _a, _b, _c;
+                                    if (((_b = (_a = document.getElementsByClassName("screen-body")[0]) === null || _a === void 0 ? void 0 : _a.scrollTop) !== null && _b !== void 0 ? _b : 0) <= 0) {
+                                        (_c = Render.updateWindow) === null || _c === void 0 ? void 0 : _c.call(Render, "scroll");
                                     }
                                 });
                             }
@@ -8671,7 +8660,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _c = [Render.getHeaderElement()];
                             return [4 /*yield*/, Render.screenSegmentedHeader(screen.header)];
                         case 1:
-                            _b.apply(_a, _c.concat([_d.sent()]));
+                            _b.apply(_a, _c.concat([_e.sent()]));
                             minamo_js_1.minamo.dom.replaceChildren(document.getElementById("screen-body"), screen.body);
                             Render.getHeaderElement().classList.toggle("header-operator-has-focus", "" !== Render.getFilterText());
                             Render.updateTitle();
