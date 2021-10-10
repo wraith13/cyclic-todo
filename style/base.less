@@ -7,25 +7,26 @@
     font: -apple-system-body;
     outline:none;
 }
-body, input, textarea
+input, textarea
 {
     .positive-foreground-coloring-trait;
     .positive-background-coloring-trait;
 }
-body
+&
 {
     margin: 0px;
     margin-bottom: 5rem; // for iOS Safari
     line-height: 100%;
     overflow: hidden;
+    .positive-foreground-coloring-trait;
     background-color: fade(@accent-color, 95%);
 }
 // @media (prefers-color-scheme: dark)
 // {
-    ::-webkit-calendar-picker-indicator
-    {
-        filter: invert(1);
-    }
+//     ::-webkit-calendar-picker-indicator
+//     {
+//         filter: invert(1);
+//     }
 // }
 a
 {

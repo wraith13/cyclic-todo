@@ -3,3 +3,5 @@
 /node_modules/*
 script/index.js
 style/index.css
+style/theme.dark.css
+style/theme.light.css

@@ -5,10 +5,12 @@
   "scripts": {
     "build all": "node ./build.js release",
     "build html": "node ./build.js none",
-    "build style": "lessc ./style/index.less ./style/index.css",
+    "build light style": "lessc ./style/theme.light.less ./style/theme.light.css",
+    "build dark style": "lessc ./style/theme.dark.less ./style/theme.dark.css",
     "build script": "tsc -p ./script/tsconfig.json",
     "debug build all": "node ./build.js debug",
-    "debug build style": "lessc --source-map-map-inline ./style/index.less ./style/index.css",
+    "debug light build style": "lessc --source-map-map-inline ./style/theme.light.less ./style/theme.light.css",
+    "debug dark build style": "lessc --source-map-map-inline ./style/theme.dark.less ./style/theme.dark.css",
     "debug build script": "tsc --inlineSourceMap -p ./script/tsconfig.json",
     "watch script": "tsc --watch --inlineSourceMap -p ./script/tsconfig.json"
   },

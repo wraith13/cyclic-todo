@@ -5092,42 +5092,15 @@ export module CyclicToDo
     //         url
     //     );
     // };
-    const originalStyle = document.getElementById("style").innerText;
-    const makeRegExpPart = (text: string) => text.replace(/([\\\/\.\+\?\*\[\]\(\)\{\}\|])/gmu, "\\$1");
     export const updateStyle = () =>
     {
         const setting = Storage.Settings.get().theme ?? "auto";
         const system = window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark": "light";
         const theme = "auto" === setting ? system: setting;
-        let style = originalStyle;
-        Object.keys(config.theme.original).forEach
+        [ "light", "dark", ].forEach
         (
-            key => style = style.replace
-            (
-                new RegExp
-                (
-                    makeRegExpPart(config.theme.original[key]),
-                    "gmu"
-                ),
-                key
-            )
+            i => document.body.classList.toggle(i, i === theme)
         );
-        Object.keys(config.theme.original).forEach
-        (
-            key => style = style.replace
-            (
-                new RegExp
-                (
-                    makeRegExpPart(key),
-                    "gmu"
-                ),
-                config.theme[theme][key] ?? config.theme.original[key]
-            )
-        );
-        if (document.getElementById("style").innerText !== style)
-        {
-            document.getElementById("style").innerText = style;
-        }
     };
     export const start = async () =>
     {

@@ -6,12 +6,14 @@
         "none": [ ],
         "release":
         [
-            "npm run-script \"build style\"",
+            "npm run-script \"build light style\"",
+            "npm run-script \"build dark style\"",
             "npm run-script \"build script\""
         ],
         "debug":
         [
-            "npm run-script \"debug build style\"",
+            "npm run-script \"debug build light style\"",
+            "npm run-script \"debug build dark style\"",
             "npm run-script \"debug build script\""
         ]
     },
@@ -19,7 +21,8 @@
     {
         "__BUILD_MESSAGE__": "This file is genereted by build.js. このファイルは build.js によって生成されました。",
         "__BUILD_TIMESTAMP__": { "call": "timestamp" },
-        "__STYLE__": { "path": "./style/index.css" },
+        "__LIGHT_STYLE__": { "path": "./style/theme.light.css" },
+        "__DARK_STYLE__": { "path": "./style/theme.dark.css" },
         "__EVIL_COMMONJS__": { "path": "./script/evil-commonjs/index.js" },
         "__SCRIPT__": { "path": "./script/index.js" },
         "__IMAGES__": { "resource": "./resource/images.json" }
