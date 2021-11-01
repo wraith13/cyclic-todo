@@ -15,6 +15,7 @@
     "@unoverall": "Excluded in Home",
     "@pickup": "Pick Up",
     "@short-term": "Short Term",
+    "@medium-term": "Medium Term",
     "@long-term": "Long Term",
     "@irregular-term": "Irregular Term",
     "@untagged": "Uncategorized",

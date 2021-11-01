@@ -7,5 +7,6 @@
     "sleepStandardDeviationRate": 3.0,
     "granceMinutes": 1440,
     "maxRestAdjustMinutes": 180,
-    "maxShortTermMinutes": 14400
+    "maxShortTermMinutes": 4320,
+    "maxMediumTermMinutes": 14400
 }

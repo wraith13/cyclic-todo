@@ -15,6 +15,7 @@
     "@unoverall": "ホームから除外",
     "@pickup": "ピックアップ",
     "@short-term": "短期",
+    "@medium-term": "中期",
     "@long-term": "長期",
     "@irregular-term": "不定期",
     "@untagged": "未分類",
