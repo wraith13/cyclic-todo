@@ -178,6 +178,7 @@ export module CyclicToDo
                 "@overall",
                 "@pickup",
                 "@short-term",
+                "@medium-term",
                 "@long-term",
                 "@unoverall",
                 //"@deleted", 現状のヤツは廃止。ただ、別の形で復帰させるかも。
@@ -186,7 +187,7 @@ export module CyclicToDo
             (
                 tag =>
                 {
-                    if ([ "@overall", "@short-term", "@long-term", ].indexOf(tag) < 0) // @overall は todos でカバーされるし、 @short-term と @long-term は自動登録されるのでここには含めない
+                    if ([ "@overall", "@short-term", "@medium-term", "@long-term", ].indexOf(tag) < 0) // @overall は todos でカバーされるし、 @short-term と @long-term は自動登録されるのでここには含めない
                     {
                         tags[tag] = TagMember.getRaw(pass, tag);
                     }
@@ -374,13 +375,13 @@ export module CyclicToDo
                 return result;
             };
             export const getByTodo = (pass: string, todo: string) =>
-                ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"]
+                ["@overall", "@pickup", "@short-term", "@medium-term", "@long-term", "@irregular-term"]
                     .concat(get(pass))
                     .concat(["@unoverall", "@untagged"])
                     .filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length)
                     .sort(minamo.core.comparer.make(tag => Model.isSublistOld(tag) ? 0: 1));
             export const getByTodoRaw = (pass: string, todo: string) =>
-                ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"]
+                ["@overall", "@pickup", "@short-term", "@medium-term", "@long-term", "@irregular-term"]
                     .concat(get(pass))
                     .concat(["@unoverall", "@untagged"])
                     .filter(tag => 0 < TagMember.getRaw(pass, tag).filter(i => todo === i).length);
@@ -811,7 +812,7 @@ export module CyclicToDo
                 const term = Domain.getTermCategory(item);
                 if ((this.content.tags[term] ?? []).indexOf(item.task) < 0)
                 {
-                    ["@short-term", "@long-term", "@irregular-term"].forEach
+                    ["@short-term", "@medium-term", "@long-term", "@irregular-term"].forEach
                     (
                         tag =>
                         {
@@ -866,13 +867,13 @@ export module CyclicToDo
                 get: (tag: string) => new Tag(this, tag),
                 getList: () => Object.keys(this.content.tags).map(i => new Tag(this, i)),
                 getByTask: (task: Task) =>
-                    ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"].map(i => this.tag.get(i))
+                    ["@overall", "@pickup", "@short-term", "@medium-term", "@long-term", "@irregular-term"].map(i => this.tag.get(i))
                     .concat(this.tag.getList())
                     .concat(["@unoverall", "@untagged"].map(i => this.tag.get(i)))
                     .filter(tag => 0 < tag.getMember().filter(i => task.getName() === i.getName()).length)
                     .sort(minamo.core.comparer.make(tag => tag.isSublist() ? 0: 1)),
                 getByTaskRaw: (task: Task) =>
-                    ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"].map(i => this.tag.get(i))
+                    ["@overall", "@pickup", "@short-term", "@medium-term", "@long-term", "@irregular-term"].map(i => this.tag.get(i))
                     .concat(this.tag.getList())
                     .concat(["@unoverall", "@untagged"].map(i => this.tag.get(i)))
                     .filter(tag => 0 < tag.getRawMember().filter(i => task.getName() === i.getName()).length),
@@ -1295,6 +1296,7 @@ export module CyclicToDo
             case "@unoverall":
             case "@pickup":
             case "@short-term":
+            case "@medium-term":
             case "@long-term":
             case "@irregular-term":
             case "@untagged":
@@ -1370,7 +1372,11 @@ export module CyclicToDo
                 (
                     item.RecentlySmartAverage < config.maxShortTermMinutes ?
                         "@short-term":
-                        "@long-term"
+                        (
+                            item.RecentlySmartAverage < config.maxMediumTermMinutes ?
+                                "@medium-term":
+                                "@long-term"
+                        )
                 ):
                 "@irregular-term";
         export const getTermCategoryByRest = (item: ToDoEntry) =>
@@ -1387,7 +1393,7 @@ export module CyclicToDo
             const term = getTermCategory(item);
             if (OldStorage.TagMember.get(pass, term).indexOf(item.task) < 0)
             {
-                ["@short-term", "@long-term", "@irregular-term"].forEach
+                ["@short-term", "@medium-term", "@long-term", "@irregular-term"].forEach
                 (
                     tag =>
                     {
@@ -3175,7 +3181,7 @@ export module CyclicToDo
                     (
                         await Promise.all
                         (
-                            ["@overall", "@pickup", "@short-term", "@long-term", "@irregular-term"].concat(OldStorage.Tag.get(pass).sort(Domain.tagComparerOld(pass))).concat(["@unoverall", "@untagged"])
+                            ["@overall", "@pickup", "@short-term", "@medium-term", "@long-term", "@irregular-term"].concat(OldStorage.Tag.get(pass).sort(Domain.tagComparerOld(pass))).concat(["@unoverall", "@untagged"])
                             .map
                             (
                                 async tag => menuLinkItem
@@ -3727,7 +3733,7 @@ export module CyclicToDo
             (
                 await Promise.all
                 (
-                    ["@pickup", "@short-term", "@long-term", "@irregular-term"].concat(OldStorage.Tag.get(entry.pass).sort(Domain.tagComparerOld(entry.pass))).concat(["@unoverall", "@untagged"])
+                    ["@pickup", "@short-term", "@medium-term", "@long-term", "@irregular-term"].concat(OldStorage.Tag.get(entry.pass).sort(Domain.tagComparerOld(entry.pass))).concat(["@unoverall", "@untagged"])
                     .map(tag => listScreenHomeColumn(entry, list, tag))
                 )
             ),
@@ -4202,6 +4208,7 @@ export module CyclicToDo
                     {
                         "@pickup": 1,
                         "@short-term": 4,
+                        "@medium-term": 4,
                         "@long-term": 4,
                         "@irregular-term": 4,
                         "@overall": 5,
@@ -4270,6 +4277,8 @@ export module CyclicToDo
                         return "pickup-icon";
                     case "@short-term":
                         return "short-term-icon";
+                    case "@medium-term":
+                        return "medium-term-icon";
                     case "@long-term":
                         return "long-term-icon";
                     case "@irregular-term":
@@ -4516,7 +4525,7 @@ export module CyclicToDo
                 {
                     if (await themeSettingsPopup())
                     {
-                        updateStyle();
+                        // updateStyle();
                     }
                 }
             ),
