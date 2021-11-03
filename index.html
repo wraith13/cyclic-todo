@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Mon Nov 01 2021 21:07:25 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed Nov 03 2021 09:06:08 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -4857,6 +4857,7 @@ define("resource/config", [], {
     "standardDeviationRate": 1.5,
     "sleepStandardDeviationRate": 3.0,
     "granceMinutes": 1440,
+    "maxHistories": 100,
     "maxRestAdjustMinutes": 180,
     "maxShortTermMinutes": 4320,
     "maxMediumTermMinutes": 14400
@@ -4865,6 +4866,7 @@ define("resource/lang.en", [], {
     "$name": "English",
     "Full screen": "Full screen",
     "Cancel full screen": "Cancel full screen",
+    "first time": "first time",
     "previous": "previous",
     "recentrly interval average": "recentrly average",
     "expected interval": "expected interval",
@@ -4947,6 +4949,7 @@ define("resource/lang.ja", [], {
     "$name": "日本語",
     "Full screen": "フルスクリーン表示",
     "Cancel full screen": "フルスクリーン解除",
+    "first time": "初回",
     "previous": "前回",
     "recentrly interval average": "直近間隔平均",
     "expected interval": "予想間隔",
@@ -5193,7 +5196,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         Tag.set(data_1.pass, Object.keys(data_1.tags));
                         Object.keys(data_1.tags).forEach(function (tag) { return TagMember.set(data_1.pass, tag, data_1.tags[tag]); });
                         Object.keys(data_1.tagSettings).forEach(function (tag) { return TagSettings.set(data_1.pass, tag, data_1.tagSettings[tag]); });
-                        Object.keys(data_1.histories).forEach(function (todo) { return History.set(data_1.pass, todo, data_1.histories[todo]); });
+                        Object.keys(data_1.histories).forEach(function (todo) {
+                            var item = data_1.histories[todo];
+                            var entry = Array.isArray(item) ? { histories: item, first: Math.min.apply(Math, item), count: item.length, } : item;
+                            History.set(data_1.pass, todo, entry);
+                        });
                         Removed.set(data_1.pass, data_1.removed.map(function (i) { return JSON.stringify(i); }));
                         return data_1.pass;
                     }
@@ -5463,32 +5470,63 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             var History;
             (function (History) {
                 History.makeKey = function (pass, task) { return "pass:(" + pass + ").task:" + task + ".history"; };
-                History.get = function (pass, task) { var _a; return (_a = OldStorage.getStorage(pass).getOrNull(History.makeKey(pass, task))) !== null && _a !== void 0 ? _a : []; };
+                History.get = function (pass, task) {
+                    var _a;
+                    var raw = (_a = OldStorage.getStorage(pass).getOrNull(History.makeKey(pass, task))) !== null && _a !== void 0 ? _a : { histories: [], first: null, count: 0, };
+                    return Array.isArray(raw) ?
+                        {
+                            histories: raw.filter(function (_i, ix) { return ix < config_json_1.default.maxHistories; }),
+                            first: Math.min.apply(Math, raw),
+                            count: raw.length,
+                        } :
+                        raw;
+                };
+                History.getTicks = function (pass, task) { return History.get(pass, task).histories; };
                 History.set = function (pass, task, list) {
                     return OldStorage.getStorage(pass).set(History.makeKey(pass, task), list);
                 };
                 History.removeKey = function (pass, task) {
                     return OldStorage.getStorage(pass).remove(History.makeKey(pass, task));
                 };
-                History.add = function (pass, task, tick) {
-                    return History.set(pass, task, History.get(pass, task).concat(tick).sort(exports.simpleReverseComparer));
+                History.addTick = function (pass, task, tick) {
+                    var item = History.get(pass, task);
+                    var oldLength = item.histories.length;
+                    var temporaryHistories = item.histories.filter(function (i) { return tick !== i; }).concat(tick).sort(exports.simpleReverseComparer);
+                    item.histories = temporaryHistories.slice(0, config_json_1.default.maxHistories);
+                    item.count += temporaryHistories.length - oldLength;
+                    if (null === item.first || tick < item.first) {
+                        item.first = tick;
+                    }
+                    History.set(pass, task, item);
                 };
-                History.removeRaw = function (pass, task, tick) {
-                    return History.set(pass, task, History.get(pass, task).filter(function (i) { return tick !== i; }).sort(exports.simpleReverseComparer));
+                History.removeTickRaw = function (pass, task, tick) {
+                    var item = History.get(pass, task);
+                    var oldLength = item.histories.length;
+                    item.histories = item.histories.filter(function (i) { return tick !== i; }).sort(exports.simpleReverseComparer);
+                    item.count += item.histories.length - oldLength;
+                    if (item.count <= 0) {
+                        item.first = null;
+                    }
+                    else {
+                        if (null === item.first || tick === item.first) {
+                            item.first = Math.min.apply(Math, item.histories);
+                        }
+                    }
+                    History.set(pass, task, item);
                 };
-                History.remove = function (pass, task, tick) {
+                History.removeTick = function (pass, task, tick) {
                     Removed.add(pass, {
                         type: "Tick",
                         deteledAt: Domain.getTicks(),
                         task: task,
                         tick: tick,
                     });
-                    History.removeRaw(pass, task, tick);
+                    History.removeTickRaw(pass, task, tick);
                 };
                 History.restore = function (pass, item) {
-                    var result = History.get(pass, item.task).indexOf(item.tick) < 0;
+                    var result = History.getTicks(pass, item.task).indexOf(item.tick) < 0;
                     if (result) {
-                        History.add(pass, item.task, item.tick);
+                        History.addTick(pass, item.task, item.tick);
                     }
                     return result;
                 };
@@ -5839,13 +5877,24 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             var _this = this;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
-                                    case 0: return [4 /*yield*/, this.save(function (content) { var _a; return content.histories[task] = ((_a = _this.content.histories[task]) !== null && _a !== void 0 ? _a : []).concat(tick); })];
+                                    case 0: return [4 /*yield*/, this.save(function (content) {
+                                            var _a;
+                                            var item = (_a = _this.content.histories[task]) !== null && _a !== void 0 ? _a : { histories: [], first: null, count: 0, };
+                                            var oldLength = item.histories.length;
+                                            var temporaryHistories = item.histories.filter(function (i) { return tick !== i; }).concat(tick).sort(exports.simpleReverseComparer);
+                                            item.histories = temporaryHistories.slice(0, config_json_1.default.maxHistories);
+                                            item.count += temporaryHistories.length - oldLength;
+                                            if (null === item.first || tick < item.first) {
+                                                item.first = tick;
+                                            }
+                                            content.histories[task] = item;
+                                        })];
                                     case 1: return [2 /*return*/, _a.sent()];
                                 }
                             });
                         });
                     };
-                    this.tagComparer = function () { return minamo_js_1.minamo.core.comparer.make(function (tag) { return -_this.content.tags[tag].map(function (todo) { return _this.content.histories[todo].length; }).reduce(function (a, b) { return a + b; }, 0); }); };
+                    this.tagComparer = function () { return minamo_js_1.minamo.core.comparer.make(function (tag) { return -_this.content.tags[tag].map(function (todo) { return _this.content.histories[todo].count; }).reduce(function (a, b) { return a + b; }, 0); }); };
                     this.todoComparer = function (entry, sort) {
                         if (sort === void 0) { sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag); }
                         switch (sort) {
@@ -6260,12 +6309,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 if (tick === void 0) { tick = Domain.getDoneTicksOld(pass); }
                 return __awaiter(_this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
-                        OldStorage.History.add(pass, task, tick);
+                        OldStorage.History.addTick(pass, task, tick);
                         return [2 /*return*/, tick];
                     });
                 });
             };
-            Domain.tagComparerOld = function (pass) { return minamo_js_1.minamo.core.comparer.make(function (tag) { return -OldStorage.TagMember.get(pass, tag).map(function (todo) { return OldStorage.History.get(pass, todo).length; }).reduce(function (a, b) { return a + b; }, 0); }); };
+            Domain.tagComparerOld = function (pass) { return minamo_js_1.minamo.core.comparer.make(function (tag) { return -OldStorage.TagMember.get(pass, tag).map(function (todo) { return OldStorage.History.getTicks(pass, todo).length; }).reduce(function (a, b) { return a + b; }, 0); }); };
             Domain.todoComparerOld = function (entry, sort) {
                 if (sort === void 0) { sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag); }
                 switch (sort) {
@@ -6357,7 +6406,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 var _a, _b;
                 // const history: { recentries: number[], previous: null | number, count: number, } = getRecentlyHistory(pass, task);
                 // const full = OldStorage.History.get(pass, task);
-                var longRecentries = Calculate.intervals(full.filter(function (_, index) { return index < 126; }));
+                var longRecentries = Calculate.intervals(full.histories);
                 var longRecentlyAverage = longRecentries.length <= 1 ? null : Calculate.average(longRecentries);
                 var longRecentlyStandardDeviation = longRecentries.length <= 5 ?
                     null :
@@ -6371,9 +6420,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         longRecentries.filter(function (i) { return (i - longRecentlyAverage) / longRecentlyStandardDeviation <= config_json_1.default.sleepStandardDeviationRate; }))
                         .filter(function (_, index) { return index < 25; }),
                     // intervals: longRecentries.filter((_, index) => index < 25),
-                    previous: full.length <= 0 ? null : full[0],
+                    previous: full.histories.length <= 0 ? null : full.histories[0],
                     //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
-                    count: full.length,
+                    count: full.count,
                 };
                 var inflateRecentrly = function (intervals) { return 20 <= intervals.length ?
                     intervals.filter(function (_, ix) { return ix < 5; }).concat(intervals.filter(function (_, ix) { return ix < 10; }), intervals) :
@@ -6385,6 +6434,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     task: task,
                     isDefault: false,
                     progress: null,
+                    first: full.first,
                     previous: history.previous,
                     elapsed: null,
                     rest: null,
@@ -6604,7 +6654,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
-                                            OldStorage.History.removeRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
+                                            OldStorage.History.removeTickRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
                                             if (isPickuped) {
                                                 OldStorage.TagMember.add(pass, "@pickup", task);
                                             }
@@ -7719,6 +7769,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     Render.label("count"),
                     Render.$span("value monospace")(item.count.toLocaleString()),
                 ]),
+                Render.$div("task-first-time")([
+                    Render.label("first time"),
+                    Render.$span("value monospace")(Domain.dateStringFromTick(item.first)),
+                ]),
                 // div("task-count")
                 // ([
                 //     "smartRest",
@@ -8022,8 +8076,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 case 1:
                                                     result = _b.apply(_a, [_c.sent()]);
                                                     if (!(null !== result && item.tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())) return [3 /*break*/, 3];
-                                                    OldStorage.History.removeRaw(entry.pass, item.task, item.tick);
-                                                    OldStorage.History.add(entry.pass, item.task, Domain.getTicks(result));
+                                                    OldStorage.History.removeTickRaw(entry.pass, item.task, item.tick);
+                                                    OldStorage.History.addTick(entry.pass, item.task, Domain.getTicks(result));
                                                     return [4 /*yield*/, CyclicToDo.reload()];
                                                 case 2:
                                                     _c.sent();
@@ -8036,7 +8090,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0:
-                                                    OldStorage.History.remove(entry.pass, item.task, item.tick);
+                                                    OldStorage.History.removeTick(entry.pass, item.task, item.tick);
                                                     return [4 /*yield*/, CyclicToDo.reload()];
                                                 case 1:
                                                     _a.sent();
@@ -8110,8 +8164,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 case 1:
                                                     result = _b.apply(_a, [_c.sent()]);
                                                     if (!(null !== result && tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())) return [3 /*break*/, 3];
-                                                    OldStorage.History.removeRaw(pass, item.task, tick);
-                                                    OldStorage.History.add(pass, item.task, Domain.getTicks(result));
+                                                    OldStorage.History.removeTickRaw(pass, item.task, tick);
+                                                    OldStorage.History.addTick(pass, item.task, Domain.getTicks(result));
                                                     return [4 /*yield*/, CyclicToDo.reload()];
                                                 case 2:
                                                     _c.sent();
@@ -8124,7 +8178,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0:
-                                                    OldStorage.History.remove(pass, item.task, tick);
+                                                    OldStorage.History.removeTick(pass, item.task, tick);
                                                     return [4 /*yield*/, CyclicToDo.reload()];
                                                 case 1:
                                                     _a.sent();
@@ -9585,7 +9639,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     switch (_c.label) {
                         case 0:
                             histories = {};
-                            list = entry.todo.map(function (task) { return (histories[task] = OldStorage.History.get(entry.pass, task)).map(function (tick) { return ({ task: task, tick: tick }); }); }).reduce(function (a, b) { return a.concat(b); }, []);
+                            list = entry.todo.map(function (task) { return (histories[task] = OldStorage.History.getTicks(entry.pass, task)).map(function (tick) { return ({ task: task, tick: tick }); }); }).reduce(function (a, b) { return a.concat(b); }, []);
                             list.sort(minamo_js_1.minamo.core.comparer.make(function (a) { return -a.tick; }));
                             list = list.concat(entry.todo.filter(function (task) { return histories[task].length <= 0; }).map(function (task) { return ({ task: task, tick: null }); }));
                             filter = Render.regulateFilterText((_b = urlParams.filter) !== null && _b !== void 0 ? _b : "");
@@ -9930,7 +9984,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 0:
                             item = Domain.getToDoEntryOld(pass, task);
                             tag = Render.getPrimaryTag(OldStorage.Tag.getByTodo(pass, item.task));
-                            ticks = OldStorage.History.get(pass, task);
+                            ticks = OldStorage.History.getTicks(pass, task);
                             Domain.updateProgress(pass, item);
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
                                 var _a, dom, information_1, _b;
@@ -9960,7 +10014,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                         case 4:
                                             item = Domain.getToDoEntryOld(pass, task);
                                             tag = OldStorage.Tag.getByTodo(pass, item.task).filter(function (tag) { return "@overall" !== tag; }).concat("@overall")[0];
-                                            ticks = OldStorage.History.get(pass, task);
+                                            ticks = OldStorage.History.getTicks(pass, task);
                                             Domain.updateProgress(pass, item);
                                             _b = Render.replaceScreenBody;
                                             return [4 /*yield*/, Render.todoScreenBody(pass, item, ticks, tag)];

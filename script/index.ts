@@ -93,6 +93,7 @@ export module CyclicToDo
         task: string;
         isDefault: boolean;
         progress: null | number;
+        first: null | number;
         previous: null | number;
         elapsed: null | number;
         rest: null | number;
@@ -115,6 +116,12 @@ export module CyclicToDo
         title: string;
         uri: string;
     }
+    export interface HistoryEntry
+    {
+        histories: number[];
+        first: number | null;
+        count: number;
+    }
     export interface Content
     {
         specification: "https://github.com/wraith13/cyclic-todo/README.md";
@@ -124,7 +131,7 @@ export module CyclicToDo
         todos: string[];
         tags: { [tag: string]: string[] };
         tagSettings: { [tag: string]: TagSettings };
-        histories: { [todo: string]: number[] };
+        histories: { [todo: string]: HistoryEntry };
         removed: RemovedType[];
     }
     export type RemovedType = RemovedTag | RemovedSublist | RemovedTask | RemovedTick;
@@ -152,7 +159,7 @@ export module CyclicToDo
         type: "Task";
         name: string;
         tags: string[];
-        ticks: number[];
+        ticks: HistoryEntry;
     }
     export interface RemovedTick extends RemovedBase
     {
@@ -160,7 +167,6 @@ export module CyclicToDo
         task: string;
         tick: number;
     }
-    export type HistoryEntry = number | { tick: number; memo: string; };
     export module OldStorage
     {
         export const sessionPassPrefix = "@Session";
@@ -195,7 +201,7 @@ export module CyclicToDo
                 }
             );
             const todos = TagMember.getRaw(pass, "@overall");
-            const histories: { [todo: string]: number[] } = { };
+            const histories: { [todo: string]: HistoryEntry } = { };
             todos
             .forEach
             (
@@ -240,7 +246,15 @@ export module CyclicToDo
                     Tag.set(data.pass, Object.keys(data.tags));
                     Object.keys(data.tags).forEach(tag => TagMember.set(data.pass, tag, data.tags[tag]));
                     Object.keys(data.tagSettings).forEach(tag => TagSettings.set(data.pass, tag, data.tagSettings[tag]));
-                    Object.keys(data.histories).forEach(todo => History.set(data.pass, todo, data.histories[todo]));
+                    Object.keys(data.histories).forEach
+                    (
+                        todo =>
+                        {
+                            const item = data.histories[todo];
+                            const entry = Array.isArray(item) ? { histories: item, first: Math.min(...item), count: item.length, }: item;
+                            History.set(data.pass, todo, entry);
+                        }
+                    );
                     Removed.set(data.pass, data.removed.map(i => JSON.stringify(i)));
                     return data.pass;
                 }
@@ -561,17 +575,55 @@ export module CyclicToDo
         export module History
         {
             export const makeKey = (pass: string, task: string) => `pass:(${pass}).task:${task}.history`;
-            export const get = (pass: string, task: string): number[] =>
-                getStorage(pass).getOrNull<number[]>(makeKey(pass, task)) ?? [];
-            export const set = (pass: string, task: string, list: number[]) =>
+            export const get = (pass: string, task: string): HistoryEntry =>
+            {
+                const raw = getStorage(pass).getOrNull<number[] | HistoryEntry>(makeKey(pass, task)) ?? { histories: [], first: null, count: 0, };
+                return Array.isArray(raw) ?
+                    {
+                        histories: raw.filter((_i, ix) => ix < config.maxHistories), // splice を使うと正しい count を取得し損ねるので、ここは filter にしている。
+                        first: Math.min(...raw),
+                        count: raw.length,
+                    }:
+                    raw;
+            };
+            export const getTicks = (pass: string, task: string): number[] => get(pass, task).histories;
+            export const set = (pass: string, task: string, list: HistoryEntry) =>
                 getStorage(pass).set(makeKey(pass, task), list);
             export const removeKey = (pass: string, task: string) =>
                 getStorage(pass).remove(makeKey(pass, task));
-            export const add = (pass: string, task: string, tick: number | number[]) =>
-                set(pass, task, get(pass, task).concat(tick).sort(simpleReverseComparer));
-            export const removeRaw = (pass: string, task: string, tick: number | number[]) =>
-                set(pass, task, get(pass, task).filter(i => tick !== i).sort(simpleReverseComparer));
-            export const remove = (pass: string, task: string, tick: number) =>
+            export const addTick = (pass: string, task: string, tick: number) =>
+            {
+                const item = get(pass, task);
+                const oldLength = item.histories.length;
+                const temporaryHistories = item.histories.filter(i => tick !== i).concat(tick).sort(simpleReverseComparer);
+                item.histories = temporaryHistories.slice(0, config.maxHistories);
+                item.count += temporaryHistories.length -oldLength;
+                if (null === item.first || tick < item.first)
+                {
+                    item.first = tick;
+                }
+                set(pass, task, item);
+            };
+            export const removeTickRaw = (pass: string, task: string, tick: number | number[]) =>
+            {
+                const item = get(pass, task);
+                const oldLength = item.histories.length;
+                item.histories = item.histories.filter(i => tick !== i).sort(simpleReverseComparer);
+                item.count += item.histories.length -oldLength;
+                if (item.count <= 0)
+                {
+                    item.first = null;
+                }
+                else
+                {
+                    if (null === item.first || tick === item.first)
+                    {
+                        item.first = Math.min(...item.histories);
+                    }
+                }
+                set(pass, task, item);
+            };
+            export const removeTick = (pass: string, task: string, tick: number) =>
             {
                 Removed.add
                 (
@@ -583,14 +635,14 @@ export module CyclicToDo
                         tick,
                     }
                 );
-                removeRaw(pass, task, tick);
+                removeTickRaw(pass, task, tick);
             };
             export const restore = (pass: string, item: RemovedTick) =>
             {
-                let result = get(pass, item.task).indexOf(item.tick) < 0;
+                let result = getTicks(pass, item.task).indexOf(item.tick) < 0;
                 if (result)
                 {
-                    add(pass, item.task, item.tick);
+                    addTick(pass, item.task, item.tick);
                 }
                 return result;
             };
@@ -919,10 +971,26 @@ export module CyclicToDo
             getDoneTicks = (): number =>
                 Math.max.apply(null, this.live.tasks.map(i => i.previous).filter(i => i).concat[Domain.getTicks() -1]) +1
             done = async (task: string, tick: number = this.getDoneTicks()) =>
-                await this.save(content => content.histories[task] = (this.content.histories[task] ?? []).concat(tick))
+                await this.save
+                (
+                    content =>
+                    {
+                        const item = this.content.histories[task] ?? { histories: [], first: null, count: 0, };
+                        const oldLength = item.histories.length;
+                        const temporaryHistories = item.histories.filter(i => tick !== i).concat(tick).sort(simpleReverseComparer);
+                        item.histories = temporaryHistories.slice(0, config.maxHistories);
+                        item.count += temporaryHistories.length -oldLength;
+                        if (null === item.first || tick < item.first)
+                        {
+                            item.first = tick;
+                        }
+                        content.histories[task] = item;
+                    }
+                )
             tagComparer = () => minamo.core.comparer.make<string>
             (
                 tag => -this.content.tags[tag].map(todo => this.content.histories[todo].length).reduce((a, b) => a +b, 0)
+                tag => -this.content.tags[tag].map(todo => this.content.histories[todo].count).reduce((a, b) => a +b, 0)
             )
             todoComparer = (entry: ToDoTagEntryOld, sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag)) =>
             {
@@ -1320,12 +1388,12 @@ export module CyclicToDo
             );
         export const doneOld = async (pass: string, task: string, tick: number = getDoneTicksOld(pass)) =>
         {
-            OldStorage.History.add(pass, task, tick);
+            OldStorage.History.addTick(pass, task, tick);
             return tick;
         };
         export const tagComparerOld = (pass: string) => minamo.core.comparer.make<string>
         (
-            tag => -OldStorage.TagMember.get(pass, tag).map(todo => OldStorage.History.get(pass, todo).length).reduce((a, b) => a +b, 0)
+            tag => -OldStorage.TagMember.get(pass, tag).map(todo => OldStorage.History.getTicks(pass, todo).length).reduce((a, b) => a +b, 0)
         );
         export const todoComparerOld = (entry: ToDoTagEntryOld, sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag)) =>
         {
@@ -1426,11 +1494,11 @@ export module CyclicToDo
         // };
         export const getToDoEntryOld = (pass: string, task: string): ToDoEntry =>
                 getToDoEntryRaw(task, OldStorage.History.get(pass, task));
-        export const getToDoEntryRaw = (task: string, full: number[]) =>
+        export const getToDoEntryRaw = (task: string, full: HistoryEntry) =>
         {
             // const history: { recentries: number[], previous: null | number, count: number, } = getRecentlyHistory(pass, task);
             // const full = OldStorage.History.get(pass, task);
-            const longRecentries = Calculate.intervals(full.filter((_, index) => index < 126));
+            const longRecentries = Calculate.intervals(full.histories);
             const longRecentlyAverage = longRecentries.length <= 1 ? null: Calculate.average(longRecentries);
             const longRecentlyStandardDeviation = longRecentries.length <= 5 ?
                 null:
@@ -1448,9 +1516,9 @@ export module CyclicToDo
                     )
                     .filter((_, index) => index < 25),
                 // intervals: longRecentries.filter((_, index) => index < 25),
-                previous: full.length <= 0 ? null: full[0],
+                previous: full.histories.length <= 0 ? null: full.histories[0],
                 //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
-                count: full.length,
+                count: full.count,
             };
             const inflateRecentrly = (intervals: number[]) => 20 <= intervals.length ?
                 intervals.filter((_, ix) => ix < 5).concat(intervals.filter((_, ix) => ix < 10), intervals):
@@ -1463,6 +1531,7 @@ export module CyclicToDo
                 task,
                 isDefault: false,
                 progress: null,
+                first: full.first,
                 previous: history.previous,
                 elapsed: null,
                 rest: null,
@@ -1659,7 +1728,7 @@ export module CyclicToDo
                     (
                         async () =>
                         {
-                            OldStorage.History.removeRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
+                            OldStorage.History.removeTickRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
                             if (isPickuped)
                             {
                                 OldStorage.TagMember.add(pass, "@pickup", task);
@@ -2156,6 +2225,7 @@ export module CyclicToDo
                                                 settings.theme = key;
                                                 Storage.Settings.set(settings);
                                                 await checkButtonListUpdate();
+                                                updateStyle();
                                                 result = init !== key;
                                             }
                                         }
@@ -2570,6 +2640,11 @@ export module CyclicToDo
                 label("count"),
                 $span("value monospace")(item.count.toLocaleString()),
             ]),
+            $div("task-first-time")
+            ([
+                label("first time"),
+                $span("value monospace")(Domain.dateStringFromTick(item.first)),
+            ]),
             // div("task-count")
             // ([
             //     "smartRest",
@@ -2832,8 +2907,8 @@ export module CyclicToDo
                                 const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), item.tick));
                                 if (null !== result && item.tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
                                 {
-                                    OldStorage.History.removeRaw(entry.pass, item.task, item.tick);
-                                    OldStorage.History.add(entry.pass, item.task, Domain.getTicks(result));
+                                    OldStorage.History.removeTickRaw(entry.pass, item.task, item.tick);
+                                    OldStorage.History.addTick(entry.pass, item.task, Domain.getTicks(result));
                                     await reload();
                                 }
                             }
@@ -2843,7 +2918,7 @@ export module CyclicToDo
                             label("Delete"),
                             async () =>
                             {
-                                OldStorage.History.remove(entry.pass, item.task, item.tick);
+                                OldStorage.History.removeTick(entry.pass, item.task, item.tick);
                                 await reload();
                             },
                             "delete-button"
@@ -2896,8 +2971,8 @@ export module CyclicToDo
                             const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), tick));
                             if (null !== result && tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
                             {
-                                OldStorage.History.removeRaw(pass, item.task, tick);
-                                OldStorage.History.add(pass, item.task, Domain.getTicks(result));
+                                OldStorage.History.removeTickRaw(pass, item.task, tick);
+                                OldStorage.History.addTick(pass, item.task, Domain.getTicks(result));
                                 await reload();
                             }
                         }
@@ -2907,7 +2982,7 @@ export module CyclicToDo
                         label("Delete"),
                         async () =>
                         {
-                            OldStorage.History.remove(pass, item.task, tick);
+                            OldStorage.History.removeTick(pass, item.task, tick);
                             await reload();
                         },
                         "delete-button"
@@ -3977,7 +4052,7 @@ export module CyclicToDo
         export const showHistoryScreen = async (urlParams: PageParams, entry: ToDoTagEntryOld) =>
         {
             const histories: { [task:string]:number[] } = { };
-            let list = entry.todo.map(task => (histories[task] = OldStorage.History.get(entry.pass, task)).map(tick => ({ task, tick }))).reduce((a, b) => a.concat(b), []);
+            let list = entry.todo.map(task => (histories[task] = OldStorage.History.getTicks(entry.pass, task)).map(tick => ({ task, tick }))).reduce((a, b) => a.concat(b), []);
             list.sort(minamo.core.comparer.make(a => -a.tick));
             list = list.concat(entry.todo.filter(task => histories[task].length <= 0).map(task => ({ task, tick: null })));
             const filter = regulateFilterText(urlParams.filter ?? "");
@@ -4222,7 +4297,7 @@ export module CyclicToDo
         {
             let item = Domain.getToDoEntryOld(pass, task);
             let tag: string = getPrimaryTag(OldStorage.Tag.getByTodo(pass, item.task));
-            let ticks = OldStorage.History.get(pass, task);
+            let ticks = OldStorage.History.getTicks(pass, task);
             Domain.updateProgress(pass, item);
             const updateWindow = async (event: UpdateWindowEventEype) =>
             {
@@ -4243,7 +4318,7 @@ export module CyclicToDo
                     case "operate":
                         item = Domain.getToDoEntryOld(pass, task);
                         tag = OldStorage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0];
-                        ticks = OldStorage.History.get(pass, task);
+                        ticks = OldStorage.History.getTicks(pass, task);
                         Domain.updateProgress(pass, item);
                         replaceScreenBody(await todoScreenBody(pass, item, ticks, tag));
                         resizeFlexList();
