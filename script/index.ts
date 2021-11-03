@@ -109,6 +109,7 @@ export module CyclicToDo
     {
         // sort?: "smart" | "simple" | "limit";
         sort?: "smart" | "simple";
+        displayStyle?: "full" | "compact";
     }
     export interface DocumentCard
     {
@@ -485,6 +486,8 @@ export module CyclicToDo
             export const remove = (pass: string, tag: string) => getStorage(pass).remove(makeKey(pass, tag));
             export const getSort = (pass: string, tag: string) =>
                 (get(pass, tag).sort ?? (get(pass, "@overall").sort ?? "smart"));
+            export const getDisplayStyle = (pass: string, tag: string) =>
+                (get(pass, tag).displayStyle ?? (get(pass, "@overall").displayStyle ?? "full"));
         }
         export module Task
         {
@@ -989,7 +992,6 @@ export module CyclicToDo
                 )
             tagComparer = () => minamo.core.comparer.make<string>
             (
-                tag => -this.content.tags[tag].map(todo => this.content.histories[todo].length).reduce((a, b) => a +b, 0)
                 tag => -this.content.tags[tag].map(todo => this.content.histories[todo].count).reduce((a, b) => a +b, 0)
             )
             todoComparer = (entry: ToDoTagEntryOld, sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag)) =>
@@ -1855,7 +1857,17 @@ export module CyclicToDo
         export const $span = $tag("span");
         export const backgroundLinerGradient = (leftPercent: string, leftColor: string, rightColor: string) =>
             `background: linear-gradient(to right, ${leftColor} ${leftPercent}, ${rightColor} ${leftPercent});`;
-        export const progressStyle = (progress: number | null) => null === progress ?
+        export const progressTitleStyle = (progress: number | null) => null === progress ?
+            "background-color: rgba(128,128,128,0.2);":
+            1 <= progress ?
+                `background: #22884466;`:
+                backgroundLinerGradient
+                (
+                    progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }),
+                    "#22884466",
+                    "rgba(128,128,128,0.0)"
+                );
+        export const progressInformationStyle = (progress: number | null) => null === progress ?
             "background-color: rgba(128,128,128,0.4);":
             1 <= progress ?
                 `background: #22884466;`:
@@ -2442,6 +2454,107 @@ export module CyclicToDo
                 });
             }
         );
+        export const tagDisplayStyleSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
+        (
+            async resolve =>
+            {
+                let result = false;
+                const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
+                const tagButtonListUpdate = async () => minamo.dom.replaceChildren
+                (
+                    tagButtonList,
+                    [
+                        "@overall" !== tag ?
+                            {
+                                tag: "button",
+                                className: `check-button ${"@home" === (settings.displayStyle ?? "@home") ? "checked": ""}`,
+                                children:
+                                [
+                                    await Resource.loadSvgOrCache("check-icon"),
+                                    $span("")(label("displayStyle.home")),
+                                ],
+                                onclick: async () =>
+                                {
+                                    settings.displayStyle = null;
+                                    OldStorage.TagSettings.set(pass, tag, settings);
+                                    result = true;
+                                    await tagButtonListUpdate();
+                                }
+                            }:
+                            [],
+                        {
+                            tag: "button",
+                            className: `check-button ${"full" === (settings.displayStyle ?? ("@overall" === tag ? "full": "@home")) ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")(label("displayStyle.full")),
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.displayStyle = "full";
+                                OldStorage.TagSettings.set(pass, tag, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                        {
+                            tag: "button",
+                            className: `check-button ${"compact" === (settings.displayStyle ?? "full") ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")(label("displayStyle.compact")),
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.displayStyle = "compact";
+                                OldStorage.TagSettings.set(pass, tag, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                        // {
+                        //     tag: "button",
+                        //     className: `check-button ${"limit" === (settings.sort ?? "smart") ? "checked": ""}`,
+                        //     children:
+                        //     [
+                        //         await Resource.loadSvgOrCache("check-icon"),
+                        //         $span("")(label("sort.limit")),
+                        //     ],
+                        //     onclick: async () =>
+                        //     {
+                        //         settings.sort = "limit";
+                        //         OldStorage.TagSettings.set(pass, tag, settings);
+                        //         result = true;
+                        //         await tagButtonListUpdate();
+                        //     }
+                        // },
+                    ]
+                );
+                await tagButtonListUpdate();
+                const ui = popup
+                ({
+                    // className: "add-remove-tags-popup",
+                    children:
+                    [
+                        $tag("h2")("")(`${locale.map("Display style setting")}: ${Domain.tagMap(tag)}`),
+                        tagButtonList,
+                        $div("popup-operator")
+                        ([{
+                            tag: "button",
+                            className: "default-button",
+                            children: label("Close"),
+                            onclick: () =>
+                            {
+                                ui.close();
+                            },
+                        }]),
+                    ],
+                    onClose: async () => resolve(result),
+                });
+            }
+        );
         export const screenCover = (data: { children?: minamo.dom.Source, onclick: () => unknown, }) =>
         {
             const dom = $make(HTMLDivElement)
@@ -2588,15 +2701,73 @@ export module CyclicToDo
         //     href,
         //     children,
         // });
-        export const information = (item: ToDoEntry) => $div
+        export const informationDigest = (item: ToDoEntry) => $div
         ({
             className: "item-information",
             attributes:
             {
-                style: progressStyle(item.progress),
+                style: progressInformationStyle(item.progress),
             }
         })
         ([
+            $div("task-last-timestamp")
+            ([
+                label("previous"),
+                $span("value monospace")(Domain.dateStringFromTick(item.previous)),
+            ]),
+            $div("task-elapsed-time")
+            ([
+                label("elapsed time"),
+                $span("value monospace")(Domain.timeLongStringFromTick(item.elapsed)),
+            ]),
+            $div("task-interval-average")
+            ([
+                label("recentrly interval average"),
+                $span("value monospace")(Domain.timeLongStringFromTick(item.RecentlyAverage)),
+            ]),
+            $div("task-interval-average")
+            ([
+                label("expected interval"),
+                $span("value monospace")
+                (
+                    null === item.RecentlyStandardDeviation ?
+                        Domain.timeLongStringFromTick(item.RecentlySmartAverage):
+                        Domain.timeRangeStringFromTick
+                        (
+                            item.expectedInterval.min,
+                            item.expectedInterval.max
+                            // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
+                            // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
+                        )
+                )
+            ]),
+            /*
+            $div("task-interval-average")
+            ([
+                $span("label")("expected interval average (予想間隔平均):"),
+                $span("value monospace")(renderTime(item.smartAverage)),
+            ])
+            */
+            // div("task-count")
+            // ([
+            //     "smartRest",
+            //     span("value monospace")(null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
+            // ]),
+        ]);
+        export const informationFull = (item: ToDoEntry) => $div
+        ({
+            className: "item-information",
+            attributes:
+            {
+                style: progressInformationStyle(item.progress),
+            }
+        })
+        ([
+            $div("task-first-time")
+            ([
+                label("first time"),
+                $span("value monospace")(Domain.dateStringFromTick(item.first)),
+            ]),
             $div("task-last-timestamp")
             ([
                 label("previous"),
@@ -2639,11 +2810,6 @@ export module CyclicToDo
             ([
                 label("count"),
                 $span("value monospace")(item.count.toLocaleString()),
-            ]),
-            $div("task-first-time")
-            ([
-                label("first time"),
-                $span("value monospace")(Domain.dateStringFromTick(item.first)),
             ]),
             // div("task-count")
             // ([
@@ -2761,7 +2927,12 @@ export module CyclicToDo
             "delete-button"
         );
         export const getTodoIcon = (item: ToDoEntry): Resource.KeyType =>
+        export const getTodoIcon = (entry: ToDoTagEntryOld, item: ToDoEntry): Resource.KeyType =>
         {
+            if (0 <= OldStorage.TagMember.get(entry.pass, "@pickup").indexOf(item.task))
+            {
+                return "pickup-icon";
+            }
             if (null === item.progress)
             {
                 switch(item.count)
@@ -2777,6 +2948,7 @@ export module CyclicToDo
             return "task-icon";
         };
         export const todoItem = async (entry: ToDoTagEntryOld, item: ToDoEntry) =>
+        export const todoItem = async (entry: ToDoTagEntryOld, item: ToDoEntry, displayStyle: "full" | "compact") =>
         {
             let isFirst = true;
             const onUpdate = async () =>
@@ -2792,7 +2964,18 @@ export module CyclicToDo
             };
             const itemDom = $make(HTMLDivElement)
             (
-                $div("task-item flex-item")
+                (
+                    "full" === displayStyle ?
+                    $div("task-item flex-item"):
+                    $div
+                    ({
+                        className: "task-item flex-item",
+                        attributes:
+                        {
+                            style: progressTitleStyle(item.progress),
+                        }
+                    })
+                )
                 ([
                     $div("item-header")
                     ([
@@ -2802,7 +2985,7 @@ export module CyclicToDo
                             href: { pass: entry.pass, todo: item.task, },
                             children:
                             [
-                                await Resource.loadSvgOrCache(getTodoIcon(item)),
+                                await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
                                 Model.decode(item.task),
                             ]
                         }),
@@ -2851,26 +3034,30 @@ export module CyclicToDo
                             ]),
                         ]),
                     ]),
-                    $div("item-tags")
-                    (
-                        await Promise.all
-                        (
-                            OldStorage.Tag.getByTodo(entry.pass, item.task).map
+                    "full" === displayStyle ?
+                        [
+                            $div("item-tags")
                             (
-                                async tag => internalLink
-                                ({
-                                    className: "tag",
-                                    href: { pass: entry.pass, tag, },
-                                    children:
-                                    [
-                                        await Resource.loadTagSvgOrCache(tag),
-                                        Domain.tagMap(tag)
-                                    ],
-                                })
-                            )
-                        )
-                    ),
-                    information(item),
+                                await Promise.all
+                                (
+                                    OldStorage.Tag.getByTodo(entry.pass, item.task).map
+                                    (
+                                        async tag => internalLink
+                                        ({
+                                            className: "tag",
+                                            href: { pass: entry.pass, tag, },
+                                            children:
+                                            [
+                                                await Resource.loadTagSvgOrCache(tag),
+                                                Domain.tagMap(tag)
+                                            ],
+                                        })
+                                    )
+                                )
+                            ),
+                            informationDigest(item),
+                        ]:
+                        []
                 ])
             );
             return itemDom;
@@ -2931,7 +3118,7 @@ export module CyclicToDo
         export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null) => $div
         ({
             className: "tick-item flex-item ",
-            style: Render.progressStyle(null === interval || max < interval ? null: interval /max),
+            style: Render.progressInformationStyle(null === interval || max < interval ? null: interval /max),
         })
         ([
             await Resource.loadSvgOrCache
@@ -3422,6 +3609,17 @@ export module CyclicToDo
             }),
             menuItem
             (
+                label("Display style setting"),
+                async () =>
+                {
+                    if (await tagDisplayStyleSettingsPopup(entry.pass, entry.tag))
+                    {
+                        await reload();
+                    }
+                }
+            ),
+            menuItem
+            (
                 label("Sort order setting"),
                 async () =>
                 {
@@ -3773,13 +3971,13 @@ export module CyclicToDo
                 children: $tag("button")("main-button long-button")(label("History")),
             }),
         ]);
-        export const listScreenBody = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) =>
+        export const listScreenBody = async (entry: ToDoTagEntryOld, list: ToDoEntry[], displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag)) =>
         ([
             await historyBar(entry, list),
-            $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item)))),
+            $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item, displayStyle)))),
             await listScreenFooter(entry, list)
         ]);
-        export const listScreenHomeColumn = async (entry: ToDoTagEntryOld, list: ToDoEntry[], tag: string, member = OldStorage.TagMember.get(entry.pass, tag)) =>
+        export const listScreenHomeColumn = async (entry: ToDoTagEntryOld, list: ToDoEntry[], tag: string, member = OldStorage.TagMember.get(entry.pass, tag), displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag)) =>
         {
             const currentList = list.filter(i => 0 <= member.indexOf(i.task));
             Domain.sortList
@@ -3796,7 +3994,7 @@ export module CyclicToDo
                 $div("tag-column-header")(tag),
                 $div("column-flex-list todo-list")
                 (
-                    await Promise.all(currentList.map(item => todoItem(entry, item)))
+                    await Promise.all(currentList.map(item => todoItem(entry, item, displayStyle)))
                 )
             ]);
             return result;
@@ -3833,6 +4031,7 @@ export module CyclicToDo
             Domain.updateListProgress(entry.pass, list);
             Domain.sortList(entry, list);
             let isDirty = false;
+            const displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag);
             const updateWindow = async (event: UpdateWindowEventEype) =>
             {
                 switch(event)
@@ -3875,9 +4074,16 @@ export module CyclicToDo
                                     const item = filteredList[index];
                                     const button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0] as HTMLButtonElement;
                                     button.classList.toggle("default-button", item.isDefault);
-                                    const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
-                                    information.setAttribute("style", Render.progressStyle(item.progress));
-                                    (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
+                                    if ("full" === displayStyle)
+                                    {
+                                        const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
+                                        information.setAttribute("style", Render.progressInformationStyle(item.progress));
+                                        (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
+                                    }
+                                    else
+                                    {
+                                        dom.setAttribute("style", Render.progressTitleStyle(item.progress));
+                                    }
                                 }
                             );
                             Array.from(document.getElementsByClassName("history-bar")).forEach
@@ -4247,7 +4453,7 @@ export module CyclicToDo
                             )
                         )
                     ),
-                    information(item),
+                    informationFull(item),
                 ]),
             ]),
             $div("column-flex-list tick-list")
@@ -4309,7 +4515,7 @@ export module CyclicToDo
                             .getElementsByClassName("todo-screen")[0]
                             .getElementsByClassName("task-item")[0] as HTMLDivElement;
                         const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
-                        information.setAttribute("style", Render.progressStyle(item.progress));
+                        information.setAttribute("style", Render.progressInformationStyle(item.progress));
                         (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
                         break;
                     case "storage":

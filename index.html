@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed Nov 03 2021 09:06:08 GMT+0900 (GMT+09:00) -->
+<!-- build at: Wed Nov 03 2021 18:12:51 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -4922,6 +4922,9 @@ define("resource/lang.en", [], {
     "sort.smart": "Smart",
     "sort.simple": "Simple",
     "sort.limit": "Limit",
+    "displayStyle.home": "Same style as Home",
+    "displayStyle.full": "Full",
+    "displayStyle.compact": "Compact",
     "Theme setting": "Theme setting",
     "theme.auto": "Auto ( Follows System )",
     "theme.light": "Light",
@@ -4929,6 +4932,7 @@ define("resource/lang.en", [], {
     "language.auto": "Auto",
     "please input": "Please input.",
     "Sort order setting": "Sort order setting",
+    "Display style setting": "Display style setting",
     "Language setting": "Language setting",
     "roll-back": "Cancel",
     "roll-backed": "Canceled.",
@@ -5005,6 +5009,9 @@ define("resource/lang.ja", [], {
     "sort.smart": "スマート",
     "sort.simple": "シンプル",
     "sort.limit": "リミット",
+    "displayStyle.home": "ホームと同じスタイル",
+    "displayStyle.full": "フル",
+    "displayStyle.compact": "コンパクト",
     "Theme setting": "テーマ設定",
     "theme.auto": "自動 ( システムに従う )",
     "theme.light": "ライト",
@@ -5012,6 +5019,7 @@ define("resource/lang.ja", [], {
     "language.auto": "自動",
     "please input": "入力してください。",
     "Sort order setting": "並び順設定",
+    "Display style setting": "表示スタイル設定",
     "Language setting": "言語設定",
     "roll-back": "取り消す",
     "roll-backed": "取り消しました。",
@@ -5401,6 +5409,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 };
                 TagSettings.remove = function (pass, tag) { return OldStorage.getStorage(pass).remove(TagSettings.makeKey(pass, tag)); };
                 TagSettings.getSort = function (pass, tag) { var _a, _b; return ((_a = TagSettings.get(pass, tag).sort) !== null && _a !== void 0 ? _a : ((_b = TagSettings.get(pass, "@overall").sort) !== null && _b !== void 0 ? _b : "smart")); };
+                TagSettings.getDisplayStyle = function (pass, tag) { var _a, _b; return ((_a = TagSettings.get(pass, tag).displayStyle) !== null && _a !== void 0 ? _a : ((_b = TagSettings.get(pass, "@overall").displayStyle) !== null && _b !== void 0 ? _b : "full")); };
             })(TagSettings = OldStorage.TagSettings || (OldStorage.TagSettings = {}));
             var Task;
             (function (Task) {
@@ -6800,7 +6809,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Render.backgroundLinerGradient = function (leftPercent, leftColor, rightColor) {
                 return "background: linear-gradient(to right, " + leftColor + " " + leftPercent + ", " + rightColor + " " + leftPercent + ");";
             };
-            Render.progressStyle = function (progress) { return null === progress ?
+            Render.progressTitleStyle = function (progress) { return null === progress ?
+                "background-color: rgba(128,128,128,0.2);" :
+                1 <= progress ?
+                    "background: #22884466;" :
+                    Render.backgroundLinerGradient(progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }), "#22884466", "rgba(128,128,128,0.0)"); };
+            Render.progressInformationStyle = function (progress) { return null === progress ?
                 "background-color: rgba(128,128,128,0.4);" :
                 1 <= progress ?
                     "background: #22884466;" :
@@ -7566,6 +7580,150 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     });
                 });
             };
+            Render.tagDisplayStyleSettingsPopup = function (pass, tag, settings) {
+                if (settings === void 0) { settings = OldStorage.TagSettings.get(pass, tag); }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                    var result, tagButtonList, tagButtonListUpdate, ui;
+                                    var _this = this;
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                result = false;
+                                                tagButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
+                                                tagButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    var _a, _b, _c, _d, _e;
+                                                    var _f, _g, _h;
+                                                    var _this = this;
+                                                    var _j, _k, _l;
+                                                    return __generator(this, function (_m) {
+                                                        switch (_m.label) {
+                                                            case 0:
+                                                                _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                                _c = [tagButtonList];
+                                                                if (!("@overall" !== tag)) return [3 /*break*/, 2];
+                                                                _f = {
+                                                                    tag: "button",
+                                                                    className: "check-button " + ("@home" === ((_j = settings.displayStyle) !== null && _j !== void 0 ? _j : "@home") ? "checked" : "")
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 1:
+                                                                _d = (_f.children = [
+                                                                    _m.sent(),
+                                                                    Render.$span("")(Render.label("displayStyle.home"))
+                                                                ],
+                                                                    _f.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                        return __generator(this, function (_a) {
+                                                                            switch (_a.label) {
+                                                                                case 0:
+                                                                                    settings.displayStyle = null;
+                                                                                    OldStorage.TagSettings.set(pass, tag, settings);
+                                                                                    result = true;
+                                                                                    return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                case 1:
+                                                                                    _a.sent();
+                                                                                    return [2 /*return*/];
+                                                                            }
+                                                                        });
+                                                                    }); },
+                                                                    _f);
+                                                                return [3 /*break*/, 3];
+                                                            case 2:
+                                                                _d = [];
+                                                                _m.label = 3;
+                                                            case 3:
+                                                                _e = [
+                                                                    _d
+                                                                ];
+                                                                _g = {
+                                                                    tag: "button",
+                                                                    className: "check-button " + ("full" === ((_k = settings.displayStyle) !== null && _k !== void 0 ? _k : ("@overall" === tag ? "full" : "@home")) ? "checked" : "")
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 4:
+                                                                _e = _e.concat([
+                                                                    (_g.children = [
+                                                                        _m.sent(),
+                                                                        Render.$span("")(Render.label("displayStyle.full"))
+                                                                    ],
+                                                                        _g.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            return __generator(this, function (_a) {
+                                                                                switch (_a.label) {
+                                                                                    case 0:
+                                                                                        settings.displayStyle = "full";
+                                                                                        OldStorage.TagSettings.set(pass, tag, settings);
+                                                                                        result = true;
+                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                    case 1:
+                                                                                        _a.sent();
+                                                                                        return [2 /*return*/];
+                                                                                }
+                                                                            });
+                                                                        }); },
+                                                                        _g)
+                                                                ]);
+                                                                _h = {
+                                                                    tag: "button",
+                                                                    className: "check-button " + ("compact" === ((_l = settings.displayStyle) !== null && _l !== void 0 ? _l : "full") ? "checked" : "")
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 5: return [2 /*return*/, _b.apply(_a, _c.concat([_e.concat([
+                                                                        (_h.children = [
+                                                                            _m.sent(),
+                                                                            Render.$span("")(Render.label("displayStyle.compact"))
+                                                                        ],
+                                                                            _h.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                return __generator(this, function (_a) {
+                                                                                    switch (_a.label) {
+                                                                                        case 0:
+                                                                                            settings.displayStyle = "compact";
+                                                                                            OldStorage.TagSettings.set(pass, tag, settings);
+                                                                                            result = true;
+                                                                                            return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                        case 1:
+                                                                                            _a.sent();
+                                                                                            return [2 /*return*/];
+                                                                                    }
+                                                                                });
+                                                                            }); },
+                                                                            _h)
+                                                                    ])]))];
+                                                        }
+                                                    });
+                                                }); };
+                                                return [4 /*yield*/, tagButtonListUpdate()];
+                                            case 1:
+                                                _a.sent();
+                                                ui = Render.popup({
+                                                    // className: "add-remove-tags-popup",
+                                                    children: [
+                                                        Render.$tag("h2")("")(locale.map("Display style setting") + ": " + Domain.tagMap(tag)),
+                                                        tagButtonList,
+                                                        Render.$div("popup-operator")([{
+                                                                tag: "button",
+                                                                className: "default-button",
+                                                                children: Render.label("Close"),
+                                                                onclick: function () {
+                                                                    ui.close();
+                                                                },
+                                                            }]),
+                                                    ],
+                                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                        return [2 /*return*/, resolve(result)];
+                                                    }); }); },
+                                                });
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); })];
+                            case 1: return [2 /*return*/, _a.sent()];
+                        }
+                    });
+                });
+            };
             Render.screenCover = function (data) {
                 var dom = Render.$make(HTMLDivElement)({
                     tag: "div",
@@ -7731,12 +7889,56 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             //     href,
             //     children,
             // });
-            Render.information = function (item) { return Render.$div({
+            Render.informationDigest = function (item) { return Render.$div({
                 className: "item-information",
                 attributes: {
-                    style: Render.progressStyle(item.progress),
+                    style: Render.progressInformationStyle(item.progress),
                 }
             })([
+                Render.$div("task-last-timestamp")([
+                    Render.label("previous"),
+                    Render.$span("value monospace")(Domain.dateStringFromTick(item.previous)),
+                ]),
+                Render.$div("task-elapsed-time")([
+                    Render.label("elapsed time"),
+                    Render.$span("value monospace")(Domain.timeLongStringFromTick(item.elapsed)),
+                ]),
+                Render.$div("task-interval-average")([
+                    Render.label("recentrly interval average"),
+                    Render.$span("value monospace")(Domain.timeLongStringFromTick(item.RecentlyAverage)),
+                ]),
+                Render.$div("task-interval-average")([
+                    Render.label("expected interval"),
+                    Render.$span("value monospace")(null === item.RecentlyStandardDeviation ?
+                        Domain.timeLongStringFromTick(item.RecentlySmartAverage) :
+                        Domain.timeRangeStringFromTick(item.expectedInterval.min, item.expectedInterval.max
+                        // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
+                        // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
+                        ))
+                ]),
+                /*
+                $div("task-interval-average")
+                ([
+                    $span("label")("expected interval average (予想間隔平均):"),
+                    $span("value monospace")(renderTime(item.smartAverage)),
+                ])
+                */
+                // div("task-count")
+                // ([
+                //     "smartRest",
+                //     span("value monospace")(null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
+                // ]),
+            ]); };
+            Render.informationFull = function (item) { return Render.$div({
+                className: "item-information",
+                attributes: {
+                    style: Render.progressInformationStyle(item.progress),
+                }
+            })([
+                Render.$div("task-first-time")([
+                    Render.label("first time"),
+                    Render.$span("value monospace")(Domain.dateStringFromTick(item.first)),
+                ]),
                 Render.$div("task-last-timestamp")([
                     Render.label("previous"),
                     Render.$span("value monospace")(Domain.dateStringFromTick(item.previous)),
@@ -7768,10 +7970,6 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 Render.$div("task-count")([
                     Render.label("count"),
                     Render.$span("value monospace")(item.count.toLocaleString()),
-                ]),
-                Render.$div("task-first-time")([
-                    Render.label("first time"),
-                    Render.$span("value monospace")(Domain.dateStringFromTick(item.first)),
                 ]),
                 // div("task-count")
                 // ([
@@ -7909,7 +8107,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     }
                 });
             }); }, "delete-button"); };
-            Render.getTodoIcon = function (item) {
+            Render.getTodoIcon = function (entry, item) {
+                if (0 <= OldStorage.TagMember.get(entry.pass, "@pickup").indexOf(item.task)) {
+                    return "pickup-icon";
+                }
                 if (null === item.progress) {
                     switch (item.count) {
                         case 0:
@@ -7922,12 +8123,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 }
                 return "task-icon";
             };
-            Render.todoItem = function (entry, item) { return __awaiter(_this, void 0, void 0, function () {
-                var isFirst, onUpdate, onDone, itemDom, _a, _b, _c, _d, _e, _f, _g, _h, _j;
-                var _k;
+            Render.todoItem = function (entry, item, displayStyle) { return __awaiter(_this, void 0, void 0, function () {
+                var isFirst, onUpdate, onDone, itemDom, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+                var _l;
                 var _this = this;
-                return __generator(this, function (_l) {
-                    switch (_l.label) {
+                return __generator(this, function (_m) {
+                    switch (_m.label) {
                         case 0:
                             isFirst = true;
                             onUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -7951,21 +8152,28 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 });
                             }); };
                             _a = Render.$make(HTMLDivElement);
-                            _b = Render.$div("task-item flex-item");
+                            _b = ("full" === displayStyle ?
+                                Render.$div("task-item flex-item") :
+                                Render.$div({
+                                    className: "task-item flex-item",
+                                    attributes: {
+                                        style: Render.progressTitleStyle(item.progress),
+                                    }
+                                }));
                             _c = Render.$div("item-header");
                             _d = Render.internalLink;
-                            _k = {
+                            _l = {
                                 className: "item-title",
                                 href: { pass: entry.pass, todo: item.task, }
                             };
-                            return [4 /*yield*/, Resource.loadSvgOrCache(Render.getTodoIcon(item))];
+                            return [4 /*yield*/, Resource.loadSvgOrCache(Render.getTodoIcon(entry, item))];
                         case 1:
                             _e = [
-                                _d.apply(void 0, [(_k.children = [
-                                        _l.sent(),
+                                _d.apply(void 0, [(_l.children = [
+                                        _m.sent(),
                                         Model.decode(item.task)
                                     ],
-                                        _k)])
+                                        _l)])
                             ];
                             _f = Render.$div("item-operator");
                             _g = [{
@@ -8008,11 +8216,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             _h = [
                                 _c.apply(void 0, [_e.concat([
                                         _f.apply(void 0, [_g.concat([
-                                                _l.sent()
+                                                _m.sent()
                                             ])])
                                     ])])
                             ];
-                            _j = Render.$div("item-tags");
+                            if (!("full" === displayStyle)) return [3 /*break*/, 4];
+                            _k = Render.$div("item-tags");
                             return [4 /*yield*/, Promise.all(OldStorage.Tag.getByTodo(entry.pass, item.task).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
                                     var _b;
@@ -8034,9 +8243,17 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     });
                                 }); }))];
                         case 3:
+                            _j = [
+                                _k.apply(void 0, [_m.sent()]),
+                                Render.informationDigest(item)
+                            ];
+                            return [3 /*break*/, 5];
+                        case 4:
+                            _j = [];
+                            _m.label = 5;
+                        case 5:
                             itemDom = _a.apply(void 0, [_b.apply(void 0, [_h.concat([
-                                        _j.apply(void 0, [_l.sent()]),
-                                        Render.information(item)
+                                        _j
                                     ])])]);
                             return [2 /*return*/, itemDom];
                     }
@@ -8127,7 +8344,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 0:
                             _a = Render.$div({
                                 className: "tick-item flex-item ",
-                                style: Render.progressStyle(null === interval || max < interval ? null : interval / max),
+                                style: Render.progressInformationStyle(null === interval || max < interval ? null : interval / max),
                             });
                             return [4 /*yield*/, Resource.loadSvgOrCache(null === interval ? "one-icon" :
                                     max < interval ? "sleep-icon" :
@@ -8773,6 +8990,20 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     href: { pass: entry.pass, tag: entry.tag, hash: "history" },
                                     children: Render.menuItem(Render.label("History")),
                                 }),
+                                Render.menuItem(Render.label("Display style setting"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, Render.tagDisplayStyleSettingsPopup(entry.pass, entry.tag)];
+                                            case 1:
+                                                if (!_a.sent()) return [3 /*break*/, 3];
+                                                return [4 /*yield*/, CyclicToDo.reload()];
+                                            case 2:
+                                                _a.sent();
+                                                _a.label = 3;
+                                            case 3: return [2 /*return*/];
+                                        }
+                                    });
+                                }); }),
                                 Render.menuItem(Render.label("Sort order setting"), function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
@@ -9143,30 +9374,34 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         ])];
                 });
             }); };
-            Render.listScreenBody = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
-                        case 0: return [4 /*yield*/, Render.historyBar(entry, list)];
-                        case 1:
-                            _a = [
-                                _c.sent()
-                            ];
-                            _b = Render.$div("column-flex-list todo-list");
-                            return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.todoItem(entry, item); }))];
-                        case 2:
-                            _a = _a.concat([
-                                _b.apply(void 0, [_c.sent()])
-                            ]);
-                            return [4 /*yield*/, Render.listScreenFooter(entry, list)];
-                        case 3: return [2 /*return*/, (_a.concat([
-                                _c.sent()
-                            ]))];
-                    }
+            Render.listScreenBody = function (entry, list, displayStyle) {
+                if (displayStyle === void 0) { displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag); }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var _a, _b;
+                    return __generator(this, function (_c) {
+                        switch (_c.label) {
+                            case 0: return [4 /*yield*/, Render.historyBar(entry, list)];
+                            case 1:
+                                _a = [
+                                    _c.sent()
+                                ];
+                                _b = Render.$div("column-flex-list todo-list");
+                                return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.todoItem(entry, item, displayStyle); }))];
+                            case 2:
+                                _a = _a.concat([
+                                    _b.apply(void 0, [_c.sent()])
+                                ]);
+                                return [4 /*yield*/, Render.listScreenFooter(entry, list)];
+                            case 3: return [2 /*return*/, (_a.concat([
+                                    _c.sent()
+                                ]))];
+                        }
+                    });
                 });
-            }); };
-            Render.listScreenHomeColumn = function (entry, list, tag, member) {
+            };
+            Render.listScreenHomeColumn = function (entry, list, tag, member, displayStyle) {
                 if (member === void 0) { member = OldStorage.TagMember.get(entry.pass, tag); }
+                if (displayStyle === void 0) { displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag); }
                 return __awaiter(_this, void 0, void 0, function () {
                     var currentList, result, _a, _b, _c;
                     return __generator(this, function (_d) {
@@ -9181,7 +9416,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 _a = Render.$div("tag-column");
                                 _b = [Render.$div("tag-column-header")(tag)];
                                 _c = Render.$div("column-flex-list todo-list");
-                                return [4 /*yield*/, Promise.all(currentList.map(function (item) { return Render.todoItem(entry, item); }))];
+                                return [4 /*yield*/, Promise.all(currentList.map(function (item) { return Render.todoItem(entry, item, displayStyle); }))];
                             case 1:
                                 result = _a.apply(void 0, [_b.concat([
                                         _c.apply(void 0, [_d.sent()])
@@ -9249,7 +9484,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             Render.showListScreen = function (pass, tag, urlParams) { return __awaiter(_this, void 0, void 0, function () {
-                var entry, list, isDirty, updateWindow, filter, _a;
+                var entry, list, isDirty, displayStyle, updateWindow, filter, _a;
                 var _this = this;
                 var _b;
                 return __generator(this, function (_c) {
@@ -9260,6 +9495,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             Domain.updateListProgress(entry.pass, list);
                             Domain.sortList(entry, list);
                             isDirty = false;
+                            displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag);
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
                                 var _a, filter_1, filteredList_1, entry_1, filter_2, _b;
                                 var _this = this;
@@ -9290,9 +9526,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 var item = filteredList_1[index];
                                                 var button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0];
                                                 button.classList.toggle("default-button", item.isDefault);
-                                                var information = dom.getElementsByClassName("item-information")[0];
-                                                information.setAttribute("style", Render.progressStyle(item.progress));
-                                                information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
+                                                if ("full" === displayStyle) {
+                                                    var information = dom.getElementsByClassName("item-information")[0];
+                                                    information.setAttribute("style", Render.progressInformationStyle(item.progress));
+                                                    information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
+                                                }
+                                                else {
+                                                    dom.setAttribute("style", Render.progressTitleStyle(item.progress));
+                                                }
                                             });
                                             Array.from(document.getElementsByClassName("history-bar")).forEach(function (dom) { return __awaiter(_this, void 0, void 0, function () { var _a, _b, _c; return __generator(this, function (_d) {
                                                 switch (_d.label) {
@@ -9353,7 +9594,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             Render.showListHomeScreen = function (pass, urlParams) { return __awaiter(_this, void 0, void 0, function () {
-                var tag, entry, list, isDirty, updateWindow, filter, _a;
+                var tag, entry, list, isDirty, displayStyle, updateWindow, filter, _a;
                 var _this = this;
                 var _b;
                 return __generator(this, function (_c) {
@@ -9365,6 +9606,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             Domain.updateListProgress(entry.pass, list);
                             Domain.sortList(entry, list);
                             isDirty = false;
+                            displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag);
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
                                 var _a, filter_3, filteredList_2, entry_2, filter_4, _b;
                                 var _this = this;
@@ -9395,9 +9637,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 var item = filteredList_2[index];
                                                 var button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0];
                                                 button.classList.toggle("default-button", item.isDefault);
-                                                var information = dom.getElementsByClassName("item-information")[0];
-                                                information.setAttribute("style", Render.progressStyle(item.progress));
-                                                information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
+                                                if ("full" === displayStyle) {
+                                                    var information = dom.getElementsByClassName("item-information")[0];
+                                                    information.setAttribute("style", Render.progressInformationStyle(item.progress));
+                                                    information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
+                                                }
+                                                else {
+                                                    dom.setAttribute("style", Render.progressTitleStyle(item.progress));
+                                                }
                                             });
                                             Array.from(document.getElementsByClassName("history-bar")).forEach(function (dom) { return __awaiter(_this, void 0, void 0, function () { var _a, _b, _c; return __generator(this, function (_d) {
                                                 switch (_d.label) {
@@ -9934,7 +10181,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     _b.apply(void 0, [[
                                             _c.apply(void 0, [[
                                                     _d.apply(void 0, [_f.sent()]),
-                                                    Render.information(item)
+                                                    Render.informationFull(item)
                                                 ]])
                                         ]])
                                 ]);
@@ -9987,7 +10234,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                             ticks = OldStorage.History.getTicks(pass, task);
                             Domain.updateProgress(pass, item);
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
-                                var _a, dom, information_1, _b;
+                                var _a, dom, information, _b;
                                 return __generator(this, function (_c) {
                                     switch (_c.label) {
                                         case 0:
@@ -10003,9 +10250,9 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             dom = document
                                                 .getElementsByClassName("todo-screen")[0]
                                                 .getElementsByClassName("task-item")[0];
-                                            information_1 = dom.getElementsByClassName("item-information")[0];
-                                            information_1.setAttribute("style", Render.progressStyle(item.progress));
-                                            information_1.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
+                                            information = dom.getElementsByClassName("item-information")[0];
+                                            information.setAttribute("style", Render.progressInformationStyle(item.progress));
+                                            information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
                                             return [3 /*break*/, 6];
                                         case 2: return [4 /*yield*/, CyclicToDo.reload()];
                                         case 3:
