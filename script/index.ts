@@ -475,6 +475,8 @@ export module CyclicToDo
                     set(pass, tag, get(pass, tag).filter(i => todo !== i));
                 }
             };
+            export const isMember = (pass: string, tag: string, todo: string) => 0 <= get(pass, tag).indexOf(todo);
+            export const isPickupTask = (pass: string, todo: string) => isMember(pass, "@pickup", todo);
         }
         export module TagSettings
         {
@@ -1461,7 +1463,7 @@ export module CyclicToDo
         export const updateTermCategoryOld = (pass: string, item: ToDoEntry) =>
         {
             const term = getTermCategory(item);
-            if (OldStorage.TagMember.get(pass, term).indexOf(item.task) < 0)
+            if ( ! OldStorage.TagMember.isMember(pass, term, item.task))
             {
                 ["@short-term", "@medium-term", "@long-term", "@irregular-term"].forEach
                 (
@@ -1479,7 +1481,7 @@ export module CyclicToDo
                             }
                         }
                     }
-             );
+                );
             }
         };
         // export const getRecentlyHistory = (pass: string, task: string) =>
@@ -1855,28 +1857,62 @@ export module CyclicToDo
             );
         export const $div = $tag("div");
         export const $span = $tag("span");
+        export const disabledColorRGB = "128,128,128";
+        export const accentProgressColor = "#22884466";
+        export const activeProgressColor = "#6F7F0088";
+        export const activeDisabledColor = "#6F7F0055";
         export const backgroundLinerGradient = (leftPercent: string, leftColor: string, rightColor: string) =>
             `background: linear-gradient(to right, ${leftColor} ${leftPercent}, ${rightColor} ${leftPercent});`;
-        export const progressTitleStyle = (progress: number | null) => null === progress ?
-            "background-color: rgba(128,128,128,0.2);":
+        export const progressStyleCore = (progressColor: string, disabledColor: string, backgroundColor: string, progress: number | null) => null === progress ?
+            `background-color: ${disabledColor};`:
             1 <= progress ?
-                `background: #22884466;`:
+                `background: ${progressColor};`:
                 backgroundLinerGradient
                 (
                     progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }),
-                    "#22884466",
-                    "rgba(128,128,128,0.0)"
+                    progressColor,
+                    backgroundColor
                 );
-        export const progressInformationStyle = (progress: number | null) => null === progress ?
-            "background-color: rgba(128,128,128,0.4);":
-            1 <= progress ?
-                `background: #22884466;`:
-                backgroundLinerGradient
-                (
-                    progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }),
-                    "#22884466",
-                    "rgba(128,128,128,0.2)"
-                );
+        export const progressDefaultTitleStyle = (progress: number | null) =>
+            progressStyleCore
+            (
+                accentProgressColor,
+                `rgba(${disabledColorRGB},0.2)`,
+                `rgba(${disabledColorRGB},0.0)`,
+                progress
+            );
+        export const progressPickupTitleStyle = (progress: number | null) =>
+            progressStyleCore
+            (
+                activeProgressColor,
+                activeDisabledColor,
+                `rgba(${disabledColorRGB},0.0)`,
+                progress
+            );
+        export const progressTitleStyle = (pass: string, item: ToDoEntry) =>
+            OldStorage.TagMember.isPickupTask(pass, item.task) ?
+                progressPickupTitleStyle(item.progress):
+                progressDefaultTitleStyle(item.progress);
+        export const progressDefaultInformationStyle = (progress: number | null) =>
+            progressStyleCore
+            (
+                accentProgressColor,
+                `rgba(${disabledColorRGB},0.4)`,
+                `rgba(${disabledColorRGB},0.2)`,
+                progress
+            );
+        export const progressPickupInformationStyle = (progress: number | null) =>
+            progressStyleCore
+            (
+                activeProgressColor,
+                activeDisabledColor,
+                `rgba(${disabledColorRGB},0.2)`,
+                progress
+            );
+        export const progressInformationStyle = (pass: string, item: ToDoEntry) =>
+            OldStorage.TagMember.isPickupTask(pass, item.task) ?
+                progressPickupInformationStyle(item.progress):
+                progressDefaultInformationStyle(item.progress);
         export const labelSpan = $span("label");
         export const label = (label: locale.LocaleKeyType) => labelSpan
         ([
@@ -2701,12 +2737,12 @@ export module CyclicToDo
         //     href,
         //     children,
         // });
-        export const informationDigest = (item: ToDoEntry) => $div
+        export const informationDigest = (entry: ToDoTagEntryOld, item: ToDoEntry) => $div
         ({
             className: "item-information",
             attributes:
             {
-                style: progressInformationStyle(item.progress),
+                style: progressInformationStyle(entry.pass, item),
             }
         })
         ([
@@ -2754,12 +2790,12 @@ export module CyclicToDo
             //     span("value monospace")(null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
             // ]),
         ]);
-        export const informationFull = (item: ToDoEntry) => $div
+        export const informationFull = (pass: string, item: ToDoEntry) => $div
         ({
             className: "item-information",
             attributes:
             {
-                style: progressInformationStyle(item.progress),
+                style: progressInformationStyle(pass, item),
             }
         })
         ([
@@ -2871,7 +2907,7 @@ export module CyclicToDo
         );
         export const todoTagMenu = (pass: string, item: ToDoEntry) =>
         [
-            0 <= OldStorage.TagMember.get(pass, "@pickup").indexOf(item.task) ?
+            OldStorage.TagMember.isPickupTask(pass, item.task) ?
                 menuItem
                 (
                     label("Remove from Pickup"),
@@ -2926,10 +2962,9 @@ export module CyclicToDo
             },
             "delete-button"
         );
-        export const getTodoIcon = (item: ToDoEntry): Resource.KeyType =>
         export const getTodoIcon = (entry: ToDoTagEntryOld, item: ToDoEntry): Resource.KeyType =>
         {
-            if (0 <= OldStorage.TagMember.get(entry.pass, "@pickup").indexOf(item.task))
+            if (OldStorage.TagMember.isPickupTask(entry.pass, item.task))
             {
                 return "pickup-icon";
             }
@@ -2945,9 +2980,20 @@ export module CyclicToDo
                     return "sleep-icon";
                 }
             }
+            if (OldStorage.TagMember.isMember(entry.pass, "@short-term", item.task))
+            {
+                return "short-term-icon";
+            }
+            if (OldStorage.TagMember.isMember(entry.pass, "@medium-term", item.task))
+            {
+                return "medium-term-icon";
+            }
+            if (OldStorage.TagMember.isMember(entry.pass, "@long-term", item.task))
+            {
+                return "long-term-icon";
+            }
             return "task-icon";
         };
-        export const todoItem = async (entry: ToDoTagEntryOld, item: ToDoEntry) =>
         export const todoItem = async (entry: ToDoTagEntryOld, item: ToDoEntry, displayStyle: "full" | "compact") =>
         {
             let isFirst = true;
@@ -2972,7 +3018,7 @@ export module CyclicToDo
                         className: "task-item flex-item",
                         attributes:
                         {
-                            style: progressTitleStyle(item.progress),
+                            style: progressTitleStyle(entry.pass, item),
                         }
                     })
                 )
@@ -3055,7 +3101,7 @@ export module CyclicToDo
                                     )
                                 )
                             ),
-                            informationDigest(item),
+                            informationDigest(entry, item),
                         ]:
                         []
                 ])
@@ -3118,7 +3164,7 @@ export module CyclicToDo
         export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null) => $div
         ({
             className: "tick-item flex-item ",
-            style: Render.progressInformationStyle(null === interval || max < interval ? null: interval /max),
+            style: Render.progressDefaultTitleStyle(null === interval || max < interval ? null: interval /max),
         })
         ([
             await Resource.loadSvgOrCache
@@ -4077,12 +4123,12 @@ export module CyclicToDo
                                     if ("full" === displayStyle)
                                     {
                                         const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
-                                        information.setAttribute("style", Render.progressInformationStyle(item.progress));
+                                        information.setAttribute("style", Render.progressInformationStyle(entry.pass, item));
                                         (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
                                     }
                                     else
                                     {
-                                        dom.setAttribute("style", Render.progressTitleStyle(item.progress));
+                                        dom.setAttribute("style", Render.progressTitleStyle(entry.pass, item));
                                     }
                                 }
                             );
@@ -4453,7 +4499,7 @@ export module CyclicToDo
                             )
                         )
                     ),
-                    informationFull(item),
+                    informationFull(pass, item),
                 ]),
             ]),
             $div("column-flex-list tick-list")
@@ -4515,7 +4561,7 @@ export module CyclicToDo
                             .getElementsByClassName("todo-screen")[0]
                             .getElementsByClassName("task-item")[0] as HTMLDivElement;
                         const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
-                        information.setAttribute("style", Render.progressInformationStyle(item.progress));
+                        information.setAttribute("style", Render.progressInformationStyle(pass, item));
                         (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
                         break;
                     case "storage":

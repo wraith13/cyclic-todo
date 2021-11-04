@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Wed Nov 03 2021 18:12:51 GMT+0900 (GMT+09:00) -->
+<!-- build at: Thu Nov 04 2021 21:40:50 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -5399,6 +5399,8 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         TagMember.set(pass, tag, TagMember.get(pass, tag).filter(function (i) { return todo !== i; }));
                     }
                 };
+                TagMember.isMember = function (pass, tag, todo) { return 0 <= TagMember.get(pass, tag).indexOf(todo); };
+                TagMember.isPickupTask = function (pass, todo) { return TagMember.isMember(pass, "@pickup", todo); };
             })(TagMember = OldStorage.TagMember || (OldStorage.TagMember = {}));
             var TagSettings;
             (function (TagSettings) {
@@ -6383,7 +6385,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             Domain.getTermCategory = Domain.getTermCategoryByAverage;
             Domain.updateTermCategoryOld = function (pass, item) {
                 var term = Domain.getTermCategory(item);
-                if (OldStorage.TagMember.get(pass, term).indexOf(item.task) < 0) {
+                if (!OldStorage.TagMember.isMember(pass, term, item.task)) {
                     ["@short-term", "@medium-term", "@long-term", "@irregular-term"].forEach(function (tag) {
                         if (tag === term) {
                             OldStorage.TagMember.add(pass, term, item.task);
@@ -6806,19 +6808,40 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             }; }; };
             Render.$div = Render.$tag("div");
             Render.$span = Render.$tag("span");
+            Render.disabledColorRGB = "128,128,128";
+            Render.accentProgressColor = "#22884466";
+            Render.activeProgressColor = "#6F7F0088";
+            Render.activeDisabledColor = "#6F7F0055";
             Render.backgroundLinerGradient = function (leftPercent, leftColor, rightColor) {
                 return "background: linear-gradient(to right, " + leftColor + " " + leftPercent + ", " + rightColor + " " + leftPercent + ");";
             };
-            Render.progressTitleStyle = function (progress) { return null === progress ?
-                "background-color: rgba(128,128,128,0.2);" :
+            Render.progressStyleCore = function (progressColor, disabledColor, backgroundColor, progress) { return null === progress ?
+                "background-color: " + disabledColor + ";" :
                 1 <= progress ?
-                    "background: #22884466;" :
-                    Render.backgroundLinerGradient(progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }), "#22884466", "rgba(128,128,128,0.0)"); };
-            Render.progressInformationStyle = function (progress) { return null === progress ?
-                "background-color: rgba(128,128,128,0.4);" :
-                1 <= progress ?
-                    "background: #22884466;" :
-                    Render.backgroundLinerGradient(progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }), "#22884466", "rgba(128,128,128,0.2)"); };
+                    "background: " + progressColor + ";" :
+                    Render.backgroundLinerGradient(progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }), progressColor, backgroundColor); };
+            Render.progressDefaultTitleStyle = function (progress) {
+                return Render.progressStyleCore(Render.accentProgressColor, "rgba(" + Render.disabledColorRGB + ",0.2)", "rgba(" + Render.disabledColorRGB + ",0.0)", progress);
+            };
+            Render.progressPickupTitleStyle = function (progress) {
+                return Render.progressStyleCore(Render.activeProgressColor, Render.activeDisabledColor, "rgba(" + Render.disabledColorRGB + ",0.0)", progress);
+            };
+            Render.progressTitleStyle = function (pass, item) {
+                return OldStorage.TagMember.isPickupTask(pass, item.task) ?
+                    Render.progressPickupTitleStyle(item.progress) :
+                    Render.progressDefaultTitleStyle(item.progress);
+            };
+            Render.progressDefaultInformationStyle = function (progress) {
+                return Render.progressStyleCore(Render.accentProgressColor, "rgba(" + Render.disabledColorRGB + ",0.4)", "rgba(" + Render.disabledColorRGB + ",0.2)", progress);
+            };
+            Render.progressPickupInformationStyle = function (progress) {
+                return Render.progressStyleCore(Render.activeProgressColor, Render.activeDisabledColor, "rgba(" + Render.disabledColorRGB + ",0.2)", progress);
+            };
+            Render.progressInformationStyle = function (pass, item) {
+                return OldStorage.TagMember.isPickupTask(pass, item.task) ?
+                    Render.progressPickupInformationStyle(item.progress) :
+                    Render.progressDefaultInformationStyle(item.progress);
+            };
             Render.labelSpan = Render.$span("label");
             Render.label = function (label) { return Render.labelSpan([
                 Render.$span("locale-parallel")(locale.parallel(label)),
@@ -7889,10 +7912,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             //     href,
             //     children,
             // });
-            Render.informationDigest = function (item) { return Render.$div({
+            Render.informationDigest = function (entry, item) { return Render.$div({
                 className: "item-information",
                 attributes: {
-                    style: Render.progressInformationStyle(item.progress),
+                    style: Render.progressInformationStyle(entry.pass, item),
                 }
             })([
                 Render.$div("task-last-timestamp")([
@@ -7929,10 +7952,10 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 //     span("value monospace")(null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
                 // ]),
             ]); };
-            Render.informationFull = function (item) { return Render.$div({
+            Render.informationFull = function (pass, item) { return Render.$div({
                 className: "item-information",
                 attributes: {
-                    style: Render.progressInformationStyle(item.progress),
+                    style: Render.progressInformationStyle(pass, item),
                 }
             })([
                 Render.$div("task-first-time")([
@@ -8042,7 +8065,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
             };
             Render.todoTagMenu = function (pass, item) {
                 return [
-                    0 <= OldStorage.TagMember.get(pass, "@pickup").indexOf(item.task) ?
+                    OldStorage.TagMember.isPickupTask(pass, item.task) ?
                         Render.menuItem(Render.label("Remove from Pickup"), function () { return __awaiter(_this, void 0, void 0, function () {
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
@@ -8108,7 +8131,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); }, "delete-button"); };
             Render.getTodoIcon = function (entry, item) {
-                if (0 <= OldStorage.TagMember.get(entry.pass, "@pickup").indexOf(item.task)) {
+                if (OldStorage.TagMember.isPickupTask(entry.pass, item.task)) {
                     return "pickup-icon";
                 }
                 if (null === item.progress) {
@@ -8120,6 +8143,15 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         default:
                             return "sleep-icon";
                     }
+                }
+                if (OldStorage.TagMember.isMember(entry.pass, "@short-term", item.task)) {
+                    return "short-term-icon";
+                }
+                if (OldStorage.TagMember.isMember(entry.pass, "@medium-term", item.task)) {
+                    return "medium-term-icon";
+                }
+                if (OldStorage.TagMember.isMember(entry.pass, "@long-term", item.task)) {
+                    return "long-term-icon";
                 }
                 return "task-icon";
             };
@@ -8157,7 +8189,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                 Render.$div({
                                     className: "task-item flex-item",
                                     attributes: {
-                                        style: Render.progressTitleStyle(item.progress),
+                                        style: Render.progressTitleStyle(entry.pass, item),
                                     }
                                 }));
                             _c = Render.$div("item-header");
@@ -8245,7 +8277,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 3:
                             _j = [
                                 _k.apply(void 0, [_m.sent()]),
-                                Render.informationDigest(item)
+                                Render.informationDigest(entry, item)
                             ];
                             return [3 /*break*/, 5];
                         case 4:
@@ -8344,7 +8376,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                         case 0:
                             _a = Render.$div({
                                 className: "tick-item flex-item ",
-                                style: Render.progressInformationStyle(null === interval || max < interval ? null : interval / max),
+                                style: Render.progressDefaultTitleStyle(null === interval || max < interval ? null : interval / max),
                             });
                             return [4 /*yield*/, Resource.loadSvgOrCache(null === interval ? "one-icon" :
                                     max < interval ? "sleep-icon" :
@@ -9528,11 +9560,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 button.classList.toggle("default-button", item.isDefault);
                                                 if ("full" === displayStyle) {
                                                     var information = dom.getElementsByClassName("item-information")[0];
-                                                    information.setAttribute("style", Render.progressInformationStyle(item.progress));
+                                                    information.setAttribute("style", Render.progressInformationStyle(entry.pass, item));
                                                     information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
                                                 }
                                                 else {
-                                                    dom.setAttribute("style", Render.progressTitleStyle(item.progress));
+                                                    dom.setAttribute("style", Render.progressTitleStyle(entry.pass, item));
                                                 }
                                             });
                                             Array.from(document.getElementsByClassName("history-bar")).forEach(function (dom) { return __awaiter(_this, void 0, void 0, function () { var _a, _b, _c; return __generator(this, function (_d) {
@@ -9639,11 +9671,11 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 button.classList.toggle("default-button", item.isDefault);
                                                 if ("full" === displayStyle) {
                                                     var information = dom.getElementsByClassName("item-information")[0];
-                                                    information.setAttribute("style", Render.progressInformationStyle(item.progress));
+                                                    information.setAttribute("style", Render.progressInformationStyle(entry.pass, item));
                                                     information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
                                                 }
                                                 else {
-                                                    dom.setAttribute("style", Render.progressTitleStyle(item.progress));
+                                                    dom.setAttribute("style", Render.progressTitleStyle(entry.pass, item));
                                                 }
                                             });
                                             Array.from(document.getElementsByClassName("history-bar")).forEach(function (dom) { return __awaiter(_this, void 0, void 0, function () { var _a, _b, _c; return __generator(this, function (_d) {
@@ -10181,7 +10213,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     _b.apply(void 0, [[
                                             _c.apply(void 0, [[
                                                     _d.apply(void 0, [_f.sent()]),
-                                                    Render.informationFull(item)
+                                                    Render.informationFull(pass, item)
                                                 ]])
                                         ]])
                                 ]);
@@ -10251,7 +10283,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                 .getElementsByClassName("todo-screen")[0]
                                                 .getElementsByClassName("task-item")[0];
                                             information = dom.getElementsByClassName("item-information")[0];
-                                            information.setAttribute("style", Render.progressInformationStyle(item.progress));
+                                            information.setAttribute("style", Render.progressInformationStyle(pass, item));
                                             information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
                                             return [3 /*break*/, 6];
                                         case 2: return [4 /*yield*/, CyclicToDo.reload()];
