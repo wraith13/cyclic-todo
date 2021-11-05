@@ -77,7 +77,7 @@ export module Calculate
 export module CyclicToDo
 {
     export const applicationTitle = config.applicationTitle;
-    export interface Settings
+    export interface SystemSettings
     {
         theme?: "auto" | "light" | "dark";
         locale?: locale.LocaleType;
@@ -713,12 +713,12 @@ export module CyclicToDo
     }
     export module Storage
     {
-        export module Settings
+        export module SystemSettings
         {
             export const makeKey = () => `settings`;
             export const get = () =>
-                minamo.localStorage.getOrNull<CyclicToDo.Settings>(makeKey()) ?? { };
-            export const set = (settings: CyclicToDo.Settings) =>
+                minamo.localStorage.getOrNull<CyclicToDo.SystemSettings>(makeKey()) ?? { };
+            export const set = (settings: CyclicToDo.SystemSettings) =>
                 minamo.localStorage.set(makeKey(), settings);
         }
         export module ToDoDocumentList
@@ -1720,11 +1720,11 @@ export module CyclicToDo
                 document.body.classList.add("flash");
                 setTimeout(() => document.body.classList.remove("flash"), 1500);
                 MigrateBridge.done(pass, task, tick);
-                const isPickuped = 0 <= MigrateBridge.getTagMember(pass, "@pickup").indexOf(task);
-                if (isPickuped)
-                {
-                    OldStorage.TagMember.remove(pass, "@pickup", task);
-                }
+                // const isPickuped = 0 <= MigrateBridge.getTagMember(pass, "@pickup").indexOf(task);
+                // if (isPickuped)
+                // {
+                //     OldStorage.TagMember.remove(pass, "@pickup", task);
+                // }
                 const toast = makePrimaryToast
                 ({
                     content: $span("")(`${locale.map("Done!")}: ${task}`),
@@ -1733,10 +1733,10 @@ export module CyclicToDo
                         async () =>
                         {
                             OldStorage.History.removeTickRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
-                            if (isPickuped)
-                            {
-                                OldStorage.TagMember.add(pass, "@pickup", task);
-                            }
+                            // if (isPickuped)
+                            // {
+                            //     OldStorage.TagMember.add(pass, "@pickup", task);
+                            // }
                             await toast.hide();
                             onCanceled();
                         }
@@ -2240,7 +2240,7 @@ export module CyclicToDo
                 }
             );
         };
-        export const themeSettingsPopup = async (settings: Settings = Storage.Settings.get()): Promise<boolean> =>
+        export const themeSettingsPopup = async (settings: SystemSettings = Storage.SystemSettings.get()): Promise<boolean> =>
         {
             const init = settings.theme ?? "auto";
             return await new Promise
@@ -2271,7 +2271,7 @@ export module CyclicToDo
                                             if (key !== (settings.theme ?? "auto"))
                                             {
                                                 settings.theme = key;
-                                                Storage.Settings.set(settings);
+                                                Storage.SystemSettings.set(settings);
                                                 await checkButtonListUpdate();
                                                 updateStyle();
                                                 result = init !== key;
@@ -2306,7 +2306,7 @@ export module CyclicToDo
                 }
             );
         };
-        export const localeSettingsPopup = async (settings: Settings = Storage.Settings.get()): Promise<boolean> =>
+        export const localeSettingsPopup = async (settings: SystemSettings = Storage.SystemSettings.get()): Promise<boolean> =>
         {
             return await new Promise
             (
@@ -2331,7 +2331,7 @@ export module CyclicToDo
                                     if (null !== (settings.locale ?? null))
                                     {
                                         settings.locale = null;
-                                        Storage.Settings.set(settings);
+                                        Storage.SystemSettings.set(settings);
                                         result = true;
                                         await checkButtonListUpdate();
                                     }
@@ -2355,7 +2355,7 @@ export module CyclicToDo
                                             if (key !== settings.locale ?? null)
                                             {
                                                 settings.locale = key;
-                                                Storage.Settings.set(settings);
+                                                Storage.SystemSettings.set(settings);
                                                 result = true;
                                                 await checkButtonListUpdate();
                                             }
@@ -4864,6 +4864,7 @@ export module CyclicToDo
                     if (await localeSettingsPopup())
                     {
                         locale.setLocale(Storage.Settings.get().locale);
+                        locale.setLocale(Storage.SystemSettings.get().locale);
                         await reload();
                     }
                 }
@@ -5430,7 +5431,7 @@ export module CyclicToDo
     // };
     export const updateStyle = () =>
     {
-        const setting = Storage.Settings.get().theme ?? "auto";
+        const setting = Storage.SystemSettings.get().theme ?? "auto";
         const system = window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark": "light";
         const theme = "auto" === setting ? system: setting;
         [ "light", "dark", ].forEach
@@ -5441,7 +5442,7 @@ export module CyclicToDo
     export const start = async () =>
     {
         console.log("start!!!");
-        locale.setLocale(Storage.Settings.get().locale);
+        locale.setLocale(Storage.SystemSettings.get().locale);
         window.onpopstate = () => showPage();
         window.addEventListener('resize', Render.onWindowResize);
         window.addEventListener('focus', Render.onWindowFocus);

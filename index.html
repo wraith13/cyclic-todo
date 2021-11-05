@@ -1,6 +1,6 @@
 <html>
 <!-- This file is genereted by build.js. このファイルは build.js によって生成されました。 -->
-<!-- build at: Thu Nov 04 2021 21:45:34 GMT+0900 (GMT+09:00) -->
+<!-- build at: Sat Nov 06 2021 01:45:29 GMT+0900 (GMT+09:00) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=contain">
@@ -5595,14 +5595,14 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
         })(OldStorage = CyclicToDo.OldStorage || (CyclicToDo.OldStorage = {}));
         var Storage;
         (function (Storage) {
-            var Settings;
-            (function (Settings) {
-                Settings.makeKey = function () { return "settings"; };
-                Settings.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Settings.makeKey())) !== null && _a !== void 0 ? _a : {}; };
-                Settings.set = function (settings) {
-                    return minamo_js_1.minamo.localStorage.set(Settings.makeKey(), settings);
+            var SystemSettings;
+            (function (SystemSettings) {
+                SystemSettings.makeKey = function () { return "settings"; };
+                SystemSettings.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(SystemSettings.makeKey())) !== null && _a !== void 0 ? _a : {}; };
+                SystemSettings.set = function (settings) {
+                    return minamo_js_1.minamo.localStorage.set(SystemSettings.makeKey(), settings);
                 };
-            })(Settings = Storage.Settings || (Storage.Settings = {}));
+            })(SystemSettings = Storage.SystemSettings || (Storage.SystemSettings = {}));
             var ToDoDocumentList;
             (function (ToDoDocumentList) {
                 ToDoDocumentList.key = "document.list";
@@ -6649,16 +6649,12 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                     });
                 };
                 Operate.done = function (pass, task, tick, onCanceled) { return __awaiter(_this, void 0, void 0, function () {
-                    var isPickuped, toast;
+                    var toast;
                     var _this = this;
                     return __generator(this, function (_a) {
                         document.body.classList.add("flash");
                         setTimeout(function () { return document.body.classList.remove("flash"); }, 1500);
                         MigrateBridge.done(pass, task, tick);
-                        isPickuped = 0 <= MigrateBridge.getTagMember(pass, "@pickup").indexOf(task);
-                        if (isPickuped) {
-                            OldStorage.TagMember.remove(pass, "@pickup", task);
-                        }
                         toast = Render.makePrimaryToast({
                             content: Render.$span("")(locale.map("Done!") + ": " + task),
                             backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
@@ -6666,11 +6662,16 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                     switch (_a.label) {
                                         case 0:
                                             OldStorage.History.removeTickRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
-                                            if (isPickuped) {
-                                                OldStorage.TagMember.add(pass, "@pickup", task);
-                                            }
+                                            // if (isPickuped)
+                                            // {
+                                            //     OldStorage.TagMember.add(pass, "@pickup", task);
+                                            // }
                                             return [4 /*yield*/, toast.hide()];
                                         case 1:
+                                            // if (isPickuped)
+                                            // {
+                                            //     OldStorage.TagMember.add(pass, "@pickup", task);
+                                            // }
                                             _a.sent();
                                             onCanceled();
                                             return [2 /*return*/];
@@ -7233,7 +7234,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             }); };
             Render.themeSettingsPopup = function (settings) {
-                if (settings === void 0) { settings = Storage.Settings.get(); }
+                if (settings === void 0) { settings = Storage.SystemSettings.get(); }
                 return __awaiter(_this, void 0, void 0, function () {
                     var init;
                     var _this = this;
@@ -7281,7 +7282,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                                                         case 0:
                                                                                                             if (!(key !== ((_a = settings.theme) !== null && _a !== void 0 ? _a : "auto"))) return [3 /*break*/, 2];
                                                                                                             settings.theme = key;
-                                                                                                            Storage.Settings.set(settings);
+                                                                                                            Storage.SystemSettings.set(settings);
                                                                                                             return [4 /*yield*/, checkButtonListUpdate()];
                                                                                                         case 1:
                                                                                                             _b.sent();
@@ -7333,7 +7334,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 });
             };
             Render.localeSettingsPopup = function (settings) {
-                if (settings === void 0) { settings = Storage.Settings.get(); }
+                if (settings === void 0) { settings = Storage.SystemSettings.get(); }
                 return __awaiter(_this, void 0, void 0, function () {
                     var _this = this;
                     return __generator(this, function (_a) {
@@ -7374,7 +7375,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                                     case 0:
                                                                                         if (!(null !== ((_a = settings.locale) !== null && _a !== void 0 ? _a : null))) return [3 /*break*/, 2];
                                                                                         settings.locale = null;
-                                                                                        Storage.Settings.set(settings);
+                                                                                        Storage.SystemSettings.set(settings);
                                                                                         result = true;
                                                                                         return [4 /*yield*/, checkButtonListUpdate()];
                                                                                     case 1:
@@ -7409,7 +7410,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                                                                                     case 0:
                                                                                                         if (!((_a = key !== settings.locale) !== null && _a !== void 0 ? _a : null)) return [3 /*break*/, 2];
                                                                                                         settings.locale = key;
-                                                                                                        Storage.Settings.set(settings);
+                                                                                                        Storage.SystemSettings.set(settings);
                                                                                                         result = true;
                                                                                                         return [4 /*yield*/, checkButtonListUpdate()];
                                                                                                     case 1:
@@ -10719,7 +10720,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                                             case 0: return [4 /*yield*/, Render.localeSettingsPopup()];
                                             case 1:
                                                 if (!_a.sent()) return [3 /*break*/, 3];
-                                                locale.setLocale(Storage.Settings.get().locale);
+                                                locale.setLocale(Storage.SystemSettings.get().locale);
                                                 return [4 /*yield*/, CyclicToDo.reload()];
                                             case 2:
                                                 _a.sent();
@@ -11265,7 +11266,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
         // };
         CyclicToDo.updateStyle = function () {
             var _a;
-            var setting = (_a = Storage.Settings.get().theme) !== null && _a !== void 0 ? _a : "auto";
+            var setting = (_a = Storage.SystemSettings.get().theme) !== null && _a !== void 0 ? _a : "auto";
             var system = window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light";
             var theme = "auto" === setting ? system : setting;
             ["light", "dark",].forEach(function (i) { return document.body.classList.toggle(i, i === theme); });
@@ -11276,7 +11277,7 @@ define("script/index", ["require", "exports", "script/minamo.js/index", "resourc
                 switch (_a.label) {
                     case 0:
                         console.log("start!!!");
-                        locale.setLocale(Storage.Settings.get().locale);
+                        locale.setLocale(Storage.SystemSettings.get().locale);
                         window.onpopstate = function () { return CyclicToDo.showPage(); };
                         window.addEventListener('resize', Render.onWindowResize);
                         window.addEventListener('focus', Render.onWindowFocus);
