@@ -9,5 +9,5 @@
     "maxHistories": 100,
     "maxRestAdjustMinutes": 180,
     "maxShortTermMinutes": 4320,
-    "maxMediumTermMinutes": 14400
+    "maxMediumTermMinutes": 21600
 }
