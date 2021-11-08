@@ -109,7 +109,7 @@ export module CyclicToDo
     {
         // sort?: "smart" | "simple" | "limit";
         sort?: "smart" | "simple";
-        displayStyle?: "full" | "compact";
+        displayStyle?: "@home" | "full" | "compact";
     }
     export interface DocumentCard
     {
@@ -489,7 +489,22 @@ export module CyclicToDo
             export const getSort = (pass: string, tag: string) =>
                 (get(pass, tag).sort ?? (get(pass, "@overall").sort ?? "smart"));
             export const getDisplayStyle = (pass: string, tag: string) =>
-                (get(pass, tag).displayStyle ?? (get(pass, "@overall").displayStyle ?? "full"));
+            {
+                const defaultResult = "full";
+                const result = get(pass, tag).displayStyle ?? defaultResult;
+                if ("@home" === result)
+                {
+                    if ("@overall" === tag)
+                    {
+                        return defaultResult;
+                    }
+                    else
+                    {
+                        return getDisplayStyle(pass, "@overall");
+                    }
+                }
+                return result;
+            };
         }
         export module Task
         {
@@ -2503,7 +2518,7 @@ export module CyclicToDo
                         "@overall" !== tag ?
                             {
                                 tag: "button",
-                                className: `check-button ${"@home" === (settings.displayStyle ?? "@home") ? "checked": ""}`,
+                                className: `check-button ${"@home" === (settings.displayStyle ?? defaultStyle) ? "checked": ""}`,
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
@@ -2511,7 +2526,7 @@ export module CyclicToDo
                                 ],
                                 onclick: async () =>
                                 {
-                                    settings.displayStyle = null;
+                                    settings.displayStyle = "@home";
                                     OldStorage.TagSettings.set(pass, tag, settings);
                                     result = true;
                                     await tagButtonListUpdate();
@@ -2520,7 +2535,7 @@ export module CyclicToDo
                             [],
                         {
                             tag: "button",
-                            className: `check-button ${"full" === (settings.displayStyle ?? ("@overall" === tag ? "full": "@home")) ? "checked": ""}`,
+                            className: `check-button ${"full" === (settings.displayStyle ?? defaultStyle) ? "checked": ""}`,
                             children:
                             [
                                 await Resource.loadSvgOrCache("check-icon"),
@@ -2536,7 +2551,7 @@ export module CyclicToDo
                         },
                         {
                             tag: "button",
-                            className: `check-button ${"compact" === (settings.displayStyle ?? "full") ? "checked": ""}`,
+                            className: `check-button ${"compact" === (settings.displayStyle ?? defaultStyle) ? "checked": ""}`,
                             children:
                             [
                                 await Resource.loadSvgOrCache("check-icon"),
