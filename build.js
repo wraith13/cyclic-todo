@@ -1,8 +1,9 @@
 'use strict';
+console.log(`build start: ${new Date()}`);
 const process = require("process");
 const child_process = require("child_process");
 const fs = require("fs");
-const fget = path => fs.readFileSync(path, { encoding: "utf-8" });
+const fget = (path, base) => fs.readFileSync(((undefined !== base ? base: "") +path).replace(/\/\.\//gm, "/"), { encoding: "utf-8" });
 const evalValue = (value) =>
 {
     if ("string" === typeof value)
@@ -19,7 +20,7 @@ const evalValue = (value) =>
     {
         const resource = require(value.resource);
         return Object.keys(resource)
-            .map(id => `<div id="${id}">${fget(resource[id]).replace(/[\w\W]*(<svg)/g, "$1")}</div>`)
+            .map(id => `<div id="${id}">${fget(resource[id], value.base).replace(/[\w\W]*(<svg)/g, "$1")}</div>`)
             .join("");
     }
     else
@@ -41,14 +42,27 @@ const evalValue = (value) =>
     return null;
 };
 const json = require("./build.json");
-(json.preprocesses[process.argv[2] || "default"] || [ ]).forEach
-(
-    command =>
-    {
-        console.log(command);
-        child_process.execSync(command);
-    }
-);
+try
+{
+    (json.preprocesses[process.argv[2] || "default"] || [ ]).forEach
+    (
+        command =>
+        {
+            console.log(command);
+            child_process.execSync
+            (
+                command,
+                {
+                    stdio: [ "inherit", "inherit", "inherit" ]
+                }
+            );
+        }
+    );
+}
+catch
+{
+    process.exit(-1);
+}
 const template = evalValue(json.template);
 Object.keys(json.parameters).forEach
 (
@@ -73,5 +87,6 @@ fs.writeFileSync
         template
     )
 )
+console.log(`build end: ${new Date()}`);
 
 // how to run: `node ./build.js`

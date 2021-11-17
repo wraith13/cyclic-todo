@@ -5454,9 +5454,10 @@ export module CyclicToDo
             i => document.body.classList.toggle(i, i === theme)
         );
     };
-    export const start = async () =>
+    export const start = async (params:{ buildTimestamp: string, }) =>
     {
-        console.log("start!!!");
+        console.log(`start timestamp: ${new Date()}`);
+        console.log(`${JSON.stringify(params)}`);
         locale.setLocale(Storage.SystemSettings.get().locale);
         window.onpopstate = () => showPage();
         window.addEventListener('resize', Render.onWindowResize);
