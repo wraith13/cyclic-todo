@@ -101,6 +101,7 @@ export module CyclicToDo
         RecentlyStandardDeviation: null | number;
         RecentlySmartAverage: null | number;
         RecentlyAverage: null | number;
+        TotalAverage: null | number;
         smartRest: null | number;
         count: number;
         expectedInterval: null | { min: number; max:number; };
@@ -1566,6 +1567,9 @@ export module CyclicToDo
                 RecentlyAverage: history.intervals.length <= 0 ?
                     null:
                     Calculate.average(longRecentries.filter((_, index) => index < 10)),
+                TotalAverage: full.first && 2 < full.count && full.first !== history.previous ?
+                    (history.previous -full.first) / (full.count -1):
+                    null,
                 smartRest: null,
                 expectedInterval: null,
             };
@@ -1855,21 +1859,7 @@ export module CyclicToDo
             children: data.children,
         });
         export const $make = minamo.dom.make;
-        export const $tag = (tag: string) => (className: string | minamo.dom.AlphaObjectSource) => (children: minamo.dom.Source) =>
-            "string" === typeof className ?
-            {
-                tag,
-                children,
-                className,
-            }:
-            <minamo.dom.ObjectSource>Object.assign
-            (
-                {
-                    tag,
-                    children,
-                },
-                className,
-            );
+        export const $tag = minamo.dom.tag;
         export const $div = $tag("div");
         export const $span = $tag("span");
         export const disabledColorRGB = "128,128,128";
@@ -2510,6 +2500,7 @@ export module CyclicToDo
             async resolve =>
             {
                 let result = false;
+                const defaultStyle = "full";
                 const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
                 const tagButtonListUpdate = async () => minamo.dom.replaceChildren
                 (
@@ -2857,6 +2848,11 @@ export module CyclicToDo
                 $span("value monospace")(renderTime(item.smartAverage)),
             ])
             */
+            $div("task-interval-average")
+            ([
+                label("total interval average"),
+                $span("value monospace")(Domain.timeLongStringFromTick(item.TotalAverage)),
+            ]),
             $div("task-count")
             ([
                 label("count"),
