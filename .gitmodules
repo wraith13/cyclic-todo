@@ -1,6 +1,3 @@
-[submodule "script/evil-commonjs"]
-	path = script/evil-commonjs
-	url = https://github.com/wraith13/evil-commonjs
-[submodule "script/minamo.js"]
-	path = script/minamo.js
-	url = https://github.com/wraith13/minamo.js
+[submodule "nephila"]
+	path = nephila
+	url = https://github.com/wraith13/nephila

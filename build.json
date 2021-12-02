@@ -23,7 +23,7 @@
         "__BUILD_TIMESTAMP__": { "call": "timestamp" },
         "__LIGHT_STYLE__": { "path": "./style/theme.light.css" },
         "__DARK_STYLE__": { "path": "./style/theme.dark.css" },
-        "__EVIL_COMMONJS__": { "path": "./script/evil-commonjs/index.js" },
+        "__EVIL_COMMONJS__": { "path": "./nephila/evil-commonjs/index.js" },
         "__SCRIPT__": { "path": "./script/index.js" },
         "__IMAGES__": { "resource": "./resource/images.json" }
     }

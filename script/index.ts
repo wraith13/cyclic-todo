@@ -1,4 +1,4 @@
-import { minamo } from "./minamo.js";
+import { minamo } from "../nephila/minamo.js";
 import config from "../resource/config.json";
 import localeEn from "../resource/lang.en.json";
 import localeJa from "../resource/lang.ja.json";
