@@ -29,7 +29,8 @@
         "noEmitOnError": true,
         "resolveJsonModule": true,
         "esModuleInterop": true,
-        "outFile": "index.js"
+        "outFile": "index.js",
+        "sourceMap": true
     },
     "files": [
         "index.ts"

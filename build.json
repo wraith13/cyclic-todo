@@ -20,11 +20,15 @@
     "parameters":
     {
         "__BUILD_MESSAGE__": "This file is genereted by build.js. このファイルは build.js によって生成されました。",
+        "__BUILD_OPTIONS__": { "call": "command_options" },
         "__BUILD_TIMESTAMP__": { "call": "timestamp" },
+        "__BUILD_TIMESTAMP_TICK__": { "call": "timestamp_tick" },
+        "__REPOSITORY_URL_": { "json": "./resource/config.json", "key": "repositoryUrl" },
+        "__LICENSE__": { "path": "./LICENSE_1_0.txt" },
         "__LIGHT_STYLE__": { "path": "./style/theme.light.css" },
         "__DARK_STYLE__": { "path": "./style/theme.dark.css" },
-        "__EVIL_COMMONJS__": { "path": "./nephila/evil-commonjs/index.js" },
-        "__SCRIPT__": { "path": "./script/index.js" },
+        "__EVIL_COMMONJS__": { "path": "./nephila/evil-commonjs/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=nephila/evil-commonjs/index.js.map" } },
+        "__SCRIPT__": { "path": "./script/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=script/index.js.map" } },
         "__IMAGES__": { "resource": "./resource/images.json" }
     }
 }

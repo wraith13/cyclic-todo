@@ -5,14 +5,10 @@
   "scripts": {
     "build all": "node ./nephila/build.js/build.js ../../build.json release",
     "build html": "node ./nephila/build.js/build.js ../../build.json none",
-    "build light style": "lessc ./style/theme.light.less ./style/theme.light.css",
-    "build dark style": "lessc ./style/theme.dark.less ./style/theme.dark.css",
+    "build light style": "lessc --source-map=style/theme.light.css.map --source-map-url=style/theme.light.css.map theme.light.less style/theme.light.css",
+    "build dark style": "lessc --source-map=style/theme.dark.css.map --source-map-url=style/theme.dark.css.map theme.dark.less style/theme.dark.css",
     "build script": "tsc -p ./script/tsconfig.json",
-    "debug build all": "node ./nephila/build.js/build.js ../../build.json debug",
-    "debug light build style": "lessc --source-map-map-inline ./style/theme.light.less ./style/theme.light.css",
-    "debug dark build style": "lessc --source-map-map-inline ./style/theme.dark.less ./style/theme.dark.css",
-    "debug build script": "tsc --inlineSourceMap -p ./script/tsconfig.json",
-    "watch script": "tsc --watch --inlineSourceMap -p ./script/tsconfig.json"
+    "watch script": "tsc --watch -p ./script/tsconfig.json"
   },
   "repository": {
     "type": "git",
