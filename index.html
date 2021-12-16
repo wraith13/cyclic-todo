@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Dec 13 2021 11:08:12 GMT+0900 (GMT+09:00)
+    build at: Thu Dec 16 2021 22:50:59 GMT+0900 (GMT+09:00)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -6894,6 +6894,14 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 Render.$span("locale-parallel")(locale.parallel(label)),
                 Render.$span("locale-map")(locale.map(label)),
             ]); };
+            Render.monospace = function (classNameOrValue, labelOrValue, valueOrNothing) {
+                return "string" !== typeof classNameOrValue || undefined === labelOrValue ?
+                    Render.$span("value monospace")(classNameOrValue) :
+                    Render.$div(classNameOrValue)([
+                        undefined !== valueOrNothing ? labelOrValue : [],
+                        Render.$span("value monospace")(valueOrNothing !== null && valueOrNothing !== void 0 ? valueOrNothing : labelOrValue),
+                    ]);
+            };
             Render.systemPrompt = function (message, _default) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
@@ -7966,39 +7974,17 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     style: Render.progressInformationStyle(entry.pass, item),
                 }
             })([
-                Render.$div("task-last-timestamp")([
-                    Render.label("previous"),
-                    Render.$span("value monospace")(Domain.dateStringFromTick(item.previous)),
-                ]),
-                Render.$div("task-elapsed-time")([
-                    Render.label("elapsed time"),
-                    Render.$span("value monospace")(Domain.timeLongStringFromTick(item.elapsed)),
-                ]),
-                Render.$div("task-interval-average")([
-                    Render.label("recentrly interval average"),
-                    Render.$span("value monospace")(Domain.timeLongStringFromTick(item.RecentlyAverage)),
-                ]),
-                Render.$div("task-interval-average")([
-                    Render.label("expected interval"),
-                    Render.$span("value monospace")(null === item.RecentlyStandardDeviation ?
-                        Domain.timeLongStringFromTick(item.RecentlySmartAverage) :
-                        Domain.timeRangeStringFromTick(item.expectedInterval.min, item.expectedInterval.max
-                        // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
-                        // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
-                        ))
-                ]),
-                /*
-                $div("task-interval-average")
-                ([
-                    $span("label")("expected interval average (予想間隔平均):"),
-                    $span("value monospace")(renderTime(item.smartAverage)),
-                ])
-                */
-                // div("task-count")
-                // ([
-                //     "smartRest",
-                //     span("value monospace")(null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
-                // ]),
+                Render.monospace("task-last-timestamp", Render.label("previous"), Domain.dateStringFromTick(item.previous)),
+                Render.monospace("task-elapsed-time", Render.label("elapsed time"), Domain.timeLongStringFromTick(item.elapsed)),
+                Render.monospace("task-interval-average", Render.label("recentrly interval average"), Domain.timeLongStringFromTick(item.RecentlyAverage)),
+                Render.monospace("task-interval-average", Render.label("expected interval"), null === item.RecentlyStandardDeviation ?
+                    Domain.timeLongStringFromTick(item.RecentlySmartAverage) :
+                    Domain.timeRangeStringFromTick(item.expectedInterval.min, item.expectedInterval.max
+                    // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
+                    // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
+                    )),
+                // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
+                // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
             ]); };
             Render.informationFull = function (pass, item) { return Render.$div({
                 className: "item-information",
@@ -8006,51 +7992,20 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     style: Render.progressInformationStyle(pass, item),
                 }
             })([
-                Render.$div("task-first-time")([
-                    Render.label("first time"),
-                    Render.$span("value monospace")(Domain.dateStringFromTick(item.first)),
-                ]),
-                Render.$div("task-last-timestamp")([
-                    Render.label("previous"),
-                    Render.$span("value monospace")(Domain.dateStringFromTick(item.previous)),
-                ]),
-                Render.$div("task-elapsed-time")([
-                    Render.label("elapsed time"),
-                    Render.$span("value monospace")(Domain.timeLongStringFromTick(item.elapsed)),
-                ]),
-                Render.$div("task-interval-average")([
-                    Render.label("recentrly interval average"),
-                    Render.$span("value monospace")(Domain.timeLongStringFromTick(item.RecentlyAverage)),
-                ]),
-                Render.$div("task-interval-average")([
-                    Render.label("expected interval"),
-                    Render.$span("value monospace")(null === item.RecentlyStandardDeviation ?
-                        Domain.timeLongStringFromTick(item.RecentlySmartAverage) :
-                        Domain.timeRangeStringFromTick(item.expectedInterval.min, item.expectedInterval.max
-                        // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
-                        // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
-                        ))
-                ]),
-                /*
-                $div("task-interval-average")
-                ([
-                    $span("label")("expected interval average (予想間隔平均):"),
-                    $span("value monospace")(renderTime(item.smartAverage)),
-                ])
-                */
-                Render.$div("task-interval-average")([
-                    Render.label("total interval average"),
-                    Render.$span("value monospace")(Domain.timeLongStringFromTick(item.TotalAverage)),
-                ]),
-                Render.$div("task-count")([
-                    Render.label("count"),
-                    Render.$span("value monospace")(item.count.toLocaleString()),
-                ]),
-                // div("task-count")
-                // ([
-                //     "smartRest",
-                //     span("value monospace")(null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
-                // ]),
+                Render.monospace("task-first-time", Render.label("first time"), Domain.dateStringFromTick(item.first)),
+                Render.monospace("task-last-timestamp", Render.label("previous"), Domain.dateStringFromTick(item.previous)),
+                Render.monospace("task-elapsed-time", Render.label("elapsed time"), Domain.timeLongStringFromTick(item.elapsed)),
+                Render.monospace("task-interval-average", Render.label("recentrly interval average"), Domain.timeLongStringFromTick(item.RecentlyAverage)),
+                Render.monospace("task-interval-average", Render.label("expected interval"), null === item.RecentlyStandardDeviation ?
+                    Domain.timeLongStringFromTick(item.RecentlySmartAverage) :
+                    Domain.timeRangeStringFromTick(item.expectedInterval.min, item.expectedInterval.max
+                    // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
+                    // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
+                    )),
+                // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
+                Render.monospace("task-interval-average", Render.label("total interval average"), Domain.timeLongStringFromTick(item.TotalAverage)),
+                Render.monospace("task-count", Render.label("count"), item.count.toLocaleString()),
+                // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
             ]); };
             Render.todoDoneMenu = function (pass, item, onDone, onCanceled) {
                 if (onDone === void 0) { onDone = function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
@@ -8356,7 +8311,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         href: { pass: entry.pass, todo: item.task, },
                                         children: Model.decode(item.task)
                                     }),
-                                    Render.$span("value monospace")(Domain.dateStringFromTick(item.tick)),
+                                    Render.monospace(Domain.dateStringFromTick(item.tick)),
                                 ])];
                             _c = Render.$div("item-operator");
                             if (!(null !== item.tick)) return [3 /*break*/, 2];
@@ -8437,14 +8392,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _b = [
                                 _d.sent(),
                                 Render.$div("item-information")([
-                                    Render.$div("tick-timestamp")([
-                                        Render.label("timestamp"),
-                                        Render.$span("value monospace")(Domain.dateStringFromTick(tick)),
-                                    ]),
-                                    Render.$div("tick-interval")([
-                                        Render.label("interval"),
-                                        Render.$span("value monospace")(Domain.timeLongStringFromTick(interval)),
-                                    ]),
+                                    Render.monospace("tick-timestamp", Render.label("timestamp"), Domain.dateStringFromTick(tick)),
+                                    Render.monospace("tick-interval", Render.label("interval"), Domain.timeLongStringFromTick(interval)),
                                 ])
                             ];
                             _c = Render.$div("item-operator");
@@ -8821,7 +8770,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     _f.apply(void 0, [[
                                             _g.sent(),
                                             Render.labelSpan(locale.map("@deleted")),
-                                            Render.$span("value monospace")("" + OldStorage.Backup.get().length)
+                                            Render.monospace("" + OldStorage.Backup.get().length)
                                         ], { hash: "removed" },
                                         pass === "@removed" ? "current-item" : undefined])
                                 ])])];
@@ -8872,7 +8821,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             case 1: return [2 /*return*/, _a.apply(void 0, [[
                                                         _b.sent(),
                                                         Render.labelSpan(Domain.tagMap(tag)),
-                                                        Render.$span("value monospace")("" + OldStorage.TagMember.get(pass, tag).length)
+                                                        Render.monospace("" + OldStorage.TagMember.get(pass, tag).length)
                                                     ], { pass: pass, tag: tag, }, current === tag ? "current-item" : undefined])];
                                         }
                                     });
@@ -8936,7 +8885,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     _f.apply(void 0, [[
                                             _h.sent(),
                                             Render.labelSpan(locale.map("@deleted")),
-                                            Render.$span("value monospace")("" + OldStorage.Removed.get(pass).length)
+                                            Render.monospace("" + OldStorage.Removed.get(pass).length)
                                         ], { pass: pass, hash: "removed" }, current === "@deleted" ? "current-item" : undefined])
                                 ])]),
                                 _g)];
@@ -10023,11 +9972,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 }])
                                         ]]),
                                     Render.$div("item-information")([
-                                        Render.$div("") // className: "task-last-timestamp"
-                                        ([
-                                            Render.label("deletedAt"),
-                                            Render.$span("value monospace")(Domain.dateStringFromTick(item.deteledAt)),
-                                        ])
+                                        Render.monospace("remoced-timestamp", Render.label("deletedAt"), Domain.dateStringFromTick(item.deteledAt)),
                                     ])
                                 ]])];
                     }
@@ -11501,7 +11446,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Dec 13 2021 11:08:12 GMT+0900 (GMT+09:00)', })"><div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div><div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Dec 16 2021 22:50:59 GMT+0900 (GMT+09:00)', })">
+<div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
+<div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
 </svg>
 </div><div id="ellipsis-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -11587,5 +11534,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div><div id="export-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M112,576L176,576L176,768C176,785.661 190.339,800 208,800L208.207,800.001C225.773,800.112 240,814.408 240,832C240,849.661 225.661,864 208,864L207.69,864C154.844,863.828 112,820.878 112,768L112,576ZM848,768L848,576L912,576L912,768L912,768.31C911.828,821.05 869.05,863.829 816.31,864L816,864C798.339,864 784,849.661 784,832C784,814.339 798.339,800 816,800L816.207,799.999C833.773,799.888 848,785.592 848,768ZM489.26,249.495C495.061,243.634 503.109,240 512,240C520.891,240 528.939,243.634 534.74,249.495L534.745,249.49L670.51,385.255L670.505,385.26C676.366,391.061 680,399.109 680,408C680,425.661 665.661,440 648,440C639.109,440 631.061,436.366 625.26,430.505L625.255,430.51L544,349.255L544,752C544,769.661 529.661,784 512,784C494.339,784 480,769.661 480,752L480,349.255L398.745,430.51L398.74,430.505C392.939,436.366 384.891,440 376,440C358.339,440 344,425.661 344,408C344,399.109 347.634,391.061 353.495,385.26L353.49,385.255L489.255,249.49L489.26,249.495ZM208,160C225.661,160 240,174.339 240,192C240,209.661 225.661,224 208,224C190.339,224 176,238.339 176,256L176,448L176,448.31C175.92,472.767 166.678,495.082 151.53,512C166.743,528.987 176,551.421 176,576L112,576C112,558.339 97.661,544 80,544L79.793,543.999C62.227,543.888 48,529.592 48,512C48,494.339 62.339,480 80,480C97.661,480 112,465.661 112,448L112,256L112,255.69C112.172,202.844 155.122,160 208,160ZM816,160C868.984,160 912,203.016 912,256L912,448C912,465.661 926.339,480 944,480C961.661,480 976,494.339 976,512C976,529.592 961.773,543.888 944.207,543.999L944,544C926.339,544 912,558.339 912,576L848,576C848,551.421 857.257,528.987 872.47,512C857.257,495.013 848,472.579 848,448L848,256C848,238.339 833.661,224 816,224C798.339,224 784,209.661 784,192C784,174.339 798.339,160 816,160Z"/>
 </svg>
-</div></div></body>
+</div></div>
+</body>
 </html>

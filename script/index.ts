@@ -1924,6 +1924,14 @@ export module CyclicToDo
             $span("locale-parallel")(locale.parallel(label)),
             $span("locale-map")(locale.map(label)),
         ]);
+        export const monospace = (classNameOrValue: string | minamo.dom.Source, labelOrValue?: minamo.dom.Source, valueOrNothing?: minamo.dom.Source) =>
+            "string" !== typeof classNameOrValue || undefined === labelOrValue ?
+                $span("value monospace")(classNameOrValue):
+                $div(classNameOrValue)
+                ([
+                    undefined !== valueOrNothing ? labelOrValue: [],
+                    $span("value monospace")(valueOrNothing ?? labelOrValue),
+                ]);
         export const systemPrompt = async (message?: string, _default?: string): Promise<string | null> =>
         {
             await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが window.prompt が表示されてる間、ずっと表示される事になる。
@@ -2752,49 +2760,25 @@ export module CyclicToDo
             }
         })
         ([
-            $div("task-last-timestamp")
-            ([
-                label("previous"),
-                $span("value monospace")(Domain.dateStringFromTick(item.previous)),
-            ]),
-            $div("task-elapsed-time")
-            ([
-                label("elapsed time"),
-                $span("value monospace")(Domain.timeLongStringFromTick(item.elapsed)),
-            ]),
-            $div("task-interval-average")
-            ([
-                label("recentrly interval average"),
-                $span("value monospace")(Domain.timeLongStringFromTick(item.RecentlyAverage)),
-            ]),
-            $div("task-interval-average")
-            ([
+            monospace("task-last-timestamp", label("previous"), Domain.dateStringFromTick(item.previous)),
+            monospace("task-elapsed-time", label("elapsed time"), Domain.timeLongStringFromTick(item.elapsed)),
+            monospace("task-interval-average", label("recentrly interval average"), Domain.timeLongStringFromTick(item.RecentlyAverage)),
+            monospace
+            (
+                "task-interval-average",
                 label("expected interval"),
-                $span("value monospace")
-                (
-                    null === item.RecentlyStandardDeviation ?
-                        Domain.timeLongStringFromTick(item.RecentlySmartAverage):
-                        Domain.timeRangeStringFromTick
-                        (
-                            item.expectedInterval.min,
-                            item.expectedInterval.max
-                            // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
-                            // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
-                        )
-                )
-            ]),
-            /*
-            $div("task-interval-average")
-            ([
-                $span("label")("expected interval average (予想間隔平均):"),
-                $span("value monospace")(renderTime(item.smartAverage)),
-            ])
-            */
-            // div("task-count")
-            // ([
-            //     "smartRest",
-            //     span("value monospace")(null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
-            // ]),
+                null === item.RecentlyStandardDeviation ?
+                    Domain.timeLongStringFromTick(item.RecentlySmartAverage):
+                    Domain.timeRangeStringFromTick
+                    (
+                        item.expectedInterval.min,
+                        item.expectedInterval.max
+                        // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
+                        // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
+                    )
+            ),
+            // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
+            // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
         ]);
         export const informationFull = (pass: string, item: ToDoEntry) => $div
         ({
@@ -2805,64 +2789,28 @@ export module CyclicToDo
             }
         })
         ([
-            $div("task-first-time")
-            ([
-                label("first time"),
-                $span("value monospace")(Domain.dateStringFromTick(item.first)),
-            ]),
-            $div("task-last-timestamp")
-            ([
-                label("previous"),
-                $span("value monospace")(Domain.dateStringFromTick(item.previous)),
-            ]),
-            $div("task-elapsed-time")
-            ([
-                label("elapsed time"),
-                $span("value monospace")(Domain.timeLongStringFromTick(item.elapsed)),
-            ]),
-            $div("task-interval-average")
-            ([
-                label("recentrly interval average"),
-                $span("value monospace")(Domain.timeLongStringFromTick(item.RecentlyAverage)),
-            ]),
-            $div("task-interval-average")
-            ([
+            monospace("task-first-time", label("first time"), Domain.dateStringFromTick(item.first)),
+            monospace("task-last-timestamp", label("previous"), Domain.dateStringFromTick(item.previous)),
+            monospace("task-elapsed-time", label("elapsed time"), Domain.timeLongStringFromTick(item.elapsed)),
+            monospace("task-interval-average", label("recentrly interval average"), Domain.timeLongStringFromTick(item.RecentlyAverage)),
+            monospace
+            (
+                "task-interval-average",
                 label("expected interval"),
-                $span("value monospace")
-                (
-                    null === item.RecentlyStandardDeviation ?
-                        Domain.timeLongStringFromTick(item.RecentlySmartAverage):
-                        Domain.timeRangeStringFromTick
-                        (
-                            item.expectedInterval.min,
-                            item.expectedInterval.max
-                            // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
-                            // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
-                        )
-                )
-            ]),
-            /*
-            $div("task-interval-average")
-            ([
-                $span("label")("expected interval average (予想間隔平均):"),
-                $span("value monospace")(renderTime(item.smartAverage)),
-            ])
-            */
-            $div("task-interval-average")
-            ([
-                label("total interval average"),
-                $span("value monospace")(Domain.timeLongStringFromTick(item.TotalAverage)),
-            ]),
-            $div("task-count")
-            ([
-                label("count"),
-                $span("value monospace")(item.count.toLocaleString()),
-            ]),
-            // div("task-count")
-            // ([
-            //     "smartRest",
-            //     span("value monospace")(null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
-            // ]),
+                null === item.RecentlyStandardDeviation ?
+                    Domain.timeLongStringFromTick(item.RecentlySmartAverage):
+                    Domain.timeRangeStringFromTick
+                    (
+                        item.expectedInterval.min,
+                        item.expectedInterval.max
+                        // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
+                        // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
+                    )
+            ),
+            // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
+            monospace("task-interval-average", label("total interval average"), Domain.timeLongStringFromTick(item.TotalAverage)),
+            monospace("task-count", label("count"), item.count.toLocaleString()),
+            // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
         ]);
         export const todoDoneMenu =
         (
@@ -3129,7 +3077,7 @@ export module CyclicToDo
                     href: { pass: entry.pass, todo: item.task, },
                     children: Model.decode(item.task)
                 }),
-                $span("value monospace")(Domain.dateStringFromTick(item.tick)),
+                monospace(Domain.dateStringFromTick(item.tick)),
             ]),
             $div("item-operator")
             (
@@ -3186,16 +3134,8 @@ export module CyclicToDo
             ),
             $div("item-information")
             ([
-                $div("tick-timestamp")
-                ([
-                    label("timestamp"),
-                    $span("value monospace")(Domain.dateStringFromTick(tick)),
-                ]),
-                $div("tick-interval")
-                ([
-                    label("interval"),
-                    $span("value monospace")(Domain.timeLongStringFromTick(interval)),
-                ]),
+                monospace("tick-timestamp", label("timestamp"),Domain.dateStringFromTick(tick)),
+                monospace("tick-interval", label("interval"), Domain.timeLongStringFromTick(interval)),
             ]),
             $div("item-operator")
             ([
@@ -3471,7 +3411,7 @@ export module CyclicToDo
                     [
                         await Resource.loadSvgOrCache("recycle-bin-icon"),
                         labelSpan(locale.map("@deleted")),
-                        $span("value monospace")(`${OldStorage.Backup.get().length}`)
+                        monospace(`${OldStorage.Backup.get().length}`)
                     ],
                     { hash: "removed" },
                     pass === "@removed" ? "current-item": undefined
@@ -3508,7 +3448,7 @@ export module CyclicToDo
                                     [
                                         await Resource.loadTagSvgOrCache(tag),
                                         labelSpan(Domain.tagMap(tag)),
-                                        $span("value monospace")(`${OldStorage.TagMember.get(pass, tag).length}`)
+                                        monospace(`${OldStorage.TagMember.get(pass, tag).length}`)
                                     ],
                                     { pass, tag, },
                                     current === tag ? "current-item": undefined
@@ -3556,7 +3496,7 @@ export module CyclicToDo
                         [
                             await Resource.loadSvgOrCache("recycle-bin-icon"),
                             labelSpan(locale.map("@deleted")),
-                            $span("value monospace")(`${OldStorage.Removed.get(pass).length}`)
+                            monospace(`${OldStorage.Removed.get(pass).length}`)
                         ],
                         { pass, hash: "removed" },
                         current === "@deleted" ? "current-item": undefined
@@ -4350,11 +4290,7 @@ export module CyclicToDo
             ]),
             $div("item-information")
             ([
-                $div("") // className: "task-last-timestamp"
-                ([
-                    label("deletedAt"),
-                    $span("value monospace")(Domain.dateStringFromTick(item.deteledAt)),
-                ])
+                monospace("remoced-timestamp", label("deletedAt"), Domain.dateStringFromTick(item.deteledAt)),
             ]),
         ]);
         export const removedScreenMenu = async (pass: string) =>
