@@ -282,20 +282,12 @@ h1
     button.icon-button,
     button.menu-button
     {
-        margin: 0px;
-        margin-right: 0.25rem;
         .primary-operator-coloring-trait;
         border-color: transparent !important;
-        right: 0.25rem;
-        position: absolute;
         &:not(:hover)
         {
             background-color: transparent !important;
         }
-    }
-    button.icon-button + button.menu-button
-    {
-        right: 2.50rem;
     }
     .menu-popup:not(.segment-popup)
     {
@@ -304,12 +296,16 @@ h1
     }
     .header-operator
     {
+        position: relative;
         flex-grow: 1;
-        margin-right: 5.25rem;
         display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
-        z-index: 1000;
+        flex-direction: row-reverse;
+        align-items: center;
+        & > *
+        {
+            margin: 0px;
+            margin-right: 0.25rem;
+        }
     }
     .progress-bar
     {
@@ -521,6 +517,7 @@ h1
     border-color: #8888;
     font-size: 1.0rem;
     max-width: 240px;
+    height: 1.5rem;
     svg
     {
         color: #888;
@@ -540,6 +537,7 @@ h1
     }
     .dropdownlist
     {
+        z-index: 1000;
         &:empty
         {
             display: none;

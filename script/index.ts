@@ -3273,7 +3273,9 @@ export module CyclicToDo
                     )
                 )
             ).reduce((a, b) => (a as any[]).concat(b), []),
-            data.parent ?
+            $div("header-operator")
+            ([
+                data.parent ?
                 {
                     tag: "button",
                     className: "icon-button close-button",
@@ -3296,8 +3298,9 @@ export module CyclicToDo
                     },
                 }:
                 [],
-            data.menu ? await menuButton(data.menu): [],
-            data.operator ? $div("header-operator")(data.operator): [],
+                data.menu ? await menuButton(data.menu): [],
+                data.operator ? data.operator: [],
+            ])
         ];
         export const getCloseButton = () => getHeaderElement().getElementsByClassName("close-button")[0] as HTMLButtonElement;
         export const screenHeaderSegmentCore = async (item: HeaderSegmentSource) =>
