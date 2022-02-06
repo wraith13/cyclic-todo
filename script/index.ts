@@ -2605,10 +2605,11 @@ export module CyclicToDo
                 });
             }
         );
-        export const screenCover = (data: { children?: minamo.dom.Source, onclick: () => unknown, }) =>
+        export const screenCover = (data: { parent?: HTMLElement, children?: minamo.dom.Source, onclick: () => unknown, }) =>
         {
             const dom = $make(HTMLDivElement)
             ({
+                parent: data.parent ?? document.body,
                 tag: "div",
                 className: "screen-cover fade-in",
                 children: data.children,
@@ -2627,7 +2628,6 @@ export module CyclicToDo
                 await minamo.core.timeout(500);
                 minamo.dom.remove(dom);
             };
-            minamo.dom.appendChildren(document.body, dom);
             const result =
             {
                 dom,
@@ -2726,6 +2726,7 @@ export module CyclicToDo
                     popup.classList.add("show");
                     cover = screenCover
                     ({
+                        parent: popup.parentElement,
                         onclick: close,
                     });
                 },
@@ -3357,6 +3358,7 @@ export module CyclicToDo
                     popup.style.left = `${Math.max(segment.offsetLeft, 4)}px`;
                     cover = screenCover
                     ({
+                        parent: popup.parentElement,
                         onclick: close,
                     });
                 },
