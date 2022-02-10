@@ -1696,7 +1696,7 @@ export module CyclicToDo
                         .add(MigrateBridge.Title.updator(pass, newName))
                         .commit()
                 );
-                const toast = makePrimaryToast
+                const toast = makeToast
                 ({
                     content: $span("")(`ToDo リストの名前を変更しました！： ${backup} → ${newName}`),
                     backwardOperator: cancelTextButton
@@ -1720,7 +1720,7 @@ export module CyclicToDo
             {
                 const list = JSON.parse(OldStorage.exportJson(pass));
                 OldStorage.Pass.remove(list.pass);
-                const toast = makePrimaryToast
+                const toast = makeToast
                 ({
                     content: $span("")(`ToDo リストを削除しました！: ${list.title}`),
                     backwardOperator: cancelTextButton
@@ -1744,7 +1744,7 @@ export module CyclicToDo
                 // {
                 //     OldStorage.TagMember.remove(pass, "@pickup", task);
                 // }
-                const toast = makePrimaryToast
+                const toast = makeToast
                 ({
                     content: $span("")(`${locale.map("Done!")}: ${task}`),
                     backwardOperator: cancelTextButton
@@ -1765,7 +1765,7 @@ export module CyclicToDo
             export const addToPickup = async (pass: string, task: string, onCanceled: () => unknown) =>
             {
                 OldStorage.TagMember.add(pass, "@pickup", task);
-                const toast = makePrimaryToast
+                const toast = makeToast
                 ({
                     content: $span("")(`ピックアップに追加！: ${task}`),
                     backwardOperator: cancelTextButton
@@ -1782,7 +1782,7 @@ export module CyclicToDo
             export const removeFromPickup = async (pass: string, task: string, onCanceled: () => unknown) =>
             {
                 OldStorage.TagMember.remove(pass, "@pickup", task);
-                const toast = makePrimaryToast
+                const toast = makeToast
                 ({
                     content: $span("")(`ピックアップからハズしました！: ${task}`),
                     backwardOperator: cancelTextButton
@@ -1800,7 +1800,7 @@ export module CyclicToDo
             {
                 const backup = Storage.Filter.get();
                 Storage.Filter.set([]);
-                const toast = makePrimaryToast
+                const toast = makeToast
                 ({
                     content: $span("")(`絞り込みの履歴をクリアしました。`),
                     backwardOperator: cancelTextButton
@@ -4815,7 +4815,6 @@ export module CyclicToDo
                 {
                     if (await localeSettingsPopup())
                     {
-                        locale.setLocale(Storage.Settings.get().locale);
                         locale.setLocale(Storage.SystemSettings.get().locale);
                         await reload();
                     }
@@ -5062,25 +5061,6 @@ export module CyclicToDo
             setTimeout(() => dom.classList.remove("slide-up-in"), 250);
             return result;
         };
-        let latestPrimaryToast: Toast;
-        export const makePrimaryToast =
-        (
-            data:
-            {
-                content: minamo.dom.Source,
-                backwardOperator?: minamo.dom.Source,
-                forwardOperator?: minamo.dom.Source,
-                isWideContent?: boolean,
-                wait?: number,
-            }
-        ): Toast =>
-        {
-            if (latestPrimaryToast)
-            {
-                latestPrimaryToast.hide();
-            }
-            return latestPrimaryToast = makeToast(data);
-        };
         export const getProgressElement = () => document.getElementById("screen-header");
         export const setProgressStyleRaw = (className: string) => getProgressElement().className = `segmented ${className}`;
         let lastSetProgressAt = 0;
@@ -5106,7 +5086,7 @@ export module CyclicToDo
         export const withProgress = async <T>(className: string, content: minamo.dom.Source, task: Promise<T>): Promise<T> =>
         {
             setProgressStyle(className, 0);
-            const toast = makePrimaryToast
+            const toast = makeToast
             ({
                 content,
                 wait: 0,

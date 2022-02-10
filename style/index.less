@@ -363,14 +363,35 @@ h1
 }
 #screen-toast
 {
-    filter: drop-shadow(0.0rem -0rem 3rem @accent-color); // #screen-toast 自体の大きさに依存するので、意識的に表示やアニメーションを施す必要がない。
-    .positive-background-coloring-trait;
+    // filter: drop-shadow(0.0rem -0rem 3rem @accent-color); // #screen-toast 自体の大きさに依存するので、意識的に表示やアニメーションを施す必要がない。
+    position: fixed;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
     .item
     {
-        border-top-color: @accent-color;
-        border-top-width: 1px;
-        border-top-style: solid;
-        padding: 2rem 1.5rem;
+        box-sizing: border-box;
+        &:not(:first-child)
+        {
+            margin-top: 0.5rem;
+        }
+        .positive-background-coloring-trait;
+        border-color: @accent-color;
+        border-width: 1px;
+        border-style: solid;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        max-width: 64rem;
+        // border-top-color: @accent-color;
+        // border-top-width: 1px;
+        // border-top-style: solid;
+        // padding: 2rem 1.5rem;
         display: flex;
         flex-direction: row;
         justify-content: stretch;
@@ -423,8 +444,8 @@ h1
     {
         opacity: 1.0;
         max-height: 6rem;
-        padding-top: 2rem;
-        padding-bottom: 2rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
     }
 }
 .slide-down-out
@@ -448,13 +469,15 @@ h1
     {
         opacity: 1.0;
         max-height: 6rem;
-        padding: 2rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
     }
     100%
     {
         opacity: 0.0;
         max-height: 0px;
-        padding: 0rem;
+        padding-top: 0rem;
+        padding-bottom: 0rem;
     }
 }
 .fade-and-slide-out
