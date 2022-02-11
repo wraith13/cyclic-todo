@@ -363,7 +363,7 @@ h1
 }
 #screen-toast
 {
-    // filter: drop-shadow(0.0rem -0rem 3rem @accent-color); // #screen-toast 自体の大きさに依存するので、意識的に表示やアニメーションを施す必要がない。
+    filter: drop-shadow(0.0rem 0.0rem 3rem @accent-color); // #screen-toast 自体の大きさに依存するので、意識的に表示やアニメーションを施す必要がない。
     position: fixed;
     right: 0px;
     bottom: 0px;
@@ -373,8 +373,17 @@ h1
     align-items: center;
     justify-content: center;
     padding: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
+    &:empty
+    {
+        display: none;
+    }
+    pointer-events: none;
     .item
     {
+        filter: drop-shadow(0.0rem 0.0rem 0.3rem @accent-color);
+        pointer-events: all;
         box-sizing: border-box;
         &:not(:first-child)
         {
