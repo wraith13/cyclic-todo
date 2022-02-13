@@ -28,6 +28,7 @@
         "__LIGHT_STYLE__": { "path": "./style/theme.light.css" },
         "__DARK_STYLE__": { "path": "./style/theme.dark.css" },
         "__EVIL_COMMONJS__": { "path": "./nephila/evil-commonjs/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=nephila/evil-commonjs/index.js.map" } },
+        "__EVIL_TIMER__": { "path": "./nephila/evil-timer.js/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=nephila/evil-timer.js/index.js.map" } },
         "__SCRIPT__": { "path": "./script/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=script/index.js.map" } },
         "__IMAGES__": { "resource": "./resource/images.json" }
     }
