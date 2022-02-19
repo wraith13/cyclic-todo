@@ -112,6 +112,28 @@ export module CyclicToDo
         sort?: "smart" | "simple";
         displayStyle?: "@home" | "full" | "compact";
     }
+    export interface PickupSettingBase
+    {
+        type: "always" | "elapsed-time" | "expired";
+    }
+    export interface PickupSettingAlways extends PickupSettingBase
+    {
+        type: "always";
+    }
+    export interface PickupSettingElapsedTime extends PickupSettingBase
+    {
+        type: "elapsed-time";
+        elapsedTime: number;
+    }
+    export interface PickupSettingExpired extends PickupSettingBase
+    {
+        type: "expired";
+    }
+    export type PickupSetting = PickupSettingAlways | PickupSettingElapsedTime | PickupSettingExpired;
+    export interface TodoSettings
+    {
+        pickup?: PickupSetting;
+    }
     export interface DocumentCard
     {
         type: "oldLocalDb" | "session" | "localDb" | "OneDrive" | "file";
@@ -133,6 +155,7 @@ export module CyclicToDo
         todos: string[];
         tags: { [tag: string]: string[] };
         tagSettings: { [tag: string]: TagSettings };
+        todoSettings: { [tag: string]: TodoSettings };
         histories: { [todo: string]: HistoryEntry };
         removed: RemovedType[];
     }
@@ -161,6 +184,7 @@ export module CyclicToDo
         type: "Task";
         name: string;
         tags: string[];
+        settings?: TodoSettings;
         ticks: HistoryEntry;
     }
     export interface RemovedTick extends RemovedBase
@@ -203,6 +227,8 @@ export module CyclicToDo
                 }
             );
             const todos = TagMember.getRaw(pass, "@overall");
+            const todoSettings: { [tag: string]: TodoSettings } = { };
+            todos.forEach(task => todoSettings[task] = TodoSettings.get(pass, task));
             const histories: { [todo: string]: HistoryEntry } = { };
             todos
             .forEach
@@ -217,6 +243,7 @@ export module CyclicToDo
                 timeAccuracy,
                 pass,
                 todos,
+                todoSettings,
                 tags,
                 tagSettings,
                 histories,
@@ -236,6 +263,7 @@ export module CyclicToDo
                     "number" === typeof data.timeAccuracy &&
                     "string" === typeof data.pass &&
                     Array.isArray(data.todos) &&
+                    "object" === typeof data.todoSettings &&
                     data.todos.filter(i => "string" !== typeof i).length <= 0 &&
                     "object" === typeof data.tags &&
                     "object" === typeof data.tagSettings &&
@@ -248,6 +276,7 @@ export module CyclicToDo
                     Tag.set(data.pass, Object.keys(data.tags));
                     Object.keys(data.tags).forEach(tag => TagMember.set(data.pass, tag, data.tags[tag]));
                     Object.keys(data.tagSettings).forEach(tag => TagSettings.set(data.pass, tag, data.tagSettings[tag]));
+                    Object.keys(data.todoSettings).forEach(tag => TodoSettings.set(data.pass, tag, data.todoSettings[tag]));
                     Object.keys(data.histories).forEach
                     (
                         todo =>
@@ -261,9 +290,10 @@ export module CyclicToDo
                     return data.pass;
                 }
             }
-            catch
+            catch(error)
             {
                 //  JSON parse error
+                console.error(error);
             }
             return null;
         };
@@ -546,6 +576,8 @@ export module CyclicToDo
                     {
                         TagMember.add(pass, newSublist, newTask);
                     }
+                    TodoSettings.set(pass, newTask, TodoSettings.get(pass, oldTask));
+                    TodoSettings.remove(pass, oldTask);
                     History.set(pass, newTask, History.get(pass, oldTask));
                     History.removeKey(pass, oldTask);
                     return true;
@@ -574,6 +606,7 @@ export module CyclicToDo
                 if (result)
                 {
                     item.tags.map(tag => TagMember.add(pass, tag, item.name));
+                    TodoSettings.set(pass, item.name, item.settings);
                     History.set(pass, item.name, item.ticks);
                 }
                 return result;
@@ -581,6 +614,7 @@ export module CyclicToDo
             export const serialize = (pass: string, task: string) =>
             {
                 const tags = Tag.getByTodoRaw(pass, task);
+                const settings = TodoSettings.get(pass, task);
                 const ticks = History.get(pass, task);
                 const result: RemovedTask =
                 {
@@ -588,9 +622,39 @@ export module CyclicToDo
                     deteledAt: Domain.getTicks(),
                     name: task,
                     tags,
+                    settings,
                     ticks,
                 };
                 return result;
+            };
+        }
+        export module TodoSettings
+        {
+            export const makeKey = (pass: string, task: string) => `pass:(${pass}).todo:(${task}).settings`;
+            export const get = (pass: string, task: string) =>
+                getStorage(pass).getOrNull<CyclicToDo.TodoSettings>(makeKey(pass, task)) ?? { };
+            export const set = (pass: string, task: string, settings: CyclicToDo.TodoSettings) =>
+                getStorage(pass).set(makeKey(pass, task), settings);
+            export const remove = (pass: string, task: string) => getStorage(pass).remove(makeKey(pass, task));
+            export const isPickupTarget = (pass: string, task: string, elapsedTime: number | null, isExpired: boolean) =>
+            {
+                const pickupSetting = get(pass, task)?.pickup;
+                if (pickupSetting)
+                {
+                    if ("always" === pickupSetting.type)
+                    {
+                        return true;
+                    }
+                    if (null !== elapsedTime && "elapsed-time" === pickupSetting.type && pickupSetting.elapsedTime <= elapsedTime)
+                    {
+                        return true;
+                    }
+                    if (isExpired && "expired" === pickupSetting.type)
+                    {
+                        return true;
+                    }
+                }
+                return false;
             };
         }
         export module History
@@ -864,6 +928,9 @@ export module CyclicToDo
                 const split = this.name.split("@:");
                 return 2 <= split.length ? split[split.length -1]: this.name;
             }
+            getSettings = () => this.document.todoSettings.get(this);
+            setSettings = (settings: CyclicToDo.TodoSettings) => this.document.todoSettings.set(this, settings);
+            resetSettings = () => this.document.todoSettings.reset(this);
         }
         export class Document
         {
@@ -988,6 +1055,14 @@ export module CyclicToDo
             task =
             {
                 get: (task: string) => new Task(this, task),
+            };
+            todoSettings =
+            {
+                get: (task: Task) => this.content.todoSettings[task.getName()] ?? { },
+                set: async (task: Task, settings: CyclicToDo.TodoSettings) =>
+                    await this.save(content => content.todoSettings[task.getName()] = settings),
+                reset: async (task: Task) =>
+                    await this.save(content => delete content.todoSettings[task.getName()]),
             };
             getDoneTicks = (): number =>
                 Math.max.apply(null, this.live.tasks.map(i => i.previous).filter(i => i).concat[Domain.getTicks() -1]) +1
@@ -1645,6 +1720,21 @@ export module CyclicToDo
                     }
                 }
             }
+            if ("string" === typeof pass)
+            {
+                const isPickupTarget = OldStorage.TodoSettings.isPickupTarget(pass, item.task, item.elapsed, null !== item.expectedInterval && item.expectedInterval.max < item.elapsed);
+                const isPickuped = OldStorage.TagMember.isPickupTask(pass, item.task);
+                if (isPickupTarget && ! isPickuped)
+                {
+                    OldStorage.TagMember.add(pass, "@pickup", item.task);
+                    Render.updateWindow?.("dirty");
+                }
+                if ( ! isPickupTarget && isPickuped)
+                {
+                    OldStorage.TagMember.remove(pass, "@pickup", item.task);
+                    Render.updateWindow?.("dirty");
+                }
+            }
             MigrateBridge.updateTermCategory(pass, item);
         };
         export const updateListProgress = (pass: string | Model.Document, list: ToDoEntry[], now: number = Domain.getTicks()) =>
@@ -1739,11 +1829,13 @@ export module CyclicToDo
                 document.body.classList.add("flash");
                 setTimeout(() => document.body.classList.remove("flash"), 1500);
                 MigrateBridge.done(pass, task, tick);
-                // const isPickuped = 0 <= MigrateBridge.getTagMember(pass, "@pickup").indexOf(task);
-                // if (isPickuped)
-                // {
-                //     OldStorage.TagMember.remove(pass, "@pickup", task);
-                // }
+                const isPickuped =
+                    0 <= MigrateBridge.getTagMember(pass, "@pickup").indexOf(task) &&
+                    "always" !== OldStorage.TodoSettings.get(pass, task).pickup?.type;
+                if (isPickuped)
+                {
+                    OldStorage.TagMember.remove(pass, "@pickup", task);
+                }
                 const toast = makeToast
                 ({
                     content: $span("")(`${locale.map("Done!")}: ${task}`),
@@ -1752,50 +1844,50 @@ export module CyclicToDo
                         async () =>
                         {
                             OldStorage.History.removeTickRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
-                            // if (isPickuped)
-                            // {
-                            //     OldStorage.TagMember.add(pass, "@pickup", task);
-                            // }
+                            if (isPickuped)
+                            {
+                                OldStorage.TagMember.add(pass, "@pickup", task);
+                            }
                             await toast.hide();
                             onCanceled();
                         }
                     ),
                 });
             };
-            export const addToPickup = async (pass: string, task: string, onCanceled: () => unknown) =>
-            {
-                OldStorage.TagMember.add(pass, "@pickup", task);
-                const toast = makeToast
-                ({
-                    content: $span("")(`ピックアップに追加！: ${task}`),
-                    backwardOperator: cancelTextButton
-                    (
-                        async () =>
-                        {
-                            OldStorage.TagMember.remove(pass, "@pickup", task);
-                            await toast.hide();
-                            onCanceled();
-                        }
-                    ),
-                });
-            };
-            export const removeFromPickup = async (pass: string, task: string, onCanceled: () => unknown) =>
-            {
-                OldStorage.TagMember.remove(pass, "@pickup", task);
-                const toast = makeToast
-                ({
-                    content: $span("")(`ピックアップからハズしました！: ${task}`),
-                    backwardOperator: cancelTextButton
-                    (
-                        async () =>
-                        {
-                            OldStorage.TagMember.add(pass, "@pickup", task);
-                            await toast.hide();
-                            onCanceled();
-                        }
-                    ),
-                });
-            };
+            // export const addToPickup = async (pass: string, task: string, onCanceled: () => unknown) =>
+            // {
+            //     OldStorage.TagMember.add(pass, "@pickup", task);
+            //     const toast = makeToast
+            //     ({
+            //         content: $span("")(`ピックアップに追加！: ${task}`),
+            //         backwardOperator: cancelTextButton
+            //         (
+            //             async () =>
+            //             {
+            //                 OldStorage.TagMember.remove(pass, "@pickup", task);
+            //                 await toast.hide();
+            //                 onCanceled();
+            //             }
+            //         ),
+            //     });
+            // };
+            // export const removeFromPickup = async (pass: string, task: string, onCanceled: () => unknown) =>
+            // {
+            //     OldStorage.TagMember.remove(pass, "@pickup", task);
+            //     const toast = makeToast
+            //     ({
+            //         content: $span("")(`ピックアップからハズしました！: ${task}`),
+            //         backwardOperator: cancelTextButton
+            //         (
+            //             async () =>
+            //             {
+            //                 OldStorage.TagMember.add(pass, "@pickup", task);
+            //                 await toast.hide();
+            //                 onCanceled();
+            //             }
+            //         ),
+            //     });
+            // };
             export const clearFilterHistory = async (onCanceled: () => unknown) =>
             {
                 const backup = Storage.Filter.get();
@@ -2605,6 +2697,138 @@ export module CyclicToDo
                 });
             }
         );
+        export const getTodoPickupSettingsElapsedTimePreset = (entry: ToDoEntry) =>
+        {
+            const sample = entry.RecentlyAverage ?? entry.elapsed;
+            if (null !== sample)
+            {
+                if (sample < 3 *24 *60)
+                {
+                    return [ 1.0, 1.5, 2, 3, 4.5, 6, 9, 12, 18, 24, 1.5 *24, 2 *24, 2.5 *24, 3 *24, ].map(i => i *60);
+                }
+                if (sample < 10 *24 *60)
+                {
+                    return [ 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 7, ].map(i => i *24 *60);
+                }
+                return [ 3, 5, 7, 10, 14, 30, 45, 60, 90, 180, 240, ].map(i => i *24 *60);
+            }
+            return [ ];
+        };
+        export const todoPickupSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
+        (
+            async resolve =>
+            {
+                let result = false;
+                const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
+                const tagButtonListUpdate = async () => minamo.dom.replaceChildren
+                (
+                    tagButtonList,
+                    [
+                        {
+                            tag: "button",
+                            className: `check-button ${"none" === (settings.pickup ?? "none") ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")(label("pickup.none")),
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.pickup = null;
+                                OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                        {
+                            tag: "button",
+                            className: `check-button ${"always" === settings.pickup?.type ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")(label("pickup.always")),
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.pickup = { type: "always" };
+                                OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                        await Promise.all
+                        (
+                            getTodoPickupSettingsElapsedTimePreset(entry)
+                            .concat([(settings.pickup as PickupSettingElapsedTime)?.elapsedTime ?? 0])
+                            .filter(i => 0 < i)
+                            .filter(uniqueFilter)
+                            .sort(minamo.core.comparer.basic)
+                            .map
+                            (
+                                async elapsedTime =>
+                                ({
+                                    tag: "button",
+                                    className: `check-button ${("elapsed-time" === settings.pickup?.type && elapsedTime === settings?.pickup.elapsedTime) ? "checked": ""}`,
+                                    children:
+                                    [
+                                        await Resource.loadSvgOrCache("check-icon"),
+                                        $span("")([label("pickup.elapsed-time"), ": ", Domain.timeLongStringFromTick(elapsedTime)]),
+                                    ],
+                                    onclick: async () =>
+                                    {
+                                        settings.pickup =
+                                        {
+                                            type: "elapsed-time",
+                                            elapsedTime,
+                                        };
+                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                        result = true;
+                                        await tagButtonListUpdate();
+                                    }
+                                })
+                            )
+                        ),
+                        {
+                            tag: "button",
+                            className: `check-button ${"expired" === settings.pickup?.type ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")(label("pickup.expired")),
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.pickup = { type: "expired" };
+                                OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                    ]
+                );
+                await tagButtonListUpdate();
+                const ui = popup
+                ({
+                    // className: "add-remove-tags-popup",
+                    children:
+                    [
+                        $tag("h2")("")(`${locale.map("Pickup setting")}: ${entry.task}`),
+                        tagButtonList,
+                        $div("popup-operator")
+                        ([{
+                            tag: "button",
+                            className: "default-button",
+                            children: label("Close"),
+                            onclick: () =>
+                            {
+                                ui.close();
+                            },
+                        }]),
+                    ],
+                    onClose: async () => resolve(result),
+                });
+            }
+        );
         export const screenCover = (data: { parent?: HTMLElement, children?: minamo.dom.Source, onclick: () => unknown, }) =>
         {
             const dom = $make(HTMLDivElement)
@@ -2867,25 +3091,36 @@ export module CyclicToDo
         );
         export const todoTagMenu = (pass: string, item: ToDoEntry) =>
         [
-            OldStorage.TagMember.isPickupTask(pass, item.task) ?
-                menuItem
-                (
-                    label("Remove from Pickup"),
-                    async () =>
+            // OldStorage.TagMember.isPickupTask(pass, item.task) ?
+            //     menuItem
+            //     (
+            //         label("Remove from Pickup"),
+            //         async () =>
+            //         {
+            //             await Operate.removeFromPickup(pass, item.task, () => updateWindow("operate"));
+            //             updateWindow("operate");
+            //         }
+            //     ):
+            //     menuItem
+            //     (
+            //         label("Add to Pickup"),
+            //         async () =>
+            //         {
+            //             await Operate.addToPickup(pass, item.task, () => updateWindow("operate"));
+            //             updateWindow("operate");
+            //         }
+            //     ),
+            menuItem
+            (
+                label("Pickup setting"),
+                async () =>
+                {
+                    if (await todoPickupSettingsPopup(pass, item))
                     {
-                        await Operate.removeFromPickup(pass, item.task, () => updateWindow("operate"));
-                        updateWindow("operate");
+                        updateWindow("timer");
                     }
-                ):
-                menuItem
-                (
-                    label("Add to Pickup"),
-                    async () =>
-                    {
-                        await Operate.addToPickup(pass, item.task, () => updateWindow("operate"));
-                        updateWindow("operate");
-                    }
-                ),
+                }
+            ),
             menuItem
             (
                 label("Add/Remove Tag"),
@@ -4125,6 +4360,10 @@ export module CyclicToDo
                             await showUrl({ });
                         }
                         break;
+                    case "dirty":
+                        isDirty = true;
+                        setProgressStyle("obsolescence", 0);
+                        break;
                 }
             };
             const filter = regulateFilterText(urlParams.filter ?? "");
@@ -4502,6 +4741,7 @@ export module CyclicToDo
             let item = Domain.getToDoEntryOld(pass, task);
             let tag: string = getPrimaryTag(OldStorage.Tag.getByTodo(pass, item.task));
             let ticks = OldStorage.History.getTicks(pass, task);
+            let isDirty = false;
             Domain.updateProgress(pass, item);
             const updateWindow = async (event: UpdateWindowEventEype) =>
             {
@@ -4516,6 +4756,14 @@ export module CyclicToDo
                         information.setAttribute("style", Render.progressInformationStyle(pass, item));
                         (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
                         break;
+                    case "focus":
+                    case "blur":
+                    case "scroll":
+                        if (isDirty)
+                        {
+                            await updateWindow("operate");
+                        }
+                        break;
                     case "storage":
                         await reload();
                         break;
@@ -4524,8 +4772,13 @@ export module CyclicToDo
                         tag = OldStorage.Tag.getByTodo(pass, item.task).filter(tag => "@overall" !== tag).concat("@overall")[0];
                         ticks = OldStorage.History.getTicks(pass, task);
                         Domain.updateProgress(pass, item);
+                        isDirty = false;
                         replaceScreenBody(await todoScreenBody(pass, item, ticks, tag));
                         resizeFlexList();
+                        break;
+                    case "dirty":
+                        isDirty = true;
+                        setProgressStyle("obsolescence", 0);
                         break;
                 }
             };
@@ -4939,7 +5192,7 @@ export module CyclicToDo
                 ?.join(" / ")
                 ?? applicationTitle;
         };
-        export type UpdateWindowEventEype = "timer" | "scroll" | "storage" | "focus" | "blur" | "operate";
+        export type UpdateWindowEventEype = "timer" | "scroll" | "storage" | "focus" | "blur" | "operate" | "dirty";
         export let updateWindow: (event: UpdateWindowEventEype) => unknown;
         let updateWindowTimer = undefined;
         export const getHeaderElement = () => document.getElementById("screen-header") as HTMLDivElement;

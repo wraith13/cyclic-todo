@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sun Feb 13 2022 21:12:05 GMT+0900 (日本標準時)
+    build at: Sun Feb 20 2022 00:39:56 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -1644,11 +1644,11 @@ body.light .item-operator {
   align-items: center;
   white-space: nowrap;
 }
-body.light .item-operator button {
+body.light .item-operator > button {
   display: inline-block;
   margin: 0px;
 }
-body.light .item-operator button + button {
+body.light .item-operator > button + button {
   margin-left: 4px;
 }
 body.light .history-list .history-item {
@@ -3462,11 +3462,11 @@ body.dark .item-operator {
   align-items: center;
   white-space: nowrap;
 }
-body.dark .item-operator button {
+body.dark .item-operator > button {
   display: inline-block;
   margin: 0px;
 }
-body.dark .item-operator button + button {
+body.dark .item-operator > button + button {
   margin-left: 4px;
 }
 body.dark .history-list .history-item {
@@ -5198,6 +5198,10 @@ define("resource/lang.en", [], {
     "sort.smart": "Smart",
     "sort.simple": "Simple",
     "sort.limit": "Limit",
+    "pickup.none": "Never",
+    "pickup.always": "Always",
+    "pickup.elapsed-time": "Elapsed time",
+    "pickup.expired": "Expired",
     "displayStyle.home": "Same style as Home",
     "displayStyle.full": "Full",
     "displayStyle.compact": "Compact",
@@ -5208,6 +5212,7 @@ define("resource/lang.en", [], {
     "language.auto": "Auto",
     "please input": "Please input.",
     "Sort order setting": "Sort order setting",
+    "Pickup setting": "Pickup setting",
     "Display style setting": "Display style setting",
     "Language setting": "Language setting",
     "roll-back": "Cancel",
@@ -5286,6 +5291,10 @@ define("resource/lang.ja", [], {
     "sort.smart": "スマート",
     "sort.simple": "シンプル",
     "sort.limit": "リミット",
+    "pickup.none": "しない",
+    "pickup.always": "常に",
+    "pickup.elapsed-time": "経過時間",
+    "pickup.expired": "期限切れ",
     "displayStyle.home": "ホームと同じスタイル",
     "displayStyle.full": "フル",
     "displayStyle.compact": "コンパクト",
@@ -5296,6 +5305,7 @@ define("resource/lang.ja", [], {
     "language.auto": "自動",
     "please input": "入力してください。",
     "Sort order setting": "並び順設定",
+    "Pickup setting": "ピックアップ設定",
     "Display style setting": "表示スタイル設定",
     "Language setting": "言語設定",
     "roll-back": "取り消す",
@@ -5446,6 +5456,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     tagSettings[tag] = TagSettings.get(pass, tag);
                 });
                 var todos = TagMember.getRaw(pass, "@overall");
+                var todoSettings = {};
+                todos.forEach(function (task) { return todoSettings[task] = TodoSettings.get(pass, task); });
                 var histories = {};
                 todos
                     .forEach(function (todo) { return histories[todo] = History.get(pass, todo); });
@@ -5456,6 +5468,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     timeAccuracy: timeAccuracy,
                     pass: pass,
                     todos: todos,
+                    todoSettings: todoSettings,
                     tags: tags,
                     tagSettings: tagSettings,
                     histories: histories,
@@ -5471,6 +5484,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         "number" === typeof data_1.timeAccuracy &&
                         "string" === typeof data_1.pass &&
                         Array.isArray(data_1.todos) &&
+                        "object" === typeof data_1.todoSettings &&
                         data_1.todos.filter(function (i) { return "string" !== typeof i; }).length <= 0 &&
                         "object" === typeof data_1.tags &&
                         "object" === typeof data_1.tagSettings &&
@@ -5481,6 +5495,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         Tag.set(data_1.pass, Object.keys(data_1.tags));
                         Object.keys(data_1.tags).forEach(function (tag) { return TagMember.set(data_1.pass, tag, data_1.tags[tag]); });
                         Object.keys(data_1.tagSettings).forEach(function (tag) { return TagSettings.set(data_1.pass, tag, data_1.tagSettings[tag]); });
+                        Object.keys(data_1.todoSettings).forEach(function (tag) { return TodoSettings.set(data_1.pass, tag, data_1.todoSettings[tag]); });
                         Object.keys(data_1.histories).forEach(function (todo) {
                             var item = data_1.histories[todo];
                             var entry = Array.isArray(item) ? { histories: item, first: Math.min.apply(Math, item), count: item.length, } : item;
@@ -5490,8 +5505,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         return data_1.pass;
                     }
                 }
-                catch (_a) {
+                catch (error) {
                     //  JSON parse error
+                    console.error(error);
                 }
                 return null;
             };
@@ -5731,6 +5747,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         if (null !== newSublist_1 && oldSublist_1 !== newSublist_1) {
                             TagMember.add(pass, newSublist_1, newTask);
                         }
+                        TodoSettings.set(pass, newTask, TodoSettings.get(pass, oldTask));
+                        TodoSettings.remove(pass, oldTask);
                         History.set(pass, newTask, History.get(pass, oldTask));
                         History.removeKey(pass, oldTask);
                         return true;
@@ -5751,23 +5769,51 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     var result = TagMember.getRaw(pass, "@overall").indexOf(item.name) < 0 && (null === sublist || 0 <= Tag.get(pass).indexOf(sublist));
                     if (result) {
                         item.tags.map(function (tag) { return TagMember.add(pass, tag, item.name); });
+                        TodoSettings.set(pass, item.name, item.settings);
                         History.set(pass, item.name, item.ticks);
                     }
                     return result;
                 };
                 Task.serialize = function (pass, task) {
                     var tags = Tag.getByTodoRaw(pass, task);
+                    var settings = TodoSettings.get(pass, task);
                     var ticks = History.get(pass, task);
                     var result = {
                         type: "Task",
                         deteledAt: Domain.getTicks(),
                         name: task,
                         tags: tags,
+                        settings: settings,
                         ticks: ticks,
                     };
                     return result;
                 };
             })(Task = OldStorage.Task || (OldStorage.Task = {}));
+            var TodoSettings;
+            (function (TodoSettings) {
+                TodoSettings.makeKey = function (pass, task) { return "pass:(" + pass + ").todo:(" + task + ").settings"; };
+                TodoSettings.get = function (pass, task) { var _a; return (_a = OldStorage.getStorage(pass).getOrNull(TodoSettings.makeKey(pass, task))) !== null && _a !== void 0 ? _a : {}; };
+                TodoSettings.set = function (pass, task, settings) {
+                    return OldStorage.getStorage(pass).set(TodoSettings.makeKey(pass, task), settings);
+                };
+                TodoSettings.remove = function (pass, task) { return OldStorage.getStorage(pass).remove(TodoSettings.makeKey(pass, task)); };
+                TodoSettings.isPickupTarget = function (pass, task, elapsedTime, isExpired) {
+                    var _a;
+                    var pickupSetting = (_a = TodoSettings.get(pass, task)) === null || _a === void 0 ? void 0 : _a.pickup;
+                    if (pickupSetting) {
+                        if ("always" === pickupSetting.type) {
+                            return true;
+                        }
+                        if (null !== elapsedTime && "elapsed-time" === pickupSetting.type && pickupSetting.elapsedTime <= elapsedTime) {
+                            return true;
+                        }
+                        if (isExpired && "expired" === pickupSetting.type) {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+            })(TodoSettings = OldStorage.TodoSettings || (OldStorage.TodoSettings = {}));
             var History;
             (function (History) {
                 History.makeKey = function (pass, task) { return "pass:(" + pass + ").task:" + task + ".history"; };
@@ -6031,6 +6077,37 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     };
                     this.getTagsRaw = function () { return _this.document.tag.getByTaskRaw(_this); };
                     this.getTags = function () { return _this.document.tag.getByTask(_this); };
+                    // rename = (newName: string) =>
+                    // {
+                    //     const newTask = new Task(this.document, newName);
+                    //     if (0 < newTask.getName().length && this.getName() !== newTask.getName() && TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0)
+                    //     {
+                    //         const oldSublist = this.getSublist();
+                    //         const newSublist = newTask.getSublist();
+                    //         this.getTagsRaw().forEach
+                    //         (
+                    //             tag =>
+                    //             {
+                    //                 tag.remove(this);
+                    //                 if ( ! tag.isSublist() || oldSublist === newSublist)
+                    //                 {
+                    //                     tag.add(newTask);
+                    //                 }
+                    //             }
+                    //         );
+                    //         if (null !== newSublist && oldSublist !== newSublist)
+                    //         {
+                    //             newSublist.add(newTask);
+                    //         }
+                    //         History.set(pass, newTask, History.get(pass, oldTask));
+                    //         History.removeKey(pass, oldTask);
+                    //         return true;
+                    //     }
+                    //     return false;
+                    // }
+                    this.getSettings = function () { return _this.document.todoSettings.get(_this); };
+                    this.setSettings = function (settings) { return _this.document.todoSettings.set(_this, settings); };
+                    this.resetSettings = function () { return _this.document.todoSettings.reset(_this); };
                 }
                 return Task;
             }());
@@ -6168,6 +6245,21 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     };
                     this.task = {
                         get: function (task) { return new Task(_this, task); },
+                    };
+                    this.todoSettings = {
+                        get: function (task) { var _a; return (_a = _this.content.todoSettings[task.getName()]) !== null && _a !== void 0 ? _a : {}; },
+                        set: function (task, settings) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, this.save(function (content) { return content.todoSettings[task.getName()] = settings; })];
+                                case 1: return [2 /*return*/, _a.sent()];
+                            }
+                        }); }); },
+                        reset: function (task) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, this.save(function (content) { return delete content.todoSettings[task.getName()]; })];
+                                case 1: return [2 /*return*/, _a.sent()];
+                            }
+                        }); }); },
                     };
                     this.getDoneTicks = function () {
                         return Math.max.apply(null, _this.live.tasks.map(function (i) { return i.previous; }).filter(function (i) { return i; }).concat[Domain.getTicks() - 1]) + 1;
@@ -6782,6 +6874,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return Domain.calcSmartRestCore(item.expectedInterval.max, (_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : (item.RecentlySmartAverage * 0.1), item.elapsed);
             };
             Domain.updateProgress = function (pass, item, now) {
+                var _a, _b;
                 if (now === void 0) { now = Domain.getTicks(); }
                 if (0 < item.count) {
                     // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
@@ -6811,6 +6904,18 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 item.smartRest = null;
                             }
                         }
+                    }
+                }
+                if ("string" === typeof pass) {
+                    var isPickupTarget = OldStorage.TodoSettings.isPickupTarget(pass, item.task, item.elapsed, null !== item.expectedInterval && item.expectedInterval.max < item.elapsed);
+                    var isPickuped = OldStorage.TagMember.isPickupTask(pass, item.task);
+                    if (isPickupTarget && !isPickuped) {
+                        OldStorage.TagMember.add(pass, "@pickup", item.task);
+                        (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render, "dirty");
+                    }
+                    if (!isPickupTarget && isPickuped) {
+                        OldStorage.TagMember.remove(pass, "@pickup", item.task);
+                        (_b = Render.updateWindow) === null || _b === void 0 ? void 0 : _b.call(Render, "dirty");
                     }
                 }
                 MigrateBridge.updateTermCategory(pass, item);
@@ -6942,12 +7047,18 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     });
                 };
                 Operate.done = function (pass, task, tick, onCanceled) { return __awaiter(_this, void 0, void 0, function () {
-                    var toast;
+                    var isPickuped, toast;
                     var _this = this;
-                    return __generator(this, function (_a) {
+                    var _a;
+                    return __generator(this, function (_b) {
                         document.body.classList.add("flash");
                         setTimeout(function () { return document.body.classList.remove("flash"); }, 1500);
                         MigrateBridge.done(pass, task, tick);
+                        isPickuped = 0 <= MigrateBridge.getTagMember(pass, "@pickup").indexOf(task) &&
+                            "always" !== ((_a = OldStorage.TodoSettings.get(pass, task).pickup) === null || _a === void 0 ? void 0 : _a.type);
+                        if (isPickuped) {
+                            OldStorage.TagMember.remove(pass, "@pickup", task);
+                        }
                         toast = Render.makeToast({
                             content: Render.$span("")(locale.map("Done!") + ": " + task),
                             backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
@@ -6955,38 +7066,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     switch (_a.label) {
                                         case 0:
                                             OldStorage.History.removeTickRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
-                                            // if (isPickuped)
-                                            // {
-                                            //     OldStorage.TagMember.add(pass, "@pickup", task);
-                                            // }
-                                            return [4 /*yield*/, toast.hide()];
-                                        case 1:
-                                            // if (isPickuped)
-                                            // {
-                                            //     OldStorage.TagMember.add(pass, "@pickup", task);
-                                            // }
-                                            _a.sent();
-                                            onCanceled();
-                                            return [2 /*return*/];
-                                    }
-                                });
-                            }); }),
-                        });
-                        return [2 /*return*/];
-                    });
-                }); };
-                Operate.addToPickup = function (pass, task, onCanceled) { return __awaiter(_this, void 0, void 0, function () {
-                    var toast;
-                    var _this = this;
-                    return __generator(this, function (_a) {
-                        OldStorage.TagMember.add(pass, "@pickup", task);
-                        toast = Render.makeToast({
-                            content: Render.$span("")("\u30D4\u30C3\u30AF\u30A2\u30C3\u30D7\u306B\u8FFD\u52A0\uFF01: " + task),
-                            backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
-                                return __generator(this, function (_a) {
-                                    switch (_a.label) {
-                                        case 0:
-                                            OldStorage.TagMember.remove(pass, "@pickup", task);
+                                            if (isPickuped) {
+                                                OldStorage.TagMember.add(pass, "@pickup", task);
+                                            }
                                             return [4 /*yield*/, toast.hide()];
                                         case 1:
                                             _a.sent();
@@ -6999,30 +7081,40 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         return [2 /*return*/];
                     });
                 }); };
-                Operate.removeFromPickup = function (pass, task, onCanceled) { return __awaiter(_this, void 0, void 0, function () {
-                    var toast;
-                    var _this = this;
-                    return __generator(this, function (_a) {
-                        OldStorage.TagMember.remove(pass, "@pickup", task);
-                        toast = Render.makeToast({
-                            content: Render.$span("")("\u30D4\u30C3\u30AF\u30A2\u30C3\u30D7\u304B\u3089\u30CF\u30BA\u3057\u307E\u3057\u305F\uFF01: " + task),
-                            backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
-                                return __generator(this, function (_a) {
-                                    switch (_a.label) {
-                                        case 0:
-                                            OldStorage.TagMember.add(pass, "@pickup", task);
-                                            return [4 /*yield*/, toast.hide()];
-                                        case 1:
-                                            _a.sent();
-                                            onCanceled();
-                                            return [2 /*return*/];
-                                    }
-                                });
-                            }); }),
-                        });
-                        return [2 /*return*/];
-                    });
-                }); };
+                // export const addToPickup = async (pass: string, task: string, onCanceled: () => unknown) =>
+                // {
+                //     OldStorage.TagMember.add(pass, "@pickup", task);
+                //     const toast = makeToast
+                //     ({
+                //         content: $span("")(`ピックアップに追加！: ${task}`),
+                //         backwardOperator: cancelTextButton
+                //         (
+                //             async () =>
+                //             {
+                //                 OldStorage.TagMember.remove(pass, "@pickup", task);
+                //                 await toast.hide();
+                //                 onCanceled();
+                //             }
+                //         ),
+                //     });
+                // };
+                // export const removeFromPickup = async (pass: string, task: string, onCanceled: () => unknown) =>
+                // {
+                //     OldStorage.TagMember.remove(pass, "@pickup", task);
+                //     const toast = makeToast
+                //     ({
+                //         content: $span("")(`ピックアップからハズしました！: ${task}`),
+                //         backwardOperator: cancelTextButton
+                //         (
+                //             async () =>
+                //             {
+                //                 OldStorage.TagMember.add(pass, "@pickup", task);
+                //                 await toast.hide();
+                //                 onCanceled();
+                //             }
+                //         ),
+                //     });
+                // };
                 Operate.clearFilterHistory = function (onCanceled) { return __awaiter(_this, void 0, void 0, function () {
                     var backup, toast;
                     var _this = this;
@@ -8039,6 +8131,204 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     });
                 });
             };
+            Render.getTodoPickupSettingsElapsedTimePreset = function (entry) {
+                var _a;
+                var sample = (_a = entry.RecentlyAverage) !== null && _a !== void 0 ? _a : entry.elapsed;
+                if (null !== sample) {
+                    if (sample < 3 * 24 * 60) {
+                        return [1.0, 1.5, 2, 3, 4.5, 6, 9, 12, 18, 24, 1.5 * 24, 2 * 24, 2.5 * 24, 3 * 24,].map(function (i) { return i * 60; });
+                    }
+                    if (sample < 10 * 24 * 60) {
+                        return [0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 7,].map(function (i) { return i * 24 * 60; });
+                    }
+                    return [3, 5, 7, 10, 14, 30, 45, 60, 90, 180, 240,].map(function (i) { return i * 24 * 60; });
+                }
+                return [];
+            };
+            Render.todoPickupSettingsPopup = function (pass, entry, settings) {
+                if (settings === void 0) { settings = OldStorage.TodoSettings.get(pass, entry.task); }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                    var result, tagButtonList, tagButtonListUpdate, ui;
+                                    var _this = this;
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                result = false;
+                                                tagButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
+                                                tagButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    var _a, _b, _c, _d;
+                                                    var _e, _f, _g;
+                                                    var _this = this;
+                                                    var _h, _j, _k, _l, _m;
+                                                    return __generator(this, function (_o) {
+                                                        switch (_o.label) {
+                                                            case 0:
+                                                                _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                                _c = [tagButtonList];
+                                                                _e = {
+                                                                    tag: "button",
+                                                                    className: "check-button " + ("none" === ((_h = settings.pickup) !== null && _h !== void 0 ? _h : "none") ? "checked" : "")
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 1:
+                                                                _d = [
+                                                                    (_e.children = [
+                                                                        _o.sent(),
+                                                                        Render.$span("")(Render.label("pickup.none"))
+                                                                    ],
+                                                                        _e.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            return __generator(this, function (_a) {
+                                                                                switch (_a.label) {
+                                                                                    case 0:
+                                                                                        settings.pickup = null;
+                                                                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                                                                        result = true;
+                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                    case 1:
+                                                                                        _a.sent();
+                                                                                        return [2 /*return*/];
+                                                                                }
+                                                                            });
+                                                                        }); },
+                                                                        _e)
+                                                                ];
+                                                                _f = {
+                                                                    tag: "button",
+                                                                    className: "check-button " + ("always" === ((_j = settings.pickup) === null || _j === void 0 ? void 0 : _j.type) ? "checked" : "")
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 2:
+                                                                _d = _d.concat([
+                                                                    (_f.children = [
+                                                                        _o.sent(),
+                                                                        Render.$span("")(Render.label("pickup.always"))
+                                                                    ],
+                                                                        _f.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            return __generator(this, function (_a) {
+                                                                                switch (_a.label) {
+                                                                                    case 0:
+                                                                                        settings.pickup = { type: "always" };
+                                                                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                                                                        result = true;
+                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                    case 1:
+                                                                                        _a.sent();
+                                                                                        return [2 /*return*/];
+                                                                                }
+                                                                            });
+                                                                        }); },
+                                                                        _f)
+                                                                ]);
+                                                                return [4 /*yield*/, Promise.all(Render.getTodoPickupSettingsElapsedTimePreset(entry)
+                                                                        .concat([(_l = (_k = settings.pickup) === null || _k === void 0 ? void 0 : _k.elapsedTime) !== null && _l !== void 0 ? _l : 0])
+                                                                        .filter(function (i) { return 0 < i; })
+                                                                        .filter(exports.uniqueFilter)
+                                                                        .sort(minamo_js_1.minamo.core.comparer.basic)
+                                                                        .map(function (elapsedTime) { return __awaiter(_this, void 0, void 0, function () {
+                                                                        var _a;
+                                                                        var _this = this;
+                                                                        var _b;
+                                                                        return __generator(this, function (_c) {
+                                                                            switch (_c.label) {
+                                                                                case 0:
+                                                                                    _a = {
+                                                                                        tag: "button",
+                                                                                        className: "check-button " + (("elapsed-time" === ((_b = settings.pickup) === null || _b === void 0 ? void 0 : _b.type) && elapsedTime === (settings === null || settings === void 0 ? void 0 : settings.pickup.elapsedTime)) ? "checked" : "")
+                                                                                    };
+                                                                                    return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                                                case 1: return [2 /*return*/, (_a.children = [
+                                                                                        _c.sent(),
+                                                                                        Render.$span("")([Render.label("pickup.elapsed-time"), ": ", Domain.timeLongStringFromTick(elapsedTime)])
+                                                                                    ],
+                                                                                        _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                            return __generator(this, function (_a) {
+                                                                                                switch (_a.label) {
+                                                                                                    case 0:
+                                                                                                        settings.pickup =
+                                                                                                            {
+                                                                                                                type: "elapsed-time",
+                                                                                                                elapsedTime: elapsedTime,
+                                                                                                            };
+                                                                                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                                                                                        result = true;
+                                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                                    case 1:
+                                                                                                        _a.sent();
+                                                                                                        return [2 /*return*/];
+                                                                                                }
+                                                                                            });
+                                                                                        }); },
+                                                                                        _a)];
+                                                                            }
+                                                                        });
+                                                                    }); }))];
+                                                            case 3:
+                                                                _d = _d.concat([
+                                                                    _o.sent()
+                                                                ]);
+                                                                _g = {
+                                                                    tag: "button",
+                                                                    className: "check-button " + ("expired" === ((_m = settings.pickup) === null || _m === void 0 ? void 0 : _m.type) ? "checked" : "")
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 4: return [2 /*return*/, _b.apply(_a, _c.concat([_d.concat([
+                                                                        (_g.children = [
+                                                                            _o.sent(),
+                                                                            Render.$span("")(Render.label("pickup.expired"))
+                                                                        ],
+                                                                            _g.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                return __generator(this, function (_a) {
+                                                                                    switch (_a.label) {
+                                                                                        case 0:
+                                                                                            settings.pickup = { type: "expired" };
+                                                                                            OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                                                                            result = true;
+                                                                                            return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                        case 1:
+                                                                                            _a.sent();
+                                                                                            return [2 /*return*/];
+                                                                                    }
+                                                                                });
+                                                                            }); },
+                                                                            _g)
+                                                                    ])]))];
+                                                        }
+                                                    });
+                                                }); };
+                                                return [4 /*yield*/, tagButtonListUpdate()];
+                                            case 1:
+                                                _a.sent();
+                                                ui = Render.popup({
+                                                    // className: "add-remove-tags-popup",
+                                                    children: [
+                                                        Render.$tag("h2")("")(locale.map("Pickup setting") + ": " + entry.task),
+                                                        tagButtonList,
+                                                        Render.$div("popup-operator")([{
+                                                                tag: "button",
+                                                                className: "default-button",
+                                                                children: Render.label("Close"),
+                                                                onclick: function () {
+                                                                    ui.close();
+                                                                },
+                                                            }]),
+                                                    ],
+                                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                        return [2 /*return*/, resolve(result)];
+                                                    }); }); },
+                                                });
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); })];
+                            case 1: return [2 /*return*/, _a.sent()];
+                        }
+                    });
+                });
+            };
             Render.screenCover = function (data) {
                 var _a;
                 var dom = Render.$make(HTMLDivElement)({
@@ -8310,29 +8600,37 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             };
             Render.todoTagMenu = function (pass, item) {
                 return [
-                    OldStorage.TagMember.isPickupTask(pass, item.task) ?
-                        Render.menuItem(Render.label("Remove from Pickup"), function () { return __awaiter(_this, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4 /*yield*/, Operate.removeFromPickup(pass, item.task, function () { return Render.updateWindow("operate"); })];
-                                    case 1:
-                                        _a.sent();
-                                        Render.updateWindow("operate");
-                                        return [2 /*return*/];
-                                }
-                            });
-                        }); }) :
-                        Render.menuItem(Render.label("Add to Pickup"), function () { return __awaiter(_this, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4 /*yield*/, Operate.addToPickup(pass, item.task, function () { return Render.updateWindow("operate"); })];
-                                    case 1:
-                                        _a.sent();
-                                        Render.updateWindow("operate");
-                                        return [2 /*return*/];
-                                }
-                            });
-                        }); }),
+                    // OldStorage.TagMember.isPickupTask(pass, item.task) ?
+                    //     menuItem
+                    //     (
+                    //         label("Remove from Pickup"),
+                    //         async () =>
+                    //         {
+                    //             await Operate.removeFromPickup(pass, item.task, () => updateWindow("operate"));
+                    //             updateWindow("operate");
+                    //         }
+                    //     ):
+                    //     menuItem
+                    //     (
+                    //         label("Add to Pickup"),
+                    //         async () =>
+                    //         {
+                    //             await Operate.addToPickup(pass, item.task, () => updateWindow("operate"));
+                    //             updateWindow("operate");
+                    //         }
+                    //     ),
+                    Render.menuItem(Render.label("Pickup setting"), function () { return __awaiter(_this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, Render.todoPickupSettingsPopup(pass, item)];
+                                case 1:
+                                    if (_a.sent()) {
+                                        Render.updateWindow("timer");
+                                    }
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); }),
                     Render.menuItem(Render.label("Add/Remove Tag"), function () { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
                             switch (_a.label) {
@@ -9785,8 +10083,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 case "scroll": return [3 /*break*/, 2];
                                                 case "storage": return [3 /*break*/, 5];
                                                 case "operate": return [3 /*break*/, 7];
+                                                case "dirty": return [3 /*break*/, 12];
                                             }
-                                            return [3 /*break*/, 12];
+                                            return [3 /*break*/, 13];
                                         case 1:
                                             Domain.updateListProgress(entry.pass, list);
                                             isDirty = isDirty || (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list)));
@@ -9820,7 +10119,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 }
                                             }); }); });
                                             // }
-                                            return [3 /*break*/, 12];
+                                            return [3 /*break*/, 13];
                                         case 2:
                                             Domain.updateListProgress(entry.pass, list);
                                             isDirty = isDirty || (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list)));
@@ -9829,11 +10128,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         case 3:
                                             _c.sent();
                                             _c.label = 4;
-                                        case 4: return [3 /*break*/, 12];
+                                        case 4: return [3 /*break*/, 13];
                                         case 5: return [4 /*yield*/, CyclicToDo.reload()];
                                         case 6:
                                             _c.sent();
-                                            return [3 /*break*/, 12];
+                                            return [3 /*break*/, 13];
                                         case 7:
                                             if (!(0 <= OldStorage.Pass.get().indexOf(entry.pass))) return [3 /*break*/, 9];
                                             Render.removeProgressStyle("obsolescence");
@@ -9853,8 +10152,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         case 10:
                                             _c.sent();
                                             _c.label = 11;
-                                        case 11: return [3 /*break*/, 12];
-                                        case 12: return [2 /*return*/];
+                                        case 11: return [3 /*break*/, 13];
+                                        case 12:
+                                            isDirty = true;
+                                            Render.setProgressStyle("obsolescence", 0);
+                                            return [3 /*break*/, 13];
+                                        case 13: return [2 /*return*/];
                                     }
                                 });
                             }); };
@@ -9896,8 +10199,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 case "scroll": return [3 /*break*/, 2];
                                                 case "storage": return [3 /*break*/, 5];
                                                 case "operate": return [3 /*break*/, 7];
+                                                case "dirty": return [3 /*break*/, 12];
                                             }
-                                            return [3 /*break*/, 12];
+                                            return [3 /*break*/, 13];
                                         case 1:
                                             Domain.updateListProgress(entry.pass, list);
                                             isDirty = isDirty || (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list)));
@@ -9931,7 +10235,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 }
                                             }); }); });
                                             // }
-                                            return [3 /*break*/, 12];
+                                            return [3 /*break*/, 13];
                                         case 2:
                                             Domain.updateListProgress(entry.pass, list);
                                             isDirty = isDirty || (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list)));
@@ -9940,11 +10244,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         case 3:
                                             _c.sent();
                                             _c.label = 4;
-                                        case 4: return [3 /*break*/, 12];
+                                        case 4: return [3 /*break*/, 13];
                                         case 5: return [4 /*yield*/, CyclicToDo.reload()];
                                         case 6:
                                             _c.sent();
-                                            return [3 /*break*/, 12];
+                                            return [3 /*break*/, 13];
                                         case 7:
                                             if (!(0 <= OldStorage.Pass.get().indexOf(entry.pass))) return [3 /*break*/, 9];
                                             Render.removeProgressStyle("obsolescence");
@@ -9964,8 +10268,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         case 10:
                                             _c.sent();
                                             _c.label = 11;
-                                        case 11: return [3 /*break*/, 12];
-                                        case 12: return [2 /*return*/];
+                                        case 11: return [3 /*break*/, 13];
+                                        case 12:
+                                            isDirty = true;
+                                            Render.setProgressStyle("obsolescence", 0);
+                                            return [3 /*break*/, 13];
+                                        case 13: return [2 /*return*/];
                                     }
                                 });
                             }); };
@@ -10495,7 +10803,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 }[tag]) !== null && _a !== void 0 ? _a : (Model.isSublistOld(tag) ? 0 : 2));
             }))[0]; };
             Render.showTodoScreen = function (pass, task) { return __awaiter(_this, void 0, void 0, function () {
-                var item, tag, ticks, updateWindow, _a;
+                var item, tag, ticks, isDirty, updateWindow, _a;
                 var _this = this;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
@@ -10503,6 +10811,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             item = Domain.getToDoEntryOld(pass, task);
                             tag = Render.getPrimaryTag(OldStorage.Tag.getByTodo(pass, item.task));
                             ticks = OldStorage.History.getTicks(pass, task);
+                            isDirty = false;
                             Domain.updateProgress(pass, item);
                             updateWindow = function (event) { return __awaiter(_this, void 0, void 0, function () {
                                 var _a, dom, information, _b;
@@ -10512,10 +10821,14 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             _a = event;
                                             switch (_a) {
                                                 case "timer": return [3 /*break*/, 1];
-                                                case "storage": return [3 /*break*/, 2];
-                                                case "operate": return [3 /*break*/, 4];
+                                                case "focus": return [3 /*break*/, 2];
+                                                case "blur": return [3 /*break*/, 2];
+                                                case "scroll": return [3 /*break*/, 2];
+                                                case "storage": return [3 /*break*/, 5];
+                                                case "operate": return [3 /*break*/, 7];
+                                                case "dirty": return [3 /*break*/, 9];
                                             }
-                                            return [3 /*break*/, 6];
+                                            return [3 /*break*/, 10];
                                         case 1:
                                             Domain.updateProgress(pass, item);
                                             dom = document
@@ -10524,23 +10837,35 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             information = dom.getElementsByClassName("item-information")[0];
                                             information.setAttribute("style", Render.progressInformationStyle(pass, item));
                                             information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
-                                            return [3 /*break*/, 6];
-                                        case 2: return [4 /*yield*/, CyclicToDo.reload()];
+                                            return [3 /*break*/, 10];
+                                        case 2:
+                                            if (!isDirty) return [3 /*break*/, 4];
+                                            return [4 /*yield*/, updateWindow("operate")];
                                         case 3:
                                             _c.sent();
-                                            return [3 /*break*/, 6];
-                                        case 4:
+                                            _c.label = 4;
+                                        case 4: return [3 /*break*/, 10];
+                                        case 5: return [4 /*yield*/, CyclicToDo.reload()];
+                                        case 6:
+                                            _c.sent();
+                                            return [3 /*break*/, 10];
+                                        case 7:
                                             item = Domain.getToDoEntryOld(pass, task);
                                             tag = OldStorage.Tag.getByTodo(pass, item.task).filter(function (tag) { return "@overall" !== tag; }).concat("@overall")[0];
                                             ticks = OldStorage.History.getTicks(pass, task);
                                             Domain.updateProgress(pass, item);
+                                            isDirty = false;
                                             _b = Render.replaceScreenBody;
                                             return [4 /*yield*/, Render.todoScreenBody(pass, item, ticks, tag)];
-                                        case 5:
+                                        case 8:
                                             _b.apply(void 0, [_c.sent()]);
                                             Render.resizeFlexList();
-                                            return [3 /*break*/, 6];
-                                        case 6: return [2 /*return*/];
+                                            return [3 /*break*/, 10];
+                                        case 9:
+                                            isDirty = true;
+                                            Render.setProgressStyle("obsolescence", 0);
+                                            return [3 /*break*/, 10];
+                                        case 10: return [2 /*return*/];
                                     }
                                 });
                             }); };
@@ -11681,7 +12006,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Feb 13 2022 21:12:05 GMT+0900 (日本標準時)', })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Feb 20 2022 00:39:56 GMT+0900 (日本標準時)', })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
