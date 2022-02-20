@@ -461,6 +461,8 @@ export module CyclicToDo
                         const unoverall = getRaw(pass, "@unoverall");
                         return getRaw(pass, "@overall").filter(i => unoverall.indexOf(i) < 0);
                     }
+                case "@pickup-all":
+                    return getRaw(pass, "@overall").filter(task => null !== (TodoSettings.get(pass, task).pickup ?? null));
                 case "@untagged":
                     {
                         const tagged = Tag.get(pass).map(tag => get(pass, tag)).reduce((a, b) => a.concat(b), []);
@@ -1736,9 +1738,10 @@ export module CyclicToDo
                 }
             }
             MigrateBridge.updateTermCategory(pass, item);
+            return item;
         };
         export const updateListProgress = (pass: string | Model.Document, list: ToDoEntry[], now: number = Domain.getTicks()) =>
-            list.forEach(item => updateProgress(pass, item, now));
+            list.map(item => updateProgress(pass, item, now));
         export const sortList = (entry: ToDoTagEntryOld, list: ToDoEntry[]) =>
         {
             const tasks = JSON.stringify(list.map(i => i.task));
@@ -4214,59 +4217,24 @@ export module CyclicToDo
             $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item, displayStyle)))),
             await listScreenFooter(entry, list)
         ]);
-        export const listScreenHomeColumn = async (entry: ToDoTagEntryOld, list: ToDoEntry[], tag: string, member = OldStorage.TagMember.get(entry.pass, tag), displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag)) =>
-        {
-            const currentList = list.filter(i => 0 <= member.indexOf(i.task));
-            Domain.sortList
-            (
-                {
-                    tag,
-                    pass: entry.pass,
-                    todo: member,
-                },
-                currentList
-            );
-            const result = $div("tag-column")
-            ([
-                $div("tag-column-header")(tag),
-                $div("column-flex-list todo-list")
-                (
-                    await Promise.all(currentList.map(item => todoItem(entry, item, displayStyle)))
-                )
-            ]);
-            return result;
-        };
-        export const listScreenHomeBody = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) =>
-        ([
-            await historyBar(entry, list),
-            $div("tag-column-list column-flex-list")
-            (
-                await Promise.all
-                (
-                    ["@pickup", "@short-term", "@medium-term", "@long-term", "@irregular-term"].concat(OldStorage.Tag.get(entry.pass).sort(Domain.tagComparerOld(entry.pass))).concat(["@unoverall", "@untagged"])
-                    .map(tag => listScreenHomeColumn(entry, list, tag))
-                )
-            ),
-            await listScreenFooter(entry, list)
-        ]);
         export const listScreen = async (entry: ToDoTagEntryOld, list: ToDoEntry[], filter: string) =>
         ({
             className: "list-screen",
             header: await listScreenHeader(entry, list),
             body: await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))),
         });
-        export const listHomeScreen = async (entry: ToDoTagEntryOld, list: ToDoEntry[], filter: string) =>
-        ({
-            className: "list-screen",
-            header: await listScreenHeader(entry, list),
-            body: await listScreenHomeBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))),
-        });
         export const showListScreen = async (pass: string, tag: string, urlParams: PageParams) =>
         {
             let entry = { tag, pass, todo: OldStorage.TagMember.get(pass, tag) };
             let list = entry.todo.map(task => Domain.getToDoEntryOld(entry.pass, task));
+            let pickupAll = "@pickup" === tag ? OldStorage.TagMember.get(entry.pass, "@pickup-all").map(task => Domain.getToDoEntryOld(entry.pass, task)): [];
             Domain.updateListProgress(entry.pass, list);
             Domain.sortList(entry, list);
+            if ("@pickup" === tag)
+            {
+                Domain.updateListProgress(entry.pass, pickupAll);
+                Domain.sortList(entry, pickupAll);
+            }
             let isDirty = false;
             const displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag);
             const updateWindow = async (event: UpdateWindowEventEype) =>
@@ -4277,11 +4245,7 @@ export module CyclicToDo
                         Domain.updateListProgress(entry.pass, list);
                         if ("@pickup" === tag)
                         {
-                            const pickuped = list.map(i => i.task);
-                            OldStorage.TagMember.getRaw(pass, "@overall")
-                                .filter(task => pickuped.indexOf(task) < 0)
-                                .filter(task => null !== (OldStorage.TodoSettings.get(pass, task).pickup ?? null))
-                                .forEach(task => Domain.updateProgress(pass, Domain.getToDoEntryOld(entry.pass, task)));
+                            Domain.updateListProgress(entry.pass, pickupAll);
                         }
                         isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[]));
                         if (isDirty)
@@ -4331,10 +4295,21 @@ export module CyclicToDo
                                     }
                                 }
                             );
-                            Array.from(document.getElementsByClassName("history-bar")).forEach
-                            (
-                                async dom => minamo.dom.replaceChildren(dom, (await historyBar(entry, filteredList)).children)
-                            );
+                            if ("@pickup" === tag)
+                            {
+                                const filteredList = pickupAll.filter(item => isMatchToDoEntry(filter, entry, item));
+                                Array.from(document.getElementsByClassName("history-bar")).forEach
+                                (
+                                    async dom => minamo.dom.replaceChildren(dom, (await historyBar(entry, filteredList)).children)
+                                );
+                            }
+                            else
+                            {
+                                Array.from(document.getElementsByClassName("history-bar")).forEach
+                                (
+                                    async dom => minamo.dom.replaceChildren(dom, (await historyBar(entry, filteredList)).children)
+                                );
+                            }
                         // }
                         break;
                     case "focus":
@@ -4358,6 +4333,12 @@ export module CyclicToDo
                             list = entry.todo.map(task => Domain.getToDoEntryOld(entry.pass, task));
                             Domain.updateListProgress(entry.pass, list);
                             Domain.sortList(entry, list);
+                        if ("@pickup" === tag)
+                        {
+                            pickupAll = "@pickup" === tag ? OldStorage.TagMember.get(entry.pass, "@pickup-all").map(task => Domain.getToDoEntryOld(entry.pass, task)): [];
+                            Domain.updateListProgress(entry.pass, pickupAll);
+                            Domain.sortList(entry, pickupAll);
+                        }
                             isDirty = false;
                             const filter = getFilterText();
                             replaceScreenBody(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))));
@@ -4376,17 +4357,10 @@ export module CyclicToDo
             };
             const filter = regulateFilterText(urlParams.filter ?? "");
             await showWindow(await listScreen(entry, list, filter), updateWindow);
-            document.getElementsByClassName("screen-body")[0]?.addEventListener
-            (
-                "scroll",
-                () =>
-                {
-                    if ((document.getElementsByClassName("screen-body")[0]?.scrollTop ?? 0) <= 0)
-                    {
-                        Render.updateWindow?.("scroll");
-                    }
-                }
-            );
+            if ("@pickup" === tag)
+            {
+                await updateWindow("timer");
+            }
         };
         export const historyScreenMenu = async (entry: ToDoTagEntryOld) =>
         [
@@ -5736,7 +5710,7 @@ export module CyclicToDo
                 if (0 <= OldStorage.Pass.get().indexOf(pass))
                 {
                     console.log("show list screen");
-                    Render.showListScreen(pass, tag ?? "@overall", urlParams);
+                    Render.showListScreen(pass, tag, urlParams);
                 }
                 else
                 {
