@@ -4275,6 +4275,14 @@ export module CyclicToDo
                 {
                     case "timer":
                         Domain.updateListProgress(entry.pass, list);
+                        if ("@pickup" === tag)
+                        {
+                            const pickuped = list.map(i => i.task);
+                            OldStorage.TagMember.getRaw(pass, "@overall")
+                                .filter(task => pickuped.indexOf(task) < 0)
+                                .filter(task => null !== (OldStorage.TodoSettings.get(pass, task).pickup ?? null))
+                                .forEach(task => Domain.updateProgress(pass, Domain.getToDoEntryOld(entry.pass, task)));
+                        }
                         isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[]));
                         if (isDirty)
                         {
