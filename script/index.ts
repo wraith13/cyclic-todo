@@ -5606,7 +5606,7 @@ export module CyclicToDo
             i => document.body.classList.toggle(i, i === theme)
         );
     };
-    export const start = async (params:{ buildTimestamp: string, }) =>
+    export const start = async (params:{ buildTimestamp: string, buildTimestampTick:number, }) =>
     {
         console.log(`start timestamp: ${new Date()}`);
         console.log(`${JSON.stringify(params)}`);
@@ -5641,6 +5641,10 @@ export module CyclicToDo
         updateStyle();
         await Render.showUpdatingScreen(location.href);
         await showPage();
+        if ("reload" === (<any>performance.getEntriesByType("navigation"))?.[0]?.type)
+        {
+            Render.makeToast({ content: Render.$span("")(`ビルドタイムスタンプ: ${Domain.dateStringFromTick(params.buildTimestampTick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - params.buildTimestampTick) /Domain.timeAccuracy)} 前 )`), });
+        }
     };
     export const showPage = async (url: string = location.href, _wait: number = 0) =>
     {
