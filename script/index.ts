@@ -2707,13 +2707,13 @@ export module CyclicToDo
             {
                 if (sample < 3 *24 *60)
                 {
-                    return [ 1.0, 1.5, 2, 3, 4.5, 6, 9, 12, 18, 24, 1.5 *24, 2 *24, 2.5 *24, 3 *24, ].map(i => i *60);
+                    return [ 1.0, 1.5, 2, 3, 4.5, 6, 9, 12, 15, 18, 21, 24, 1.5 *24, 2 *24, 2.5 *24, 3 *24, ].map(i => i *60);
                 }
                 if (sample < 10 *24 *60)
                 {
                     return [ 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 7, ].map(i => i *24 *60);
                 }
-                return [ 3, 5, 7, 10, 14, 30, 45, 60, 90, 180, 240, ].map(i => i *24 *60);
+                return [ 3, 5, 7, 10, 14, 21, 30, 45, 60, 90, 180, 240, ].map(i => i *24 *60);
             }
             return [ ];
         };
@@ -4333,16 +4333,20 @@ export module CyclicToDo
                             list = entry.todo.map(task => Domain.getToDoEntryOld(entry.pass, task));
                             Domain.updateListProgress(entry.pass, list);
                             Domain.sortList(entry, list);
-                        if ("@pickup" === tag)
-                        {
-                            pickupAll = "@pickup" === tag ? OldStorage.TagMember.get(entry.pass, "@pickup-all").map(task => Domain.getToDoEntryOld(entry.pass, task)): [];
-                            Domain.updateListProgress(entry.pass, pickupAll);
-                            Domain.sortList(entry, pickupAll);
-                        }
+                            if ("@pickup" === tag)
+                            {
+                                pickupAll = "@pickup" === tag ? OldStorage.TagMember.get(entry.pass, "@pickup-all").map(task => Domain.getToDoEntryOld(entry.pass, task)): [];
+                                Domain.updateListProgress(entry.pass, pickupAll);
+                                Domain.sortList(entry, pickupAll);
+                            }
                             isDirty = false;
                             const filter = getFilterText();
                             replaceScreenBody(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))));
                             resizeFlexList();
+                            if ("@pickup" === tag)
+                            {
+                                await updateWindow("timer");
+                            }
                         }
                         else
                         {
@@ -5693,7 +5697,15 @@ export module CyclicToDo
             {
             case "history":
                 console.log("show history screen");
-                Render.showHistoryScreen(urlParams, { tag: tag, pass, todo: OldStorage.TagMember.get(pass, tag) });
+                Render.showHistoryScreen
+                (
+                    urlParams,
+                    {
+                        tag,
+                        pass,
+                        todo: OldStorage.TagMember.get(pass, "@pickup" === tag ? "@pickup-all": tag),
+                    }
+                );
                 break;
             // case "statistics":
             //     dom.updateStatisticsScreen(title, pass, todo);
