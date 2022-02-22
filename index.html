@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Feb 21 2022 23:30:32 GMT+0900 (日本標準時)
+    build at: Tue Feb 22 2022 19:56:51 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -5695,6 +5695,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 };
                 TagMember.isMember = function (pass, tag, todo) { return 0 <= TagMember.get(pass, tag).indexOf(todo); };
+                TagMember.isRestrictionTask = function (pass, todo) { return TagMember.isMember(pass, "@restriction", todo); };
                 TagMember.isPickupTask = function (pass, todo) { return TagMember.isMember(pass, "@pickup", todo); };
             })(TagMember = OldStorage.TagMember || (OldStorage.TagMember = {}));
             var TagSettings;
@@ -5799,18 +5800,36 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return OldStorage.getStorage(pass).set(TodoSettings.makeKey(pass, task), settings);
                 };
                 TodoSettings.remove = function (pass, task) { return OldStorage.getStorage(pass).remove(TodoSettings.makeKey(pass, task)); };
-                TodoSettings.isPickupTarget = function (pass, task, elapsedTime, isExpired) {
+                TodoSettings.isPickupTarget = function (pass, task, elapsedTime, standardScore, isExpired) {
                     var _a;
                     var pickupSetting = (_a = TodoSettings.get(pass, task)) === null || _a === void 0 ? void 0 : _a.pickup;
                     if (pickupSetting) {
-                        if ("always" === pickupSetting.type) {
-                            return true;
+                        switch (pickupSetting.type) {
+                            case "always":
+                                return true;
+                            case "elapsed-time":
+                                return null !== elapsedTime && pickupSetting.elapsedTime <= elapsedTime;
+                            case "elapsed-time-standard-score":
+                                return null !== elapsedTime && pickupSetting.elapsedTimeStandardScore <= standardScore;
+                            case "expired":
+                                return isExpired;
                         }
-                        if (null !== elapsedTime && "elapsed-time" === pickupSetting.type && pickupSetting.elapsedTime <= elapsedTime) {
-                            return true;
-                        }
-                        if (isExpired && "expired" === pickupSetting.type) {
-                            return true;
+                    }
+                    return false;
+                };
+                TodoSettings.isRestrictionTarget = function (pass, task, elapsedTime, standardScore, isExpired) {
+                    var _a;
+                    var restrictionSetting = (_a = TodoSettings.get(pass, task)) === null || _a === void 0 ? void 0 : _a.restriction;
+                    if (restrictionSetting) {
+                        switch (restrictionSetting.type) {
+                            case "always":
+                                return true;
+                            case "elapsed-time":
+                                return null !== elapsedTime && elapsedTime < restrictionSetting.elapsedTime;
+                            case "elapsed-time-standard-score":
+                                return null !== elapsedTime && standardScore < restrictionSetting.elapsedTimeStandardScore;
+                            case "expired":
+                                return !isExpired;
                         }
                     }
                     return false;
@@ -6876,7 +6895,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return Domain.calcSmartRestCore(item.expectedInterval.max, (_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : (item.RecentlySmartAverage * 0.1), item.elapsed);
             };
             Domain.updateProgress = function (pass, item, now) {
-                var _a, _b;
+                var _a, _b, _c, _d;
                 if (now === void 0) { now = Domain.getTicks(); }
                 if (0 < item.count) {
                     // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
@@ -6909,7 +6928,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 }
                 if ("string" === typeof pass) {
-                    var isPickupTarget = OldStorage.TodoSettings.isPickupTarget(pass, item.task, item.elapsed, null !== item.expectedInterval && item.expectedInterval.max < item.elapsed);
+                    var isPickupTarget = OldStorage.TodoSettings.isPickupTarget(pass, item.task, item.elapsed, null !== item.RecentlyStandardDeviation ? Calculate.standardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, item.elapsed) : null, null !== item.expectedInterval && item.expectedInterval.max < item.elapsed);
                     var isPickuped = OldStorage.TagMember.isPickupTask(pass, item.task);
                     if (isPickupTarget && !isPickuped) {
                         OldStorage.TagMember.add(pass, "@pickup", item.task);
@@ -6918,6 +6937,16 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     if (!isPickupTarget && isPickuped) {
                         OldStorage.TagMember.remove(pass, "@pickup", item.task);
                         (_b = Render.updateWindow) === null || _b === void 0 ? void 0 : _b.call(Render, "dirty");
+                    }
+                    var isRestrictionTarget = OldStorage.TodoSettings.isRestrictionTarget(pass, item.task, item.elapsed, null !== item.RecentlyStandardDeviation ? Calculate.standardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, item.elapsed) : null, null !== item.expectedInterval && item.expectedInterval.max < item.elapsed);
+                    var isRestrictioned = OldStorage.TagMember.isRestrictionTask(pass, item.task);
+                    if (isRestrictionTarget && !isRestrictioned) {
+                        OldStorage.TagMember.add(pass, "@restriction", item.task);
+                        (_c = Render.updateWindow) === null || _c === void 0 ? void 0 : _c.call(Render, "dirty");
+                    }
+                    if (!isRestrictionTarget && isRestrictioned) {
+                        OldStorage.TagMember.remove(pass, "@restriction", item.task);
+                        (_d = Render.updateWindow) === null || _d === void 0 ? void 0 : _d.call(Render, "dirty");
                     }
                 }
                 MigrateBridge.updateTermCategory(pass, item);
@@ -7190,6 +7219,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.accentProgressColor = "#22884466";
             Render.activeProgressColor = "#6F7F0088";
             Render.activeDisabledColor = "#6F7F0055";
+            Render.deleteProgressColor = "#831B5088";
+            Render.deleteDisabledColor = "#831B5055";
             Render.backgroundLinerGradient = function (leftPercent, leftColor, rightColor) {
                 return "background: linear-gradient(to right, " + leftColor + " " + leftPercent + ", " + rightColor + " " + leftPercent + ");";
             };
@@ -7204,10 +7235,15 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.progressPickupTitleStyle = function (progress) {
                 return Render.progressStyleCore(Render.activeProgressColor, Render.activeDisabledColor, "rgba(" + Render.disabledColorRGB + ",0.0)", progress);
             };
+            Render.progressRestrictionTitleStyle = function (progress) {
+                return Render.progressStyleCore(Render.deleteProgressColor, Render.deleteDisabledColor, "rgba(" + Render.disabledColorRGB + ",0.0)", progress);
+            };
             Render.progressTitleStyle = function (pass, item) {
-                return OldStorage.TagMember.isPickupTask(pass, item.task) ?
-                    Render.progressPickupTitleStyle(item.progress) :
-                    Render.progressDefaultTitleStyle(item.progress);
+                return OldStorage.TagMember.isRestrictionTask(pass, item.task) ?
+                    Render.progressRestrictionTitleStyle(item.progress) :
+                    OldStorage.TagMember.isPickupTask(pass, item.task) ?
+                        Render.progressPickupTitleStyle(item.progress) :
+                        Render.progressDefaultTitleStyle(item.progress);
             };
             Render.progressDefaultInformationStyle = function (progress) {
                 return Render.progressStyleCore(Render.accentProgressColor, "rgba(" + Render.disabledColorRGB + ",0.4)", "rgba(" + Render.disabledColorRGB + ",0.2)", progress);
@@ -7215,10 +7251,15 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.progressPickupInformationStyle = function (progress) {
                 return Render.progressStyleCore(Render.activeProgressColor, Render.activeDisabledColor, "rgba(" + Render.disabledColorRGB + ",0.2)", progress);
             };
+            Render.progressRestrictionInformationStyle = function (progress) {
+                return Render.progressStyleCore(Render.deleteProgressColor, Render.deleteDisabledColor, "rgba(" + Render.disabledColorRGB + ",0.2)", progress);
+            };
             Render.progressInformationStyle = function (pass, item) {
-                return OldStorage.TagMember.isPickupTask(pass, item.task) ?
-                    Render.progressPickupInformationStyle(item.progress) :
-                    Render.progressDefaultInformationStyle(item.progress);
+                return OldStorage.TagMember.isRestrictionTask(pass, item.task) ?
+                    Render.progressRestrictionInformationStyle(item.progress) :
+                    OldStorage.TagMember.isPickupTask(pass, item.task) ?
+                        Render.progressPickupInformationStyle(item.progress) :
+                        Render.progressDefaultInformationStyle(item.progress);
             };
             Render.labelSpan = Render.$span("label");
             Render.label = function (label) { return Render.labelSpan([
@@ -8273,12 +8314,54 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 _d = _d.concat([
                                                                     _o.sent()
                                                                 ]);
+                                                                return [4 /*yield*/, Promise.all([30, 40, 50, 60, 70,].map(function (elapsedTimeStandardScore) { return __awaiter(_this, void 0, void 0, function () {
+                                                                        var _a;
+                                                                        var _this = this;
+                                                                        var _b;
+                                                                        return __generator(this, function (_c) {
+                                                                            switch (_c.label) {
+                                                                                case 0:
+                                                                                    _a = {
+                                                                                        tag: "button",
+                                                                                        className: "check-button " + (("elapsed-time-standard-score" === ((_b = settings.pickup) === null || _b === void 0 ? void 0 : _b.type) && elapsedTimeStandardScore === (settings === null || settings === void 0 ? void 0 : settings.pickup.elapsedTimeStandardScore)) ? "checked" : "")
+                                                                                    };
+                                                                                    return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                                                case 1: return [2 /*return*/, (_a.children = [
+                                                                                        _c.sent(),
+                                                                                        Render.$span("")([Render.label("pickup.elapsed-time"), ": " + elapsedTimeStandardScore])
+                                                                                    ],
+                                                                                        _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                            return __generator(this, function (_a) {
+                                                                                                switch (_a.label) {
+                                                                                                    case 0:
+                                                                                                        settings.pickup =
+                                                                                                            {
+                                                                                                                type: "elapsed-time-standard-score",
+                                                                                                                elapsedTimeStandardScore: elapsedTimeStandardScore,
+                                                                                                            };
+                                                                                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                                                                                        result = true;
+                                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                                    case 1:
+                                                                                                        _a.sent();
+                                                                                                        return [2 /*return*/];
+                                                                                                }
+                                                                                            });
+                                                                                        }); },
+                                                                                        _a)];
+                                                                            }
+                                                                        });
+                                                                    }); }))];
+                                                            case 4:
+                                                                _d = _d.concat([
+                                                                    _o.sent()
+                                                                ]);
                                                                 _g = {
                                                                     tag: "button",
                                                                     className: "check-button " + ("expired" === ((_m = settings.pickup) === null || _m === void 0 ? void 0 : _m.type) ? "checked" : "")
                                                                 };
                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
-                                                            case 4: return [2 /*return*/, _b.apply(_a, _c.concat([_d.concat([
+                                                            case 5: return [2 /*return*/, _b.apply(_a, _c.concat([_d.concat([
                                                                         (_g.children = [
                                                                             _o.sent(),
                                                                             Render.$span("")(Render.label("pickup.expired"))
@@ -8288,6 +8371,232 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                     switch (_a.label) {
                                                                                         case 0:
                                                                                             settings.pickup = { type: "expired" };
+                                                                                            OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                                                                            result = true;
+                                                                                            return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                        case 1:
+                                                                                            _a.sent();
+                                                                                            return [2 /*return*/];
+                                                                                    }
+                                                                                });
+                                                                            }); },
+                                                                            _g)
+                                                                    ])]))];
+                                                        }
+                                                    });
+                                                }); };
+                                                return [4 /*yield*/, tagButtonListUpdate()];
+                                            case 1:
+                                                _a.sent();
+                                                ui = Render.popup({
+                                                    // className: "add-remove-tags-popup",
+                                                    children: [
+                                                        Render.$tag("h2")("")(locale.map("Pickup setting") + ": " + entry.task),
+                                                        tagButtonList,
+                                                        Render.$div("popup-operator")([{
+                                                                tag: "button",
+                                                                className: "default-button",
+                                                                children: Render.label("Close"),
+                                                                onclick: function () {
+                                                                    ui.close();
+                                                                },
+                                                            }]),
+                                                    ],
+                                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                        return [2 /*return*/, resolve(result)];
+                                                    }); }); },
+                                                });
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); })];
+                            case 1: return [2 /*return*/, _a.sent()];
+                        }
+                    });
+                });
+            };
+            Render.todoRestrictionSettingsPopup = function (pass, entry, settings) {
+                if (settings === void 0) { settings = OldStorage.TodoSettings.get(pass, entry.task); }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                    var result, tagButtonList, tagButtonListUpdate, ui;
+                                    var _this = this;
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                result = false;
+                                                tagButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
+                                                tagButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    var _a, _b, _c, _d;
+                                                    var _e, _f, _g;
+                                                    var _this = this;
+                                                    var _h, _j, _k, _l, _m;
+                                                    return __generator(this, function (_o) {
+                                                        switch (_o.label) {
+                                                            case 0:
+                                                                _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                                _c = [tagButtonList];
+                                                                _e = {
+                                                                    tag: "button",
+                                                                    className: "check-button " + ("none" === ((_h = settings.restriction) !== null && _h !== void 0 ? _h : "none") ? "checked" : "")
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 1:
+                                                                _d = [
+                                                                    (_e.children = [
+                                                                        _o.sent(),
+                                                                        Render.$span("")(Render.label("pickup.none"))
+                                                                    ],
+                                                                        _e.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            return __generator(this, function (_a) {
+                                                                                switch (_a.label) {
+                                                                                    case 0:
+                                                                                        settings.restriction = null;
+                                                                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                                                                        result = true;
+                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                    case 1:
+                                                                                        _a.sent();
+                                                                                        return [2 /*return*/];
+                                                                                }
+                                                                            });
+                                                                        }); },
+                                                                        _e)
+                                                                ];
+                                                                _f = {
+                                                                    tag: "button",
+                                                                    className: "check-button " + ("always" === ((_j = settings.restriction) === null || _j === void 0 ? void 0 : _j.type) ? "checked" : "")
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 2:
+                                                                _d = _d.concat([
+                                                                    (_f.children = [
+                                                                        _o.sent(),
+                                                                        Render.$span("")(Render.label("pickup.always"))
+                                                                    ],
+                                                                        _f.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            return __generator(this, function (_a) {
+                                                                                switch (_a.label) {
+                                                                                    case 0:
+                                                                                        settings.restriction = { type: "always" };
+                                                                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                                                                        result = true;
+                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                    case 1:
+                                                                                        _a.sent();
+                                                                                        return [2 /*return*/];
+                                                                                }
+                                                                            });
+                                                                        }); },
+                                                                        _f)
+                                                                ]);
+                                                                return [4 /*yield*/, Promise.all(Render.getTodoPickupSettingsElapsedTimePreset(entry)
+                                                                        .concat([(_l = (_k = settings.pickup) === null || _k === void 0 ? void 0 : _k.elapsedTime) !== null && _l !== void 0 ? _l : 0])
+                                                                        .filter(function (i) { return 0 < i; })
+                                                                        .filter(exports.uniqueFilter)
+                                                                        .sort(minamo_js_1.minamo.core.comparer.basic)
+                                                                        .map(function (elapsedTime) { return __awaiter(_this, void 0, void 0, function () {
+                                                                        var _a;
+                                                                        var _this = this;
+                                                                        var _b;
+                                                                        return __generator(this, function (_c) {
+                                                                            switch (_c.label) {
+                                                                                case 0:
+                                                                                    _a = {
+                                                                                        tag: "button",
+                                                                                        className: "check-button " + (("elapsed-time" === ((_b = settings.restriction) === null || _b === void 0 ? void 0 : _b.type) && elapsedTime === (settings === null || settings === void 0 ? void 0 : settings.restriction.elapsedTime)) ? "checked" : "")
+                                                                                    };
+                                                                                    return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                                                case 1: return [2 /*return*/, (_a.children = [
+                                                                                        _c.sent(),
+                                                                                        Render.$span("")([Render.label("pickup.elapsed-time"), ": ", Domain.timeLongStringFromTick(elapsedTime)])
+                                                                                    ],
+                                                                                        _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                            return __generator(this, function (_a) {
+                                                                                                switch (_a.label) {
+                                                                                                    case 0:
+                                                                                                        settings.restriction =
+                                                                                                            {
+                                                                                                                type: "elapsed-time",
+                                                                                                                elapsedTime: elapsedTime,
+                                                                                                            };
+                                                                                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                                                                                        result = true;
+                                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                                    case 1:
+                                                                                                        _a.sent();
+                                                                                                        return [2 /*return*/];
+                                                                                                }
+                                                                                            });
+                                                                                        }); },
+                                                                                        _a)];
+                                                                            }
+                                                                        });
+                                                                    }); }))];
+                                                            case 3:
+                                                                _d = _d.concat([
+                                                                    _o.sent()
+                                                                ]);
+                                                                return [4 /*yield*/, Promise.all([30, 40, 50, 60, 70,].map(function (elapsedTimeStandardScore) { return __awaiter(_this, void 0, void 0, function () {
+                                                                        var _a;
+                                                                        var _this = this;
+                                                                        var _b;
+                                                                        return __generator(this, function (_c) {
+                                                                            switch (_c.label) {
+                                                                                case 0:
+                                                                                    _a = {
+                                                                                        tag: "button",
+                                                                                        className: "check-button " + (("elapsed-time-standard-score" === ((_b = settings.restriction) === null || _b === void 0 ? void 0 : _b.type) && elapsedTimeStandardScore === (settings === null || settings === void 0 ? void 0 : settings.restriction.elapsedTimeStandardScore)) ? "checked" : "")
+                                                                                    };
+                                                                                    return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                                                case 1: return [2 /*return*/, (_a.children = [
+                                                                                        _c.sent(),
+                                                                                        Render.$span("")([Render.label("pickup.elapsed-time"), ": " + elapsedTimeStandardScore])
+                                                                                    ],
+                                                                                        _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                            return __generator(this, function (_a) {
+                                                                                                switch (_a.label) {
+                                                                                                    case 0:
+                                                                                                        settings.restriction =
+                                                                                                            {
+                                                                                                                type: "elapsed-time-standard-score",
+                                                                                                                elapsedTimeStandardScore: elapsedTimeStandardScore,
+                                                                                                            };
+                                                                                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                                                                                        result = true;
+                                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                                    case 1:
+                                                                                                        _a.sent();
+                                                                                                        return [2 /*return*/];
+                                                                                                }
+                                                                                            });
+                                                                                        }); },
+                                                                                        _a)];
+                                                                            }
+                                                                        });
+                                                                    }); }))];
+                                                            case 4:
+                                                                _d = _d.concat([
+                                                                    _o.sent()
+                                                                ]);
+                                                                _g = {
+                                                                    tag: "button",
+                                                                    className: "check-button " + ("expired" === ((_m = settings.restriction) === null || _m === void 0 ? void 0 : _m.type) ? "checked" : "")
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 5: return [2 /*return*/, _b.apply(_a, _c.concat([_d.concat([
+                                                                        (_g.children = [
+                                                                            _o.sent(),
+                                                                            Render.$span("")(Render.label("pickup.expired"))
+                                                                        ],
+                                                                            _g.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                return __generator(this, function (_a) {
+                                                                                    switch (_a.label) {
+                                                                                        case 0:
+                                                                                            settings.restriction = { type: "expired" };
                                                                                             OldStorage.TodoSettings.set(pass, entry.task, settings);
                                                                                             result = true;
                                                                                             return [4 /*yield*/, tagButtonListUpdate()];
@@ -11869,7 +12178,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Feb 21 2022 23:30:32 GMT+0900 (日本標準時)', buildTimestampTick: '1645453832609', })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Feb 22 2022 19:56:51 GMT+0900 (日本標準時)', buildTimestampTick: '1645527411877', })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

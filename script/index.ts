@@ -114,7 +114,7 @@ export module CyclicToDo
     }
     export interface PickupSettingBase
     {
-        type: "always" | "elapsed-time" | "expired";
+        type: "always" | "elapsed-time" | "elapsed-time-standard-score" | "expired";
     }
     export interface PickupSettingAlways extends PickupSettingBase
     {
@@ -125,14 +125,21 @@ export module CyclicToDo
         type: "elapsed-time";
         elapsedTime: number;
     }
+    export interface PickupSettingElapsedTimeStandardScore extends PickupSettingBase
+    {
+        type: "elapsed-time-standard-score";
+        elapsedTimeStandardScore: number;
+    }
     export interface PickupSettingExpired extends PickupSettingBase
     {
         type: "expired";
     }
-    export type PickupSetting = PickupSettingAlways | PickupSettingElapsedTime | PickupSettingExpired;
+    export type PickupSetting = PickupSettingAlways | PickupSettingElapsedTime | PickupSettingElapsedTimeStandardScore | PickupSettingExpired;
+    export type RestrictionSetting = PickupSettingAlways | PickupSettingElapsedTime | PickupSettingElapsedTimeStandardScore | PickupSettingExpired;
     export interface TodoSettings
     {
         pickup?: PickupSetting;
+        restriction?: RestrictionSetting;
     }
     export interface DocumentCard
     {
@@ -509,6 +516,7 @@ export module CyclicToDo
                 }
             };
             export const isMember = (pass: string, tag: string, todo: string) => 0 <= get(pass, tag).indexOf(todo);
+            export const isRestrictionTask = (pass: string, todo: string) => isMember(pass, "@restriction", todo);
             export const isPickupTask = (pass: string, todo: string) => isMember(pass, "@pickup", todo);
         }
         export module TagSettings
@@ -638,22 +646,40 @@ export module CyclicToDo
             export const set = (pass: string, task: string, settings: CyclicToDo.TodoSettings) =>
                 getStorage(pass).set(makeKey(pass, task), settings);
             export const remove = (pass: string, task: string) => getStorage(pass).remove(makeKey(pass, task));
-            export const isPickupTarget = (pass: string, task: string, elapsedTime: number | null, isExpired: boolean) =>
+            export const isPickupTarget = (pass: string, task: string, elapsedTime: number | null, standardScore: number | null, isExpired: boolean) =>
             {
                 const pickupSetting = get(pass, task)?.pickup;
                 if (pickupSetting)
                 {
-                    if ("always" === pickupSetting.type)
+                    switch(pickupSetting.type)
                     {
+                    case "always":
                         return true;
+                    case "elapsed-time":
+                        return null !== elapsedTime && pickupSetting.elapsedTime <= elapsedTime;
+                    case "elapsed-time-standard-score":
+                        return null !== elapsedTime && pickupSetting.elapsedTimeStandardScore <= standardScore;
+                    case "expired":
+                        return isExpired;
                     }
-                    if (null !== elapsedTime && "elapsed-time" === pickupSetting.type && pickupSetting.elapsedTime <= elapsedTime)
+                }
+                return false;
+            };
+            export const isRestrictionTarget = (pass: string, task: string, elapsedTime: number | null, standardScore: number | null, isExpired: boolean) =>
+            {
+                const restrictionSetting = get(pass, task)?.restriction;
+                if (restrictionSetting)
+                {
+                    switch(restrictionSetting.type)
                     {
+                    case "always":
                         return true;
-                    }
-                    if (isExpired && "expired" === pickupSetting.type)
-                    {
-                        return true;
+                    case "elapsed-time":
+                        return null !== elapsedTime && elapsedTime < restrictionSetting.elapsedTime;
+                    case "elapsed-time-standard-score":
+                        return null !== elapsedTime && standardScore < restrictionSetting.elapsedTimeStandardScore;
+                    case "expired":
+                        return ! isExpired;
                     }
                 }
                 return false;
@@ -1724,7 +1750,14 @@ export module CyclicToDo
             }
             if ("string" === typeof pass)
             {
-                const isPickupTarget = OldStorage.TodoSettings.isPickupTarget(pass, item.task, item.elapsed, null !== item.expectedInterval && item.expectedInterval.max < item.elapsed);
+                const isPickupTarget = OldStorage.TodoSettings.isPickupTarget
+                (
+                    pass,
+                    item.task,
+                    item.elapsed,
+                    null !== item.RecentlyStandardDeviation ? Calculate.standardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, item.elapsed): null,
+                    null !== item.expectedInterval && item.expectedInterval.max < item.elapsed
+                );
                 const isPickuped = OldStorage.TagMember.isPickupTask(pass, item.task);
                 if (isPickupTarget && ! isPickuped)
                 {
@@ -1734,6 +1767,25 @@ export module CyclicToDo
                 if ( ! isPickupTarget && isPickuped)
                 {
                     OldStorage.TagMember.remove(pass, "@pickup", item.task);
+                    Render.updateWindow?.("dirty");
+                }
+                const isRestrictionTarget = OldStorage.TodoSettings.isRestrictionTarget
+                (
+                    pass,
+                    item.task,
+                    item.elapsed,
+                    null !== item.RecentlyStandardDeviation ? Calculate.standardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, item.elapsed): null,
+                    null !== item.expectedInterval && item.expectedInterval.max < item.elapsed
+                );
+                const isRestrictioned = OldStorage.TagMember.isRestrictionTask(pass, item.task);
+                if (isRestrictionTarget && ! isRestrictioned)
+                {
+                    OldStorage.TagMember.add(pass, "@restriction", item.task);
+                    Render.updateWindow?.("dirty");
+                }
+                if ( ! isRestrictionTarget && isRestrictioned)
+                {
+                    OldStorage.TagMember.remove(pass, "@restriction", item.task);
                     Render.updateWindow?.("dirty");
                 }
             }
@@ -1961,6 +2013,8 @@ export module CyclicToDo
         export const accentProgressColor = "#22884466";
         export const activeProgressColor = "#6F7F0088";
         export const activeDisabledColor = "#6F7F0055";
+        export const deleteProgressColor = "#831B5088";
+        export const deleteDisabledColor = "#831B5055";
         export const backgroundLinerGradient = (leftPercent: string, leftColor: string, rightColor: string) =>
             `background: linear-gradient(to right, ${leftColor} ${leftPercent}, ${rightColor} ${leftPercent});`;
         export const progressStyleCore = (progressColor: string, disabledColor: string, backgroundColor: string, progress: number | null) => null === progress ?
@@ -1989,7 +2043,17 @@ export module CyclicToDo
                 `rgba(${disabledColorRGB},0.0)`,
                 progress
             );
+        export const progressRestrictionTitleStyle = (progress: number | null) =>
+            progressStyleCore
+            (
+                deleteProgressColor,
+                deleteDisabledColor,
+                `rgba(${disabledColorRGB},0.0)`,
+                progress
+            );
         export const progressTitleStyle = (pass: string, item: ToDoEntry) =>
+            OldStorage.TagMember.isRestrictionTask(pass, item.task) ?
+                progressRestrictionTitleStyle(item.progress):
             OldStorage.TagMember.isPickupTask(pass, item.task) ?
                 progressPickupTitleStyle(item.progress):
                 progressDefaultTitleStyle(item.progress);
@@ -2009,7 +2073,17 @@ export module CyclicToDo
                 `rgba(${disabledColorRGB},0.2)`,
                 progress
             );
+        export const progressRestrictionInformationStyle = (progress: number | null) =>
+            progressStyleCore
+            (
+                deleteProgressColor,
+                deleteDisabledColor,
+                `rgba(${disabledColorRGB},0.2)`,
+                progress
+            );
         export const progressInformationStyle = (pass: string, item: ToDoEntry) =>
+            OldStorage.TagMember.isRestrictionTask(pass, item.task) ?
+                progressRestrictionInformationStyle(item.progress):
             OldStorage.TagMember.isPickupTask(pass, item.task) ?
                 progressPickupInformationStyle(item.progress):
                 progressDefaultInformationStyle(item.progress);
@@ -2762,27 +2836,54 @@ export module CyclicToDo
                         await Promise.all
                         (
                             getTodoPickupSettingsElapsedTimePreset(entry)
-                            .concat([(settings.pickup as PickupSettingElapsedTime)?.elapsedTime ?? 0])
-                            .filter(i => 0 < i)
-                            .filter(uniqueFilter)
-                            .sort(minamo.core.comparer.basic)
-                            .map
+                                .concat([(settings.pickup as PickupSettingElapsedTime)?.elapsedTime ?? 0])
+                                .filter(i => 0 < i)
+                                .filter(uniqueFilter)
+                                .sort(minamo.core.comparer.basic)
+                                .map
+                                (
+                                    async elapsedTime =>
+                                    ({
+                                        tag: "button",
+                                        className: `check-button ${("elapsed-time" === settings.pickup?.type && elapsedTime === settings?.pickup.elapsedTime) ? "checked": ""}`,
+                                        children:
+                                        [
+                                            await Resource.loadSvgOrCache("check-icon"),
+                                            $span("")([label("pickup.elapsed-time"), ": ", Domain.timeLongStringFromTick(elapsedTime)]),
+                                        ],
+                                        onclick: async () =>
+                                        {
+                                            settings.pickup =
+                                            {
+                                                type: "elapsed-time",
+                                                elapsedTime,
+                                            };
+                                            OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                            result = true;
+                                            await tagButtonListUpdate();
+                                        }
+                                    })
+                                )
+                        ),
+                        await Promise.all
+                        (
+                            [ 30, 40, 50, 60, 70, ].map
                             (
-                                async elapsedTime =>
+                                async elapsedTimeStandardScore =>
                                 ({
                                     tag: "button",
-                                    className: `check-button ${("elapsed-time" === settings.pickup?.type && elapsedTime === settings?.pickup.elapsedTime) ? "checked": ""}`,
+                                    className: `check-button ${("elapsed-time-standard-score" === settings.pickup?.type && elapsedTimeStandardScore === settings?.pickup.elapsedTimeStandardScore) ? "checked": ""}`,
                                     children:
                                     [
                                         await Resource.loadSvgOrCache("check-icon"),
-                                        $span("")([label("pickup.elapsed-time"), ": ", Domain.timeLongStringFromTick(elapsedTime)]),
+                                        $span("")([label("pickup.elapsed-time"), `: ${elapsedTimeStandardScore}`]),
                                     ],
                                     onclick: async () =>
                                     {
                                         settings.pickup =
                                         {
-                                            type: "elapsed-time",
-                                            elapsedTime,
+                                            type: "elapsed-time-standard-score",
+                                            elapsedTimeStandardScore,
                                         };
                                         OldStorage.TodoSettings.set(pass, entry.task, settings);
                                         result = true;
@@ -2802,6 +2903,148 @@ export module CyclicToDo
                             onclick: async () =>
                             {
                                 settings.pickup = { type: "expired" };
+                                OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                    ]
+                );
+                await tagButtonListUpdate();
+                const ui = popup
+                ({
+                    // className: "add-remove-tags-popup",
+                    children:
+                    [
+                        $tag("h2")("")(`${locale.map("Pickup setting")}: ${entry.task}`),
+                        tagButtonList,
+                        $div("popup-operator")
+                        ([{
+                            tag: "button",
+                            className: "default-button",
+                            children: label("Close"),
+                            onclick: () =>
+                            {
+                                ui.close();
+                            },
+                        }]),
+                    ],
+                    onClose: async () => resolve(result),
+                });
+            }
+        );
+        export const todoRestrictionSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
+        (
+            async resolve =>
+            {
+                let result = false;
+                const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
+                const tagButtonListUpdate = async () => minamo.dom.replaceChildren
+                (
+                    tagButtonList,
+                    [
+                        {
+                            tag: "button",
+                            className: `check-button ${"none" === (settings.restriction ?? "none") ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")(label("pickup.none")),
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.restriction = null;
+                                OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                        {
+                            tag: "button",
+                            className: `check-button ${"always" === settings.restriction?.type ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")(label("pickup.always")),
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.restriction = { type: "always" };
+                                OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                        await Promise.all
+                        (
+                            getTodoPickupSettingsElapsedTimePreset(entry)
+                            .concat([(settings.pickup as PickupSettingElapsedTime)?.elapsedTime ?? 0])
+                            .filter(i => 0 < i)
+                            .filter(uniqueFilter)
+                            .sort(minamo.core.comparer.basic)
+                            .map
+                            (
+                                async elapsedTime =>
+                                ({
+                                    tag: "button",
+                                    className: `check-button ${("elapsed-time" === settings.restriction?.type && elapsedTime === settings?.restriction.elapsedTime) ? "checked": ""}`,
+                                    children:
+                                    [
+                                        await Resource.loadSvgOrCache("check-icon"),
+                                        $span("")([label("pickup.elapsed-time"), ": ", Domain.timeLongStringFromTick(elapsedTime)]),
+                                    ],
+                                    onclick: async () =>
+                                    {
+                                        settings.restriction =
+                                        {
+                                            type: "elapsed-time",
+                                            elapsedTime,
+                                        };
+                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                        result = true;
+                                        await tagButtonListUpdate();
+                                    }
+                                })
+                            )
+                        ),
+                        await Promise.all
+                        (
+                            [ 30, 40, 50, 60, 70, ].map
+                            (
+                                async elapsedTimeStandardScore =>
+                                ({
+                                    tag: "button",
+                                    className: `check-button ${("elapsed-time-standard-score" === settings.restriction?.type && elapsedTimeStandardScore === settings?.restriction.elapsedTimeStandardScore) ? "checked": ""}`,
+                                    children:
+                                    [
+                                        await Resource.loadSvgOrCache("check-icon"),
+                                        $span("")([label("pickup.elapsed-time"), `: ${elapsedTimeStandardScore}`]),
+                                    ],
+                                    onclick: async () =>
+                                    {
+                                        settings.restriction =
+                                        {
+                                            type: "elapsed-time-standard-score",
+                                            elapsedTimeStandardScore,
+                                        };
+                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                        result = true;
+                                        await tagButtonListUpdate();
+                                    }
+                                })
+                            )
+                        ),
+                        {
+                            tag: "button",
+                            className: `check-button ${"expired" === settings.restriction?.type ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")(label("pickup.expired")),
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.restriction = { type: "expired" };
                                 OldStorage.TodoSettings.set(pass, entry.task, settings);
                                 result = true;
                                 await tagButtonListUpdate();
