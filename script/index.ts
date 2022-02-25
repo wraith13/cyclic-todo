@@ -5890,7 +5890,11 @@ export module CyclicToDo
         await showPage();
         if ("reload" === (<any>performance.getEntriesByType("navigation"))?.[0]?.type)
         {
-            Render.makeToast({ content: Render.$span("")(`ビルドタイムスタンプ: ${Domain.dateStringFromTick(params.buildTimestampTick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - params.buildTimestampTick) /Domain.timeAccuracy)} 前 )`), });
+            Render.makeToast
+            ({
+                content: Render.$span("")(`ビルドタイムスタンプ: ${Domain.dateStringFromTick(params.buildTimestampTick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - params.buildTimestampTick) /Domain.timeAccuracy)} 前 )`),
+                isWideContent: true,
+            });
         }
     };
     export const showPage = async (url: string = location.href, _wait: number = 0) =>

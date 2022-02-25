@@ -403,11 +403,11 @@ h1
         // padding: 2rem 1.5rem;
         display: flex;
         flex-direction: row;
-        justify-content: stretch;
+        justify-content: center;
         align-items: center;
-        & > button:first-child,
-        & > div:first-child,
-        & > span:first-child
+        & > button:first-child:not(:last-child),
+        & > div:first-child:not(:last-child),
+        & > span:first-child:not(:last-child)
         {
             min-width: calc(100% / 4);
             max-width: calc(100% / 4);
@@ -421,13 +421,20 @@ h1
             max-width: calc(100% / 2);
             text-align: center;
         }
-        & > button:last-child,
-        & > div:last-child,
-        & > span:last-child
+        & > button:last-child:not(:first-child),
+        & > div:last-child:not(:first-child),
+        & > span:last-child:not(:first-child)
         {
             min-width: calc(100% / 4);
             max-width: calc(100% / 4);
             text-align: right;
+        }
+        & > button:first-child:last-child,
+        & > div:first-child:last-child,
+        & > span:first-child:last-child
+        {
+            max-width: 100%;
+            text-align: left;
         }
     }
 }
