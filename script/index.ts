@@ -3058,7 +3058,7 @@ export module CyclicToDo
                     // className: "add-remove-tags-popup",
                     children:
                     [
-                        $tag("h2")("")(`${locale.map("Pickup setting")}: ${entry.task}`),
+                        $tag("h2")("")(`${locale.map("Restriction setting")}: ${entry.task}`),
                         tagButtonList,
                         $div("popup-operator")
                         ([{
@@ -3369,6 +3369,17 @@ export module CyclicToDo
             ),
             menuItem
             (
+                label("Restriction setting"),
+                async () =>
+                {
+                    if (await todoRestrictionSettingsPopup(pass, item))
+                    {
+                        updateWindow("timer");
+                    }
+                }
+            ),
+            menuItem
+            (
                 label("Add/Remove Tag"),
                 async () =>
                 {
@@ -3405,6 +3416,10 @@ export module CyclicToDo
         );
         export const getTodoIcon = (entry: ToDoTagEntryOld, item: ToDoEntry): Resource.KeyType =>
         {
+            if (OldStorage.TagMember.isRestrictionTask(entry.pass, item.task))
+            {
+                return "forbidden-icon";
+            }
             if (OldStorage.TagMember.isPickupTask(entry.pass, item.task))
             {
                 return "pickup-icon";
