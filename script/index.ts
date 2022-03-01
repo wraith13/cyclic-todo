@@ -2005,6 +2005,14 @@ export module CyclicToDo
             href: data.href,
             children: data.children,
         });
+        export const linkButton = (data: { className?: string, children: minamo.dom.Source, onclick: (event: MouseEvent) => unknown}) =>
+        ({
+            tag: "a",
+            className: data.className,
+            href: "",
+            children: data.children,
+            onclick: data.onclick
+        });
         export const $make = minamo.dom.make;
         export const $tag = minamo.dom.tag;
         export const $div = $tag("div");
@@ -3538,25 +3546,61 @@ export module CyclicToDo
                     ]),
                     "full" === displayStyle ?
                         [
-                            $div("item-tags")
-                            (
-                                await Promise.all
+                            $div("item-attribute")
+                            ([
+                                $div("item-tags")
                                 (
-                                    OldStorage.Tag.getByTodo(entry.pass, item.task).map
+                                    await Promise.all
                                     (
-                                        async tag => internalLink
+                                        OldStorage.Tag.getByTodo(entry.pass, item.task).map
+                                        (
+                                            async tag => internalLink
+                                            ({
+                                                className: "tag",
+                                                href: { pass: entry.pass, tag, },
+                                                children:
+                                                [
+                                                    await Resource.loadTagSvgOrCache(tag),
+                                                    Domain.tagMap(tag)
+                                                ],
+                                            })
+                                        )
+                                    )
+                                ),
+                                $div("item-settings")
+                                ([
+                                    null !== (OldStorage.TodoSettings.get(entry.pass, item.task).pickup ?? null) ?
+                                        linkButton
                                         ({
                                             className: "tag",
-                                            href: { pass: entry.pass, tag, },
-                                            children:
-                                            [
-                                                await Resource.loadTagSvgOrCache(tag),
-                                                Domain.tagMap(tag)
-                                            ],
-                                        })
-                                    )
-                                )
-                            ),
+                                            children: await Resource.loadTagSvgOrCache("@pickup"),
+                                            onclick: async (event: MouseEvent) =>
+                                            {
+                                                event.preventDefault();
+                                                if (await todoPickupSettingsPopup(entry.pass, item))
+                                                {
+                                                    updateWindow("timer");
+                                                }
+                                            }
+                                        }):
+                                        [],
+                                    null !== (OldStorage.TodoSettings.get(entry.pass, item.task).restriction ?? null) ?
+                                        linkButton
+                                        ({
+                                            className: "tag",
+                                            children: await Resource.loadTagSvgOrCache("@restriction"),
+                                            onclick: async (event: MouseEvent) =>
+                                            {
+                                                event.preventDefault();
+                                                if (await todoRestrictionSettingsPopup(entry.pass, item))
+                                                {
+                                                    updateWindow("timer");
+                                                }
+                                            }
+                                        }):
+                                        [],
+                                ]),
+                            ]),
                             informationDigest(entry, item),
                         ]:
                         []
@@ -5051,6 +5095,8 @@ export module CyclicToDo
                         return "home-icon";
                     case "@pickup":
                         return "pickup-icon";
+                    case "@restriction":
+                        return "forbidden-icon";
                     case "@short-term":
                         return "short-term-icon";
                     case "@medium-term":

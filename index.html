@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Tue Mar 01 2022 10:01:11 GMT+0900 (日本標準時)
+    build at: Tue Mar 01 2022 23:00:09 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -1540,53 +1540,106 @@ body.light .task-item .item-header .item-title,
 body.light .removed-item .item-header .item-title {
   max-width: calc(100% - 180px);
 }
-body.light .task-item .item-tags {
+body.light .task-item .item-attribute {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #8884;
+}
+body.light .task-item .item-attribute .item-tags {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   padding: 0.5rem;
   margin: 0px;
-  background-color: #8884;
   height: 1rem;
   position: relative;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: start;
-}
-body.light .task-item .item-tags a {
   display: inline-flex;
   flex-direction: row;
   align-items: center;
   justify-content: start;
 }
-body.light .task-item .item-tags a svg {
+body.light .task-item .item-attribute .item-tags a {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+}
+body.light .task-item .item-attribute .item-tags a svg {
   width: 1rem;
   height: 1rem;
   margin-right: 4px;
 }
 @media (hover: hover) {
-  body.light .task-item .item-tags a:not(:hover) {
+  body.light .task-item .item-attribute .item-tags a:not(:hover) {
     opacity: 0.6;
     text-decoration: none;
     color: #000022;
     fill: #000022;
   }
-  body.light .task-item .item-tags a:hover {
+  body.light .task-item .item-attribute .item-tags a:hover {
     color: #6F7F00;
     fill: #6F7F00;
   }
 }
 @media (hover: none) {
-  body.light .task-item .item-tags a {
+  body.light .task-item .item-attribute .item-tags a {
     opacity: 0.6;
     text-decoration: none;
     color: #000022;
     fill: #000022;
   }
 }
-body.light .task-item .item-tags a + a {
+body.light .task-item .item-attribute .item-tags a + a {
   margin-left: 1rem;
+}
+body.light .task-item .item-attribute .item-settings {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0.5rem;
+  margin: 0px;
+  height: 1rem;
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: end;
+}
+body.light .task-item .item-attribute .item-settings a {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+}
+body.light .task-item .item-attribute .item-settings a svg {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 4px;
+}
+@media (hover: hover) {
+  body.light .task-item .item-attribute .item-settings a:not(:hover) {
+    opacity: 0.6;
+    text-decoration: none;
+    color: #000022;
+    fill: #000022;
+  }
+  body.light .task-item .item-attribute .item-settings a:hover {
+    color: #6F7F00;
+    fill: #6F7F00;
+  }
+}
+@media (hover: none) {
+  body.light .task-item .item-attribute .item-settings a {
+    opacity: 0.6;
+    text-decoration: none;
+    color: #000022;
+    fill: #000022;
+  }
+}
+body.light .task-item .item-attribute .item-settings a + a {
+  margin-left: 0.25rem;
 }
 body.light .task-item .item-information {
   padding: 0.5rem;
@@ -3364,53 +3417,106 @@ body.dark .task-item .item-header .item-title,
 body.dark .removed-item .item-header .item-title {
   max-width: calc(100% - 180px);
 }
-body.dark .task-item .item-tags {
+body.dark .task-item .item-attribute {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #8884;
+}
+body.dark .task-item .item-attribute .item-tags {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   padding: 0.5rem;
   margin: 0px;
-  background-color: #8884;
   height: 1rem;
   position: relative;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: start;
-}
-body.dark .task-item .item-tags a {
   display: inline-flex;
   flex-direction: row;
   align-items: center;
   justify-content: start;
 }
-body.dark .task-item .item-tags a svg {
+body.dark .task-item .item-attribute .item-tags a {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+}
+body.dark .task-item .item-attribute .item-tags a svg {
   width: 1rem;
   height: 1rem;
   margin-right: 4px;
 }
 @media (hover: hover) {
-  body.dark .task-item .item-tags a:not(:hover) {
+  body.dark .task-item .item-attribute .item-tags a:not(:hover) {
     opacity: 0.6;
     text-decoration: none;
     color: #FFFFFF;
     fill: #FFFFFF;
   }
-  body.dark .task-item .item-tags a:hover {
+  body.dark .task-item .item-attribute .item-tags a:hover {
     color: #6F7F00;
     fill: #6F7F00;
   }
 }
 @media (hover: none) {
-  body.dark .task-item .item-tags a {
+  body.dark .task-item .item-attribute .item-tags a {
     opacity: 0.6;
     text-decoration: none;
     color: #FFFFFF;
     fill: #FFFFFF;
   }
 }
-body.dark .task-item .item-tags a + a {
+body.dark .task-item .item-attribute .item-tags a + a {
   margin-left: 1rem;
+}
+body.dark .task-item .item-attribute .item-settings {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0.5rem;
+  margin: 0px;
+  height: 1rem;
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: end;
+}
+body.dark .task-item .item-attribute .item-settings a {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+}
+body.dark .task-item .item-attribute .item-settings a svg {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 4px;
+}
+@media (hover: hover) {
+  body.dark .task-item .item-attribute .item-settings a:not(:hover) {
+    opacity: 0.6;
+    text-decoration: none;
+    color: #FFFFFF;
+    fill: #FFFFFF;
+  }
+  body.dark .task-item .item-attribute .item-settings a:hover {
+    color: #6F7F00;
+    fill: #6F7F00;
+  }
+}
+@media (hover: none) {
+  body.dark .task-item .item-attribute .item-settings a {
+    opacity: 0.6;
+    text-decoration: none;
+    color: #FFFFFF;
+    fill: #FFFFFF;
+  }
+}
+body.dark .task-item .item-attribute .item-settings a + a {
+  margin-left: 0.25rem;
 }
 body.dark .task-item .item-information {
   padding: 0.5rem;
@@ -7478,6 +7584,15 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     children: data.children,
                 });
             };
+            Render.linkButton = function (data) {
+                return ({
+                    tag: "a",
+                    className: data.className,
+                    href: "",
+                    children: data.children,
+                    onclick: data.onclick
+                });
+            };
             Render.$make = minamo_js_1.minamo.dom.make;
             Render.$tag = minamo_js_1.minamo.dom.tag;
             Render.$div = Render.$tag("div");
@@ -9293,11 +9408,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return "task-icon";
             };
             Render.todoItem = function (entry, item, displayStyle) { return __awaiter(_this, void 0, void 0, function () {
-                var isFirst, onUpdate, onDone, itemDom, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-                var _l;
+                var isFirst, onUpdate, onDone, itemDom, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t;
+                var _u, _v, _w;
                 var _this = this;
-                return __generator(this, function (_m) {
-                    switch (_m.label) {
+                var _x, _y;
+                return __generator(this, function (_z) {
+                    switch (_z.label) {
                         case 0:
                             isFirst = true;
                             onUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -9331,18 +9447,18 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 }));
                             _c = Render.$div("item-header");
                             _d = Render.internalLink;
-                            _l = {
+                            _u = {
                                 className: "item-title",
                                 href: { pass: entry.pass, todo: item.task, }
                             };
                             return [4 /*yield*/, Resource.loadSvgOrCache(Render.getTodoIcon(entry, item))];
                         case 1:
                             _e = [
-                                _d.apply(void 0, [(_l.children = [
-                                        _m.sent(),
+                                _d.apply(void 0, [(_u.children = [
+                                        _z.sent(),
                                         Model.decode(item.task)
                                     ],
-                                        _l)])
+                                        _u)])
                             ];
                             _f = Render.$div("item-operator");
                             _g = [{
@@ -9385,12 +9501,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _h = [
                                 _c.apply(void 0, [_e.concat([
                                         _f.apply(void 0, [_g.concat([
-                                                _m.sent()
+                                                _z.sent()
                                             ])])
                                     ])])
                             ];
-                            if (!("full" === displayStyle)) return [3 /*break*/, 4];
-                            _k = Render.$div("item-tags");
+                            if (!("full" === displayStyle)) return [3 /*break*/, 10];
+                            _k = Render.$div("item-attribute");
+                            _l = Render.$div("item-tags");
                             return [4 /*yield*/, Promise.all(OldStorage.Tag.getByTodo(entry.pass, item.task).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
                                     var _b;
@@ -9412,15 +9529,82 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     });
                                 }); }))];
                         case 3:
+                            _m = [
+                                _l.apply(void 0, [_z.sent()])
+                            ];
+                            _o = Render.$div("item-settings");
+                            if (!(null !== ((_x = OldStorage.TodoSettings.get(entry.pass, item.task).pickup) !== null && _x !== void 0 ? _x : null))) return [3 /*break*/, 5];
+                            _q = Render.linkButton;
+                            _v = {
+                                className: "tag"
+                            };
+                            return [4 /*yield*/, Resource.loadTagSvgOrCache("@pickup")];
+                        case 4:
+                            _p = _q.apply(void 0, [(_v.children = _z.sent(),
+                                    _v.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0:
+                                                    event.preventDefault();
+                                                    return [4 /*yield*/, Render.todoPickupSettingsPopup(entry.pass, item)];
+                                                case 1:
+                                                    if (_a.sent()) {
+                                                        Render.updateWindow("timer");
+                                                    }
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); },
+                                    _v)]);
+                            return [3 /*break*/, 6];
+                        case 5:
+                            _p = [];
+                            _z.label = 6;
+                        case 6:
+                            _r = [
+                                _p
+                            ];
+                            if (!(null !== ((_y = OldStorage.TodoSettings.get(entry.pass, item.task).restriction) !== null && _y !== void 0 ? _y : null))) return [3 /*break*/, 8];
+                            _t = Render.linkButton;
+                            _w = {
+                                className: "tag"
+                            };
+                            return [4 /*yield*/, Resource.loadTagSvgOrCache("@restriction")];
+                        case 7:
+                            _s = _t.apply(void 0, [(_w.children = _z.sent(),
+                                    _w.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0:
+                                                    event.preventDefault();
+                                                    return [4 /*yield*/, Render.todoRestrictionSettingsPopup(entry.pass, item)];
+                                                case 1:
+                                                    if (_a.sent()) {
+                                                        Render.updateWindow("timer");
+                                                    }
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); },
+                                    _w)]);
+                            return [3 /*break*/, 9];
+                        case 8:
+                            _s = [];
+                            _z.label = 9;
+                        case 9:
                             _j = [
-                                _k.apply(void 0, [_m.sent()]),
+                                _k.apply(void 0, [_m.concat([
+                                        _o.apply(void 0, [_r.concat([
+                                                _s
+                                            ])])
+                                    ])]),
                                 Render.informationDigest(entry, item)
                             ];
-                            return [3 /*break*/, 5];
-                        case 4:
+                            return [3 /*break*/, 11];
+                        case 10:
                             _j = [];
-                            _m.label = 5;
-                        case 5:
+                            _z.label = 11;
+                        case 11:
                             itemDom = _a.apply(void 0, [_b.apply(void 0, [_h.concat([
                                         _j
                                     ])])]);
@@ -11347,6 +11531,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             return "home-icon";
                         case "@pickup":
                             return "pickup-icon";
+                        case "@restriction":
+                            return "forbidden-icon";
                         case "@short-term":
                             return "short-term-icon";
                         case "@medium-term":
@@ -12463,7 +12649,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Mar 01 2022 10:01:11 GMT+0900 (日本標準時)', buildTimestampTick: 1646096471722, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Mar 01 2022 23:00:09 GMT+0900 (日本標準時)', buildTimestampTick: 1646143209781, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
