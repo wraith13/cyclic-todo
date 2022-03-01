@@ -4959,25 +4959,61 @@ export module CyclicToDo
             ([
                 $div("task-item flex-item")
                 ([
-                    $div("item-tags")
-                    (
-                        await Promise.all
+                    $div("item-attribute")
+                    ([
+                        $div("item-tags")
                         (
-                            OldStorage.Tag.getByTodo(pass, item.task).map
+                            await Promise.all
                             (
-                                async tag => internalLink
+                                OldStorage.Tag.getByTodo(pass, item.task).map
+                                (
+                                    async tag => internalLink
+                                    ({
+                                        className: "tag",
+                                        href: { pass, tag, },
+                                        children:
+                                        [
+                                            await Resource.loadTagSvgOrCache(tag),
+                                            Domain.tagMap(tag)
+                                        ],
+                                    })
+                                )
+                            )
+                        ),
+                        $div("item-settings")
+                        ([
+                            null !== (OldStorage.TodoSettings.get(pass, item.task).pickup ?? null) ?
+                                linkButton
                                 ({
                                     className: "tag",
-                                    href: { pass, tag, },
-                                    children:
-                                    [
-                                        await Resource.loadTagSvgOrCache(tag),
-                                        Domain.tagMap(tag)
-                                    ],
-                                })
-                            )
-                        )
-                    ),
+                                    children: await Resource.loadTagSvgOrCache("@pickup"),
+                                    onclick: async (event: MouseEvent) =>
+                                    {
+                                        event.preventDefault();
+                                        if (await todoPickupSettingsPopup(pass, item))
+                                        {
+                                            updateWindow("timer");
+                                        }
+                                    }
+                                }):
+                                [],
+                            null !== (OldStorage.TodoSettings.get(pass, item.task).restriction ?? null) ?
+                                linkButton
+                                ({
+                                    className: "tag",
+                                    children: await Resource.loadTagSvgOrCache("@restriction"),
+                                    onclick: async (event: MouseEvent) =>
+                                    {
+                                        event.preventDefault();
+                                        if (await todoRestrictionSettingsPopup(pass, item))
+                                        {
+                                            updateWindow("timer");
+                                        }
+                                    }
+                                }):
+                                [],
+                        ]),
+                    ]),
                     informationFull(pass, item),
                 ]),
             ]),
