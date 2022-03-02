@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Wed Mar 02 2022 06:40:31 GMT+0900 (日本標準時)
+    build at: Wed Mar 02 2022 20:51:51 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -6190,9 +6190,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                     return false;
                 };
-                TodoSettings.isRestrictionTarget = function (pass, task, elapsedTime, standardScore, isExpired) {
+                TodoSettings.isRestrictionTarget = function (pass, item, elapsedTime) {
                     var _a;
-                    var restrictionSetting = (_a = TodoSettings.get(pass, task)) === null || _a === void 0 ? void 0 : _a.restriction;
+                    if (elapsedTime === void 0) { elapsedTime = item.elapsed; }
+                    var restrictionSetting = (_a = TodoSettings.get(pass, item.task)) === null || _a === void 0 ? void 0 : _a.restriction;
                     if (restrictionSetting) {
                         switch (restrictionSetting.type) {
                             case "always":
@@ -6200,8 +6201,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             case "elapsed-time":
                                 return null !== elapsedTime && elapsedTime < restrictionSetting.elapsedTime;
                             case "elapsed-time-standard-score":
+                                var standardScore = null !== item.RecentlyStandardDeviation ? Calculate.standardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, elapsedTime) : null;
                                 return null !== elapsedTime && standardScore < restrictionSetting.elapsedTimeStandardScore;
                             case "expired":
+                                var isExpired = null !== item.expectedInterval && item.expectedInterval.max < elapsedTime;
                                 return !isExpired;
                         }
                     }
@@ -7311,7 +7314,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         OldStorage.TagMember.remove(pass, "@pickup", item.task);
                         (_b = Render.updateWindow) === null || _b === void 0 ? void 0 : _b.call(Render, "dirty");
                     }
-                    var isRestrictionTarget = OldStorage.TodoSettings.isRestrictionTarget(pass, item.task, item.elapsed, null !== item.RecentlyStandardDeviation ? Calculate.standardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, item.elapsed) : null, null !== item.expectedInterval && item.expectedInterval.max < item.elapsed);
+                    var isRestrictionTarget = OldStorage.TodoSettings.isRestrictionTarget(pass, item);
                     var isRestrictioned = OldStorage.TagMember.isRestrictionTask(pass, item.task);
                     if (isRestrictionTarget && !isRestrictioned) {
                         OldStorage.TagMember.add(pass, "@restriction", item.task);
@@ -9689,82 +9692,88 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 });
             }); };
-            Render.tickItem = function (pass, item, tick, interval, max) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c;
-                var _this = this;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
-                        case 0:
-                            _a = Render.$div({
-                                className: "tick-item flex-item ",
-                                style: Render.progressDefaultTitleStyle(null === interval || max < interval ? null : interval / max),
-                            });
-                            return [4 /*yield*/, Resource.loadSvgOrCache(null === interval ? "one-icon" :
-                                    max < interval ? "sleep-icon" :
-                                        "tick-icon")];
-                        case 1:
-                            _b = [
-                                _d.sent(),
-                                Render.$div("item-information")([
-                                    Render.monospace("tick-timestamp", Render.label("timestamp"), Domain.dateStringFromTick(tick)),
-                                    Render.monospace("tick-interval", Render.label("interval"), Domain.timeLongStringFromTick(interval)),
-                                ])
-                            ];
-                            _c = Render.$div("item-operator");
-                            // {
-                            //     tag: "button",
-                            //     className: "default-button main-button",
-                            //     children: "開く",
-                            //     onclick: async () => { }
-                            // },
-                            return [4 /*yield*/, Render.menuButton([
-                                    Render.menuItem(Render.label("Edit"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                        var result, _a, _b;
-                                        return __generator(this, function (_c) {
-                                            switch (_c.label) {
-                                                case 0:
-                                                    _b = (_a = Domain).parseDate;
-                                                    return [4 /*yield*/, Render.dateTimePrompt(locale.map("Edit"), tick)];
-                                                case 1:
-                                                    result = _b.apply(_a, [_c.sent()]);
-                                                    if (!(null !== result && tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())) return [3 /*break*/, 3];
-                                                    OldStorage.History.removeTickRaw(pass, item.task, tick);
-                                                    OldStorage.History.addTick(pass, item.task, Domain.getTicks(result));
-                                                    return [4 /*yield*/, CyclicToDo.reload()];
-                                                case 2:
-                                                    _c.sent();
-                                                    _c.label = 3;
-                                                case 3: return [2 /*return*/];
-                                            }
-                                        });
-                                    }); }),
-                                    Render.menuItem(Render.label("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0:
-                                                    OldStorage.History.removeTick(pass, item.task, tick);
-                                                    return [4 /*yield*/, CyclicToDo.reload()];
-                                                case 1:
-                                                    _a.sent();
-                                                    return [2 /*return*/];
-                                            }
-                                        });
-                                    }); }, "delete-button")
-                                ])];
-                        case 2: return [2 /*return*/, _a.apply(void 0, [_b.concat([
-                                    _c.apply(void 0, [[
-                                            // {
-                                            //     tag: "button",
-                                            //     className: "default-button main-button",
-                                            //     children: "開く",
-                                            //     onclick: async () => { }
-                                            // },
-                                            _d.sent()
-                                        ]])
-                                ])])];
-                    }
+            Render.tickItem = function (pass, item, tick, interval, max, isRestrictioned) {
+                if (isRestrictioned === void 0) { isRestrictioned = OldStorage.TodoSettings.isRestrictionTarget(pass, item, interval); }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var _a, _b, _c;
+                    var _this = this;
+                    return __generator(this, function (_d) {
+                        switch (_d.label) {
+                            case 0:
+                                _a = Render.$div({
+                                    className: "tick-item flex-item ",
+                                    style: (isRestrictioned ?
+                                        Render.progressRestrictionTitleStyle :
+                                        Render.progressDefaultTitleStyle)(null === interval || max < interval ? null : interval / max),
+                                });
+                                return [4 /*yield*/, Resource.loadSvgOrCache(isRestrictioned ? "forbidden-icon" :
+                                        null === interval ? "one-icon" :
+                                            max < interval ? "sleep-icon" :
+                                                "tick-icon")];
+                            case 1:
+                                _b = [
+                                    _d.sent(),
+                                    Render.$div("item-information")([
+                                        Render.monospace("tick-timestamp", Render.label("timestamp"), Domain.dateStringFromTick(tick)),
+                                        Render.monospace("tick-interval", Render.label("interval"), Domain.timeLongStringFromTick(interval)),
+                                    ])
+                                ];
+                                _c = Render.$div("item-operator");
+                                // {
+                                //     tag: "button",
+                                //     className: "default-button main-button",
+                                //     children: "開く",
+                                //     onclick: async () => { }
+                                // },
+                                return [4 /*yield*/, Render.menuButton([
+                                        Render.menuItem(Render.label("Edit"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                            var result, _a, _b;
+                                            return __generator(this, function (_c) {
+                                                switch (_c.label) {
+                                                    case 0:
+                                                        _b = (_a = Domain).parseDate;
+                                                        return [4 /*yield*/, Render.dateTimePrompt(locale.map("Edit"), tick)];
+                                                    case 1:
+                                                        result = _b.apply(_a, [_c.sent()]);
+                                                        if (!(null !== result && tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())) return [3 /*break*/, 3];
+                                                        OldStorage.History.removeTickRaw(pass, item.task, tick);
+                                                        OldStorage.History.addTick(pass, item.task, Domain.getTicks(result));
+                                                        return [4 /*yield*/, CyclicToDo.reload()];
+                                                    case 2:
+                                                        _c.sent();
+                                                        _c.label = 3;
+                                                    case 3: return [2 /*return*/];
+                                                }
+                                            });
+                                        }); }),
+                                        Render.menuItem(Render.label("Delete"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        OldStorage.History.removeTick(pass, item.task, tick);
+                                                        return [4 /*yield*/, CyclicToDo.reload()];
+                                                    case 1:
+                                                        _a.sent();
+                                                        return [2 /*return*/];
+                                                }
+                                            });
+                                        }); }, "delete-button")
+                                    ])];
+                            case 2: return [2 /*return*/, _a.apply(void 0, [_b.concat([
+                                        _c.apply(void 0, [[
+                                                // {
+                                                //     tag: "button",
+                                                //     className: "default-button main-button",
+                                                //     children: "開く",
+                                                //     onclick: async () => { }
+                                                // },
+                                                _d.sent()
+                                            ]])
+                                    ])])];
+                        }
+                    });
                 });
-            }); };
+            };
             Render.dropDownLabel = function (options) {
                 var _a;
                 var dropdown = Render.$make(HTMLSelectElement)({
@@ -12719,7 +12728,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Mar 02 2022 06:40:31 GMT+0900 (日本標準時)', buildTimestampTick: 1646170831794, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Mar 02 2022 20:51:51 GMT+0900 (日本標準時)', buildTimestampTick: 1646221911816, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

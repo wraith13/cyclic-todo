@@ -665,9 +665,9 @@ export module CyclicToDo
                 }
                 return false;
             };
-            export const isRestrictionTarget = (pass: string, task: string, elapsedTime: number | null, standardScore: number | null, isExpired: boolean) =>
+            export const isRestrictionTarget = (pass: string, item: ToDoEntry, elapsedTime = item.elapsed) =>
             {
-                const restrictionSetting = get(pass, task)?.restriction;
+                const restrictionSetting = get(pass, item.task)?.restriction;
                 if (restrictionSetting)
                 {
                     switch(restrictionSetting.type)
@@ -677,8 +677,10 @@ export module CyclicToDo
                     case "elapsed-time":
                         return null !== elapsedTime && elapsedTime < restrictionSetting.elapsedTime;
                     case "elapsed-time-standard-score":
+                        const standardScore = null !== item.RecentlyStandardDeviation ? Calculate.standardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, elapsedTime): null;
                         return null !== elapsedTime && standardScore < restrictionSetting.elapsedTimeStandardScore;
                     case "expired":
+                        const isExpired = null !== item.expectedInterval && item.expectedInterval.max < elapsedTime;
                         return ! isExpired;
                     }
                 }
@@ -1769,14 +1771,7 @@ export module CyclicToDo
                     OldStorage.TagMember.remove(pass, "@pickup", item.task);
                     Render.updateWindow?.("dirty");
                 }
-                const isRestrictionTarget = OldStorage.TodoSettings.isRestrictionTarget
-                (
-                    pass,
-                    item.task,
-                    item.elapsed,
-                    null !== item.RecentlyStandardDeviation ? Calculate.standardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, item.elapsed): null,
-                    null !== item.expectedInterval && item.expectedInterval.max < item.elapsed
-                );
+                const isRestrictionTarget = OldStorage.TodoSettings.isRestrictionTarget(pass, item);
                 const isRestrictioned = OldStorage.TagMember.isRestrictionTask(pass, item.task);
                 if (isRestrictionTarget && ! isRestrictioned)
                 {
@@ -3661,14 +3656,20 @@ export module CyclicToDo
                 []
             ),
         ]);
-        export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null) => $div
+        export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null, isRestrictioned: boolean = OldStorage.TodoSettings.isRestrictionTarget(pass, item, interval)) => $div
         ({
             className: "tick-item flex-item ",
-            style: Render.progressDefaultTitleStyle(null === interval || max < interval ? null: interval /max),
+            style:
+            (
+                isRestrictioned ?
+                    Render.progressRestrictionTitleStyle:
+                    Render.progressDefaultTitleStyle
+            )(null === interval || max < interval ? null: interval /max),
         })
         ([
             await Resource.loadSvgOrCache
             (
+                isRestrictioned ? "forbidden-icon":
                 null === interval ? "one-icon":
                 max < interval ? "sleep-icon":
                 "tick-icon"
