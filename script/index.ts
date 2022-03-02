@@ -646,9 +646,9 @@ export module CyclicToDo
             export const set = (pass: string, task: string, settings: CyclicToDo.TodoSettings) =>
                 getStorage(pass).set(makeKey(pass, task), settings);
             export const remove = (pass: string, task: string) => getStorage(pass).remove(makeKey(pass, task));
-            export const isPickupTarget = (pass: string, task: string, elapsedTime: number | null, standardScore: number | null, isExpired: boolean) =>
+            export const isPickupTarget = (pass: string, item: ToDoEntry, elapsedTime = item.elapsed) =>
             {
-                const pickupSetting = get(pass, task)?.pickup;
+                const pickupSetting = get(pass, item.task)?.pickup;
                 if (pickupSetting)
                 {
                     switch(pickupSetting.type)
@@ -658,9 +658,9 @@ export module CyclicToDo
                     case "elapsed-time":
                         return null !== elapsedTime && pickupSetting.elapsedTime <= elapsedTime;
                     case "elapsed-time-standard-score":
-                        return null !== elapsedTime && pickupSetting.elapsedTimeStandardScore <= standardScore;
+                        return null !== elapsedTime && pickupSetting.elapsedTimeStandardScore <= Domain.getStandardScore(item, elapsedTime);
                     case "expired":
-                        return isExpired;
+                        return Domain.isExpired(item, elapsedTime);
                     }
                 }
                 return false;
@@ -677,11 +677,9 @@ export module CyclicToDo
                     case "elapsed-time":
                         return null !== elapsedTime && elapsedTime < restrictionSetting.elapsedTime;
                     case "elapsed-time-standard-score":
-                        const standardScore = null !== item.RecentlyStandardDeviation ? Calculate.standardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, elapsedTime): null;
-                        return null !== elapsedTime && standardScore < restrictionSetting.elapsedTimeStandardScore;
+                        return null !== elapsedTime && Domain.getStandardScore(item, elapsedTime) < restrictionSetting.elapsedTimeStandardScore;
                     case "expired":
-                        const isExpired = null !== item.expectedInterval && item.expectedInterval.max < elapsedTime;
-                        return ! isExpired;
+                        return ! Domain.isExpired(item, elapsedTime);
                     }
                 }
                 return false;
@@ -1501,6 +1499,13 @@ export module CyclicToDo
                 return Model.decode(tag);
             }
         };
+        export const getStandardScore = (item: ToDoEntry, elapsedTime = item.elapsed) =>
+            null !== item.RecentlyStandardDeviation ?
+                Calculate.standardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, elapsedTime):
+                null;
+        export const isExpired = (item: ToDoEntry, elapsedTime = item.elapsed) =>
+            // null !== item.expectedInterval && item.expectedInterval.max < elapsedTime;
+            (item.expectedInterval?.max ?? Infinity) < (elapsedTime ?? 0);
         export const getDoneTicksOld = (pass: string, key: string = `pass:(${pass}).last.done.ticks`) =>
             minamo.localStorage.set
             (
@@ -1752,14 +1757,7 @@ export module CyclicToDo
             }
             if ("string" === typeof pass)
             {
-                const isPickupTarget = OldStorage.TodoSettings.isPickupTarget
-                (
-                    pass,
-                    item.task,
-                    item.elapsed,
-                    null !== item.RecentlyStandardDeviation ? Calculate.standardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, item.elapsed): null,
-                    null !== item.expectedInterval && item.expectedInterval.max < item.elapsed
-                );
+                const isPickupTarget = OldStorage.TodoSettings.isPickupTarget(pass, item);
                 const isPickuped = OldStorage.TagMember.isPickupTask(pass, item.task);
                 if (isPickupTarget && ! isPickuped)
                 {
