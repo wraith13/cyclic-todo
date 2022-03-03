@@ -2877,7 +2877,7 @@ export module CyclicToDo
                                     children:
                                     [
                                         await Resource.loadSvgOrCache("check-icon"),
-                                        $span("")([label("pickup.elapsed-time"), `: ${elapsedTimeStandardScore}`]),
+                                        $span("")([label("pickup.elapsed-time-standard-score"), `: ${elapsedTimeStandardScore}`]),
                                     ],
                                     onclick: async () =>
                                     {
@@ -3019,7 +3019,7 @@ export module CyclicToDo
                                     children:
                                     [
                                         await Resource.loadSvgOrCache("check-icon"),
-                                        $span("")([label("pickup.elapsed-time"), `: ${elapsedTimeStandardScore}`]),
+                                        $span("")([label("pickup.elapsed-time-standard-score"), `: ${elapsedTimeStandardScore}`]),
                                     ],
                                     onclick: async () =>
                                     {
