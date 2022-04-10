@@ -61,16 +61,37 @@ export module Calculate
         return result;
     };
     export const sign = (n: number) => 0 <= n ? 1: -1; // Math.sign() とは挙動が異なるので注意。
-    export const sum = (ticks: number[]) => ticks.length <= 0 ?
-        null:
-        ticks.reduce((a, b) => a +b, 0);
-    export const average = (ticks: number[]) => ticks.length <= 0 ?
-        null:
-        sum(ticks) /ticks.length;
+    export function sum(ticks: [number, ...number[]]) : number;
+    export function sum(ticks: number[]) : null | number;
+    export function sum(ticks: number[]) : null | number
+    {
+        return ticks.length <= 0 ?
+            null:
+            ticks.reduce((a, b) => a +b, 0);
+    }
+    export function average(ticks: [number, ...number[]]) : number;
+    export function average(ticks: number[]) : null | number;
+    export function average(ticks: number[]) : null | number
+    {
+        return ticks.length <= 0 ?
+            null:
+            sum(<[number, ...number[]]>ticks) /ticks.length;
+        }
     // export const standardDeviationOld = (ticks: number[], average: number = Calculate.average(ticks)) =>
     //     Math.sqrt(Calculate.average(ticks.map(i => (i -average) ** 2)));
-    export const standardDeviation = (ticks: number[], average: number = Calculate.average(ticks)) =>
-        Math.sqrt(Calculate.average(ticks.map(i => i ** 2)) -(average ** 2));
+    export function standardDeviation(ticks: [number, ...number[]], average?: number) : number;
+    export function standardDeviation(ticks: number[], average?: number) : null | number;
+    export function standardDeviation(ticks: number[], average: number | null = Calculate.average(ticks)) : null | number
+    {
+        if (null === average || ticks.length <= 0)
+        {
+            return null;
+        }
+        else
+        {
+            return Math.sqrt(Calculate.average(<[number, ...number[]]>ticks.map(i => i ** 2)) -(average ** 2));
+        }
+    }
     export const standardScore = (average: number, standardDeviation: number, target: number) =>
         (10 * (target -average) /standardDeviation) +50;
 }
@@ -529,7 +550,7 @@ export module CyclicToDo
             export const remove = (pass: string, tag: string) => getStorage(pass).remove(makeKey(pass, tag));
             export const getSort = (pass: string, tag: string) =>
                 (get(pass, tag).sort ?? (get(pass, "@overall").sort ?? "smart"));
-            export const getDisplayStyle = (pass: string, tag: string) =>
+            export const getDisplayStyle = (pass: string, tag: string): "full" | "compact" =>
             {
                 const defaultResult = "full";
                 const result = get(pass, tag).displayStyle ?? defaultResult;
@@ -643,8 +664,10 @@ export module CyclicToDo
             export const makeKey = (pass: string, task: string) => `pass:(${pass}).todo:(${task}).settings`;
             export const get = (pass: string, task: string) =>
                 getStorage(pass).getOrNull<CyclicToDo.TodoSettings>(makeKey(pass, task)) ?? { };
-            export const set = (pass: string, task: string, settings: CyclicToDo.TodoSettings) =>
-                getStorage(pass).set(makeKey(pass, task), settings);
+            export const set = (pass: string, task: string, settings: CyclicToDo.TodoSettings | undefined) =>
+                undefined === settings ?
+                    remove(pass, task):
+                    getStorage(pass).set(makeKey(pass, task), settings);
             export const remove = (pass: string, task: string) => getStorage(pass).remove(makeKey(pass, task));
             export const isPickupTarget = (pass: string, item: ToDoEntry, elapsedTime = item.elapsed) =>
             {
