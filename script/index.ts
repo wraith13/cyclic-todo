@@ -681,7 +681,7 @@ export module CyclicToDo
                     case "elapsed-time":
                         return null !== elapsedTime && pickupSetting.elapsedTime <= elapsedTime;
                     case "elapsed-time-standard-score":
-                        return null !== elapsedTime && pickupSetting.elapsedTimeStandardScore <= Domain.getStandardScore(item, elapsedTime);
+                        return null !== elapsedTime && pickupSetting.elapsedTimeStandardScore <= (Domain.getStandardScore(item, elapsedTime) ?? 0);
                     case "expired":
                         return Domain.isExpired(item, elapsedTime);
                     }
@@ -700,7 +700,7 @@ export module CyclicToDo
                     case "elapsed-time":
                         return null !== elapsedTime && elapsedTime < restrictionSetting.elapsedTime;
                     case "elapsed-time-standard-score":
-                        return null !== elapsedTime && Domain.getStandardScore(item, elapsedTime) < restrictionSetting.elapsedTimeStandardScore;
+                        return null !== elapsedTime && (Domain.getStandardScore(item, elapsedTime) ?? 0) < restrictionSetting.elapsedTimeStandardScore;
                     case "expired":
                         return ! Domain.isExpired(item, elapsedTime);
                     }
@@ -1097,7 +1097,7 @@ export module CyclicToDo
                     case "@unoverall":
                     default:
                         return tag.isSublist() ?
-                            new Tag(this, "@overall").getRawMember().filter(i => tag.getName() === i.getSublist().getName()):
+                            new Tag(this, "@overall").getRawMember().filter(i => tag.getName() === i.getSublist()?.getName()):
                             tag.getRawMember();
                     }
                 },
