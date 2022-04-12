@@ -1138,7 +1138,7 @@ export module CyclicToDo
             (
                 tag => -this.content.tags[tag].map(todo => this.content.histories[todo].count).reduce((a, b) => a +b, 0)
             )
-            todoComparer = (entry: ToDoTagEntryOld, sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag)) =>
+            todoComparer = (entry: ToDoTagEntryOld, sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag)): minamo.core.comparer.ComparerType<ToDoEntry> =>
             {
                 switch(sort)
                 {
