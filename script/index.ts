@@ -1491,7 +1491,9 @@ export module CyclicToDo
         };
         export const timeRangeStringFromTick = (a: null | number, b: null | number): string =>
             `${Domain.timeShortStringFromTick(a)} 〜 ${Domain.timeShortStringFromTick(b)}`;
-        export const parseDate = (date: string | null): Date | null =>
+        export function parseDate(date: null): null;
+        export function parseDate(date: string | null): Date | null;
+        export function parseDate(date: string | null): Date | null
         {
             if (null !== date)
             {
@@ -1528,7 +1530,9 @@ export module CyclicToDo
             }
         };
         export const getStandardScore = (item: ToDoEntry, elapsedTime = item.elapsed) =>
-            null !== item.RecentlyStandardDeviation ?
+            null !== item.RecentlySmartAverage &&
+            null !== item.RecentlyStandardDeviation &&
+            null !== elapsedTime ?
                 Calculate.standardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, elapsedTime):
                 null;
         export const isExpired = (item: ToDoEntry, elapsedTime = item.elapsed) =>
@@ -1553,7 +1557,7 @@ export module CyclicToDo
         (
             tag => -OldStorage.TagMember.get(pass, tag).map(todo => OldStorage.History.getTicks(pass, todo).length).reduce((a, b) => a +b, 0)
         );
-        export const todoComparerOld = (entry: ToDoTagEntryOld, sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag)) =>
+        export const todoComparerOld = (entry: ToDoTagEntryOld, sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag)): minamo.core.comparer.ComparerType<ToDoEntry> =>
         {
             switch(sort)
             {
