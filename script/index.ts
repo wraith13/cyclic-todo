@@ -1116,7 +1116,7 @@ export module CyclicToDo
                     await this.save(content => delete content.todoSettings[task.getName()]),
             };
             getDoneTicks = (): number =>
-                Math.max.apply(null, this.live.tasks.map(i => i.previous).filter(i => i).concat[Domain.getTicks() -1]) +1
+                Math.max.apply(null, minamo.core.existFilter(this.live.tasks.map(i => i.previous)).concat([Domain.getTicks() -1])) +1
             done = async (task: string, tick: number = this.getDoneTicks()) =>
                 await this.save
                 (
@@ -1150,7 +1150,9 @@ export module CyclicToDo
                                 item.smartRest:
                                 -(item.progress ?? -1),
                             item => 1 < item.count ? -2: -item.count,
-                            item => 1 < item.count ? (item.elapsed -item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate)): -(item.elapsed ?? 0),
+                            item => 1 < item.count && null !== item.elapsed && null !== item.RecentlySmartAverage ?
+                                (item.elapsed -item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate)):
+                                -(item.elapsed ?? 0),
                             item => entry.todo.indexOf(item.task),
                             item => item.task,
                         ]);
@@ -1231,10 +1233,10 @@ export module CyclicToDo
                 result = JSON.parse(OldStorage.exportJson(card.uri)) as Content;
                 break;
             case "session":
-                result = SessionStorage.ToDoList.get(card.uri);
+                result = SessionStorage.ToDoList.get(card.uri) ?? undefined;
                 break;
             case "localDb":
-                result = Storage.ToDoList.get(card.uri);
+                result = Storage.ToDoList.get(card.uri) ?? undefined;
                 break;
             }
             return result;
@@ -1388,7 +1390,10 @@ export module CyclicToDo
                 return `${date.getFullYear()}-${("0" +(date.getMonth() +1)).substr(-2)}-${("0" +date.getDate()).substr(-2)}`;
             }
         };
-        export const getTime = (tick: null | number): null | number =>
+        export function getTime(tick: null): null;
+        export function getTime(tick: number): number;
+        export function getTime(tick: null | number): null | number;
+        export function getTime(tick: null | number): null | number
         {
             if (null === tick)
             {
@@ -1413,8 +1418,8 @@ export module CyclicToDo
                 date.setMilliseconds(0);
                 return tick -getTicks(date);
             }
-        };
-        export const dateStringFromTick = (tick: null | number) =>
+        }
+        export function dateStringFromTick(tick: null | number): string
         {
             if (null === tick)
             {
@@ -1424,8 +1429,8 @@ export module CyclicToDo
             {
                 return `${dateCoreStringFromTick(tick)} ${timeCoreStringFromTick(getTime(tick))}`;
             }
-        };
-        export const timeCoreStringFromTick = (tick: null | number) =>
+        }
+        export const timeCoreStringFromTick = (tick: null | number): string =>
         {
             if (null === tick)
             {
@@ -1444,7 +1449,7 @@ export module CyclicToDo
                 return `${("00" +hour).slice(-2)}:${("00" +minute).slice(-2)}`;
             }
         };
-        export const timeShortStringFromTick = (tick: null | number) =>
+        export const timeShortStringFromTick = (tick: null | number): string =>
         {
             if (null === tick)
             {
@@ -1465,7 +1470,7 @@ export module CyclicToDo
                         timeCoreStringFromTick(tick);
             }
         };
-        export const timeLongStringFromTick = (tick: null | number) =>
+        export const timeLongStringFromTick = (tick: null | number): string =>
         {
             if (null === tick)
             {
@@ -1484,7 +1489,7 @@ export module CyclicToDo
                     timeCoreStringFromTick(tick);
             }
         };
-        export const timeRangeStringFromTick = (a: null | number, b: null | number) =>
+        export const timeRangeStringFromTick = (a: null | number, b: null | number): string =>
             `${Domain.timeShortStringFromTick(a)} 〜 ${Domain.timeShortStringFromTick(b)}`;
         export const parseDate = (date: string | null): Date | null =>
         {
