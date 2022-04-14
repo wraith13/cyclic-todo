@@ -1507,7 +1507,7 @@ export module CyclicToDo
                 }
             }
             return null;
-        };
+        }
         export const tagMap = (tag: string) =>
         {
             switch(tag)
@@ -1569,7 +1569,9 @@ export module CyclicToDo
                             item.smartRest:
                             -(item.progress ?? -1),
                         item => 1 < item.count ? -2: -item.count,
-                        item => 1 < item.count ? (item.elapsed -item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate)): -(item.elapsed ?? 0),
+                        item => 1 < item.count && null !== item.elapsed && null !== item.RecentlySmartAverage ?
+                            (item.elapsed -item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate)):
+                            -(item.elapsed ?? 0),
                         item => entry.todo.indexOf(item.task),
                         item => item.task,
                     ]);
@@ -1598,7 +1600,7 @@ export module CyclicToDo
             }
         };
         export const getTermCategoryByAverage = (item: ToDoEntry) =>
-            null !== item.smartRest ?
+            null !== item.smartRest && null !== item.RecentlySmartAverage ?
                 (
                     item.RecentlySmartAverage < config.maxShortTermMinutes ?
                         "@short-term":
@@ -1610,7 +1612,7 @@ export module CyclicToDo
                 ):
                 "@irregular-term";
         export const getTermCategoryByRest = (item: ToDoEntry) =>
-            null !== item.smartRest ?
+            null !== item.smartRest && null !== item.rest ?
                 (
                     item.rest < 24 *60 ?
                         "@short-term":
@@ -3011,34 +3013,34 @@ export module CyclicToDo
                         await Promise.all
                         (
                             getTodoPickupSettingsElapsedTimePreset(entry)
-                            .concat([(settings.pickup as PickupSettingElapsedTime)?.elapsedTime ?? 0])
-                            .filter(i => 0 < i)
-                            .filter(uniqueFilter)
-                            .sort(minamo.core.comparer.basic)
-                            .map
-                            (
-                                async elapsedTime =>
-                                ({
-                                    tag: "button",
-                                    className: `check-button ${("elapsed-time" === settings.restriction?.type && elapsedTime === settings?.restriction.elapsedTime) ? "checked": ""}`,
-                                    children:
-                                    [
-                                        await Resource.loadSvgOrCache("check-icon"),
-                                        $span("")([label("pickup.elapsed-time"), ": ", Domain.timeLongStringFromTick(elapsedTime)]),
-                                    ],
-                                    onclick: async () =>
-                                    {
-                                        settings.restriction =
+                                .concat([(settings.pickup as PickupSettingElapsedTime)?.elapsedTime ?? 0])
+                                .filter(i => 0 < i)
+                                .filter(uniqueFilter)
+                                .sort(minamo.core.comparer.basic)
+                                .map
+                                (
+                                    async elapsedTime =>
+                                    ({
+                                        tag: "button",
+                                        className: `check-button ${("elapsed-time" === settings.restriction?.type && elapsedTime === settings?.restriction.elapsedTime) ? "checked": ""}`,
+                                        children:
+                                        [
+                                            await Resource.loadSvgOrCache("check-icon"),
+                                            $span("")([label("pickup.elapsed-time"), ": ", Domain.timeLongStringFromTick(elapsedTime)]),
+                                        ],
+                                        onclick: async () =>
                                         {
-                                            type: "elapsed-time",
-                                            elapsedTime,
-                                        };
-                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                        result = true;
-                                        await tagButtonListUpdate();
-                                    }
-                                })
-                            )
+                                            settings.restriction =
+                                            {
+                                                type: "elapsed-time",
+                                                elapsedTime,
+                                            };
+                                            OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                            result = true;
+                                            await tagButtonListUpdate();
+                                        }
+                                    })
+                                )
                         ),
                         await Promise.all
                         (
