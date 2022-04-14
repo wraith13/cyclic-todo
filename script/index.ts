@@ -174,6 +174,44 @@ export module CyclicToDo
         first: number | null;
         count: number;
     }
+    export interface HistoryEntryZero extends HistoryEntry
+    {
+        first: null;
+        count: 0;
+    }
+    export interface HistoryEntryFirst extends HistoryEntry
+    {
+        histories: [number, ...number[]];
+        first: number;
+        count: 1;
+    }
+    export interface HistoryEntrySecond extends HistoryEntry
+    {
+        histories: [number, number, ...number[]];
+        first: number;
+        count: 2;
+    }
+    export interface HistoryEntryMore extends HistoryEntry
+    {
+        histories: [number, number, number, ...number[]];
+        first: number;
+        // count: 3 <=;
+    }
+    export const isZeroHistryEntry = (entry: HistoryEntry): entry is HistoryEntryZero =>
+        entry.count <= 0 || "number" !== typeof entry.first || entry.histories.length <= 0;
+    export const isFirstOrMoreHistryEntry = (entry: HistoryEntry): entry is HistoryEntryFirst | HistoryEntrySecond | HistoryEntryMore =>
+        1 <= entry.count && "number" === typeof entry.first && 1 <= entry.histories.length;
+    export const isSecondOrMoreHistryEntry = (entry: HistoryEntry): entry is HistoryEntrySecond | HistoryEntryMore =>
+        2 <= entry.count && "number" === typeof entry.first && 2 <= entry.histories.length;
+    export const isMoreHistryEntry = (entry: HistoryEntry): entry is HistoryEntryMore =>
+        3 <= entry.count && "number" === typeof entry.first && 3 <= entry.histories.length;
+    export function getPreviousFromHistryEntry(entry: HistoryEntry): number | null;
+    export function getPreviousFromHistryEntry(entry: HistoryEntryZero): null;
+    export function getPreviousFromHistryEntry(entry: HistoryEntryFirst | HistoryEntrySecond | HistoryEntryMore): number;
+    export function getPreviousFromHistryEntry(entry: HistoryEntry): number | null
+    {
+        return isFirstOrMoreHistryEntry(entry) ? entry.histories[entry.histories.length -1]: null;
+    }
     export interface Content
     {
         specification: "https://github.com/wraith13/cyclic-todo/README.md";
