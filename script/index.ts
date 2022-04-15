@@ -205,9 +205,9 @@ export module CyclicToDo
         2 <= entry.count && "number" === typeof entry.first && 2 <= entry.histories.length;
     export const isMoreHistryEntry = (entry: HistoryEntry): entry is HistoryEntryMore =>
         3 <= entry.count && "number" === typeof entry.first && 3 <= entry.histories.length;
-    export function getPreviousFromHistryEntry(entry: HistoryEntry): number | null;
     export function getPreviousFromHistryEntry(entry: HistoryEntryZero): null;
     export function getPreviousFromHistryEntry(entry: HistoryEntryFirst | HistoryEntrySecond | HistoryEntryMore): number;
+    export function getPreviousFromHistryEntry(entry: HistoryEntry): number | null;
     export function getPreviousFromHistryEntry(entry: HistoryEntry): number | null
     {
         return isFirstOrMoreHistryEntry(entry) ? entry.histories[entry.histories.length -1]: null;
@@ -1718,7 +1718,7 @@ export module CyclicToDo
                     )
                     .filter((_, index) => index < 25),
                 // intervals: longRecentries.filter((_, index) => index < 25),
-                previous: full.histories.length <= 0 ? null: full.histories[0],
+                // previous: full.histories.length <= 0 ? null: full.histories[0],
                 //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
                 count: full.count,
             };
@@ -1734,7 +1734,7 @@ export module CyclicToDo
                 isDefault: false,
                 progress: null,
                 first: full.first,
-                previous: history.previous,
+                previous: getPreviousFromHistryEntry(full),
                 elapsed: null,
                 rest: null,
                 RecentlyStandardDeviation: history.intervals.length <= 0 ?
@@ -1749,8 +1749,8 @@ export module CyclicToDo
                 RecentlyAverage: history.intervals.length <= 0 ?
                     null:
                     Calculate.average(longRecentries.filter((_, index) => index < 10)),
-                TotalAverage: full.first && 2 < full.count && full.first !== history.previous ?
-                    (history.previous -full.first) / (full.count -1):
+                TotalAverage: isSecondOrMoreHistryEntry(full) ?
+                    (getPreviousFromHistryEntry(full) -full.first) / (full.count -1):
                     null,
                 smartRest: null,
                 expectedInterval: null,
