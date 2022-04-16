@@ -127,6 +127,60 @@ export module CyclicToDo
         count: number;
         expectedInterval: null | { min: number; max:number; };
     }
+    export interface ToDoEntryZero extends ToDoEntry
+    {
+        isDefault: false;
+        progress: null;
+        first: null;
+        previous: null;
+        elapsed: null;
+        rest: null;
+        // overallAverage: null;
+        RecentlyStandardDeviation: null;
+        RecentlySmartAverage: null;
+        RecentlyAverage: null;
+        TotalAverage: null;
+        smartRest: null;
+        count: 0;
+        expectedInterval: null;
+    }
+    export interface ToDoEntryFirst extends ToDoEntry
+    {
+        isDefault: false;
+        progress: null;
+        first: number;
+        previous: number;
+        elapsed: number;
+        rest: null;
+        // overallAverage: null;
+        RecentlyStandardDeviation: null;
+        RecentlySmartAverage: null;
+        RecentlyAverage: null;
+        TotalAverage: null;
+        smartRest: null;
+        count: 1;
+        expectedInterval: null;
+    }
+    export interface ToDoEntryMore extends ToDoEntry
+    {
+        first: number;
+        previous: number;
+        elapsed: number;
+        rest: null | number;
+        // overallAverage: number;
+        RecentlyStandardDeviation: number;
+        RecentlySmartAverage: number;
+        RecentlyAverage: number;
+        TotalAverage: number;
+        smartRest: null | number;
+        expectedInterval: { min: number; max:number; };
+    }
+    export const isZeroToDoEntry = (item: ToDoEntry): item is ToDoEntryZero =>
+        item.count <= 0 || "number" !== typeof item.first;
+    export const isFirstOrMoreToDoEntry = (item: ToDoEntry): item is ToDoEntryFirst | ToDoEntryMore =>
+        1 <= item.count && "number" === typeof item.first;
+    export const isMoreToDoEntry = (item: ToDoEntry): item is ToDoEntryMore =>
+        2 <= item.count && "number" === typeof item.first && "number" === typeof item.previous && item.first !== item.previous;
     export interface TagSettings
     {
         // sort?: "smart" | "simple" | "limit";
@@ -1755,7 +1809,7 @@ export module CyclicToDo
                 smartRest: null,
                 expectedInterval: null,
             };
-            if (null !== item.RecentlySmartAverage)
+            if (isMoreToDoEntry(item))
             {
                 const base = inflatedRecentrlyIntervals.length;
                 const lows = (base /2) +Math.max(inflatedRecentrlyIntervals.filter(i => i < item.RecentlySmartAverage).length, 1);
@@ -1780,7 +1834,7 @@ export module CyclicToDo
             0 < rest ?
                 advancedRest *Math.max(Math.log((advancedRest /standardDeviation) *100), 0.1):
                 rest;
-        export const calcSmartRest = (item: ToDoEntry) =>
+        export const calcSmartRest = (item: ToDoEntryMore) =>
             calcSmartRestCore
             (
                 item.expectedInterval.max,
@@ -1789,11 +1843,11 @@ export module CyclicToDo
             );
         export const updateProgress = (pass: string | Model.Document, item: ToDoEntry, now: number = Domain.getTicks()) =>
         {
-            if (0 < item.count)
+            if (isFirstOrMoreToDoEntry(item))
             {
                 // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
                 item.elapsed = Math.max(0.0, now -item.previous);
-                if (null !== item.RecentlySmartAverage)
+                if (isMoreToDoEntry(item))
                 {
                     const short = item.expectedInterval.min;
                     const long = item.expectedInterval.max;
@@ -3734,13 +3788,13 @@ export module CyclicToDo
                 isRestrictioned ?
                     Render.progressRestrictionTitleStyle:
                     Render.progressDefaultTitleStyle
-            )(null === interval || max < interval ? null: interval /max),
+            )(null === interval || null === max || max < interval ? null: interval /max),
         })
         ([
             await Resource.loadSvgOrCache
             (
                 isRestrictioned ? "forbidden-icon":
-                null === interval ? "one-icon":
+                null === interval || null === max ? "one-icon":
                 max < interval ? "sleep-icon":
                 "tick-icon"
             ),
