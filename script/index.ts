@@ -3365,15 +3365,15 @@ export module CyclicToDo
             (
                 "task-interval-average",
                 label("expected interval"),
-                null === item.RecentlyStandardDeviation ?
-                    Domain.timeLongStringFromTick(item.RecentlySmartAverage):
+                isMoreToDoEntry(item) ?
                     Domain.timeRangeStringFromTick
                     (
                         item.expectedInterval.min,
                         item.expectedInterval.max
                         // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
                         // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
-                    )
+                    ):
+                    Domain.timeLongStringFromTick(item.RecentlySmartAverage)
             ),
             // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
             // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
@@ -3847,7 +3847,7 @@ export module CyclicToDo
                 className: options.className,
                 children: Array.isArray(options.list) ?
                     options.list.map(i => ({ tag: "option", value:i, children: i, selected: options.value === i ? true: undefined, })):
-                    Object.keys(options.list).map(i => ({ tag: "option", value:i, children: options.list[i] ?? i, selected: options.value === i ? true: undefined, })),
+                    Object.keys(options.list).map(i => ({ tag: "option", value:i, children: (<{ [value:string]:string }>options.list)[i] ?? i, selected: options.value === i ? true: undefined, })),
                 onchange: () =>
                 {
                     if (labelSoan.innerText !== dropdown.value)
@@ -3865,7 +3865,7 @@ export module CyclicToDo
                     options.value:
                     (options.list[options.value] ?? options.value),
             });
-            const result = $tag("label")(options.className)
+            const result = $tag("label")(options.className ?? "")
             ([
                 dropdown,
                 labelSoan
@@ -3885,7 +3885,7 @@ export module CyclicToDo
             }),
             await Promise.all
             (
-                [].concat(list).sort(minamo.core.comparer.make(i => -i.previous ?? 0)).map
+                list.sort(minamo.core.comparer.make(i => -(i.previous ?? 0))).map
                 (
                     async item => internalLink
                     ({
@@ -5747,7 +5747,7 @@ export module CyclicToDo
                     await minamo.core.timeout(wait);
                     minamo.dom.remove(dom);
                     // 以下は Safari での CSS バグをクリアする為の細工。本質的には必要の無い呼び出し。
-                    if (document.getElementById("screen-toast").getElementsByClassName("item").length <= 0)
+                    if (minamo.core.existsOrThrow(document.getElementById("screen-toast")).getElementsByClassName("item").length <= 0)
                     {
                         await minamo.core.timeout(10);
                         updateWindow("operate");
@@ -5761,11 +5761,11 @@ export module CyclicToDo
                 timer: 0 < wait ? setTimeout(() => hideRaw("slow-slide-down-out", 500), wait): null,
                 hide: async () => await hideRaw("slide-down-out", 250),
             };
-            document.getElementById("screen-toast").appendChild(dom);
+            minamo.core.existsOrThrow(document.getElementById("screen-toast")).appendChild(dom);
             setTimeout(() => dom.classList.remove("slide-up-in"), 250);
             return result;
         };
-        export const getProgressElement = () => document.getElementById("screen-header");
+        export const getProgressElement = () => minamo.core.existsOrThrow(document.getElementById("screen-header"));
         export const setProgressStyleRaw = (className: string) => getProgressElement().className = `segmented ${className}`;
         let lastSetProgressAt = 0;
         export const setProgressStyle = async (className: string, timeout: number) =>
@@ -5849,7 +5849,7 @@ export module CyclicToDo
                     );
                     if (length <= 1 || maxColumns <= 1)
                     {
-                        list.style.height = undefined;
+                        minamo.dom.removeCSSStyleProperty(list.style, "height");
                     }
                     else
                     {
@@ -6024,7 +6024,7 @@ export module CyclicToDo
     export const regulateUrl = (url: string) => url.replace(/#$/, "").replace(/\?$/, "");
     export const makeUrl =
     (
-        args: {[key: string]: string} | Render.PageParams,
+        args: {[key: string]: string} & Render.PageParams,
         href: string = location.href
     ) => regulateUrl
     (
@@ -6079,7 +6079,7 @@ export module CyclicToDo
     {
         console.log(`start timestamp: ${new Date()}`);
         console.log(`${JSON.stringify(params)}`);
-        locale.setLocale(Storage.SystemSettings.get().locale);
+        locale.setLocale(Storage.SystemSettings.get().locale ?? null);
         window.onpopstate = () => showPage();
         window.addEventListener('resize', Render.onWindowResize);
         window.addEventListener('focus', Render.onWindowFocus);
@@ -6088,12 +6088,12 @@ export module CyclicToDo
         window.addEventListener('compositionstart', Render.onCompositionStart);
         window.addEventListener('compositionend', Render.onCompositionEnd);
         window.addEventListener('keydown', Render.onKeydown);
-        document.getElementById("screen-header").addEventListener
+        minamo.core.existsOrThrow(document.getElementById("screen-header")).addEventListener
         (
             'click',
             async () =>
             {
-                const body = document.getElementById("screen-body");
+                const body = minamo.core.existsOrThrow(document.getElementById("screen-body"));
                 let top = body.scrollTop;
                 for(let i = 0; i < 25; ++i)
                 {
@@ -6122,11 +6122,11 @@ export module CyclicToDo
     export const showPage = async (url: string = location.href, _wait: number = 0) =>
     {
         window.scrollTo(0,0);
-        document.getElementById("screen-body").scrollTo(0,0);
+        minamo.core.existsOrThrow(document.getElementById("screen-body")).scrollTo(0,0);
         //await minamo.core.timeout(wait);
         const urlParams = getUrlParams(url);
         const hash = getUrlHash(url);
-        const tag = urlParams["tag"];
+        const tag = urlParams["tag"] ?? "";
         const todo = urlParams["todo"];
         const pass = urlParams["pass"] ?? `${OldStorage.sessionPassPrefix}:${new Date().getTime()}`;
         // const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
