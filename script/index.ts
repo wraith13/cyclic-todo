@@ -2096,7 +2096,7 @@ export module CyclicToDo
                 });
             },
         });
-        export interface PageParams
+        export interface PageParamsRaw
         {
             pass?:string;
             tag?:string;
@@ -2104,6 +2104,7 @@ export module CyclicToDo
             hash?: string;
             filter?: string;
         }
+        export type PageParams = PageParamsRaw & {[key: string]: string};
         export const internalLink = (data: { className?: string, href: PageParams, children: minamo.dom.Source}) =>
         ({
             tag: "a",
@@ -2375,7 +2376,7 @@ export module CyclicToDo
                 async resolve =>
                 {
                     let hasNewTag = false;
-                    let result: string[] = [].concat(currentTags);
+                    let result: string[] = currentTags.concat([]);
                     const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
                     const tagButtonListUpdate = async () => minamo.dom.replaceChildren
                     (
@@ -2639,7 +2640,7 @@ export module CyclicToDo
                                 {
                                     if (null !== (settings.locale ?? null))
                                     {
-                                        settings.locale = null;
+                                        settings.locale = undefined;
                                         Storage.SystemSettings.set(settings);
                                         result = true;
                                         await checkButtonListUpdate();
@@ -2719,7 +2720,7 @@ export module CyclicToDo
                                 ],
                                 onclick: async () =>
                                 {
-                                    settings.sort = null;
+                                    settings.sort = undefined;
                                     OldStorage.TagSettings.set(pass, tag, settings);
                                     result = true;
                                     await tagButtonListUpdate();
@@ -2938,7 +2939,7 @@ export module CyclicToDo
                             ],
                             onclick: async () =>
                             {
-                                settings.pickup = null;
+                                settings.pickup = undefined;
                                 OldStorage.TodoSettings.set(pass, entry.task, settings);
                                 result = true;
                                 await tagButtonListUpdate();
@@ -3080,7 +3081,7 @@ export module CyclicToDo
                             ],
                             onclick: async () =>
                             {
-                                settings.restriction = null;
+                                settings.restriction = undefined;
                                 OldStorage.TodoSettings.set(pass, entry.task, settings);
                                 result = true;
                                 await tagButtonListUpdate();
@@ -3213,7 +3214,7 @@ export module CyclicToDo
                 onclick: async () =>
                 {
                     console.log("screen-cover.click!");
-                    dom.onclick = undefined;
+                    dom.onclick = null;
                     data.onclick();
                     close();
                 }
@@ -3259,7 +3260,7 @@ export module CyclicToDo
             });
             const close = async () =>
             {
-                await data?.onClose();
+                await data?.onClose?.();
                 cover.close();
             };
             // minamo.dom.appendChildren(document.body, dom);
@@ -3272,7 +3273,7 @@ export module CyclicToDo
                 ],
                 onclick: async () =>
                 {
-                    await data?.onClose();
+                    await data?.onClose?.();
                     //minamo.dom.remove(dom);
                 },
             });
@@ -5240,7 +5241,7 @@ export module CyclicToDo
             {
                 try
                 {
-                    return new DOMParser().parseFromString(document.getElementById(key).innerHTML, "image/svg+xml").documentElement as any;
+                    return new DOMParser().parseFromString(minamo.core.existsOrThrow(document.getElementById(key)).innerHTML, "image/svg+xml").documentElement as any;
                 }
                 catch(error)
                 {
@@ -5519,7 +5520,7 @@ export module CyclicToDo
                 {
                     if (await localeSettingsPopup())
                     {
-                        locale.setLocale(Storage.SystemSettings.get().locale);
+                        locale.setLocale(Storage.SystemSettings.get().locale ?? null);
                         await reload();
                     }
                 }
@@ -5683,7 +5684,7 @@ export module CyclicToDo
                     }
                 );
             }
-            document.getElementById("screen").className = `${screen.className} screen`;
+            minamo.core.existsOrThrow(document.getElementById("screen")).className = `${screen.className} screen`;
             minamo.dom.replaceChildren
             (
                 getHeaderElement(),
@@ -5691,7 +5692,7 @@ export module CyclicToDo
             );
             minamo.dom.replaceChildren
             (
-                document.getElementById("screen-body"),
+                minamo.core.existsOrThrow(document.getElementById("screen-body")),
                 screen.body
             );
             getHeaderElement().classList.toggle("header-operator-has-focus", "" !== getFilterText());
@@ -6024,7 +6025,7 @@ export module CyclicToDo
     export const regulateUrl = (url: string) => url.replace(/#$/, "").replace(/\?$/, "");
     export const makeUrl =
     (
-        args: {[key: string]: string} & Render.PageParams,
+        args: Render.PageParams,
         href: string = location.href
     ) => regulateUrl
     (
