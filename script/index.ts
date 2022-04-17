@@ -1950,7 +1950,7 @@ export module CyclicToDo
         };
         export module Operate
         {
-            export const renameList = async (pass: string | Model.Document, newName, onCanceled: () => unknown = () => updateWindow("operate")) =>
+            export const renameList = async (pass: string | Model.Document, newName: string, onCanceled: () => unknown = () => updateWindow("operate")) =>
             {
                 const backup = MigrateBridge.Title.get(pass);
                 await withUpdateProgress
@@ -2464,7 +2464,7 @@ export module CyclicToDo
                         ],
                         onClose: async () => resolve
                         (
-                            JSON.stringify(result.sort()) !== JSON.stringify([].concat(currentTags).sort()) || hasNewTag
+                            JSON.stringify(result.sort()) !== JSON.stringify(currentTags.concat([]).sort()) || hasNewTag
                         ),
                     });
                 }
@@ -3203,7 +3203,7 @@ export module CyclicToDo
                 });
             }
         );
-        export const screenCover = (data: { parent?: HTMLElement, children?: minamo.dom.Source, onclick: () => unknown, }) =>
+        export const screenCover = (data: { parent?: HTMLElement | null, children?: minamo.dom.Source, onclick: () => unknown, }) =>
         {
             const dom = $make(HTMLDivElement)
             ({
@@ -3286,7 +3286,7 @@ export module CyclicToDo
         };
         export const menuButton = async (menu: minamo.dom.Source | (() => Promise<minamo.dom.Source>)) =>
         {
-            let cover: { dom: HTMLDivElement, close: () => Promise<unknown> };
+            let cover: { dom: HTMLDivElement, close: () => Promise<unknown> } | null = null;
             const close = () =>
             {
                 popup.classList.remove("show");
@@ -3396,15 +3396,15 @@ export module CyclicToDo
             (
                 "task-interval-average",
                 label("expected interval"),
-                null === item.RecentlyStandardDeviation ?
-                    Domain.timeLongStringFromTick(item.RecentlySmartAverage):
+                isMoreToDoEntry(item) ?
                     Domain.timeRangeStringFromTick
                     (
                         item.expectedInterval.min,
                         item.expectedInterval.max
                         // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
                         // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
-                    )
+                    ):
+                    Domain.timeLongStringFromTick(item.RecentlySmartAverage)
             ),
             // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
             monospace("task-interval-average", label("total interval average"), Domain.timeLongStringFromTick(item.TotalAverage)),
@@ -3728,7 +3728,7 @@ export module CyclicToDo
             );
             return itemDom;
         };
-        export const historyItem = async (entry: ToDoTagEntryOld, item: { task: string, tick: number }) => $div("history-item flex-item ")
+        export const historyItem = async (entry: ToDoTagEntryOld, item: { task: string, tick: number | null }) => $div("history-item flex-item ")
         ([
             $div("item-information")
             ([
@@ -3757,10 +3757,10 @@ export module CyclicToDo
                             label("Edit"),
                             async () =>
                             {
-                                const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), item.tick));
+                                const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), <number>item.tick));
                                 if (null !== result && item.tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
                                 {
-                                    OldStorage.History.removeTickRaw(entry.pass, item.task, item.tick);
+                                    OldStorage.History.removeTickRaw(entry.pass, item.task, <number>item.tick);
                                     OldStorage.History.addTick(entry.pass, item.task, Domain.getTicks(result));
                                     await reload();
                                 }
@@ -3771,7 +3771,7 @@ export module CyclicToDo
                             label("Delete"),
                             async () =>
                             {
-                                OldStorage.History.removeTick(entry.pass, item.task, item.tick);
+                                OldStorage.History.removeTick(entry.pass, item.task, <number>item.tick);
                                 await reload();
                             },
                             "delete-button"
@@ -3934,7 +3934,7 @@ export module CyclicToDo
                     .map
                     (
                         async (item, ix) =>
-                            (item.href && screenHeaderLinkSegment(item, getLastSegmentClass(data,ix))) ||
+                            (item.href && screenHeaderLinkSegment(<any>item, getLastSegmentClass(data,ix))) ||
                             (item.menu && screenHeaderPopupSegment(item, getLastSegmentClass(data,ix))) ||
                             (true && screenHeaderLabelSegment(item, getLastSegmentClass(data,ix)))
                     )
@@ -3960,7 +3960,7 @@ export module CyclicToDo
                         }
                         else
                         {
-                            showUrl(data.parent);
+                            showUrl(<PageParams>data.parent);
                         }
                     },
                 }:
@@ -3977,7 +3977,7 @@ export module CyclicToDo
         ];
         export const screenHeaderLabelSegment = async (item: HeaderSegmentSource, className: string = "") =>
             $div(`segment label-segment ${className}`)(await screenHeaderSegmentCore(item));
-        export const screenHeaderLinkSegment = async (item: HeaderSegmentSource, className: string = "") => internalLink
+        export const screenHeaderLinkSegment = async (item: HeaderSegmentSource & { href: PageParams; }, className: string = "") => internalLink
         ({
             className: `segment ${className}`,
             href: item.href,
@@ -3985,7 +3985,7 @@ export module CyclicToDo
         });
         export const screenHeaderPopupSegment = async (item: HeaderSegmentSource, className: string = "") =>
         {
-            let cover: { dom: HTMLDivElement, close: () => Promise<unknown> };
+            let cover: { dom: HTMLDivElement, close: () => Promise<unknown> } | null = null;
             const close = () =>
             {
                 popup.classList.remove("show");
@@ -4913,7 +4913,7 @@ export module CyclicToDo
         export const showHistoryScreen = async (urlParams: PageParams, entry: ToDoTagEntryOld) =>
         {
             const histories: { [task:string]:number[] } = { };
-            let list = entry.todo.map(task => (histories[task] = OldStorage.History.getTicks(entry.pass, task)).map(tick => ({ task, tick }))).reduce((a, b) => a.concat(b), []);
+            let list = entry.todo.map(task => (histories[task] = OldStorage.History.getTicks(entry.pass, task)).map(tick => ({ task, tick:<number | null>tick, }))).reduce((a, b) => a.concat(b), []);
             list.sort(minamo.core.comparer.make(a => -a.tick));
             list = list.concat(entry.todo.filter(task => histories[task].length <= 0).map(task => ({ task, tick: null })));
             const filter = regulateFilterText(urlParams.filter ?? "");
@@ -4990,7 +4990,7 @@ export module CyclicToDo
                 (
                     await Promise.all
                     (
-                        [].concat(list)
+                        list.concat([])
                             .sort(minamo.core.comparer.make(item => -item.deteledAt))
                             .map(item => removedItem(pass, item))
                     )
