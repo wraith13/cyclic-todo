@@ -4914,7 +4914,7 @@ export module CyclicToDo
         {
             const histories: { [task:string]:number[] } = { };
             let list = entry.todo.map(task => (histories[task] = OldStorage.History.getTicks(entry.pass, task)).map(tick => ({ task, tick:<number | null>tick, }))).reduce((a, b) => a.concat(b), []);
-            list.sort(minamo.core.comparer.make(a => -a.tick));
+            list.sort(minamo.core.comparer.make(a => -(a.tick ?? 0)));
             list = list.concat(entry.todo.filter(task => histories[task].length <= 0).map(task => ({ task, tick: null })));
             const filter = regulateFilterText(urlParams.filter ?? "");
             await showWindow(await historyScreen(entry, list, filter));
@@ -5053,12 +5053,24 @@ export module CyclicToDo
         });
         export const getIntervalsMax = (intervals: number[]) =>
         {
-            const average = intervals.length <= 1 ? null: Calculate.average(intervals);
-            const standardDeviation = intervals.length <= 5 ?
-                null:
-                Calculate.standardDeviation(intervals, average);
-            return null === standardDeviation ? (intervals.length <= 0 ? null: Math.max.apply(null, intervals)):
-                Math.max.apply(null, intervals.filter(i => (i -average -config.granceMinutes) / standardDeviation <= config.sleepStandardDeviationRate));
+            if (0 < intervals.length)
+            {
+                const i = <[number, ...number[]]>intervals;
+                const average = Calculate.average(i);
+                if (6 < intervals.length)
+                {
+                    const standardDeviation = Calculate.standardDeviation(i, average);
+                    return Math.max.apply(null, intervals.filter(i => (i -average -config.granceMinutes) / standardDeviation <= config.sleepStandardDeviationRate));
+                }
+                else
+                {
+                    return Math.max.apply(null, intervals);
+                }
+            }
+            else
+            {
+                return null;
+            }
         };
         export const todoScreenBody = async (pass: string, item: ToDoEntry, ticks: number[], _tag: string, max: number | null = getIntervalsMax(Calculate.intervals(ticks))) =>
         ([
@@ -5646,7 +5658,7 @@ export module CyclicToDo
         };
         export type UpdateWindowEventEype = "timer" | "scroll" | "storage" | "focus" | "blur" | "operate" | "dirty";
         export let updateWindow: (event: UpdateWindowEventEype) => unknown;
-        let updateWindowTimer = undefined;
+        let updateWindowTimer: number;
         export const getHeaderElement = () => document.getElementById("screen-header") as HTMLDivElement;
         export const showWindow = async (screen: ScreenSource, updateWindow?: (event: UpdateWindowEventEype) => unknown) =>
         {
