@@ -1758,13 +1758,13 @@ export module CyclicToDo
             const longRecentlyAverage = longRecentries.length <= 1 ? null: Calculate.average(longRecentries);
             const longRecentlyStandardDeviation = longRecentries.length <= 5 ?
                 null:
-                Calculate.standardDeviation(longRecentries, longRecentlyAverage);
+                Calculate.standardDeviation(<[number, ...number[]]>longRecentries, <number>longRecentlyAverage);
             const history =
             {
                 // full,
                 intervals:
                     (
-                        null === longRecentlyStandardDeviation ?
+                        null === longRecentlyStandardDeviation || null === longRecentlyAverage ?
                             longRecentries:
                             // todo 毎の hisotry 画面では config.granceMinutes を使うが、ここでは予想間隔の精度の都合から使わない。 ( 整合性が無くなるが、特にそれでなんの影響も無いので気にしない。 )
                             //longRecentries.filter(i => (i -longRecentlyAverage -config.granceMinutes) / longRecentlyStandardDeviation <= config.sleepStandardDeviationRate)
@@ -1794,7 +1794,7 @@ export module CyclicToDo
                 RecentlyStandardDeviation: history.intervals.length <= 0 ?
                     null:
                     history.intervals.length <= 1 ?
-                        Calculate.average(history.intervals) *0.05: // この値を標準偏差として代用
+                        Calculate.average(<[number, ...number[]]>history.intervals) *0.05: // この値を標準偏差として代用
                         Calculate.standardDeviation(inflatedRecentrlyIntervals),
                 count: history.count,
                 RecentlySmartAverage: history.intervals.length <= 0 ?
