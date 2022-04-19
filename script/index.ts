@@ -264,7 +264,7 @@ export module CyclicToDo
     export function getPreviousFromHistryEntry(entry: HistoryEntry): number | null;
     export function getPreviousFromHistryEntry(entry: HistoryEntry): number | null
     {
-        return isFirstOrMoreHistryEntry(entry) ? entry.histories[entry.histories.length -1]: null;
+        return isFirstOrMoreHistryEntry(entry) ? entry.histories[0]: null;
     }
     export interface Content
     {
