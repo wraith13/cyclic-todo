@@ -4675,7 +4675,7 @@ export module CyclicToDo
                         {
                             Domain.updateListProgress(entry.pass, pickupAll);
                         }
-                        isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[]));
+                        isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list)));
                         if (isDirty)
                         {
                             setProgressStyle("obsolescence", 0);
@@ -4744,7 +4744,7 @@ export module CyclicToDo
                     case "blur":
                     case "scroll":
                         Domain.updateListProgress(entry.pass, list);
-                        isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list) as ToDoEntry[]));
+                        isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list)));
                         if (isDirty)
                         {
                             await updateWindow("operate");
