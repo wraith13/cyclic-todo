@@ -3886,7 +3886,7 @@ export module CyclicToDo
             }),
             await Promise.all
             (
-                list.sort(minamo.core.comparer.make(i => -(i.previous ?? 0))).map
+                list.concat([]).sort(minamo.core.comparer.make(i => -(i.previous ?? 0))).map
                 (
                     async item => internalLink
                     ({
