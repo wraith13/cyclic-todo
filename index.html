@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Thu Mar 03 2022 21:09:55 GMT+0900 (日本標準時)
+    build at: Sun Apr 24 2022 11:31:09 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -3930,7 +3930,7 @@ var _this = this;
                                 evil.module.registerMapping(path, mapping);
                             }
                             absolutePath = makeAbsoluteUrl(location.href, resolveMapping(path));
-                            console.log("load(\"" + absolutePath + "\", " + JSON.stringify(mapping) + ")");
+                            console.log("load(\"".concat(absolutePath, "\", ").concat(JSON.stringify(mapping), ")"));
                             _a = evil.modules;
                             _b = absolutePath;
                             return [4 /*yield*/, loadJsonRaw(absolutePath)];
@@ -3941,7 +3941,7 @@ var _this = this;
                         case 2:
                             absolutePath = makeAbsoluteUrl(location.href, resolveMapping(path));
                             window.module.readyToCapture(absolutePath);
-                            console.log("load(\"" + absolutePath + "\", " + JSON.stringify(mapping) + ")");
+                            console.log("load(\"".concat(absolutePath, "\", ").concat(JSON.stringify(mapping), ")"));
                             return [4 /*yield*/, loadScript(absolutePath)];
                         case 3:
                             _c.sent();
@@ -4005,7 +4005,7 @@ var _this = this;
     };
     var isStanbyAfterCheck = false;
     //const gThis = globalThis;
-    var gThis = (_a = self !== null && self !== void 0 ? self : window) !== null && _a !== void 0 ? _a : global;
+    var gThis = ((_a = self !== null && self !== void 0 ? self : window) !== null && _a !== void 0 ? _a : global);
     gThis.require = function (path) {
         var _a;
         switch (path) {
@@ -4023,10 +4023,10 @@ var _this = this;
                         isStanbyAfterCheck = true;
                         setTimeout(function () {
                             if (0 < evil.unresolved.length) {
-                                console.error("evil-commonjs: unresoled modules: " + JSON.stringify(evil.unresolved));
+                                console.error("evil-commonjs: unresoled modules: ".concat(JSON.stringify(evil.unresolved)));
                                 // console.error(`"${path}" is not found! require() of evil-commonjs need to load() in advance.`);
-                                console.error("evil-commonjs: loaded modules: \"" + JSON.stringify(Object.keys(evil.modules)) + "\"");
-                                console.error("evil-commonjs: module mapping: \"" + JSON.stringify(evil.mapping) + "\"");
+                                console.error("evil-commonjs: loaded modules: \"".concat(JSON.stringify(Object.keys(evil.modules)), "\""));
+                                console.error("evil-commonjs: module mapping: \"".concat(JSON.stringify(evil.mapping), "\""));
                                 console.error(evil.modules);
                             }
                             else {
@@ -4045,7 +4045,7 @@ var _this = this;
         else {
             var absolutePath = makeAbsoluteUrl(location.href, resolveMapping(path));
             evil.module.readyToCapture(absolutePath);
-            content.apply(null, requires.map(function (i) { return globalThis.require(i); }));
+            content.apply(null, requires.map(function (i) { return gThis.require(i); }));
             evil.module.capture(path);
         }
     };
@@ -4553,29 +4553,39 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                 return [2 /*return*/, new Promise(function (resolve) { return setTimeout(resolve, wait); })];
             }); }); };
             core_1.tryOrThrough = function (title, f) {
+                var args = [];
+                for (var _i = 2; _i < arguments.length; _i++) {
+                    args[_i - 2] = arguments[_i];
+                }
+                var result;
                 try {
-                    f();
+                    result = f.apply(void 0, args);
                 }
                 catch (err) {
                     console.error("\uD83D\uDEAB " + title + ": " + err);
                 }
+                return result;
             };
             core_1.tryOrThroughAsync = function (title, f) {
+                var args = [];
+                for (var _i = 2; _i < arguments.length; _i++) {
+                    args[_i - 2] = arguments[_i];
+                }
                 return __awaiter(this, void 0, void 0, function () {
-                    var err_1;
+                    var result, err_1;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 _a.trys.push([0, 2, , 3]);
-                                return [4 /*yield*/, f()];
+                                return [4 /*yield*/, f.apply(void 0, args)];
                             case 1:
-                                _a.sent();
+                                result = _a.sent();
                                 return [3 /*break*/, 3];
                             case 2:
                                 err_1 = _a.sent();
                                 console.error("\uD83D\uDEAB " + title + ": " + err_1);
                                 return [3 /*break*/, 3];
-                            case 3: return [2 /*return*/];
+                            case 3: return [2 /*return*/, result];
                         }
                     });
                 });
@@ -4617,6 +4627,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                 }
                 return i;
             };
+            core_1.existFilter = function (list) { return (list.filter(function (i) { return core_1.exists(i); })); };
             var Url = /** @class */ (function () {
                 function Url(url) {
                     var _this = this;
@@ -4628,21 +4639,24 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                         return _this;
                     };
                     this.getWithoutParams = function () { return core_1.separate(_this.url, "?").head; };
-                    this.getRawParamsString = function () { return core_1.separate(_this.url, "?").tail; };
+                    this.getRawParamsString = function () { var _a; return (_a = core_1.separate(_this.url, "?").tail) !== null && _a !== void 0 ? _a : ""; };
                     this.getRawParams = function () {
                         if (!_this.rawParams) {
-                            _this.rawParams = {};
+                            var params_1 = _this.rawParams = {};
                             _this.getRawParamsString().split("&")
                                 .forEach(function (i) {
                                 var _a = core.separate(i, "="), head = _a.head, tail = _a.tail;
-                                _this.rawParams[head] = tail;
+                                params_1[head] = tail !== null && tail !== void 0 ? tail : "";
                             });
                         }
                         return _this.rawParams;
                     };
                     this.getParam = function (key) { return decodeURIComponent(_this.getRawParams()[key]); };
-                    this.updateParams = function () { return _this.setRawParamsString(core_1.objectToArray(_this.rawParams, function (k, v) { return core_1.bond(k, "=", v); })
-                        .join("&")); };
+                    this.updateParams = function () {
+                        var _a;
+                        return _this.setRawParamsString(core_1.objectToArray((_a = _this.rawParams) !== null && _a !== void 0 ? _a : {}, function (k, v) { return core_1.bond(k, "=", v); })
+                            .join("&"));
+                    };
                     this.setRawParamsString = function (rawParamsString) {
                         _this.url = core_1.bond(_this.getWithoutParams(), "?", rawParamsString);
                         return _this;
@@ -4709,31 +4723,20 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                     this.onUpdateOnce = new Listener();
                     this.exists = function () { return core_1.exists(_this.value); };
                     this.get = function () { return _this.value; };
-                    this.setAsync = function (value, options) { return __awaiter(_this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    if (!(this.value !== value)) return [3 /*break*/, 3];
-                                    this.value = value;
-                                    return [4 /*yield*/, this.onUpdate.fireAsync(this, options)];
-                                case 1:
-                                    _a.sent();
-                                    return [4 /*yield*/, this.onUpdateOnce.fireAsync(this, options)];
-                                case 2:
-                                    _a.sent();
-                                    this.onUpdateOnce.clear();
-                                    _a.label = 3;
-                                case 3: return [2 /*return*/, value];
-                            }
-                        });
-                    }); };
-                    this.updateAsync = function () { return __awaiter(_this, void 0, void 0, function () { var _a; return __generator(this, function (_b) {
-                        switch (_b.label) {
+                    this.updateAsync = function () { return __awaiter(_this, void 0, void 0, function () { var _a, _b; return __generator(this, function (_c) {
+                        switch (_c.label) {
                             case 0:
-                                _a = this.setAsync;
+                                if (!this.updater) return [3 /*break*/, 3];
+                                _b = this.setAsync;
                                 return [4 /*yield*/, this.updater()];
-                            case 1: return [4 /*yield*/, _a.apply(this, [_b.sent()])];
-                            case 2: return [2 /*return*/, _b.sent()];
+                            case 1: return [4 /*yield*/, _b.apply(this, [_c.sent()])];
+                            case 2:
+                                _a = _c.sent();
+                                return [3 /*break*/, 4];
+                            case 3:
+                                _a = null;
+                                _c.label = 4;
+                            case 4: return [2 /*return*/, _a];
                         }
                     }); }); };
                     this.getOrUpdateAsync = function () { return __awaiter(_this, void 0, void 0, function () { var _a; return __generator(this, function (_b) {
@@ -4750,6 +4753,26 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                         }
                     }); }); };
                 }
+                Property.prototype.setAsync = function (value, options) {
+                    return __awaiter(this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    if (!(this.value !== value)) return [3 /*break*/, 3];
+                                    this.value = value;
+                                    return [4 /*yield*/, this.onUpdate.fireAsync(this, options)];
+                                case 1:
+                                    _a.sent();
+                                    return [4 /*yield*/, this.onUpdateOnce.fireAsync(this, options)];
+                                case 2:
+                                    _a.sent();
+                                    this.onUpdateOnce.clear();
+                                    _a.label = 3;
+                                case 3: return [2 /*return*/, value];
+                            }
+                        });
+                    });
+                };
                 return Property;
             }());
             core_1.Property = Property;
@@ -4830,7 +4853,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                     limit = 100000;
                 }
                 while (true) {
-                    if (limit <= index) {
+                    if ("number" === typeof limit && limit <= index) {
                         throw new RangeError("minamo.core.loopMap() overs the limit(" + limit + ")");
                     }
                     var current = mapFunction(index++, result);
@@ -4971,20 +4994,21 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
             cookie.setAsAnnually = function (key, value) { return cookie.set(key, value, 365 * 24 * 60 * 60); };
             cookie.remove = function (key) { return cookie.setRaw(key, null, 0); };
             cookie.update = function () {
-                cache = {};
+                var result = cache = {};
                 document.cookie
                     .split(";")
                     .map(function (i) { return i.trim(); })
                     .forEach(function (i) {
                     var _a = core.separate(i, "="), head = _a.head, tail = _a.tail;
-                    cache[head] = tail;
+                    result[head] = tail !== null && tail !== void 0 ? tail : "";
                 });
-                return cache;
+                return result;
             };
-            cookie.cacheOrUpdate = function () { return cache || cookie.update(); };
+            cookie.cacheOrUpdate = function () { return cache !== null && cache !== void 0 ? cache : cookie.update(); };
             cookie.getRaw = function (key) { return cookie.cacheOrUpdate()[key]; };
             cookie.getOrNull = function (key) {
-                return core.exists(cookie.getRaw(key)) ? JSON.parse(decodeURIComponent(cache[key])) : null;
+                var rawValue = cookie.getRaw(key);
+                return core.exists(rawValue) ? JSON.parse(decodeURIComponent(rawValue)) : null;
             };
             var Property = /** @class */ (function (_super) {
                 __extends(Property, _super);
@@ -5186,16 +5210,17 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                     }); };
                     _this.loadOrUpdateAsync = function () { return __awaiter(_this, void 0, void 0, function () {
                         var result;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
+                        var _a;
+                        return __generator(this, function (_b) {
+                            switch (_b.label) {
                                 case 0: return [4 /*yield*/, this.loadAsync()];
                                 case 1:
-                                    result = _a.sent();
+                                    result = _b.sent();
                                     if (!!core.exists(result)) return [3 /*break*/, 3];
                                     return [4 /*yield*/, this.updateAsync()];
                                 case 2:
-                                    result = _a.sent();
-                                    _a.label = 3;
+                                    result = (_a = (_b.sent())) !== null && _a !== void 0 ? _a : result;
+                                    _b.label = 3;
                                 case 3: return [2 /*return*/, result];
                             }
                         });
@@ -5393,7 +5418,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                 }
                 return element;
             };
-            dom.remove = function (node) { return node.parentNode.removeChild(node); };
+            dom.remove = function (node) { var _a, _b; return (_b = (_a = node.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(node)) !== null && _b !== void 0 ? _b : node; };
             dom.removeChildren = function (parent, isRemoveChild) {
                 if (isRemoveChild) {
                     parent.childNodes.forEach(function (i) {
@@ -5784,18 +5809,28 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             return result;
         };
         Calculate.sign = function (n) { return 0 <= n ? 1 : -1; }; // Math.sign() とは挙動が異なるので注意。
-        Calculate.sum = function (ticks) { return ticks.length <= 0 ?
-            null :
-            ticks.reduce(function (a, b) { return a + b; }, 0); };
-        Calculate.average = function (ticks) { return ticks.length <= 0 ?
-            null :
-            Calculate.sum(ticks) / ticks.length; };
-        // export const standardDeviationOld = (ticks: number[], average: number = Calculate.average(ticks)) =>
-        //     Math.sqrt(Calculate.average(ticks.map(i => (i -average) ** 2)));
-        Calculate.standardDeviation = function (ticks, average) {
+        function sum(ticks) {
+            return ticks.length <= 0 ?
+                null :
+                ticks.reduce(function (a, b) { return a + b; }, 0);
+        }
+        Calculate.sum = sum;
+        function average(ticks) {
+            return ticks.length <= 0 ?
+                null :
+                sum(ticks) / ticks.length;
+        }
+        Calculate.average = average;
+        function standardDeviation(ticks, average) {
             if (average === void 0) { average = Calculate.average(ticks); }
-            return Math.sqrt(Calculate.average(ticks.map(function (i) { return Math.pow(i, 2); })) - (Math.pow(average, 2)));
-        };
+            if (null === average || ticks.length <= 0) {
+                return null;
+            }
+            else {
+                return Math.sqrt(Calculate.average(ticks.map(function (i) { return Math.pow(i, 2); })) - (Math.pow(average, 2)));
+            }
+        }
+        Calculate.standardDeviation = standardDeviation;
         Calculate.standardScore = function (average, standardDeviation, target) {
             return (10 * (target - average) / standardDeviation) + 50;
         };
@@ -5804,6 +5839,31 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
     (function (CyclicToDo) {
         var _this = this;
         CyclicToDo.applicationTitle = config_json_1.default.applicationTitle;
+        CyclicToDo.isZeroToDoEntry = function (item) {
+            return item.count <= 0 || "number" !== typeof item.first;
+        };
+        CyclicToDo.isFirstOrMoreToDoEntry = function (item) {
+            return 1 <= item.count && "number" === typeof item.first;
+        };
+        CyclicToDo.isMoreToDoEntry = function (item) {
+            return 2 <= item.count && "number" === typeof item.first && "number" === typeof item.previous && item.first !== item.previous;
+        };
+        CyclicToDo.isZeroHistryEntry = function (entry) {
+            return entry.count <= 0 || "number" !== typeof entry.first || entry.histories.length <= 0;
+        };
+        CyclicToDo.isFirstOrMoreHistryEntry = function (entry) {
+            return 1 <= entry.count && "number" === typeof entry.first && 1 <= entry.histories.length;
+        };
+        CyclicToDo.isSecondOrMoreHistryEntry = function (entry) {
+            return 2 <= entry.count && "number" === typeof entry.first && 2 <= entry.histories.length;
+        };
+        CyclicToDo.isMoreHistryEntry = function (entry) {
+            return 3 <= entry.count && "number" === typeof entry.first && 3 <= entry.histories.length;
+        };
+        function getPreviousFromHistryEntry(entry) {
+            return CyclicToDo.isFirstOrMoreHistryEntry(entry) ? entry.histories[0] : null;
+        }
+        CyclicToDo.getPreviousFromHistryEntry = getPreviousFromHistryEntry;
         var OldStorage;
         (function (OldStorage) {
             OldStorage.sessionPassPrefix = "@Session";
@@ -6174,11 +6234,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 TodoSettings.makeKey = function (pass, task) { return "pass:(" + pass + ").todo:(" + task + ").settings"; };
                 TodoSettings.get = function (pass, task) { var _a; return (_a = OldStorage.getStorage(pass).getOrNull(TodoSettings.makeKey(pass, task))) !== null && _a !== void 0 ? _a : {}; };
                 TodoSettings.set = function (pass, task, settings) {
-                    return OldStorage.getStorage(pass).set(TodoSettings.makeKey(pass, task), settings);
+                    return undefined === settings ?
+                        TodoSettings.remove(pass, task) :
+                        OldStorage.getStorage(pass).set(TodoSettings.makeKey(pass, task), settings);
                 };
                 TodoSettings.remove = function (pass, task) { return OldStorage.getStorage(pass).remove(TodoSettings.makeKey(pass, task)); };
                 TodoSettings.isPickupTarget = function (pass, item, elapsedTime) {
-                    var _a;
+                    var _a, _b;
                     if (elapsedTime === void 0) { elapsedTime = item.elapsed; }
                     var pickupSetting = (_a = TodoSettings.get(pass, item.task)) === null || _a === void 0 ? void 0 : _a.pickup;
                     if (pickupSetting) {
@@ -6188,7 +6250,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             case "elapsed-time":
                                 return null !== elapsedTime && pickupSetting.elapsedTime <= elapsedTime;
                             case "elapsed-time-standard-score":
-                                return null !== elapsedTime && pickupSetting.elapsedTimeStandardScore <= Domain.getStandardScore(item, elapsedTime);
+                                return null !== elapsedTime && pickupSetting.elapsedTimeStandardScore <= ((_b = Domain.getStandardScore(item, elapsedTime)) !== null && _b !== void 0 ? _b : 0);
                             case "expired":
                                 return Domain.isExpired(item, elapsedTime);
                         }
@@ -6196,7 +6258,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return false;
                 };
                 TodoSettings.isRestrictionTarget = function (pass, item, elapsedTime) {
-                    var _a;
+                    var _a, _b;
                     if (elapsedTime === void 0) { elapsedTime = item.elapsed; }
                     var restrictionSetting = (_a = TodoSettings.get(pass, item.task)) === null || _a === void 0 ? void 0 : _a.restriction;
                     if (restrictionSetting) {
@@ -6206,7 +6268,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             case "elapsed-time":
                                 return null !== elapsedTime && elapsedTime < restrictionSetting.elapsedTime;
                             case "elapsed-time-standard-score":
-                                return null !== elapsedTime && Domain.getStandardScore(item, elapsedTime) < restrictionSetting.elapsedTimeStandardScore;
+                                return null !== elapsedTime && ((_b = Domain.getStandardScore(item, elapsedTime)) !== null && _b !== void 0 ? _b : 0) < restrictionSetting.elapsedTimeStandardScore;
                             case "expired":
                                 return !Domain.isExpired(item, elapsedTime);
                         }
@@ -6622,7 +6684,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 case "@unoverall":
                                 default:
                                     return tag.isSublist() ?
-                                        new Tag(_this, "@overall").getRawMember().filter(function (i) { return tag.getName() === i.getSublist().getName(); }) :
+                                        new Tag(_this, "@overall").getRawMember().filter(function (i) { var _a; return tag.getName() === ((_a = i.getSublist()) === null || _a === void 0 ? void 0 : _a.getName()); }) :
                                         tag.getRawMember();
                             }
                         },
@@ -6662,7 +6724,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         }); }); },
                     };
                     this.getDoneTicks = function () {
-                        return Math.max.apply(null, _this.live.tasks.map(function (i) { return i.previous; }).filter(function (i) { return i; }).concat[Domain.getTicks() - 1]) + 1;
+                        return Math.max.apply(null, minamo_js_1.minamo.core.existFilter(_this.live.tasks.map(function (i) { return i.previous; })).concat([Domain.getTicks() - 1])) + 1;
                     };
                     this.done = function (task, tick) {
                         if (tick === void 0) { tick = _this.getDoneTicks(); }
@@ -6701,7 +6763,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             -((_c = item.progress) !== null && _c !== void 0 ? _c : -1);
                                     },
                                     function (item) { return 1 < item.count ? -2 : -item.count; },
-                                    function (item) { var _a, _b; return 1 < item.count ? (item.elapsed - item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate)) : -((_b = item.elapsed) !== null && _b !== void 0 ? _b : 0); },
+                                    function (item) {
+                                        var _a, _b;
+                                        return 1 < item.count && null !== item.elapsed && null !== item.RecentlySmartAverage ?
+                                            (item.elapsed - item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate)) :
+                                            -((_b = item.elapsed) !== null && _b !== void 0 ? _b : 0);
+                                    },
                                     function (item) { return entry.todo.indexOf(item.task); },
                                     function (item) { return item.task; },
                                 ]);
@@ -6774,16 +6841,17 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             };
             Model.loadContent = function (card) { return __awaiter(_this, void 0, void 0, function () {
                 var result;
-                return __generator(this, function (_a) {
+                var _a, _b;
+                return __generator(this, function (_c) {
                     switch (card.type) {
                         case "oldLocalDb":
                             result = JSON.parse(OldStorage.exportJson(card.uri));
                             break;
                         case "session":
-                            result = SessionStorage.ToDoList.get(card.uri);
+                            result = (_a = SessionStorage.ToDoList.get(card.uri)) !== null && _a !== void 0 ? _a : undefined;
                             break;
                         case "localDb":
-                            result = Storage.ToDoList.get(card.uri);
+                            result = (_b = Storage.ToDoList.get(card.uri)) !== null && _b !== void 0 ? _b : undefined;
                             break;
                     }
                     return [2 /*return*/, result];
@@ -6989,12 +7057,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).substr(-2) + "-" + ("0" + date.getDate()).substr(-2);
                 }
             };
-            Domain.getTime = function (tick) {
+            function getTime(tick) {
                 if (null === tick) {
                     return null;
                 }
                 else if (tick < 0) {
-                    return -Domain.getTime(tick);
+                    return -getTime(tick);
                 }
                 else if (tick * Domain.timeAccuracy < 24 * 60 * 60 * 1000) {
                     return tick;
@@ -7007,15 +7075,17 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     date.setMilliseconds(0);
                     return tick - Domain.getTicks(date);
                 }
-            };
-            Domain.dateStringFromTick = function (tick) {
+            }
+            Domain.getTime = getTime;
+            function dateStringFromTick(tick) {
                 if (null === tick) {
                     return "N/A";
                 }
                 else {
-                    return Domain.dateCoreStringFromTick(tick) + " " + Domain.timeCoreStringFromTick(Domain.getTime(tick));
+                    return Domain.dateCoreStringFromTick(tick) + " " + Domain.timeCoreStringFromTick(getTime(tick));
                 }
-            };
+            }
+            Domain.dateStringFromTick = dateStringFromTick;
             Domain.timeCoreStringFromTick = function (tick) {
                 if (null === tick) {
                     return "N/A";
@@ -7063,7 +7133,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Domain.timeRangeStringFromTick = function (a, b) {
                 return Domain.timeShortStringFromTick(a) + " \u301C " + Domain.timeShortStringFromTick(b);
             };
-            Domain.parseDate = function (date) {
+            function parseDate(date) {
                 if (null !== date) {
                     try {
                         return new Date(Date.parse(date));
@@ -7073,7 +7143,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 }
                 return null;
-            };
+            }
+            Domain.parseDate = parseDate;
             Domain.tagMap = function (tag) {
                 switch (tag) {
                     case "@root":
@@ -7095,7 +7166,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             };
             Domain.getStandardScore = function (item, elapsedTime) {
                 if (elapsedTime === void 0) { elapsedTime = item.elapsed; }
-                return null !== item.RecentlyStandardDeviation ?
+                return null !== item.RecentlySmartAverage &&
+                    null !== item.RecentlyStandardDeviation &&
+                    null !== elapsedTime ?
                     Calculate.standardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, elapsedTime) :
                     null;
             };
@@ -7133,7 +7206,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     -((_c = item.progress) !== null && _c !== void 0 ? _c : -1);
                             },
                             function (item) { return 1 < item.count ? -2 : -item.count; },
-                            function (item) { var _a, _b; return 1 < item.count ? (item.elapsed - item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate)) : -((_b = item.elapsed) !== null && _b !== void 0 ? _b : 0); },
+                            function (item) {
+                                var _a, _b;
+                                return 1 < item.count && null !== item.elapsed && null !== item.RecentlySmartAverage ?
+                                    (item.elapsed - item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate)) :
+                                    -((_b = item.elapsed) !== null && _b !== void 0 ? _b : 0);
+                            },
                             function (item) { return entry.todo.indexOf(item.task); },
                             function (item) { return item.task; },
                         ]);
@@ -7161,7 +7239,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 }
             };
             Domain.getTermCategoryByAverage = function (item) {
-                return null !== item.smartRest ?
+                return null !== item.smartRest && null !== item.RecentlySmartAverage ?
                     (item.RecentlySmartAverage < config_json_1.default.maxShortTermMinutes ?
                         "@short-term" :
                         (item.RecentlySmartAverage < config_json_1.default.maxMediumTermMinutes ?
@@ -7170,7 +7248,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     "@irregular-term";
             };
             Domain.getTermCategoryByRest = function (item) {
-                return null !== item.smartRest ?
+                return null !== item.smartRest && null !== item.rest ?
                     (item.rest < 24 * 60 ?
                         "@short-term" :
                         "@long-term") :
@@ -7218,14 +7296,14 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     Calculate.standardDeviation(longRecentries, longRecentlyAverage);
                 var history = {
                     // full,
-                    intervals: (null === longRecentlyStandardDeviation ?
+                    intervals: (null === longRecentlyStandardDeviation || null === longRecentlyAverage ?
                         longRecentries :
                         // todo 毎の hisotry 画面では config.granceMinutes を使うが、ここでは予想間隔の精度の都合から使わない。 ( 整合性が無くなるが、特にそれでなんの影響も無いので気にしない。 )
                         //longRecentries.filter(i => (i -longRecentlyAverage -config.granceMinutes) / longRecentlyStandardDeviation <= config.sleepStandardDeviationRate)
                         longRecentries.filter(function (i) { return (i - longRecentlyAverage) / longRecentlyStandardDeviation <= config_json_1.default.sleepStandardDeviationRate; }))
                         .filter(function (_, index) { return index < 25; }),
                     // intervals: longRecentries.filter((_, index) => index < 25),
-                    previous: full.histories.length <= 0 ? null : full.histories[0],
+                    // previous: full.histories.length <= 0 ? null: full.histories[0],
                     //average: full.length <= 1 ? null: (full[0] -full[full.length -1]) / (full.length -1),
                     count: full.count,
                 };
@@ -7240,7 +7318,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     isDefault: false,
                     progress: null,
                     first: full.first,
-                    previous: history.previous,
+                    previous: getPreviousFromHistryEntry(full),
                     elapsed: null,
                     rest: null,
                     RecentlyStandardDeviation: history.intervals.length <= 0 ?
@@ -7255,13 +7333,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     RecentlyAverage: history.intervals.length <= 0 ?
                         null :
                         Calculate.average(longRecentries.filter(function (_, index) { return index < 10; })),
-                    TotalAverage: full.first && 2 < full.count && full.first !== history.previous ?
-                        (history.previous - full.first) / (full.count - 1) :
+                    TotalAverage: CyclicToDo.isSecondOrMoreHistryEntry(full) ?
+                        (getPreviousFromHistryEntry(full) - full.first) / (full.count - 1) :
                         null,
                     smartRest: null,
                     expectedInterval: null,
                 };
-                if (null !== item.RecentlySmartAverage) {
+                if (CyclicToDo.isMoreToDoEntry(item)) {
                     var base = inflatedRecentrlyIntervals.length;
                     var lows = (base / 2) + Math.max(inflatedRecentrlyIntervals.filter(function (i) { return i < item.RecentlySmartAverage; }).length, 1);
                     var highs = (base / 2) + Math.max(inflatedRecentrlyIntervals.filter(function (i) { return item.RecentlySmartAverage < i; }).length, 1);
@@ -7288,10 +7366,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Domain.updateProgress = function (pass, item, now) {
                 var _a, _b, _c, _d;
                 if (now === void 0) { now = Domain.getTicks(); }
-                if (0 < item.count) {
+                if (CyclicToDo.isFirstOrMoreToDoEntry(item)) {
                     // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
                     item.elapsed = Math.max(0.0, now - item.previous);
-                    if (null !== item.RecentlySmartAverage) {
+                    if (CyclicToDo.isMoreToDoEntry(item)) {
                         var short = item.expectedInterval.min;
                         var long = item.expectedInterval.max;
                         item.rest = long - item.elapsed;
@@ -7842,7 +7920,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     switch (_a.label) {
                                         case 0:
                                             hasNewTag = false;
-                                            result = [].concat(currentTags);
+                                            result = currentTags.concat([]);
                                             tagButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
                                             tagButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
                                                 var _a, _b, _c, _d;
@@ -7947,7 +8025,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 ],
                                                 onClose: function () { return __awaiter(_this, void 0, void 0, function () {
                                                     return __generator(this, function (_a) {
-                                                        return [2 /*return*/, resolve(JSON.stringify(result.sort()) !== JSON.stringify([].concat(currentTags).sort()) || hasNewTag)];
+                                                        return [2 /*return*/, resolve(JSON.stringify(result.sort()) !== JSON.stringify(currentTags.concat([]).sort()) || hasNewTag)];
                                                     });
                                                 }); },
                                             });
@@ -8200,7 +8278,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                 switch (_b.label) {
                                                                                     case 0:
                                                                                         if (!(null !== ((_a = settings.locale) !== null && _a !== void 0 ? _a : null))) return [3 /*break*/, 2];
-                                                                                        settings.locale = null;
+                                                                                        settings.locale = undefined;
                                                                                         Storage.SystemSettings.set(settings);
                                                                                         result = true;
                                                                                         return [4 /*yield*/, checkButtonListUpdate()];
@@ -8325,7 +8403,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                         return __generator(this, function (_a) {
                                                                             switch (_a.label) {
                                                                                 case 0:
-                                                                                    settings.sort = null;
+                                                                                    settings.sort = undefined;
                                                                                     OldStorage.TagSettings.set(pass, tag, settings);
                                                                                     result = true;
                                                                                     return [4 /*yield*/, tagButtonListUpdate()];
@@ -8628,7 +8706,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                             return __generator(this, function (_a) {
                                                                                 switch (_a.label) {
                                                                                     case 0:
-                                                                                        settings.pickup = null;
+                                                                                        settings.pickup = undefined;
                                                                                         OldStorage.TodoSettings.set(pass, entry.task, settings);
                                                                                         result = true;
                                                                                         return [4 /*yield*/, tagButtonListUpdate()];
@@ -8854,7 +8932,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                             return __generator(this, function (_a) {
                                                                                 switch (_a.label) {
                                                                                     case 0:
-                                                                                        settings.restriction = null;
+                                                                                        settings.restriction = undefined;
                                                                                         OldStorage.TodoSettings.set(pass, entry.task, settings);
                                                                                         result = true;
                                                                                         return [4 /*yield*/, tagButtonListUpdate()];
@@ -9051,7 +9129,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
                             console.log("screen-cover.click!");
-                            dom.onclick = undefined;
+                            dom.onclick = null;
                             data.onclick();
                             close();
                             return [2 /*return*/];
@@ -9096,11 +9174,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }); },
                 });
                 var close = function () { return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, (data === null || data === void 0 ? void 0 : data.onClose())];
+                    var _a;
+                    return __generator(this, function (_b) {
+                        switch (_b.label) {
+                            case 0: return [4 /*yield*/, ((_a = data === null || data === void 0 ? void 0 : data.onClose) === null || _a === void 0 ? void 0 : _a.call(data))];
                             case 1:
-                                _a.sent();
+                                _b.sent();
                                 cover.close();
                                 return [2 /*return*/];
                         }
@@ -9113,11 +9192,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         { tag: "div", }, // レイアウト調整用のダミー要素 ( この調整がないとポップアップが小さく且つ入力要素がある場合に iPad でキーボードの下に dom が隠れてしまう。 )
                     ],
                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, (data === null || data === void 0 ? void 0 : data.onClose())];
+                        var _a;
+                        return __generator(this, function (_b) {
+                            switch (_b.label) {
+                                case 0: return [4 /*yield*/, ((_a = data === null || data === void 0 ? void 0 : data.onClose) === null || _a === void 0 ? void 0 : _a.call(data))];
                                 case 1:
-                                    _a.sent();
+                                    _b.sent();
                                     return [2 /*return*/];
                             }
                         });
@@ -9136,6 +9216,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
+                            cover = null;
                             close = function () {
                                 popup.classList.remove("show");
                                 cover = null;
@@ -9217,12 +9298,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 Render.monospace("task-last-timestamp", Render.label("previous"), Domain.dateStringFromTick(item.previous)),
                 Render.monospace("task-elapsed-time", Render.label("elapsed time"), Domain.timeLongStringFromTick(item.elapsed)),
                 Render.monospace("task-interval-average", Render.label("recentrly interval average"), Domain.timeLongStringFromTick(item.RecentlyAverage)),
-                Render.monospace("task-interval-average", Render.label("expected interval"), null === item.RecentlyStandardDeviation ?
-                    Domain.timeLongStringFromTick(item.RecentlySmartAverage) :
+                Render.monospace("task-interval-average", Render.label("expected interval"), CyclicToDo.isMoreToDoEntry(item) ?
                     Domain.timeRangeStringFromTick(item.expectedInterval.min, item.expectedInterval.max
                     // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
                     // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
-                    )),
+                    ) :
+                    Domain.timeLongStringFromTick(item.RecentlySmartAverage)),
                 // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
                 // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
             ]); };
@@ -9236,12 +9317,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 Render.monospace("task-last-timestamp", Render.label("previous"), Domain.dateStringFromTick(item.previous)),
                 Render.monospace("task-elapsed-time", Render.label("elapsed time"), Domain.timeLongStringFromTick(item.elapsed)),
                 Render.monospace("task-interval-average", Render.label("recentrly interval average"), Domain.timeLongStringFromTick(item.RecentlyAverage)),
-                Render.monospace("task-interval-average", Render.label("expected interval"), null === item.RecentlyStandardDeviation ?
-                    Domain.timeLongStringFromTick(item.RecentlySmartAverage) :
+                Render.monospace("task-interval-average", Render.label("expected interval"), CyclicToDo.isMoreToDoEntry(item) ?
                     Domain.timeRangeStringFromTick(item.expectedInterval.min, item.expectedInterval.max
                     // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
                     // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
-                    )),
+                    ) :
+                    Domain.timeLongStringFromTick(item.RecentlySmartAverage)),
                 // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
                 Render.monospace("task-interval-average", Render.label("total interval average"), Domain.timeLongStringFromTick(item.TotalAverage)),
                 Render.monospace("task-count", Render.label("count"), item.count.toLocaleString()),
@@ -9719,10 +9800,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     className: "tick-item flex-item ",
                                     style: (isRestrictioned ?
                                         Render.progressRestrictionTitleStyle :
-                                        Render.progressDefaultTitleStyle)(null === interval || max < interval ? null : interval / max),
+                                        Render.progressDefaultTitleStyle)(null === interval || null === max || max < interval ? null : interval / max),
                                 });
                                 return [4 /*yield*/, Resource.loadSvgOrCache(isRestrictioned ? "forbidden-icon" :
-                                        null === interval ? "one-icon" :
+                                        null === interval || null === max ? "one-icon" :
                                             max < interval ? "sleep-icon" :
                                                 "tick-icon")];
                             case 1:
@@ -9790,7 +9871,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 });
             };
             Render.dropDownLabel = function (options) {
-                var _a;
+                var _a, _b;
                 var dropdown = Render.$make(HTMLSelectElement)({
                     className: options.className,
                     children: Array.isArray(options.list) ?
@@ -9811,7 +9892,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         options.value :
                         ((_a = options.list[options.value]) !== null && _a !== void 0 ? _a : options.value),
                 });
-                var result = Render.$tag("label")(options.className)([
+                var result = Render.$tag("label")((_b = options.className) !== null && _b !== void 0 ? _b : "")([
                     dropdown,
                     labelSoan
                 ]);
@@ -9839,7 +9920,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         ]]),
                                         _e)])
                             ];
-                            return [4 /*yield*/, Promise.all([].concat(list).sort(minamo_js_1.minamo.core.comparer.make(function (i) { var _a; return (_a = -i.previous) !== null && _a !== void 0 ? _a : 0; })).map(function (item) { return __awaiter(_this, void 0, void 0, function () {
+                            return [4 /*yield*/, Promise.all(list.concat([]).sort(minamo_js_1.minamo.core.comparer.make(function (i) { var _a; return -((_a = i.previous) !== null && _a !== void 0 ? _a : 0); })).map(function (item) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a, _b;
                                     var _c;
                                     return __generator(this, function (_d) {
@@ -9991,6 +10072,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return __generator(this, function (_c) {
                         switch (_c.label) {
                             case 0:
+                                cover = null;
                                 close = function () {
                                     popup.classList.remove("show");
                                     cover = null;
@@ -11125,8 +11207,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     switch (_c.label) {
                         case 0:
                             histories = {};
-                            list = entry.todo.map(function (task) { return (histories[task] = OldStorage.History.getTicks(entry.pass, task)).map(function (tick) { return ({ task: task, tick: tick }); }); }).reduce(function (a, b) { return a.concat(b); }, []);
-                            list.sort(minamo_js_1.minamo.core.comparer.make(function (a) { return -a.tick; }));
+                            list = entry.todo.map(function (task) { return (histories[task] = OldStorage.History.getTicks(entry.pass, task)).map(function (tick) { return ({ task: task, tick: tick, }); }); }).reduce(function (a, b) { return a.concat(b); }, []);
+                            list.sort(minamo_js_1.minamo.core.comparer.make(function (a) { var _a; return -((_a = a.tick) !== null && _a !== void 0 ? _a : 0); }));
                             list = list.concat(entry.todo.filter(function (task) { return histories[task].length <= 0; }).map(function (task) { return ({ task: task, tick: null }); }));
                             filter = Render.regulateFilterText((_b = urlParams.filter) !== null && _b !== void 0 ? _b : "");
                             _a = Render.showWindow;
@@ -11242,7 +11324,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 _e);
                             if (!(0 < list.length)) return [3 /*break*/, 6];
                             _c = Render.$div("column-flex-list removed-list");
-                            return [4 /*yield*/, Promise.all([].concat(list)
+                            return [4 /*yield*/, Promise.all(list.concat([])
                                     .sort(minamo_js_1.minamo.core.comparer.make(function (item) { return -item.deteledAt; }))
                                     .map(function (item) { return Render.removedItem(pass, item); }))];
                         case 5:
@@ -11355,12 +11437,20 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 });
             }); };
             Render.getIntervalsMax = function (intervals) {
-                var average = intervals.length <= 1 ? null : Calculate.average(intervals);
-                var standardDeviation = intervals.length <= 5 ?
-                    null :
-                    Calculate.standardDeviation(intervals, average);
-                return null === standardDeviation ? (intervals.length <= 0 ? null : Math.max.apply(null, intervals)) :
-                    Math.max.apply(null, intervals.filter(function (i) { return (i - average - config_json_1.default.granceMinutes) / standardDeviation <= config_json_1.default.sleepStandardDeviationRate; }));
+                if (0 < intervals.length) {
+                    var i = intervals;
+                    var average_1 = Calculate.average(i);
+                    if (6 < intervals.length) {
+                        var standardDeviation_1 = Calculate.standardDeviation(i, average_1);
+                        return Math.max.apply(null, intervals.filter(function (i) { return (i - average_1 - config_json_1.default.granceMinutes) / standardDeviation_1 <= config_json_1.default.sleepStandardDeviationRate; }));
+                    }
+                    else {
+                        return Math.max.apply(null, intervals);
+                    }
+                }
+                else {
+                    return null;
+                }
             };
             Render.todoScreenBody = function (pass, item, ticks, _tag, max) {
                 if (max === void 0) { max = Render.getIntervalsMax(Calculate.intervals(ticks)); }
@@ -11610,7 +11700,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 Resource.loadSvgOrCache = function (key) { return __awaiter(_this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         try {
-                            return [2 /*return*/, new DOMParser().parseFromString(document.getElementById(key).innerHTML, "image/svg+xml").documentElement];
+                            return [2 /*return*/, new DOMParser().parseFromString(minamo_js_1.minamo.core.existsOrThrow(document.getElementById(key)).innerHTML, "image/svg+xml").documentElement];
                         }
                         catch (error) {
                             console.log({ key: key });
@@ -12006,16 +12096,17 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     });
                                 }); }),
                                 Render.menuItem(Render.label("Language setting"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
+                                    var _a;
+                                    return __generator(this, function (_b) {
+                                        switch (_b.label) {
                                             case 0: return [4 /*yield*/, Render.localeSettingsPopup()];
                                             case 1:
-                                                if (!_a.sent()) return [3 /*break*/, 3];
-                                                locale.setLocale(Storage.SystemSettings.get().locale);
+                                                if (!_b.sent()) return [3 /*break*/, 3];
+                                                locale.setLocale((_a = Storage.SystemSettings.get().locale) !== null && _a !== void 0 ? _a : null);
                                                 return [4 /*yield*/, CyclicToDo.reload()];
                                             case 2:
-                                                _a.sent();
-                                                _a.label = 3;
+                                                _b.sent();
+                                                _b.label = 3;
                                             case 3: return [2 /*return*/];
                                         }
                                     });
@@ -12187,7 +12278,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 var _a, _b, _c;
                 document.title = (_c = (_b = (_a = Array.from(Render.getHeaderElement().getElementsByClassName("segment-title"))) === null || _a === void 0 ? void 0 : _a.map(function (div) { return div.innerText; })) === null || _b === void 0 ? void 0 : _b.join(" / ")) !== null && _c !== void 0 ? _c : CyclicToDo.applicationTitle;
             };
-            var updateWindowTimer = undefined;
+            var updateWindowTimer;
             Render.getHeaderElement = function () { return document.getElementById("screen-header"); };
             Render.showWindow = function (screen, updateWindow) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c;
@@ -12224,13 +12315,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     }
                                 });
                             }
-                            document.getElementById("screen").className = screen.className + " screen";
+                            minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen")).className = screen.className + " screen";
                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                             _c = [Render.getHeaderElement()];
                             return [4 /*yield*/, Render.screenSegmentedHeader(screen.header)];
                         case 1:
                             _b.apply(_a, _c.concat([_e.sent()]));
-                            minamo_js_1.minamo.dom.replaceChildren(document.getElementById("screen-body"), screen.body);
+                            minamo_js_1.minamo.dom.replaceChildren(minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen-body")), screen.body);
                             Render.getHeaderElement().classList.toggle("header-operator-has-focus", "" !== Render.getFilterText());
                             Render.updateTitle();
                             //minamo.core.timeout(100);
@@ -12271,7 +12362,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             case 1:
                                 _a.sent();
                                 minamo_js_1.minamo.dom.remove(dom);
-                                if (!(document.getElementById("screen-toast").getElementsByClassName("item").length <= 0)) return [3 /*break*/, 3];
+                                if (!(minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen-toast")).getElementsByClassName("item").length <= 0)) return [3 /*break*/, 3];
                                 return [4 /*yield*/, minamo_js_1.minamo.core.timeout(10)];
                             case 2:
                                 _a.sent();
@@ -12292,11 +12383,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         }
                     }); }); },
                 };
-                document.getElementById("screen-toast").appendChild(dom);
+                minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen-toast")).appendChild(dom);
                 setTimeout(function () { return dom.classList.remove("slide-up-in"); }, 250);
                 return result;
             };
-            Render.getProgressElement = function () { return document.getElementById("screen-header"); };
+            Render.getProgressElement = function () { return minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen-header")); };
             Render.setProgressStyleRaw = function (className) { return Render.getProgressElement().className = "segmented " + className; };
             var lastSetProgressAt = 0;
             Render.setProgressStyle = function (className, timeout) { return __awaiter(_this, void 0, void 0, function () {
@@ -12374,7 +12465,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         }
                     });
                     if (length <= 1 || maxColumns <= 1) {
-                        list.style.height = undefined;
+                        minamo_js_1.minamo.dom.removeCSSStyleProperty(list.style, "height");
                     }
                     else {
                         var height = window.innerHeight - list.offsetTop;
@@ -12557,13 +12648,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
         };
         CyclicToDo.start = function (params) { return __awaiter(_this, void 0, void 0, function () {
             var _this = this;
-            var _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var _a, _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
                         console.log("start timestamp: " + new Date());
                         console.log("" + JSON.stringify(params));
-                        locale.setLocale(Storage.SystemSettings.get().locale);
+                        locale.setLocale((_a = Storage.SystemSettings.get().locale) !== null && _a !== void 0 ? _a : null);
                         window.onpopstate = function () { return CyclicToDo.showPage(); };
                         window.addEventListener('resize', Render.onWindowResize);
                         window.addEventListener('focus', Render.onWindowFocus);
@@ -12572,12 +12663,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         window.addEventListener('compositionstart', Render.onCompositionStart);
                         window.addEventListener('compositionend', Render.onCompositionEnd);
                         window.addEventListener('keydown', Render.onKeydown);
-                        document.getElementById("screen-header").addEventListener('click', function () { return __awaiter(_this, void 0, void 0, function () {
+                        minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen-header")).addEventListener('click', function () { return __awaiter(_this, void 0, void 0, function () {
                             var body, top, i;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
-                                        body = document.getElementById("screen-body");
+                                        body = minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen-body"));
                                         top = body.scrollTop;
                                         i = 0;
                                         _a.label = 1;
@@ -12604,11 +12695,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         CyclicToDo.updateStyle();
                         return [4 /*yield*/, Render.showUpdatingScreen(location.href)];
                     case 1:
-                        _c.sent();
+                        _d.sent();
                         return [4 /*yield*/, CyclicToDo.showPage()];
                     case 2:
-                        _c.sent();
-                        if ("reload" === ((_b = (_a = performance.getEntriesByType("navigation")) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.type)) {
+                        _d.sent();
+                        if ("reload" === ((_c = (_b = performance.getEntriesByType("navigation")) === null || _b === void 0 ? void 0 : _b[0]) === null || _c === void 0 ? void 0 : _c.type)) {
                             Render.makeToast({
                                 content: Render.$span("")("\u30D3\u30EB\u30C9\u30BF\u30A4\u30E0\u30B9\u30BF\u30F3\u30D7: " + Domain.dateStringFromTick(params.buildTimestampTick / Domain.timeAccuracy) + " ( " + Domain.timeLongStringFromTick((new Date().getTime() - params.buildTimestampTick) / Domain.timeAccuracy) + " \u524D )"),
                                 isWideContent: true,
@@ -12623,22 +12714,22 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             if (_wait === void 0) { _wait = 0; }
             return __awaiter(_this, void 0, void 0, function () {
                 var urlParams, hash, tag, todo, pass, _a, _b;
-                var _c;
-                return __generator(this, function (_d) {
-                    switch (_d.label) {
+                var _c, _d;
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
                         case 0:
                             window.scrollTo(0, 0);
-                            document.getElementById("screen-body").scrollTo(0, 0);
+                            minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen-body")).scrollTo(0, 0);
                             urlParams = CyclicToDo.getUrlParams(url);
                             hash = CyclicToDo.getUrlHash(url);
-                            tag = urlParams["tag"];
+                            tag = (_c = urlParams["tag"]) !== null && _c !== void 0 ? _c : "";
                             todo = urlParams["todo"];
-                            pass = (_c = urlParams["pass"]) !== null && _c !== void 0 ? _c : OldStorage.sessionPassPrefix + ":" + new Date().getTime();
+                            pass = (_d = urlParams["pass"]) !== null && _d !== void 0 ? _d : OldStorage.sessionPassPrefix + ":" + new Date().getTime();
                             if (!(pass && todo)) return [3 /*break*/, 2];
                             console.log("show todo screen");
                             return [4 /*yield*/, Render.showTodoScreen(pass, todo)];
                         case 1:
-                            _d.sent();
+                            _e.sent();
                             return [3 /*break*/, 18];
                         case 2:
                             if (!(OldStorage.isSessionPass(pass) && !tag)) return [3 /*break*/, 9];
@@ -12665,7 +12756,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             console.log("show welcome screen");
                             return [4 /*yield*/, Render.showWelcomeScreen()];
                         case 7:
-                            _d.sent();
+                            _e.sent();
                             return [3 /*break*/, 8];
                         case 8: return [3 /*break*/, 18];
                         case 9:
@@ -12704,8 +12795,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             return [3 /*break*/, 17];
                         case 15: return [4 /*yield*/, CyclicToDo.showUrl({})];
                         case 16:
-                            _d.sent();
-                            _d.label = 17;
+                            _e.sent();
+                            _e.label = 17;
                         case 17: return [3 /*break*/, 18];
                         case 18: return [2 /*return*/];
                     }
@@ -12743,7 +12834,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Mar 03 2022 21:09:55 GMT+0900 (日本標準時)', buildTimestampTick: 1646309395849, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Apr 24 2022 11:31:09 GMT+0900 (日本標準時)', buildTimestampTick: 1650767469325, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
