@@ -5651,7 +5651,7 @@ export module CyclicToDo
         export const updateTitle = () =>
         {
             document.title = Array.from(getHeaderElement().getElementsByClassName("segment-title"))
-                ?.map((div: HTMLDivElement) => div.innerText)
+                ?.map(div => (<HTMLDivElement>div).innerText)
                 // ?.reverse()
                 ?.join(" / ")
                 ?? applicationTitle;
