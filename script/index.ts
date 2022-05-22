@@ -98,18 +98,19 @@ export module Calculate
 export module CyclicToDo
 {
     export const applicationTitle = config.applicationTitle;
+    export type ThemeType = "auto" | "light" | "dark";
     export interface SystemSettings
     {
-        theme?: "auto" | "light" | "dark";
+        theme?: ThemeType;
         locale?: locale.LocaleType;
     }
-    export interface ToDoTagEntryOld
+    export interface ToDoTagEntryOld extends minamo.core.JsonableObject
     {
         pass: string;
         tag: string;
         todo: string[];
     }
-    export interface ToDoEntry
+    export interface ToDoEntry extends minamo.core.JsonableObject
     {
         task: string;
         isDefault: boolean;
@@ -181,13 +182,13 @@ export module CyclicToDo
         1 <= item.count && "number" === typeof item.first;
     export const isMoreToDoEntry = (item: ToDoEntry): item is ToDoEntryMore =>
         2 <= item.count && "number" === typeof item.first && "number" === typeof item.previous && item.first !== item.previous;
-    export interface TagSettings
+    export interface TagSettings extends minamo.core.JsonableObject
     {
         // sort?: "smart" | "simple" | "limit";
         sort?: "smart" | "simple";
         displayStyle?: "@home" | "full" | "compact";
     }
-    export interface PickupSettingBase
+    export interface PickupSettingBase extends minamo.core.JsonableObject
     {
         type: "always" | "elapsed-time" | "elapsed-time-standard-score" | "expired";
     }
@@ -211,18 +212,18 @@ export module CyclicToDo
     }
     export type PickupSetting = PickupSettingAlways | PickupSettingElapsedTime | PickupSettingElapsedTimeStandardScore | PickupSettingExpired;
     export type RestrictionSetting = PickupSettingAlways | PickupSettingElapsedTime | PickupSettingElapsedTimeStandardScore | PickupSettingExpired;
-    export interface TodoSettings
+    export interface TodoSettings extends minamo.core.JsonableObject
     {
         pickup?: PickupSetting;
         restriction?: RestrictionSetting;
     }
-    export interface DocumentCard
+    export interface DocumentCard extends minamo.core.JsonableObject
     {
         type: "oldLocalDb" | "session" | "localDb" | "OneDrive" | "file";
         title: string;
         uri: string;
     }
-    export interface HistoryEntry
+    export interface HistoryEntry extends minamo.core.JsonableObject
     {
         histories: number[];
         first: number | null;
@@ -266,7 +267,7 @@ export module CyclicToDo
     {
         return isFirstOrMoreHistryEntry(entry) ? entry.histories[0]: null;
     }
-    export interface Content
+    export interface Content extends minamo.core.JsonableObject
     {
         specification: "https://github.com/wraith13/cyclic-todo/README.md";
         title: string;
@@ -280,7 +281,7 @@ export module CyclicToDo
         removed: RemovedType[];
     }
     export type RemovedType = RemovedTag | RemovedSublist | RemovedTask | RemovedTick;
-    export interface RemovedBase
+    export interface RemovedBase extends minamo.core.JsonableObject
     {
         type: "Tag" | "Sublist" | "Task" | "Tick";
         deteledAt: number;
@@ -2565,9 +2566,9 @@ export module CyclicToDo
                         [
                             await Promise.all
                             (
-                                ["auto", "light", "dark"].map
+                                (<ThemeType[]>["auto", "light", "dark"]).map
                                 (
-                                    async (key: "auto" | "light" | "dark") =>
+                                    async (key: ThemeType) =>
                                     ({
                                         tag: "button",
                                         className: `check-button ${key === (settings.theme ?? "auto") ? "checked": ""}`,
