@@ -99,7 +99,7 @@ export module CyclicToDo
 {
     export const applicationTitle = config.applicationTitle;
     export type ThemeType = "auto" | "light" | "dark";
-    export interface SystemSettings
+    export interface SystemSettings extends minamo.core.JsonableObject
     {
         theme?: ThemeType;
         locale?: locale.LocaleType;
