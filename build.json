@@ -1,35 +1,48 @@
 {
-    "template": { "path": "./index.template.html" },
-    "output": { "path": "./index.html" },
-    "preprocesses":
+    "$schema": "https://raw.githubusercontent.com/wraith13/build.js/master/json-schema.json#",
+    "modes":
     {
-        "none": [ ],
+        "default":
+        {
+            "template": { "path": "./index.template.html" },
+            "output": { "path": "./index.html" },
+            "parameters":
+            {
+                "__BUILD_MESSAGE__": "This file is genereted by build.js. このファイルは build.js によって生成されました。",
+                "__BUILD_OPTIONS__": { "call": "command_options" },
+                "__BUILD_TIMESTAMP__": { "call": "timestamp" },
+                "__BUILD_TIMESTAMP_TICK__": { "call": "timestamp_tick" },
+                "__REPOSITORY_URL_": { "json": "./resource/config.json", "key": "repositoryUrl" },
+                "__LICENSE__": { "path": "./LICENSE_1_0.txt" },
+                "__LIGHT_STYLE__": { "path": "./style/theme.light.css" },
+                "__DARK_STYLE__": { "path": "./style/theme.dark.css" },
+                "__EVIL_COMMONJS__": { "path": "./nephila/evil-commonjs/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=nephila/evil-commonjs/index.js.map" } },
+                "__EVIL_TIMER__": { "path": "./nephila/evil-timer.js/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=nephila/evil-timer.js/index.js.map" } },
+                "__SCRIPT__": { "path": "./script/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=script/index.js.map" } },
+                "__IMAGES__": { "resource": "./resource/images.json" }
+            }
+        },
+        "none":
+        {
+            "preprocesses": [ ]
+        },
         "release":
-        [
-            "npm run-script \"build light style\"",
-            "npm run-script \"build dark style\"",
-            "npm run-script \"build script\""
-        ],
+        {
+            "preprocesses":
+            [
+                "npm run-script \"build light style\"",
+                "npm run-script \"build dark style\"",
+                "npm run-script \"build script\""
+            ]
+        },
         "debug":
-        [
-            "npm run-script \"debug build light style\"",
-            "npm run-script \"debug build dark style\"",
-            "npm run-script \"debug build script\""
-        ]
-    },
-    "parameters":
-    {
-        "__BUILD_MESSAGE__": "This file is genereted by build.js. このファイルは build.js によって生成されました。",
-        "__BUILD_OPTIONS__": { "call": "command_options" },
-        "__BUILD_TIMESTAMP__": { "call": "timestamp" },
-        "__BUILD_TIMESTAMP_TICK__": { "call": "timestamp_tick" },
-        "__REPOSITORY_URL_": { "json": "./resource/config.json", "key": "repositoryUrl" },
-        "__LICENSE__": { "path": "./LICENSE_1_0.txt" },
-        "__LIGHT_STYLE__": { "path": "./style/theme.light.css" },
-        "__DARK_STYLE__": { "path": "./style/theme.dark.css" },
-        "__EVIL_COMMONJS__": { "path": "./nephila/evil-commonjs/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=nephila/evil-commonjs/index.js.map" } },
-        "__EVIL_TIMER__": { "path": "./nephila/evil-timer.js/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=nephila/evil-timer.js/index.js.map" } },
-        "__SCRIPT__": { "path": "./script/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=script/index.js.map" } },
-        "__IMAGES__": { "resource": "./resource/images.json" }
+        {
+            "preprocesses":
+            [
+                "npm run-script \"debug build light style\"",
+                "npm run-script \"debug build dark style\"",
+                "npm run-script \"debug build script\""
+            ]
+        }
     }
 }

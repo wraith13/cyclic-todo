@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sun Apr 24 2022 11:31:09 GMT+0900 (日本標準時)
+    build at: Mon Aug 01 2022 09:21:17 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -4549,6 +4549,8 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
         var core;
         (function (core_1) {
             var _this = this;
+            core_1.jsonStringify = function (source, replacer, space) { return JSON.stringify(source, replacer, space); };
+            core_1.extender = function () { return function (x) { return x; }; }; // TypeScript 4.8 以降では satisfies の使用を推奨
             core_1.timeout = function (wait) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (resolve) { return setTimeout(resolve, wait); })];
             }); }); };
@@ -4590,7 +4592,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                     });
                 });
             };
-            core_1.simpleDeepCopy = function (source) { return JSON.parse(JSON.stringify(source)); };
+            core_1.simpleDeepCopy = function (source) { return JSON.parse(core_1.jsonStringify(source)); };
             core_1.recursiveAssign = function (target, source) { return core_1.objectForEach(source, function (key, value) {
                 if ("object" === core_1.practicalTypeof(value)) {
                     if (undefined === target[key]) {
@@ -4608,6 +4610,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                     target[key] = value;
                 }
             }); };
+            core_1.objectKeys = function (target) { return Object.keys(target); };
             core_1.practicalTypeof = function (obj) {
                 if (undefined === obj) {
                     return "undefined";
@@ -4984,7 +4987,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
             };
             cookie.set = function (key, value, maxAge) {
                 if (maxAge === void 0) { maxAge = cookie.defaultMaxAge; }
-                cookie.setRaw(key, encodeURIComponent(JSON.stringify(value)), maxAge);
+                cookie.setRaw(key, encodeURIComponent(core.jsonStringify(value)), maxAge);
                 return value;
             };
             cookie.setAsTemporary = function (key, value) { return cookie.set(key, value, null); };
@@ -5077,11 +5080,11 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
              * @deprecated User `set2()` instead.
              */
             localStorage.set = function (key, value) {
-                localStorage.setRaw(key, encodeURIComponent(JSON.stringify(value)));
+                localStorage.setRaw(key, encodeURIComponent(core.jsonStringify(value)));
                 return value;
             };
             localStorage.set2 = function (key, value) {
-                localStorage.setRaw(key, JSON.stringify(value));
+                localStorage.setRaw(key, core.jsonStringify(value));
                 return value;
             };
             localStorage.remove = function (key) { return window.localStorage.removeItem(key); };
@@ -5169,11 +5172,11 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
              * @deprecated User `set2()` instead.
              */
             sessionStorage.set = function (key, value) {
-                sessionStorage.setRaw(key, encodeURIComponent(JSON.stringify(value)));
+                sessionStorage.setRaw(key, encodeURIComponent(core.jsonStringify(value)));
                 return value;
             };
             sessionStorage.set2 = function (key, value) {
-                sessionStorage.setRaw(key, JSON.stringify(value));
+                sessionStorage.setRaw(key, core.jsonStringify(value));
                 return value;
             };
             sessionStorage.remove = function (key) { return window.sessionStorage.removeItem(key); };
@@ -5259,7 +5262,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                 var request = new XMLHttpRequest();
                 request.open(method, url, true);
                 if (headers) {
-                    console.log("headers: " + JSON.stringify(headers));
+                    console.log("headers: " + core.jsonStringify(headers));
                     Object.keys(headers).forEach(function (key) { return request.setRequestHeader(key, headers[key]); });
                 }
                 request.onreadystatechange = function () {
@@ -5462,7 +5465,12 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                 var element = get(objectOrQuery);
                 var isUpdate = value !== element[key];
                 if (isUpdate) {
-                    element[key] = value;
+                    if (undefined === value && element instanceof CSSStyleDeclaration) {
+                        element.removeProperty(key);
+                    }
+                    else {
+                        element[key] = value;
+                    }
                 }
                 var result = {
                     object: element,
@@ -5471,6 +5479,9 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                     isUpdate: isUpdate,
                 };
                 return result;
+            };
+            dom.setProperties = function (objectOrQuery, data) {
+                return core.objectKeys(data).map(function (key) { return dom.setProperty(objectOrQuery, key, data[key]); });
             };
             dom.removeCSSStyleProperty = function (object, key) {
                 var isUpdate = undefined !== object[key];
@@ -12834,7 +12845,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Apr 24 2022 11:31:09 GMT+0900 (日本標準時)', buildTimestampTick: 1650767469325, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Aug 01 2022 09:21:17 GMT+0900 (日本標準時)', buildTimestampTick: 1659313277588, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

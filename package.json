@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Cyclic ToDo Static Web Application",
   "scripts": {
-    "build all": "node ./nephila/build.js/build.js ../../build.json release",
-    "build html": "node ./nephila/build.js/build.js ../../build.json none",
+    "build all": "node ./nephila/build.js ../../build.json release",
+    "build html": "node ./nephila/build.js ../../build.json none",
     "build light style": "lessc --source-map=style/theme.light.css.map --source-map-url=style/theme.light.css.map theme.light.less style/theme.light.css",
     "build dark style": "lessc --source-map=style/theme.dark.css.map --source-map-url=style/theme.dark.css.map theme.dark.less style/theme.dark.css",
     "build script": "tsc -p ./script/tsconfig.json",
