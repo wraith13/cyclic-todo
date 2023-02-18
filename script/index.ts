@@ -210,10 +210,12 @@ export module CyclicToDo
     {
         type: "expired";
     }
+    export type FlashSetting = PickupSettingAlways | PickupSettingElapsedTime | PickupSettingElapsedTimeStandardScore | PickupSettingExpired;
     export type PickupSetting = PickupSettingAlways | PickupSettingElapsedTime | PickupSettingElapsedTimeStandardScore | PickupSettingExpired;
     export type RestrictionSetting = PickupSettingAlways | PickupSettingElapsedTime | PickupSettingElapsedTimeStandardScore | PickupSettingExpired;
     export interface TodoSettings extends minamo.core.JsonableObject
     {
+        flash?: FlashSetting;
         pickup?: PickupSetting;
         restriction?: RestrictionSetting;
     }
@@ -632,6 +634,7 @@ export module CyclicToDo
             export const isMember = (pass: string, tag: string, todo: string) => 0 <= get(pass, tag).indexOf(todo);
             export const isRestrictionTask = (pass: string, todo: string) => isMember(pass, "@restriction", todo);
             export const isPickupTask = (pass: string, todo: string) => isMember(pass, "@pickup", todo);
+            export const isFlashTask = (pass: string, todo: string) => isMember(pass, "@flash", todo);
         }
         export module TagSettings
         {
@@ -762,6 +765,25 @@ export module CyclicToDo
                     remove(pass, task):
                     getStorage(pass).set(makeKey(pass, task), settings);
             export const remove = (pass: string, task: string) => getStorage(pass).remove(makeKey(pass, task));
+            export const isFlashTarget = (pass: string, item: ToDoEntry, elapsedTime = item.elapsed) =>
+            {
+                const flashSetting = get(pass, item.task)?.flash;
+                if (flashSetting)
+                {
+                    switch(flashSetting.type)
+                    {
+                    case "always":
+                        return true;
+                    case "elapsed-time":
+                        return null !== elapsedTime && flashSetting.elapsedTime <= elapsedTime;
+                    case "elapsed-time-standard-score":
+                        return null !== elapsedTime && flashSetting.elapsedTimeStandardScore <= (Domain.getStandardScore(item, elapsedTime) ?? 0);
+                    case "expired":
+                        return Domain.isExpired(item, elapsedTime);
+                    }
+                }
+                return false;
+            };
             export const isPickupTarget = (pass: string, item: ToDoEntry, elapsedTime = item.elapsed) =>
             {
                 const pickupSetting = get(pass, item.task)?.pickup;
@@ -1608,7 +1630,9 @@ export module CyclicToDo
             case "@root":
             case "@overall":
             case "@unoverall":
+            case "@flash":
             case "@pickup":
+            case "@restriction":
             case "@short-term":
             case "@medium-term":
             case "@long-term":
@@ -1884,6 +1908,18 @@ export module CyclicToDo
             }
             if ("string" === typeof pass)
             {
+                const isFlashTarget = OldStorage.TodoSettings.isFlashTarget(pass, item);
+                const isFlashed = OldStorage.TagMember.isFlashTask(pass, item.task);
+                if (isFlashTarget && ! isFlashed)
+                {
+                    OldStorage.TagMember.add(pass, "@flash", item.task);
+                    Render.updateWindow?.("dirty");
+                }
+                if ( ! isFlashTarget && isFlashed)
+                {
+                    OldStorage.TagMember.remove(pass, "@flash", item.task);
+                    Render.updateWindow?.("dirty");
+                }
                 const isPickupTarget = OldStorage.TodoSettings.isPickupTarget(pass, item);
                 const isPickuped = OldStorage.TagMember.isPickupTask(pass, item.task);
                 if (isPickupTarget && ! isPickuped)
@@ -2140,6 +2176,8 @@ export module CyclicToDo
         export const $span = $tag("span");
         export const disabledColorRGB = "128,128,128";
         export const accentProgressColor = "#22884466";
+        export const flashProgressColor = "#0F469988";
+        export const flashDisabledColor = "#0F469955";
         export const activeProgressColor = "#6F7F0088";
         export const activeDisabledColor = "#6F7F0055";
         export const deleteProgressColor = "#831B5088";
@@ -2164,6 +2202,14 @@ export module CyclicToDo
                 `rgba(${disabledColorRGB},0.0)`,
                 progress
             );
+        export const progressFlashTitleStyle = (progress: number | null) =>
+            progressStyleCore
+            (
+                flashProgressColor,
+                flashDisabledColor,
+                `rgba(${disabledColorRGB},0.0)`,
+                progress
+            ) +" repeat-flash";
         export const progressPickupTitleStyle = (progress: number | null) =>
             progressStyleCore
             (
@@ -2183,6 +2229,8 @@ export module CyclicToDo
         export const progressTitleStyle = (pass: string, item: ToDoEntry) =>
             OldStorage.TagMember.isRestrictionTask(pass, item.task) ?
                 progressRestrictionTitleStyle(item.progress):
+            OldStorage.TagMember.isFlashTask(pass, item.task) ?
+                progressFlashTitleStyle(item.progress):
             OldStorage.TagMember.isPickupTask(pass, item.task) ?
                 progressPickupTitleStyle(item.progress):
                 progressDefaultTitleStyle(item.progress);
@@ -2194,6 +2242,14 @@ export module CyclicToDo
                 `rgba(${disabledColorRGB},0.2)`,
                 progress
             );
+        export const progressFlashInformationStyle = (progress: number | null) =>
+            progressStyleCore
+            (
+                flashProgressColor,
+                flashDisabledColor,
+                `rgba(${disabledColorRGB},0.2)`,
+                progress
+            ) +" repeat-flash";
         export const progressPickupInformationStyle = (progress: number | null) =>
             progressStyleCore
             (
@@ -2213,6 +2269,8 @@ export module CyclicToDo
         export const progressInformationStyle = (pass: string, item: ToDoEntry) =>
             OldStorage.TagMember.isRestrictionTask(pass, item.task) ?
                 progressRestrictionInformationStyle(item.progress):
+            OldStorage.TagMember.isFlashTask(pass, item.task) ?
+                progressFlashInformationStyle(item.progress):
             OldStorage.TagMember.isPickupTask(pass, item.task) ?
                 progressPickupInformationStyle(item.progress):
                 progressDefaultInformationStyle(item.progress);
@@ -2920,6 +2978,148 @@ export module CyclicToDo
             }
             return [ ];
         };
+        export const todoFlashSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
+        (
+            async resolve =>
+            {
+                let result = false;
+                const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
+                const tagButtonListUpdate = async () => minamo.dom.replaceChildren
+                (
+                    tagButtonList,
+                    [
+                        {
+                            tag: "button",
+                            className: `check-button ${"none" === (settings.flash ?? "none") ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")(label("pickup.none")),
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.flash = undefined;
+                                OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                        {
+                            tag: "button",
+                            className: `check-button ${"always" === settings.flash?.type ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")(label("pickup.always")),
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.flash = { type: "always" };
+                                OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                        await Promise.all
+                        (
+                            getTodoPickupSettingsElapsedTimePreset(entry)
+                                .concat([(settings.pickup as PickupSettingElapsedTime)?.elapsedTime ?? 0])
+                                .filter(i => 0 < i)
+                                .filter(uniqueFilter)
+                                .sort(minamo.core.comparer.basic)
+                                .map
+                                (
+                                    async elapsedTime =>
+                                    ({
+                                        tag: "button",
+                                        className: `check-button ${("elapsed-time" === settings.flash?.type && elapsedTime === settings?.flash.elapsedTime) ? "checked": ""}`,
+                                        children:
+                                        [
+                                            await Resource.loadSvgOrCache("check-icon"),
+                                            $span("")([label("pickup.elapsed-time"), ": ", Domain.timeLongStringFromTick(elapsedTime)]),
+                                        ],
+                                        onclick: async () =>
+                                        {
+                                            settings.flash =
+                                            {
+                                                type: "elapsed-time",
+                                                elapsedTime,
+                                            };
+                                            OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                            result = true;
+                                            await tagButtonListUpdate();
+                                        }
+                                    })
+                                )
+                        ),
+                        await Promise.all
+                        (
+                            [ 30, 40, 50, 60, 70, ].map
+                            (
+                                async elapsedTimeStandardScore =>
+                                ({
+                                    tag: "button",
+                                    className: `check-button ${("elapsed-time-standard-score" === settings.flash?.type && elapsedTimeStandardScore === settings?.flash.elapsedTimeStandardScore) ? "checked": ""}`,
+                                    children:
+                                    [
+                                        await Resource.loadSvgOrCache("check-icon"),
+                                        $span("")([label("pickup.elapsed-time-standard-score"), `: ${elapsedTimeStandardScore}`]),
+                                    ],
+                                    onclick: async () =>
+                                    {
+                                        settings.flash =
+                                        {
+                                            type: "elapsed-time-standard-score",
+                                            elapsedTimeStandardScore,
+                                        };
+                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                        result = true;
+                                        await tagButtonListUpdate();
+                                    }
+                                })
+                            )
+                        ),
+                        {
+                            tag: "button",
+                            className: `check-button ${"expired" === settings.flash?.type ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")(label("pickup.expired")),
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.flash = { type: "expired" };
+                                OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                    ]
+                );
+                await tagButtonListUpdate();
+                const ui = popup
+                ({
+                    // className: "add-remove-tags-popup",
+                    children:
+                    [
+                        $tag("h2")("")(`${locale.map("Flash setting")}: ${entry.task}`),
+                        tagButtonList,
+                        $div("popup-operator")
+                        ([{
+                            tag: "button",
+                            className: "default-button",
+                            children: label("Close"),
+                            onclick: () =>
+                            {
+                                ui.close();
+                            },
+                        }]),
+                    ],
+                    onClose: async () => resolve(result),
+                });
+            }
+        );
         export const todoPickupSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
         (
             async resolve =>
@@ -3487,6 +3687,17 @@ export module CyclicToDo
             //     ),
             menuItem
             (
+                label("Flash setting"),
+                async () =>
+                {
+                    if (await todoFlashSettingsPopup(pass, item))
+                    {
+                        updateWindow("timer");
+                    }
+                }
+            ),
+            menuItem
+            (
                 label("Pickup setting"),
                 async () =>
                 {
@@ -3548,6 +3759,10 @@ export module CyclicToDo
             if (OldStorage.TagMember.isRestrictionTask(entry.pass, item.task))
             {
                 return "forbidden-icon";
+            }
+            if (OldStorage.TagMember.isFlashTask(entry.pass, item.task))
+            {
+                return "flash-icon";
             }
             if (OldStorage.TagMember.isPickupTask(entry.pass, item.task))
             {
@@ -3690,6 +3905,21 @@ export module CyclicToDo
                                 ),
                                 $div("item-settings")
                                 ([
+                                    null !== (OldStorage.TodoSettings.get(entry.pass, item.task).flash ?? null) ?
+                                        linkButton
+                                        ({
+                                            className: "tag",
+                                            children: await Resource.loadTagSvgOrCache("@flash"),
+                                            onclick: async (event: MouseEvent) =>
+                                            {
+                                                event.preventDefault();
+                                                if (await todoFlashSettingsPopup(entry.pass, item))
+                                                {
+                                                    updateWindow("timer");
+                                                }
+                                            }
+                                        }):
+                                        [],
                                     null !== (OldStorage.TodoSettings.get(entry.pass, item.task).pickup ?? null) ?
                                         linkButton
                                         ({
@@ -5121,6 +5351,21 @@ export module CyclicToDo
                         ),
                         $div("item-settings")
                         ([
+                            null !== (OldStorage.TodoSettings.get(pass, item.task).flash ?? null) ?
+                                linkButton
+                                ({
+                                    className: "tag",
+                                    children: await Resource.loadTagSvgOrCache("@flash"),
+                                    onclick: async (event: MouseEvent) =>
+                                    {
+                                        event.preventDefault();
+                                        if (await todoFlashSettingsPopup(pass, item))
+                                        {
+                                            updateWindow("timer");
+                                        }
+                                    }
+                                }):
+                                [],
                             null !== (OldStorage.TodoSettings.get(pass, item.task).pickup ?? null) ?
                                 linkButton
                                 ({
@@ -5268,6 +5513,8 @@ export module CyclicToDo
                 {
                     case "@overall":
                         return "home-icon";
+                    case "@flash":
+                        return "flash-icon";
                     case "@pickup":
                         return "pickup-icon";
                     case "@restriction":
