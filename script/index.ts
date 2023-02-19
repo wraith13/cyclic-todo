@@ -5761,6 +5761,25 @@ export module CyclicToDo
         ]);
         export const welcomeScreenMenu = async () =>
         [
+            menuItem
+            (
+                label("Reload screen"),
+                async () =>
+                {
+                    minamo.dom.appendChildren
+                    (
+                        document.head,
+                        {
+                            tag: "meta",
+                            attributes:
+                            {
+                                "http-equiv": "refresh",
+                                "content": "0",
+                            }
+                        }
+                    );
+                }
+            ),
             await fullscreenMenuItem(),
             menuItem
             (
