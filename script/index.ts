@@ -4012,20 +4012,21 @@ export module CyclicToDo
                 []
             ),
         ]);
-        export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null, isRestrictioned: boolean = OldStorage.TodoSettings.isRestrictionTarget(pass, item, interval)) => $div
+        export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null, isFlashed: boolean = OldStorage.TodoSettings.isFlashTarget(pass, item, interval), isRestrictioned: boolean = OldStorage.TodoSettings.isRestrictionTarget(pass, item, interval)) => $div
         ({
             className: "tick-item flex-item ",
             style:
             (
-                isRestrictioned ?
-                    Render.progressRestrictionTitleStyle:
-                    Render.progressDefaultTitleStyle
+                isRestrictioned ? Render.progressRestrictionTitleStyle:
+                isFlashed ? Render.progressFlashTitleStyle:
+                Render.progressDefaultTitleStyle
             )(null === interval || null === max || max < interval ? null: interval /max),
         })
         ([
             await Resource.loadSvgOrCache
             (
                 isRestrictioned ? "forbidden-icon":
+                isFlashed ? "flash-icon":
                 null === interval || null === max ? "one-icon":
                 max < interval ? "sleep-icon":
                 "tick-icon"
