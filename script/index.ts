@@ -331,7 +331,9 @@ export module CyclicToDo
             const tagSettings: { [tag: string]: TagSettings } = { };
             [
                 "@overall",
+                "@flash",
                 "@pickup",
+                "@restriction",
                 "@short-term",
                 "@medium-term",
                 "@long-term",
@@ -544,13 +546,13 @@ export module CyclicToDo
                 return result;
             };
             export const getByTodo = (pass: string, todo: string) =>
-                ["@overall", "@pickup", "@short-term", "@medium-term", "@long-term", "@irregular-term"]
+                ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"]
                     .concat(get(pass))
                     .concat(["@unoverall", "@untagged"])
                     .filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length)
                     .sort(minamo.core.comparer.make(tag => Model.isSublistOld(tag) ? 0: 1));
             export const getByTodoRaw = (pass: string, todo: string) =>
-                ["@overall", "@pickup", "@short-term", "@medium-term", "@long-term", "@irregular-term"]
+                ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"]
                     .concat(get(pass))
                     .concat(["@unoverall", "@untagged"])
                     .filter(tag => 0 < TagMember.getRaw(pass, tag).filter(i => todo === i).length);
@@ -1173,13 +1175,13 @@ export module CyclicToDo
                 get: (tag: string) => new Tag(this, tag),
                 getList: () => Object.keys(this.content.tags).map(i => new Tag(this, i)),
                 getByTask: (task: Task) =>
-                    ["@overall", "@pickup", "@short-term", "@medium-term", "@long-term", "@irregular-term"].map(i => this.tag.get(i))
+                    ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"].map(i => this.tag.get(i))
                     .concat(this.tag.getList())
                     .concat(["@unoverall", "@untagged"].map(i => this.tag.get(i)))
                     .filter(tag => 0 < tag.getMember().filter(i => task.getName() === i.getName()).length)
                     .sort(minamo.core.comparer.make(tag => tag.isSublist() ? 0: 1)),
                 getByTaskRaw: (task: Task) =>
-                    ["@overall", "@pickup", "@short-term", "@medium-term", "@long-term", "@irregular-term"].map(i => this.tag.get(i))
+                    ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"].map(i => this.tag.get(i))
                     .concat(this.tag.getList())
                     .concat(["@unoverall", "@untagged"].map(i => this.tag.get(i)))
                     .filter(tag => 0 < tag.getRawMember().filter(i => task.getName() === i.getName()).length),
@@ -4343,7 +4345,7 @@ export module CyclicToDo
                     (
                         await Promise.all
                         (
-                            ["@overall", "@pickup", "@short-term", "@medium-term", "@long-term", "@irregular-term"].concat(OldStorage.Tag.get(pass).sort(Domain.tagComparerOld(pass))).concat(["@unoverall", "@untagged"])
+                            ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"].concat(OldStorage.Tag.get(pass).sort(Domain.tagComparerOld(pass))).concat(["@unoverall", "@untagged"])
                             .map
                             (
                                 async tag => menuLinkItem
@@ -5433,15 +5435,16 @@ export module CyclicToDo
                 tag =>
                 (
                     {
-                        "@pickup": 1,
-                        "@short-term": 4,
-                        "@medium-term": 4,
-                        "@long-term": 4,
-                        "@irregular-term": 4,
-                        "@overall": 5,
-                        "@untagged": 3,
+                        "@flash": 1,
+                        "@pickup": 2,
+                        "@short-term": 5,
+                        "@medium-term": 5,
+                        "@long-term": 5,
+                        "@irregular-term": 5,
+                        "@overall": 6,
+                        "@untagged": 4,
                     }
-                    [tag] ?? (Model.isSublistOld(tag) ? 0: 2)
+                    [tag] ?? (Model.isSublistOld(tag) ? 0: 3)
                 )
             )
         )[0];
