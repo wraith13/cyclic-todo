@@ -550,7 +550,16 @@ export module CyclicToDo
                     .concat(get(pass))
                     .concat(["@unoverall", "@untagged"])
                     .filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length)
-                    .sort(minamo.core.comparer.make(tag => Model.isSublistOld(tag) ? 0: 1));
+                    .sort
+                    (
+                        minamo.core.comparer.make
+                        (
+                            tag =>
+                                Model.isSystemTagOld(tag) ?
+                                    ("@overall" === tag ? 0: 3):
+                                    Model.isSublistOld(tag) ? 1: 2
+                        )
+                    );
             export const getByTodoRaw = (pass: string, todo: string) =>
                 ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"]
                     .concat(get(pass))
