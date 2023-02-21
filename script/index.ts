@@ -5435,8 +5435,8 @@ export module CyclicToDo
                 tag =>
                 (
                     {
-                        "@flash": 1,
-                        "@pickup": 2,
+                        "@flash": 2,
+                        "@pickup": 3,
                         "@short-term": 5,
                         "@medium-term": 5,
                         "@long-term": 5,
@@ -5444,7 +5444,7 @@ export module CyclicToDo
                         "@overall": 6,
                         "@untagged": 4,
                     }
-                    [tag] ?? (Model.isSublistOld(tag) ? 0: 3)
+                    [tag] ?? (Model.isSublistOld(tag) ? 0: 1)
                 )
             )
         )[0];
