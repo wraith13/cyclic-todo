@@ -1231,25 +1231,26 @@ button
         display: flex;
         flex-direction: row;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-start;
         background-color: #8884;
         max-width: 100vw;
+        padding: 0.25rem;
         .item-tags
         {
+            min-height: 1.5rem;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            padding: 0.5rem;
             margin: 0px;
-            height: 1rem;
             position: relative;
-            display: inline-flex;
+            display: inline;
             flex-direction: row;
             align-items: center;
             justify-content: start;
             flex-shrink: 1;
             a
             {
+                padding: 0.25rem;
                 display: inline-flex;
                 flex-direction: row;
                 align-items: center;
@@ -1282,28 +1283,29 @@ button
                     color: @main-color;
                     fill: @main-color;
                 }
-            }
-            a + a
-            {
-                margin-left: 1rem;
+                &:not(:last-child)
+                {
+                    margin-right: 0.5rem;
+                }
             }
         }
         .item-settings
         {
-            overflow: hidden;
+            min-height: 1.5rem;
+            overflow: visible;
             text-overflow: ellipsis;
             white-space: nowrap;
-            padding: 0.5rem;
             margin: 0px;
-            height: 1rem;
             position: relative;
             display: inline-flex;
             flex-direction: row;
             align-items: center;
             justify-content: end;
             flex-shrink: 1;
+            flex-grow: 1;
             a
             {
+                padding: 0.25rem;
                 display: inline-flex;
                 flex-direction: row;
                 align-items: center;
@@ -1336,10 +1338,6 @@ button
                     color: @main-color;
                     fill: @main-color;
                 }
-            }
-            a + a
-            {
-                margin-left: 0.25rem;
             }
         }
     }
@@ -1370,6 +1368,20 @@ button
             font-size: 1.0rem;
             opacity: 0.4;
             float: right;
+        }
+    }
+}
+.todo-screen
+{
+    .task-item
+    {
+        .item-attribute
+        {
+            flex-wrap: wrap;
+            .item-tags
+            {
+                display: contents;
+            }
         }
     }
 }
