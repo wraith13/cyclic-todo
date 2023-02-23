@@ -2193,6 +2193,16 @@ export module CyclicToDo
         export const activeDisabledColor = "#6F7F0055";
         export const deleteProgressColor = "#831B5088";
         export const deleteDisabledColor = "#831B5055";
+        export const progressStyle = (progress: number | null) =>
+            `width:${(progress ?? 1).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })};`;
+        export const progressValidityClass = (_pass: string, item: ToDoEntry) =>
+            null === item.progress ? "progress-disabled": "";
+        export const progressStatusClass = (pass: string, item: ToDoEntry) =>
+            OldStorage.TagMember.isRestrictionTask(pass, item.task) ? "progress-restriction":
+            OldStorage.TagMember.isFlashTask(pass, item.task) ? "progress-flash":
+            OldStorage.TagMember.isPickupTask(pass, item.task) ? "progress-pickup":
+            "progress-default";
+        export const progressClass = (pass: string, item: ToDoEntry) => `${progressValidityClass(pass, item)} ${progressStatusClass(pass, item)}`;
         export const backgroundLinerGradient = (leftPercent: string, leftColor: string, rightColor: string) =>
             `background: linear-gradient(to right, ${leftColor} ${leftPercent}, ${rightColor} ${leftPercent});`;
         export const progressStyleCore = (progressColor: string, disabledColor: string, backgroundColor: string, progress: number | null) => null === progress ?
