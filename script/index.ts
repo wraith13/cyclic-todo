@@ -2203,6 +2203,12 @@ export module CyclicToDo
             OldStorage.TagMember.isPickupTask(pass, item.task) ? "progress-pickup":
             "progress-default";
         export const progressClass = (pass: string, item: ToDoEntry) => `${progressValidityClass(pass, item)} ${progressStatusClass(pass, item)}`;
+        export const progressBar = (pass: string, item: ToDoEntry) =>$div
+        ({
+            className: `progress-bar ${progressClass(pass, item)}`,
+            attributes:{ style: progressStyle(item.progress), }
+        })
+        ([]);
         export const backgroundLinerGradient = (leftPercent: string, leftColor: string, rightColor: string) =>
             `background: linear-gradient(to right, ${leftColor} ${leftPercent}, ${rightColor} ${leftPercent});`;
         export const progressStyleCore = (progressColor: string, disabledColor: string, backgroundColor: string, progress: number | null) => null === progress ?
