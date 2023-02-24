@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Thu Feb 23 2023 02:10:44 GMT+0900 (日本標準時)
+    build at: Sat Feb 25 2023 04:22:03 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -691,6 +691,7 @@ body.light h1.obsolescence .progress-bar {
 body.light #screen-toast {
   filter: drop-shadow(0rem 0rem 1rem #228844);
   position: fixed;
+  z-index: 1000;
   right: 0px;
   bottom: 0px;
   left: 0px;
@@ -1362,7 +1363,7 @@ body.light .flex-item {
   display: inline-block;
   box-sizing: border-box;
   min-width: calc(100% / 1);
-  border-color: rgba(128, 128, 128, 0.5);
+  border-color: rgba(128, 128, 128, 0.618);
   border-style: solid;
   border-width: 0px 1px 1px 0px;
   margin: 0px;
@@ -1471,6 +1472,7 @@ body.light .max-column-12 .flex-item {
   max-width: calc((100% - 1px) / 12);
 }
 body.light .item-title {
+  z-index: 10;
   display: inline-flex;
   flex-direction: row;
   justify-content: start;
@@ -1540,6 +1542,52 @@ body.light .list-item .item-header .item-title,
 body.light .task-item .item-header .item-title,
 body.light .removed-item .item-header .item-title {
   max-width: calc(100% - 180px);
+}
+body.light .task-item .progress-bar,
+body.light .tick-item .progress-bar {
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  position: absolute;
+}
+body.light .task-item .progress-bar:not(.progress-disabled).progress-default,
+body.light .tick-item .progress-bar:not(.progress-disabled).progress-default {
+  background-color: rgba(34, 136, 68, 0.4);
+}
+body.light .task-item .progress-bar:not(.progress-disabled).progress-flash,
+body.light .tick-item .progress-bar:not(.progress-disabled).progress-flash {
+  background-color: rgba(15, 70, 153, 0.53);
+}
+body.light .task-item .progress-bar:not(.progress-disabled).progress-pickup,
+body.light .tick-item .progress-bar:not(.progress-disabled).progress-pickup {
+  background-color: rgba(111, 127, 0, 0.53);
+}
+body.light .task-item .progress-bar:not(.progress-disabled).progress-restriction,
+body.light .tick-item .progress-bar:not(.progress-disabled).progress-restriction {
+  background-color: rgba(131, 27, 80, 0.53);
+}
+body.light .task-item .progress-bar.progress-disabled.progress-default,
+body.light .tick-item .progress-bar.progress-disabled.progress-default {
+  background-color: rgba(128, 128, 128, 0.2);
+}
+body.light .task-item .progress-bar.progress-disabled.progress-flash,
+body.light .tick-item .progress-bar.progress-disabled.progress-flash {
+  background-color: rgba(15, 70, 153, 0.33);
+}
+body.light .task-item .progress-bar.progress-disabled.progress-pickup,
+body.light .tick-item .progress-bar.progress-disabled.progress-pickup {
+  background-color: rgba(111, 127, 0, 0.33);
+}
+body.light .task-item .progress-bar.progress-disabled.progress-restriction,
+body.light .tick-item .progress-bar.progress-disabled.progress-restriction {
+  background-color: rgba(131, 27, 80, 0.33);
+}
+body.light .task-item .progress-bar-pad,
+body.light .tick-item .progress-bar-pad {
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  position: absolute;
 }
 body.light .task-item .item-attribute {
   display: flex;
@@ -1646,6 +1694,7 @@ body.light .task-item .item-attribute .item-settings a svg {
   }
 }
 body.light .task-item .item-information {
+  position: relative;
   padding: 0.5rem;
   margin: 0px;
 }
@@ -1668,6 +1717,12 @@ body.light .task-item .item-information .value {
   font-size: 1rem;
   opacity: 0.4;
   float: right;
+}
+body.light .task-item .item-information .progress-bar.progress-disabled.progress-default {
+  background-color: rgba(128, 128, 128, 0.4);
+}
+body.light .task-item .item-information .progress-bar-pad {
+  background-color: rgba(128, 128, 128, 0.2);
 }
 body.light .todo-screen .task-item .item-attribute {
   flex-wrap: wrap;
@@ -2578,6 +2633,7 @@ body.dark h1.obsolescence .progress-bar {
 body.dark #screen-toast {
   filter: drop-shadow(0rem 0rem 1rem #228844);
   position: fixed;
+  z-index: 1000;
   right: 0px;
   bottom: 0px;
   left: 0px;
@@ -3249,7 +3305,7 @@ body.dark .flex-item {
   display: inline-block;
   box-sizing: border-box;
   min-width: calc(100% / 1);
-  border-color: rgba(128, 128, 128, 0.5);
+  border-color: rgba(128, 128, 128, 0.618);
   border-style: solid;
   border-width: 0px 1px 1px 0px;
   margin: 0px;
@@ -3358,6 +3414,7 @@ body.dark .max-column-12 .flex-item {
   max-width: calc((100% - 1px) / 12);
 }
 body.dark .item-title {
+  z-index: 10;
   display: inline-flex;
   flex-direction: row;
   justify-content: start;
@@ -3427,6 +3484,52 @@ body.dark .list-item .item-header .item-title,
 body.dark .task-item .item-header .item-title,
 body.dark .removed-item .item-header .item-title {
   max-width: calc(100% - 180px);
+}
+body.dark .task-item .progress-bar,
+body.dark .tick-item .progress-bar {
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  position: absolute;
+}
+body.dark .task-item .progress-bar:not(.progress-disabled).progress-default,
+body.dark .tick-item .progress-bar:not(.progress-disabled).progress-default {
+  background-color: rgba(34, 136, 68, 0.4);
+}
+body.dark .task-item .progress-bar:not(.progress-disabled).progress-flash,
+body.dark .tick-item .progress-bar:not(.progress-disabled).progress-flash {
+  background-color: rgba(15, 70, 153, 0.53);
+}
+body.dark .task-item .progress-bar:not(.progress-disabled).progress-pickup,
+body.dark .tick-item .progress-bar:not(.progress-disabled).progress-pickup {
+  background-color: rgba(111, 127, 0, 0.53);
+}
+body.dark .task-item .progress-bar:not(.progress-disabled).progress-restriction,
+body.dark .tick-item .progress-bar:not(.progress-disabled).progress-restriction {
+  background-color: rgba(131, 27, 80, 0.53);
+}
+body.dark .task-item .progress-bar.progress-disabled.progress-default,
+body.dark .tick-item .progress-bar.progress-disabled.progress-default {
+  background-color: rgba(128, 128, 128, 0.2);
+}
+body.dark .task-item .progress-bar.progress-disabled.progress-flash,
+body.dark .tick-item .progress-bar.progress-disabled.progress-flash {
+  background-color: rgba(15, 70, 153, 0.33);
+}
+body.dark .task-item .progress-bar.progress-disabled.progress-pickup,
+body.dark .tick-item .progress-bar.progress-disabled.progress-pickup {
+  background-color: rgba(111, 127, 0, 0.33);
+}
+body.dark .task-item .progress-bar.progress-disabled.progress-restriction,
+body.dark .tick-item .progress-bar.progress-disabled.progress-restriction {
+  background-color: rgba(131, 27, 80, 0.33);
+}
+body.dark .task-item .progress-bar-pad,
+body.dark .tick-item .progress-bar-pad {
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  position: absolute;
 }
 body.dark .task-item .item-attribute {
   display: flex;
@@ -3533,6 +3636,7 @@ body.dark .task-item .item-attribute .item-settings a svg {
   }
 }
 body.dark .task-item .item-information {
+  position: relative;
   padding: 0.5rem;
   margin: 0px;
 }
@@ -3555,6 +3659,12 @@ body.dark .task-item .item-information .value {
   font-size: 1rem;
   opacity: 0.4;
   float: right;
+}
+body.dark .task-item .item-information .progress-bar.progress-disabled.progress-default {
+  background-color: rgba(128, 128, 128, 0.4);
+}
+body.dark .task-item .item-information .progress-bar-pad {
+  background-color: rgba(128, 128, 128, 0.2);
 }
 body.dark .todo-screen .task-item .item-attribute {
   flex-wrap: wrap;
@@ -7766,63 +7876,49 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.$tag = minamo_js_1.minamo.dom.tag;
             Render.$div = Render.$tag("div");
             Render.$span = Render.$tag("span");
-            Render.disabledColorRGB = "128,128,128";
-            Render.accentProgressColor = "#22884466";
-            Render.flashProgressColor = "#0F469988";
-            Render.flashDisabledColor = "#0F469955";
-            Render.activeProgressColor = "#6F7F0088";
-            Render.activeDisabledColor = "#6F7F0055";
-            Render.deleteProgressColor = "#831B5088";
-            Render.deleteDisabledColor = "#831B5055";
-            Render.backgroundLinerGradient = function (leftPercent, leftColor, rightColor) {
-                return "background: linear-gradient(to right, " + leftColor + " " + leftPercent + ", " + rightColor + " " + leftPercent + ");";
+            Render.progressStyle = function (progress) {
+                return "width:" + (progress !== null && progress !== void 0 ? progress : 1).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }) + ";";
             };
-            Render.progressStyleCore = function (progressColor, disabledColor, backgroundColor, progress) { return null === progress ?
-                "background-color: " + disabledColor + ";" :
-                1 <= progress ?
-                    "background: " + progressColor + ";" :
-                    Render.backgroundLinerGradient(progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }), progressColor, backgroundColor); };
-            Render.progressDefaultTitleStyle = function (progress) {
-                return Render.progressStyleCore(Render.accentProgressColor, "rgba(" + Render.disabledColorRGB + ",0.2)", "rgba(" + Render.disabledColorRGB + ",0.0)", progress);
+            Render.progressPadStyle = function (progress) { return Render.progressStyle(1 - (progress !== null && progress !== void 0 ? progress : 1)); };
+            Render.progressValidityClass = function (progress) {
+                return null === progress ? "progress-disabled" : "";
             };
-            Render.progressFlashTitleStyle = function (progress) {
-                return Render.progressStyleCore(Render.flashProgressColor, Render.flashDisabledColor, "rgba(" + Render.disabledColorRGB + ",0.0)", progress) + " repeat-flash";
+            Render.getItemProgressStatus = function (pass, item) {
+                return OldStorage.TagMember.isRestrictionTask(pass, item.task) ? "restriction" :
+                    OldStorage.TagMember.isFlashTask(pass, item.task) ? "flash" :
+                        OldStorage.TagMember.isPickupTask(pass, item.task) ? "pickup" :
+                            "default";
             };
-            Render.progressPickupTitleStyle = function (progress) {
-                return Render.progressStyleCore(Render.activeProgressColor, Render.activeDisabledColor, "rgba(" + Render.disabledColorRGB + ",0.0)", progress);
+            Render.progressStatusClass = function (status) {
+                return ({
+                    "default": "progress-default",
+                    "flash": "progress-flash",
+                    "pickup": "progress-pickup",
+                    "restriction": "progress-restriction",
+                }[status]);
             };
-            Render.progressRestrictionTitleStyle = function (progress) {
-                return Render.progressStyleCore(Render.deleteProgressColor, Render.deleteDisabledColor, "rgba(" + Render.disabledColorRGB + ",0.0)", progress);
+            Render.progressClass = function (progress, status) { return "progress-bar " + Render.progressValidityClass(progress) + " " + Render.progressStatusClass(status); };
+            Render.progressBar = function (progress, status) { return Render.$div({
+                className: Render.progressClass(progress, status),
+                attributes: { style: Render.progressStyle(progress), }
+            })([]); };
+            Render.progressBarPad = function (progress) { return Render.$div({
+                className: "progress-bar-pad",
+                attributes: { style: Render.progressPadStyle(progress), }
+            })([]); };
+            Render.itemProgressBar = function (pass, item, withPad) {
+                return [
+                    Render.progressBar(item.progress, Render.getItemProgressStatus(pass, item)),
+                    withPad ? Render.progressBarPad(item.progress) : []
+                ];
             };
-            Render.progressTitleStyle = function (pass, item) {
-                return OldStorage.TagMember.isRestrictionTask(pass, item.task) ?
-                    Render.progressRestrictionTitleStyle(item.progress) :
-                    OldStorage.TagMember.isFlashTask(pass, item.task) ?
-                        Render.progressFlashTitleStyle(item.progress) :
-                        OldStorage.TagMember.isPickupTask(pass, item.task) ?
-                            Render.progressPickupTitleStyle(item.progress) :
-                            Render.progressDefaultTitleStyle(item.progress);
-            };
-            Render.progressDefaultInformationStyle = function (progress) {
-                return Render.progressStyleCore(Render.accentProgressColor, "rgba(" + Render.disabledColorRGB + ",0.4)", "rgba(" + Render.disabledColorRGB + ",0.2)", progress);
-            };
-            Render.progressFlashInformationStyle = function (progress) {
-                return Render.progressStyleCore(Render.flashProgressColor, Render.flashDisabledColor, "rgba(" + Render.disabledColorRGB + ",0.2)", progress) + " repeat-flash";
-            };
-            Render.progressPickupInformationStyle = function (progress) {
-                return Render.progressStyleCore(Render.activeProgressColor, Render.activeDisabledColor, "rgba(" + Render.disabledColorRGB + ",0.2)", progress);
-            };
-            Render.progressRestrictionInformationStyle = function (progress) {
-                return Render.progressStyleCore(Render.deleteProgressColor, Render.deleteDisabledColor, "rgba(" + Render.disabledColorRGB + ",0.2)", progress);
-            };
-            Render.progressInformationStyle = function (pass, item) {
-                return OldStorage.TagMember.isRestrictionTask(pass, item.task) ?
-                    Render.progressRestrictionInformationStyle(item.progress) :
-                    OldStorage.TagMember.isFlashTask(pass, item.task) ?
-                        Render.progressFlashInformationStyle(item.progress) :
-                        OldStorage.TagMember.isPickupTask(pass, item.task) ?
-                            Render.progressPickupInformationStyle(item.progress) :
-                            Render.progressDefaultInformationStyle(item.progress);
+            Render.updateItemProgressBar = function (pass, item, dom) {
+                var _a;
+                var progressBarDiv = dom.getElementsByClassName("progress-bar")[0];
+                progressBarDiv.className = Render.progressClass(item.progress, Render.getItemProgressStatus(pass, item));
+                progressBarDiv.setAttribute("style", Render.progressStyle(item.progress));
+                var progressBarPadDiv = dom.getElementsByClassName("progress-bar-pad")[0];
+                (_a = progressBarPadDiv === null || progressBarPadDiv === void 0 ? void 0 : progressBarPadDiv.setAttribute) === null || _a === void 0 ? void 0 : _a.call(progressBarPadDiv, "style", Render.progressPadStyle(item.progress));
             };
             Render.labelSpan = Render.$span("label");
             Render.label = function (label) { return Render.labelSpan([
@@ -9600,12 +9696,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             //     href,
             //     children,
             // });
-            Render.informationDigest = function (entry, item) { return Render.$div({
-                className: "item-information",
-                attributes: {
-                    style: Render.progressInformationStyle(entry.pass, item),
-                }
-            })([
+            Render.informationDigest = function (entry, item) { return Render.$div("item-information")([
+                Render.itemProgressBar(entry.pass, item, "with-pad"),
                 Render.monospace("task-last-timestamp", Render.label("previous"), Domain.dateStringFromTick(item.previous)),
                 Render.monospace("task-elapsed-time", Render.label("elapsed time"), Domain.timeLongStringFromTick(item.elapsed)),
                 Render.monospace("task-interval-average", Render.label("recentrly interval average"), Domain.timeLongStringFromTick(item.RecentlyAverage)),
@@ -9618,12 +9710,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
                 // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
             ]); };
-            Render.informationFull = function (pass, item) { return Render.$div({
-                className: "item-information",
-                attributes: {
-                    style: Render.progressInformationStyle(pass, item),
-                }
-            })([
+            Render.informationFull = function (pass, item) { return Render.$div("item-information")([
+                Render.itemProgressBar(pass, item, "with-pad"),
                 Render.monospace("task-first-time", Render.label("first time"), Domain.dateStringFromTick(item.first)),
                 Render.monospace("task-last-timestamp", Render.label("previous"), Domain.dateStringFromTick(item.previous)),
                 Render.monospace("task-elapsed-time", Render.label("elapsed time"), Domain.timeLongStringFromTick(item.elapsed)),
@@ -9862,31 +9950,25 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 });
                             }); };
                             _a = Render.$make(HTMLDivElement);
-                            _b = ("full" === displayStyle ?
-                                Render.$div("task-item flex-item") :
-                                Render.$div({
-                                    className: "task-item flex-item",
-                                    attributes: {
-                                        style: Render.progressTitleStyle(entry.pass, item),
-                                    }
-                                }));
-                            _c = Render.$div("item-header");
-                            _d = Render.internalLink;
+                            _b = Render.$div("task-item flex-item");
+                            _c = ["full" === displayStyle ? [] : Render.itemProgressBar(entry.pass, item)];
+                            _d = Render.$div("item-header");
+                            _e = Render.internalLink;
                             _w = {
                                 className: "item-title",
                                 href: { pass: entry.pass, todo: item.task, }
                             };
                             return [4 /*yield*/, Resource.loadSvgOrCache(Render.getTodoIcon(entry, item))];
                         case 1:
-                            _e = [
-                                _d.apply(void 0, [(_w.children = [
+                            _f = [
+                                _e.apply(void 0, [(_w.children = [
                                         _3.sent(),
                                         Model.decode(item.task)
                                     ],
                                         _w)])
                             ];
-                            _f = Render.$div("item-operator");
-                            _g = [{
+                            _g = Render.$div("item-operator");
+                            _h = [{
                                     tag: "button",
                                     className: item.isDefault ? "default-button main-button" : "main-button",
                                     children: Render.label("Done"),
@@ -9923,13 +10005,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.todoDeleteMenu(entry.pass, item),
                                 ])];
                         case 2:
-                            _h = [
-                                _c.apply(void 0, [_e.concat([
-                                        _f.apply(void 0, [_g.concat([
+                            _c = _c.concat([
+                                _d.apply(void 0, [_f.concat([
+                                        _g.apply(void 0, [_h.concat([
                                                 _3.sent()
                                             ])])
                                     ])])
-                            ];
+                            ]);
                             if (!("full" === displayStyle)) return [3 /*break*/, 13];
                             _k = Render.$div("item-attribute");
                             _l = Render.$div("item-tags");
@@ -10061,7 +10143,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _j = [];
                             _3.label = 14;
                         case 14:
-                            itemDom = _a.apply(void 0, [_b.apply(void 0, [_h.concat([
+                            itemDom = _a.apply(void 0, [_b.apply(void 0, [_c.concat([
                                         _j
                                     ])])]);
                             return [2 /*return*/, itemDom];
@@ -10154,25 +10236,23 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return __generator(this, function (_d) {
                         switch (_d.label) {
                             case 0:
-                                _a = Render.$div({
-                                    className: "tick-item flex-item ",
-                                    style: (isRestrictioned ? Render.progressRestrictionTitleStyle :
-                                        isFlashed ? Render.progressFlashTitleStyle :
-                                            Render.progressDefaultTitleStyle)(null === interval || null === max || max < interval ? null : interval / max),
-                                });
+                                _a = Render.$div("tick-item flex-item");
+                                _b = [Render.progressBar(null === interval || null === max || max < interval ? null : interval / max, isRestrictioned ? "restriction" :
+                                        isFlashed ? "flash" :
+                                            "default")];
                                 return [4 /*yield*/, Resource.loadSvgOrCache(isRestrictioned ? "forbidden-icon" :
                                         isFlashed ? "flash-icon" :
                                             null === interval || null === max ? "one-icon" :
                                                 max < interval ? "sleep-icon" :
                                                     "tick-icon")];
                             case 1:
-                                _b = [
+                                _b = _b.concat([
                                     _d.sent(),
                                     Render.$div("item-information")([
                                         Render.monospace("tick-timestamp", Render.label("timestamp"), Domain.dateStringFromTick(tick)),
                                         Render.monospace("tick-interval", Render.label("interval"), Domain.timeLongStringFromTick(interval)),
                                     ])
-                                ];
+                                ]);
                                 _c = Render.$div("item-operator");
                                 // {
                                 //     tag: "button",
@@ -11286,12 +11366,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 button.classList.toggle("default-button", item.isDefault);
                                                 if ("full" === displayStyle) {
                                                     var information = dom.getElementsByClassName("item-information")[0];
-                                                    information.setAttribute("style", Render.progressInformationStyle(entry.pass, item));
                                                     information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
                                                 }
-                                                else {
-                                                    dom.setAttribute("style", Render.progressTitleStyle(entry.pass, item));
-                                                }
+                                                Render.updateItemProgressBar(entry.pass, item, dom);
                                             });
                                             if ("@pickup" === tag) {
                                                 filteredList_2 = pickupAll.filter(function (item) { return Render.isMatchToDoEntry(filter_1, entry, item); });
@@ -12042,7 +12119,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 .getElementsByClassName("todo-screen")[0]
                                                 .getElementsByClassName("task-item")[0];
                                             information = dom.getElementsByClassName("item-information")[0];
-                                            information.setAttribute("style", Render.progressInformationStyle(pass, item));
+                                            Render.updateItemProgressBar(pass, item, information);
                                             information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
                                             return [3 /*break*/, 10];
                                         case 2:
@@ -13241,7 +13318,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Feb 23 2023 02:10:44 GMT+0900 (日本標準時)', buildTimestampTick: 1677085844737, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Feb 25 2023 04:22:03 GMT+0900 (日本標準時)', buildTimestampTick: 1677266523560, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

@@ -2185,122 +2185,53 @@ export module CyclicToDo
         export const $tag = minamo.dom.tag;
         export const $div = $tag("div");
         export const $span = $tag("span");
-        export const disabledColorRGB = "128,128,128";
-        export const accentProgressColor = "#22884466";
-        export const flashProgressColor = "#0F469988";
-        export const flashDisabledColor = "#0F469955";
-        export const activeProgressColor = "#6F7F0088";
-        export const activeDisabledColor = "#6F7F0055";
-        export const deleteProgressColor = "#831B5088";
-        export const deleteDisabledColor = "#831B5055";
         export const progressStyle = (progress: number | null) =>
             `width:${(progress ?? 1).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })};`;
-        export const progressValidityClass = (_pass: string, item: ToDoEntry) =>
-            null === item.progress ? "progress-disabled": "";
-        export const progressStatusClass = (pass: string, item: ToDoEntry) =>
-            OldStorage.TagMember.isRestrictionTask(pass, item.task) ? "progress-restriction":
-            OldStorage.TagMember.isFlashTask(pass, item.task) ? "progress-flash":
-            OldStorage.TagMember.isPickupTask(pass, item.task) ? "progress-pickup":
-            "progress-default";
-        export const progressClass = (pass: string, item: ToDoEntry) => `${progressValidityClass(pass, item)} ${progressStatusClass(pass, item)}`;
-        export const progressBar = (pass: string, item: ToDoEntry) =>$div
+        export const progressPadStyle = (progress: number | null) => progressStyle(1 -(progress ?? 1));
+        export const progressValidityClass = (progress: number | null) =>
+            null === progress ? "progress-disabled": "";
+        export type ProgressStatusType = "default" | "flash" | "pickup" | "restriction";
+        export const getItemProgressStatus = (pass: string, item: ToDoEntry): ProgressStatusType =>
+            OldStorage.TagMember.isRestrictionTask(pass, item.task) ? "restriction":
+            OldStorage.TagMember.isFlashTask(pass, item.task) ? "flash":
+            OldStorage.TagMember.isPickupTask(pass, item.task) ? "pickup":
+            "default";
+        export const progressStatusClass = (status: ProgressStatusType) =>
+        (
+            {
+                "default": "progress-default",
+                "flash": "progress-flash",
+                "pickup": "progress-pickup",
+                "restriction": "progress-restriction",
+            }
+            [status]
+        );
+        export const progressClass = (progress: number | null, status: ProgressStatusType) => `progress-bar ${progressValidityClass(progress)} ${progressStatusClass(status)}`;
+        export const progressBar = (progress: number | null, status: ProgressStatusType) =>$div
         ({
-            className: `progress-bar ${progressClass(pass, item)}`,
-            attributes:{ style: progressStyle(item.progress), }
+            className: progressClass(progress, status),
+            attributes:{ style: progressStyle(progress), }
         })
         ([]);
-        export const backgroundLinerGradient = (leftPercent: string, leftColor: string, rightColor: string) =>
-            `background: linear-gradient(to right, ${leftColor} ${leftPercent}, ${rightColor} ${leftPercent});`;
-        export const progressStyleCore = (progressColor: string, disabledColor: string, backgroundColor: string, progress: number | null) => null === progress ?
-            `background-color: ${disabledColor};`:
-            1 <= progress ?
-                `background: ${progressColor};`:
-                backgroundLinerGradient
-                (
-                    progress.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }),
-                    progressColor,
-                    backgroundColor
-                );
-        export const progressDefaultTitleStyle = (progress: number | null) =>
-            progressStyleCore
-            (
-                accentProgressColor,
-                `rgba(${disabledColorRGB},0.2)`,
-                `rgba(${disabledColorRGB},0.0)`,
-                progress
-            );
-        export const progressFlashTitleStyle = (progress: number | null) =>
-            progressStyleCore
-            (
-                flashProgressColor,
-                flashDisabledColor,
-                `rgba(${disabledColorRGB},0.0)`,
-                progress
-            ) +" repeat-flash";
-        export const progressPickupTitleStyle = (progress: number | null) =>
-            progressStyleCore
-            (
-                activeProgressColor,
-                activeDisabledColor,
-                `rgba(${disabledColorRGB},0.0)`,
-                progress
-            );
-        export const progressRestrictionTitleStyle = (progress: number | null) =>
-            progressStyleCore
-            (
-                deleteProgressColor,
-                deleteDisabledColor,
-                `rgba(${disabledColorRGB},0.0)`,
-                progress
-            );
-        export const progressTitleStyle = (pass: string, item: ToDoEntry) =>
-            OldStorage.TagMember.isRestrictionTask(pass, item.task) ?
-                progressRestrictionTitleStyle(item.progress):
-            OldStorage.TagMember.isFlashTask(pass, item.task) ?
-                progressFlashTitleStyle(item.progress):
-            OldStorage.TagMember.isPickupTask(pass, item.task) ?
-                progressPickupTitleStyle(item.progress):
-                progressDefaultTitleStyle(item.progress);
-        export const progressDefaultInformationStyle = (progress: number | null) =>
-            progressStyleCore
-            (
-                accentProgressColor,
-                `rgba(${disabledColorRGB},0.4)`,
-                `rgba(${disabledColorRGB},0.2)`,
-                progress
-            );
-        export const progressFlashInformationStyle = (progress: number | null) =>
-            progressStyleCore
-            (
-                flashProgressColor,
-                flashDisabledColor,
-                `rgba(${disabledColorRGB},0.2)`,
-                progress
-            ) +" repeat-flash";
-        export const progressPickupInformationStyle = (progress: number | null) =>
-            progressStyleCore
-            (
-                activeProgressColor,
-                activeDisabledColor,
-                `rgba(${disabledColorRGB},0.2)`,
-                progress
-            );
-        export const progressRestrictionInformationStyle = (progress: number | null) =>
-            progressStyleCore
-            (
-                deleteProgressColor,
-                deleteDisabledColor,
-                `rgba(${disabledColorRGB},0.2)`,
-                progress
-            );
-        export const progressInformationStyle = (pass: string, item: ToDoEntry) =>
-            OldStorage.TagMember.isRestrictionTask(pass, item.task) ?
-                progressRestrictionInformationStyle(item.progress):
-            OldStorage.TagMember.isFlashTask(pass, item.task) ?
-                progressFlashInformationStyle(item.progress):
-            OldStorage.TagMember.isPickupTask(pass, item.task) ?
-                progressPickupInformationStyle(item.progress):
-                progressDefaultInformationStyle(item.progress);
+        export const progressBarPad = (progress: number | null) =>$div
+        ({
+            className: "progress-bar-pad",
+            attributes:{ style: progressPadStyle(progress), }
+        })
+        ([]);
+        export const itemProgressBar = (pass: string, item: ToDoEntry, withPad?: "with-pad") =>
+        [
+            progressBar(item.progress, getItemProgressStatus(pass, item)),
+            withPad ? progressBarPad(item.progress): []
+        ];
+        export const updateItemProgressBar = (pass: string, item: ToDoEntry, dom: HTMLDivElement) =>
+        {
+            const progressBarDiv = dom.getElementsByClassName("progress-bar")[0] as HTMLDivElement;
+            progressBarDiv.className = progressClass(item.progress, getItemProgressStatus(pass, item));
+            progressBarDiv.setAttribute("style", progressStyle(item.progress));
+            const progressBarPadDiv = dom.getElementsByClassName("progress-bar-pad")[0] as HTMLDivElement;
+            progressBarPadDiv?.setAttribute?.("style", progressPadStyle(item.progress));
+        };
         export const labelSpan = $span("label");
         export const label = (label: locale.LocaleKeyType) => labelSpan
         ([
@@ -3578,15 +3509,9 @@ export module CyclicToDo
         //     href,
         //     children,
         // });
-        export const informationDigest = (entry: ToDoTagEntryOld, item: ToDoEntry) => $div
-        ({
-            className: "item-information",
-            attributes:
-            {
-                style: progressInformationStyle(entry.pass, item),
-            }
-        })
+        export const informationDigest = (entry: ToDoTagEntryOld, item: ToDoEntry) => $div("item-information")
         ([
+            itemProgressBar(entry.pass, item, "with-pad"),
             monospace("task-last-timestamp", label("previous"), Domain.dateStringFromTick(item.previous)),
             monospace("task-elapsed-time", label("elapsed time"), Domain.timeLongStringFromTick(item.elapsed)),
             monospace("task-interval-average", label("recentrly interval average"), Domain.timeLongStringFromTick(item.RecentlyAverage)),
@@ -3607,15 +3532,9 @@ export module CyclicToDo
             // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
             // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
         ]);
-        export const informationFull = (pass: string, item: ToDoEntry) => $div
-        ({
-            className: "item-information",
-            attributes:
-            {
-                style: progressInformationStyle(pass, item),
-            }
-        })
+        export const informationFull = (pass: string, item: ToDoEntry) => $div("item-information")
         ([
+            itemProgressBar(pass, item, "with-pad"),
             monospace("task-first-time", label("first time"), Domain.dateStringFromTick(item.first)),
             monospace("task-last-timestamp", label("previous"), Domain.dateStringFromTick(item.previous)),
             monospace("task-elapsed-time", label("elapsed time"), Domain.timeLongStringFromTick(item.elapsed)),
@@ -3837,19 +3756,9 @@ export module CyclicToDo
             };
             const itemDom = $make(HTMLDivElement)
             (
-                (
-                    "full" === displayStyle ?
-                    $div("task-item flex-item"):
-                    $div
-                    ({
-                        className: "task-item flex-item",
-                        attributes:
-                        {
-                            style: progressTitleStyle(entry.pass, item),
-                        }
-                    })
-                )
+                $div("task-item flex-item")
                 ([
+                    "full" === displayStyle ? []: itemProgressBar(entry.pass, item),
                     $div("item-header")
                     ([
                         internalLink
@@ -4039,17 +3948,15 @@ export module CyclicToDo
                 []
             ),
         ]);
-        export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null, isFlashed: boolean = OldStorage.TodoSettings.isFlashTarget(pass, item, interval), isRestrictioned: boolean = OldStorage.TodoSettings.isRestrictionTarget(pass, item, interval)) => $div
-        ({
-            className: "tick-item flex-item ",
-            style:
-            (
-                isRestrictioned ? Render.progressRestrictionTitleStyle:
-                isFlashed ? Render.progressFlashTitleStyle:
-                Render.progressDefaultTitleStyle
-            )(null === interval || null === max || max < interval ? null: interval /max),
-        })
+        export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null, isFlashed: boolean = OldStorage.TodoSettings.isFlashTarget(pass, item, interval), isRestrictioned: boolean = OldStorage.TodoSettings.isRestrictionTarget(pass, item, interval)) => $div("tick-item flex-item")
         ([
+            progressBar
+            (
+                null === interval || null === max || max < interval ? null: interval /max,
+                isRestrictioned ? "restriction":
+                isFlashed ? "flash":
+                "default"
+            ),
             await Resource.loadSvgOrCache
             (
                 isRestrictioned ? "forbidden-icon":
@@ -4973,13 +4880,9 @@ export module CyclicToDo
                                     if ("full" === displayStyle)
                                     {
                                         const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
-                                        information.setAttribute("style", Render.progressInformationStyle(entry.pass, item));
                                         (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
                                     }
-                                    else
-                                    {
-                                        dom.setAttribute("style", Render.progressTitleStyle(entry.pass, item));
-                                    }
+                                    Render.updateItemProgressBar(entry.pass, item, dom);
                                 }
                             );
                             if ("@pickup" === tag)
@@ -5490,7 +5393,7 @@ export module CyclicToDo
                             .getElementsByClassName("todo-screen")[0]
                             .getElementsByClassName("task-item")[0] as HTMLDivElement;
                         const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
-                        information.setAttribute("style", Render.progressInformationStyle(pass, item));
+                        Render.updateItemProgressBar(pass, item, information);
                         (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
                         break;
                     case "focus":
