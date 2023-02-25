@@ -2051,9 +2051,12 @@ export module CyclicToDo
                 document.body.classList.add("flash");
                 setTimeout(() => document.body.classList.remove("flash"), 1500);
                 MigrateBridge.done(pass, task, tick);
-                const isPickuped =
-                    0 <= MigrateBridge.getTagMember(pass, "@pickup").indexOf(task) &&
-                    "always" !== OldStorage.TodoSettings.get(pass, task).pickup?.type;
+                const isFlashed = "always" !== OldStorage.TodoSettings.get(pass, task).flash?.type && OldStorage.TagMember.isFlashTask(pass, task);
+                if (isFlashed)
+                {
+                    OldStorage.TagMember.remove(pass, "@flash", task);
+                }
+                const isPickuped = "always" !== OldStorage.TodoSettings.get(pass, task).pickup?.type && OldStorage.TagMember.isPickupTask(pass, task);
                 if (isPickuped)
                 {
                     OldStorage.TagMember.remove(pass, "@pickup", task);
@@ -2066,6 +2069,10 @@ export module CyclicToDo
                         async () =>
                         {
                             OldStorage.History.removeTickRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
+                            if (isFlashed)
+                            {
+                                OldStorage.TagMember.add(pass, "@flash", task);
+                            }
                             if (isPickuped)
                             {
                                 OldStorage.TagMember.add(pass, "@pickup", task);
