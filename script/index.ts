@@ -4143,7 +4143,12 @@ export module CyclicToDo
                 monospace("header-timestamp", headerTimestamp()),
             ])
         ];
-        export const headerTimestamp = () => Domain.dateStringFromTick(Domain.getTicks());
+        export const headerTimestamp = () =>
+        {
+            const now = new Date();
+            const tick = Domain.getTicks(now);
+            return `${Domain.dateCoreStringFromTick(tick)} ${Domain.timeCoreStringFromTick(Domain.getTime(tick))}:${("00" +now.getSeconds()).slice(-2)}`;
+        };
         export const updateHeaderTimestamp = () =>
         {
             const frame = document.getElementsByClassName("header-timestamp")[0];
