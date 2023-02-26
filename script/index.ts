@@ -4140,8 +4140,22 @@ export module CyclicToDo
                 [],
                 data.menu ? await menuButton(data.menu): [],
                 data.operator ? data.operator: [],
+                monospace("header-timestamp", headerTimestamp()),
             ])
         ];
+        export const headerTimestamp = () => Domain.dateStringFromTick(Domain.getTicks());
+        export const updateHeaderTimestamp = () =>
+        {
+            const frame = document.getElementsByClassName("header-timestamp")[0];
+            if (frame)
+            {
+                const value = frame.getElementsByClassName("value")[0];
+                if (value)
+                {
+                    minamo.dom.setProperty(value, "innerText", headerTimestamp());
+                }
+            }
+        };
         export const getCloseButton = () => getHeaderElement().getElementsByClassName("close-button")[0] as HTMLButtonElement;
         export const screenHeaderSegmentCore = async (item: HeaderSegmentSource) =>
         [
@@ -4842,6 +4856,9 @@ export module CyclicToDo
             {
                 switch(event)
                 {
+                    case "high-resolution-timer":
+                        updateHeaderTimestamp();
+                        break;
                     case "timer":
                         Domain.updateListProgress(entry.pass, list);
                         if ("@pickup" === tag)
@@ -5394,6 +5411,9 @@ export module CyclicToDo
             {
                 switch(event)
                 {
+                    case "high-resolution-timer":
+                        updateHeaderTimestamp();
+                        break;
                     case "timer":
                         Domain.updateProgress(pass, item);
                         const dom = document
@@ -5862,9 +5882,10 @@ export module CyclicToDo
                 ?.join(" / ")
                 ?? applicationTitle;
         };
-        export type UpdateWindowEventEype = "timer" | "scroll" | "storage" | "focus" | "blur" | "operate" | "dirty";
+        export type UpdateWindowEventEype = "high-resolution-timer" | "timer" | "scroll" | "storage" | "focus" | "blur" | "operate" | "dirty";
         export let updateWindow: (event: UpdateWindowEventEype) => unknown;
         let updateWindowTimer: number;
+        let updateHighResolutionTimer: number;
         export const getHeaderElement = () => document.getElementById("screen-header") as HTMLDivElement;
         export const showWindow = async (screen: ScreenSource, updateWindow?: (event: UpdateWindowEventEype) => unknown) =>
         {
@@ -5877,9 +5898,15 @@ export module CyclicToDo
             {
                 Render.updateWindow = async (event: UpdateWindowEventEype) =>
                 {
-                    if ("storage" === event || "operate" === event)
+                    switch(event)
                     {
-                        await reload();
+                        case "high-resolution-timer":
+                            updateHeaderTimestamp();
+                            break;
+                        case "storage":
+                        case "operate":
+                            await reload();
+                            break;
                     }
                 };
             }
@@ -5900,6 +5927,14 @@ export module CyclicToDo
                             Render.updateWindow?.("scroll");
                         }
                     }
+                );
+            }
+            if (undefined === updateHighResolutionTimer)
+            {
+                updateHighResolutionTimer = setInterval
+                (
+                    () => Render.updateWindow?.("high-resolution-timer"),
+                    100
                 );
             }
             minamo.core.existsOrThrow(document.getElementById("screen")).className = `${screen.className} screen`;
