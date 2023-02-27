@@ -4146,8 +4146,9 @@ export module CyclicToDo
         export const headerTimestamp = () =>
         {
             const now = new Date();
+            const day = locale.map(`week.short.${now.getDay()}` as locale.LocaleKeyType);
             const tick = Domain.getTicks(now);
-            return `${Domain.dateCoreStringFromTick(tick)} ${Domain.timeCoreStringFromTick(Domain.getTime(tick))}:${("00" +now.getSeconds()).slice(-2)}`;
+            return `${Domain.dateCoreStringFromTick(tick)}(${day}) ${Domain.timeCoreStringFromTick(Domain.getTime(tick))}:${("00" +now.getSeconds()).slice(-2)}`;
         };
         export const updateHeaderTimestamp = () =>
         {

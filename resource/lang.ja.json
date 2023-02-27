@@ -95,5 +95,12 @@
     "This action cannot be undone. Do you want to continue?": "この操作は取り消せません。続行しますか？",
     "Close": "閉じる",
     "Done!": "完了！",
-    "Storing": "保存中"
+    "Storing": "保存中",
+    "week.short.0": "日",
+    "week.short.1": "月",
+    "week.short.2": "火",
+    "week.short.3": "水",
+    "week.short.4": "木",
+    "week.short.5": "金",
+    "week.short.6": "土"
 }

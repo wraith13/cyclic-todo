@@ -95,5 +95,12 @@
     "This action cannot be undone. Do you want to continue?": "This action cannot be undone. Do you want to continue?",
     "Close": "Close",
     "Done!": "Done!",
-    "Storing": "Storing"
+    "Storing": "Storing",
+    "week.short.0": "Sun",
+    "week.short.1": "Mon",
+    "week.short.2": "Tue",
+    "week.short.3": "Wed",
+    "week.short.4": "Thu",
+    "week.short.5": "Fri",
+    "week.short.6": "Sat"
 }
