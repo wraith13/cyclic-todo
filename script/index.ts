@@ -2192,9 +2192,21 @@ export module CyclicToDo
         export const $tag = minamo.dom.tag;
         export const $div = $tag("div");
         export const $span = $tag("span");
-        export const progressStyle = (progress: number | null) =>
-            `width:${(progress ?? 1).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })};`;
-        export const progressPadStyle = (progress: number | null) => progressStyle(1 -(progress ?? 1));
+        let progressFlashDelay = 0;
+        export const getProgressFlashDelay = () =>
+        {
+            progressFlashDelay += 0.618;
+            if (1.0 <= progressFlashDelay)
+            {
+                progressFlashDelay -= 1.0;
+            }
+            return progressFlashDelay;
+        };
+        export const progressStyle = (progress: number | null, status: ProgressStatusType) =>
+            `width:${(progress ?? 1).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })};`
+            +("flash" === status ? `animation-delay:-${5.0 *getProgressFlashDelay()}s;`: "");
+        export const progressPadStyle = (progress: number | null) =>
+            progressStyle(1 -(progress ?? 1), "default");
         export const progressValidityClass = (progress: number | null) =>
             null === progress ? "progress-disabled": "";
         export type ProgressStatusType = "default" | "flash" | "pickup" | "restriction";
@@ -2213,11 +2225,12 @@ export module CyclicToDo
             }
             [status]
         );
-        export const progressClass = (progress: number | null, status: ProgressStatusType) => `progress-bar ${progressValidityClass(progress)} ${progressStatusClass(status)}`;
+        export const progressClass = (progress: number | null, status: ProgressStatusType) =>
+            `progress-bar ${progressValidityClass(progress)} ${progressStatusClass(status)}`;
         export const progressBar = (progress: number | null, status: ProgressStatusType) =>$div
         ({
             className: progressClass(progress, status),
-            attributes:{ style: progressStyle(progress), }
+            attributes:{ style: progressStyle(progress, status), }
         })
         ([]);
         export const progressBarPad = (progress: number | null) =>$div
@@ -2229,13 +2242,14 @@ export module CyclicToDo
         export const itemProgressBar = (pass: string, item: ToDoEntry, withPad?: "with-pad") =>
         [
             progressBar(item.progress, getItemProgressStatus(pass, item)),
-            withPad ? progressBarPad(item.progress): []
-        ];
+            withPad ? progressBarPad(item.progress): undefined,
+        ]
+        .filter(i => undefined !== i) as minamo.dom.Source;
         export const updateItemProgressBar = (pass: string, item: ToDoEntry, dom: HTMLDivElement) =>
         {
             const progressBarDiv = dom.getElementsByClassName("progress-bar")[0] as HTMLDivElement;
             progressBarDiv.className = progressClass(item.progress, getItemProgressStatus(pass, item));
-            progressBarDiv.setAttribute("style", progressStyle(item.progress));
+            progressBarDiv.setAttribute("style", progressStyle(item.progress, getItemProgressStatus(pass, item)));
             const progressBarPadDiv = dom.getElementsByClassName("progress-bar-pad")[0] as HTMLDivElement;
             progressBarPadDiv?.setAttribute?.("style", progressPadStyle(item.progress));
         };
