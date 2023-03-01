@@ -2193,6 +2193,7 @@ export module CyclicToDo
         export const $div = $tag("div");
         export const $span = $tag("span");
         let progressFlashDelay = 0;
+        export const resetProgressFlashDelay = () => progressFlashDelay = 0;
         export const getProgressFlashDelay = () =>
         {
             progressFlashDelay += 0.618;
@@ -4903,6 +4904,7 @@ export module CyclicToDo
                         // }
                         // else
                         // {
+                            Render.resetProgressFlashDelay();
                             const filter = getFilterText();
                             const filteredList = list.filter(item => isMatchToDoEntry(filter, entry, item));
                             (
@@ -4994,6 +4996,7 @@ export module CyclicToDo
                 }
             };
             const filter = regulateFilterText(urlParams.filter ?? "");
+            resetProgressFlashDelay();
             await showWindow(await listScreen(entry, list, filter), updateWindow);
             if ("@pickup" === tag)
             {
@@ -5440,6 +5443,7 @@ export module CyclicToDo
                             .getElementsByClassName("todo-screen")[0]
                             .getElementsByClassName("task-item")[0] as HTMLDivElement;
                         const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
+                        Render.resetProgressFlashDelay();
                         Render.updateItemProgressBar(pass, item, information);
                         (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
                         break;
@@ -5469,6 +5473,7 @@ export module CyclicToDo
                         break;
                 }
             };
+            resetProgressFlashDelay();
             await showWindow(await todoScreen(pass, item, ticks, tag), updateWindow);
         };
         export module Resource
