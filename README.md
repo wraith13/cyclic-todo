@@ -6,7 +6,7 @@
 
 - ✅️ Lifelog as ToDo List. / ToDo リストとしてのライフログ。
 - ✅️ Automatically predict task cycle. / タスク周期を自動予測。
-- 🚧 Sublists and tags. / サブリストとタグ。
+- ✅️ Sublists and tags. / サブリストとタグ。
 - ✅️ Static Single Page Web Application. / 静的シングルページウェブアプリケーション。
 - ✅️ Supports PCs and smartphones. / PCとスマフォをサポート。
 - 🚫 OneDrive sync. / OneDrive 同期。
@@ -19,6 +19,15 @@
 - Don't blame the user. / ユーザーを責めない。
 - Encourage users. / ユーザーを勇気づける。
 - Just record the log and display it. / ひたすらログを記録しそれを表示するだけ。
+
+## Other ToDo applications
+
+Cyclic ToDo do not support cloud sync, single-shot tasks, trees, due dates, notifications, etc. If necessary, please use the following ToDo apps together. / Cyclic ToDo はクラウド同期、単発の ToDo、ツリー、期限、通知などをサポートしません。必要に応じて以下のような ToDo アプリを併用してください。
+
+- [OmniFocus](https://web.omnifocus.com/)
+- [Microsoft To Do](https://to-do.live.com/)
+- [Apple Reminders](https://www.icloud.com/reminders)
+- [Google Keep](https://keep.google.com/)
 
 ## Development environment construction
 

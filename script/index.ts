@@ -2956,7 +2956,8 @@ export module CyclicToDo
                 }
                 return [ 3, 5, 7, 10, 14, 21, 30, 45, 60, 90, 180, 240, ].map(i => i *24 *60);
             }
-            return [ ];
+            return [ 6, 9, 12, 15, 18, 21, 24, ].map(i => i *60)
+                .concat([ 1.5, 2, 2.5, 3, 4, 5, 6, 7, 10, 14, 21, 30, ].map(i => i *24 *60));
         };
         export const todoFlashSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
         (
