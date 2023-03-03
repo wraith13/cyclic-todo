@@ -4042,7 +4042,7 @@ export module CyclicToDo
                 {
                     if (labelSoan.innerText !== dropdown.value)
                     {
-                        labelSoan.innerText =Array.isArray(options.list) ?
+                        labelSoan.innerText = Array.isArray(options.list) ?
                             dropdown.value:
                             (options.list[dropdown.value] ?? dropdown.value);
                         options.onChange?.(dropdown.value);
@@ -5446,7 +5446,7 @@ export module CyclicToDo
                         const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
                         Render.resetProgressFlashDelay();
                         Render.updateItemProgressBar(pass, item, information);
-                        (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
+                        minamo.dom.setProperty((information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement), "innerText", Domain.timeLongStringFromTick(item.elapsed));
                         break;
                     case "focus":
                     case "blur":
