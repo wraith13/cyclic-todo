@@ -3959,19 +3959,21 @@ export module CyclicToDo
                 []
             ),
         ]);
-        export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null, isFlashed: boolean = OldStorage.TodoSettings.isFlashTarget(pass, item, interval), isRestrictioned: boolean = OldStorage.TodoSettings.isRestrictionTarget(pass, item, interval)) => $div("tick-item flex-item")
+        export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null, isFlashed: boolean = OldStorage.TodoSettings.isFlashTarget(pass, item, interval), isPickuped: boolean = OldStorage.TodoSettings.isPickupTarget(pass, item, interval), isRestrictioned: boolean = OldStorage.TodoSettings.isRestrictionTarget(pass, item, interval)) => $div("tick-item flex-item")
         ([
             progressBar
             (
                 null === interval || null === max || max < interval ? null: interval /max,
                 isRestrictioned ? "restriction":
                 isFlashed ? "flash":
+                isPickuped ? "pickup":
                 "default"
             ),
             await Resource.loadSvgOrCache
             (
                 isRestrictioned ? "forbidden-icon":
-                isFlashed ? "flash-icon":
+                // isFlashed ? "flash-icon":
+                // isPickuped ? "pickup-icon":
                 null === interval || null === max ? "one-icon":
                 max < interval ? "sleep-icon":
                 "tick-icon"
@@ -4821,7 +4823,7 @@ export module CyclicToDo
                 children: label("New ToDo"),
                 onclick: async () =>
                 {
-                    const newTask = await prompt(locale.map("Input a ToDo's name."));
+                    const newTask = await prompt(locale.map("Input a ToDo's name."), getFilterText());
                     if (null !== newTask)
                     {
                         OldStorage.Task.add(entry.pass, newTask);
