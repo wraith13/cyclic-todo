@@ -2192,22 +2192,10 @@ export module CyclicToDo
         export const $tag = minamo.dom.tag;
         export const $div = $tag("div");
         export const $span = $tag("span");
-        let progressFlashDelay = 0;
-        export const resetProgressFlashDelay = () => progressFlashDelay = 0;
-        export const getProgressFlashDelay = () =>
-        {
-            progressFlashDelay += 0.618;
-            if (1.0 <= progressFlashDelay)
-            {
-                progressFlashDelay -= 1.0;
-            }
-            return progressFlashDelay;
-        };
-        export const progressStyle = (progress: number | null, status: ProgressStatusType) =>
-            `width:${(progress ?? 1).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })};`
-            +("flash" === status ? `animation-delay:-${5.0 *getProgressFlashDelay()}s;`: "");
+        export const progressStyle = (progress: number | null) =>
+            `width:${(progress ?? 1).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })};`;
         export const progressPadStyle = (progress: number | null) =>
-            progressStyle(1 -(progress ?? 1), "default");
+            progressStyle(1 -(progress ?? 1));
         export const progressValidityClass = (progress: number | null) =>
             null === progress ? "progress-disabled": "";
         export type ProgressStatusType = "default" | "flash" | "pickup" | "restriction";
@@ -2231,7 +2219,7 @@ export module CyclicToDo
         export const progressBar = (progress: number | null, status: ProgressStatusType) =>$div
         ({
             className: progressClass(progress, status),
-            attributes:{ style: progressStyle(progress, status), }
+            attributes:{ style: progressStyle(progress), }
         })
         ([]);
         export const progressBarPad = (progress: number | null) =>$div
@@ -2250,7 +2238,7 @@ export module CyclicToDo
         {
             const progressBarDiv = dom.getElementsByClassName("progress-bar")[0] as HTMLDivElement;
             progressBarDiv.className = progressClass(item.progress, getItemProgressStatus(pass, item));
-            progressBarDiv.setAttribute("style", progressStyle(item.progress, getItemProgressStatus(pass, item)));
+            progressBarDiv.setAttribute("style", progressStyle(item.progress));
             const progressBarPadDiv = dom.getElementsByClassName("progress-bar-pad")[0] as HTMLDivElement;
             progressBarPadDiv?.setAttribute?.("style", progressPadStyle(item.progress));
         };
@@ -4905,7 +4893,6 @@ export module CyclicToDo
                         // }
                         // else
                         // {
-                            Render.resetProgressFlashDelay();
                             const filter = getFilterText();
                             const filteredList = list.filter(item => isMatchToDoEntry(filter, entry, item));
                             (
@@ -4997,7 +4984,6 @@ export module CyclicToDo
                 }
             };
             const filter = regulateFilterText(urlParams.filter ?? "");
-            resetProgressFlashDelay();
             await showWindow(await listScreen(entry, list, filter), updateWindow);
             if ("@pickup" === tag)
             {
@@ -5444,7 +5430,6 @@ export module CyclicToDo
                             .getElementsByClassName("todo-screen")[0]
                             .getElementsByClassName("task-item")[0] as HTMLDivElement;
                         const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
-                        Render.resetProgressFlashDelay();
                         Render.updateItemProgressBar(pass, item, information);
                         minamo.dom.setProperty((information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement), "innerText", Domain.timeLongStringFromTick(item.elapsed));
                         break;
@@ -5474,7 +5459,6 @@ export module CyclicToDo
                         break;
                 }
             };
-            resetProgressFlashDelay();
             await showWindow(await todoScreen(pass, item, ticks, tag), updateWindow);
         };
         export module Resource
