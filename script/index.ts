@@ -2419,7 +2419,7 @@ export module CyclicToDo
                         [
                             await Promise.all
                             (
-                                ["@pickup"].concat(OldStorage.Tag.get(pass).sort(Domain.tagComparerOld(pass))).concat("@unoverall").map
+                                OldStorage.Tag.get(pass).sort(Domain.tagComparerOld(pass)).concat("@unoverall").map
                                 (
                                     async tag =>
                                     {
