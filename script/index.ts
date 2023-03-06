@@ -625,6 +625,10 @@ export module CyclicToDo
                 else
                 {
                     set(pass, tag, get(pass, tag).concat([ todo ]).filter(uniqueFilter));
+                    // if ("@unoverall" === tag)
+                    // {
+                    //     OldStorage.TagMember.remove(pass, "@overall", todo);
+                    // }
                 }
             };
             //export const merge = (pass: string, tag: string, list: string[]) => set(pass, tag, get(pass, tag).concat(list).filter(uniqueFilter));
@@ -640,6 +644,10 @@ export module CyclicToDo
                 else
                 {
                     set(pass, tag, get(pass, tag).filter(i => todo !== i));
+                    // if ("@unoverall" === tag)
+                    // {
+                    //     OldStorage.TagMember.add(pass, "@overall", todo);
+                    // }
                 }
             };
             export const isMember = (pass: string, tag: string, todo: string) => 0 <= get(pass, tag).indexOf(todo);
@@ -4897,29 +4905,38 @@ export module CyclicToDo
                         // {
                             const filter = getFilterText();
                             const filteredList = list.filter(item => isMatchToDoEntry(filter, entry, item));
+                            await Promise.all
                             (
-                                Array.from
                                 (
+                                    Array.from
                                     (
-                                        document
-                                            .getElementsByClassName("list-screen")[0]
-                                            .getElementsByClassName("todo-list")[0] as HTMLDivElement
-                                    ).childNodes
-                                ) as HTMLDivElement[]
-                            ).forEach
-                            (
-                                (dom, index) =>
-                                {
-                                    const item = filteredList[index];
-                                    const button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0] as HTMLButtonElement;
-                                    button.classList.toggle("default-button", item.isDefault);
-                                    if ("full" === displayStyle)
+                                        (
+                                            document
+                                                .getElementsByClassName("list-screen")[0]
+                                                .getElementsByClassName("todo-list")[0] as HTMLDivElement
+                                        ).childNodes
+                                    ) as HTMLDivElement[]
+                                ).map
+                                (
+                                    async (dom, index) =>
                                     {
-                                        const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
-                                        (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
+                                        const item = filteredList[index];
+                                        const button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0] as HTMLButtonElement;
+                                        button.classList.toggle("default-button", item.isDefault);
+                                        if ("full" === displayStyle)
+                                        {
+                                            const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
+                                            (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
+                                        }
+                                        const svg = dom.getElementsByClassName("item-title")?.[0]?.getElementsByTagName("svg")?.[0];
+                                        if (svg)
+                                        {
+                                            const icon = await Resource.loadSvgOrCache(getTodoIcon(entry, item));
+                                            minamo.dom.setProperty(svg, "outerHTML", icon.outerHTML);
+                                        }
+                                        Render.updateItemProgressBar(entry.pass, item, dom);
                                     }
-                                    Render.updateItemProgressBar(entry.pass, item, dom);
-                                }
+                                )
                             );
                             if ("@pickup" === tag)
                             {
