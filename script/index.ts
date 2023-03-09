@@ -2404,6 +2404,65 @@ export module CyclicToDo
                 }
             );
         };
+        export const dateTimeSpanPrompt = async (message: string, _default: number): Promise<string | null> =>
+        {
+            const inputDate = $make(HTMLInputElement)
+            ({
+                tag: "input",
+                type: "number",
+                value: Math.floor(_default / (24 *60)),
+                min: "0",
+                step: "1",
+                required: "",
+            });
+            const inputTime = $make(HTMLInputElement)
+            ({
+                tag: "input",
+                type: "time",
+                value: Domain.timeCoreStringFromTick(Domain.getTime(_default)),
+                required: "",
+            });
+            return await new Promise
+            (
+                resolve =>
+                {
+                    let result: string | null = null;
+                    const ui = popup
+                    ({
+                        children:
+                        [
+                            $tag("h2")("")(message),
+                            inputDate,
+                            inputTime,
+                            $div("popup-operator")
+                            ([
+                                {
+                                    tag: "button",
+                                    className: "cancel-button",
+                                    children: locale.map("Cancel"),
+                                    onclick: () =>
+                                    {
+                                        result = null;
+                                        ui.close();
+                                    },
+                                },
+                                {
+                                    tag: "button",
+                                    className: "default-button",
+                                    children: locale.map("OK"),
+                                    onclick: () =>
+                                    {
+                                        result = `${inputDate.value}T${inputTime.value}`;
+                                        ui.close();
+                                    },
+                                },
+                            ])
+                        ],
+                        onClose: async () => resolve(result),
+                    });
+                }
+            );
+        };
         export const addRemoveTagsPopup = async (pass: string, item: ToDoEntry, currentTags: string[]): Promise<boolean> =>
         {
             return await new Promise
