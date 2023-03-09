@@ -1642,6 +1642,23 @@ export module CyclicToDo
             }
             return null;
         }
+        export function parseTimeSpan(time: null): null;
+        export function parseTimeSpan(time: string | null): number | null;
+        export function parseTimeSpan(time: string | null): number | null
+        {
+            if (null !== time)
+            {
+                try
+                {
+                    return (Date.parse(`2023-01-01T${time}`) -Date.parse(`2023-01-01T00:00`)) /timeAccuracy;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            return null;
+        }
         export const tagMap = (tag: string) =>
         {
             switch(tag)
@@ -2404,13 +2421,14 @@ export module CyclicToDo
                 }
             );
         };
-        export const dateTimeSpanPrompt = async (message: string, _default: number): Promise<string | null> =>
+        export const dateTimeSpanPrompt = async (message: string, _default: number): Promise<number | null> =>
         {
+            const dayUnit = 24 *60 *60 *1000;
             const inputDate = $make(HTMLInputElement)
             ({
                 tag: "input",
                 type: "number",
-                value: Math.floor(_default / (24 *60)),
+                value: Math.floor((_default *Domain.timeAccuracy) / dayUnit),
                 min: "0",
                 step: "1",
                 required: "",
@@ -2426,7 +2444,7 @@ export module CyclicToDo
             (
                 resolve =>
                 {
-                    let result: string | null = null;
+                    let result: number | null = null;
                     const ui = popup
                     ({
                         children:
@@ -2452,7 +2470,15 @@ export module CyclicToDo
                                     children: locale.map("OK"),
                                     onclick: () =>
                                     {
-                                        result = `${inputDate.value}T${inputTime.value}`;
+                                        const time = Domain.parseTimeSpan(inputTime.value);
+                                        if (null !== time)
+                                        {
+                                            result = ((parseInt(inputDate.value) *dayUnit) /Domain.timeAccuracy) +time;
+                                        }
+                                        else
+                                        {
+                                            result = null;
+                                        }
                                         ui.close();
                                     },
                                 },
