@@ -3227,7 +3227,7 @@ export module CyclicToDo
                         await Promise.all
                         (
                             getTodoPickupSettingsElapsedTimePreset(entry)
-                                .concat([(settings.pickup as PickupSettingElapsedTime)?.elapsedTime ?? 0])
+                                .concat([(settings.flash as PickupSettingElapsedTime)?.elapsedTime ?? 0])
                                 .filter(i => 0 < i)
                                 .filter(uniqueFilter)
                                 .sort(minamo.core.comparer.basic)
@@ -3369,7 +3369,7 @@ export module CyclicToDo
                         await Promise.all
                         (
                             getTodoPickupSettingsElapsedTimePreset(entry)
-                                .concat([(settings.pickup as PickupSettingElapsedTime)?.elapsedTime ?? 0])
+                                .concat([(settings.restriction as PickupSettingElapsedTime)?.elapsedTime ?? 0])
                                 .filter(i => 0 < i)
                                 .filter(uniqueFilter)
                                 .sort(minamo.core.comparer.basic)
