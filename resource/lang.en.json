@@ -67,6 +67,7 @@
     "pickup.elapsed-time": "Elapsed time ( actual )",
     "pickup.elapsed-time-standard-score": "Elapsed time ( T-score )",
     "pickup.expired": "Expired",
+    "pickup.specify": "Specify",
     "displayStyle.home": "Same style as Home",
     "displayStyle.full": "Full",
     "displayStyle.compact": "Compact",
