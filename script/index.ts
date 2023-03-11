@@ -3256,6 +3256,30 @@ export module CyclicToDo
                                     })
                                 )
                         ),
+                        {
+                            tag: "button",
+                            className: `check-button`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")([label("pickup.elapsed-time"), ": ", "指定"]),
+                            ],
+                            onclick: async () =>
+                            {
+                                const elapsedTime = await dateTimeSpanPrompt(locale.map("pickup.elapsed-time"), (settings.flash as PickupSettingElapsedTime)?.elapsedTime ?? 0);
+                                if (null !== elapsedTime)
+                                {
+                                    settings.flash =
+                                    {
+                                        type: "elapsed-time",
+                                        elapsedTime,
+                                    };
+                                    OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                    result = true;
+                                    await tagButtonListUpdate();
+                                }
+                            }
+                        },
                         await Promise.all
                         (
                             [ 30, 40, 50, 60, 70, ].map
