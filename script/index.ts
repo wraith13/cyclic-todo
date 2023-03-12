@@ -2343,6 +2343,58 @@ export module CyclicToDo
 
         export const systemConfirm = (message: string) => window.confirm(message);
         export const confirm = systemConfirm;
+        export const numberPrompt = async (message: string, _default: number, options?: { min?:number, max?:number, step?:number,  }): Promise<number | null> =>
+        {
+            const input = $make(HTMLInputElement)
+            ({
+                tag: "input",
+                type: "number",
+                value: _default,
+                min: options?.min,
+                max: options?.max,
+                step: options?.step,
+                required: "",
+            });
+            return await new Promise
+            (
+                resolve =>
+                {
+                    let result: number | null = null;
+                    const ui = popup
+                    ({
+                        children:
+                        [
+                            $tag("h2")("")(message),
+                            input,
+                            $div("popup-operator")
+                            ([
+                                {
+                                    tag: "button",
+                                    className: "cancel-button",
+                                    children: locale.map("Cancel"),
+                                    onclick: () =>
+                                    {
+                                        result = null;
+                                        ui.close();
+                                    },
+                                },
+                                {
+                                    tag: "button",
+                                    className: "default-button",
+                                    children: locale.map("OK"),
+                                    onclick: () =>
+                                    {
+                                        result = parseInt(input.value);
+                                        ui.close();
+                                    },
+                                },
+                            ])
+                        ],
+                        onClose: async () => resolve(result),
+                    });
+                }
+            );
+        };
         export const newListPrompt = async () =>
         {
             const newList = await prompt(locale.map("Input a ToDo list's name."), locale.map("ToDo List"));
@@ -3144,6 +3196,30 @@ export module CyclicToDo
                         ),
                         {
                             tag: "button",
+                            className: `check-button`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")([label("pickup.elapsed-time-standard-score"), ": ", label("pickup.specify")]),
+                            ],
+                            onclick: async () =>
+                            {
+                                const elapsedTimeStandardScore = await dateTimeSpanPrompt(locale.map("pickup.elapsed-time"), (settings.flash as PickupSettingElapsedTime)?.elapsedTime ?? 0);
+                                if (null !== elapsedTimeStandardScore)
+                                {
+                                    settings.flash =
+                                    {
+                                        type: "elapsed-time-standard-score",
+                                        elapsedTimeStandardScore,
+                                    };
+                                    OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                    result = true;
+                                    await tagButtonListUpdate();
+                                }
+                            }
+                        },
+                        {
+                            tag: "button",
                             className: `check-button ${"expired" === settings.flash?.type ? "checked": ""}`,
                             children:
                             [
@@ -3257,6 +3333,30 @@ export module CyclicToDo
                                     })
                                 )
                         ),
+                        {
+                            tag: "button",
+                            className: `check-button`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")([label("pickup.elapsed-time"), ": ", label("pickup.specify")]),
+                            ],
+                            onclick: async () =>
+                            {
+                                const elapsedTime = await dateTimeSpanPrompt(locale.map("pickup.elapsed-time"), (settings.flash as PickupSettingElapsedTime)?.elapsedTime ?? 0);
+                                if (null !== elapsedTime)
+                                {
+                                    settings.flash =
+                                    {
+                                        type: "elapsed-time",
+                                        elapsedTime,
+                                    };
+                                    OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                    result = true;
+                                    await tagButtonListUpdate();
+                                }
+                            }
+                        },
                         await Promise.all
                         (
                             [ 30, 40, 50, 60, 70, ].map
@@ -3399,30 +3499,6 @@ export module CyclicToDo
                                     })
                                 )
                         ),
-                        {
-                            tag: "button",
-                            className: `check-button`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")([label("pickup.elapsed-time"), ": ", label("pickup.specify")]),
-                            ],
-                            onclick: async () =>
-                            {
-                                const elapsedTime = await dateTimeSpanPrompt(locale.map("pickup.elapsed-time"), (settings.flash as PickupSettingElapsedTime)?.elapsedTime ?? 0);
-                                if (null !== elapsedTime)
-                                {
-                                    settings.flash =
-                                    {
-                                        type: "elapsed-time",
-                                        elapsedTime,
-                                    };
-                                    OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                    result = true;
-                                    await tagButtonListUpdate();
-                                }
-                            }
-                        },
                         await Promise.all
                         (
                             [ 30, 40, 50, 60, 70, ].map
