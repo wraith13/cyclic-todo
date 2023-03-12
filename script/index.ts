@@ -2470,10 +2470,11 @@ export module CyclicToDo
                                     children: locale.map("OK"),
                                     onclick: () =>
                                     {
+                                        const day = parseInt(inputDate.value);
                                         const time = Domain.parseTimeSpan(inputTime.value);
-                                        if (null !== time)
+                                        if ( ! isNaN(day) && null !== time)
                                         {
-                                            result = ((parseInt(inputDate.value) *dayUnit) /Domain.timeAccuracy) +time;
+                                            result = ((day *dayUnit) /Domain.timeAccuracy) +time;
                                         }
                                         else
                                         {
