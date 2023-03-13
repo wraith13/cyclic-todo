@@ -3204,7 +3204,7 @@ export module CyclicToDo
                             ],
                             onclick: async () =>
                             {
-                                const elapsedTimeStandardScore = await dateTimeSpanPrompt(locale.map("pickup.elapsed-time"), (settings.flash as PickupSettingElapsedTime)?.elapsedTime ?? 0);
+                                const elapsedTimeStandardScore = await numberPrompt(locale.map("pickup.elapsed-time-standard-score"), (settings.flash as PickupSettingElapsedTimeStandardScore)?.elapsedTimeStandardScore ?? 50, { min: 0, max: 100, });
                                 if (null !== elapsedTimeStandardScore)
                                 {
                                     settings.flash =
