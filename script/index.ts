@@ -2482,6 +2482,7 @@ export module CyclicToDo
                 type: "number",
                 value: Math.floor((_default *Domain.timeAccuracy) / dayUnit),
                 min: "0",
+                max: "999",
                 step: "1",
                 required: "",
             });
