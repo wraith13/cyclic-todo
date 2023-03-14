@@ -1049,7 +1049,22 @@ export module CyclicToDo
                 (
                     [ timespan ].concat(get())
                         .filter(uniqueFilter)
-                        .filter((_i, ix) => ix < 12)
+                        .filter((_i, ix) => ix < 10)
+                );
+            };
+        }
+        export module TimespanStandardScore
+        {
+            export const key = `timespan-standardscore.recently`;
+            export const get = () => minamo.localStorage.getOrNull<number[]>(key) ?? [];
+            export const set = (timespanList: number[]) => minamo.localStorage.set(key, timespanList);
+            export const add = (timespan: number) =>
+            {
+                set
+                (
+                    [ timespan ].concat(get())
+                        .filter(uniqueFilter)
+                        .filter((_i, ix) => ix < 5)
                 );
             };
         }
