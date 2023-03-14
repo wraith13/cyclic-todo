@@ -3124,6 +3124,10 @@ export module CyclicToDo
             return [ 6, 9, 12, 15, 18, 21, 24, ].map(i => i *60)
                 .concat([ 1.5, 2, 2.5, 3, 4, 5, 6, 7, 10, 14, 21, 30, ].map(i => i *24 *60));
         };
+        export const getTodoPickupSettingsElapsedTimeStandardScorePreset = (_entry: ToDoEntry) =>
+        {
+            return [ 30, 40, 50, 60, 70, ];
+        };
         export const todoFlashSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
         (
             async resolve =>
@@ -3198,9 +3202,33 @@ export module CyclicToDo
                                     })
                                 )
                         ),
+                        {
+                            tag: "button",
+                            className: `check-button`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")([label("pickup.elapsed-time"), ": ", label("pickup.specify")]),
+                            ],
+                            onclick: async () =>
+                            {
+                                const elapsedTime = await dateTimeSpanPrompt(locale.map("pickup.elapsed-time"), (settings.flash as PickupSettingElapsedTime)?.elapsedTime ?? 0);
+                                if (null !== elapsedTime)
+                                {
+                                    settings.flash =
+                                    {
+                                        type: "elapsed-time",
+                                        elapsedTime,
+                                    };
+                                    OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                    result = true;
+                                    await tagButtonListUpdate();
+                                }
+                            }
+                        },
                         await Promise.all
                         (
-                            [ 30, 40, 50, 60, 70, ].map
+                            getTodoPickupSettingsElapsedTimeStandardScorePreset(entry).map
                             (
                                 async elapsedTimeStandardScore =>
                                 ({
@@ -3364,33 +3392,9 @@ export module CyclicToDo
                                     })
                                 )
                         ),
-                        {
-                            tag: "button",
-                            className: `check-button`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")([label("pickup.elapsed-time"), ": ", label("pickup.specify")]),
-                            ],
-                            onclick: async () =>
-                            {
-                                const elapsedTime = await dateTimeSpanPrompt(locale.map("pickup.elapsed-time"), (settings.flash as PickupSettingElapsedTime)?.elapsedTime ?? 0);
-                                if (null !== elapsedTime)
-                                {
-                                    settings.flash =
-                                    {
-                                        type: "elapsed-time",
-                                        elapsedTime,
-                                    };
-                                    OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                    result = true;
-                                    await tagButtonListUpdate();
-                                }
-                            }
-                        },
                         await Promise.all
                         (
-                            [ 30, 40, 50, 60, 70, ].map
+                            getTodoPickupSettingsElapsedTimeStandardScorePreset(entry).map
                             (
                                 async elapsedTimeStandardScore =>
                                 ({
@@ -3532,7 +3536,7 @@ export module CyclicToDo
                         ),
                         await Promise.all
                         (
-                            [ 30, 40, 50, 60, 70, ].map
+                            getTodoPickupSettingsElapsedTimeStandardScorePreset(entry).map
                             (
                                 async elapsedTimeStandardScore =>
                                 ({
