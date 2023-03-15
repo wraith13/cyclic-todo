@@ -3128,6 +3128,18 @@ export module CyclicToDo
         {
             return [ 30, 40, 50, 60, 70, ];
         };
+        export const updateRecentlySelection = (setting: FlashSetting) =>
+        {
+            switch(setting?.type)
+            {
+            case "elapsed-time":
+                Storage.Timespan.add(setting.elapsedTime);
+                break;
+            case "elapsed-time-standard-score":
+                Storage.TimespanStandardScore.add(setting.elapsedTimeStandardScore);
+                break;
+            }
+        };
         export const todoFlashSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
         (
             async resolve =>
