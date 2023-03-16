@@ -3128,7 +3128,7 @@ export module CyclicToDo
         {
             return [ 30, 40, 50, 60, 70, ];
         };
-        export const updateRecentlySelection = (setting: FlashSetting) =>
+        export const updateRecentlySelection = (setting: FlashSetting | undefined) =>
         {
             switch(setting?.type)
             {
@@ -3326,7 +3326,11 @@ export module CyclicToDo
                             },
                         }]),
                     ],
-                    onClose: async () => resolve(result),
+                    onClose: async () =>
+                    {
+                        updateRecentlySelection(settings.restriction);
+                        resolve(result);
+                    },
                 });
             }
         );
@@ -3468,7 +3472,11 @@ export module CyclicToDo
                             },
                         }]),
                     ],
-                    onClose: async () => resolve(result),
+                    onClose: async () =>
+                    {
+                        updateRecentlySelection(settings.flash);
+                        resolve(result);
+                    },
                 });
             }
         );
@@ -3610,7 +3618,11 @@ export module CyclicToDo
                             },
                         }]),
                     ],
-                    onClose: async () => resolve(result),
+                    onClose: async () =>
+                    {
+                        updateRecentlySelection(settings.pickup);
+                        resolve(result);
+                    },
                 });
             }
         );
