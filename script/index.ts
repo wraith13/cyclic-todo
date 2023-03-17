@@ -3124,9 +3124,16 @@ export module CyclicToDo
             return [ 6, 9, 12, 15, 18, 21, 24, ].map(i => i *60)
                 .concat([ 1.5, 2, 2.5, 3, 4, 5, 6, 7, 10, 14, 21, 30, ].map(i => i *24 *60));
         };
-        export const getTodoPickupSettingsElapsedTimeStandardScorePreset = (_entry: ToDoEntry) =>
+        export const getTodoPickupSettingsElapsedTimeStandardScorePreset = (_entry: ToDoEntry, current: FlashSetting | undefined) =>
         {
-            return [ 30, 40, 50, 60, 70, ];
+            let list: number[] = [];
+            if ("elapsed-time-standard-score" === current?.type)
+            {
+                list.push(current.elapsedTimeStandardScore);
+            }
+            list.push(...Storage.TimespanStandardScore.get());
+            list.push(...[ 50, 40, 60, 30, 70, ]);
+            return list.filter(uniqueFilter).filter((_i, ix) => ix < 5);
         };
         export const updateRecentlySelection = (setting: FlashSetting | undefined) =>
         {
@@ -3240,7 +3247,7 @@ export module CyclicToDo
                         },
                         await Promise.all
                         (
-                            getTodoPickupSettingsElapsedTimeStandardScorePreset(entry).map
+                            getTodoPickupSettingsElapsedTimeStandardScorePreset(entry, settings.flash).map
                             (
                                 async elapsedTimeStandardScore =>
                                 ({
@@ -3328,7 +3335,7 @@ export module CyclicToDo
                     ],
                     onClose: async () =>
                     {
-                        updateRecentlySelection(settings.restriction);
+                        updateRecentlySelection(settings.flash);
                         resolve(result);
                     },
                 });
@@ -3410,7 +3417,7 @@ export module CyclicToDo
                         ),
                         await Promise.all
                         (
-                            getTodoPickupSettingsElapsedTimeStandardScorePreset(entry).map
+                            getTodoPickupSettingsElapsedTimeStandardScorePreset(entry, settings.pickup).map
                             (
                                 async elapsedTimeStandardScore =>
                                 ({
@@ -3474,7 +3481,7 @@ export module CyclicToDo
                     ],
                     onClose: async () =>
                     {
-                        updateRecentlySelection(settings.flash);
+                        updateRecentlySelection(settings.pickup);
                         resolve(result);
                     },
                 });
@@ -3556,7 +3563,7 @@ export module CyclicToDo
                         ),
                         await Promise.all
                         (
-                            getTodoPickupSettingsElapsedTimeStandardScorePreset(entry).map
+                            getTodoPickupSettingsElapsedTimeStandardScorePreset(entry, settings.restriction).map
                             (
                                 async elapsedTimeStandardScore =>
                                 ({
@@ -3620,7 +3627,7 @@ export module CyclicToDo
                     ],
                     onClose: async () =>
                     {
-                        updateRecentlySelection(settings.pickup);
+                        updateRecentlySelection(settings.restriction);
                         resolve(result);
                     },
                 });
