@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Tue Mar 07 2023 04:11:04 GMT+0900 (日本標準時)
+    build at: Sat Mar 18 2023 09:58:12 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -6266,6 +6266,7 @@ define("resource/lang.en", [], {
     "pickup.elapsed-time": "Elapsed time ( actual )",
     "pickup.elapsed-time-standard-score": "Elapsed time ( T-score )",
     "pickup.expired": "Expired",
+    "pickup.specify": "Specify",
     "displayStyle.home": "Same style as Home",
     "displayStyle.full": "Full",
     "displayStyle.compact": "Compact",
@@ -6372,6 +6373,7 @@ define("resource/lang.ja", [], {
     "pickup.elapsed-time": "経過時間(実値)",
     "pickup.elapsed-time-standard-score": "経過時間(偏差値)",
     "pickup.expired": "期限切れ",
+    "pickup.specify": "指定する",
     "displayStyle.home": "ホームと同じスタイル",
     "displayStyle.full": "フル",
     "displayStyle.compact": "コンパクト",
@@ -7164,6 +7166,28 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         .filter(function (_i, ix) { return ix < 30; }));
                 };
             })(Filter = Storage.Filter || (Storage.Filter = {}));
+            var Timespan;
+            (function (Timespan) {
+                Timespan.key = "timespan.recently";
+                Timespan.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Timespan.key)) !== null && _a !== void 0 ? _a : []; };
+                Timespan.set = function (timespanList) { return minamo_js_1.minamo.localStorage.set(Timespan.key, timespanList); };
+                Timespan.add = function (timespan) {
+                    Timespan.set([timespan].concat(Timespan.get())
+                        .filter(exports.uniqueFilter)
+                        .filter(function (_i, ix) { return ix < 10; }));
+                };
+            })(Timespan = Storage.Timespan || (Storage.Timespan = {}));
+            var TimespanStandardScore;
+            (function (TimespanStandardScore) {
+                TimespanStandardScore.key = "timespan-standardscore.recently";
+                TimespanStandardScore.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(TimespanStandardScore.key)) !== null && _a !== void 0 ? _a : []; };
+                TimespanStandardScore.set = function (timespanList) { return minamo_js_1.minamo.localStorage.set(TimespanStandardScore.key, timespanList); };
+                TimespanStandardScore.add = function (timespan) {
+                    TimespanStandardScore.set([timespan].concat(TimespanStandardScore.get())
+                        .filter(exports.uniqueFilter)
+                        .filter(function (_i, ix) { return ix < 5; }));
+                };
+            })(TimespanStandardScore = Storage.TimespanStandardScore || (Storage.TimespanStandardScore = {}));
         })(Storage = CyclicToDo.Storage || (CyclicToDo.Storage = {}));
         var SessionStorage;
         (function (SessionStorage) {
@@ -7864,6 +7888,18 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return null;
             }
             Domain.parseDate = parseDate;
+            function parseTimeSpan(time) {
+                if (null !== time) {
+                    try {
+                        return (Date.parse("2023-01-01T" + time) - Date.parse("2023-01-01T00:00")) / Domain.timeAccuracy;
+                    }
+                    catch (_a) {
+                        return null;
+                    }
+                }
+                return null;
+            }
+            Domain.parseTimeSpan = parseTimeSpan;
             Domain.tagMap = function (tag) {
                 switch (tag) {
                     case "@root":
@@ -8560,6 +8596,57 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.alert = function (message) { return Render.makeToast({ content: message, }); };
             Render.systemConfirm = function (message) { return window.confirm(message); };
             Render.confirm = Render.systemConfirm;
+            Render.numberPrompt = function (message, _default, options) { return __awaiter(_this, void 0, void 0, function () {
+                var input;
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            input = Render.$make(HTMLInputElement)({
+                                tag: "input",
+                                type: "number",
+                                value: _default,
+                                min: options === null || options === void 0 ? void 0 : options.min,
+                                max: options === null || options === void 0 ? void 0 : options.max,
+                                step: options === null || options === void 0 ? void 0 : options.step,
+                                required: "",
+                            });
+                            return [4 /*yield*/, new Promise(function (resolve) {
+                                    var result = null;
+                                    var ui = Render.popup({
+                                        children: [
+                                            Render.$tag("h2")("")(message),
+                                            input,
+                                            Render.$div("popup-operator")([
+                                                {
+                                                    tag: "button",
+                                                    className: "cancel-button",
+                                                    children: locale.map("Cancel"),
+                                                    onclick: function () {
+                                                        result = null;
+                                                        ui.close();
+                                                    },
+                                                },
+                                                {
+                                                    tag: "button",
+                                                    className: "default-button",
+                                                    children: locale.map("OK"),
+                                                    onclick: function () {
+                                                        result = parseInt(input.value);
+                                                        ui.close();
+                                                    },
+                                                },
+                                            ])
+                                        ],
+                                        onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            return [2 /*return*/, resolve(result)];
+                                        }); }); },
+                                    });
+                                })];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            }); };
             Render.newListPrompt = function () { return __awaiter(_this, void 0, void 0, function () {
                 var newList, pass;
                 return __generator(this, function (_a) {
@@ -8635,6 +8722,72 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                     children: locale.map("OK"),
                                                     onclick: function () {
                                                         result = inputDate.value + "T" + inputTime.value;
+                                                        ui.close();
+                                                    },
+                                                },
+                                            ])
+                                        ],
+                                        onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            return [2 /*return*/, resolve(result)];
+                                        }); }); },
+                                    });
+                                })];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            }); };
+            Render.dateTimeSpanPrompt = function (message, _default) { return __awaiter(_this, void 0, void 0, function () {
+                var dayUnit, inputDate, inputTime;
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            dayUnit = 24 * 60 * 60 * 1000;
+                            inputDate = Render.$make(HTMLInputElement)({
+                                tag: "input",
+                                type: "number",
+                                value: Math.floor((_default * Domain.timeAccuracy) / dayUnit),
+                                min: "0",
+                                max: "999",
+                                step: "1",
+                                required: "",
+                            });
+                            inputTime = Render.$make(HTMLInputElement)({
+                                tag: "input",
+                                type: "time",
+                                value: Domain.timeCoreStringFromTick(_default),
+                                required: "",
+                            });
+                            return [4 /*yield*/, new Promise(function (resolve) {
+                                    var result = null;
+                                    var ui = Render.popup({
+                                        children: [
+                                            Render.$tag("h2")("")(message),
+                                            inputDate,
+                                            inputTime,
+                                            Render.$div("popup-operator")([
+                                                {
+                                                    tag: "button",
+                                                    className: "cancel-button",
+                                                    children: locale.map("Cancel"),
+                                                    onclick: function () {
+                                                        result = null;
+                                                        ui.close();
+                                                    },
+                                                },
+                                                {
+                                                    tag: "button",
+                                                    className: "default-button",
+                                                    children: locale.map("OK"),
+                                                    onclick: function () {
+                                                        var day = parseInt(inputDate.value);
+                                                        var time = Domain.parseTimeSpan(inputTime.value);
+                                                        if (!isNaN(day) && null !== time) {
+                                                            result = ((day * dayUnit) / Domain.timeAccuracy) + time;
+                                                        }
+                                                        else {
+                                                            result = null;
+                                                        }
                                                         ui.close();
                                                     },
                                                 },
@@ -9393,20 +9546,59 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     });
                 });
             };
-            Render.getTodoPickupSettingsElapsedTimePreset = function (entry) {
-                var _a;
-                var sample = (_a = entry.RecentlyAverage) !== null && _a !== void 0 ? _a : entry.elapsed;
-                if (null !== sample) {
-                    if (sample < 3 * 24 * 60) {
-                        return [1.0, 1.5, 2, 3, 4.5, 6, 9, 12, 15, 18, 21, 24, 1.5 * 24, 2 * 24, 2.5 * 24, 3 * 24,].map(function (i) { return i * 60; });
-                    }
-                    if (sample < 10 * 24 * 60) {
-                        return [0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 7,].map(function (i) { return i * 24 * 60; });
-                    }
-                    return [3, 5, 7, 10, 14, 21, 30, 45, 60, 90, 180, 240,].map(function (i) { return i * 24 * 60; });
+            Render.getTodoPickupSettingsElapsedTimePreset = function (_entry, current) {
+                var list = [];
+                if ("elapsed-time" === (current === null || current === void 0 ? void 0 : current.type)) {
+                    list.push(current.elapsedTime);
                 }
-                return [6, 9, 12, 15, 18, 21, 24,].map(function (i) { return i * 60; })
-                    .concat([1.5, 2, 2.5, 3, 4, 5, 6, 7, 10, 14, 21, 30,].map(function (i) { return i * 24 * 60; }));
+                list.push.apply(list, Storage.Timespan.get());
+                // const sample = entry.RecentlyAverage ?? entry.elapsed;
+                // if (null !== sample)
+                // {
+                //     if (sample < 3 *24 *60)
+                //     {
+                //         list.push(...[ 1.0, 1.5, 2, 3, 4.5, 6, 9, 12, 15, 18, 21, 24, 1.5 *24, 2 *24, 2.5 *24, 3 *24, ].map(i => i *60));
+                //     }
+                //     else
+                //     if (sample < 10 *24 *60)
+                //     {
+                //         list.push(...[ 0.5, 1, 1.5, 2, 2.5, 3, 5, 7, ].map(i => i *24 *60));
+                //         return ;
+                //     }
+                //     else
+                //     {
+                //         list.push(...[ 3, 7, 10, 14, 30, 45, 60, 90, 180, 240, ].map(i => i *24 *60));
+                //     }
+                // }
+                // else
+                // {
+                //     list.push(...[ 6, 9, 12, 15, 18, 21, 24, ].map(i => i *60)
+                //     .concat([ 1.5, 2, 2.5, 3, 4, 5, 6, 7, 10, 14, 21, 30, ].map(i => i *24 *60)));
+                // }
+                list.push.apply(list, [
+                    270, 1260, 540, 4320, 43200, 7200, 180, 720, 1080, 30240, 64800, 5760, 10080, 360,
+                    120, 1440, 20160, 259200, 345600, 2880, 900, 2160, 3600, 14400, 86400,
+                ]);
+                return list.filter(exports.uniqueFilter).filter(function (_i, ix) { return ix < 12; }).sort(minamo_js_1.minamo.core.comparer.basic);
+            };
+            Render.getTodoPickupSettingsElapsedTimeStandardScorePreset = function (_entry, current) {
+                var list = [];
+                if ("elapsed-time-standard-score" === (current === null || current === void 0 ? void 0 : current.type)) {
+                    list.push(current.elapsedTimeStandardScore);
+                }
+                list.push.apply(list, Storage.TimespanStandardScore.get());
+                list.push.apply(list, [50, 40, 60, 30, 70,]);
+                return list.filter(exports.uniqueFilter).filter(function (_i, ix) { return ix < 5; }).sort(minamo_js_1.minamo.core.comparer.basic);
+            };
+            Render.updateRecentlySelection = function (setting) {
+                switch (setting === null || setting === void 0 ? void 0 : setting.type) {
+                    case "elapsed-time":
+                        Storage.Timespan.add(setting.elapsedTime);
+                        break;
+                    case "elapsed-time-standard-score":
+                        Storage.TimespanStandardScore.add(setting.elapsedTimeStandardScore);
+                        break;
+                }
             };
             Render.todoFlashSettingsPopup = function (pass, entry, settings) {
                 if (settings === void 0) { settings = OldStorage.TodoSettings.get(pass, entry.task); }
@@ -9424,9 +9616,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 tagButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
                                                 tagButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
                                                     var _a, _b, _c, _d;
-                                                    var _e, _f, _g;
+                                                    var _e, _f, _g, _h, _j;
                                                     var _this = this;
-                                                    var _h, _j, _k, _l, _m;
+                                                    var _k, _l, _m;
                                                     return __generator(this, function (_o) {
                                                         switch (_o.label) {
                                                             case 0:
@@ -9434,7 +9626,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 _c = [tagButtonList];
                                                                 _e = {
                                                                     tag: "button",
-                                                                    className: "check-button " + ("none" === ((_h = settings.flash) !== null && _h !== void 0 ? _h : "none") ? "checked" : "")
+                                                                    className: "check-button " + ("none" === ((_k = settings.flash) !== null && _k !== void 0 ? _k : "none") ? "checked" : "")
                                                                 };
                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                             case 1:
@@ -9461,7 +9653,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 ];
                                                                 _f = {
                                                                     tag: "button",
-                                                                    className: "check-button " + ("always" === ((_j = settings.flash) === null || _j === void 0 ? void 0 : _j.type) ? "checked" : "")
+                                                                    className: "check-button " + ("always" === ((_l = settings.flash) === null || _l === void 0 ? void 0 : _l.type) ? "checked" : "")
                                                                 };
                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                             case 2:
@@ -9486,11 +9678,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                         }); },
                                                                         _f)
                                                                 ]);
-                                                                return [4 /*yield*/, Promise.all(Render.getTodoPickupSettingsElapsedTimePreset(entry)
-                                                                        .concat([(_l = (_k = settings.pickup) === null || _k === void 0 ? void 0 : _k.elapsedTime) !== null && _l !== void 0 ? _l : 0])
-                                                                        .filter(function (i) { return 0 < i; })
-                                                                        .filter(exports.uniqueFilter)
-                                                                        .sort(minamo_js_1.minamo.core.comparer.basic)
+                                                                return [4 /*yield*/, Promise.all(Render.getTodoPickupSettingsElapsedTimePreset(entry, settings.flash)
                                                                         .map(function (elapsedTime) { return __awaiter(_this, void 0, void 0, function () {
                                                                         var _a;
                                                                         var _this = this;
@@ -9533,7 +9721,44 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 _d = _d.concat([
                                                                     _o.sent()
                                                                 ]);
-                                                                return [4 /*yield*/, Promise.all([30, 40, 50, 60, 70,].map(function (elapsedTimeStandardScore) { return __awaiter(_this, void 0, void 0, function () {
+                                                                _g = {
+                                                                    tag: "button",
+                                                                    className: "check-button"
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 4:
+                                                                _d = _d.concat([
+                                                                    (_g.children = [
+                                                                        _o.sent(),
+                                                                        Render.$span("")([Render.label("pickup.elapsed-time"), ": ", Render.label("pickup.specify")])
+                                                                    ],
+                                                                        _g.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            var elapsedTime;
+                                                                            var _a, _b;
+                                                                            return __generator(this, function (_c) {
+                                                                                switch (_c.label) {
+                                                                                    case 0: return [4 /*yield*/, Render.dateTimeSpanPrompt(locale.map("pickup.elapsed-time"), (_b = (_a = settings.flash) === null || _a === void 0 ? void 0 : _a.elapsedTime) !== null && _b !== void 0 ? _b : 0)];
+                                                                                    case 1:
+                                                                                        elapsedTime = _c.sent();
+                                                                                        if (!(null !== elapsedTime)) return [3 /*break*/, 3];
+                                                                                        settings.flash =
+                                                                                            {
+                                                                                                type: "elapsed-time",
+                                                                                                elapsedTime: elapsedTime,
+                                                                                            };
+                                                                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                                                                        result = true;
+                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                    case 2:
+                                                                                        _c.sent();
+                                                                                        _c.label = 3;
+                                                                                    case 3: return [2 /*return*/];
+                                                                                }
+                                                                            });
+                                                                        }); },
+                                                                        _g)
+                                                                ]);
+                                                                return [4 /*yield*/, Promise.all(Render.getTodoPickupSettingsElapsedTimeStandardScorePreset(entry, settings.flash).map(function (elapsedTimeStandardScore) { return __awaiter(_this, void 0, void 0, function () {
                                                                         var _a;
                                                                         var _this = this;
                                                                         var _b;
@@ -9571,21 +9796,58 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                             }
                                                                         });
                                                                     }); }))];
-                                                            case 4:
+                                                            case 5:
                                                                 _d = _d.concat([
                                                                     _o.sent()
                                                                 ]);
-                                                                _g = {
+                                                                _h = {
+                                                                    tag: "button",
+                                                                    className: "check-button"
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                            case 6:
+                                                                _d = _d.concat([
+                                                                    (_h.children = [
+                                                                        _o.sent(),
+                                                                        Render.$span("")([Render.label("pickup.elapsed-time-standard-score"), ": ", Render.label("pickup.specify")])
+                                                                    ],
+                                                                        _h.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            var elapsedTimeStandardScore;
+                                                                            var _a, _b;
+                                                                            return __generator(this, function (_c) {
+                                                                                switch (_c.label) {
+                                                                                    case 0: return [4 /*yield*/, Render.numberPrompt(locale.map("pickup.elapsed-time-standard-score"), (_b = (_a = settings.flash) === null || _a === void 0 ? void 0 : _a.elapsedTimeStandardScore) !== null && _b !== void 0 ? _b : 50, { min: 0, max: 100, })];
+                                                                                    case 1:
+                                                                                        elapsedTimeStandardScore = _c.sent();
+                                                                                        if (!(null !== elapsedTimeStandardScore)) return [3 /*break*/, 3];
+                                                                                        settings.flash =
+                                                                                            {
+                                                                                                type: "elapsed-time-standard-score",
+                                                                                                elapsedTimeStandardScore: elapsedTimeStandardScore,
+                                                                                            };
+                                                                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                                                                        result = true;
+                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                    case 2:
+                                                                                        _c.sent();
+                                                                                        _c.label = 3;
+                                                                                    case 3: return [2 /*return*/];
+                                                                                }
+                                                                            });
+                                                                        }); },
+                                                                        _h)
+                                                                ]);
+                                                                _j = {
                                                                     tag: "button",
                                                                     className: "check-button " + ("expired" === ((_m = settings.flash) === null || _m === void 0 ? void 0 : _m.type) ? "checked" : "")
                                                                 };
                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
-                                                            case 5: return [2 /*return*/, _b.apply(_a, _c.concat([_d.concat([
-                                                                        (_g.children = [
+                                                            case 7: return [2 /*return*/, _b.apply(_a, _c.concat([_d.concat([
+                                                                        (_j.children = [
                                                                             _o.sent(),
                                                                             Render.$span("")(Render.label("pickup.expired"))
                                                                         ],
-                                                                            _g.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            _j.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
                                                                                 return __generator(this, function (_a) {
                                                                                     switch (_a.label) {
                                                                                         case 0:
@@ -9599,7 +9861,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                     }
                                                                                 });
                                                                             }); },
-                                                                            _g)
+                                                                            _j)
                                                                     ])]))];
                                                         }
                                                     });
@@ -9621,9 +9883,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 },
                                                             }]),
                                                     ],
-                                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                        return [2 /*return*/, resolve(result)];
-                                                    }); }); },
+                                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        return __generator(this, function (_a) {
+                                                            Render.updateRecentlySelection(settings.flash);
+                                                            resolve(result);
+                                                            return [2 /*return*/];
+                                                        });
+                                                    }); },
                                                 });
                                                 return [2 /*return*/];
                                         }
@@ -9652,9 +9918,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                     var _a, _b, _c, _d;
                                                     var _e, _f, _g;
                                                     var _this = this;
-                                                    var _h, _j, _k, _l, _m;
-                                                    return __generator(this, function (_o) {
-                                                        switch (_o.label) {
+                                                    var _h, _j, _k;
+                                                    return __generator(this, function (_l) {
+                                                        switch (_l.label) {
                                                             case 0:
                                                                 _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                                                 _c = [tagButtonList];
@@ -9666,7 +9932,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             case 1:
                                                                 _d = [
                                                                     (_e.children = [
-                                                                        _o.sent(),
+                                                                        _l.sent(),
                                                                         Render.$span("")(Render.label("pickup.none"))
                                                                     ],
                                                                         _e.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -9693,7 +9959,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             case 2:
                                                                 _d = _d.concat([
                                                                     (_f.children = [
-                                                                        _o.sent(),
+                                                                        _l.sent(),
                                                                         Render.$span("")(Render.label("pickup.always"))
                                                                     ],
                                                                         _f.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -9712,11 +9978,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                         }); },
                                                                         _f)
                                                                 ]);
-                                                                return [4 /*yield*/, Promise.all(Render.getTodoPickupSettingsElapsedTimePreset(entry)
-                                                                        .concat([(_l = (_k = settings.pickup) === null || _k === void 0 ? void 0 : _k.elapsedTime) !== null && _l !== void 0 ? _l : 0])
-                                                                        .filter(function (i) { return 0 < i; })
-                                                                        .filter(exports.uniqueFilter)
-                                                                        .sort(minamo_js_1.minamo.core.comparer.basic)
+                                                                return [4 /*yield*/, Promise.all(Render.getTodoPickupSettingsElapsedTimePreset(entry, settings.pickup)
                                                                         .map(function (elapsedTime) { return __awaiter(_this, void 0, void 0, function () {
                                                                         var _a;
                                                                         var _this = this;
@@ -9757,9 +10019,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                     }); }))];
                                                             case 3:
                                                                 _d = _d.concat([
-                                                                    _o.sent()
+                                                                    _l.sent()
                                                                 ]);
-                                                                return [4 /*yield*/, Promise.all([30, 40, 50, 60, 70,].map(function (elapsedTimeStandardScore) { return __awaiter(_this, void 0, void 0, function () {
+                                                                return [4 /*yield*/, Promise.all(Render.getTodoPickupSettingsElapsedTimeStandardScorePreset(entry, settings.pickup).map(function (elapsedTimeStandardScore) { return __awaiter(_this, void 0, void 0, function () {
                                                                         var _a;
                                                                         var _this = this;
                                                                         var _b;
@@ -9799,16 +10061,16 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                     }); }))];
                                                             case 4:
                                                                 _d = _d.concat([
-                                                                    _o.sent()
+                                                                    _l.sent()
                                                                 ]);
                                                                 _g = {
                                                                     tag: "button",
-                                                                    className: "check-button " + ("expired" === ((_m = settings.pickup) === null || _m === void 0 ? void 0 : _m.type) ? "checked" : "")
+                                                                    className: "check-button " + ("expired" === ((_k = settings.pickup) === null || _k === void 0 ? void 0 : _k.type) ? "checked" : "")
                                                                 };
                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                             case 5: return [2 /*return*/, _b.apply(_a, _c.concat([_d.concat([
                                                                         (_g.children = [
-                                                                            _o.sent(),
+                                                                            _l.sent(),
                                                                             Render.$span("")(Render.label("pickup.expired"))
                                                                         ],
                                                                             _g.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -9847,9 +10109,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 },
                                                             }]),
                                                     ],
-                                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                        return [2 /*return*/, resolve(result)];
-                                                    }); }); },
+                                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        return __generator(this, function (_a) {
+                                                            Render.updateRecentlySelection(settings.pickup);
+                                                            resolve(result);
+                                                            return [2 /*return*/];
+                                                        });
+                                                    }); },
                                                 });
                                                 return [2 /*return*/];
                                         }
@@ -9878,9 +10144,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                     var _a, _b, _c, _d;
                                                     var _e, _f, _g;
                                                     var _this = this;
-                                                    var _h, _j, _k, _l, _m;
-                                                    return __generator(this, function (_o) {
-                                                        switch (_o.label) {
+                                                    var _h, _j, _k;
+                                                    return __generator(this, function (_l) {
+                                                        switch (_l.label) {
                                                             case 0:
                                                                 _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                                                 _c = [tagButtonList];
@@ -9892,7 +10158,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             case 1:
                                                                 _d = [
                                                                     (_e.children = [
-                                                                        _o.sent(),
+                                                                        _l.sent(),
                                                                         Render.$span("")(Render.label("pickup.none"))
                                                                     ],
                                                                         _e.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -9919,7 +10185,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             case 2:
                                                                 _d = _d.concat([
                                                                     (_f.children = [
-                                                                        _o.sent(),
+                                                                        _l.sent(),
                                                                         Render.$span("")(Render.label("pickup.always"))
                                                                     ],
                                                                         _f.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -9938,11 +10204,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                         }); },
                                                                         _f)
                                                                 ]);
-                                                                return [4 /*yield*/, Promise.all(Render.getTodoPickupSettingsElapsedTimePreset(entry)
-                                                                        .concat([(_l = (_k = settings.pickup) === null || _k === void 0 ? void 0 : _k.elapsedTime) !== null && _l !== void 0 ? _l : 0])
-                                                                        .filter(function (i) { return 0 < i; })
-                                                                        .filter(exports.uniqueFilter)
-                                                                        .sort(minamo_js_1.minamo.core.comparer.basic)
+                                                                return [4 /*yield*/, Promise.all(Render.getTodoPickupSettingsElapsedTimePreset(entry, settings.restriction)
                                                                         .map(function (elapsedTime) { return __awaiter(_this, void 0, void 0, function () {
                                                                         var _a;
                                                                         var _this = this;
@@ -9983,9 +10245,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                     }); }))];
                                                             case 3:
                                                                 _d = _d.concat([
-                                                                    _o.sent()
+                                                                    _l.sent()
                                                                 ]);
-                                                                return [4 /*yield*/, Promise.all([30, 40, 50, 60, 70,].map(function (elapsedTimeStandardScore) { return __awaiter(_this, void 0, void 0, function () {
+                                                                return [4 /*yield*/, Promise.all(Render.getTodoPickupSettingsElapsedTimeStandardScorePreset(entry, settings.restriction).map(function (elapsedTimeStandardScore) { return __awaiter(_this, void 0, void 0, function () {
                                                                         var _a;
                                                                         var _this = this;
                                                                         var _b;
@@ -10025,16 +10287,16 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                     }); }))];
                                                             case 4:
                                                                 _d = _d.concat([
-                                                                    _o.sent()
+                                                                    _l.sent()
                                                                 ]);
                                                                 _g = {
                                                                     tag: "button",
-                                                                    className: "check-button " + ("expired" === ((_m = settings.restriction) === null || _m === void 0 ? void 0 : _m.type) ? "checked" : "")
+                                                                    className: "check-button " + ("expired" === ((_k = settings.restriction) === null || _k === void 0 ? void 0 : _k.type) ? "checked" : "")
                                                                 };
                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                             case 5: return [2 /*return*/, _b.apply(_a, _c.concat([_d.concat([
                                                                         (_g.children = [
-                                                                            _o.sent(),
+                                                                            _l.sent(),
                                                                             Render.$span("")(Render.label("pickup.expired"))
                                                                         ],
                                                                             _g.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -10073,9 +10335,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 },
                                                             }]),
                                                     ],
-                                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                        return [2 /*return*/, resolve(result)];
-                                                    }); }); },
+                                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        return __generator(this, function (_a) {
+                                                            Render.updateRecentlySelection(settings.restriction);
+                                                            resolve(result);
+                                                            return [2 /*return*/];
+                                                        });
+                                                    }); },
                                                 });
                                                 return [2 /*return*/];
                                         }
@@ -13937,7 +14203,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Mar 07 2023 04:11:04 GMT+0900 (日本標準時)', buildTimestampTick: 1678129864485, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Mar 18 2023 09:58:12 GMT+0900 (日本標準時)', buildTimestampTick: 1679101092088, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

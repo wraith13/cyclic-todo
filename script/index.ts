@@ -3106,23 +3106,43 @@ export module CyclicToDo
                 });
             }
         );
-        export const getTodoPickupSettingsElapsedTimePreset = (entry: ToDoEntry) =>
+        export const getTodoPickupSettingsElapsedTimePreset = (_entry: ToDoEntry, current: FlashSetting | undefined) =>
         {
-            const sample = entry.RecentlyAverage ?? entry.elapsed;
-            if (null !== sample)
+            let list: number[] = [];
+            if ("elapsed-time" === current?.type)
             {
-                if (sample < 3 *24 *60)
-                {
-                    return [ 1.0, 1.5, 2, 3, 4.5, 6, 9, 12, 15, 18, 21, 24, 1.5 *24, 2 *24, 2.5 *24, 3 *24, ].map(i => i *60);
-                }
-                if (sample < 10 *24 *60)
-                {
-                    return [ 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 7, ].map(i => i *24 *60);
-                }
-                return [ 3, 5, 7, 10, 14, 21, 30, 45, 60, 90, 180, 240, ].map(i => i *24 *60);
+                list.push(current.elapsedTime);
             }
-            return [ 6, 9, 12, 15, 18, 21, 24, ].map(i => i *60)
-                .concat([ 1.5, 2, 2.5, 3, 4, 5, 6, 7, 10, 14, 21, 30, ].map(i => i *24 *60));
+            list.push(...Storage.Timespan.get());
+            // const sample = entry.RecentlyAverage ?? entry.elapsed;
+            // if (null !== sample)
+            // {
+            //     if (sample < 3 *24 *60)
+            //     {
+            //         list.push(...[ 1.0, 1.5, 2, 3, 4.5, 6, 9, 12, 15, 18, 21, 24, 1.5 *24, 2 *24, 2.5 *24, 3 *24, ].map(i => i *60));
+            //     }
+            //     else
+            //     if (sample < 10 *24 *60)
+            //     {
+            //         list.push(...[ 0.5, 1, 1.5, 2, 2.5, 3, 5, 7, ].map(i => i *24 *60));
+            //         return ;
+            //     }
+            //     else
+            //     {
+            //         list.push(...[ 3, 7, 10, 14, 30, 45, 60, 90, 180, 240, ].map(i => i *24 *60));
+            //     }
+            // }
+            // else
+            // {
+            //     list.push(...[ 6, 9, 12, 15, 18, 21, 24, ].map(i => i *60)
+            //     .concat([ 1.5, 2, 2.5, 3, 4, 5, 6, 7, 10, 14, 21, 30, ].map(i => i *24 *60)));
+            // }
+            list.push
+            (...[
+                270, 1260, 540, 4320, 43200, 7200, 180, 720, 1080, 30240, 64800, 5760, 10080, 360,
+                120, 1440, 20160, 259200, 345600, 2880, 900, 2160, 3600, 14400,  86400,
+            ]);
+            return list.filter(uniqueFilter).filter((_i, ix) => ix < 12).sort(minamo.core.comparer.basic);
         };
         export const getTodoPickupSettingsElapsedTimeStandardScorePreset = (_entry: ToDoEntry, current: FlashSetting | undefined) =>
         {
@@ -3133,7 +3153,7 @@ export module CyclicToDo
             }
             list.push(...Storage.TimespanStandardScore.get());
             list.push(...[ 50, 40, 60, 30, 70, ]);
-            return list.filter(uniqueFilter).filter((_i, ix) => ix < 5);
+            return list.filter(uniqueFilter).filter((_i, ix) => ix < 5).sort(minamo.core.comparer.basic);
         };
         export const updateRecentlySelection = (setting: FlashSetting | undefined) =>
         {
@@ -3191,11 +3211,7 @@ export module CyclicToDo
                         },
                         await Promise.all
                         (
-                            getTodoPickupSettingsElapsedTimePreset(entry)
-                                .concat([(settings.flash as PickupSettingElapsedTime)?.elapsedTime ?? 0])
-                                .filter(i => 0 < i)
-                                .filter(uniqueFilter)
-                                .sort(minamo.core.comparer.basic)
+                            getTodoPickupSettingsElapsedTimePreset(entry, settings.flash)
                                 .map
                                 (
                                     async elapsedTime =>
@@ -3385,11 +3401,7 @@ export module CyclicToDo
                         },
                         await Promise.all
                         (
-                            getTodoPickupSettingsElapsedTimePreset(entry)
-                                .concat([(settings.pickup as PickupSettingElapsedTime)?.elapsedTime ?? 0])
-                                .filter(i => 0 < i)
-                                .filter(uniqueFilter)
-                                .sort(minamo.core.comparer.basic)
+                            getTodoPickupSettingsElapsedTimePreset(entry, settings.pickup)
                                 .map
                                 (
                                     async elapsedTime =>
@@ -3531,11 +3543,7 @@ export module CyclicToDo
                         },
                         await Promise.all
                         (
-                            getTodoPickupSettingsElapsedTimePreset(entry)
-                                .concat([(settings.restriction as PickupSettingElapsedTime)?.elapsedTime ?? 0])
-                                .filter(i => 0 < i)
-                                .filter(uniqueFilter)
-                                .sort(minamo.core.comparer.basic)
+                            getTodoPickupSettingsElapsedTimePreset(entry, settings.restriction)
                                 .map
                                 (
                                     async elapsedTime =>
