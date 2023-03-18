@@ -9,5 +9,12 @@
     "maxHistories": 100,
     "maxRestAdjustMinutes": 180,
     "maxShortTermMinutes": 4320,
-    "maxMediumTermMinutes": 21600
+    "maxMediumTermMinutes": 21600,
+    "timespanPreset": [
+        270, 1260, 540, 4320, 43200, 7200, 180, 720, 1080, 30240, 64800, 5760, 10080,
+        360, 120, 1440, 20160, 259200, 345600, 2880, 900, 2160, 3600, 14400, 86400
+    ],
+    "timespanPresetMaxCount": 12,
+    "timespanStandardScorePreset": [ 50, 40, 60, 30, 70 ],
+    "timespanStandardScorePresetMaxCount": 5
 }
