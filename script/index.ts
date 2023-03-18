@@ -3141,7 +3141,7 @@ export module CyclicToDo
                 break;
             }
         };
-        export const todoFlashSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
+        export const todoSpanSettingsPopup = async (entry: ToDoEntry, title: locale.LocaleKeyType, setter: (value: FlashSetting | undefined) => unknown, getter: () => (FlashSetting | undefined)): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
@@ -3153,7 +3153,7 @@ export module CyclicToDo
                     [
                         {
                             tag: "button",
-                            className: `check-button ${"none" === (settings.flash ?? "none") ? "checked": ""}`,
+                            className: `check-button ${"none" === (getter() ?? "none") ? "checked": ""}`,
                             children:
                             [
                                 await Resource.loadSvgOrCache("check-icon"),
@@ -3161,15 +3161,14 @@ export module CyclicToDo
                             ],
                             onclick: async () =>
                             {
-                                settings.flash = undefined;
-                                OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                setter(undefined);
                                 result = true;
                                 await tagButtonListUpdate();
                             }
                         },
                         {
                             tag: "button",
-                            className: `check-button ${"always" === settings.flash?.type ? "checked": ""}`,
+                            className: `check-button ${"always" === getter()?.type ? "checked": ""}`,
                             children:
                             [
                                 await Resource.loadSvgOrCache("check-icon"),
@@ -3177,21 +3176,20 @@ export module CyclicToDo
                             ],
                             onclick: async () =>
                             {
-                                settings.flash = { type: "always" };
-                                OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                setter({ type: "always" });
                                 result = true;
                                 await tagButtonListUpdate();
                             }
                         },
                         await Promise.all
                         (
-                            getTodoPickupSettingsElapsedTimePreset(entry, settings.flash)
+                            getTodoPickupSettingsElapsedTimePreset(entry, getter())
                                 .map
                                 (
                                     async elapsedTime =>
                                     ({
                                         tag: "button",
-                                        className: `check-button ${("elapsed-time" === settings.flash?.type && elapsedTime === settings?.flash.elapsedTime) ? "checked": ""}`,
+                                        className: `check-button ${("elapsed-time" === getter()?.type && elapsedTime === getter()?.elapsedTime) ? "checked": ""}`,
                                         children:
                                         [
                                             await Resource.loadSvgOrCache("check-icon"),
@@ -3199,12 +3197,7 @@ export module CyclicToDo
                                         ],
                                         onclick: async () =>
                                         {
-                                            settings.flash =
-                                            {
-                                                type: "elapsed-time",
-                                                elapsedTime,
-                                            };
-                                            OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                            setter({ type: "elapsed-time", elapsedTime, });
                                             result = true;
                                             await tagButtonListUpdate();
                                         }
@@ -3221,15 +3214,10 @@ export module CyclicToDo
                             ],
                             onclick: async () =>
                             {
-                                const elapsedTime = await dateTimeSpanPrompt(locale.map("pickup.elapsed-time"), (settings.flash as PickupSettingElapsedTime)?.elapsedTime ?? 0);
+                                const elapsedTime = await dateTimeSpanPrompt(locale.map("pickup.elapsed-time"), (getter() as PickupSettingElapsedTime)?.elapsedTime ?? 0);
                                 if (null !== elapsedTime)
                                 {
-                                    settings.flash =
-                                    {
-                                        type: "elapsed-time",
-                                        elapsedTime,
-                                    };
-                                    OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                    setter({ type: "elapsed-time", elapsedTime, });
                                     result = true;
                                     await tagButtonListUpdate();
                                 }
@@ -3237,12 +3225,12 @@ export module CyclicToDo
                         },
                         await Promise.all
                         (
-                            getTodoPickupSettingsElapsedTimeStandardScorePreset(entry, settings.flash).map
+                            getTodoPickupSettingsElapsedTimeStandardScorePreset(entry, getter()).map
                             (
                                 async elapsedTimeStandardScore =>
                                 ({
                                     tag: "button",
-                                    className: `check-button ${("elapsed-time-standard-score" === settings.flash?.type && elapsedTimeStandardScore === settings?.flash.elapsedTimeStandardScore) ? "checked": ""}`,
+                                    className: `check-button ${("elapsed-time-standard-score" === getter()?.type && elapsedTimeStandardScore === getter()?.elapsedTimeStandardScore) ? "checked": ""}`,
                                     children:
                                     [
                                         await Resource.loadSvgOrCache("check-icon"),
@@ -3250,12 +3238,7 @@ export module CyclicToDo
                                     ],
                                     onclick: async () =>
                                     {
-                                        settings.flash =
-                                        {
-                                            type: "elapsed-time-standard-score",
-                                            elapsedTimeStandardScore,
-                                        };
-                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                        setter({ type: "elapsed-time-standard-score", elapsedTimeStandardScore, });
                                         result = true;
                                         await tagButtonListUpdate();
                                     }
@@ -3272,15 +3255,10 @@ export module CyclicToDo
                             ],
                             onclick: async () =>
                             {
-                                const elapsedTimeStandardScore = await numberPrompt(locale.map("pickup.elapsed-time-standard-score"), (settings.flash as PickupSettingElapsedTimeStandardScore)?.elapsedTimeStandardScore ?? 50, { min: 0, max: 100, });
+                                const elapsedTimeStandardScore = await numberPrompt(locale.map("pickup.elapsed-time-standard-score"), (getter() as PickupSettingElapsedTimeStandardScore)?.elapsedTimeStandardScore ?? 50, { min: 0, max: 100, });
                                 if (null !== elapsedTimeStandardScore)
                                 {
-                                    settings.flash =
-                                    {
-                                        type: "elapsed-time-standard-score",
-                                        elapsedTimeStandardScore,
-                                    };
-                                    OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                    setter({ type: "elapsed-time-standard-score", elapsedTimeStandardScore, });
                                     result = true;
                                     await tagButtonListUpdate();
                                 }
@@ -3288,7 +3266,7 @@ export module CyclicToDo
                         },
                         {
                             tag: "button",
-                            className: `check-button ${"expired" === settings.flash?.type ? "checked": ""}`,
+                            className: `check-button ${"expired" === getter()?.type ? "checked": ""}`,
                             children:
                             [
                                 await Resource.loadSvgOrCache("check-icon"),
@@ -3296,8 +3274,7 @@ export module CyclicToDo
                             ],
                             onclick: async () =>
                             {
-                                settings.flash = { type: "expired" };
-                                OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                setter({ type: "expired" });
                                 result = true;
                                 await tagButtonListUpdate();
                             }
@@ -3310,7 +3287,7 @@ export module CyclicToDo
                     // className: "add-remove-tags-popup",
                     children:
                     [
-                        $tag("h2")("")(`${locale.map("Flash setting")}: ${entry.task}`),
+                        $tag("h2")("")(`${locale.map(title)}: ${entry.task}`),
                         tagButtonList,
                         $div("popup-operator")
                         ([{
@@ -3325,296 +3302,48 @@ export module CyclicToDo
                     ],
                     onClose: async () =>
                     {
-                        updateRecentlySelection(settings.flash);
+                        updateRecentlySelection(getter());
                         resolve(result);
                     },
                 });
             }
         );
-        export const todoPickupSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
-        (
-            async resolve =>
-            {
-                let result = false;
-                const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
-                const tagButtonListUpdate = async () => minamo.dom.replaceChildren
-                (
-                    tagButtonList,
-                    [
-                        {
-                            tag: "button",
-                            className: `check-button ${"none" === (settings.pickup ?? "none") ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("pickup.none")),
-                            ],
-                            onclick: async () =>
-                            {
-                                settings.pickup = undefined;
-                                OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
-                        {
-                            tag: "button",
-                            className: `check-button ${"always" === settings.pickup?.type ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("pickup.always")),
-                            ],
-                            onclick: async () =>
-                            {
-                                settings.pickup = { type: "always" };
-                                OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
-                        await Promise.all
-                        (
-                            getTodoPickupSettingsElapsedTimePreset(entry, settings.pickup)
-                                .map
-                                (
-                                    async elapsedTime =>
-                                    ({
-                                        tag: "button",
-                                        className: `check-button ${("elapsed-time" === settings.pickup?.type && elapsedTime === settings?.pickup.elapsedTime) ? "checked": ""}`,
-                                        children:
-                                        [
-                                            await Resource.loadSvgOrCache("check-icon"),
-                                            $span("")([label("pickup.elapsed-time"), ": ", Domain.timeLongStringFromTick(elapsedTime)]),
-                                        ],
-                                        onclick: async () =>
-                                        {
-                                            settings.pickup =
-                                            {
-                                                type: "elapsed-time",
-                                                elapsedTime,
-                                            };
-                                            OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                            result = true;
-                                            await tagButtonListUpdate();
-                                        }
-                                    })
-                                )
-                        ),
-                        await Promise.all
-                        (
-                            getTodoPickupSettingsElapsedTimeStandardScorePreset(entry, settings.pickup).map
-                            (
-                                async elapsedTimeStandardScore =>
-                                ({
-                                    tag: "button",
-                                    className: `check-button ${("elapsed-time-standard-score" === settings.pickup?.type && elapsedTimeStandardScore === settings?.pickup.elapsedTimeStandardScore) ? "checked": ""}`,
-                                    children:
-                                    [
-                                        await Resource.loadSvgOrCache("check-icon"),
-                                        $span("")([label("pickup.elapsed-time-standard-score"), `: ${elapsedTimeStandardScore}`]),
-                                    ],
-                                    onclick: async () =>
-                                    {
-                                        settings.pickup =
-                                        {
-                                            type: "elapsed-time-standard-score",
-                                            elapsedTimeStandardScore,
-                                        };
-                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                        result = true;
-                                        await tagButtonListUpdate();
-                                    }
-                                })
-                            )
-                        ),
-                        {
-                            tag: "button",
-                            className: `check-button ${"expired" === settings.pickup?.type ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("pickup.expired")),
-                            ],
-                            onclick: async () =>
-                            {
-                                settings.pickup = { type: "expired" };
-                                OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
-                    ]
-                );
-                await tagButtonListUpdate();
-                const ui = popup
-                ({
-                    // className: "add-remove-tags-popup",
-                    children:
-                    [
-                        $tag("h2")("")(`${locale.map("Pickup setting")}: ${entry.task}`),
-                        tagButtonList,
-                        $div("popup-operator")
-                        ([{
-                            tag: "button",
-                            className: "default-button",
-                            children: label("Close"),
-                            onclick: () =>
-                            {
-                                ui.close();
-                            },
-                        }]),
-                    ],
-                    onClose: async () =>
-                    {
-                        updateRecentlySelection(settings.pickup);
-                        resolve(result);
-                    },
-                });
-            }
-        );
-        export const todoRestrictionSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
-        (
-            async resolve =>
-            {
-                let result = false;
-                const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
-                const tagButtonListUpdate = async () => minamo.dom.replaceChildren
-                (
-                    tagButtonList,
-                    [
-                        {
-                            tag: "button",
-                            className: `check-button ${"none" === (settings.restriction ?? "none") ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("pickup.none")),
-                            ],
-                            onclick: async () =>
-                            {
-                                settings.restriction = undefined;
-                                OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
-                        {
-                            tag: "button",
-                            className: `check-button ${"always" === settings.restriction?.type ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("pickup.always")),
-                            ],
-                            onclick: async () =>
-                            {
-                                settings.restriction = { type: "always" };
-                                OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
-                        await Promise.all
-                        (
-                            getTodoPickupSettingsElapsedTimePreset(entry, settings.restriction)
-                                .map
-                                (
-                                    async elapsedTime =>
-                                    ({
-                                        tag: "button",
-                                        className: `check-button ${("elapsed-time" === settings.restriction?.type && elapsedTime === settings?.restriction.elapsedTime) ? "checked": ""}`,
-                                        children:
-                                        [
-                                            await Resource.loadSvgOrCache("check-icon"),
-                                            $span("")([label("pickup.elapsed-time"), ": ", Domain.timeLongStringFromTick(elapsedTime)]),
-                                        ],
-                                        onclick: async () =>
-                                        {
-                                            settings.restriction =
-                                            {
-                                                type: "elapsed-time",
-                                                elapsedTime,
-                                            };
-                                            OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                            result = true;
-                                            await tagButtonListUpdate();
-                                        }
-                                    })
-                                )
-                        ),
-                        await Promise.all
-                        (
-                            getTodoPickupSettingsElapsedTimeStandardScorePreset(entry, settings.restriction).map
-                            (
-                                async elapsedTimeStandardScore =>
-                                ({
-                                    tag: "button",
-                                    className: `check-button ${("elapsed-time-standard-score" === settings.restriction?.type && elapsedTimeStandardScore === settings?.restriction.elapsedTimeStandardScore) ? "checked": ""}`,
-                                    children:
-                                    [
-                                        await Resource.loadSvgOrCache("check-icon"),
-                                        $span("")([label("pickup.elapsed-time-standard-score"), `: ${elapsedTimeStandardScore}`]),
-                                    ],
-                                    onclick: async () =>
-                                    {
-                                        settings.restriction =
-                                        {
-                                            type: "elapsed-time-standard-score",
-                                            elapsedTimeStandardScore,
-                                        };
-                                        OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                        result = true;
-                                        await tagButtonListUpdate();
-                                    }
-                                })
-                            )
-                        ),
-                        {
-                            tag: "button",
-                            className: `check-button ${"expired" === settings.restriction?.type ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("pickup.expired")),
-                            ],
-                            onclick: async () =>
-                            {
-                                settings.restriction = { type: "expired" };
-                                OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
-                    ]
-                );
-                await tagButtonListUpdate();
-                const ui = popup
-                ({
-                    // className: "add-remove-tags-popup",
-                    children:
-                    [
-                        $tag("h2")("")(`${locale.map("Restriction setting")}: ${entry.task}`),
-                        tagButtonList,
-                        $div("popup-operator")
-                        ([{
-                            tag: "button",
-                            className: "default-button",
-                            children: label("Close"),
-                            onclick: () =>
-                            {
-                                ui.close();
-                            },
-                        }]),
-                    ],
-                    onClose: async () =>
-                    {
-                        updateRecentlySelection(settings.restriction);
-                        resolve(result);
-                    },
-                });
-            }
-        );
+        export const todoFlashSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
+            await todoSpanSettingsPopup
+            (
+                entry,
+                "Flash setting",
+                value =>
+                {
+                    settings.flash = value;
+                    OldStorage.TodoSettings.set(pass, entry.task, settings);
+                },
+                () => settings.flash
+            );
+        export const todoPickupSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
+            await todoSpanSettingsPopup
+            (
+                entry,
+                "Pickup setting",
+                value =>
+                {
+                    settings.pickup = value;
+                    OldStorage.TodoSettings.set(pass, entry.task, settings);
+                },
+                () => settings.pickup
+            );
+        export const todoRestrictionSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
+            await todoSpanSettingsPopup
+            (
+                entry,
+                "Restriction setting",
+                value =>
+                {
+                    settings.restriction = value;
+                    OldStorage.TodoSettings.set(pass, entry.task, settings);
+                },
+                () => settings.restriction
+            );
         export const screenCover = (data: { parent?: HTMLElement | null, children?: minamo.dom.Source, onclick: () => unknown, }) =>
         {
             const dom = $make(HTMLDivElement)
