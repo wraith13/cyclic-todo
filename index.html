@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sun Mar 19 2023 08:24:50 GMT+0900 (日本標準時)
+    build at: Sun Mar 19 2023 16:05:32 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -6453,7 +6453,7 @@ define("resource/images", [], {
 define("script/index", ["require", "exports", "nephila/minamo.js/index", "resource/config", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, config_json_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.CyclicToDo = exports.Calculate = exports.locale = exports.takeFilter = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.makeObject = void 0;
+    exports.CyclicToDo = exports.Calculate = exports.locale = exports.toPercentSting = exports.takeFilter = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.makeObject = void 0;
     config_json_1 = __importDefault(config_json_1);
     lang_en_json_1 = __importDefault(lang_en_json_1);
     lang_ja_json_1 = __importDefault(lang_ja_json_1);
@@ -6470,6 +6470,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
     exports.uniqueFilter = uniqueFilter;
     var takeFilter = function (max) { return function (_value, index) { return index < max; }; };
     exports.takeFilter = takeFilter;
+    var toPercentSting = function (value) { return value.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }); };
+    exports.toPercentSting = toPercentSting;
     var locale;
     (function (locale_1) {
         locale_1.master = {
@@ -8476,7 +8478,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.$div = Render.$tag("div");
             Render.$span = Render.$tag("span");
             Render.progressStyle = function (progress) {
-                return "width:" + (progress !== null && progress !== void 0 ? progress : 1).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }) + ";";
+                return "width:" + exports.toPercentSting(progress !== null && progress !== void 0 ? progress : 1) + ";";
             };
             Render.progressPadStyle = function (progress) {
                 return Render.progressStyle(1 - (progress !== null && progress !== void 0 ? progress : 1));
@@ -10600,6 +10602,58 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 });
             }); };
+            Render.tickScale = function (max) {
+                var hourUnit = 60;
+                var dayUnit = 24 * hourUnit;
+                var yearUnit = 365.2425 * dayUnit;
+                if ("number" === typeof max) {
+                    if (max < 10) {
+                        return 1 / max;
+                    }
+                    else if (max < 30) {
+                        return 5 / max;
+                    }
+                    else if (max < hourUnit) {
+                        return 10 / max;
+                    }
+                    else if (max < 3 * hourUnit) {
+                        return 30 / max;
+                    }
+                    else if (max < 6 * hourUnit) {
+                        return hourUnit / max;
+                    }
+                    else if (max < 12 * hourUnit) {
+                        return (3 * hourUnit) / max;
+                    }
+                    else if (max < dayUnit) {
+                        return (6 * 60) / max;
+                    }
+                    else if (max < 3 * dayUnit) {
+                        return (12 * 60) / max;
+                    }
+                    else if (max < 7 * dayUnit) {
+                        return dayUnit / max;
+                    }
+                    else if (max < 30 * dayUnit) {
+                        return (7 * dayUnit) / max;
+                    }
+                    else if (max < 3 * 30 * dayUnit) {
+                        return (30 * dayUnit) / max;
+                    }
+                    else if (max < yearUnit) {
+                        return (yearUnit / 4) / max;
+                    }
+                    else {
+                        return yearUnit / max;
+                    }
+                }
+                return null;
+            };
+            Render.tickScaleStyle = function (percent) {
+                return "number" === typeof percent ?
+                    "background: repeating-linear-gradient(90deg, #00000000, #00000000 calc(" + exports.toPercentSting(percent) + " - 1px), #88888844 calc(" + exports.toPercentSting(percent) + " - 1px), #88888844 " + exports.toPercentSting(percent) + ");" :
+                    "";
+            };
             Render.tickItem = function (pass, item, tick, interval, max, isFlashed, isPickuped, isRestrictioned) {
                 if (isFlashed === void 0) { isFlashed = OldStorage.TodoSettings.isFlashTarget(pass, item, interval); }
                 if (isPickuped === void 0) { isPickuped = OldStorage.TodoSettings.isPickupTarget(pass, item, interval); }
@@ -10610,7 +10664,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return __generator(this, function (_d) {
                         switch (_d.label) {
                             case 0:
-                                _a = Render.$div("tick-item flex-item");
+                                _a = Render.$div({
+                                    className: "tick-item flex-item",
+                                    attributes: { style: Render.tickScaleStyle(Render.tickScale(max)), }
+                                });
                                 _b = [Render.progressBar(null === interval || null === max || max < interval ? null : interval / max, isRestrictioned ? "restriction" :
                                         isFlashed ? "flash" :
                                             isPickuped ? "pickup" :
@@ -13750,7 +13807,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Mar 19 2023 08:24:50 GMT+0900 (日本標準時)', buildTimestampTick: 1679181890446, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Mar 19 2023 16:05:32 GMT+0900 (日本標準時)', buildTimestampTick: 1679209532033, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

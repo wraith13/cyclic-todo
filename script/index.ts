@@ -13,6 +13,7 @@ export const simpleComparer = minamo.core.comparer.basic;
 export const simpleReverseComparer = <T>(a: T, b: T) => -simpleComparer(a, b);
 export const uniqueFilter = <T>(value: T, index: number, list: T[]) => index === list.indexOf(value);
 export const takeFilter = (max: number) => <T>(_value: T, index: number) => index < max;
+export const toPercentSting = (value: number) => value.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 });
 export module locale
 {
     export const master =
@@ -2249,7 +2250,7 @@ export module CyclicToDo
         export const $div = $tag("div");
         export const $span = $tag("span");
         export const progressStyle = (progress: number | null) =>
-            `width:${(progress ?? 1).toLocaleString("en", { style: "percent", minimumFractionDigits: 2 })};`;
+            `width:${toPercentSting(progress ?? 1)};`;
         export const progressPadStyle = (progress: number | null) =>
             progressStyle(1 -(progress ?? 1));
         export const progressValidityClass = (progress: number | null) =>
@@ -3930,7 +3931,89 @@ export module CyclicToDo
                 []
             ),
         ]);
-        export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null, isFlashed: boolean = OldStorage.TodoSettings.isFlashTarget(pass, item, interval), isPickuped: boolean = OldStorage.TodoSettings.isPickupTarget(pass, item, interval), isRestrictioned: boolean = OldStorage.TodoSettings.isRestrictionTarget(pass, item, interval)) => $div("tick-item flex-item")
+        export const tickScale = (max: number | null): number | null =>
+        {
+            const hourUnit = 60;
+            const dayUnit = 24 *hourUnit;
+            const yearUnit = 365.2425 *dayUnit;
+            if ("number" === typeof max)
+            {
+                if (max < 10)
+                {
+                    return 1 /max;
+                }
+                else
+                if (max < 30)
+                {
+                    return 5 /max;
+                }
+                else
+                if (max < hourUnit)
+                {
+                    return 10 /max;
+                }
+                else
+                if (max < 3 *hourUnit)
+                {
+                    return 30 /max;
+                }
+                else
+                if (max < 6 *hourUnit)
+                {
+                    return hourUnit /max;
+                }
+                else
+                if (max < 12 *hourUnit)
+                {
+                    return (3 *hourUnit) /max;
+                }
+                else
+                if (max < dayUnit)
+                {
+                    return (6 *60) /max;
+                }
+                else
+                if (max < 3 *dayUnit)
+                {
+                    return (12 *60) /max;
+                }
+                else
+                if (max < 7 *dayUnit)
+                {
+                    return dayUnit /max;
+                }
+                else
+                if (max < 30 *dayUnit)
+                {
+                    return (7 *dayUnit) /max;
+                }
+                else
+                if (max < 3 *30 *dayUnit)
+                {
+                    return (30 *dayUnit) /max;
+                }
+                else
+                if (max < yearUnit)
+                {
+                    return (yearUnit /4) /max;
+                }
+                else
+                {
+                    return yearUnit /max;
+                }
+            }
+            return null;
+        };
+        export const tickScaleStyle = (percent: number | null) =>
+            "number" === typeof percent ?
+                `background: repeating-linear-gradient(90deg, #00000000, #00000000 calc(${toPercentSting(percent)} - 1px), #88888844 calc(${toPercentSting(percent)} - 1px), #88888844 ${toPercentSting(percent)});`:
+                "";
+        export const tickItem = async (pass: string, item: ToDoEntry, tick: number, interval: number | null, max: number | null, isFlashed: boolean = OldStorage.TodoSettings.isFlashTarget(pass, item, interval), isPickuped: boolean = OldStorage.TodoSettings.isPickupTarget(pass, item, interval), isRestrictioned: boolean = OldStorage.TodoSettings.isRestrictionTarget(pass, item, interval)) =>
+        $div
+        ({
+            className: "tick-item flex-item",
+            attributes:{ style: tickScaleStyle(tickScale(max)), }
+        })
         ([
             progressBar
             (
