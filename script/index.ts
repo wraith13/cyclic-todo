@@ -3983,12 +3983,12 @@ export module CyclicToDo
                     return dayUnit /max;
                 }
                 else
-                if (max < 30 *dayUnit)
+                if (max < 2 *30 *dayUnit)
                 {
                     return (7 *dayUnit) /max;
                 }
                 else
-                if (max < 3 *30 *dayUnit)
+                if (max < 6 *30 *dayUnit)
                 {
                     return (30 *dayUnit) /max;
                 }
