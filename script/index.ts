@@ -14,6 +14,7 @@ export const simpleReverseComparer = <T>(a: T, b: T) => -simpleComparer(a, b);
 export const uniqueFilter = <T>(value: T, index: number, list: T[]) => index === list.indexOf(value);
 export const takeFilter = (max: number) => <T>(_value: T, index: number) => index < max;
 export const toPercentSting = (value: number) => value.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 });
+export const isValidNumber = (value: unknown) => "number" === typeof value && ! isNaN(value);
 export module locale
 {
     export const master =
@@ -3151,7 +3152,7 @@ export module CyclicToDo
             case "always":
                 return label("pickup.always");
             case "elapsed-time":
-                if ("number" === typeof setting.elapsedTime && ! isNaN(setting.elapsedTime))
+                if (isValidNumber(setting.elapsedTime))
                 {
                     return [label("pickup.elapsed-time"), ": ", Domain.timeLongStringFromTick(setting.elapsedTime)];
                 }
@@ -3160,7 +3161,7 @@ export module CyclicToDo
                     return [label("pickup.elapsed-time"), ": ", label("pickup.specify")];
                 }
             case "elapsed-time-standard-score":
-                if ("number" === typeof setting.elapsedTimeStandardScore && ! isNaN(setting.elapsedTimeStandardScore))
+                if (isValidNumber(setting.elapsedTimeStandardScore))
                 {
                     return [label("pickup.elapsed-time-standard-score"), ": ", `${setting.elapsedTimeStandardScore}`];
                 }
