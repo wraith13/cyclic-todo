@@ -212,14 +212,12 @@ export module CyclicToDo
     {
         type: "expired";
     }
-    export type FlashSetting = PickupSettingAlways | PickupSettingElapsedTime | PickupSettingElapsedTimeStandardScore | PickupSettingExpired;
-    export type PickupSetting = PickupSettingAlways | PickupSettingElapsedTime | PickupSettingElapsedTimeStandardScore | PickupSettingExpired;
-    export type RestrictionSetting = PickupSettingAlways | PickupSettingElapsedTime | PickupSettingElapsedTimeStandardScore | PickupSettingExpired;
+    export type AutoTagSetting = PickupSettingAlways | PickupSettingElapsedTime | PickupSettingElapsedTimeStandardScore | PickupSettingExpired;
     export interface TodoSettings extends minamo.core.JsonableObject
     {
-        flash?: FlashSetting;
-        pickup?: PickupSetting;
-        restriction?: RestrictionSetting;
+        flash?: AutoTagSetting;
+        pickup?: AutoTagSetting;
+        restriction?: AutoTagSetting;
     }
     export interface DocumentCard extends minamo.core.JsonableObject
     {
@@ -3108,7 +3106,7 @@ export module CyclicToDo
                 });
             }
         );
-        export const getTodoPickupSettingsElapsedTimePreset = (_entry: ToDoEntry, current: FlashSetting | undefined) =>
+        export const getTodoPickupSettingsElapsedTimePreset = (_entry: ToDoEntry, current: AutoTagSetting | undefined) =>
         {
             let list: number[] = [];
             if ("elapsed-time" === current?.type)
@@ -3119,7 +3117,7 @@ export module CyclicToDo
             list.push(...config.timespanPreset);
             return list.filter(uniqueFilter).filter(takeFilter(config.timespanPresetMaxCount)).sort(minamo.core.comparer.basic);
         };
-        export const getTodoPickupSettingsElapsedTimeStandardScorePreset = (_entry: ToDoEntry, current: FlashSetting | undefined) =>
+        export const getTodoPickupSettingsElapsedTimeStandardScorePreset = (_entry: ToDoEntry, current: AutoTagSetting | undefined) =>
         {
             let list: number[] = [];
             if ("elapsed-time-standard-score" === current?.type)
@@ -3130,7 +3128,7 @@ export module CyclicToDo
             list.push(...config.timespanStandardScorePreset);
             return list.filter(uniqueFilter).filter(takeFilter(config.timespanStandardScorePresetMaxCount)).sort(minamo.core.comparer.basic);
         };
-        export const updateRecentlySelection = (setting: FlashSetting | undefined) =>
+        export const updateRecentlySelection = (setting: AutoTagSetting | undefined) =>
         {
             switch(setting?.type)
             {
@@ -3142,7 +3140,39 @@ export module CyclicToDo
                 break;
             }
         };
-        export const todoSpanSettingsPopup = async (entry: ToDoEntry, title: locale.LocaleKeyType, setter: (value: FlashSetting | undefined) => unknown, getter: () => (FlashSetting | undefined)): Promise<boolean> => await new Promise
+        export const getAutoTagSettingText = (setting: AutoTagSetting | undefined) =>
+        {
+            if (undefined === setting)
+            {
+                return label("pickup.none");
+            }
+            switch(setting.type)
+            {
+            case "always":
+                return label("pickup.always");
+            case "elapsed-time":
+                if ("number" === typeof setting.elapsedTime && ! isNaN(setting.elapsedTime))
+                {
+                    return [label("pickup.elapsed-time"), ": ", Domain.timeLongStringFromTick(setting.elapsedTime)];
+                }
+                else
+                {
+                    return [label("pickup.elapsed-time"), ": ", label("pickup.specify")];
+                }
+            case "elapsed-time-standard-score":
+                if ("number" === typeof setting.elapsedTimeStandardScore && ! isNaN(setting.elapsedTimeStandardScore))
+                {
+                    return [label("pickup.elapsed-time-standard-score"), ": ", `${setting.elapsedTimeStandardScore}`];
+                }
+                else
+                {
+                    return [label("pickup.elapsed-time-standard-score"), ": ", label("pickup.specify")];
+                }
+            case "expired":
+                return label("pickup.expired");
+            }
+        };
+        export const todoSpanSettingsPopup = async (entry: ToDoEntry, title: locale.LocaleKeyType, setter: (value: AutoTagSetting | undefined) => unknown, getter: () => (AutoTagSetting | undefined)): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
