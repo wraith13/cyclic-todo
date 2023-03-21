@@ -3182,136 +3182,75 @@ export module CyclicToDo
                 const tagButtonListUpdate = async () => minamo.dom.replaceChildren
                 (
                     tagButtonList,
-                    [
-                        {
-                            tag: "button",
-                            className: `check-button ${"none" === (getter() ?? "none") ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("pickup.none")),
-                            ],
-                            onclick: async () =>
-                            {
-                                setter(undefined);
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
-                        {
-                            tag: "button",
-                            className: `check-button ${"always" === getter()?.type ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("pickup.always")),
-                            ],
-                            onclick: async () =>
-                            {
-                                setter({ type: "always" });
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
-                        await Promise.all
+                    await Promise.all
+                    (
                         (
-                            getTodoPickupSettingsElapsedTimePreset(entry, getter())
-                                .map
-                                (
-                                    async elapsedTime =>
-                                    ({
-                                        tag: "button",
-                                        className: `check-button ${("elapsed-time" === getter()?.type && elapsedTime === getter()?.elapsedTime) ? "checked": ""}`,
-                                        children:
-                                        [
-                                            await Resource.loadSvgOrCache("check-icon"),
-                                            $span("")([label("pickup.elapsed-time"), ": ", Domain.timeLongStringFromTick(elapsedTime)]),
-                                        ],
-                                        onclick: async () =>
+                            <(AutoTagSetting | undefined)[]>
+                            [
+                                undefined,
+                                { type: "always" },
+                                ...getTodoPickupSettingsElapsedTimePreset(entry, getter())
+                                    .map(elapsedTime => ({ type: "elapsed-time", elapsedTime, })),
+                                { type: "elapsed-time", NaN, },
+                                ...getTodoPickupSettingsElapsedTimeStandardScorePreset(entry, getter())
+                                    .map(elapsedTimeStandardScore => ({ type: "elapsed-time-standard-score", elapsedTimeStandardScore, })),
+                                { type: "elapsed-time-standard-score", NaN, },
+                                { type: "expired" },
+                            ]
+                        )
+                        .map
+                        (
+                            async i =>
+                            ({
+                                tag: "button",
+                                className: `check-button ${JSON.stringify(i) === JSON.stringify(getter()) ? "checked": ""}`,
+                                children:
+                                [
+                                    await Resource.loadSvgOrCache("check-icon"),
+                                    $span("")(getAutoTagSettingText(i)),
+                                ],
+                                onclick: async () =>
+                                {
+                                    if ("elapsed-time" === i?.type && ! isValidNumber(i?.elapsedTime))
+                                    {
+                                        const elapsedTime = await dateTimeSpanPrompt
+                                        (
+                                            locale.map("pickup.elapsed-time"),
+                                            (getter() as PickupSettingElapsedTime)?.elapsedTime ?? 0
+                                        );
+                                        if (null !== elapsedTime)
                                         {
                                             setter({ type: "elapsed-time", elapsedTime, });
                                             result = true;
                                             await tagButtonListUpdate();
                                         }
-                                    })
-                                )
-                        ),
-                        {
-                            tag: "button",
-                            className: `check-button`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")([label("pickup.elapsed-time"), ": ", label("pickup.specify")]),
-                            ],
-                            onclick: async () =>
-                            {
-                                const elapsedTime = await dateTimeSpanPrompt(locale.map("pickup.elapsed-time"), (getter() as PickupSettingElapsedTime)?.elapsedTime ?? 0);
-                                if (null !== elapsedTime)
-                                {
-                                    setter({ type: "elapsed-time", elapsedTime, });
-                                    result = true;
-                                    await tagButtonListUpdate();
-                                }
-                            }
-                        },
-                        await Promise.all
-                        (
-                            getTodoPickupSettingsElapsedTimeStandardScorePreset(entry, getter()).map
-                            (
-                                async elapsedTimeStandardScore =>
-                                ({
-                                    tag: "button",
-                                    className: `check-button ${("elapsed-time-standard-score" === getter()?.type && elapsedTimeStandardScore === getter()?.elapsedTimeStandardScore) ? "checked": ""}`,
-                                    children:
-                                    [
-                                        await Resource.loadSvgOrCache("check-icon"),
-                                        $span("")([label("pickup.elapsed-time-standard-score"), `: ${elapsedTimeStandardScore}`]),
-                                    ],
-                                    onclick: async () =>
+                                    }
+                                    else
+                                    if ("elapsed-time-standard-score" === i?.type && ! isValidNumber(i?.elapsedTimeStandardScore))
                                     {
-                                        setter({ type: "elapsed-time-standard-score", elapsedTimeStandardScore, });
+                                        const elapsedTimeStandardScore = await numberPrompt
+                                        (
+                                            locale.map("pickup.elapsed-time-standard-score"),
+                                            (getter() as PickupSettingElapsedTimeStandardScore)?.elapsedTimeStandardScore ?? 50,
+                                            { min: 0, max: 100, }
+                                        );
+                                        if (null !== elapsedTimeStandardScore)
+                                        {
+                                            setter({ type: "elapsed-time-standard-score", elapsedTimeStandardScore, });
+                                            result = true;
+                                            await tagButtonListUpdate();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        setter(i);
                                         result = true;
                                         await tagButtonListUpdate();
                                     }
-                                })
-                            )
-                        ),
-                        {
-                            tag: "button",
-                            className: `check-button`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")([label("pickup.elapsed-time-standard-score"), ": ", label("pickup.specify")]),
-                            ],
-                            onclick: async () =>
-                            {
-                                const elapsedTimeStandardScore = await numberPrompt(locale.map("pickup.elapsed-time-standard-score"), (getter() as PickupSettingElapsedTimeStandardScore)?.elapsedTimeStandardScore ?? 50, { min: 0, max: 100, });
-                                if (null !== elapsedTimeStandardScore)
-                                {
-                                    setter({ type: "elapsed-time-standard-score", elapsedTimeStandardScore, });
-                                    result = true;
-                                    await tagButtonListUpdate();
                                 }
-                            }
-                        },
-                        {
-                            tag: "button",
-                            className: `check-button ${"expired" === getter()?.type ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("pickup.expired")),
-                            ],
-                            onclick: async () =>
-                            {
-                                setter({ type: "expired" });
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
-                    ]
+                            }),
+                        )
+                    )
                 );
                 await tagButtonListUpdate();
                 const ui = popup
