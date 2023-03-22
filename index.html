@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Tue Mar 21 2023 21:32:40 GMT+0900 (日本標準時)
+    build at: Wed Mar 22 2023 21:58:22 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -1431,6 +1431,46 @@ body.light .check-button svg {
 body.light .check-button:not(.checked) svg {
   visibility: hidden;
 }
+body.light .label-button {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  flex-direction: row;
+  position: relative;
+  margin: 0px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0px;
+  border-style: none;
+  border-width: 0px;
+}
+body.light .label-button svg {
+  width: 1.5em;
+  height: 1.5em;
+  margin-right: 4px;
+  flex-grow: 0;
+}
+body.light .label-button > *:not(svg) {
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+}
+body.light .label-button > *:not(svg) > .label {
+  text-align: left;
+  padding: 4px;
+  margin-right: -50%;
+}
+body.light .label-button > *:not(svg) > .label::after {
+  content: ":";
+}
+body.light .label-button > *:not(svg) > .value {
+  text-align: right;
+  padding: 4px;
+  float: right;
+}
 body.light .popup {
   border-style: solid;
   border-width: 1px;
@@ -1498,7 +1538,8 @@ body.light .screen-cover.fade-out {
     opacity: 0;
   }
 }
-body.light .check-button-list {
+body.light .check-button-list,
+body.light .label-button-list {
   position: relative;
   display: flex;
   flex-wrap: wrap;
@@ -1506,7 +1547,8 @@ body.light .check-button-list {
   justify-content: stretch;
   flex-direction: column;
 }
-body.light .check-button-list button {
+body.light .check-button-list button,
+body.light .label-button-list button {
   border-color: rgba(128, 128, 128, 0.5);
   border-style: solid;
   border-width: 0px 0px 1px 0px;
@@ -3636,6 +3678,46 @@ body.dark .check-button svg {
 body.dark .check-button:not(.checked) svg {
   visibility: hidden;
 }
+body.dark .label-button {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  flex-direction: row;
+  position: relative;
+  margin: 0px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0px;
+  border-style: none;
+  border-width: 0px;
+}
+body.dark .label-button svg {
+  width: 1.5em;
+  height: 1.5em;
+  margin-right: 4px;
+  flex-grow: 0;
+}
+body.dark .label-button > *:not(svg) {
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+}
+body.dark .label-button > *:not(svg) > .label {
+  text-align: left;
+  padding: 4px;
+  margin-right: -50%;
+}
+body.dark .label-button > *:not(svg) > .label::after {
+  content: ":";
+}
+body.dark .label-button > *:not(svg) > .value {
+  text-align: right;
+  padding: 4px;
+  float: right;
+}
 body.dark .popup {
   border-style: solid;
   border-width: 1px;
@@ -3703,7 +3785,8 @@ body.dark .screen-cover.fade-out {
     opacity: 0;
   }
 }
-body.dark .check-button-list {
+body.dark .check-button-list,
+body.dark .label-button-list {
   position: relative;
   display: flex;
   flex-wrap: wrap;
@@ -3711,7 +3794,8 @@ body.dark .check-button-list {
   justify-content: stretch;
   flex-direction: column;
 }
-body.dark .check-button-list button {
+body.dark .check-button-list button,
+body.dark .label-button-list button {
   border-color: rgba(128, 128, 128, 0.5);
   border-style: solid;
   border-width: 0px 0px 1px 0px;
@@ -6289,6 +6373,7 @@ define("resource/lang.en", [], {
     "language.auto": "Auto",
     "please input": "Please input.",
     "Sort order setting": "Sort order setting",
+    "Auto tag setting": "Auto tag setting",
     "Flash setting": "Flash setting",
     "Pickup setting": "Pickup setting",
     "Restriction setting": "Restriction setting",
@@ -6396,6 +6481,7 @@ define("resource/lang.ja", [], {
     "language.auto": "自動",
     "please input": "入力してください。",
     "Sort order setting": "並び順設定",
+    "Auto tag setting": "自動タグ設定",
     "Flash setting": "フラッシュ設定",
     "Pickup setting": "ピックアップ設定",
     "Restriction setting": "制限設定",
@@ -9622,21 +9708,21 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
-                                var result, tagButtonList, tagButtonListUpdate, ui;
+                                var result, buttonList, buttonListUpdate, ui;
                                 var _this = this;
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
                                             result = false;
-                                            tagButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
-                                            tagButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
+                                            buttonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
+                                            buttonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
                                                 var _a, _b, _c;
                                                 var _this = this;
                                                 return __generator(this, function (_d) {
                                                     switch (_d.label) {
                                                         case 0:
                                                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
-                                                            _c = [tagButtonList];
+                                                            _c = [buttonList];
                                                             return [4 /*yield*/, Promise.all(__spreadArray(__spreadArray(__spreadArray(__spreadArray([
                                                                     undefined,
                                                                     { type: "always" }
@@ -9676,7 +9762,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                                     if (!(null !== elapsedTime)) return [3 /*break*/, 3];
                                                                                                     setter({ type: "elapsed-time", elapsedTime: elapsedTime, });
                                                                                                     result = true;
-                                                                                                    return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                                    return [4 /*yield*/, buttonListUpdate()];
                                                                                                 case 2:
                                                                                                     _e.sent();
                                                                                                     _e.label = 3;
@@ -9689,7 +9775,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                                     if (!(null !== elapsedTimeStandardScore)) return [3 /*break*/, 7];
                                                                                                     setter({ type: "elapsed-time-standard-score", elapsedTimeStandardScore: elapsedTimeStandardScore, });
                                                                                                     result = true;
-                                                                                                    return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                                    return [4 /*yield*/, buttonListUpdate()];
                                                                                                 case 6:
                                                                                                     _e.sent();
                                                                                                     _e.label = 7;
@@ -9697,7 +9783,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                                 case 8:
                                                                                                     setter(i);
                                                                                                     result = true;
-                                                                                                    return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                                    return [4 /*yield*/, buttonListUpdate()];
                                                                                                 case 9:
                                                                                                     _e.sent();
                                                                                                     _e.label = 10;
@@ -9713,14 +9799,14 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                     }
                                                 });
                                             }); };
-                                            return [4 /*yield*/, tagButtonListUpdate()];
+                                            return [4 /*yield*/, buttonListUpdate()];
                                         case 1:
                                             _a.sent();
                                             ui = Render.popup({
                                                 // className: "add-remove-tags-popup",
                                                 children: [
                                                     Render.$tag("h2")("")(locale.map(title) + ": " + entry.task),
-                                                    tagButtonList,
+                                                    buttonList,
                                                     Render.$div("popup-operator")([{
                                                             tag: "button",
                                                             className: "default-button",
@@ -9783,6 +9869,148 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     settings.restriction = value;
                                     OldStorage.TodoSettings.set(pass, entry.task, settings);
                                 }, function () { return settings.restriction; })];
+                            case 1: return [2 /*return*/, _a.sent()];
+                        }
+                    });
+                });
+            };
+            Render.autoTagSettingsPopup = function (pass, entry, settings) {
+                if (settings === void 0) { settings = OldStorage.TodoSettings.get(pass, entry.task); }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                    var result, buttonList, buttonListUpdate, ui;
+                                    var _this = this;
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                result = false;
+                                                buttonList = Render.$make(HTMLDivElement)({ className: "label-button-list" });
+                                                buttonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    var _a, _b, _c, _d;
+                                                    var _e, _f, _g;
+                                                    var _this = this;
+                                                    return __generator(this, function (_h) {
+                                                        switch (_h.label) {
+                                                            case 0:
+                                                                _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                                _c = [buttonList];
+                                                                _e = {
+                                                                    tag: "button",
+                                                                    className: "label-button"
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache(Resource.getTagIcon("@flash"))];
+                                                            case 1:
+                                                                _d = [
+                                                                    (_e.children = [
+                                                                        _h.sent(),
+                                                                        Render.monospace("auto-tag-flash", Render.label("@flash"), Render.getAutoTagSettingText(settings.flash))
+                                                                    ],
+                                                                        _e.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            return __generator(this, function (_a) {
+                                                                                switch (_a.label) {
+                                                                                    case 0: return [4 /*yield*/, Render.todoFlashSettingsPopup(pass, entry, settings)];
+                                                                                    case 1:
+                                                                                        if (!_a.sent()) return [3 /*break*/, 3];
+                                                                                        result = true;
+                                                                                        return [4 /*yield*/, buttonListUpdate()];
+                                                                                    case 2:
+                                                                                        _a.sent();
+                                                                                        _a.label = 3;
+                                                                                    case 3: return [2 /*return*/];
+                                                                                }
+                                                                            });
+                                                                        }); },
+                                                                        _e)
+                                                                ];
+                                                                _f = {
+                                                                    tag: "button",
+                                                                    className: "label-button"
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache(Resource.getTagIcon("@pickup"))];
+                                                            case 2:
+                                                                _d = _d.concat([
+                                                                    (_f.children = [
+                                                                        _h.sent(),
+                                                                        Render.monospace("auto-tag-flash", Render.label("@pickup"), Render.getAutoTagSettingText(settings.pickup))
+                                                                    ],
+                                                                        _f.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            return __generator(this, function (_a) {
+                                                                                switch (_a.label) {
+                                                                                    case 0: return [4 /*yield*/, Render.todoPickupSettingsPopup(pass, entry, settings)];
+                                                                                    case 1:
+                                                                                        if (!_a.sent()) return [3 /*break*/, 3];
+                                                                                        result = true;
+                                                                                        return [4 /*yield*/, buttonListUpdate()];
+                                                                                    case 2:
+                                                                                        _a.sent();
+                                                                                        _a.label = 3;
+                                                                                    case 3: return [2 /*return*/];
+                                                                                }
+                                                                            });
+                                                                        }); },
+                                                                        _f)
+                                                                ]);
+                                                                _g = {
+                                                                    tag: "button",
+                                                                    className: "label-button"
+                                                                };
+                                                                return [4 /*yield*/, Resource.loadSvgOrCache(Resource.getTagIcon("@restriction"))];
+                                                            case 3: return [2 /*return*/, _b.apply(_a, _c.concat([_d.concat([
+                                                                        (_g.children = [
+                                                                            _h.sent(),
+                                                                            Render.monospace("auto-tag-flash", Render.label("@restriction"), Render.getAutoTagSettingText(settings.restriction))
+                                                                        ],
+                                                                            _g.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                return __generator(this, function (_a) {
+                                                                                    switch (_a.label) {
+                                                                                        case 0: return [4 /*yield*/, Render.todoRestrictionSettingsPopup(pass, entry, settings)];
+                                                                                        case 1:
+                                                                                            if (!_a.sent()) return [3 /*break*/, 3];
+                                                                                            result = true;
+                                                                                            return [4 /*yield*/, buttonListUpdate()];
+                                                                                        case 2:
+                                                                                            _a.sent();
+                                                                                            _a.label = 3;
+                                                                                        case 3: return [2 /*return*/];
+                                                                                    }
+                                                                                });
+                                                                            }); },
+                                                                            _g)
+                                                                    ])]))];
+                                                        }
+                                                    });
+                                                }); };
+                                                return [4 /*yield*/, buttonListUpdate()];
+                                            case 1:
+                                                _a.sent();
+                                                ui = Render.popup({
+                                                    // className: "add-remove-tags-popup",
+                                                    children: [
+                                                        Render.$tag("h2")("")(locale.map("Auto tag setting") + ": " + entry.task),
+                                                        buttonList,
+                                                        Render.$div("popup-operator")([{
+                                                                tag: "button",
+                                                                className: "default-button",
+                                                                children: Render.label("Close"),
+                                                                onclick: function () {
+                                                                    ui.close();
+                                                                },
+                                                            }]),
+                                                    ],
+                                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        return __generator(this, function (_a) {
+                                                            resolve(result);
+                                                            return [2 /*return*/];
+                                                        });
+                                                    }); },
+                                                });
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); })];
                             case 1: return [2 /*return*/, _a.sent()];
                         }
                     });
@@ -10073,34 +10301,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     //             updateWindow("operate");
                     //         }
                     //     ),
-                    Render.menuItem(Render.label("Flash setting"), function () { return __awaiter(_this, void 0, void 0, function () {
+                    Render.menuItem(Render.label("Auto tag setting"), function () { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
                             switch (_a.label) {
-                                case 0: return [4 /*yield*/, Render.todoFlashSettingsPopup(pass, item)];
-                                case 1:
-                                    if (_a.sent()) {
-                                        Render.updateWindow("timer");
-                                    }
-                                    return [2 /*return*/];
-                            }
-                        });
-                    }); }),
-                    Render.menuItem(Render.label("Pickup setting"), function () { return __awaiter(_this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, Render.todoPickupSettingsPopup(pass, item)];
-                                case 1:
-                                    if (_a.sent()) {
-                                        Render.updateWindow("timer");
-                                    }
-                                    return [2 /*return*/];
-                            }
-                        });
-                    }); }),
-                    Render.menuItem(Render.label("Restriction setting"), function () { return __awaiter(_this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, Render.todoRestrictionSettingsPopup(pass, item)];
+                                case 0: return [4 /*yield*/, Render.autoTagSettingsPopup(pass, item)];
                                 case 1:
                                     if (_a.sent()) {
                                         Render.updateWindow("timer");
@@ -13694,7 +13898,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Mar 21 2023 21:32:40 GMT+0900 (日本標準時)', buildTimestampTick: 1679401960481, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Mar 22 2023 21:58:22 GMT+0900 (日本標準時)', buildTimestampTick: 1679489902105, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

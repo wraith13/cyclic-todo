@@ -3675,32 +3675,10 @@ export module CyclicToDo
             //     ),
             menuItem
             (
-                label("Flash setting"),
+                label("Auto tag setting"),
                 async () =>
                 {
-                    if (await todoFlashSettingsPopup(pass, item))
-                    {
-                        updateWindow("timer");
-                    }
-                }
-            ),
-            menuItem
-            (
-                label("Pickup setting"),
-                async () =>
-                {
-                    if (await todoPickupSettingsPopup(pass, item))
-                    {
-                        updateWindow("timer");
-                    }
-                }
-            ),
-            menuItem
-            (
-                label("Restriction setting"),
-                async () =>
-                {
-                    if (await todoRestrictionSettingsPopup(pass, item))
+                    if (await autoTagSettingsPopup(pass, item))
                     {
                         updateWindow("timer");
                     }
