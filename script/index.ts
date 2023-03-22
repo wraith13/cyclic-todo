@@ -3178,10 +3178,10 @@ export module CyclicToDo
             async resolve =>
             {
                 let result = false;
-                const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
-                const tagButtonListUpdate = async () => minamo.dom.replaceChildren
+                const buttonList = $make(HTMLDivElement)({ className: "check-button-list" });
+                const buttonListUpdate = async () => minamo.dom.replaceChildren
                 (
-                    tagButtonList,
+                    buttonList,
                     await Promise.all
                     (
                         (
@@ -3222,7 +3222,7 @@ export module CyclicToDo
                                         {
                                             setter({ type: "elapsed-time", elapsedTime, });
                                             result = true;
-                                            await tagButtonListUpdate();
+                                            await buttonListUpdate();
                                         }
                                     }
                                     else
@@ -3238,28 +3238,28 @@ export module CyclicToDo
                                         {
                                             setter({ type: "elapsed-time-standard-score", elapsedTimeStandardScore, });
                                             result = true;
-                                            await tagButtonListUpdate();
+                                            await buttonListUpdate();
                                         }
                                     }
                                     else
                                     {
                                         setter(i);
                                         result = true;
-                                        await tagButtonListUpdate();
+                                        await buttonListUpdate();
                                     }
                                 }
                             }),
                         )
                     )
                 );
-                await tagButtonListUpdate();
+                await buttonListUpdate();
                 const ui = popup
                 ({
                     // className: "add-remove-tags-popup",
                     children:
                     [
                         $tag("h2")("")(`${locale.map(title)}: ${entry.task}`),
-                        tagButtonList,
+                        buttonList,
                         $div("popup-operator")
                         ([{
                             tag: "button",
@@ -3315,6 +3315,95 @@ export module CyclicToDo
                 },
                 () => settings.restriction
             );
+        export const autoTagSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
+        (
+            async resolve =>
+            {
+                let result = false;
+                const buttonList = $make(HTMLDivElement)({ className: "label-button-list" });
+                const buttonListUpdate = async () => minamo.dom.replaceChildren
+                (
+                    buttonList,
+                    [
+                        {
+                            tag: "button",
+                            className: "label-button",
+                            children:
+                            [
+                                await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
+                                monospace("auto-tag-flash", label("@flash"), getAutoTagSettingText(settings.flash))
+                            ],
+                            onclick: async () =>
+                            {
+                                if (await todoFlashSettingsPopup(pass, entry, settings))
+                                {
+                                    result = true;
+                                    await buttonListUpdate();
+                                }
+                            }
+                        },
+                        {
+                            tag: "button",
+                            className: "label-button",
+                            children:
+                            [
+                                await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
+                                monospace("auto-tag-flash", label("@pickup"), getAutoTagSettingText(settings.pickup)),
+                            ],
+                            onclick: async () =>
+                            {
+                                if (await todoPickupSettingsPopup(pass, entry, settings))
+                                {
+                                    result = true;
+                                    await buttonListUpdate();
+                                }
+                            }
+                        },
+                        {
+                            tag: "button",
+                            className: "label-button",
+                            children:
+                            [
+                                await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
+                                monospace("auto-tag-flash", label("@restriction"), getAutoTagSettingText(settings.restriction)),
+                            ],
+                            onclick: async () =>
+                            {
+                                if (await todoRestrictionSettingsPopup(pass, entry, settings))
+                                {
+                                    result = true;
+                                    await buttonListUpdate();
+                                }
+                            }
+                        },
+                    ]
+                );
+                await buttonListUpdate();
+                const ui = popup
+                ({
+                    // className: "add-remove-tags-popup",
+                    children:
+                    [
+                        $tag("h2")("")(`${locale.map("Auto tag setting")}: ${entry.task}`),
+                        buttonList,
+                        $div("popup-operator")
+                        ([{
+                            tag: "button",
+                            className: "default-button",
+                            children: label("Close"),
+                            onclick: () =>
+                            {
+                                ui.close();
+                            },
+                        }]),
+                    ],
+                    onClose: async () =>
+                    {
+                        resolve(result);
+                    },
+                });
+            }
+        );
         export const screenCover = (data: { parent?: HTMLElement | null, children?: minamo.dom.Source, onclick: () => unknown, }) =>
         {
             const dom = $make(HTMLDivElement)

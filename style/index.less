@@ -920,6 +920,57 @@ button
         visibility: hidden;
     }
 }
+.label-button
+{
+    display: flex;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    flex-direction: row;
+    position: relative;
+    margin: 0px;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0px;
+    border-style: none;
+    border-width: 0px;
+    svg
+    {
+        width: 1.5em;
+        height: 1.5em;
+        margin-right: 4px;
+        flex-grow: 0;
+    }
+    & > *:not(svg)
+    {
+        flex-grow: 1;
+        display: flex;
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row;
+        & > .label
+        {
+            text-align: left;
+            padding: 4px;
+            margin-right: -50%;
+            &::after
+            {
+                content: ":";
+            }
+        }
+        & > .value
+        {
+            text-align: right;
+            padding: 4px;
+            // font-size: 1.0rem;
+            // opacity: 0.4;
+            float: right;
+        }
+    }
+}
 .popup
 {
     border-style: solid;
@@ -1003,7 +1054,8 @@ button
         opacity: 0.0;
     }
 }
-.check-button-list
+.check-button-list,
+.label-button-list
 {
     display: flex;
     position: relative;
