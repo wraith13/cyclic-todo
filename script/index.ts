@@ -3869,7 +3869,7 @@ export module CyclicToDo
                                             onclick: async (event: MouseEvent) =>
                                             {
                                                 event.preventDefault();
-                                                if (await todoFlashSettingsPopup(entry.pass, item))
+                                                if (await autoTagSettingsPopup(entry.pass, item))
                                                 {
                                                     updateWindow("timer");
                                                 }
@@ -3884,7 +3884,7 @@ export module CyclicToDo
                                             onclick: async (event: MouseEvent) =>
                                             {
                                                 event.preventDefault();
-                                                if (await todoPickupSettingsPopup(entry.pass, item))
+                                                if (await autoTagSettingsPopup(entry.pass, item))
                                                 {
                                                     updateWindow("timer");
                                                 }
@@ -3899,7 +3899,24 @@ export module CyclicToDo
                                             onclick: async (event: MouseEvent) =>
                                             {
                                                 event.preventDefault();
-                                                if (await todoRestrictionSettingsPopup(entry.pass, item))
+                                                if (await autoTagSettingsPopup(entry.pass, item))
+                                                {
+                                                    updateWindow("timer");
+                                                }
+                                            }
+                                        }):
+                                        [],
+                                    null === (OldStorage.TodoSettings.get(entry.pass, item.task).flash ?? null) &&
+                                    null === (OldStorage.TodoSettings.get(entry.pass, item.task).pickup ?? null) &&
+                                    null === (OldStorage.TodoSettings.get(entry.pass, item.task).restriction ?? null) ?
+                                        linkButton
+                                        ({
+                                            className: "tag",
+                                            children: await Resource.loadSvgOrCache("ellipsis-icon"),
+                                            onclick: async (event: MouseEvent) =>
+                                            {
+                                                event.preventDefault();
+                                                if (await autoTagSettingsPopup(entry.pass, item))
                                                 {
                                                     updateWindow("timer");
                                                 }
@@ -5426,7 +5443,7 @@ export module CyclicToDo
                                     onclick: async (event: MouseEvent) =>
                                     {
                                         event.preventDefault();
-                                        if (await todoFlashSettingsPopup(pass, item))
+                                        if (await autoTagSettingsPopup(pass, item))
                                         {
                                             updateWindow("timer");
                                         }
@@ -5441,7 +5458,7 @@ export module CyclicToDo
                                     onclick: async (event: MouseEvent) =>
                                     {
                                         event.preventDefault();
-                                        if (await todoPickupSettingsPopup(pass, item))
+                                        if (await autoTagSettingsPopup(pass, item))
                                         {
                                             updateWindow("timer");
                                         }
@@ -5456,7 +5473,24 @@ export module CyclicToDo
                                     onclick: async (event: MouseEvent) =>
                                     {
                                         event.preventDefault();
-                                        if (await todoRestrictionSettingsPopup(pass, item))
+                                        if (await autoTagSettingsPopup(pass, item))
+                                        {
+                                            updateWindow("timer");
+                                        }
+                                    }
+                                }):
+                                [],
+                            null === (OldStorage.TodoSettings.get(pass, item.task).flash ?? null) &&
+                            null === (OldStorage.TodoSettings.get(pass, item.task).pickup ?? null) &&
+                            null === (OldStorage.TodoSettings.get(pass, item.task).restriction ?? null) ?
+                                linkButton
+                                ({
+                                    className: "tag",
+                                    children: await Resource.loadSvgOrCache("ellipsis-icon"),
+                                    onclick: async (event: MouseEvent) =>
+                                    {
+                                        event.preventDefault();
+                                        if (await autoTagSettingsPopup(pass, item))
                                         {
                                             updateWindow("timer");
                                         }
