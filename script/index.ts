@@ -842,6 +842,11 @@ export module CyclicToDo
                 }
                 return false;
             };
+            export const hasAutoTagSettings = (pass: string, task: string) =>
+            {
+                const settings = get(pass, task);
+                return null !== (settings?.flash ?? null) || null !== (settings?.pickup ?? null) || null !== (settings?.restriction ?? null);
+            };
         }
         export module History
         {
@@ -3906,9 +3911,7 @@ export module CyclicToDo
                                             }
                                         }):
                                         [],
-                                    null === (OldStorage.TodoSettings.get(entry.pass, item.task).flash ?? null) &&
-                                    null === (OldStorage.TodoSettings.get(entry.pass, item.task).pickup ?? null) &&
-                                    null === (OldStorage.TodoSettings.get(entry.pass, item.task).restriction ?? null) ?
+                                    ! OldStorage.TodoSettings.hasAutoTagSettings(entry.pass, item.task) ?
                                         linkButton
                                         ({
                                             className: "tag",
@@ -5480,9 +5483,7 @@ export module CyclicToDo
                                     }
                                 }):
                                 [],
-                            null === (OldStorage.TodoSettings.get(pass, item.task).flash ?? null) &&
-                            null === (OldStorage.TodoSettings.get(pass, item.task).pickup ?? null) &&
-                            null === (OldStorage.TodoSettings.get(pass, item.task).restriction ?? null) ?
+                            ! OldStorage.TodoSettings.hasAutoTagSettings(pass, item.task) ?
                                 linkButton
                                 ({
                                     className: "tag",
