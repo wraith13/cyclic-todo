@@ -3915,7 +3915,7 @@ export module CyclicToDo
                                         linkButton
                                         ({
                                             className: "tag",
-                                            children: await Resource.loadSvgOrCache("ellipsis-icon"),
+                                            children: await Resource.loadSvgOrCache("setting-icon"),
                                             onclick: async (event: MouseEvent) =>
                                             {
                                                 event.preventDefault();
@@ -5487,7 +5487,7 @@ export module CyclicToDo
                                 linkButton
                                 ({
                                     className: "tag",
-                                    children: await Resource.loadSvgOrCache("ellipsis-icon"),
+                                    children: await Resource.loadSvgOrCache("setting-icon"),
                                     onclick: async (event: MouseEvent) =>
                                     {
                                         event.preventDefault();

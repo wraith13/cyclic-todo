@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Thu Mar 23 2023 20:14:56 GMT+0900 (日本標準時)
+    build at: Fri Mar 24 2023 10:30:45 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -6539,7 +6539,8 @@ define("resource/images", [], {
     "cross-icon": "./image/cross.1024.svg",
     "forbidden-icon": "./image/forbidden.1024.svg",
     "import-icon": "./image/import.1024.svg",
-    "export-icon": "./image/export.1024.svg"
+    "export-icon": "./image/export.1024.svg",
+    "setting-icon": "./image/cog.1024.svg"
 });
 define("script/index", ["require", "exports", "nephila/minamo.js/index", "resource/config", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, config_json_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
@@ -10609,7 +10610,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _2 = {
                                 className: "tag"
                             };
-                            return [4 /*yield*/, Resource.loadSvgOrCache("ellipsis-icon")];
+                            return [4 /*yield*/, Resource.loadSvgOrCache("setting-icon")];
                         case 13:
                             _w = _x.apply(void 0, [(_2.children = _6.sent(),
                                     _2.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
@@ -12641,7 +12642,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 _w = {
                                     className: "tag"
                                 };
-                                return [4 /*yield*/, Resource.loadSvgOrCache("ellipsis-icon")];
+                                return [4 /*yield*/, Resource.loadSvgOrCache("setting-icon")];
                             case 11:
                                 _q = _r.apply(void 0, [(_w.children = _0.sent(),
                                         _w.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
@@ -13965,7 +13966,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Mar 23 2023 20:14:56 GMT+0900 (日本標準時)', buildTimestampTick: 1679570096453, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Mar 24 2023 10:30:45 GMT+0900 (日本標準時)', buildTimestampTick: 1679621445861, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
@@ -14058,6 +14059,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </svg>
 </div><div id="export-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M112,576L176,576L176,768C176,785.661 190.339,800 208,800L208.207,800.001C225.773,800.112 240,814.408 240,832C240,849.661 225.661,864 208,864L207.69,864C154.844,863.828 112,820.878 112,768L112,576ZM848,768L848,576L912,576L912,768L912,768.31C911.828,821.05 869.05,863.829 816.31,864L816,864C798.339,864 784,849.661 784,832C784,814.339 798.339,800 816,800L816.207,799.999C833.773,799.888 848,785.592 848,768ZM489.26,249.495C495.061,243.634 503.109,240 512,240C520.891,240 528.939,243.634 534.74,249.495L534.745,249.49L670.51,385.255L670.505,385.26C676.366,391.061 680,399.109 680,408C680,425.661 665.661,440 648,440C639.109,440 631.061,436.366 625.26,430.505L625.255,430.51L544,349.255L544,752C544,769.661 529.661,784 512,784C494.339,784 480,769.661 480,752L480,349.255L398.745,430.51L398.74,430.505C392.939,436.366 384.891,440 376,440C358.339,440 344,425.661 344,408C344,399.109 347.634,391.061 353.495,385.26L353.49,385.255L489.255,249.49L489.26,249.495ZM208,160C225.661,160 240,174.339 240,192C240,209.661 225.661,224 208,224C190.339,224 176,238.339 176,256L176,448L176,448.31C175.92,472.767 166.678,495.082 151.53,512C166.743,528.987 176,551.421 176,576L112,576C112,558.339 97.661,544 80,544L79.793,543.999C62.227,543.888 48,529.592 48,512C48,494.339 62.339,480 80,480C97.661,480 112,465.661 112,448L112,256L112,255.69C112.172,202.844 155.122,160 208,160ZM816,160C868.984,160 912,203.016 912,256L912,448C912,465.661 926.339,480 944,480C961.661,480 976,494.339 976,512C976,529.592 961.773,543.888 944.207,543.999L944,544C926.339,544 912,558.339 912,576L848,576C848,551.421 857.257,528.987 872.47,512C857.257,495.013 848,472.579 848,448L848,256C848,238.339 833.661,224 816,224C798.339,224 784,209.661 784,192C784,174.339 798.339,160 816,160Z"/>
+</svg>
+</div><div id="setting-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M579.681,101.543C534.863,94.152 489.137,94.152 444.319,101.543L422.868,255.329C390.367,266.615 360.306,283.97 334.282,306.473L190.374,248.158C161.565,283.276 138.702,322.876 122.693,365.385L245.15,460.855C238.674,494.644 238.674,529.356 245.15,563.145L122.693,658.615C138.702,701.124 161.565,740.724 190.374,775.842L334.282,717.527C360.306,740.03 390.367,757.385 422.868,768.671L444.319,922.457C489.137,929.848 534.863,929.848 579.681,922.457L601.132,768.671C633.633,757.385 663.694,740.03 689.718,717.527L833.626,775.842C862.435,740.724 885.298,701.124 901.307,658.615L778.85,563.145C785.326,529.356 785.326,494.644 778.85,460.855L901.307,365.385C885.298,322.876 862.435,283.276 833.626,248.158L689.718,306.473C663.694,283.97 633.633,266.615 601.132,255.329L579.681,101.543ZM512,350.491C601.139,350.491 673.509,422.861 673.509,512C673.509,601.139 601.139,673.509 512,673.509C422.861,673.509 350.491,601.139 350.491,512C350.491,422.861 422.861,350.491 512,350.491Z"/>
 </svg>
 </div></div>
 </body>

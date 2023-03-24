@@ -28,5 +28,6 @@
     "cross-icon": "./image/cross.1024.svg",
     "forbidden-icon": "./image/forbidden.1024.svg",
     "import-icon": "./image/import.1024.svg",
-    "export-icon": "./image/export.1024.svg"
+    "export-icon": "./image/export.1024.svg",
+    "setting-icon": "./image/cog.1024.svg"
 }
