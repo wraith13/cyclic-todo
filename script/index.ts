@@ -3146,9 +3146,9 @@ export module CyclicToDo
                 break;
             }
         };
-        export const getAutoTagSettingText = (setting: AutoTagSetting | undefined) =>
+        export const getAutoTagSettingText = (setting: AutoTagSetting | undefined, option: "compact" | "full"): minamo.dom.Source =>
         {
-            if (undefined === setting)
+            if (undefined === setting || null === setting)
             {
                 return label("pickup.none");
             }
@@ -3157,22 +3157,28 @@ export module CyclicToDo
             case "always":
                 return label("pickup.always");
             case "elapsed-time":
-                if (isValidNumber(setting.elapsedTime))
                 {
-                    return [label("pickup.elapsed-time"), ": ", Domain.timeLongStringFromTick(setting.elapsedTime)];
-                }
-                else
-                {
-                    return [label("pickup.elapsed-time"), ": ", label("pickup.specify")];
+                    const format = (value: minamo.dom.Source) => "compact" === option ? value: [label("pickup.elapsed-time"), ": ", value];
+                    if (isValidNumber(setting.elapsedTime))
+                    {
+                        return format(Domain.timeLongStringFromTick(setting.elapsedTime));
+                    }
+                    else
+                    {
+                        return format(label("pickup.specify"));
+                    }
                 }
             case "elapsed-time-standard-score":
-                if (isValidNumber(setting.elapsedTimeStandardScore))
                 {
-                    return [label("pickup.elapsed-time-standard-score"), ": ", `${setting.elapsedTimeStandardScore}`];
-                }
-                else
-                {
-                    return [label("pickup.elapsed-time-standard-score"), ": ", label("pickup.specify")];
+                    const format = (value: minamo.dom.Source) => "compact" === option ? value: [label("pickup.elapsed-time-standard-score"), ": ", value];
+                    if (isValidNumber(setting.elapsedTimeStandardScore))
+                    {
+                        return format(`${setting.elapsedTimeStandardScore}`);
+                    }
+                    else
+                    {
+                        return format(label("pickup.specify"));
+                    }
                 }
             case "expired":
                 return label("pickup.expired");
@@ -3212,7 +3218,7 @@ export module CyclicToDo
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    $span("")(getAutoTagSettingText(i)),
+                                    $span("")(getAutoTagSettingText(i, "full")),
                                 ],
                                 onclick: async () =>
                                 {
@@ -3336,7 +3342,7 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
-                                monospace("auto-tag-flash", label("@flash"), getAutoTagSettingText(settings.flash))
+                                monospace("auto-tag-flash", label("@flash"), getAutoTagSettingText(settings.flash, "compact"))
                             ],
                             onclick: async () =>
                             {
@@ -3353,7 +3359,7 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
-                                monospace("auto-tag-flash", label("@pickup"), getAutoTagSettingText(settings.pickup)),
+                                monospace("auto-tag-flash", label("@pickup"), getAutoTagSettingText(settings.pickup, "compact")),
                             ],
                             onclick: async () =>
                             {
@@ -3370,7 +3376,7 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
-                                monospace("auto-tag-flash", label("@restriction"), getAutoTagSettingText(settings.restriction)),
+                                monospace("auto-tag-flash", label("@restriction"), getAutoTagSettingText(settings.restriction, "compact")),
                             ],
                             onclick: async () =>
                             {
