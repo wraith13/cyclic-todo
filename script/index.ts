@@ -4001,68 +4001,18 @@ export module CyclicToDo
             const yearUnit = 365.2425 *dayUnit;
             if ("number" === typeof max)
             {
-                if (max < 10)
+                const preset =
+                [
+                    1, 5, 10, 30,
+                    ...[1, 3, 6, 12].map(i => i *hourUnit),
+                    ...[1, 7, 30].map(i => i *dayUnit),
+                    ...[0.25, 1, 10].map(i => i *yearUnit),
+                ];
+                preset.reverse();
+                const first = preset.filter(i => 3 <= max /i)[0];
+                if ("number" === typeof first)
                 {
-                    return 1 /max;
-                }
-                else
-                if (max < 30)
-                {
-                    return 5 /max;
-                }
-                else
-                if (max < hourUnit)
-                {
-                    return 10 /max;
-                }
-                else
-                if (max < 3 *hourUnit)
-                {
-                    return 30 /max;
-                }
-                else
-                if (max < 6 *hourUnit)
-                {
-                    return hourUnit /max;
-                }
-                else
-                if (max < 12 *hourUnit)
-                {
-                    return (3 *hourUnit) /max;
-                }
-                else
-                if (max < dayUnit)
-                {
-                    return (6 *60) /max;
-                }
-                else
-                if (max < 3 *dayUnit)
-                {
-                    return (12 *60) /max;
-                }
-                else
-                if (max < 7 *dayUnit)
-                {
-                    return dayUnit /max;
-                }
-                else
-                if (max < 2 *30 *dayUnit)
-                {
-                    return (7 *dayUnit) /max;
-                }
-                else
-                if (max < 6 *30 *dayUnit)
-                {
-                    return (30 *dayUnit) /max;
-                }
-                else
-                if (max < yearUnit)
-                {
-                    return (yearUnit /4) /max;
-                }
-                else
-                {
-                    return yearUnit /max;
+                    return first /max;
                 }
             }
             return null;
