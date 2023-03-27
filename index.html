@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sat Mar 25 2023 10:15:29 GMT+0900 (日本標準時)
+    build at: Tue Mar 28 2023 05:46:56 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -5292,6 +5292,18 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
         var core;
         (function (core_1) {
             var _this = this;
+            function undefinedable(target, defaultResult) {
+                return function (parameter) { return undefined === parameter ? defaultResult : target(parameter); };
+            }
+            core_1.undefinedable = undefinedable;
+            function nullable(target, defaultResult) {
+                return function (parameter) { return null === parameter ? (defaultResult !== null && defaultResult !== void 0 ? defaultResult : null) : target(parameter); };
+            }
+            core_1.nullable = nullable;
+            function nonexistentable(target, defaultResult) {
+                return function (parameter) { return undefined === parameter || null === parameter ? defaultResult : target(parameter); };
+            }
+            core_1.nonexistentable = nonexistentable;
             core_1.jsonStringify = function (source, replacer, space) { return JSON.stringify(source, replacer, space); };
             core_1.extender = function () { return function (x) { return x; }; }; // TypeScript 4.8 以降では satisfies の使用を推奨
             core_1.timeout = function (wait) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
@@ -5702,6 +5714,81 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                 };
                 comparer.lowerCase = comparer.make([function (a) { return a.toLowerCase(); }, { raw: comparer.basic }]);
             })(comparer = core_1.comparer || (core_1.comparer = {}));
+            core_1.parseTimespan = function (timespan) {
+                try {
+                    switch (typeof timespan) {
+                        case "number":
+                            return timespan;
+                        case "string":
+                            if (timespan.endsWith("ms")) {
+                                return parseFloat(timespan.substring(0, timespan.length - 2).trim());
+                            }
+                            else if (timespan.endsWith("s")) {
+                                return parseFloat(timespan.substring(0, timespan.length - 1).trim()) * 1000;
+                            }
+                            else if (timespan.endsWith("m")) {
+                                return parseFloat(timespan.substring(0, timespan.length - 1).trim()) * 60 * 1000;
+                            }
+                            else if (timespan.endsWith("h")) {
+                                return parseFloat(timespan.substring(0, timespan.length - 1).trim()) * 60 * 60 * 1000;
+                            }
+                            else if (timespan.endsWith("d")) {
+                                return parseFloat(timespan.substring(0, timespan.length - 1).trim()) * 24 * 60 * 60 * 1000;
+                            }
+                            else if (timespan.endsWith("y")) {
+                                return parseFloat(timespan.substring(0, timespan.length - 1).trim()) * 365.2425 * 24 * 60 * 60 * 1000;
+                            }
+                            else {
+                                return parseInt(timespan.trim());
+                            }
+                    }
+                }
+                catch (err) {
+                    console.error(err);
+                }
+                return null;
+            };
+            core_1.timespanToString = function (value) {
+                if (value < 0) {
+                    return "-" + core_1.timespanToString(-value);
+                }
+                else {
+                    var units = [
+                        {
+                            label: "y",
+                            size: 365.2425 * 24 * 60 * 60 * 1000
+                        },
+                        {
+                            label: "d",
+                            size: 24 * 60 * 60 * 1000
+                        },
+                        {
+                            label: "h",
+                            size: 60 * 60 * 1000
+                        },
+                        {
+                            label: "m",
+                            size: 60 * 1000
+                        },
+                        {
+                            label: "s",
+                            size: 1000
+                        },
+                        {
+                            label: "ms",
+                            size: 1
+                        }
+                    ];
+                    var i = 0;
+                    do {
+                        var unit = units[i];
+                        if (unit.size <= value) {
+                            return "" + value / unit.size + unit.label;
+                        }
+                    } while (++i < units.length);
+                    return value + "ms";
+                }
+            };
         })(core = minamo.core || (minamo.core = {}));
         var environment;
         (function (environment) {
@@ -6286,8 +6373,10 @@ define("resource/config", [], {
     "maxShortTermMinutes": 4320,
     "maxMediumTermMinutes": 21600,
     "timespanPreset": [
-        270, 1260, 540, 4320, 43200, 7200, 180, 720, 1080, 30240, 64800, 5760, 10080,
-        360, 120, 1440, 20160, 259200, 345600, 2880, 900, 2160, 3600, 14400, 86400
+        "4.5h", "21h", "9h", "3d", "30d", "5d", "3h", "12h",
+        "18h", "21d", "45d", "4d", "7d", "6h", "2h", "1d",
+        "14d", "180d", "240d", "2d", "15h", "1.5d", "2.5d", "10d",
+        "60d"
     ],
     "timespanPresetMaxCount": 12,
     "timespanStandardScorePreset": [50, 40, 60, 30, 70],
@@ -6545,7 +6634,7 @@ define("resource/images", [], {
 define("script/index", ["require", "exports", "nephila/minamo.js/index", "resource/config", "resource/lang.en", "resource/lang.ja"], function (require, exports, minamo_js_1, config_json_1, lang_en_json_1, lang_ja_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.CyclicToDo = exports.Calculate = exports.locale = exports.isValidNumber = exports.toPercentSting = exports.takeFilter = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.makeObject = void 0;
+    exports.CyclicToDo = exports.Calculate = exports.locale = exports.isValidNumber = exports.isNumber = exports.toPercentSting = exports.takeFilter = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.makeObject = void 0;
     config_json_1 = __importDefault(config_json_1);
     lang_en_json_1 = __importDefault(lang_en_json_1);
     lang_ja_json_1 = __importDefault(lang_ja_json_1);
@@ -6564,7 +6653,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
     exports.takeFilter = takeFilter;
     var toPercentSting = function (value) { return value.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 }); };
     exports.toPercentSting = toPercentSting;
-    var isValidNumber = function (value) { return "number" === typeof value && !isNaN(value); };
+    var isNumber = function (value) { return "number" === typeof value; };
+    exports.isNumber = isNumber;
+    var isValidNumber = function (value) { return exports.isNumber(value) && !isNaN(value); };
     exports.isValidNumber = isValidNumber;
     var locale;
     (function (locale_1) {
@@ -9662,7 +9753,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     list.push(current.elapsedTime);
                 }
                 list.push.apply(list, Storage.Timespan.get());
-                list.push.apply(list, config_json_1.default.timespanPreset);
+                list.push.apply(list, config_json_1.default.timespanPreset.map(function (i) { return minamo_js_1.minamo.core.parseTimespan(i); }).filter(exports.isNumber).map(function (i) { return i / Domain.timeAccuracy; }));
                 return list.filter(exports.uniqueFilter).filter(exports.takeFilter(config_json_1.default.timespanPresetMaxCount)).sort(minamo_js_1.minamo.core.comparer.basic);
             };
             Render.getTodoPickupSettingsElapsedTimeStandardScorePreset = function (_entry, current) {
@@ -13941,7 +14032,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Mar 25 2023 10:15:29 GMT+0900 (日本標準時)', buildTimestampTick: 1679706929543, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Mar 28 2023 05:46:56 GMT+0900 (日本標準時)', buildTimestampTick: 1679950016647, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

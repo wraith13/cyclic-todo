@@ -3120,7 +3120,7 @@ export module CyclicToDo
                 list.push(current.elapsedTime);
             }
             list.push(...Storage.Timespan.get());
-            list.push(...config.timespanPreset);
+            list.push(...config.timespanPreset.map(i => minamo.core.parseTimespan(i)).filter(isNumber).map(i => i / Domain.timeAccuracy));
             return list.filter(uniqueFilter).filter(takeFilter(config.timespanPresetMaxCount)).sort(minamo.core.comparer.basic);
         };
         export const getTodoPickupSettingsElapsedTimeStandardScorePreset = (_entry: ToDoEntry, current: AutoTagSetting | undefined) =>
