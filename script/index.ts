@@ -14,7 +14,8 @@ export const simpleReverseComparer = <T>(a: T, b: T) => -simpleComparer(a, b);
 export const uniqueFilter = <T>(value: T, index: number, list: T[]) => index === list.indexOf(value);
 export const takeFilter = (max: number) => <T>(_value: T, index: number) => index < max;
 export const toPercentSting = (value: number) => value.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 });
-export const isValidNumber = (value: unknown) => "number" === typeof value && ! isNaN(value);
+export const isNumber = (value: unknown): value is number => "number" === typeof value;
+export const isValidNumber = (value: unknown) => isNumber(value) && ! isNaN(value);
 export module locale
 {
     export const master =
@@ -1543,7 +1544,7 @@ export module CyclicToDo
         //     // );
         //     // todo.forEach(task => Storage.History.add(pass, task, temp[task]));
         // };
-        export const timeAccuracy = config.timeAccuracy;
+        export const timeAccuracy = minamo.core.parseTimespan(config.timeAccuracy) ?? 60000;
         export const standardDeviationRate = config.standardDeviationRate;
         export const granceTime = (config.granceMinutes *60 *1000) / timeAccuracy;
         export const maxRestAdjustTime = (config.maxRestAdjustMinutes *60 *1000) / timeAccuracy;

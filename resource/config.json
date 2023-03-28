@@ -2,7 +2,7 @@
     "applicationTitle": "Cyclic ToDo",
     "localDbPrefix": "cyclic-todo",
     "repositoryUrl": "https://github.com/wraith13/cyclic-todo/",
-    "timeAccuracy": 60000,
+    "timeAccuracy": "1m",
     "standardDeviationRate": 1.5,
     "sleepStandardDeviationRate": 3.0,
     "granceMinutes": 1440,
