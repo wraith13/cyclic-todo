@@ -5,7 +5,7 @@
     "timeAccuracy": "1m",
     "standardDeviationRate": 1.5,
     "sleepStandardDeviationRate": 3.0,
-    "granceMinutes": 1440,
+    "granceTimespan": "1d",
     "maxHistories": 100,
     "maxRestAdjustMinutes": 180,
     "maxShortTermMinutes": 4320,
