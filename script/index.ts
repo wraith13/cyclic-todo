@@ -1547,7 +1547,7 @@ export module CyclicToDo
         export const timeAccuracy = minamo.core.parseTimespan(config.timeAccuracy) ?? 60000;
         export const standardDeviationRate = config.standardDeviationRate;
         export const granceTime = (minamo.core.parseTimespan(config.granceTimespan) ?? (24 *60 *60 *1000)) / timeAccuracy;
-        export const maxRestAdjustTime = (config.maxRestAdjustMinutes *60 *1000) / timeAccuracy;
+        export const maxRestAdjustTime = (minamo.core.parseTimespan(config.maxRestAdjustTimespan) ?? (3 *60 *60 *1000)) / timeAccuracy;
         export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / timeAccuracy);
         export const dateCoreStringFromTick = (tick: null | number) =>
         {
