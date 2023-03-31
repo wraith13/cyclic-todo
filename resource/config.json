@@ -8,8 +8,8 @@
     "granceTimespan": "1d",
     "maxHistories": 100,
     "maxRestAdjustTimespan": "3h",
-    "maxShortTermMinutes": 4320,
-    "maxMediumTermMinutes": 21600,
+    "maxShortTermTimespan": "3d",
+    "maxMediumTermTimespan": "15d",
     "timespanPreset": [
         "4.5h", "21h", "9h", "3d", "30d", "5d", "3h", "12h",
         "18h", "21d", "45d", "4d", "7d", "6h", "2h", "1d",

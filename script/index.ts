@@ -1544,10 +1544,16 @@ export module CyclicToDo
         //     // );
         //     // todo.forEach(task => Storage.History.add(pass, task, temp[task]));
         // };
-        export const timeAccuracy = minamo.core.parseTimespan(config.timeAccuracy) ?? 60000;
+        export const minuteUnit = 60 *1000;
+        export const hourUnit = 60 *minuteUnit;
+        export const dayUnit = 24 *hourUnit;
+        export const yearUnit = 365.2425 *dayUnit;
+        export const timeAccuracy = minamo.core.parseTimespan(config.timeAccuracy) ?? minuteUnit;
         export const standardDeviationRate = config.standardDeviationRate;
-        export const granceTime = (minamo.core.parseTimespan(config.granceTimespan) ?? (24 *60 *60 *1000)) / timeAccuracy;
-        export const maxRestAdjustTime = (minamo.core.parseTimespan(config.maxRestAdjustTimespan) ?? (3 *60 *60 *1000)) / timeAccuracy;
+        export const granceTime = (minamo.core.parseTimespan(config.granceTimespan) ?? dayUnit) / timeAccuracy;
+        export const maxRestAdjustTime = (minamo.core.parseTimespan(config.maxRestAdjustTimespan) ?? (3 *hourUnit)) / timeAccuracy;
+        export const maxShortTermMinutes = (minamo.core.parseTimespan(config.maxShortTermTimespan) ?? (6 *dayUnit)) / minuteUnit;
+        export const maxMediumTermMinutes = (minamo.core.parseTimespan(config.maxMediumTermTimespan) ?? (15 *dayUnit)) / minuteUnit;
         export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / timeAccuracy);
         export const dateCoreStringFromTick = (tick: null | number) =>
         {
@@ -1576,7 +1582,7 @@ export module CyclicToDo
                 return -getTime(tick);
             }
             else
-            if (tick *timeAccuracy < 24 *60 *60 *1000)
+            if (tick *timeAccuracy < dayUnit)
             {
                 return tick;
             }
@@ -1792,10 +1798,10 @@ export module CyclicToDo
         export const getTermCategoryByAverage = (item: ToDoEntry) =>
             null !== item.smartRest && null !== item.RecentlySmartAverage ?
                 (
-                    item.RecentlySmartAverage < config.maxShortTermMinutes ?
+                    item.RecentlySmartAverage < Domain.maxShortTermMinutes ?
                         "@short-term":
                         (
-                            item.RecentlySmartAverage < config.maxMediumTermMinutes ?
+                            item.RecentlySmartAverage < Domain.maxMediumTermMinutes ?
                                 "@medium-term":
                                 "@long-term"
                         )
@@ -2512,12 +2518,11 @@ export module CyclicToDo
         };
         export const dateTimeSpanPrompt = async (message: string, _default: number): Promise<number | null> =>
         {
-            const dayUnit = 24 *60 *60 *1000;
             const inputDate = $make(HTMLInputElement)
             ({
                 tag: "input",
                 type: "number",
-                value: Math.floor((_default *Domain.timeAccuracy) / dayUnit),
+                value: Math.floor((_default *Domain.timeAccuracy) / Domain.dayUnit),
                 min: "0",
                 max: "999",
                 step: "1",
@@ -2564,7 +2569,7 @@ export module CyclicToDo
                                         const time = Domain.parseTimeSpan(inputTime.value);
                                         if ( ! isNaN(day) && null !== time)
                                         {
-                                            result = ((day *dayUnit) /Domain.timeAccuracy) +time;
+                                            result = ((day *Domain.dayUnit) /Domain.timeAccuracy) +time;
                                         }
                                         else
                                         {
@@ -3997,18 +4002,16 @@ export module CyclicToDo
         ]);
         export const tickScale = (max: number | null): number | null =>
         {
-            const hourUnit = 60;
-            const dayUnit = 24 *hourUnit;
-            const yearUnit = 365.2425 *dayUnit;
             if ("number" === typeof max)
             {
                 const preset =
                 [
-                    1, 5, 10, 30,
-                    ...[1, 3, 6, 12].map(i => i *hourUnit),
-                    ...[1, 7, 30].map(i => i *dayUnit),
-                    ...[0.25, 1, 10].map(i => i *yearUnit),
-                ];
+                    ...[ 1, 5, 10, 30, ].map(i => i *Domain.minuteUnit),
+                    ...[ 1, 3, 6, 12, ].map(i => i *Domain.hourUnit),
+                    ...[ 1, 7, 30, ].map(i => i *Domain.dayUnit),
+                    ...[ 0.25, 1, 10, ].map(i => i *Domain.yearUnit),
+                ]
+                .map(i => i / Domain.timeAccuracy);
                 preset.reverse();
                 const first = preset.filter(i => 3 <= max /i)[0];
                 if ("number" === typeof first)
