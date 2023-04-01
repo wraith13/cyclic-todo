@@ -4730,6 +4730,8 @@ export module CyclicToDo
                 onkeyup: () => onchange(),
             });
             input.addEventListener('change', onchange);
+            input.addEventListener('cut', () => setTimeout(onchange, 0));
+            input.addEventListener('paste', () => setTimeout(onchange, 0));
             input.addEventListener('compositionupdate', onchange);
             input.addEventListener('compositionend', onchange);
             const dropdownlist = $make(HTMLDivElement)($div("dropdownlist")([]));
