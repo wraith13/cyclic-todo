@@ -5834,18 +5834,19 @@ export module CyclicToDo
                 label("Reload screen"),
                 async () =>
                 {
-                    minamo.dom.appendChildren
-                    (
-                        document.head,
-                        {
-                            tag: "meta",
-                            attributes:
-                            {
-                                "http-equiv": "refresh",
-                                "content": "0",
-                            }
-                        }
-                    );
+                    minamo.dom.setProperty("#meta-refresh", "content", "0");
+                    // minamo.dom.appendChildren
+                    // (
+                    //     document.head,
+                    //     {
+                    //         tag: "meta",
+                    //         attributes:
+                    //         {
+                    //             "http-equiv": "refresh",
+                    //             "content": "0",
+                    //         }
+                    //     }
+                    // );
                 }
             ),
             await fullscreenMenuItem(),
