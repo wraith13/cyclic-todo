@@ -4,8 +4,17 @@
     {
         "default":
         {
-            "template": { "path": "./index.template.html" },
-            "output": { "path": "./index.html" },
+            "files":
+            [
+                {
+                    "template": { "path": "./index.template.html" },
+                    "output": { "path": "./index.html" }
+                },
+                {
+                    "template": "__BUILD_TIMESTAMP_TICK__",
+                    "output": { "path": "./build.timestamp.json" }
+                }
+            ],
             "parameters":
             {
                 "__BUILD_MESSAGE__": "This file is genereted by build.js. このファイルは build.js によって生成されました。",
