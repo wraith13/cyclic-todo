@@ -5827,27 +5827,38 @@ export module CyclicToDo
                 ]),
             ]),
         ]);
+        export const reloadScreen = async () =>
+        {
+            try
+            {
+                await minamo.http.get(`./build.timestamp.json?dummy=${new Date().getTime()}`);
+                minamo.dom.setProperty("#meta-refresh", "content", "0");
+            }
+            catch(error)
+            {
+                const toast = makeToast
+                ({
+                    forwardOperator:{
+                        tag: "button",
+                        className: "text-button",
+                        children: $span("")(`リトライ`),
+                        onclick: async () =>
+                        {
+                            reloadScreen();
+                            await toast.hide();
+                        },
+                    },
+                    content: $span("")(`サーバーに正常アクセスできませんでした。`),
+                });
+                console.error(error);
+            }
+        };
         export const welcomeScreenMenu = async () =>
         [
             menuItem
             (
                 label("Reload screen"),
-                async () =>
-                {
-                    minamo.dom.setProperty("#meta-refresh", "content", "0");
-                    // minamo.dom.appendChildren
-                    // (
-                    //     document.head,
-                    //     {
-                    //         tag: "meta",
-                    //         attributes:
-                    //         {
-                    //             "http-equiv": "refresh",
-                    //             "content": "0",
-                    //         }
-                    //     }
-                    // );
-                }
+                reloadScreen
             ),
             await fullscreenMenuItem(),
             menuItem

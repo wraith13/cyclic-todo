@@ -9,6 +9,7 @@
             "dom",
             "scripthost"
         ],
+        // "strict": true,
         "noImplicitAny": true,
         "strictNullChecks": true,
         "noFallthroughCasesInSwitch": true,
