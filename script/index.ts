@@ -5831,8 +5831,26 @@ export module CyclicToDo
         {
             try
             {
+                let isCanceled = false;
+                const toast = makeToast
+                ({
+                    content: $span("")("サーバーと通信中..."),
+                    backwardOperator: cancelTextButton
+                    (
+                        async () =>
+                        {
+                            await toast.hide();
+                            isCanceled = true;
+                        }
+                    ),
+                    wait: 0,
+                });
                 await minamo.http.get(`./build.timestamp.json?dummy=${new Date().getTime()}`);
-                minamo.dom.setProperty("#meta-refresh", "content", "0");
+                if ( ! isCanceled)
+                {
+                    location.reload();
+                }
+                await toast.hide();
             }
             catch(error)
             {
