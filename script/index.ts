@@ -5845,7 +5845,7 @@ export module CyclicToDo
                     ),
                     wait: 0,
                 });
-                await minamo.http.get(`./build.timestamp.json?dummy=${new Date().getTime()}`);
+                await getLatestBuildTimestamp();
                 if ( ! isCanceled)
                 {
                     location.reload();
@@ -6468,8 +6468,25 @@ export module CyclicToDo
             i => document.body.classList.toggle(i, i === theme)
         );
     };
+    export const getLatestBuildTimestamp = async (): Promise<number> =>
+        JSON.parse(await minamo.http.get(`./build.timestamp.json?dummy=${new Date().getTime()}`));
+    let currentBuildTimestamp: number;
+    export const isNewVersionReady = async (): Promise<boolean> =>
+    {
+        try
+        {
+            const buildTimestamp = await getLatestBuildTimestamp();
+            return "number" === typeof buildTimestamp && buildTimestamp !== currentBuildTimestamp;
+        }
+        catch(error)
+        {
+            console.error(error);
+            return false;
+        }
+    };
     export const start = async (params:{ buildTimestamp: string, buildTimestampTick:number, }) =>
     {
+        currentBuildTimestamp = params.buildTimestampTick;
         console.log(`start timestamp: ${new Date()}`);
         console.log(`${JSON.stringify(params)}`);
         locale.setLocale(Storage.SystemSettings.get().locale ?? null);
