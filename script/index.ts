@@ -6321,9 +6321,8 @@ export module CyclicToDo
         };
         let lastNewVersionCheckAt = 0;
         let wasShowNewVersionToast = false;
-        export const onWindowFocus = async () =>
+        export const checkApplicationUpdate = async () =>
         {
-            updateWindow?.("focus");
             if ( ! wasShowNewVersionToast)
             {
                 const now = new Date().getTime();
@@ -6350,6 +6349,11 @@ export module CyclicToDo
                     }
                 }
             }
+        };
+        export const onWindowFocus = async () =>
+        {
+            updateWindow?.("focus");
+            await checkApplicationUpdate();
         };
         export const onWindowBlur = () =>
         {
@@ -6506,13 +6510,13 @@ export module CyclicToDo
     };
     export const getLatestBuildTimestamp = async (): Promise<number> =>
         JSON.parse(await minamo.http.get(`./build.timestamp.json?dummy=${new Date().getTime()}`));
-    let currentBuildTimestamp: number;
+    let currentBuildTimestamp: { text: string, tick: number, };
     export const isNewVersionReady = async (): Promise<boolean> =>
     {
         try
         {
             const buildTimestamp = await getLatestBuildTimestamp();
-            return "number" === typeof buildTimestamp && buildTimestamp !== currentBuildTimestamp;
+            return "number" === typeof buildTimestamp && buildTimestamp !== currentBuildTimestamp.tick;
         }
         catch(error)
         {
@@ -6522,7 +6526,11 @@ export module CyclicToDo
     };
     export const start = async (params:{ buildTimestamp: string, buildTimestampTick:number, }) =>
     {
-        currentBuildTimestamp = params.buildTimestampTick;
+        currentBuildTimestamp =
+        {
+            text: params.buildTimestamp,
+            tick: params.buildTimestampTick,
+        };
         console.log(`start timestamp: ${new Date()}`);
         console.log(`${JSON.stringify(params)}`);
         locale.setLocale(Storage.SystemSettings.get().locale ?? null);

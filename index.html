@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Thu Apr 06 2023 11:16:18 GMT+0900 (日本標準時)
+    build at: Thu Apr 06 2023 21:27:24 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -13783,12 +13783,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             };
             var lastNewVersionCheckAt = 0;
             var wasShowNewVersionToast = false;
-            Render.onWindowFocus = function () { return __awaiter(_this, void 0, void 0, function () {
+            Render.checkApplicationUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
                 var now, toast_1;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            Render.updateWindow === null || Render.updateWindow === void 0 ? void 0 : Render.updateWindow("focus");
                             if (!!wasShowNewVersionToast) return [3 /*break*/, 2];
                             now = new Date().getTime();
                             if (!(lastNewVersionCheckAt + (60 * 60 * 1000) < now)) return [3 /*break*/, 2];
@@ -13812,6 +13811,18 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             }
                             _a.label = 2;
                         case 2: return [2 /*return*/];
+                    }
+                });
+            }); };
+            Render.onWindowFocus = function () { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            Render.updateWindow === null || Render.updateWindow === void 0 ? void 0 : Render.updateWindow("focus");
+                            return [4 /*yield*/, Render.checkApplicationUpdate()];
+                        case 1:
+                            _a.sent();
+                            return [2 /*return*/];
                     }
                 });
             }); };
@@ -13962,7 +13973,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         return [4 /*yield*/, CyclicToDo.getLatestBuildTimestamp()];
                     case 1:
                         buildTimestamp = _a.sent();
-                        return [2 /*return*/, "number" === typeof buildTimestamp && buildTimestamp !== currentBuildTimestamp];
+                        return [2 /*return*/, "number" === typeof buildTimestamp && buildTimestamp !== currentBuildTimestamp.tick];
                     case 2:
                         error_2 = _a.sent();
                         console.error(error_2);
@@ -13977,7 +13988,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
-                        currentBuildTimestamp = params.buildTimestampTick;
+                        currentBuildTimestamp =
+                            {
+                                text: params.buildTimestamp,
+                                tick: params.buildTimestampTick,
+                            };
                         console.log("start timestamp: " + new Date());
                         console.log("" + JSON.stringify(params));
                         locale.setLocale((_a = Storage.SystemSettings.get().locale) !== null && _a !== void 0 ? _a : null);
@@ -14160,7 +14175,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Apr 06 2023 11:16:18 GMT+0900 (日本標準時)', buildTimestampTick: 1680747378598, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Apr 06 2023 21:27:24 GMT+0900 (日本標準時)', buildTimestampTick: 1680784044577, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
