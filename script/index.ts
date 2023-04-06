@@ -5829,32 +5829,33 @@ export module CyclicToDo
         ]);
         export const reloadScreen = async () =>
         {
+            let isCanceled = false;
+            const loadingToast = makeToast
+            ({
+                content: $span("")("サーバーと通信中..."),
+                backwardOperator: cancelTextButton
+                (
+                    async () =>
+                    {
+                        await loadingToast.hide();
+                        isCanceled = true;
+                    }
+                ),
+                wait: 0,
+            });
             try
             {
-                let isCanceled = false;
-                const toast = makeToast
-                ({
-                    content: $span("")("サーバーと通信中..."),
-                    backwardOperator: cancelTextButton
-                    (
-                        async () =>
-                        {
-                            await toast.hide();
-                            isCanceled = true;
-                        }
-                    ),
-                    wait: 0,
-                });
                 await getLatestBuildTimestamp();
                 if ( ! isCanceled)
                 {
                     location.reload();
                 }
-                await toast.hide();
+                await loadingToast.hide();
             }
             catch(error)
             {
-                const toast = makeToast
+                loadingToast.hide();
+                const retryToast = makeToast
                 ({
                     forwardOperator:{
                         tag: "button",
@@ -5863,10 +5864,17 @@ export module CyclicToDo
                         onclick: async () =>
                         {
                             reloadScreen();
-                            await toast.hide();
+                            await retryToast.hide();
                         },
                     },
                     content: $span("")(`サーバーに正常アクセスできませんでした。`),
+                    backwardOperator: cancelTextButton
+                    (
+                        async () =>
+                        {
+                            await retryToast.hide();
+                        }
+                    ),
                 });
                 console.error(error);
             }
@@ -6311,9 +6319,37 @@ export module CyclicToDo
                 100,
             );
         };
-        export const onWindowFocus = () =>
+        let lastNewVersionCheckAt = 0;
+        let wasShowNewVersionToast = false;
+        export const onWindowFocus = async () =>
         {
             updateWindow?.("focus");
+            if ( ! wasShowNewVersionToast)
+            {
+                const now = new Date().getTime();
+                if (lastNewVersionCheckAt +(60 * 60 *1000) < now)
+                {
+                    lastNewVersionCheckAt = now;
+                    if (await isNewVersionReady())
+                    {
+                        wasShowNewVersionToast = true;
+                        const toast = makeToast
+                        ({
+                            forwardOperator:{
+                                tag: "button",
+                                className: "text-button",
+                                children: $span("")(`リロード`),
+                                onclick: () =>
+                                {
+                                    toast.hide();
+                                    reloadScreen();
+                                },
+                            },
+                            content: $span("")(`新しいバージョンがあります！`),
+                        });
+                    }
+                }
+            }
         };
         export const onWindowBlur = () =>
         {
