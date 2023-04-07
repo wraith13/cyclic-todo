@@ -5972,10 +5972,14 @@ export module CyclicToDo
                 ]),
                 $div("row-flex-list compact-flex-list list-list")
                     (await Promise.all(OldStorage.Pass.get().map(pass => listItem(JSON.parse(OldStorage.exportJson(pass)) as Content)))),
+                $div("bottom-line version-information")(`build timestamp: ${buildTimestamp.tick} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} 前 )`)
             ]
         });
         export const showWelcomeScreen = async () =>
+        {
             await showWindow(await welcomeScreen());
+            checkApplicationUpdate();
+        };
         export const updatingScreenMenu = async () =>
         [
             menuItem
@@ -6510,13 +6514,13 @@ export module CyclicToDo
     };
     export const getLatestBuildTimestamp = async (): Promise<number> =>
         JSON.parse(await minamo.http.get(`./build.timestamp.json?dummy=${new Date().getTime()}`));
-    let currentBuildTimestamp: { text: string, tick: number, };
+    let buildTimestamp: { stamp: string, tick: number, };
     export const isNewVersionReady = async (): Promise<boolean> =>
     {
         try
         {
-            const buildTimestamp = await getLatestBuildTimestamp();
-            return "number" === typeof buildTimestamp && buildTimestamp !== currentBuildTimestamp.tick;
+            const latestBuildTimestamp = await getLatestBuildTimestamp();
+            return "number" === typeof latestBuildTimestamp && latestBuildTimestamp !== buildTimestamp.tick;
         }
         catch(error)
         {
@@ -6526,9 +6530,9 @@ export module CyclicToDo
     };
     export const start = async (params:{ buildTimestamp: string, buildTimestampTick:number, }) =>
     {
-        currentBuildTimestamp =
+        buildTimestamp =
         {
-            text: params.buildTimestamp,
+            stamp: params.buildTimestamp,
             tick: params.buildTimestampTick,
         };
         console.log(`start timestamp: ${new Date()}`);
@@ -6568,7 +6572,7 @@ export module CyclicToDo
         {
             Render.makeToast
             ({
-                content: Render.$span("")(`ビルドタイムスタンプ: ${Domain.dateStringFromTick(params.buildTimestampTick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - params.buildTimestampTick) /Domain.timeAccuracy)} 前 )`),
+                content: Render.$span("")(`ビルドタイムスタンプ: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} 前 )`),
                 isWideContent: true,
             });
         }
