@@ -5972,7 +5972,7 @@ export module CyclicToDo
                 ]),
                 $div("row-flex-list compact-flex-list list-list")
                     (await Promise.all(OldStorage.Pass.get().map(pass => listItem(JSON.parse(OldStorage.exportJson(pass)) as Content)))),
-                $div("bottom-line version-information")(`build timestamp: ${buildTimestamp.tick} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} 前 )`)
+                $div("bottom-line version-information")(`build timestamp: ${(buildTimestamp.tick /1000).toLocaleString("en")} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} 前 )`)
             ]
         });
         export const showWelcomeScreen = async () =>
