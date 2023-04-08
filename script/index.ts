@@ -5875,6 +5875,7 @@ export module CyclicToDo
                             await retryToast.hide();
                         }
                     ),
+                    wait: 0,
                 });
                 console.error(error);
             }
@@ -5931,6 +5932,7 @@ export module CyclicToDo
                 children: menuItem(labelSpan("GitHub")),
             }),
         ];
+        export const getVersionInfromationText = () => `build timestamp: ${(buildTimestamp.tick /1000).toLocaleString("en")} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} 前 )`;
         export const welcomeScreen = async (): Promise<ScreenSource> =>
         ({
             className: "welcome-screen",
@@ -5972,12 +5974,21 @@ export module CyclicToDo
                 ]),
                 $div("row-flex-list compact-flex-list list-list")
                     (await Promise.all(OldStorage.Pass.get().map(pass => listItem(JSON.parse(OldStorage.exportJson(pass)) as Content)))),
-                $div("bottom-line version-information")(`build timestamp: ${(buildTimestamp.tick /1000).toLocaleString("en")} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} 前 )`)
+                $div("bottom-line version-information")(getVersionInfromationText())
             ]
         });
         export const showWelcomeScreen = async () =>
         {
-            await showWindow(await welcomeScreen());
+            const updateWindow = async (event: UpdateWindowEventEype) =>
+            {
+                switch(event)
+                {
+                case "timer":
+                    minamo.dom.setProperty(document.getElementsByClassName("version-information")[0], "innerText", getVersionInfromationText());
+                    break;
+                }
+            }
+            await showWindow(await welcomeScreen(), updateWindow);
             checkApplicationUpdate();
         };
         export const updatingScreenMenu = async () =>
@@ -6338,7 +6349,8 @@ export module CyclicToDo
                         wasShowNewVersionToast = true;
                         const toast = makeToast
                         ({
-                            forwardOperator:{
+                            forwardOperator:
+                            {
                                 tag: "button",
                                 className: "text-button",
                                 children: $span("")(`リロード`),
@@ -6349,6 +6361,7 @@ export module CyclicToDo
                                 },
                             },
                             content: $span("")(`新しいバージョンがあります！`),
+                            wait: 0,
                         });
                     }
                 }
