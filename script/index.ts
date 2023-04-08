@@ -467,7 +467,7 @@ export module CyclicToDo
         {
             export const makeKey = (pass: string) => `pass:(${pass}).title`;
             export const get = (pass: string) =>
-                getStorage(pass).getOrNull<string>(makeKey(pass)) ?? "ToDo リスト";
+                getStorage(pass).getOrNull<string>(makeKey(pass)) ?? locale.string("ToDo リスト");
             export const set = (pass: string, title: string) =>
                 getStorage(pass).set(makeKey(pass), title);
         }
@@ -1220,7 +1220,7 @@ export module CyclicToDo
             title =
             {
                 get: () =>
-                    this.content.title ?? "ToDo リスト",
+                    this.content.title ?? locale.string("ToDo リスト"),
                 updator: (title: string) =>
                     (content: Content) => content.title = title,
             };
@@ -2078,7 +2078,7 @@ export module CyclicToDo
                 );
                 const toast = makeToast
                 ({
-                    content: $span("")(`ToDo リストの名前を変更しました！： ${backup} → ${newName}`),
+                    content: $span("")(`${locale.string("ToDo リストの名前を変更しました！")}： ${backup} → ${newName}`),
                     backwardOperator: cancelTextButton
                     (
                         async () =>
@@ -2102,7 +2102,7 @@ export module CyclicToDo
                 OldStorage.Pass.remove(list.pass);
                 const toast = makeToast
                 ({
-                    content: $span("")(`ToDo リストを削除しました！: ${list.title}`),
+                    content: $span("")(`${locale.string("ToDo リストを削除しました！")}: ${list.title}`),
                     backwardOperator: cancelTextButton
                     (
                         async () =>
@@ -2191,7 +2191,7 @@ export module CyclicToDo
                 Storage.Filter.set([]);
                 const toast = makeToast
                 ({
-                    content: $span("")(`絞り込みの履歴をクリアしました。`),
+                    content: $span("")(locale.string(`絞り込みの履歴をクリアしました。`)),
                     backwardOperator: cancelTextButton
                     (
                         async () =>
@@ -5666,7 +5666,7 @@ export module CyclicToDo
             },
             body:
             [
-                $tag("textarea")("json")("エクスポートした JSON をペーストしてください。"),
+                $tag("textarea")("json")(locale.string("エクスポートした JSON をペーストしてください。")),
                 $div("button-list")
                 ({
                     tag: "button",
@@ -5691,7 +5691,7 @@ export module CyclicToDo
                 $div("item-title")
                 ([
                     await Resource.loadSvgOrCache("list-icon"),
-                    list.title ?? `ToDo リスト ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
+                    list.title ?? `${locale.string("ToDo リスト")} ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
                 ]),
                 $div("item-operator")
                 ([{
@@ -5832,7 +5832,7 @@ export module CyclicToDo
             let isCanceled = false;
             const loadingToast = makeToast
             ({
-                content: $span("")("サーバーと通信中..."),
+                content: $span("")(locale.string("サーバーと通信中...")),
                 backwardOperator: cancelTextButton
                 (
                     async () =>
@@ -5860,14 +5860,14 @@ export module CyclicToDo
                     forwardOperator:{
                         tag: "button",
                         className: "text-button",
-                        children: $span("")(`リトライ`),
+                        children: $span("")(locale.string(`リトライ`)),
                         onclick: async () =>
                         {
                             reloadScreen();
                             await retryToast.hide();
                         },
                     },
-                    content: $span("")(`サーバーに正常アクセスできませんでした。`),
+                    content: $span("")(locale.string(`サーバーに正常アクセスできませんでした。`)),
                     backwardOperator: cancelTextButton
                     (
                         async () =>
@@ -6353,14 +6353,14 @@ export module CyclicToDo
                             {
                                 tag: "button",
                                 className: "text-button",
-                                children: $span("")(`リロード`),
+                                children: $span("")(locale.string(`アップデート`)),
                                 onclick: () =>
                                 {
                                     toast.hide();
                                     reloadScreen();
                                 },
                             },
-                            content: $span("")(`新しいバージョンがあります！`),
+                            content: $span("")(locale.string(`新しいバージョンがあります！`)),
                             wait: 0,
                         });
                     }
@@ -6550,6 +6550,18 @@ export module CyclicToDo
         };
         console.log(`start timestamp: ${new Date()}`);
         console.log(`${JSON.stringify(params)}`);
+        minamo.dom.appendChildren
+        (
+            document.head,
+            {
+                tag: "meta",
+                attributes:
+                {
+                    "http-equiv": "Cache-Control",
+                    "content": "max-age=86400",
+                },
+            }
+        );
         locale.setLocale(Storage.SystemSettings.get().locale ?? null);
         window.onpopstate = () => showPage();
         window.addEventListener('resize', Render.onWindowResize);
@@ -6585,7 +6597,7 @@ export module CyclicToDo
         {
             Render.makeToast
             ({
-                content: Render.$span("")(`ビルドタイムスタンプ: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} 前 )`),
+                content: Render.$span("")(`${locale.string("ビルドタイムスタンプ")}: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} 前 )`),
                 isWideContent: true,
             });
         }
