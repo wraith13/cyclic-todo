@@ -6558,7 +6558,7 @@ export module CyclicToDo
                 attributes:
                 {
                     "http-equiv": "Cache-Control",
-                    "content": "max-age=86400",
+                    "content": `max-age=${(minamo.core.parseTimespan("30d") ?? 30 *24 *60 *60 *1000) / 1000}`,
                 },
             }
         );

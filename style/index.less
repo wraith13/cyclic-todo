@@ -1906,11 +1906,20 @@ button
 }
 .bottom-line
 {
-    text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex-grow: 1;
+    padding-bottom: 1rem;
+    &.version-information
+    {
+        padding-bottom: 1.5rem;
+    }
 }
 .version-information
 {
     color: #888;
+    padding: 0.5rem;
 }
 .updating-screen
 {
