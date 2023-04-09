@@ -44,6 +44,7 @@ export module locale
     export const getSecondary = (key : LocaleKeyType) => master[locales.filter(locale => masterKey !== locale)[0]][key];
     export const string = (key : string) : string => getPrimary(key as LocaleKeyType) || key;
     export const map = (key : LocaleKeyType) : string => string(key);
+    export const immutable = (key : string) : string => key;
     export const parallel = (key : LocaleKeyType) : string => `${getPrimary(key)} / ${getSecondary(key)}`;
 }
 export module Calculate
@@ -467,7 +468,7 @@ export module CyclicToDo
         {
             export const makeKey = (pass: string) => `pass:(${pass}).title`;
             export const get = (pass: string) =>
-                getStorage(pass).getOrNull<string>(makeKey(pass)) ?? locale.string("ToDo リスト");
+                getStorage(pass).getOrNull<string>(makeKey(pass)) ?? locale.map("ToDo List");
             export const set = (pass: string, title: string) =>
                 getStorage(pass).set(makeKey(pass), title);
         }
@@ -1220,7 +1221,7 @@ export module CyclicToDo
             title =
             {
                 get: () =>
-                    this.content.title ?? locale.string("ToDo リスト"),
+                    this.content.title ?? locale.map("ToDo List"),
                 updator: (title: string) =>
                     (content: Content) => content.title = title,
             };
@@ -5691,7 +5692,7 @@ export module CyclicToDo
                 $div("item-title")
                 ([
                     await Resource.loadSvgOrCache("list-icon"),
-                    list.title ?? `${locale.string("ToDo リスト")} ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
+                    list.title ?? `${locale.map("ToDo List")} ( pass: ${list.pass.substr(0, 2)}****${list.pass.substr(-2)} )`,
                 ]),
                 $div("item-operator")
                 ([{
@@ -5932,7 +5933,7 @@ export module CyclicToDo
                 children: menuItem(labelSpan("GitHub")),
             }),
         ];
-        export const getVersionInfromationText = () => `build timestamp: ${(buildTimestamp.tick /1000).toLocaleString("en")} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} 前 )`;
+        export const getVersionInfromationText = () => `${locale.immutable("build timestamp")}: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} 前 )`;
         export const welcomeScreen = async (): Promise<ScreenSource> =>
         ({
             className: "welcome-screen",
@@ -6597,7 +6598,7 @@ export module CyclicToDo
         {
             Render.makeToast
             ({
-                content: Render.$span("")(`${locale.string("ビルドタイムスタンプ")}: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} 前 )`),
+                content: Render.$span("")(Render.getVersionInfromationText()),
                 isWideContent: true,
             });
         }
