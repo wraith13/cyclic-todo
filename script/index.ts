@@ -99,6 +99,8 @@ export module Calculate
     }
     export const standardScore = (average: number, standardDeviation: number, target: number) =>
         (10 * (target -average) /standardDeviation) +50;
+    export const tickFromStandardScore = (average: number, standardDeviation: number, target: number) =>
+        ((target -50) /10 *standardDeviation) +average;
 }
 export module CyclicToDo
 {
@@ -193,29 +195,29 @@ export module CyclicToDo
         sort?: "smart" | "simple";
         displayStyle?: "@home" | "full" | "compact";
     }
-    export interface PickupSettingBase extends minamo.core.JsonableObject
+    export interface AutoTagSettingBase extends minamo.core.JsonableObject
     {
         type: "always" | "elapsed-time" | "elapsed-time-standard-score" | "expired";
     }
-    export interface PickupSettingAlways extends PickupSettingBase
+    export interface AutoTagSettingAlways extends AutoTagSettingBase
     {
         type: "always";
     }
-    export interface PickupSettingElapsedTime extends PickupSettingBase
+    export interface AutoTagSettingElapsedTime extends AutoTagSettingBase
     {
         type: "elapsed-time";
         elapsedTime: number;
     }
-    export interface PickupSettingElapsedTimeStandardScore extends PickupSettingBase
+    export interface AutoTagSettingElapsedTimeStandardScore extends AutoTagSettingBase
     {
         type: "elapsed-time-standard-score";
         elapsedTimeStandardScore: number;
     }
-    export interface PickupSettingExpired extends PickupSettingBase
+    export interface AutoTagSettingExpired extends AutoTagSettingBase
     {
         type: "expired";
     }
-    export type AutoTagSetting = PickupSettingAlways | PickupSettingElapsedTime | PickupSettingElapsedTimeStandardScore | PickupSettingExpired;
+    export type AutoTagSetting = AutoTagSettingAlways | AutoTagSettingElapsedTime | AutoTagSettingElapsedTimeStandardScore | AutoTagSettingExpired;
     export interface TodoSettings extends minamo.core.JsonableObject
     {
         flash?: AutoTagSetting;
@@ -1732,6 +1734,30 @@ export module CyclicToDo
             null !== elapsedTime ?
                 Calculate.standardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, elapsedTime):
                 null;
+        export const tickFromStandardScore = (item: ToDoEntry, standardScore: number) =>
+            null !== item.RecentlySmartAverage &&
+            null !== item.RecentlyStandardDeviation &&
+            null !== standardScore ?
+                Calculate.tickFromStandardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, standardScore):
+                null;
+        export const getAutoTagSettingElapsedTime = (item: ToDoEntry, setting?: AutoTagSetting): number | null =>
+        {
+            if (setting)
+            {
+                switch(setting.type)
+                {
+                case "always":
+                    return 0;
+                case "elapsed-time":
+                    return setting.elapsedTime;
+                case "elapsed-time-standard-score":
+                    return tickFromStandardScore(item, setting.elapsedTimeStandardScore);
+                case "expired":
+                    return item.expectedInterval?.max ?? Infinity;
+                }
+            }
+            return null;
+        }
         export const isExpired = (item: ToDoEntry, elapsedTime = item.elapsed) =>
             // null !== item.expectedInterval && item.expectedInterval.max < elapsedTime;
             (item.expectedInterval?.max ?? Infinity) < (elapsedTime ?? 0);
@@ -1946,6 +1972,29 @@ export module CyclicToDo
                 item.RecentlyStandardDeviation ?? (item.RecentlySmartAverage *0.1),
                 item.elapsed
             );
+        export const calcProgress = (item: ToDoEntry, elapsed: number | null = item.elapsed) =>
+        {
+            if (isMoreToDoEntry(item) && "number" === typeof elapsed)
+            {
+                const short = item.expectedInterval.min;
+                const long = item.expectedInterval.max;
+                const shortOneThird = short /3.0;
+                if (elapsed < shortOneThird)
+                {
+                    return elapsed /short;
+                }
+                else
+                if (elapsed < long)
+                {
+                    return  (1.0 /3.0) +(((elapsed -shortOneThird) /(long -shortOneThird)) *2.0 /3.0);
+                }
+                else
+                {
+                    return 1.0 +((item.elapsed -long) /item.RecentlySmartAverage);
+                }
+            }
+            return null;
+        }
         export const updateProgress = (pass: string | Model.Document, item: ToDoEntry, now: number = Domain.getTicks()) =>
         {
             if (isFirstOrMoreToDoEntry(item))
@@ -1958,20 +2007,7 @@ export module CyclicToDo
                     const long = item.expectedInterval.max;
                     item.rest = long -item.elapsed;
                     item.isDefault = short <= item.elapsed;
-                    const shortOneThird = short /3.0;
-                    if (item.elapsed < shortOneThird)
-                    {
-                        item.progress = item.elapsed /short;
-                    }
-                    else
-                    if (item.elapsed < long)
-                    {
-                        item.progress = (1.0 /3.0) +(((item.elapsed -shortOneThird) /(long -shortOneThird)) *2.0 /3.0);
-                    }
-                    else
-                    {
-                        item.progress = 1.0 +((item.elapsed -long) /item.RecentlySmartAverage);
-                    }
+                    item.progress = calcProgress(item);
                     item.smartRest = calcSmartRest(item);
                     if (item.smartRest < 0)
                     {
@@ -2261,6 +2297,57 @@ export module CyclicToDo
         export const $tag = minamo.dom.tag;
         export const $div = $tag("div");
         export const $span = $tag("span");
+        export const scaleLinesStyleParts = (lines: { percent: number, color: string }[]): string =>
+            lines
+                .map
+                (
+                    (i, ix) =>
+                    {
+                        const isFirst = 0 === ix;
+                        const isLast = (lines.length -1) === ix;
+                        let result = "";
+                        if (isFirst && 0 < i.percent)
+                        {
+                            result += "#00000000, ";
+                        }
+                        result += `#00000000 calc(${toPercentSting(i.percent)} - 1px), ${i.color} calc(${toPercentSting(i.percent)} - 1px), ${i.color} ${toPercentSting(i.percent)}`
+                        if ( ! isLast || i.percent < 1)
+                        {
+                            result += `, #00000000 calc(${toPercentSting(i.percent)} + 1px)`;
+                        }
+                        return result;
+                    }
+                )
+                .join(", ");
+        export const scaleLinesStyle = (lines: { percent: number, color: string }[]): string =>
+        {
+            let result = "";
+            if (0 < lines.length)
+            {
+                return `background: linear-gradient(90deg, ${scaleLinesStyleParts(lines.sort(minamo.core.comparer.make(i => i.percent)))});`;
+            }
+            return result;
+        }
+        export const progressScaleStyle = (item: ToDoEntry, settings?: TodoSettings): string =>
+        {
+            const lines: { percent: number, color: string }[] = [];
+            const restriction = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.restriction));
+            if ("number" === typeof restriction)
+            {
+                lines.push({ percent: restriction, color: "#FF444466"});
+            }
+            const pickup = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.pickup));
+            if ("number" === typeof pickup)
+            {
+                lines.push({ percent: pickup, color: "#CCCC44AA"});
+            }
+            const flash = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.flash));
+            if ("number" === typeof flash)
+            {
+                lines.push({ percent: flash, color: "#6666AAAA"});
+            }
+            return scaleLinesStyle(lines.map(i => ({ percent: Math.min(i.percent, 1), color: i.color })));
+        }
         export const progressStyle = (progress: number | null) =>
             `width:${toPercentSting(progress ?? 1)};`;
         export const progressPadStyle = (progress: number | null) =>
@@ -3234,7 +3321,7 @@ export module CyclicToDo
                                         const elapsedTime = await dateTimeSpanPrompt
                                         (
                                             locale.map("pickup.elapsed-time"),
-                                            (getter() as PickupSettingElapsedTime)?.elapsedTime ?? 0
+                                            (getter() as AutoTagSettingElapsedTime)?.elapsedTime ?? 0
                                         );
                                         if (null !== elapsedTime)
                                         {
@@ -3249,7 +3336,7 @@ export module CyclicToDo
                                         const elapsedTimeStandardScore = await numberPrompt
                                         (
                                             locale.map("pickup.elapsed-time-standard-score"),
-                                            (getter() as PickupSettingElapsedTimeStandardScore)?.elapsedTimeStandardScore ?? 50,
+                                            (getter() as AutoTagSettingElapsedTimeStandardScore)?.elapsedTimeStandardScore ?? 50,
                                             { min: 0, max: 100, }
                                         );
                                         if (null !== elapsedTimeStandardScore)
@@ -3569,7 +3656,11 @@ export module CyclicToDo
         //     href,
         //     children,
         // });
-        export const informationDigest = (entry: ToDoTagEntryOld, item: ToDoEntry) => $div("item-information")
+        export const informationDigest = (entry: ToDoTagEntryOld, item: ToDoEntry) => $div
+        ({
+            className: "item-information",
+            attributes: { style: progressScaleStyle(item,OldStorage.TodoSettings.get(entry.pass, item.task)), }
+        })
         ([
             itemProgressBar(entry.pass, item, "with-pad"),
             monospace("task-last-timestamp", label("previous"), Domain.dateStringFromTick(item.previous)),
@@ -3592,7 +3683,11 @@ export module CyclicToDo
             // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
             // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
         ]);
-        export const informationFull = (pass: string, item: ToDoEntry) => $div("item-information")
+        export const informationFull = (pass: string, item: ToDoEntry) => $div
+        ({
+            className: "item-information",
+            attributes: { style: progressScaleStyle(item,OldStorage.TodoSettings.get(pass, item.task)), }
+        })
         ([
             itemProgressBar(pass, item, "with-pad"),
             monospace("task-first-time", label("first time"), Domain.dateStringFromTick(item.first)),
@@ -3794,7 +3889,13 @@ export module CyclicToDo
             };
             const itemDom = $make(HTMLDivElement)
             (
-                $div("task-item flex-item")
+                $div
+                ({
+                    className: "task-item flex-item",
+                    attributes:"full" === displayStyle ?
+                        { }:
+                        { style: progressScaleStyle(item,OldStorage.TodoSettings.get(entry.pass, item.task)), }
+                })
                 ([
                     "full" === displayStyle ? []: itemProgressBar(entry.pass, item),
                     $div("item-header")
