@@ -2310,7 +2310,7 @@ export module CyclicToDo
                         {
                             result += "#00000000, ";
                         }
-                        result += `#00000000 calc(${toPercentSting(i.percent)} - 1px), ${i.color} calc(${toPercentSting(i.percent)} - 1px), ${i.color} ${toPercentSting(i.percent)}`
+                        result += `#00000000 calc(${toPercentSting(i.percent)} - 1px), ${i.color}AA calc(${toPercentSting(i.percent)} - 1px), ${i.color}AA ${toPercentSting(i.percent)}`
                         if ( ! isLast || i.percent < 1)
                         {
                             result += `, #00000000 calc(${toPercentSting(i.percent)} + 1px)`;
@@ -2334,17 +2334,22 @@ export module CyclicToDo
             const restriction = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.restriction));
             if ("number" === typeof restriction)
             {
-                lines.push({ percent: restriction, color: "#FF444466"});
+                lines.push({ percent: restriction, color: "#831B50"});
             }
             const pickup = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.pickup));
             if ("number" === typeof pickup)
             {
-                lines.push({ percent: pickup, color: "#CCCC44AA"});
+                lines.push({ percent: pickup, color: "#6F7F00"});
             }
             const flash = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.flash));
             if ("number" === typeof flash)
             {
-                lines.push({ percent: flash, color: "#6666AAAA"});
+                lines.push({ percent: flash, color: "#0F4699"});
+            }
+            const short = Domain.calcProgress(item, item.expectedInterval?.min);
+            if ("number" === typeof short)
+            {
+                lines.push({ percent: short, color: "#228844"});
             }
             return scaleLinesStyle(lines.map(i => ({ percent: Math.min(i.percent, 1), color: i.color })));
         }
