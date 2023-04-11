@@ -2330,28 +2330,35 @@ export module CyclicToDo
         }
         export const progressScaleStyle = (item: ToDoEntry, settings?: TodoSettings): string =>
         {
-            const lines: { percent: number, color: string }[] = [];
-            const restriction = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.restriction));
-            if ("number" === typeof restriction)
+            if ("number" === typeof item.progress)
             {
-                lines.push({ percent: restriction, color: "#831B50"});
+                const lines: { percent: number, color: string }[] = [];
+                const restriction = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.restriction));
+                if ("number" === typeof restriction)
+                {
+                    lines.push({ percent: restriction, color: "#831B50"});
+                }
+                const pickup = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.pickup));
+                if ("number" === typeof pickup)
+                {
+                    lines.push({ percent: pickup, color: "#6F7F00"});
+                }
+                const flash = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.flash));
+                if ("number" === typeof flash)
+                {
+                    lines.push({ percent: flash, color: "#0F4699"});
+                }
+                const short = Domain.calcProgress(item, item.expectedInterval?.min);
+                if ("number" === typeof short)
+                {
+                    lines.push({ percent: short, color: "#228844"});
+                }
+                return scaleLinesStyle(lines.map(i => ({ percent: Math.min(i.percent, 1), color: i.color })));
             }
-            const pickup = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.pickup));
-            if ("number" === typeof pickup)
+            else
             {
-                lines.push({ percent: pickup, color: "#6F7F00"});
+                return "";
             }
-            const flash = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.flash));
-            if ("number" === typeof flash)
-            {
-                lines.push({ percent: flash, color: "#0F4699"});
-            }
-            const short = Domain.calcProgress(item, item.expectedInterval?.min);
-            if ("number" === typeof short)
-            {
-                lines.push({ percent: short, color: "#228844"});
-            }
-            return scaleLinesStyle(lines.map(i => ({ percent: Math.min(i.percent, 1), color: i.color })));
         }
         export const progressStyle = (progress: number | null) =>
             `width:${toPercentSting(progress ?? 1)};`;
