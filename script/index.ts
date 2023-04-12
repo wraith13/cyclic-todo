@@ -3236,6 +3236,108 @@ export module CyclicToDo
                 });
             }
         );
+        export const tagProgressScaleStyleSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
+        (
+            async resolve =>
+            {
+                let result = false;
+                const defaultStyle = "null";
+                const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
+                const tagButtonListUpdate = async () => minamo.dom.replaceChildren
+                (
+                    tagButtonList,
+                    [
+                        "@overall" !== tag ?
+                            {
+                                tag: "button",
+                                className: `check-button ${"@home" === (settings.progressScaleStyle ?? "@home") ? "checked": ""}`,
+                                children:
+                                [
+                                    await Resource.loadSvgOrCache("check-icon"),
+                                    $span("")(label("progressScaleStyle.home")),
+                                ],
+                                onclick: async () =>
+                                {
+                                    settings.progressScaleStyle = "@home";
+                                    OldStorage.TagSettings.set(pass, tag, settings);
+                                    result = true;
+                                    await tagButtonListUpdate();
+                                }
+                            }:
+                            [],
+                        {
+                            tag: "button",
+                            className: `check-button ${"none" === (settings.progressScaleStyle ?? defaultStyle) ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")(label("progressScaleStyle.none")),
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.progressScaleStyle = "none";
+                                OldStorage.TagSettings.set(pass, tag, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                        {
+                            tag: "button",
+                            className: `check-button ${"full" === (settings.progressScaleStyle ?? defaultStyle) ? "checked": ""}`,
+                            children:
+                            [
+                                await Resource.loadSvgOrCache("check-icon"),
+                                $span("")(label("progressScaleStyle.full")),
+                            ],
+                            onclick: async () =>
+                            {
+                                settings.progressScaleStyle = "full";
+                                OldStorage.TagSettings.set(pass, tag, settings);
+                                result = true;
+                                await tagButtonListUpdate();
+                            }
+                        },
+                        // {
+                        //     tag: "button",
+                        //     className: `check-button ${"limit" === (settings.sort ?? "smart") ? "checked": ""}`,
+                        //     children:
+                        //     [
+                        //         await Resource.loadSvgOrCache("check-icon"),
+                        //         $span("")(label("sort.limit")),
+                        //     ],
+                        //     onclick: async () =>
+                        //     {
+                        //         settings.sort = "limit";
+                        //         OldStorage.TagSettings.set(pass, tag, settings);
+                        //         result = true;
+                        //         await tagButtonListUpdate();
+                        //     }
+                        // },
+                    ]
+                );
+                await tagButtonListUpdate();
+                const ui = popup
+                ({
+                    // className: "add-remove-tags-popup",
+                    children:
+                    [
+                        $tag("h2")("")(`${locale.map("Progress scale style setting")}: ${Domain.tagMap(tag)}`),
+                        tagButtonList,
+                        $div("popup-operator")
+                        ([{
+                            tag: "button",
+                            className: "default-button",
+                            children: label("Close"),
+                            onclick: () =>
+                            {
+                                ui.close();
+                            },
+                        }]),
+                    ],
+                    onClose: async () => resolve(result),
+                });
+            }
+        );
         export const getTodoPickupSettingsElapsedTimePreset = (_entry: ToDoEntry, current: AutoTagSetting | undefined) =>
         {
             let list: number[] = [];
@@ -4683,6 +4785,17 @@ export module CyclicToDo
                 async () =>
                 {
                     if (await tagDisplayStyleSettingsPopup(entry.pass, entry.tag))
+                    {
+                        await reload();
+                    }
+                }
+            ),
+            menuItem
+            (
+                label("Progress scale style setting"),
+                async () =>
+                {
+                    if (await tagProgressScaleStyleSettingsPopup(entry.pass, entry.tag))
                     {
                         await reload();
                     }
@@ -6682,18 +6795,6 @@ export module CyclicToDo
         };
         console.log(`start timestamp: ${new Date()}`);
         console.log(`${JSON.stringify(params)}`);
-        minamo.dom.appendChildren
-        (
-            document.head,
-            {
-                tag: "meta",
-                attributes:
-                {
-                    "http-equiv": "Cache-Control",
-                    "content": `max-age=${(minamo.core.parseTimespan("30d") ?? 30 *24 *60 *60 *1000) / 1000}`,
-                },
-            }
-        );
         locale.setLocale(Storage.SystemSettings.get().locale ?? null);
         window.onpopstate = () => showPage();
         window.addEventListener('resize', Render.onWindowResize);
