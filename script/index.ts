@@ -194,6 +194,7 @@ export module CyclicToDo
         // sort?: "smart" | "simple" | "limit";
         sort?: "smart" | "simple";
         displayStyle?: "@home" | "full" | "compact";
+        progressScaleStyle?: "@home" | "none" | "full";
     }
     export interface AutoTagSettingBase extends minamo.core.JsonableObject
     {
@@ -687,6 +688,23 @@ export module CyclicToDo
                 }
                 return result;
             };
+            export const getProgressScaleStyle = (pass: string, tag: string): "none" | "full" =>
+            {
+                const defaultResult = "none";
+                const result = get(pass, tag).progressScaleStyle ?? "@home";
+                if ("@home" === result)
+                {
+                    if ("@overall" === tag)
+                    {
+                        return defaultResult;
+                    }
+                    else
+                    {
+                        return getProgressScaleStyle(pass, "@overall");
+                    }
+                }
+                return result;
+            }
         }
         export module Task
         {
