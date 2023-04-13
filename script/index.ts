@@ -3241,7 +3241,7 @@ export module CyclicToDo
             async resolve =>
             {
                 let result = false;
-                const defaultStyle = "null";
+                const defaultStyle = "@overall" === tag ? "none": "@home";
                 const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
                 const tagButtonListUpdate = async () => minamo.dom.replaceChildren
                 (
@@ -3250,7 +3250,7 @@ export module CyclicToDo
                         "@overall" !== tag ?
                             {
                                 tag: "button",
-                                className: `check-button ${"@home" === (settings.progressScaleStyle ?? "@home") ? "checked": ""}`,
+                                className: `check-button ${"@home" === (settings.progressScaleStyle ?? defaultStyle) ? "checked": ""}`,
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
