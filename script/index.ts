@@ -2346,9 +2346,9 @@ export module CyclicToDo
             }
             return result;
         }
-        export const progressScaleStyle = (item: ToDoEntry, settings?: TodoSettings): string =>
+        export const progressScaleStyle = (item: ToDoEntry, progressScaleShowStyle: "none" | "full", settings?: TodoSettings): string =>
         {
-            if ("number" === typeof item.progress)
+            if ("number" === typeof item.progress && "full" === progressScaleShowStyle)
             {
                 const lines: { percent: number, color: string }[] = [];
                 const restriction = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.restriction));
@@ -3788,10 +3788,10 @@ export module CyclicToDo
         //     href,
         //     children,
         // });
-        export const informationDigest = (entry: ToDoTagEntryOld, item: ToDoEntry) => $div
+        export const informationDigest = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
         ({
             className: "item-information",
-            attributes: { style: progressScaleStyle(item,OldStorage.TodoSettings.get(entry.pass, item.task)), }
+            attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
         })
         ([
             itemProgressBar(entry.pass, item, "with-pad"),
@@ -3815,10 +3815,10 @@ export module CyclicToDo
             // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
             // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
         ]);
-        export const informationFull = (pass: string, item: ToDoEntry) => $div
+        export const informationFull = (pass: string, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
         ({
             className: "item-information",
-            attributes: { style: progressScaleStyle(item,OldStorage.TodoSettings.get(pass, item.task)), }
+            attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(pass, item.task)), }
         })
         ([
             itemProgressBar(pass, item, "with-pad"),
@@ -4005,7 +4005,7 @@ export module CyclicToDo
             }
             return "task-icon";
         };
-        export const todoItem = async (entry: ToDoTagEntryOld, item: ToDoEntry, displayStyle: "full" | "compact") =>
+        export const todoItem = async (entry: ToDoTagEntryOld, item: ToDoEntry, displayStyle: "full" | "compact", progressScaleShowStyle: "none" | "full") =>
         {
             let isFirst = true;
             const onUpdate = async () =>
@@ -4026,7 +4026,7 @@ export module CyclicToDo
                     className: "task-item flex-item",
                     attributes:"full" === displayStyle ?
                         { }:
-                        { style: progressScaleStyle(item,OldStorage.TodoSettings.get(entry.pass, item.task)), }
+                        { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
                 })
                 ([
                     "full" === displayStyle ? []: itemProgressBar(entry.pass, item),
@@ -4174,7 +4174,7 @@ export module CyclicToDo
                                         [],
                                 ]),
                             ]),
-                            informationDigest(entry, item),
+                            informationDigest(entry, item, progressScaleShowStyle),
                         ]:
                         []
                 ])
@@ -5156,10 +5156,10 @@ export module CyclicToDo
                 children: $tag("button")("main-button long-button")(label("History")),
             }),
         ]);
-        export const listScreenBody = async (entry: ToDoTagEntryOld, list: ToDoEntry[], displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag)) =>
+        export const listScreenBody = async (entry: ToDoTagEntryOld, list: ToDoEntry[], displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag), progressScaleShowStyle = OldStorage.TagSettings.getProgressScaleStyle(entry.pass, entry.tag)) =>
         ([
             await historyBar(entry, list),
-            $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item, displayStyle)))),
+            $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item, displayStyle, progressScaleShowStyle)))),
             await listScreenFooter(entry, list)
         ]);
         export const listScreen = async (entry: ToDoTagEntryOld, list: ToDoEntry[], filter: string) =>
@@ -5707,7 +5707,7 @@ export module CyclicToDo
                                 [],
                         ]),
                     ]),
-                    informationFull(pass, item),
+                    informationFull(pass, item, OldStorage.TagSettings.getProgressScaleStyle(pass, "@home")),
                 ]),
             ]),
             $div("column-flex-list tick-list")
