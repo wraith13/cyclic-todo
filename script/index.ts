@@ -6177,7 +6177,7 @@ export module CyclicToDo
                 children: menuItem(labelSpan("GitHub")),
             }),
         ];
-        export const getVersionInfromationText = () => `${locale.immutable("build timestamp")}: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} 前 )`;
+        export const getVersionInfromationText = () => `${locale.immutable("build timestamp")}: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} ${locale.map("ago")} )`;
         export const welcomeScreen = async (): Promise<ScreenSource> =>
         ({
             className: "welcome-screen",
