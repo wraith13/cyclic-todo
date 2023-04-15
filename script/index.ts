@@ -1114,6 +1114,11 @@ export module CyclicToDo
     {
         export const isSystemTagOld = (tag: string) => tag.startsWith("@") && ! tag.startsWith("@=") && ! isSublistOld(tag);
         export const isSublistOld = (tag: string) => tag.endsWith("@:");
+        export type TagCategory = "home" | "tag" | "sublist";
+        export const getTagCategory = (tag: string): TagCategory =>
+            "@home" === tag ? "home":
+            isSublistOld(tag) ? "sublist":
+            "tag";
         export const encode = (tag: string) => tag.replace(/@/g, "@=");
         export const encodeSublist = (tag: string) => encode(tag) +"@:";
         export const decode = (tag: string) => tag.replace(/@\:/g, ": ").replace(/@=/g, "@");
@@ -3033,6 +3038,105 @@ export module CyclicToDo
                 }
             );
         };
+        export const getTagSettingTitle = (tag: string): locale.LocaleKeyType =>
+        {
+            const map: { [key: string]: locale.LocaleKeyType; } =
+            {
+                "home": "Home setting",
+                "tag": "Tag setting",
+                "sublist": "Sublist setting",
+            };
+            return map[<string>Model.getTagCategory(tag)];
+        };
+        export const tagSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
+        (
+            async resolve =>
+            {
+                let result = false;
+                const buttonList = $make(HTMLDivElement)({ className: "label-button-list" });
+                const buttonListUpdate = async () => minamo.dom.replaceChildren
+                (
+                    buttonList,
+                    [
+                        {
+                            tag: "button",
+                            className: "label-button",
+                            children:
+                            [
+                                await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
+                                monospace("auto-tag-flash", label("Display style setting"), getAutoTagSettingText(settings.flash, "compact"))
+                            ],
+                            onclick: async () =>
+                            {
+                                if (await tagDisplayStyleSettingsPopup(pass, tag))
+                                {
+                                    result = true;
+                                    await buttonListUpdate();
+                                }
+                            }
+                        },
+                        {
+                            tag: "button",
+                            className: "label-button",
+                            children:
+                            [
+                                await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
+                                monospace("auto-tag-flash", label("Progress scale style setting"), getAutoTagSettingText(settings.pickup, "compact")),
+                            ],
+                            onclick: async () =>
+                            {
+                                if (await tagProgressScaleStyleSettingsPopup(pass, tag))
+                                {
+                                    result = true;
+                                    await buttonListUpdate();
+                                }
+                            }
+                        },
+                        {
+                            tag: "button",
+                            className: "label-button",
+                            children:
+                            [
+                                await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
+                                monospace("auto-tag-flash", label("Sort order setting"), getAutoTagSettingText(settings.restriction, "compact")),
+                            ],
+                            onclick: async () =>
+                            {
+                                if (await tagSortSettingsPopup(pass, tag))
+                                {
+                                    result = true;
+                                    await buttonListUpdate();
+                                }
+                            }
+                        },
+                    ]
+                );
+                await buttonListUpdate();
+                const ui = popup
+                ({
+                    // className: "add-remove-tags-popup",
+                    children:
+                    [
+                        $tag("h2")("")(`${locale.map(getTagSettingTitle(tag))}: ${tag}`),
+                        buttonList,
+                        $div("popup-operator")
+                        ([{
+                            tag: "button",
+                            className: "default-button",
+                            children: label("Close"),
+                            onclick: () =>
+                            {
+                                ui.close();
+                            },
+                        }]),
+                    ],
+                    onClose: async () =>
+                    {
+                        resolve(result);
+                    },
+                });
+            }
+        );
         export const tagSortSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
         (
             async resolve =>
@@ -4781,32 +4885,10 @@ export module CyclicToDo
             }),
             menuItem
             (
-                label("Display style setting"),
+                label(getTagSettingTitle(entry.tag)),
                 async () =>
                 {
-                    if (await tagDisplayStyleSettingsPopup(entry.pass, entry.tag))
-                    {
-                        await reload();
-                    }
-                }
-            ),
-            menuItem
-            (
-                label("Progress scale style setting"),
-                async () =>
-                {
-                    if (await tagProgressScaleStyleSettingsPopup(entry.pass, entry.tag))
-                    {
-                        await reload();
-                    }
-                }
-            ),
-            menuItem
-            (
-                label("Sort order setting"),
-                async () =>
-                {
-                    if (await tagSortSettingsPopup(entry.pass, entry.tag))
+                    if (await tagSettingsPopup(entry.pass, entry.tag))
                     {
                         await reload();
                     }
