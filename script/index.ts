@@ -3064,7 +3064,7 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
-                                monospace("auto-tag-flash", label("Display style setting"), getAutoTagSettingText(settings.flash, "compact"))
+                                monospace("auto-tag-flash", label("Display style setting"), getTagDisplayStyleText(settings.displayStyle ?? getTagDisplayStyleDefault(tag)))
                             ],
                             onclick: async () =>
                             {
@@ -3238,84 +3238,55 @@ export module CyclicToDo
                 });
             }
         );
+        export const getTagDisplayStyleDefault = (tag: string) => "@overall" !== tag ? "@home": "full";
+        export const getTagDisplayStyleText = (displayStyle: "@home" | "full" | "compact") =>
+        {
+            const map: { [key: string]: locale.LocaleKeyType; } =
+            {
+                "@home": "displayStyle.home",
+                "full": "displayStyle.full",
+                "compact": "displayStyle.compact",
+            };
+            return map[displayStyle];
+        }
         export const tagDisplayStyleSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
                 let result = false;
-                const defaultStyle = "full";
+                const defaultStyle = getTagDisplayStyleDefault(tag);
                 const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
                 const tagButtonListUpdate = async () => minamo.dom.replaceChildren
                 (
                     tagButtonList,
-                    [
-                        "@overall" !== tag ?
-                            {
+                    await Promise.all
+                    (
+                        (
+                            "@overall" !== tag ?
+                            [ "@home", "full", "compact", ]:
+                            [ "full", "compact", ]
+                        )
+                        .map
+                        (
+                            async (i: "@home" | "full" | "compact") =>
+                            ({
                                 tag: "button",
-                                className: `check-button ${"@home" === (settings.displayStyle ?? defaultStyle) ? "checked": ""}`,
+                                className: `check-button ${i === (settings.displayStyle ?? defaultStyle) ? "checked": ""}`,
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    $span("")(label("displayStyle.home")),
+                                    $span("")(label(getTagDisplayStyleText(i))),
                                 ],
                                 onclick: async () =>
                                 {
-                                    settings.displayStyle = "@home";
+                                    settings.displayStyle = i;
                                     OldStorage.TagSettings.set(pass, tag, settings);
                                     result = true;
                                     await tagButtonListUpdate();
                                 }
-                            }:
-                            [],
-                        {
-                            tag: "button",
-                            className: `check-button ${"full" === (settings.displayStyle ?? defaultStyle) ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("displayStyle.full")),
-                            ],
-                            onclick: async () =>
-                            {
-                                settings.displayStyle = "full";
-                                OldStorage.TagSettings.set(pass, tag, settings);
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
-                        {
-                            tag: "button",
-                            className: `check-button ${"compact" === (settings.displayStyle ?? defaultStyle) ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("displayStyle.compact")),
-                            ],
-                            onclick: async () =>
-                            {
-                                settings.displayStyle = "compact";
-                                OldStorage.TagSettings.set(pass, tag, settings);
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
-                        // {
-                        //     tag: "button",
-                        //     className: `check-button ${"limit" === (settings.sort ?? "smart") ? "checked": ""}`,
-                        //     children:
-                        //     [
-                        //         await Resource.loadSvgOrCache("check-icon"),
-                        //         $span("")(label("sort.limit")),
-                        //     ],
-                        //     onclick: async () =>
-                        //     {
-                        //         settings.sort = "limit";
-                        //         OldStorage.TagSettings.set(pass, tag, settings);
-                        //         result = true;
-                        //         await tagButtonListUpdate();
-                        //     }
-                        // },
-                    ]
+                            })
+                        )
+                    )
                 );
                 await tagButtonListUpdate();
                 const ui = popup
