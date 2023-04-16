@@ -3081,7 +3081,7 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
-                                monospace("auto-tag-flash", label("Progress scale style setting"), getAutoTagSettingText(settings.pickup, "compact")),
+                                monospace("auto-tag-flash", label("Progress scale style setting"), getTagProgressScaleStyleText(settings.progressScaleStyle ?? getTagProgressScaleStyleDefault(tag))),
                             ],
                             onclick: async () =>
                             {
@@ -3238,7 +3238,7 @@ export module CyclicToDo
                 });
             }
         );
-        export const getTagDisplayStyleDefault = (tag: string) => "@overall" !== tag ? "@home": "full";
+        export const getTagDisplayStyleDefault = (tag: string) => "@overall" === tag ? "full": "@home";
         export const getTagDisplayStyleText = (displayStyle: "@home" | "full" | "compact") =>
         {
             const map: { [key: string]: locale.LocaleKeyType; } =
@@ -3262,9 +3262,9 @@ export module CyclicToDo
                     await Promise.all
                     (
                         (
-                            "@overall" !== tag ?
-                            [ "@home", "full", "compact", ]:
-                            [ "full", "compact", ]
+                            "@overall" === tag ?
+                            [ "full", "compact", ]:
+                            [ "@home", "full", "compact", ]
                         )
                         .map
                         (
@@ -3311,84 +3311,55 @@ export module CyclicToDo
                 });
             }
         );
+        export const getTagProgressScaleStyleDefault = (tag: string) => "@overall" === tag ? "none": "@home";
+        export const getTagProgressScaleStyleText = (displayStyle: "@home" | "none" | "full") =>
+        {
+            const map: { [key: string]: locale.LocaleKeyType; } =
+            {
+                "@home": "progressScaleStyle.home",
+                "none": "progressScaleStyle.none",
+                "full": "progressScaleStyle.full",
+            };
+            return map[displayStyle];
+        }
         export const tagProgressScaleStyleSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
                 let result = false;
-                const defaultStyle = "@overall" === tag ? "none": "@home";
+                const defaultStyle = getTagProgressScaleStyleDefault(tag);
                 const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
                 const tagButtonListUpdate = async () => minamo.dom.replaceChildren
                 (
                     tagButtonList,
-                    [
-                        "@overall" !== tag ?
-                            {
+                    await Promise.all
+                    (
+                        (
+                            "@overall" === tag ?
+                            [ "none", "full", ]:
+                            [ "@home", "none", "full", ]
+                        )
+                        .map
+                        (
+                            async (i: "@home" | "none" | "full") =>
+                            ({
                                 tag: "button",
-                                className: `check-button ${"@home" === (settings.progressScaleStyle ?? defaultStyle) ? "checked": ""}`,
+                                className: `check-button ${i === (settings.progressScaleStyle ?? defaultStyle) ? "checked": ""}`,
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    $span("")(label("progressScaleStyle.home")),
+                                    $span("")(label(getTagProgressScaleStyleText(i))),
                                 ],
                                 onclick: async () =>
                                 {
-                                    settings.progressScaleStyle = "@home";
+                                    settings.progressScaleStyle = i;
                                     OldStorage.TagSettings.set(pass, tag, settings);
                                     result = true;
                                     await tagButtonListUpdate();
                                 }
-                            }:
-                            [],
-                        {
-                            tag: "button",
-                            className: `check-button ${"none" === (settings.progressScaleStyle ?? defaultStyle) ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("progressScaleStyle.none")),
-                            ],
-                            onclick: async () =>
-                            {
-                                settings.progressScaleStyle = "none";
-                                OldStorage.TagSettings.set(pass, tag, settings);
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
-                        {
-                            tag: "button",
-                            className: `check-button ${"full" === (settings.progressScaleStyle ?? defaultStyle) ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("progressScaleStyle.full")),
-                            ],
-                            onclick: async () =>
-                            {
-                                settings.progressScaleStyle = "full";
-                                OldStorage.TagSettings.set(pass, tag, settings);
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
-                        // {
-                        //     tag: "button",
-                        //     className: `check-button ${"limit" === (settings.sort ?? "smart") ? "checked": ""}`,
-                        //     children:
-                        //     [
-                        //         await Resource.loadSvgOrCache("check-icon"),
-                        //         $span("")(label("sort.limit")),
-                        //     ],
-                        //     onclick: async () =>
-                        //     {
-                        //         settings.sort = "limit";
-                        //         OldStorage.TagSettings.set(pass, tag, settings);
-                        //         result = true;
-                        //         await tagButtonListUpdate();
-                        //     }
-                        // },
-                    ]
+                            })
+                        )
+                    )
                 );
                 await tagButtonListUpdate();
                 const ui = popup
