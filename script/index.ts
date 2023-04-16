@@ -3197,22 +3197,6 @@ export module CyclicToDo
                                 await tagButtonListUpdate();
                             }
                         },
-                        // {
-                        //     tag: "button",
-                        //     className: `check-button ${"limit" === (settings.sort ?? "smart") ? "checked": ""}`,
-                        //     children:
-                        //     [
-                        //         await Resource.loadSvgOrCache("check-icon"),
-                        //         $span("")(label("sort.limit")),
-                        //     ],
-                        //     onclick: async () =>
-                        //     {
-                        //         settings.sort = "limit";
-                        //         OldStorage.TagSettings.set(pass, tag, settings);
-                        //         result = true;
-                        //         await tagButtonListUpdate();
-                        //     }
-                        // },
                     ]
                 );
                 await tagButtonListUpdate();
@@ -3238,7 +3222,9 @@ export module CyclicToDo
                 });
             }
         );
-        export const getTagDisplayStyleDefault = (tag: string) => "@overall" === tag ? "full": "@home";
+        export const makeTagDefaultGetter = <T extends string>(defaultValue: T) =>
+            (tag: string): "@home" | T => "@overall" === tag ? defaultValue: "@home";
+        export const getTagDisplayStyleDefault = makeTagDefaultGetter("full");
         export const getTagDisplayStyleText = (displayStyle: "@home" | "full" | "compact") =>
         {
             const map: { [key: string]: locale.LocaleKeyType; } =
@@ -3311,7 +3297,7 @@ export module CyclicToDo
                 });
             }
         );
-        export const getTagProgressScaleStyleDefault = (tag: string) => "@overall" === tag ? "none": "@home";
+        export const getTagProgressScaleStyleDefault = makeTagDefaultGetter("none");
         export const getTagProgressScaleStyleText = (displayStyle: "@home" | "none" | "full") =>
         {
             const map: { [key: string]: locale.LocaleKeyType; } =
