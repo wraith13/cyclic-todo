@@ -3063,7 +3063,7 @@ export module CyclicToDo
                             className: "label-button",
                             children:
                             [
-                                await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
+                                // await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
                                 monospace("auto-tag-flash", label("Display style setting"), label(getTagDisplayStyleText(settings.displayStyle ?? getTagDisplayStyleDefault(tag))))
                             ],
                             onclick: async () =>
@@ -3080,7 +3080,7 @@ export module CyclicToDo
                             className: "label-button",
                             children:
                             [
-                                await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
+                                // await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
                                 monospace("auto-tag-flash", label("Progress scale style setting"), label(getTagProgressScaleStyleText(settings.progressScaleStyle ?? getTagProgressScaleStyleDefault(tag)))),
                             ],
                             onclick: async () =>
@@ -3097,7 +3097,7 @@ export module CyclicToDo
                             className: "label-button",
                             children:
                             [
-                                await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
+                                // await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
                                 monospace("auto-tag-flash", label("Sort order setting"), label(getTagSortSettingsText(settings.sort ?? getTagSortSettingsDefault(tag)))),
                             ],
                             onclick: async () =>
@@ -3117,7 +3117,7 @@ export module CyclicToDo
                     // className: "add-remove-tags-popup",
                     children:
                     [
-                        $tag("h2")("")(`${locale.map(getTagSettingTitle(tag))}: ${tag}`),
+                        $tag("h2")("")(`${locale.map(getTagSettingTitle(tag))}: ${Domain.tagMap(tag)}`),
                         buttonList,
                         $div("popup-operator")
                         ([{
