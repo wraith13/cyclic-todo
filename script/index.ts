@@ -3098,7 +3098,7 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
-                                monospace("auto-tag-flash", label("Sort order setting"), getAutoTagSettingText(settings.restriction, "compact")),
+                                monospace("auto-tag-flash", label("Sort order setting"), getTagSortSettingsText(settings.sort ?? getTagSortSettingsDefault(tag))),
                             ],
                             onclick: async () =>
                             {
@@ -3137,67 +3137,57 @@ export module CyclicToDo
                 });
             }
         );
+        export const makeTagDefaultGetter = <T extends string>(defaultValue: T) =>
+            (tag: string): "@home" | T => "@overall" === tag ? defaultValue: "@home";
+        export const getTagSortSettingsDefault = makeTagDefaultGetter("smart");
+        export const getTagSortSettingsText = (displayStyle: "@home" | "smart" | "simple") =>
+        {
+            const map: { [key: string]: locale.LocaleKeyType; } =
+            {
+                "@home": "sort.home",
+                "smart": "sort.smart",
+                "simple": "sort.simple",
+            };
+            return map[displayStyle];
+        }
         export const tagSortSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
                 let result = false;
+                const defaultSort = getTagSortSettingsDefault(tag);
                 const tagButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
                 const tagButtonListUpdate = async () => minamo.dom.replaceChildren
                 (
                     tagButtonList,
-                    [
-                        "@overall" !== tag ?
-                            {
+                    await Promise.all
+                    (
+                        (
+                            "@overall" === tag ?
+                            [ "smart", "simple", ]:
+                            [ "@home", "smart", "simple", ]
+                        )
+                        .map
+                        (
+                            async (i: "@home" | "smart" | "simple") =>
+                            ({
                                 tag: "button",
-                                className: `check-button ${"@home" === (settings.sort ?? "@home") ? "checked": ""}`,
+                                className: `check-button ${i === (settings.sort ?? defaultSort) ? "checked": ""}`,
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    $span("")(label("sort.home")),
+                                    $span("")(label(getTagSortSettingsText(i))),
                                 ],
                                 onclick: async () =>
                                 {
-                                    settings.sort = undefined;
+                                    settings.sort = defaultSort === i ? undefined: <"smart" | "simple">i;
                                     OldStorage.TagSettings.set(pass, tag, settings);
                                     result = true;
                                     await tagButtonListUpdate();
                                 }
-                            }:
-                            [],
-                        {
-                            tag: "button",
-                            className: `check-button ${"smart" === (settings.sort ?? ("@overall" === tag ? "smart": "@home")) ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("sort.smart")),
-                            ],
-                            onclick: async () =>
-                            {
-                                settings.sort = "smart";
-                                OldStorage.TagSettings.set(pass, tag, settings);
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
-                        {
-                            tag: "button",
-                            className: `check-button ${"simple" === (settings.sort ?? "smart") ? "checked": ""}`,
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("check-icon"),
-                                $span("")(label("sort.simple")),
-                            ],
-                            onclick: async () =>
-                            {
-                                settings.sort = "simple";
-                                OldStorage.TagSettings.set(pass, tag, settings);
-                                result = true;
-                                await tagButtonListUpdate();
-                            }
-                        },
-                    ]
+                            })
+                        )
+                    )
                 );
                 await tagButtonListUpdate();
                 const ui = popup
@@ -3222,8 +3212,6 @@ export module CyclicToDo
                 });
             }
         );
-        export const makeTagDefaultGetter = <T extends string>(defaultValue: T) =>
-            (tag: string): "@home" | T => "@overall" === tag ? defaultValue: "@home";
         export const getTagDisplayStyleDefault = makeTagDefaultGetter("full");
         export const getTagDisplayStyleText = (displayStyle: "@home" | "full" | "compact") =>
         {
