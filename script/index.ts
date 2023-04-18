@@ -1116,7 +1116,7 @@ export module CyclicToDo
         export const isSublistOld = (tag: string) => tag.endsWith("@:");
         export type TagCategory = "home" | "tag" | "sublist";
         export const getTagCategory = (tag: string): TagCategory =>
-            "@home" === tag ? "home":
+            "@overall" === tag ? "home":
             isSublistOld(tag) ? "sublist":
             "tag";
         export const encode = (tag: string) => tag.replace(/@/g, "@=");
