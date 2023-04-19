@@ -1112,11 +1112,12 @@ export module CyclicToDo
     }
     export module Model
     {
+        export const isHomeOld = (tag: string) => "@overall" === tag;
         export const isSystemTagOld = (tag: string) => tag.startsWith("@") && ! tag.startsWith("@=") && ! isSublistOld(tag);
         export const isSublistOld = (tag: string) => tag.endsWith("@:");
         export type TagCategory = "home" | "tag" | "sublist";
         export const getTagCategory = (tag: string): TagCategory =>
-            "@overall" === tag ? "home":
+            isHomeOld(tag) ? "home":
             isSublistOld(tag) ? "sublist":
             "tag";
         export const encode = (tag: string) => tag.replace(/@/g, "@=");
@@ -3117,7 +3118,12 @@ export module CyclicToDo
                     // className: "add-remove-tags-popup",
                     children:
                     [
-                        $tag("h2")("")(`${locale.map(getTagSettingTitle(tag))}: ${Domain.tagMap(tag)}`),
+                        $tag("h2")("")
+                        (
+                            Model.isHomeOld(tag) ?
+                                locale.map(getTagSettingTitle(tag)):
+                                `${locale.map(getTagSettingTitle(tag))}: ${Domain.tagMap(tag)}`
+                        ),
                         buttonList,
                         $div("popup-operator")
                         ([{
