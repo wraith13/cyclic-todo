@@ -3951,7 +3951,7 @@ export module CyclicToDo
                 {
                     if (await autoTagSettingsPopup(pass, item))
                     {
-                        updateWindow("timer");
+                        updateWindow("operate");
                     }
                 }
             ),
@@ -4148,7 +4148,7 @@ export module CyclicToDo
                                                 event.preventDefault();
                                                 if (await autoTagSettingsPopup(entry.pass, item))
                                                 {
-                                                    updateWindow("timer");
+                                                    updateWindow("operate");
                                                 }
                                             }
                                         }):
@@ -4163,7 +4163,7 @@ export module CyclicToDo
                                                 event.preventDefault();
                                                 if (await autoTagSettingsPopup(entry.pass, item))
                                                 {
-                                                    updateWindow("timer");
+                                                    updateWindow("operate");
                                                 }
                                             }
                                         }):
@@ -4178,7 +4178,7 @@ export module CyclicToDo
                                                 event.preventDefault();
                                                 if (await autoTagSettingsPopup(entry.pass, item))
                                                 {
-                                                    updateWindow("timer");
+                                                    updateWindow("operate");
                                                 }
                                             }
                                         }):
@@ -4193,7 +4193,7 @@ export module CyclicToDo
                                                 event.preventDefault();
                                                 if (await autoTagSettingsPopup(entry.pass, item))
                                                 {
-                                                    updateWindow("timer");
+                                                    updateWindow("operate");
                                                 }
                                             }
                                         }):
@@ -5704,7 +5704,7 @@ export module CyclicToDo
                                         event.preventDefault();
                                         if (await autoTagSettingsPopup(pass, item))
                                         {
-                                            updateWindow("timer");
+                                            updateWindow("operate");
                                         }
                                     }
                                 }):
