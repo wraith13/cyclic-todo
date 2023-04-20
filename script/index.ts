@@ -624,8 +624,10 @@ export module CyclicToDo
                 {
                     if (tag !== Task.getSublist(todo))
                     {
-                        console.log(`Task.rename(${pass}, ${todo}, "${tag}${Task.getBody(todo)}")`);
-                        Task.rename(pass, todo, `${tag}${Task.getBody(todo)}`);
+                        const renamedTodo = `${tag}${Task.getBody(todo)}`;
+                        console.log(`Task.rename(${pass}, ${todo}, "${renamedTodo}")`);
+                        Task.rename(pass, todo, renamedTodo);
+                        return renamedTodo;
                     }
                 }
                 else
@@ -636,6 +638,7 @@ export module CyclicToDo
                     //     OldStorage.TagMember.remove(pass, "@overall", todo);
                     // }
                 }
+                return todo;
             };
             //export const merge = (pass: string, tag: string, list: string[]) => set(pass, tag, get(pass, tag).concat(list).filter(uniqueFilter));
             export const remove = (pass: string, tag: string, todo: string) =>
@@ -4742,8 +4745,8 @@ export module CyclicToDo
                             if (null !== newTask)
                             {
                                 OldStorage.Task.add(pass, newTask);
-                                OldStorage.TagMember.add(pass, tag, newTask);
-                                await showUrl({ pass, todo: newTask, });
+                                const newTask2 = OldStorage.TagMember.add(pass, tag, newTask);
+                                await showUrl({ pass, todo: newTask2, });
                             }
                         }
                     ),
@@ -4851,8 +4854,8 @@ export module CyclicToDo
                     if (null !== newTask)
                     {
                         OldStorage.Task.add(entry.pass, newTask);
-                        OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
-                        await showUrl({ pass: entry.pass, todo: newTask, });
+                        const newTask2 = OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
+                        await showUrl({ pass: entry.pass, todo: newTask2, });
                     }
                 }
             ),
@@ -5149,8 +5152,8 @@ export module CyclicToDo
                     if (null !== newTask)
                     {
                         OldStorage.Task.add(entry.pass, newTask);
-                        OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
-                        await showUrl({ pass: entry.pass, todo: newTask, });
+                        const newTask2 = OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
+                        await showUrl({ pass: entry.pass, todo: newTask2, });
                     }
                 }
             },
@@ -5359,8 +5362,8 @@ export module CyclicToDo
                     if (null !== newTask)
                     {
                         OldStorage.Task.add(entry.pass, newTask);
-                        OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
-                        await showUrl({ pass: entry.pass, todo: newTask, });
+                        const newTask2 = OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
+                        await showUrl({ pass: entry.pass, todo: newTask2, });
                     }
                 }
             ),
