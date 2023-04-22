@@ -957,6 +957,8 @@ export module CyclicToDo
             export const add = (pass: string, target: RemovedType) => set(pass, getRaw(pass).concat([ JSON.stringify(target) ]));
             const remove = (pass: string, target: string) => set(pass, getRaw(pass).filter(i => target !== i));
             export const clear = (pass: string) => set(pass, []);
+            export const decay = (pass: string, expire = Domain.getTicks() -Domain.removedItemExpire) =>
+                set(pass, getRaw(pass).filter(i => expire < (JSON.parse(i) as RemovedType).deteledAt));
             export const getTypeName = (item: RemovedType) => locale.map(item.type);
             export const getIcon = (item: RemovedType): keyof typeof resource =>
             {
@@ -1584,6 +1586,7 @@ export module CyclicToDo
         export const maxRestAdjustTime = (minamo.core.parseTimespan(config.maxRestAdjustTimespan) ?? (3 *hourUnit)) / timeAccuracy;
         export const maxShortTermMinutes = (minamo.core.parseTimespan(config.maxShortTermTimespan) ?? (6 *dayUnit)) / minuteUnit;
         export const maxMediumTermMinutes = (minamo.core.parseTimespan(config.maxMediumTermTimespan) ?? (15 *dayUnit)) / minuteUnit;
+        export const removedItemExpire = (minamo.core.parseTimespan(config.removedItemExpire) ?? (30 *dayUnit)) / minuteUnit;
         export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / timeAccuracy);
         export const dateCoreStringFromTick = (tick: null | number) =>
         {
