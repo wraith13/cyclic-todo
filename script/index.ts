@@ -958,7 +958,16 @@ export module CyclicToDo
             const remove = (pass: string, target: string) => set(pass, getRaw(pass).filter(i => target !== i));
             export const clear = (pass: string) => set(pass, []);
             export const decay = (pass: string, expire = Domain.getTicks() -Domain.removedItemExpire) =>
-                set(pass, getRaw(pass).filter(i => expire < (JSON.parse(i) as RemovedType).deteledAt));
+            {
+                const oldList = getRaw(pass);
+                const newList = oldList.filter(i => expire < (JSON.parse(i) as RemovedType).deteledAt);
+                const result = oldList.length !== newList.length;
+                if (result)
+                {
+                    set(pass, newList);
+                }
+                return result;
+            }
             export const getTypeName = (item: RemovedType) => locale.map(item.type);
             export const getIcon = (item: RemovedType): keyof typeof resource =>
             {
