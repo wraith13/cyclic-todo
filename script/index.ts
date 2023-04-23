@@ -6805,6 +6805,10 @@ export module CyclicToDo
             return false;
         }
     };
+    export const decayRemovedItems = () =>
+    {
+        OldStorage.Pass.get().forEach(pass => OldStorage.Removed.decay(pass));
+    }
     export const start = async (params:{ buildTimestamp: string, buildTimestampTick:number, }) =>
     {
         buildTimestamp =
@@ -6842,6 +6846,12 @@ export module CyclicToDo
         document.addEventListener('fullscreenchange', Render.onFullscreenChange);
         document.addEventListener('webkitfullscreenchange', Render.onWebkitFullscreenChange);
         window.matchMedia('(prefers-color-scheme: dark)').addListener(updateStyle);
+        decayRemovedItems();
+        setInterval
+        (
+            decayRemovedItems,
+            minamo.core.parseTimespan(config.removedItemDecayInterval) ?? 60 *60 *1000
+        )
         updateStyle();
         await Render.showUpdatingScreen(location.href);
         await showPage();
