@@ -6807,7 +6807,11 @@ export module CyclicToDo
     };
     export const decayRemovedItems = () =>
     {
-        OldStorage.Pass.get().forEach(pass => OldStorage.Removed.decay(pass));
+        const isDirty = OldStorage.Pass.get().map(pass => OldStorage.Removed.decay(pass)).reduce((a,b) => a || b, false);
+        if (isDirty)
+        {
+            Render.updateWindow?.("dirty");
+        }
     }
     export const start = async (params:{ buildTimestamp: string, buildTimestampTick:number, }) =>
     {
