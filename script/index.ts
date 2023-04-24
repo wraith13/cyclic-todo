@@ -5566,7 +5566,28 @@ export module CyclicToDo
             ]
         });
         export const showRemovedScreen = async (pass: string) =>
-            await showWindow(await removedScreen(pass, OldStorage.Removed.get(pass)));
+        {
+            const updateWindow = async (event: UpdateWindowEventEype) =>
+            {
+                switch(event)
+                {
+                    case "high-resolution-timer":
+                        updateHeaderTimestamp();
+                        break;
+                    case "timer":
+                    case "focus":
+                    case "blur":
+                    case "scroll":
+                        break;
+                    case "storage":
+                    case "operate":
+                    case "dirty":
+                        await reload();
+                        break;
+                }
+            };
+            await showWindow(await removedScreen(pass, OldStorage.Removed.get(pass)), updateWindow);
+        };
         export const todoScreenMenu = async (pass: string, item: ToDoEntry) =>
         [
             todoDoneMenu(pass, item),
