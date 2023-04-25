@@ -2463,6 +2463,8 @@ export module CyclicToDo
                     undefined !== valueOrNothing ? labelOrValue: [],
                     $span("value monospace")(valueOrNothing ?? labelOrValue),
                 ]);
+        export const messagePanel = (text: string) => $div("message-panel")(text);
+        export const messageList = (source: minamo.dom.Source) => $div("message-list")(source);
         export const systemPrompt = async (message?: string, _default?: string): Promise<string | null> =>
         {
             await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが window.prompt が表示されてる間、ずっと表示される事になる。
@@ -5563,9 +5565,10 @@ export module CyclicToDo
                         }:
                         [],
                 ]),
-                $div({ style: "text-align: center; padding: 0.5rem;", })
-                ("💬 Items after 30 days are automatically deleted completely. / ３０日経過したアイテムは自動的に完全消去されます。"),
-
+                messageList
+                ([
+                    messagePanel("Items after 30 days are automatically deleted completely. / ３０日経過したアイテムは自動的に完全消去されます。"),
+                ]),
             ]
         });
         export const showRemovedScreen = async (pass: string) =>
