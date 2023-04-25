@@ -5563,6 +5563,9 @@ export module CyclicToDo
                         }:
                         [],
                 ]),
+                $div({ style: "text-align: center; padding: 0.5rem;", })
+                ("💬 Items after 30 days are automatically deleted completely. / ３０日経過したアイテムは自動的に完全消去されます。"),
+
             ]
         });
         export const showRemovedScreen = async (pass: string) =>
