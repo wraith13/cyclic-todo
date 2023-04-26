@@ -5567,7 +5567,7 @@ export module CyclicToDo
                 ]),
                 messageList
                 ([
-                    messagePanel("Items after 30 days are automatically deleted completely. / ３０日経過したアイテムは自動的に完全消去されます。"),
+                    messagePanel(label("Items after 30 days are automatically deleted completely.")),
                 ]),
             ]
         });
