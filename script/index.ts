@@ -2450,10 +2450,10 @@ export module CyclicToDo
             progressBarPadDiv?.setAttribute?.("style", progressPadStyle(item.progress));
         };
         export const labelSpan = $span("label");
-        export const label = (label: locale.LocaleKeyType) => labelSpan
+        export const label = (text: locale.LocaleKeyType) => labelSpan
         ([
-            $span("locale-parallel")(locale.parallel(label)),
-            $span("locale-map")(locale.map(label)),
+            $span("locale-parallel")(locale.parallel(text)),
+            $span("locale-map")(locale.map(text)),
         ]);
         export const monospace = (classNameOrValue: string | minamo.dom.Source, labelOrValue?: minamo.dom.Source, valueOrNothing?: minamo.dom.Source) =>
             "string" !== typeof classNameOrValue || undefined === labelOrValue ?
@@ -2463,7 +2463,7 @@ export module CyclicToDo
                     undefined !== valueOrNothing ? labelOrValue: [],
                     $span("value monospace")(valueOrNothing ?? labelOrValue),
                 ]);
-        export const messagePanel = (text: string) => $div("message-panel")(text);
+        export const messagePanel = (text: minamo.dom.Source) => $div("message-panel locale-parallel-off")(text);
         export const messageList = (source: minamo.dom.Source) => $div("message-list")(source);
         export const systemPrompt = async (message?: string, _default?: string): Promise<string | null> =>
         {
@@ -6265,7 +6265,11 @@ export module CyclicToDo
                 ]),
                 $div("row-flex-list compact-flex-list list-list")
                     (await Promise.all(OldStorage.Pass.get().map(pass => listItem(JSON.parse(OldStorage.exportJson(pass)) as Content)))),
-                $div("bottom-line version-information")(getVersionInfromationText())
+                messageList
+                ([
+                    messagePanel(label("You can use this web app like an app by registering it on the home screen of your smartphone.")),
+                ]),
+                $div("bottom-line version-information")(getVersionInfromationText()),
             ]
         });
         export const showWelcomeScreen = async () =>
