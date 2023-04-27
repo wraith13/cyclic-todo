@@ -6278,6 +6278,9 @@ export module CyclicToDo
             {
                 switch(event)
                 {
+                case "high-resolution-timer":
+                    updateHeaderTimestamp();
+                    break;
                 case "timer":
                     minamo.dom.setProperty(document.getElementsByClassName("version-information")[0], "innerText", getVersionInfromationText());
                     break;
