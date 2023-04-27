@@ -288,6 +288,10 @@ export module CyclicToDo
         histories: { [todo: string]: HistoryEntry };
         removed: RemovedType[];
     }
+    export interface RemovedContent extends Content
+    {
+        deteledAt: number;
+    }
     export type RemovedType = RemovedTag | RemovedSublist | RemovedTask | RemovedTick;
     export interface RemovedBase extends minamo.core.JsonableObject
     {
@@ -436,6 +440,17 @@ export module CyclicToDo
             export const add = (json: string) => set(get().concat([ json ]));
             export const remove = (pass: string) => set(get().filter(i => pass !== (JSON.parse(i) as Content).pass));
             export const clear = () => set([]);
+            export const decay = (expire = Domain.getTicks() -Domain.removedItemExpire) =>
+            {
+                const oldList = get();
+                const newList = oldList.filter(i => expire < (JSON.parse(i) as RemovedContent).deteledAt);
+                const result = oldList.length !== newList.length;
+                if (result)
+                {
+                    set(newList);
+                }
+                return result;
+            }
         }
         export module Pass
         {
@@ -449,7 +464,9 @@ export module CyclicToDo
             };
             export const remove = (pass: string) =>
             {
-                Backup.add(exportJson(pass));
+                const data: RemovedContent = JSON.parse(exportJson(pass));
+                data.deteledAt = Domain.getTicks();
+                Backup.add(JSON.stringify(data));
                 set(get().filter(i => pass !== i));
                 TagMember.getRaw(pass, "@overall").forEach(task => History.removeKey(pass, task));
                 Tag.get(pass).filter(tag => ! Model.isSystemTagOld(tag) && ! Model.isSublistOld(tag)).forEach(tag => TagMember.removeKey(pass, tag));
@@ -6005,7 +6022,28 @@ export module CyclicToDo
             ]),
         ]);
         export const showRemovedListScreen = async () =>
-            await showWindow(await removedListScreen(OldStorage.Backup.get().map(json => JSON.parse(json) as Content)));
+        {
+            const updateWindow = async (event: UpdateWindowEventEype) =>
+            {
+                switch(event)
+                {
+                    case "high-resolution-timer":
+                        updateHeaderTimestamp();
+                        break;
+                    case "timer":
+                    case "focus":
+                    case "blur":
+                    case "scroll":
+                        break;
+                    case "storage":
+                    case "operate":
+                    case "dirty":
+                        await reload();
+                        break;
+                }
+            };
+            await showWindow(await removedListScreen(OldStorage.Backup.get().map(json => JSON.parse(json) as Content)), updateWindow);
+        };
         export const removedListScreenMenu = async () =>
         [
             menuItem
@@ -6054,6 +6092,10 @@ export module CyclicToDo
                             },
                         }:
                         [],
+                ]),
+                messageList
+                ([
+                    messagePanel(label("Items after 30 days are automatically deleted completely.")),
                 ]),
             ]
         });
@@ -6841,7 +6883,12 @@ export module CyclicToDo
     };
     export const decayRemovedItems = () =>
     {
-        const isDirty = OldStorage.Pass.get().map(pass => OldStorage.Removed.decay(pass)).reduce((a,b) => a || b, false);
+        const isDirty =
+            [
+                OldStorage.Backup.decay(),
+                ...OldStorage.Pass.get().map(pass => OldStorage.Removed.decay(pass)),
+            ].
+            reduce((a,b) => a || b, false);
         if (isDirty)
         {
             Render.updateWindow?.("dirty");
