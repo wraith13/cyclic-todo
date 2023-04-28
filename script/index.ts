@@ -6330,6 +6330,11 @@ export module CyclicToDo
                 case "timer":
                     minamo.dom.setProperty(document.getElementsByClassName("version-information")[0], "innerText", getVersionInfromationText());
                     break;
+                case "storage":
+                case "operate":
+                case "dirty":
+                    await reload();
+                    break;
                 }
             }
             await showWindow(await welcomeScreen(), updateWindow);
@@ -6411,6 +6416,7 @@ export module CyclicToDo
                             break;
                         case "storage":
                         case "operate":
+                        case "dirty":
                             await reload();
                             break;
                     }
