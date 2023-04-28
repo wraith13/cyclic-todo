@@ -5511,7 +5511,7 @@ export module CyclicToDo
             ]),
             $div("item-information")
             ([
-                monospace("remoced-timestamp", label("deletedAt"), Domain.dateStringFromTick(item.deteledAt)),
+                monospace("removed-timestamp", label("deletedAt"), Domain.dateStringFromTick(item.deteledAt)),
             ]),
         ]);
         export const removedScreenMenu = async (pass: string) =>
@@ -5992,7 +5992,7 @@ export module CyclicToDo
                 }),
             ]
         });
-        export const removedListItem = async (list: Content) => $div("list-item flex-item")
+        export const removedListItem = async (list: RemovedContent) => $div("list-item removed-item flex-item")
         ([
             $div("item-header")
             ([
@@ -6020,6 +6020,10 @@ export module CyclicToDo
                     },
                 }]),
             ]),
+            $div("item-information")
+            ([
+                monospace("removed-timestamp", label("deletedAt"), Domain.dateStringFromTick(list.deteledAt)),
+            ]),
         ]);
         export const showRemovedListScreen = async () =>
         {
@@ -6042,7 +6046,7 @@ export module CyclicToDo
                         break;
                 }
             };
-            await showWindow(await removedListScreen(OldStorage.Backup.get().map(json => JSON.parse(json) as Content)), updateWindow);
+            await showWindow(await removedListScreen(OldStorage.Backup.get().map(json => JSON.parse(json) as RemovedContent)), updateWindow);
         };
         export const removedListScreenMenu = async () =>
         [
@@ -6052,7 +6056,7 @@ export module CyclicToDo
                 async () => await showUrl({ }),
             )
         ];
-        export const removedListScreen = async (list: Content[]) =>
+        export const removedListScreen = async (list: RemovedContent[]) =>
         ({
             className: "remove-list-screen",
             header:
