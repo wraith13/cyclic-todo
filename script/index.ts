@@ -3948,7 +3948,6 @@ export module CyclicToDo
                     if (OldStorage.Task.rename(pass, item.task, newTask))
                     {
                         await onRename(newTask);
-                        //await reload();
                     }
                     else
                     {
@@ -4014,14 +4013,19 @@ export module CyclicToDo
                 }
             )
         ];
-        export const todoDeleteMenu = (pass: string, item: ToDoEntry) => menuItem
+        export const todoDeleteMenu =
+        (
+            pass: string,
+            item: ToDoEntry,
+            onDelete: (task: string) => Promise<unknown> = async () => await reload()
+        ) => menuItem
         (
             label("Delete"),
             async () =>
             {
                 OldStorage.Task.remove(pass, item.task);
                 //Storage.TagMember.add(pass, "@deleted", item.task);
-                await reload();
+                await onDelete(item.task);
             },
             "delete-button"
         );
@@ -5616,7 +5620,7 @@ export module CyclicToDo
             todoDoneMenu(pass, item),
             todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
             todoTagMenu(pass, item),
-            todoDeleteMenu(pass, item),
+            todoDeleteMenu(pass, item, async _task => await showUrl({ pass, tag: "@overall", })),
             // {
             //     tag: "button",
             //     children: "🚫 ToDo をシェア",
