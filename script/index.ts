@@ -305,6 +305,7 @@ export module CyclicToDo
         tasks: string[];
         settings: TagSettings;
     }
+    export const isRemovedTag = (value: RemovedType):value is RemovedTag => "Tag" === value.type;
     export interface RemovedSublist extends RemovedBase
     {
         type: "Sublist";
@@ -312,6 +313,7 @@ export module CyclicToDo
         tasks: RemovedTask[];
         settings: TagSettings;
     }
+    export const isRemovedSublist = (value: RemovedType):value is RemovedSublist => "Sublist" === value.type;
     export interface RemovedTask extends RemovedBase
     {
         type: "Task";
@@ -320,12 +322,14 @@ export module CyclicToDo
         settings?: TodoSettings;
         ticks: HistoryEntry;
     }
+    export const isRemovedTask = (value: RemovedType):value is RemovedTask => "Task" === value.type;
     export interface RemovedTick extends RemovedBase
     {
         type: "Tick";
         task: string;
         tick: number;
     }
+    export const isRemovedTick = (value: RemovedType):value is RemovedTick => "Tick" === value.type;
     export module OldStorage
     {
         export const sessionPassPrefix = "@Session";
