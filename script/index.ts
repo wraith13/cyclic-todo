@@ -2175,7 +2175,7 @@ export module CyclicToDo
                 );
                 const toast = makeToast
                 ({
-                    content: $span("")(`${locale.string("ToDo リストの名前を変更しました！")}： ${backup} → ${newName}`),
+                    content: $span("")(`${locale.string("ToDo リストの名前を変更しました！")}: ${backup} → ${newName}`),
                     backwardOperator: cancelTextButton
                     (
                         async () =>
@@ -4021,7 +4021,8 @@ export module CyclicToDo
         (
             pass: string,
             item: ToDoEntry,
-            onDelete: (task: string) => Promise<unknown> = async () => await reload()
+            onDelete: () => Promise<unknown> = async () => await reload(),
+            onCanceled: () => Promise<unknown> = async () => await reload()
         ) => menuItem
         (
             label("Delete"),
@@ -4029,7 +4030,21 @@ export module CyclicToDo
             {
                 OldStorage.Task.remove(pass, item.task);
                 //Storage.TagMember.add(pass, "@deleted", item.task);
-                await onDelete(item.task);
+                await onDelete();
+                const toast = makeToast
+                ({
+                    content: $span("")(`${locale.string("ToDo を削除しました！")}: ${item.task}`),
+                    backwardOperator: cancelTextButton
+                    (
+                        async () =>
+                        {
+                            const removedItem = OldStorage.Removed.get(pass).filter(i => isRemovedTask(i) && item.task === i.name)[0];
+                            OldStorage.Removed.restore(pass, removedItem);
+                            await toast.hide();
+                            onCanceled();
+                        }
+                    ),
+                });
             },
             "delete-button"
         );
