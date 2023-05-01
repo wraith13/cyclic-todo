@@ -5639,7 +5639,13 @@ export module CyclicToDo
             todoDoneMenu(pass, item),
             todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
             todoTagMenu(pass, item),
-            todoDeleteMenu(pass, item, async _task => await showUrl({ pass, tag: "@overall", })),
+            todoDeleteMenu
+            (
+                pass,
+                item,
+                async () => await showUrl({ pass, tag: "@overall", }),
+                async () => await showUrl({ pass, todo: item.task, })
+            ),
             // {
             //     tag: "button",
             //     children: "🚫 ToDo をシェア",
