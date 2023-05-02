@@ -4033,7 +4033,7 @@ export module CyclicToDo
                 await onDelete();
                 const toast = makeToast
                 ({
-                    content: $span("")(`${locale.string("ToDo を削除しました！")}: ${item.task}`),
+                    content: $span("")(`${locale.map("ToDo has been deleted!")}: ${item.task}`),
                     backwardOperator: cancelTextButton
                     (
                         async () =>
