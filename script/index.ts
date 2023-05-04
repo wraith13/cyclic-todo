@@ -2199,7 +2199,7 @@ export module CyclicToDo
                 OldStorage.Pass.remove(list.pass);
                 const toast = makeToast
                 ({
-                    content: $span("")(`${locale.string("ToDo リストを削除しました！")}: ${list.title}`),
+                    content: $span("")(`${locale.map("ToDo list has been deleted!")}: ${list.title}`),
                     backwardOperator: cancelTextButton
                     (
                         async () =>
