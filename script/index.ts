@@ -6226,7 +6226,7 @@ export module CyclicToDo
                     forwardOperator:{
                         tag: "button",
                         className: "text-button",
-                        children: $span("")(locale.string(`リトライ`)),
+                        children: $span("")(locale.map("Retry")),
                         onclick: async () =>
                         {
                             reloadScreen();
