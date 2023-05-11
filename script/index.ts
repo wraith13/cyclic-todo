@@ -1883,7 +1883,7 @@ export module CyclicToDo
             }
         };
         export const getTermCategoryByAverage = (item: ToDoEntry) =>
-            null !== item.smartRest && null !== item.RecentlySmartAverage ?
+            null !== item.progress && null !== item.smartRest && null !== item.RecentlySmartAverage ?
                 (
                     item.RecentlySmartAverage < Domain.maxShortTermMinutes ?
                         "@short-term":
@@ -1895,7 +1895,7 @@ export module CyclicToDo
                 ):
                 "@irregular-term";
         export const getTermCategoryByRest = (item: ToDoEntry) =>
-            null !== item.smartRest && null !== item.rest ?
+            null !== item.progress && null !== item.smartRest && null !== item.rest ?
                 (
                     item.rest < 24 *60 ?
                         "@short-term":
