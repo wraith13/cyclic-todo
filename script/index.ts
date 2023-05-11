@@ -2226,6 +2226,7 @@ export module CyclicToDo
                 {
                     OldStorage.TagMember.remove(pass, "@pickup", task);
                 }
+                MigrateBridge.updateTermCategory(pass, MigrateBridge.getToDoEntry(pass, task));
                 const toast = makeToast
                 ({
                     content: $span("")(`${locale.map("Done!")}: ${task}`),
@@ -2242,6 +2243,7 @@ export module CyclicToDo
                             {
                                 OldStorage.TagMember.add(pass, "@pickup", task);
                             }
+                            MigrateBridge.updateTermCategory(pass, MigrateBridge.getToDoEntry(pass, task));
                             await toast.hide();
                             onCanceled();
                         }
