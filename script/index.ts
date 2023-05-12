@@ -4689,6 +4689,21 @@ export module CyclicToDo
                 "@removed": locale.map("@deleted"),
                 "@import": locale.map("Import List"),
             }[pass] ?? OldStorage.Title.get(pass), // `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
+            href: { pass, tag: "@overall", },
+            //menu: await screenHeaderListSegmentMenu(pass),
+        });
+        export const screenHeaderListMenuSegment = async (pass: string): Promise<HeaderSegmentSource> =>
+        ({
+            icon:
+            {
+                "@removed": "recycle-bin-icon" as Resource.KeyType,
+                "@import": "import-icon" as Resource.KeyType,
+            }[pass] ?? "list-icon",
+            title:
+            {
+                "@removed": locale.map("@deleted"),
+                "@import": locale.map("Import List"),
+            }[pass] ?? OldStorage.Title.get(pass), // `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
             menu: await screenHeaderListSegmentMenu(pass),
         });
         export const screenHeaderTagSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
@@ -5174,7 +5189,9 @@ export module CyclicToDo
             items:
             [
                 await screenHeaderHomeSegment(),
-                await screenHeaderListSegment(entry.pass),
+                "@overall" === entry.tag ?
+                    await screenHeaderListMenuSegment(entry.pass):
+                    await screenHeaderListSegment(entry.pass),
                 await screenHeaderTagSegment(entry.pass, entry.tag),
             ],
             menu: () => listScreenMenu(entry),
