@@ -6734,7 +6734,7 @@ export module CyclicToDo
                             {
                                 tag: "button",
                                 className: "text-button",
-                                children: $span("")(locale.string(`アップデート`)),
+                                children: $span("")(locale.map("Update")),
                                 onclick: () =>
                                 {
                                     toast.hide();
