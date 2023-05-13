@@ -4710,6 +4710,12 @@ export module CyclicToDo
         ({
             icon: Resource.getTagIcon(current),
             title: Domain.tagMap(current),
+            href: { pass, tag: current, },
+        });
+        export const screenHeaderTagMenuSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
+        ({
+            icon: Resource.getTagIcon(current),
+            title: Domain.tagMap(current),
             menu:
                 (
                     (
@@ -5192,7 +5198,7 @@ export module CyclicToDo
                 "@overall" === entry.tag ?
                     await screenHeaderListMenuSegment(entry.pass):
                     await screenHeaderListSegment(entry.pass),
-                await screenHeaderTagSegment(entry.pass, entry.tag),
+                await screenHeaderTagMenuSegment(entry.pass, entry.tag),
             ],
             menu: () => listScreenMenu(entry),
             operator: await filter
