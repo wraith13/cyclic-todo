@@ -6764,7 +6764,7 @@ export module CyclicToDo
                                     reloadScreen();
                                 },
                             },
-                            content: $span("")(locale.string(`新しいバージョンがあります！`)),
+                            content: $span("")(locale.map("There is a new version!")),
                             wait: 0,
                         });
                     }
