@@ -6223,7 +6223,7 @@ export module CyclicToDo
             let isCanceled = false;
             const loadingToast = makeToast
             ({
-                content: $span("")(locale.string("サーバーと通信中...")),
+                content: $span("")(locale.map("Communicating with server...")),
                 backwardOperator: cancelTextButton
                 (
                     async () =>

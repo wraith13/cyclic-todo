@@ -119,5 +119,6 @@
     "ToDo list has been deleted!": "ToDo list has been deleted!",
     "Retry": "Retry",
     "Update": "Update",
-    "There is a new version!": "There is a new version!"
+    "There is a new version!": "There is a new version!",
+    "Communicating with server...": "サーバーと通信中..."
 }
