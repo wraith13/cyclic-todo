@@ -6239,7 +6239,13 @@ export module CyclicToDo
                 await getLatestBuildTimestamp();
                 if ( ! isCanceled)
                 {
-                    location.reload();
+                    const reload =
+                    {
+                        url: location.href,
+                        fullscreen: fullscreenEnabled() && fullscreenElement(),
+                        dummy: new Date().getTime(),
+                    };
+                    location.href = `?reload=${encodeURIComponent(JSON.stringify(reload))}`
                 }
                 await loadingToast.hide();
             }
@@ -6967,6 +6973,17 @@ export module CyclicToDo
         };
         console.log(`start timestamp: ${new Date()}`);
         console.log(`${JSON.stringify(params)}`);
+        const urlParams = getUrlParams(location.href);
+        const reload = urlParams["reload"];
+        if (reload)
+        {
+            const json = JSON.parse(reload);
+            const url = json["url"];
+            if (url)
+            {
+                history.replaceState(null, applicationTitle, url);
+            }
+        }
         locale.setLocale(Storage.SystemSettings.get().locale ?? null);
         window.onpopstate = () => showPage();
         window.addEventListener('resize', Render.onWindowResize);
@@ -7004,7 +7021,7 @@ export module CyclicToDo
         updateStyle();
         await Render.showUpdatingScreen(location.href);
         await showPage();
-        if ("reload" === (<any>performance.getEntriesByType("navigation"))?.[0]?.type)
+        if (reload || "reload" === (<any>performance.getEntriesByType("navigation"))?.[0]?.type)
         {
             Render.makeToast
             ({
