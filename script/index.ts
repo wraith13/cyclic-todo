@@ -6264,7 +6264,7 @@ export module CyclicToDo
                             await retryToast.hide();
                         },
                     },
-                    content: $span("")(locale.string(`サーバーに正常アクセスできませんでした。`)),
+                    content: $span("")(locale.map("Could not access the server successfully.")),
                     backwardOperator: cancelTextButton
                     (
                         async () =>

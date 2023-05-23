@@ -120,5 +120,6 @@
     "Retry": "リトライ",
     "Update": "アップデート",
     "There is a new version!": "新しいバージョンがあります！",
-    "Communicating with server...": "サーバーと通信中..."
+    "Communicating with server...": "サーバーと通信中...",
+    "Could not access the server successfully.": "サーバーに正常にアクセスできませんでした。"
 }

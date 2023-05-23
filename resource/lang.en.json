@@ -120,5 +120,6 @@
     "Retry": "Retry",
     "Update": "Update",
     "There is a new version!": "There is a new version!",
-    "Communicating with server...": "Communicating with server..."
+    "Communicating with server...": "Communicating with server...",
+    "Could not access the server successfully.": "Could not access the server successfully."
 }
