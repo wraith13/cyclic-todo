@@ -6983,6 +6983,25 @@ export module CyclicToDo
             {
                 history.replaceState(null, applicationTitle, url);
             }
+            const fullscreen = urlParams["reload"];
+            if (fullscreen && Render.fullscreenEnabled())
+            {
+                const toast = Render.makeToast
+                ({
+                    forwardOperator:
+                    {
+                        tag: "button",
+                        className: "text-button",
+                        children: Render.$span("")(locale.map("Full screen")),
+                        onclick: async () =>
+                        {
+                            toast.hide();
+                            await Render.requestFullscreen();
+                        },
+                    },
+                    content: Render.$span("")(locale.string("再読み込みした為、フルスクリーンが解かれました。")),
+                });
+            }
         }
         locale.setLocale(Storage.SystemSettings.get().locale ?? null);
         window.onpopstate = () => showPage();
