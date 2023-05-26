@@ -6242,7 +6242,7 @@ export module CyclicToDo
                     const reload =
                     {
                         url: location.href,
-                        fullscreen: fullscreenEnabled() && fullscreenElement(),
+                        fullscreen: fullscreenEnabled() && null !== fullscreenElement(),
                         dummy: new Date().getTime(),
                     };
                     location.href = `?reload=${encodeURIComponent(JSON.stringify(reload))}`;
@@ -6983,7 +6983,7 @@ export module CyclicToDo
             {
                 history.replaceState(null, applicationTitle, url);
             }
-            const fullscreen = urlParams["reload"];
+            const fullscreen = json["fullscreen"];
             if (fullscreen && Render.fullscreenEnabled())
             {
                 const toast = Render.makeToast
