@@ -6245,7 +6245,7 @@ export module CyclicToDo
                         fullscreen: fullscreenEnabled() && fullscreenElement(),
                         dummy: new Date().getTime(),
                     };
-                    location.href = `?reload=${encodeURIComponent(JSON.stringify(reload))}`
+                    location.href = `?reload=${encodeURIComponent(JSON.stringify(reload))}`;
                 }
                 await loadingToast.hide();
             }
