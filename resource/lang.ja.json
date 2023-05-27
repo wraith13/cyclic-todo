@@ -121,5 +121,6 @@
     "Update": "アップデート",
     "There is a new version!": "新しいバージョンがあります！",
     "Communicating with server...": "サーバーと通信中...",
-    "Could not access the server successfully.": "サーバーに正常にアクセスできませんでした。"
+    "Could not access the server successfully.": "サーバーに正常にアクセスできませんでした。",
+    "Full screen has been canceled due to reloading.": "再読み込みした為、フルスクリーンが解かれました。"
 }
