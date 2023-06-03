@@ -2290,7 +2290,7 @@ export module CyclicToDo
                 Storage.Filter.set([]);
                 const toast = makeToast
                 ({
-                    content: $span("")(locale.string(`絞り込みの履歴をクリアしました。`)),
+                    content: $span("")(locale.map("Filter history cleared.")),
                     backwardOperator: cancelTextButton
                     (
                         async () =>

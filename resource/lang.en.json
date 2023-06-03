@@ -122,5 +122,6 @@
     "There is a new version!": "There is a new version!",
     "Communicating with server...": "Communicating with server...",
     "Could not access the server successfully.": "Could not access the server successfully.",
-    "Full screen has been canceled due to reloading.": "再読み込みした為、フルスクリーンが解かれました。"
+    "Full screen has been canceled due to reloading.": "Full screen has been canceled due to reloading.",
+    "Filter history cleared.": "Filter history cleared."
 }
