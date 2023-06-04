@@ -6028,7 +6028,7 @@ export module CyclicToDo
             },
             body:
             [
-                $tag("textarea")("json")(locale.string("エクスポートした JSON をペーストしてください。")),
+                $tag("textarea")({ className:"json", attributes:{ placeholder:locale.string("エクスポートした JSON をペーストしてください。"), }, })(""),
                 $div("button-list")
                 ({
                     tag: "button",
