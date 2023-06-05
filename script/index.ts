@@ -6851,6 +6851,17 @@ export module CyclicToDo
                                 }
                             }
                             break;
+                        case "?":
+                            Render.makeToast
+                            ({
+                                content: $tag("ul")("")
+                                ([
+                                    $tag("li")("")("?: show keyboard shortcut"),
+                                    $tag("li")("")("f: toggle fullscreen"),
+                                ]),
+                                isWideContent: true,
+                            });
+                            break;
                     }
                 }
             }
