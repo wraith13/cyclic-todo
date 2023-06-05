@@ -6374,6 +6374,7 @@ export module CyclicToDo
                 messageList
                 ([
                     messagePanel(label("You can use this web app like an app by registering it on the home screen of your smartphone.")),
+                    messagePanel(labelSpan("? キーでキーボードショートカット一覧が表示されます。")),
                 ]),
                 $div("bottom-line version-information")(getVersionInfromationText()),
             ]
