@@ -6856,7 +6856,17 @@ export module CyclicToDo
                         case "?":
                             Render.makeToast
                             ({
-                                content: $tag("ul")("")(keyboardShortcuts.map(i => $tag("li")("")(`${i.key}: ${i.message}`))),
+                                content: $tag("ul")({})
+                                (
+                                    keyboardShortcuts.map
+                                    (
+                                        i => $tag("li")({})
+                                        ([
+                                            $tag("kbd")({})(`${i.key}`),
+                                            `: ${i.message}`
+                                        ])
+                                    )
+                                ),
                                 isWideContent: true,
                             });
                             break;
