@@ -3,6 +3,7 @@ import config from "../resource/config.json";
 import localeEn from "../resource/lang.en.json";
 import localeJa from "../resource/lang.ja.json";
 import resource from "../resource/images.json";
+import keyboardShortcuts from "../resource/keyboard.shortcuts.json";
 export const makeObject = <T>(items: { key: string, value: T}[]) =>
 {
     const result: { [key: string]: T} = { };
@@ -6855,11 +6856,7 @@ export module CyclicToDo
                         case "?":
                             Render.makeToast
                             ({
-                                content: $tag("ul")("")
-                                ([
-                                    $tag("li")("")("?: show keyboard shortcut"),
-                                    $tag("li")("")("f: toggle fullscreen"),
-                                ]),
+                                content: $tag("ul")("")(keyboardShortcuts.map(i => $tag("li")("")(`${i.key}: ${i.message}`))),
                                 isWideContent: true,
                             });
                             break;

@@ -1,0 +1,10 @@
+[
+    {
+        "key": "?",
+        "message": "show keyboard shortcut"
+    },
+    {
+        "key": "f",
+        "message": "toggle fullscreen"
+    }
+]
