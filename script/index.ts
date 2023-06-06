@@ -6331,6 +6331,11 @@ export module CyclicToDo
             }),
         ];
         export const getVersionInfromationText = () => `${locale.immutable("build timestamp")}: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} ${locale.map("ago")} )`;
+        export const keyboardShortcutsItem = (i: { key:string, message:string, }) =>
+        [
+            $tag("kbd")({})(`${i.key}`),
+            `: ${i.message}`
+        ];
         export const welcomeScreen = async (): Promise<ScreenSource> =>
         ({
             className: "welcome-screen",
@@ -6375,7 +6380,7 @@ export module CyclicToDo
                 messageList
                 ([
                     messagePanel(label("You can use this web app like an app by registering it on the home screen of your smartphone.")),
-                    messagePanel(labelSpan("? キーでキーボードショートカット一覧が表示されます。")),
+                    messagePanel(labelSpan(keyboardShortcutsItem(keyboardShortcuts[0]))),
                 ]),
                 $div("bottom-line version-information")(getVersionInfromationText()),
             ]
@@ -6860,11 +6865,7 @@ export module CyclicToDo
                                 (
                                     keyboardShortcuts.map
                                     (
-                                        i => $tag("li")({})
-                                        ([
-                                            $tag("kbd")({})(`${i.key}`),
-                                            `: ${i.message}`
-                                        ])
+                                        i => $tag("li")({})(keyboardShortcutsItem(i))
                                     )
                                 ),
                                 isWideContent: true,
