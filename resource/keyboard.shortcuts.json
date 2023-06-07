@@ -1,10 +1,17 @@
 [
     {
         "key": "?",
-        "message": "show keyboard shortcut"
+        "message": "show keyboard shortcut",
+        "context": "whenever"
     },
     {
         "key": "f",
-        "message": "toggle fullscreen"
+        "message": "toggle fullscreen",
+        "context": "whenever"
+    },
+    {
+        "key": "s",
+        "message": "focus to filter",
+        "context": "with filter"
     }
 ]

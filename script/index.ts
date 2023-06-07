@@ -3,7 +3,15 @@ import config from "../resource/config.json";
 import localeEn from "../resource/lang.en.json";
 import localeJa from "../resource/lang.ja.json";
 import resource from "../resource/images.json";
-import keyboardShortcuts from "../resource/keyboard.shortcuts.json";
+import keyboardShortcutsJson from "../resource/keyboard.shortcuts.json";
+export const keyboardShortcuts = keyboardShortcutsJson as keyboardShortcutsItem[];
+export type keyboardShortcutsContext = "whenever" | "with filter";
+export interface keyboardShortcutsItem
+{
+    key: string;
+    message: string;
+    context: keyboardShortcutsContext;
+}
 export const makeObject = <T>(items: { key: string, value: T}[]) =>
 {
     const result: { [key: string]: T} = { };
@@ -6331,7 +6339,7 @@ export module CyclicToDo
             }),
         ];
         export const getVersionInfromationText = () => `${locale.immutable("build timestamp")}: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} ${locale.map("ago")} )`;
-        export const keyboardShortcutsItem = (i: { key:string, message:string, }) =>
+        export const keyboardShortcutsItem = (i: keyboardShortcutsItem) =>
         [
             $tag("kbd")({})(`${i.key}`),
             `: ${i.message}`
