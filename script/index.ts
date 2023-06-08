@@ -6339,6 +6339,17 @@ export module CyclicToDo
             }),
         ];
         export const getVersionInfromationText = () => `${locale.immutable("build timestamp")}: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} ${locale.map("ago")} )`;
+        export const matchKeyboardShortcutsContext = (context: keyboardShortcutsContext) =>
+        {
+            switch(context)
+            {
+            case "whenever":
+                return true;
+            case "with filter":
+                return undefined !== getFilterInputElement();
+            }
+            return false;
+        };
         export const keyboardShortcutsItem = (i: keyboardShortcutsItem) =>
         [
             $tag("kbd")({})(`${i.key}`),
@@ -6871,10 +6882,12 @@ export module CyclicToDo
                             ({
                                 content: $tag("ul")({})
                                 (
-                                    keyboardShortcuts.map
-                                    (
-                                        i => $tag("li")({})(keyboardShortcutsItem(i))
-                                    )
+                                    keyboardShortcuts
+                                        .filter(i => matchKeyboardShortcutsContext(i.context))
+                                        .map
+                                        (
+                                            i => $tag("li")({})(keyboardShortcutsItem(i))
+                                        )
                                 ),
                                 isWideContent: true,
                             });

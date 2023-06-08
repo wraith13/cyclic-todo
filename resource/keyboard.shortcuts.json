@@ -5,6 +5,11 @@
         "context": "whenever"
     },
     {
+        "key": "esc",
+        "message": "escape from current context",
+        "context": "whenever"
+    },
+    {
         "key": "f",
         "message": "toggle fullscreen",
         "context": "whenever"
