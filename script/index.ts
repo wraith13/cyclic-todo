@@ -6877,6 +6877,10 @@ export module CyclicToDo
                                 }
                             }
                             break;
+                        case "s":
+                            getFilterInputElement()?.focus();
+                            event.preventDefault();
+                            break;
                         case "?":
                             Render.makeToast
                             ({
