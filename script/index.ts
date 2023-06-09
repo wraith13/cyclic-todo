@@ -2184,7 +2184,7 @@ export module CyclicToDo
                 );
                 const toast = makeToast
                 ({
-                    content: $span("")(`${locale.string("ToDo リストの名前を変更しました！")}: ${backup} → ${newName}`),
+                    content: $span("")(`${locale.map("ToDo list has been renamed!")}: ${backup} → ${newName}`),
                     backwardOperator: cancelTextButton
                     (
                         async () =>
