@@ -125,5 +125,6 @@
     "Full screen has been canceled due to reloading.": "再読み込みした為、フルスクリーンが解かれました。",
     "Filter history cleared.": "絞り込みの履歴をクリアしました。",
     "ToDo list has been renamed!": "ToDo リストの名前を変更しました！",
-    "Show keyboard shortcut": "キーボードショートカットを表示"
+    "Show keyboard shortcut": "キーボードショートカットを表示",
+    "Escape from current context": "現在のコンテキストから抜ける"
 }
