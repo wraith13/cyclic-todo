@@ -5,17 +5,17 @@
         "context": "whenever"
     },
     {
-        "key": "esc",
+        "key": "ESC",
         "message": "Escape from current context",
         "context": "whenever"
     },
     {
-        "key": "f",
+        "key": "F",
         "message": "Toggle full screen",
         "context": "whenever"
     },
     {
-        "key": "s",
+        "key": "S",
         "message": "Focus to filter",
         "context": "with filter"
     }
