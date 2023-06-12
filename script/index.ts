@@ -6884,7 +6884,7 @@ export module CyclicToDo
                         case "?":
                             Render.makeToast
                             ({
-                                content: $tag("ul")({})
+                                content: $tag("ul")("keyboard-shortcuts")
                                 (
                                     keyboardShortcuts
                                         .filter(i => matchKeyboardShortcutsContext(i.context))
