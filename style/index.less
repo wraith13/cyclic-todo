@@ -2027,8 +2027,18 @@ kbd
 }
 .keyboard-shortcuts
 {
+    margin: 0px;
+    padding: 0px;
     li
     {
         list-style: none;
+        min-height: 1.5rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        kbd
+        {
+            margin-right: 0.5rem;
+        }
     }
 }
