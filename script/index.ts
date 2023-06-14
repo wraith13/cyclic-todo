@@ -6352,8 +6352,8 @@ export module CyclicToDo
         };
         export const keyboardShortcutsItem = (i: keyboardShortcutsItem) =>
         [
-            $tag("kbd")({})(`${i.key}`),
-            ` ${locale.string(i.message)}`
+            $span("key")($tag("kbd")({})(`${i.key}`)),
+            locale.string(i.message)
         ];
         export const welcomeScreen = async (): Promise<ScreenSource> =>
         ({
