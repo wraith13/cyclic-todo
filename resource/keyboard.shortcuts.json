@@ -1,21 +1,21 @@
 [
     {
-        "key": "?",
+        "key": [ "?" ],
         "message": "Show keyboard shortcut",
         "context": "whenever"
     },
     {
-        "key": "ESC",
+        "key": [ "ESC" ],
         "message": "Escape from current context",
         "context": "whenever"
     },
     {
-        "key": "F",
+        "key": [ "F" ],
         "message": "Toggle full screen",
         "context": "whenever"
     },
     {
-        "key": "S",
+        "key": [ "S" ],
         "message": "Focus to filter",
         "context": "with filter"
     }

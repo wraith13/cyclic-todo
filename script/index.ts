@@ -8,7 +8,7 @@ export const keyboardShortcuts = keyboardShortcutsJson as keyboardShortcutsItem[
 export type keyboardShortcutsContext = "whenever" | "with filter";
 export interface keyboardShortcutsItem
 {
-    key: string;
+    key: string[];
     message: string;
     context: keyboardShortcutsContext;
 }
@@ -6352,7 +6352,7 @@ export module CyclicToDo
         };
         export const keyboardShortcutsItem = (i: keyboardShortcutsItem) =>
         [
-            $span("key")($tag("kbd")({})(`${i.key}`)),
+            $span("key")(i.key.map(k => $tag("kbd")({})(`${k}`))),
             locale.string(i.message)
         ];
         export const welcomeScreen = async (): Promise<ScreenSource> =>
