@@ -127,5 +127,6 @@
     "ToDo list has been renamed!": "ToDo list has been renamed!",
     "Show keyboard shortcut": "Show keyboard shortcut",
     "Escape from current context": "Escape from current context",
-    "Toggle full screen": "Toggle full screen"
+    "Toggle full screen": "Toggle full screen",
+    "Paste the exported JSON.": "Paste the exported JSON."
 }

@@ -127,5 +127,6 @@
     "ToDo list has been renamed!": "ToDo リストの名前を変更しました！",
     "Show keyboard shortcut": "キーボードショートカットを表示",
     "Escape from current context": "現在のコンテキストから抜ける",
-    "Toggle full screen": "フルスクリーン切り替え"
+    "Toggle full screen": "フルスクリーン切り替え",
+    "Paste the exported JSON.": "エクスポートした JSON をペーストしてください。"
 }
