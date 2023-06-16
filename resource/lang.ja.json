@@ -128,5 +128,6 @@
     "Show keyboard shortcut": "キーボードショートカットを表示",
     "Escape from current context": "現在のコンテキストから抜ける",
     "Toggle full screen": "フルスクリーン切り替え",
+    "Focus to filter": "絞り込みにフォーカス移動",
     "Paste the exported JSON.": "エクスポートした JSON をペーストしてください。"
 }

@@ -9,7 +9,7 @@ export type keyboardShortcutsContext = "whenever" | "with filter";
 export interface keyboardShortcutsItem
 {
     key: string[];
-    message: string;
+    message: locale.LocaleKeyType;
     context: keyboardShortcutsContext;
 }
 export const makeObject = <T>(items: { key: string, value: T}[]) =>
@@ -6353,7 +6353,7 @@ export module CyclicToDo
         export const keyboardShortcutsItem = (i: keyboardShortcutsItem) =>
         [
             $span("key")(i.key.map(k => $tag("kbd")({})(`${k}`))),
-            locale.string(i.message)
+            locale.map(i.message)
         ];
         export const welcomeScreen = async (): Promise<ScreenSource> =>
         ({
