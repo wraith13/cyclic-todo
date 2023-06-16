@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Fri Jun 16 2023 09:30:51 GMT+0900 (日本標準時)
+    build at: Fri Jun 16 2023 21:54:35 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -6886,7 +6886,7 @@ define("resource/keyboard.shortcuts", [], [
 define("script/index", ["require", "exports", "nephila/minamo.js/index", "resource/config", "resource/lang.en", "resource/lang.ja", "resource/keyboard.shortcuts"], function (require, exports, minamo_js_1, config_json_1, lang_en_json_1, lang_ja_json_1, keyboard_shortcuts_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.CyclicToDo = exports.Calculate = exports.locale = exports.isValidNumber = exports.isNumber = exports.toPercentSting = exports.takeFilter = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.makeObject = exports.keyboardShortcuts = void 0;
+    exports.CyclicToDo = exports.Calculate = exports.locale = exports.nextItem = exports.isValidNumber = exports.isNumber = exports.toPercentSting = exports.takeFilter = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.makeObject = exports.keyboardShortcuts = void 0;
     config_json_1 = __importDefault(config_json_1);
     lang_en_json_1 = __importDefault(lang_en_json_1);
     lang_ja_json_1 = __importDefault(lang_ja_json_1);
@@ -6911,6 +6911,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
     exports.isNumber = isNumber;
     var isValidNumber = function (value) { return exports.isNumber(value) && !isNaN(value); };
     exports.isValidNumber = isValidNumber;
+    var nextItem = function (list, current) { return list[(list.indexOf(current) + 1) % list.length]; };
+    exports.nextItem = nextItem;
     var locale;
     (function (locale_1) {
         locale_1.master = {
@@ -14619,7 +14621,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return event.isComposing || isInComposeSession || new Date().getTime() < lastestCompositionEndAt + 100;
             };
             Render.onKeydown = function (event) {
-                var _a, _b, _c, _d, _e, _f;
+                var _a, _b, _c, _d, _e, _f, _g, _h, _j;
                 if (!Render.isComposing(event)) {
                     switch (event.key) {
                         case "Enter":
@@ -14633,6 +14635,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                     var focusedElementTagName = (_e = (_d = (_c = document.activeElement) === null || _c === void 0 ? void 0 : _c.tagName) === null || _d === void 0 ? void 0 : _d.toLowerCase()) !== null && _e !== void 0 ? _e : "";
                     if (["input", "textarea"].indexOf(focusedElementTagName) < 0) {
+                        var url = location.href;
+                        var urlParams = CyclicToDo.getUrlParams(url);
+                        // const hash = getUrlHash(url);
+                        var tag_2 = (_f = urlParams["tag"]) !== null && _f !== void 0 ? _f : "";
+                        // const todo = urlParams["todo"];
+                        var pass_1 = (_g = urlParams["pass"]) !== null && _g !== void 0 ? _g : OldStorage.sessionPassPrefix + ":" + new Date().getTime();
                         switch (event.key.toLowerCase()) {
                             case "f":
                                 if (Render.fullscreenEnabled()) {
@@ -14644,8 +14652,43 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     }
                                 }
                                 break;
+                            case "o":
+                                if (pass_1 && tag_2) {
+                                    var settings = OldStorage.TagSettings.get(pass_1, tag_2);
+                                    var defaultSort_1 = Render.getTagSortSettingsDefault(tag_2);
+                                    var current_1 = (_h = settings.sort) !== null && _h !== void 0 ? _h : defaultSort_1;
+                                    var list = "@overall" === tag_2 ?
+                                        ["smart", "simple",] :
+                                        ["@home", "smart", "simple",];
+                                    var next_1 = exports.nextItem(list, current_1);
+                                    settings.sort = defaultSort_1 === next_1 ? undefined : next_1;
+                                    OldStorage.TagSettings.set(pass_1, tag_2, settings);
+                                    CyclicToDo.reload(); // nowait
+                                    var toast_2 = Render.makeToast({
+                                        content: Render.$span("")(locale.string("表示順を変更しました！") + ": " + locale.map(Render.getTagSortSettingsText(current_1)) + " \u2192 " + locale.map(Render.getTagSortSettingsText(next_1))),
+                                        backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
+                                            var settings;
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        settings = OldStorage.TagSettings.get(pass_1, tag_2);
+                                                        settings.sort = defaultSort_1 === next_1 ? undefined : current_1;
+                                                        OldStorage.TagSettings.set(pass_1, tag_2, settings);
+                                                        return [4 /*yield*/, CyclicToDo.reload()];
+                                                    case 1:
+                                                        _a.sent();
+                                                        return [4 /*yield*/, toast_2.hide()];
+                                                    case 2:
+                                                        _a.sent();
+                                                        return [2 /*return*/];
+                                                }
+                                            });
+                                        }); }),
+                                    });
+                                }
+                                break;
                             case "s":
-                                (_f = Render.getFilterInputElement()) === null || _f === void 0 ? void 0 : _f.focus();
+                                (_j = Render.getFilterInputElement()) === null || _j === void 0 ? void 0 : _j.focus();
                                 event.preventDefault();
                                 break;
                             case "?":
@@ -14771,7 +14814,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             }
         };
         CyclicToDo.start = function (params) { return __awaiter(_this, void 0, void 0, function () {
-            var urlParams, reload, json, url, fullscreen, toast_2;
+            var urlParams, reload, json, url, fullscreen, toast_3;
             var _this = this;
             var _a, _b, _c, _d;
             return __generator(this, function (_e) {
@@ -14794,7 +14837,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             }
                             fullscreen = json["fullscreen"];
                             if (fullscreen && Render.fullscreenEnabled()) {
-                                toast_2 = Render.makeToast({
+                                toast_3 = Render.makeToast({
                                     forwardOperator: {
                                         tag: "button",
                                         className: "text-button",
@@ -14803,7 +14846,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0:
-                                                        toast_2.hide();
+                                                        toast_3.hide();
                                                         return [4 /*yield*/, Render.requestFullscreen()];
                                                     case 1:
                                                         _a.sent();
@@ -14998,7 +15041,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Jun 16 2023 09:30:51 GMT+0900 (日本標準時)', buildTimestampTick: 1686875451605, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Jun 16 2023 21:54:35 GMT+0900 (日本標準時)', buildTimestampTick: 1686920075458, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

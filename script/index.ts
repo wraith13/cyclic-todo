@@ -25,6 +25,7 @@ export const takeFilter = (max: number) => <T>(_value: T, index: number) => inde
 export const toPercentSting = (value: number) => value.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 });
 export const isNumber = (value: unknown): value is number => "number" === typeof value;
 export const isValidNumber = (value: unknown) => isNumber(value) && ! isNaN(value);
+export const nextItem = <T>(list: T[], current: T): T => list[(list.indexOf(current) +1) %list.length];
 export module locale
 {
     export const master =
@@ -6862,6 +6863,12 @@ export module CyclicToDo
                 const focusedElementTagName = document.activeElement?.tagName?.toLowerCase() ?? "";
                 if (["input", "textarea"].indexOf(focusedElementTagName) < 0)
                 {
+                    const url = location.href;
+                    const urlParams = getUrlParams(url);
+                    // const hash = getUrlHash(url);
+                    const tag = urlParams["tag"] ?? "";
+                    // const todo = urlParams["todo"];
+                    const pass = urlParams["pass"] ?? `${OldStorage.sessionPassPrefix}:${new Date().getTime()}`;
                     switch(event.key.toLowerCase())
                     {
                         case "f":
@@ -6875,6 +6882,36 @@ export module CyclicToDo
                                 {
                                     exitFullscreen();
                                 }
+                            }
+                            break;
+                        case "o":
+                            if (pass && tag)
+                            {
+                                const settings = OldStorage.TagSettings.get(pass, tag);
+                                const defaultSort = getTagSortSettingsDefault(tag);
+                                const current = settings.sort ?? defaultSort;
+                                const list: ("@home" | "smart" | "simple")[] = "@overall" === tag ?
+                                    [ "smart", "simple", ]:
+                                    [ "@home", "smart", "simple", ];
+                                const next = nextItem(list, current);
+                                settings.sort = defaultSort === next ? undefined: <"smart" | "simple">next;
+                                OldStorage.TagSettings.set(pass, tag, settings);
+                                reload(); // nowait
+                                const toast = makeToast
+                                ({
+                                    content: $span("")(`${locale.string("表示順を変更しました！")}: ${locale.map(getTagSortSettingsText(current))} → ${locale.map(getTagSortSettingsText(next))}`),
+                                    backwardOperator: cancelTextButton
+                                    (
+                                        async () =>
+                                        {
+                                            const settings = OldStorage.TagSettings.get(pass, tag);
+                                            settings.sort = defaultSort === next ? undefined: <"smart" | "simple">current;
+                                            OldStorage.TagSettings.set(pass, tag, settings);
+                                            await reload();
+                                            await toast.hide();
+                                        }
+                                    ),
+                                });
                             }
                             break;
                         case "s":
