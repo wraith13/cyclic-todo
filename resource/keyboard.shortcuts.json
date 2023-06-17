@@ -18,5 +18,15 @@
         "key": [ "S" ],
         "message": "Focus to filter",
         "context": "with filter"
+    },
+    {
+        "key": [ "V" ],
+        "message": "Switch display style",
+        "context": "with tag"
+    },
+    {
+        "key": [ "O" ],
+        "message": "Switch sort order",
+        "context": "with tag"
     }
 ]

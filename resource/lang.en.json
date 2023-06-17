@@ -129,5 +129,7 @@
     "Escape from current context": "Escape from current context",
     "Toggle full screen": "Toggle full screen",
     "Focus to filter": "Focus to filter",
+    "Switch display style": "Switch display style",
+    "Switch sort order": "Switch sort order",
     "Paste the exported JSON.": "Paste the exported JSON."
 }

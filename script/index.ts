@@ -5,7 +5,7 @@ import localeJa from "../resource/lang.ja.json";
 import resource from "../resource/images.json";
 import keyboardShortcutsJson from "../resource/keyboard.shortcuts.json";
 export const keyboardShortcuts = keyboardShortcutsJson as keyboardShortcutsItem[];
-export type keyboardShortcutsContext = "whenever" | "with filter";
+export type keyboardShortcutsContext = "whenever" | "with filter" | "with tag";
 export interface keyboardShortcutsItem
 {
     key: string[];
@@ -6340,7 +6340,7 @@ export module CyclicToDo
             }),
         ];
         export const getVersionInfromationText = () => `${locale.immutable("build timestamp")}: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} ${locale.map("ago")} )`;
-        export const matchKeyboardShortcutsContext = (context: keyboardShortcutsContext) =>
+        export const matchKeyboardShortcutsContext = (urlParams: PageParams, context: keyboardShortcutsContext) =>
         {
             switch(context)
             {
@@ -6348,6 +6348,8 @@ export module CyclicToDo
                 return true;
             case "with filter":
                 return undefined !== getFilterInputElement();
+            case "with tag":
+                return urlParams.pass && urlParams.tag;
             }
             return false;
         };
@@ -6954,7 +6956,7 @@ export module CyclicToDo
                                 content: $tag("ul")("keyboard-shortcuts")
                                 (
                                     keyboardShortcuts
-                                        .filter(i => matchKeyboardShortcutsContext(i.context))
+                                        .filter(i => matchKeyboardShortcutsContext(urlParams, i.context))
                                         .map
                                         (
                                             i => $tag("li")({})(keyboardShortcutsItem(i))
