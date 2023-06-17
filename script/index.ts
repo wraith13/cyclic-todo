@@ -6884,6 +6884,36 @@ export module CyclicToDo
                                 }
                             }
                             break;
+                        case "v":
+                            if (pass && tag)
+                            {
+                                const settings = OldStorage.TagSettings.get(pass, tag);
+                                const defaultStyle = getTagDisplayStyleDefault(tag);
+                                const current = settings.displayStyle ?? defaultStyle;
+                                const list: ("@home" | "full" | "compact")[] = "@overall" === tag ?
+                                    [ "full", "compact", ]:
+                                    [ "@home", "full", "compact", ];
+                                const next = nextItem(list, current);
+                                settings.displayStyle = defaultStyle === next ? undefined: <"full" | "compact">next;
+                                OldStorage.TagSettings.set(pass, tag, settings);
+                                reload(); // nowait
+                                const toast = makeToast
+                                ({
+                                    content: $span("")(`${locale.string("表示スタイルを変更しました！")}: ${locale.map(getTagDisplayStyleText(current))} → ${locale.map(getTagDisplayStyleText(next))}`),
+                                    backwardOperator: cancelTextButton
+                                    (
+                                        async () =>
+                                        {
+                                            const settings = OldStorage.TagSettings.get(pass, tag);
+                                            settings.displayStyle = defaultStyle === current ? undefined: <"full" | "compact">current;
+                                            OldStorage.TagSettings.set(pass, tag, settings);
+                                            await reload();
+                                            await toast.hide();
+                                        }
+                                    ),
+                                });
+                            }
+                            break;
                         case "o":
                             if (pass && tag)
                             {
@@ -6905,7 +6935,7 @@ export module CyclicToDo
                                         async () =>
                                         {
                                             const settings = OldStorage.TagSettings.get(pass, tag);
-                                            settings.sort = defaultSort === next ? undefined: <"smart" | "simple">current;
+                                            settings.sort = defaultSort === current ? undefined: <"smart" | "simple">current;
                                             OldStorage.TagSettings.set(pass, tag, settings);
                                             await reload();
                                             await toast.hide();
