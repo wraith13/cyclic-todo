@@ -6886,6 +6886,12 @@ export module CyclicToDo
                                 }
                             }
                             break;
+                        case "h":
+                            if (pass)
+                            {
+                                showUrl({ pass: pass, tag: "@overall", }); // nowait
+                            }
+                            break;
                         case "v":
                             if (pass && tag)
                             {
