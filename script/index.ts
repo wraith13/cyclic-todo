@@ -5,7 +5,7 @@ import localeJa from "../resource/lang.ja.json";
 import resource from "../resource/images.json";
 import keyboardShortcutsJson from "../resource/keyboard.shortcuts.json";
 export const keyboardShortcuts = keyboardShortcutsJson as keyboardShortcutsItem[];
-export type keyboardShortcutsContext = "whenever" | "with filter" | "with tag";
+export type keyboardShortcutsContext = "whenever" | "with filter" | "with list" | "with tag";
 export interface keyboardShortcutsItem
 {
     key: string[];
@@ -6348,6 +6348,8 @@ export module CyclicToDo
                 return true;
             case "with filter":
                 return undefined !== getFilterInputElement();
+            case "with list":
+                return urlParams.pass;
             case "with tag":
                 return urlParams.pass && urlParams.tag;
             }
@@ -6355,7 +6357,7 @@ export module CyclicToDo
         };
         export const keyboardShortcutsItem = (i: keyboardShortcutsItem) =>
         [
-            $span("key")(i.key.map(k => $tag("kbd")({})(`${k}`))),
+            $span("key monospace")(i.key.map(k => $tag("kbd")({})(`${k}`))),
             locale.map(i.message)
         ];
         export const welcomeScreen = async (): Promise<ScreenSource> =>

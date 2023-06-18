@@ -20,6 +20,11 @@
         "context": "with filter"
     },
     {
+        "key": [ "H" ],
+        "message": "Move to Home",
+        "context": "with list"
+    },
+    {
         "key": [ "V" ],
         "message": "Switch display style",
         "context": "with tag"
