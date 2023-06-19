@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Jun 19 2023 03:00:06 GMT+0900 (日本標準時)
+    build at: Mon Jun 19 2023 21:55:57 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -14386,8 +14386,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 });
             }); };
+            var toastMap = {};
+            Render.getToast = function (id) { return toastMap[id]; };
             Render.makeToast = function (data) {
-                var _a, _b, _c;
+                var _a, _b, _c, _d, _e, _f;
+                (_c = (_b = Render.getToast((_a = data.id) !== null && _a !== void 0 ? _a : "")) === null || _b === void 0 ? void 0 : _b.hide) === null || _c === void 0 ? void 0 : _c.call(_b);
                 var dom = Render.$make(HTMLDivElement)({
                     tag: "div",
                     className: "item slide-up-in",
@@ -14398,9 +14401,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             data.forwardOperator,
                         ].filter(function (i) { return undefined !== i; }) :
                         [
-                            (_a = data.backwardOperator) !== null && _a !== void 0 ? _a : Render.$span("dummy")([]),
+                            (_d = data.backwardOperator) !== null && _d !== void 0 ? _d : Render.$span("dummy")([]),
                             data.content,
-                            (_b = data.forwardOperator) !== null && _b !== void 0 ? _b : Render.$span("dummy")([]),
+                            (_e = data.forwardOperator) !== null && _e !== void 0 ? _e : Render.$span("dummy")([]),
                         ],
                 });
                 var hideRaw = function (className, wait) { return __awaiter(_this, void 0, void 0, function () {
@@ -14428,7 +14431,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         }
                     });
                 }); };
-                var wait = (_c = data.wait) !== null && _c !== void 0 ? _c : 5000;
+                var wait = (_f = data.wait) !== null && _f !== void 0 ? _f : 5000;
                 var result = {
                     dom: dom,
                     timer: 0 < wait ? setTimeout(function () { return hideRaw("slow-slide-down-out", 500); }, wait) : null,
@@ -14441,6 +14444,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 };
                 minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen-toast")).appendChild(dom);
                 setTimeout(function () { return dom.classList.remove("slide-up-in"); }, 250);
+                if (data.id) {
+                    toastMap[data.id] = result;
+                }
                 return result;
             };
             Render.getProgressElement = function () { return minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen-header")); };
@@ -14691,6 +14697,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     OldStorage.TagSettings.set(pass_1, tag_2, settings);
                                     CyclicToDo.reload(); // nowait
                                     var toast_2 = Render.makeToast({
+                                        id: "change-display-style",
                                         content: Render.$span("")(locale.string("表示スタイルを変更しました！") + ": " + locale.map(Render.getTagDisplayStyleText(current_1)) + " \u2192 " + locale.map(Render.getTagDisplayStyleText(next))),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             var settings;
@@ -14726,6 +14733,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     OldStorage.TagSettings.set(pass_1, tag_2, settings);
                                     CyclicToDo.reload(); // nowait
                                     var toast_3 = Render.makeToast({
+                                        id: "change-sort",
                                         content: Render.$span("")(locale.string("表示順を変更しました！") + ": " + locale.map(Render.getTagSortSettingsText(current_2)) + " \u2192 " + locale.map(Render.getTagSortSettingsText(next))),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             var settings;
@@ -14754,6 +14762,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 break;
                             case "?":
                                 Render.makeToast({
+                                    id: "keyboard-shortcuts",
                                     content: Render.$tag("ul")("keyboard-shortcuts")(exports.keyboardShortcuts
                                         .filter(function (i) { return Render.matchKeyboardShortcutsContext(urlParams_1, i.context); })
                                         .map(function (i) { return Render.$tag("li")({})(Render.keyboardShortcutsItem(i)); })),
@@ -15102,7 +15111,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Jun 19 2023 03:00:06 GMT+0900 (日本標準時)', buildTimestampTick: 1687111206823, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Jun 19 2023 21:55:57 GMT+0900 (日本標準時)', buildTimestampTick: 1687179357559, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

@@ -6562,10 +6562,13 @@ export module CyclicToDo
             timer: number | null;
             hide: ()  => Promise<unknown>;
         }
+        const toastMap: { [id: string]: Toast } = { };
+        export const getToast = (id: string) => toastMap[id];
         export const makeToast =
         (
             data:
             {
+                id?: string,
                 content: minamo.dom.Source,
                 backwardOperator?: minamo.dom.Source,
                 forwardOperator?: minamo.dom.Source,
@@ -6574,6 +6577,7 @@ export module CyclicToDo
             }
         ): Toast =>
         {
+            getToast(data.id ?? "")?.hide?.();
             const dom = $make(HTMLDivElement)
             ({
                 tag: "div",
@@ -6620,6 +6624,10 @@ export module CyclicToDo
             };
             minamo.core.existsOrThrow(document.getElementById("screen-toast")).appendChild(dom);
             setTimeout(() => dom.classList.remove("slide-up-in"), 250);
+            if (data.id)
+            {
+                toastMap[data.id] = result;
+            }
             return result;
         };
         export const getProgressElement = () => minamo.core.existsOrThrow(document.getElementById("screen-header"));
@@ -6909,6 +6917,7 @@ export module CyclicToDo
                                 reload(); // nowait
                                 const toast = makeToast
                                 ({
+                                    id: "change-display-style",
                                     content: $span("")(`${locale.string("表示スタイルを変更しました！")}: ${locale.map(getTagDisplayStyleText(current))} → ${locale.map(getTagDisplayStyleText(next))}`),
                                     backwardOperator: cancelTextButton
                                     (
@@ -6939,6 +6948,7 @@ export module CyclicToDo
                                 reload(); // nowait
                                 const toast = makeToast
                                 ({
+                                    id: "change-sort",
                                     content: $span("")(`${locale.string("表示順を変更しました！")}: ${locale.map(getTagSortSettingsText(current))} → ${locale.map(getTagSortSettingsText(next))}`),
                                     backwardOperator: cancelTextButton
                                     (
@@ -6961,6 +6971,7 @@ export module CyclicToDo
                         case "?":
                             Render.makeToast
                             ({
+                                id: "keyboard-shortcuts",
                                 content: $tag("ul")("keyboard-shortcuts")
                                 (
                                     keyboardShortcuts
