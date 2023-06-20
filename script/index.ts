@@ -28,6 +28,8 @@ export const toPercentSting = (value: number) => value.toLocaleString("en", { st
 export const isNumber = (value: unknown): value is number => "number" === typeof value;
 export const isValidNumber = (value: unknown) => isNumber(value) && ! isNaN(value);
 export const nextItem = <T>(list: T[], current: T): T => list[(list.indexOf(current) +1) %list.length];
+export const groupBy = <T, G>(list: T[], getGroup: (i: T) => G): { group: G, list: T[], }[] =>
+    list.map(i => getGroup(i)).filter(uniqueFilter).map(group => ({ group, list: list.filter(i => group === getGroup(i))}));
 export module locale
 {
     export const master =
