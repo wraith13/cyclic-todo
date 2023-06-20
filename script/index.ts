@@ -5,12 +5,14 @@ import localeJa from "../resource/lang.ja.json";
 import resource from "../resource/images.json";
 import keyboardShortcutsJson from "../resource/keyboard.shortcuts.json";
 export const keyboardShortcuts = keyboardShortcutsJson as keyboardShortcutsItem[];
-export type keyboardShortcutsContext = "whenever" | "with filter" | "with list" | "with tag";
+export type KeyboardShortcutsContext = "whenever" | "with filter" | "with list" | "with tag";
+export type KeyboardShortcutsCategory = "general" | "move" | "config";
 export interface keyboardShortcutsItem
 {
     key: string[];
     message: locale.LocaleKeyType;
-    context: keyboardShortcutsContext;
+    context: KeyboardShortcutsContext;
+    category: KeyboardShortcutsCategory;
 }
 export const makeObject = <T>(items: { key: string, value: T}[]) =>
 {
@@ -6340,7 +6342,7 @@ export module CyclicToDo
             }),
         ];
         export const getVersionInfromationText = () => `${locale.immutable("build timestamp")}: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} ${locale.map("ago")} )`;
-        export const matchKeyboardShortcutsContext = (urlParams: PageParams, context: keyboardShortcutsContext) =>
+        export const matchKeyboardShortcutsContext = (urlParams: PageParams, context: KeyboardShortcutsContext) =>
         {
             switch(context)
             {

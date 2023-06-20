@@ -2,36 +2,43 @@
     {
         "key": [ "?" ],
         "message": "Show keyboard shortcut",
-        "context": "whenever"
+        "context": "whenever",
+        "category": "genaral"
     },
     {
         "key": [ "ESC" ],
         "message": "Escape from current context",
-        "context": "whenever"
+        "context": "whenever",
+        "category": "genaral"
     },
     {
         "key": [ "F" ],
         "message": "Toggle full screen",
-        "context": "whenever"
+        "context": "whenever",
+        "category": "genaral"
     },
     {
         "key": [ "S" ],
         "message": "Focus to filter",
-        "context": "with filter"
+        "context": "with filter",
+        "category": "move"
     },
     {
         "key": [ "H" ],
         "message": "Move to Home",
-        "context": "with list"
+        "context": "with list",
+        "category": "move"
     },
     {
         "key": [ "V" ],
         "message": "Switch display style",
-        "context": "with tag"
+        "context": "with tag",
+        "category": "config"
     },
     {
         "key": [ "O" ],
         "message": "Switch sort order",
-        "context": "with tag"
+        "context": "with tag",
+        "category": "config"
     }
 ]
