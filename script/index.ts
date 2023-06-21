@@ -6900,6 +6900,13 @@ export module CyclicToDo
                                 }
                             }
                             break;
+                        case "l":
+                            const list = OldStorage.Pass.get();
+                            if (0 < list.length)
+                            {
+                                showUrl({ pass: nextItem(list, pass), tag: "@overall", }); // nowait
+                            }
+                            break;
                         case "h":
                             if (pass)
                             {
