@@ -6906,6 +6906,18 @@ export module CyclicToDo
                                 showUrl({ pass: pass, tag: "@overall", }); // nowait
                             }
                             break;
+                        case "a":
+                            if (pass)
+                            {
+                                showUrl({ pass: pass, tag: nextItem([ "@flash", "@pickup", "@restriction", ], tag), }); // nowait
+                            }
+                            break;
+                        case "p":
+                            if (pass)
+                            {
+                                showUrl({ pass: pass, tag: nextItem([ "@short-term", "@medium-term", "@long-term", "@irregular-term", ], tag), }); // nowait
+                            }
+                            break;
                         case "v":
                             if (pass && tag)
                             {
