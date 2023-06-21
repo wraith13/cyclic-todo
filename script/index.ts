@@ -6976,14 +6976,32 @@ export module CyclicToDo
                             Render.makeToast
                             ({
                                 id: "keyboard-shortcuts",
-                                content: $tag("ul")("keyboard-shortcuts")
+                                content: $tag("dl")({})
                                 (
-                                    keyboardShortcuts
-                                        .filter(i => matchKeyboardShortcutsContext(urlParams, i.context))
-                                        .map
-                                        (
-                                            i => $tag("li")({})(keyboardShortcutsItem(i))
-                                        )
+                                    groupBy
+                                    (
+                                        keyboardShortcuts
+                                        .filter(i => matchKeyboardShortcutsContext(urlParams, i.context)),
+                                        i => i.category
+                                    )
+                                    .map
+                                    (
+                                        i =>
+                                        [
+                                            $tag("dt")({})(i.group),
+                                            $tag("dd")({})
+                                            (
+                                                $tag("ul")("keyboard-shortcuts")
+                                                (
+                                                    i.list.map
+                                                    (
+                                                        i => $tag("li")({})(keyboardShortcutsItem(i))
+                                                    )
+                                                )
+                                            )
+                                        ]
+                                    )
+
                                 ),
                                 isWideContent: true,
                             });
