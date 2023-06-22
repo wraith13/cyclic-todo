@@ -6925,6 +6925,29 @@ export module CyclicToDo
                                 showUrl({ pass: pass, tag: nextItem([ "@short-term", "@medium-term", "@long-term", "@irregular-term", ], tag), }); // nowait
                             }
                             break;
+                        case "t":
+                            if (pass)
+                            {
+                                showUrl
+                                ({
+                                    pass: pass,
+                                    tag: nextItem
+                                    (
+                                        [
+                                            "@overall",
+                                            // "@flash", "@pickup", "@restriction",
+                                            // "@short-term", "@medium-term", "@long-term", "@irregular-term"
+                                        ]
+                                        .concat
+                                        (
+                                            OldStorage.Tag.get(pass).sort(Domain.tagComparerOld(pass)))
+                                                .concat(["@unoverall", "@untagged"]
+                                        ),
+                                        tag
+                                    ),
+                                }); // nowait
+                            }
+                            break;
                         case "v":
                             if (pass && tag)
                             {
