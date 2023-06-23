@@ -4726,6 +4726,38 @@ export module CyclicToDo
             title: Domain.tagMap(current),
             href: { pass, tag: current, },
         });
+        export const getTagList = (params: string | { overall?: boolean, auto?: boolean, term?: boolean, pass?: string, un?: boolean, }): string[] =>
+        {
+            if ("string" === typeof params)
+            {
+                return getTagList({ overall: true, auto: true, term: true, pass: params, un: true, });
+            }
+            else
+            {
+                const result: string[] = [];
+                if (params.overall)
+                {
+                    result.push("@overall");
+                }
+                if (params.auto)
+                {
+                    result.push("@flash", "@pickup", "@restriction");
+                }
+                if (params.term)
+                {
+                    result.push("@short-term", "@medium-term", "@long-term", "@irregular-term");
+                }
+                if ("string" === typeof params.pass)
+                {
+                    result.push(...OldStorage.Tag.get(params.pass).sort(Domain.tagComparerOld(params.pass)));
+                }
+                if (params.un)
+                {
+                    result.push("@unoverall", "@untagged");
+                }
+                return result;
+            }
+        };
         export const screenHeaderTagMenuSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
         ({
             icon: Resource.getTagIcon(current),
@@ -4735,7 +4767,7 @@ export module CyclicToDo
                     (
                         await Promise.all
                         (
-                            ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"].concat(OldStorage.Tag.get(pass).sort(Domain.tagComparerOld(pass))).concat(["@unoverall", "@untagged"])
+                            getTagList(pass)
                             .map
                             (
                                 async tag => menuLinkItem
@@ -6916,36 +6948,19 @@ export module CyclicToDo
                         case "a":
                             if (pass)
                             {
-                                showUrl({ pass: pass, tag: nextItem([ "@flash", "@pickup", "@restriction", ], tag), }); // nowait
+                                showUrl({ pass: pass, tag: nextItem(getTagList({ auto: true, }), tag),}); // nowait
                             }
                             break;
                         case "p":
                             if (pass)
                             {
-                                showUrl({ pass: pass, tag: nextItem([ "@short-term", "@medium-term", "@long-term", "@irregular-term", ], tag), }); // nowait
+                                showUrl({ pass: pass, tag: nextItem(getTagList({ term: true, }), tag),}); // nowait
                             }
                             break;
                         case "t":
                             if (pass)
                             {
-                                showUrl
-                                ({
-                                    pass: pass,
-                                    tag: nextItem
-                                    (
-                                        [
-                                            "@overall",
-                                            // "@flash", "@pickup", "@restriction",
-                                            // "@short-term", "@medium-term", "@long-term", "@irregular-term"
-                                        ]
-                                        .concat
-                                        (
-                                            OldStorage.Tag.get(pass).sort(Domain.tagComparerOld(pass)))
-                                                .concat(["@unoverall", "@untagged"]
-                                        ),
-                                        tag
-                                    ),
-                                }); // nowait
+                                showUrl({ pass: pass, tag: nextItem(getTagList({ pass, un: true, }), tag),}); // nowait
                             }
                             break;
                         case "v":
