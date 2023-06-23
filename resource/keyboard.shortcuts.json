@@ -30,6 +30,24 @@
         "category": "move"
     },
     {
+        "key": [ "A" ],
+        "message": "Move to next auto tag",
+        "context": "with list",
+        "category": "move"
+    },
+    {
+        "key": [ "P" ],
+        "message": "Move to next term tag",
+        "context": "with list",
+        "category": "move"
+    },
+    {
+        "key": [ "T" ],
+        "message": "Move to next tag",
+        "context": "with list",
+        "category": "move"
+    },
+    {
         "key": [ "V" ],
         "message": "Switch display style",
         "context": "with tag",
