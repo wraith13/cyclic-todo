@@ -13,6 +13,7 @@ export interface keyboardShortcutsItem
     message: locale.LocaleKeyType;
     context: KeyboardShortcutsContext;
     category: KeyboardShortcutsCategory;
+    reverseWithShiftKey?: boolean;
 }
 export const makeObject = <T>(items: { key: string, value: T}[]) =>
 {
@@ -28,6 +29,7 @@ export const toPercentSting = (value: number) => value.toLocaleString("en", { st
 export const isNumber = (value: unknown): value is number => "number" === typeof value;
 export const isValidNumber = (value: unknown) => isNumber(value) && ! isNaN(value);
 export const nextItem = <T>(list: T[], current: T): T => list[(list.indexOf(current) +1) %list.length];
+export const previousItem = <T>(list: T[], current: T): T => list[(list.indexOf(current) +(list.length -1)) %list.length];
 export const groupBy = <T, G>(list: T[], getGroup: (i: T) => G): { group: G, list: T[], }[] =>
     list.map(i => getGroup(i)).filter(uniqueFilter).map(group => ({ group, list: list.filter(i => group === getGroup(i))}));
 export module locale
@@ -6394,7 +6396,8 @@ export module CyclicToDo
         export const keyboardShortcutsItem = (i: keyboardShortcutsItem) =>
         [
             $span("key monospace")(i.key.map(k => $tag("kbd")({})(`${k}`))),
-            locale.map(i.message)
+            locale.map(i.message),
+            i.reverseWithShiftKey ? [ " ( reverse with ", $span("key monospace")($tag("kbd")({})(`Shift`)), " )", ]: "",
         ];
         export const welcomeScreen = async (): Promise<ScreenSource> =>
         ({
@@ -6917,6 +6920,7 @@ export module CyclicToDo
                     const tag = urlParams["tag"] ?? "";
                     // const todo = urlParams["todo"];
                     const pass = urlParams["pass"] ?? `${OldStorage.sessionPassPrefix}:${new Date().getTime()}`;
+                    const destinationItem = event.shiftKey ? previousItem: nextItem;
                     switch(event.key.toLowerCase())
                     {
                         case "f":
@@ -6936,7 +6940,7 @@ export module CyclicToDo
                             const list = OldStorage.Pass.get();
                             if (0 < list.length)
                             {
-                                showUrl({ pass: nextItem(list, pass), tag: "@overall", }); // nowait
+                                showUrl({ pass: destinationItem(list, pass), tag: "@overall", }); // nowait
                             }
                             break;
                         case "h":
@@ -6948,19 +6952,19 @@ export module CyclicToDo
                         case "a":
                             if (pass)
                             {
-                                showUrl({ pass: pass, tag: nextItem(getTagList({ auto: true, }), tag),}); // nowait
+                                showUrl({ pass: pass, tag: destinationItem(getTagList({ auto: true, }), tag),}); // nowait
                             }
                             break;
                         case "p":
                             if (pass)
                             {
-                                showUrl({ pass: pass, tag: nextItem(getTagList({ term: true, }), tag),}); // nowait
+                                showUrl({ pass: pass, tag: destinationItem(getTagList({ term: true, }), tag),}); // nowait
                             }
                             break;
                         case "t":
                             if (pass)
                             {
-                                showUrl({ pass: pass, tag: nextItem(getTagList({ pass, un: true, }), tag),}); // nowait
+                                showUrl({ pass: pass, tag: destinationItem(getTagList({ pass, un: true, }), tag),}); // nowait
                             }
                             break;
                         case "v":
@@ -6972,7 +6976,7 @@ export module CyclicToDo
                                 const list: ("@home" | "full" | "compact")[] = "@overall" === tag ?
                                     [ "full", "compact", ]:
                                     [ "@home", "full", "compact", ];
-                                const next = nextItem(list, current);
+                                const next = destinationItem(list, current);
                                 settings.displayStyle = defaultStyle === next ? undefined: <"full" | "compact">next;
                                 OldStorage.TagSettings.set(pass, tag, settings);
                                 reload(); // nowait
@@ -7003,7 +7007,7 @@ export module CyclicToDo
                                 const list: ("@home" | "smart" | "simple")[] = "@overall" === tag ?
                                     [ "smart", "simple", ]:
                                     [ "@home", "smart", "simple", ];
-                                const next = nextItem(list, current);
+                                const next = destinationItem(list, current);
                                 settings.sort = defaultSort === next ? undefined: <"smart" | "simple">next;
                                 OldStorage.TagSettings.set(pass, tag, settings);
                                 reload(); // nowait

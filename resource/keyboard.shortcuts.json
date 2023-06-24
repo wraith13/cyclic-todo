@@ -33,30 +33,35 @@
         "key": [ "A" ],
         "message": "Move to next auto tag",
         "context": "with list",
-        "category": "move"
+        "category": "move",
+        "reverseWithShiftKey": true
     },
     {
         "key": [ "P" ],
         "message": "Move to next term tag",
         "context": "with list",
-        "category": "move"
+        "category": "move",
+        "reverseWithShiftKey": true
     },
     {
         "key": [ "T" ],
         "message": "Move to next tag",
         "context": "with list",
-        "category": "move"
+        "category": "move",
+        "reverseWithShiftKey": true
     },
     {
         "key": [ "V" ],
         "message": "Switch display style",
         "context": "with tag",
-        "category": "config"
+        "category": "config",
+        "reverseWithShiftKey": true
     },
     {
         "key": [ "O" ],
         "message": "Switch sort order",
         "context": "with tag",
-        "category": "config"
+        "category": "config",
+        "reverseWithShiftKey": true
     }
 ]
