@@ -6397,7 +6397,7 @@ export module CyclicToDo
         [
             $span("key monospace")(i.key.map(k => $tag("kbd")({})(`${k}`))),
             locale.map(i.message),
-            i.reverseWithShiftKey ? [ " ( reverse with ", $span("key monospace")($tag("kbd")({})(`Shift`)), " )", ]: "",
+            i.reverseWithShiftKey ? [ " ( + ", $span("key monospace")($tag("kbd")({})(`Shift`)), locale.map("Reverse") +" )", ]: "",
         ];
         export const welcomeScreen = async (): Promise<ScreenSource> =>
         ({
