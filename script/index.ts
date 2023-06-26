@@ -7030,8 +7030,12 @@ export module CyclicToDo
                             }
                             break;
                         case "s":
-                            getFilterInputElement()?.focus();
-                            event.preventDefault();
+                            const filterIcon = Array.from(document.getElementsByClassName("filter-icon"))[0] as HTMLDivElement;
+                            if (filterIcon)
+                            {
+                                filterIcon.click();
+                                event.preventDefault();
+                            }
                             break;
                         case "?":
                             Render.makeToast
