@@ -58,6 +58,13 @@
         "reverseWithShiftKey": true
     },
     {
+        "key": [ "G" ],
+        "message": "Switch gauge style",
+        "context": "with tag",
+        "category": "config",
+        "reverseWithShiftKey": true
+    },
+    {
         "key": [ "O" ],
         "message": "Switch sort order",
         "context": "with tag",
