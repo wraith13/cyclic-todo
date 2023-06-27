@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Jun 26 2023 20:31:50 GMT+0900 (日本標準時)
+    build at: Tue Jun 27 2023 11:22:58 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -14711,7 +14711,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return event.isComposing || isInComposeSession || new Date().getTime() < lastestCompositionEndAt + 100;
             };
             Render.onKeydown = function (event) {
-                var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+                var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
                 if (!Render.isComposing(event)) {
                     switch (event.key) {
                         case "Enter":
@@ -14805,33 +14805,69 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     });
                                 }
                                 break;
-                            case "o":
+                            case "g":
                                 if (pass_1 && tag_2) {
                                     var settings = OldStorage.TagSettings.get(pass_1, tag_2);
-                                    var defaultSort_1 = Render.getTagSortSettingsDefault(tag_2);
-                                    var current_2 = (_j = settings.sort) !== null && _j !== void 0 ? _j : defaultSort_1;
+                                    var defaultStyle_2 = Render.getTagProgressScaleStyleDefault(tag_2);
+                                    var current_2 = (_j = settings.progressScaleStyle) !== null && _j !== void 0 ? _j : defaultStyle_2;
                                     var list_2 = "@overall" === tag_2 ?
-                                        ["smart", "simple",] :
-                                        ["@home", "smart", "simple",];
+                                        ["none", "full",] :
+                                        ["@home", "none", "full",];
                                     var next = destinationItem(list_2, current_2);
-                                    settings.sort = defaultSort_1 === next ? undefined : next;
+                                    settings.progressScaleStyle = defaultStyle_2 === next ? undefined : next;
                                     OldStorage.TagSettings.set(pass_1, tag_2, settings);
                                     CyclicToDo.reload(); // nowait
                                     var toast_3 = Render.makeToast({
-                                        id: "change-sort",
-                                        content: Render.$span("")(locale.string("表示順を変更しました！") + ": " + locale.map(Render.getTagSortSettingsText(current_2)) + " \u2192 " + locale.map(Render.getTagSortSettingsText(next))),
+                                        id: "change-display-style",
+                                        content: Render.$span("")(locale.string("ゲージ表示設定を変更しました！") + ": " + locale.map(Render.getTagProgressScaleStyleText(current_2)) + " \u2192 " + locale.map(Render.getTagProgressScaleStyleText(next))),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             var settings;
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0:
                                                         settings = OldStorage.TagSettings.get(pass_1, tag_2);
-                                                        settings.sort = defaultSort_1 === current_2 ? undefined : current_2;
+                                                        settings.progressScaleStyle = defaultStyle_2 === current_2 ? undefined : current_2;
                                                         OldStorage.TagSettings.set(pass_1, tag_2, settings);
                                                         return [4 /*yield*/, CyclicToDo.reload()];
                                                     case 1:
                                                         _a.sent();
                                                         return [4 /*yield*/, toast_3.hide()];
+                                                    case 2:
+                                                        _a.sent();
+                                                        return [2 /*return*/];
+                                                }
+                                            });
+                                        }); }),
+                                    });
+                                }
+                                break;
+                            case "o":
+                                if (pass_1 && tag_2) {
+                                    var settings = OldStorage.TagSettings.get(pass_1, tag_2);
+                                    var defaultSort_1 = Render.getTagSortSettingsDefault(tag_2);
+                                    var current_3 = (_k = settings.sort) !== null && _k !== void 0 ? _k : defaultSort_1;
+                                    var list_3 = "@overall" === tag_2 ?
+                                        ["smart", "simple",] :
+                                        ["@home", "smart", "simple",];
+                                    var next = destinationItem(list_3, current_3);
+                                    settings.sort = defaultSort_1 === next ? undefined : next;
+                                    OldStorage.TagSettings.set(pass_1, tag_2, settings);
+                                    CyclicToDo.reload(); // nowait
+                                    var toast_4 = Render.makeToast({
+                                        id: "change-sort",
+                                        content: Render.$span("")(locale.string("表示順を変更しました！") + ": " + locale.map(Render.getTagSortSettingsText(current_3)) + " \u2192 " + locale.map(Render.getTagSortSettingsText(next))),
+                                        backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
+                                            var settings;
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        settings = OldStorage.TagSettings.get(pass_1, tag_2);
+                                                        settings.sort = defaultSort_1 === current_3 ? undefined : current_3;
+                                                        OldStorage.TagSettings.set(pass_1, tag_2, settings);
+                                                        return [4 /*yield*/, CyclicToDo.reload()];
+                                                    case 1:
+                                                        _a.sent();
+                                                        return [4 /*yield*/, toast_4.hide()];
                                                     case 2:
                                                         _a.sent();
                                                         return [2 /*return*/];
@@ -14977,7 +15013,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             }
         };
         CyclicToDo.start = function (params) { return __awaiter(_this, void 0, void 0, function () {
-            var urlParams, reload, json, url, fullscreen, toast_4;
+            var urlParams, reload, json, url, fullscreen, toast_5;
             var _this = this;
             var _a, _b, _c, _d;
             return __generator(this, function (_e) {
@@ -15000,7 +15036,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             }
                             fullscreen = json["fullscreen"];
                             if (fullscreen && Render.fullscreenEnabled()) {
-                                toast_4 = Render.makeToast({
+                                toast_5 = Render.makeToast({
                                     forwardOperator: {
                                         tag: "button",
                                         className: "text-button",
@@ -15009,7 +15045,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0:
-                                                        toast_4.hide();
+                                                        toast_5.hide();
                                                         return [4 /*yield*/, Render.requestFullscreen()];
                                                     case 1:
                                                         _a.sent();
@@ -15204,7 +15240,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Jun 26 2023 20:31:50 GMT+0900 (日本標準時)', buildTimestampTick: 1687779110897, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Jun 27 2023 11:22:58 GMT+0900 (日本標準時)', buildTimestampTick: 1687832578998, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

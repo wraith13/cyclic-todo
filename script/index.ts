@@ -6998,6 +6998,37 @@ export module CyclicToDo
                                 });
                             }
                             break;
+                        case "g":
+                            if (pass && tag)
+                            {
+                                const settings = OldStorage.TagSettings.get(pass, tag);
+                                const defaultStyle = getTagProgressScaleStyleDefault(tag);
+                                const current = settings.progressScaleStyle ?? defaultStyle;
+                                const list: ("@home" | "none" | "full")[] = "@overall" === tag ?
+                                    [ "none", "full", ]:
+                                    [ "@home", "none", "full", ];
+                                const next = destinationItem(list, current);
+                                settings.progressScaleStyle = defaultStyle === next ? undefined: <"none" | "full">next;
+                                OldStorage.TagSettings.set(pass, tag, settings);
+                                reload(); // nowait
+                                const toast = makeToast
+                                ({
+                                    id: "change-display-style",
+                                    content: $span("")(`${locale.string("ゲージ表示設定を変更しました！")}: ${locale.map(getTagProgressScaleStyleText(current))} → ${locale.map(getTagProgressScaleStyleText(next))}`),
+                                    backwardOperator: cancelTextButton
+                                    (
+                                        async () =>
+                                        {
+                                            const settings = OldStorage.TagSettings.get(pass, tag);
+                                            settings.progressScaleStyle = defaultStyle === current ? undefined: <"none" | "full">current;
+                                            OldStorage.TagSettings.set(pass, tag, settings);
+                                            await reload();
+                                            await toast.hide();
+                                        }
+                                    ),
+                                });
+                            }
+                            break;
                         case "o":
                             if (pass && tag)
                             {
