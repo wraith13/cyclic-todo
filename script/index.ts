@@ -6658,7 +6658,21 @@ export module CyclicToDo
             const result =
             {
                 dom,
-                timer: 0 < wait ? setTimeout(() => hideRaw("slow-slide-down-out", 500), wait): null,
+                timer: 0 < wait ? setTimeout
+                (
+                    () =>
+                    {
+                        if (isPressedShift)
+                        {
+                            pausedToastList.push(result);
+                        }
+                        else
+                        {
+                            hideRaw("slow-slide-down-out", 500);
+                        }
+                    },
+                    wait
+                ): null,
                 hide: async () => await hideRaw("slide-down-out", 250),
             };
             minamo.core.existsOrThrow(document.getElementById("screen-toast")).appendChild(dom);
@@ -6896,8 +6910,42 @@ export module CyclicToDo
         {
             return event.isComposing || isInComposeSession || new Date().getTime() < lastestCompositionEndAt +100;
         };
+        let isPressedShift: boolean = false;
+        let pausedToastList: Toast[] = [];
+        let releaseToastsTimer = 0;
+        export const releaseToasts = () =>
+        {
+            if (releaseToastsTimer)
+            {
+                clearTimeout(releaseToastsTimer);
+            }
+            releaseToastsTimer = setTimeout
+            (
+                async () =>
+                {
+                    while( ! isPressedShift)
+                    {
+                        const i = pausedToastList.shift();
+                        if (i)
+                        {
+                            await i.hide();
+                            await minamo.core.timeout(100);
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                },
+                500
+            );
+        };
         export const onKeydown = (event: KeyboardEvent) =>
         {
+            if ("Shift" === event.key)
+            {
+                isPressedShift = true;
+            }
             if ( ! isComposing(event))
             {
                 switch(event.key)
@@ -6921,9 +6969,9 @@ export module CyclicToDo
                     // const todo = urlParams["todo"];
                     const pass = urlParams["pass"] ?? `${OldStorage.sessionPassPrefix}:${new Date().getTime()}`;
                     const destinationItem = event.shiftKey ? previousItem: nextItem;
-                    switch(event.key.toLowerCase())
+                    switch(event.key.toUpperCase())
                     {
-                        case "f":
+                        case "F":
                             if (fullscreenEnabled())
                             {
                                 if(null === fullscreenElement())
@@ -6936,38 +6984,38 @@ export module CyclicToDo
                                 }
                             }
                             break;
-                        case "l":
+                        case "L":
                             const list = OldStorage.Pass.get();
                             if (0 < list.length)
                             {
                                 showUrl({ pass: destinationItem(list, pass), tag: "@overall", }); // nowait
                             }
                             break;
-                        case "h":
+                        case "H":
                             if (pass)
                             {
                                 showUrl({ pass: pass, tag: "@overall", }); // nowait
                             }
                             break;
-                        case "a":
+                        case "A":
                             if (pass)
                             {
                                 showUrl({ pass: pass, tag: destinationItem(getTagList({ auto: true, }), tag),}); // nowait
                             }
                             break;
-                        case "p":
+                        case "P":
                             if (pass)
                             {
                                 showUrl({ pass: pass, tag: destinationItem(getTagList({ term: true, }), tag),}); // nowait
                             }
                             break;
-                        case "t":
+                        case "T":
                             if (pass)
                             {
                                 showUrl({ pass: pass, tag: destinationItem(getTagList({ pass, un: true, }), tag),}); // nowait
                             }
                             break;
-                        case "v":
+                        case "V":
                             if (pass && tag)
                             {
                                 const settings = OldStorage.TagSettings.get(pass, tag);
@@ -6998,7 +7046,7 @@ export module CyclicToDo
                                 });
                             }
                             break;
-                        case "g":
+                        case "G":
                             if (pass && tag)
                             {
                                 const settings = OldStorage.TagSettings.get(pass, tag);
@@ -7013,7 +7061,7 @@ export module CyclicToDo
                                 reload(); // nowait
                                 const toast = makeToast
                                 ({
-                                    id: "change-display-style",
+                                    id: "change-gauge-style",
                                     content: $span("")(`${locale.string("ゲージ表示設定を変更しました！")}: ${locale.map(getTagProgressScaleStyleText(current))} → ${locale.map(getTagProgressScaleStyleText(next))}`),
                                     backwardOperator: cancelTextButton
                                     (
@@ -7029,7 +7077,7 @@ export module CyclicToDo
                                 });
                             }
                             break;
-                        case "o":
+                        case "O":
                             if (pass && tag)
                             {
                                 const settings = OldStorage.TagSettings.get(pass, tag);
@@ -7060,7 +7108,7 @@ export module CyclicToDo
                                 });
                             }
                             break;
-                        case "s":
+                        case "S":
                             const filterIcon = Array.from(document.getElementsByClassName("filter-icon"))[0] as HTMLDivElement;
                             if (filterIcon)
                             {
@@ -7106,6 +7154,14 @@ export module CyclicToDo
                 }
             }
         };
+        export const onKeyup = (event: KeyboardEvent) =>
+        {
+            if ("Shift" === event.key)
+            {
+                isPressedShift = false;
+                releaseToasts();
+            }
+        }
         export const onFullscreenChange = (_event: Event) =>
         {
             onWindowResize();
@@ -7263,6 +7319,7 @@ export module CyclicToDo
         window.addEventListener('compositionstart', Render.onCompositionStart);
         window.addEventListener('compositionend', Render.onCompositionEnd);
         window.addEventListener('keydown', Render.onKeydown);
+        window.addEventListener('keyup', Render.onKeyup);
         minamo.core.existsOrThrow(document.getElementById("screen-header")).addEventListener
         (
             'click',
