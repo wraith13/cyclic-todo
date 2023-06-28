@@ -18,6 +18,12 @@
         "category": "genaral"
     },
     {
+        "key": [ "Shift" ],
+        "message": "Keep pop-up notification ( while holding down the key )",
+        "context": "whenever",
+        "category": "genaral"
+    },
+    {
         "key": [ "S" ],
         "message": "Focus to filter",
         "context": "with filter",
