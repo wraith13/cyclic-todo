@@ -7111,6 +7111,34 @@ export module CyclicToDo
                                 });
                             }
                             break;
+                        case "M":
+                            {
+                                const settings = Storage.SystemSettings.get();
+                                const defaultTheme = "auto";
+                                const current = settings.theme ?? defaultTheme;
+                                const list: ThemeType[] = [ "auto", "light", "dark", ];
+                                const next = destinationItem(list, current);
+                                settings.theme = defaultTheme === next ? undefined: next;
+                                Storage.SystemSettings.set(settings);
+                                updateStyle();
+                                const toast = makeToast
+                                ({
+                                    id: "change-sort",
+                                    content: $span("")(`${locale.string("テーマを変更しました！")}: ${locale.map(<"theme.auto" | "theme.light" | "theme.dark">`theme.${current}`)} → ${locale.map(<"theme.auto" | "theme.light" | "theme.dark">`theme.${next}`)}`),
+                                    backwardOperator: cancelTextButton
+                                    (
+                                        async () =>
+                                        {
+                                            const settings = Storage.SystemSettings.get();
+                                            settings.theme = defaultTheme === current ? undefined: current;
+                                            Storage.SystemSettings.set(settings);
+                                            updateStyle();
+                                            await toast.hide();
+                                        }
+                                    ),
+                                });
+                            }
+                            break;
                         case "S":
                             const filterIcon = Array.from(document.getElementsByClassName("filter-icon"))[0] as HTMLDivElement;
                             if (filterIcon)

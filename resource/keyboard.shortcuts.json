@@ -57,6 +57,13 @@
         "reverseWithShiftKey": true
     },
     {
+        "key": [ "M" ],
+        "message": "Switch theme",
+        "context": "whenever",
+        "category": "config",
+        "reverseWithShiftKey": true
+    },
+    {
         "key": [ "V" ],
         "message": "Switch display style",
         "context": "with tag",
