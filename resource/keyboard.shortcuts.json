@@ -3,25 +3,25 @@
         "key": [ "?" ],
         "message": "Show keyboard shortcut",
         "context": "whenever",
-        "category": "genaral"
+        "category": "general"
     },
     {
         "key": [ "ESC" ],
         "message": "Escape from current context",
         "context": "whenever",
-        "category": "genaral"
+        "category": "general"
     },
     {
         "key": [ "F" ],
         "message": "Toggle full screen",
         "context": "whenever",
-        "category": "genaral"
+        "category": "general"
     },
     {
         "key": [ "Shift" ],
         "message": "Keep pop-up notification ( while holding down the key )",
         "context": "whenever",
-        "category": "genaral"
+        "category": "general"
     },
     {
         "key": [ "S" ],

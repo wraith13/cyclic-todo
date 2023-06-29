@@ -133,5 +133,8 @@
     "Move to Home": "ホームへ移動",
     "Switch display style": "表示スタイルの切り替え",
     "Switch sort order": "並び順の切り替え",
-    "Paste the exported JSON.": "エクスポートした JSON をペーストしてください。"
+    "Paste the exported JSON.": "エクスポートした JSON をペーストしてください。",
+    "KeyboardShortcutsCategory.general": "全般",
+    "KeyboardShortcutsCategory.move": "移動",
+    "KeyboardShortcutsCategory.config": "設定"
 }

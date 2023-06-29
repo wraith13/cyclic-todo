@@ -7,6 +7,9 @@ import keyboardShortcutsJson from "../resource/keyboard.shortcuts.json";
 export const keyboardShortcuts = keyboardShortcutsJson as keyboardShortcutsItem[];
 export type KeyboardShortcutsContext = "whenever" | "with filter" | "with list" | "with tag";
 export type KeyboardShortcutsCategory = "general" | "move" | "config";
+export type KeyboardShortcutsCategoryLocale = `KeyboardShortcutsCategory.${KeyboardShortcutsCategory}`
+export const getKeyboardShortcutsCategoryLocale = (key: KeyboardShortcutsCategory) =>
+    <KeyboardShortcutsCategoryLocale>`KeyboardShortcutsCategory.${key}`;
 export interface keyboardShortcutsItem
 {
     key: string[];
@@ -7126,7 +7129,7 @@ export module CyclicToDo
                                     (
                                         keyboardShortcuts
                                         .filter(i => matchKeyboardShortcutsContext(urlParams, i.context)),
-                                        i => i.category
+                                        i => locale.map(getKeyboardShortcutsCategoryLocale(i.category))
                                     )
                                     .map
                                     (

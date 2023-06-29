@@ -133,5 +133,8 @@
     "Move to Home": "Move to Home",
     "Switch display style": "Switch display style",
     "Switch sort order": "Switch sort order",
-    "Paste the exported JSON.": "Paste the exported JSON."
+    "Paste the exported JSON.": "Paste the exported JSON.",
+    "KeyboardShortcutsCategory.general": "General",
+    "KeyboardShortcutsCategory.move": "Move",
+    "KeyboardShortcutsCategory.config": "Config"
 }
