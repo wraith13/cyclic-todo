@@ -50,7 +50,8 @@ export module locale
     let masterKey: LocaleType = 0 <= locales.indexOf(navigator.language as LocaleType) ?
         navigator.language as LocaleType:
         locales[0];
-    export const getLocaleName = (locale: LocaleType) => master[locale].$name;
+    export const getLocaleName = (locale: "@auto" | LocaleType) =>
+        "@auto" === locale ?  map("language.auto"): master[locale].$name;
     export const setLocale = (locale: LocaleType | null) =>
     {
         const key = locale ?? navigator.language as LocaleType;
@@ -7136,6 +7137,36 @@ export module CyclicToDo
                                             settings.theme = defaultTheme === current ? undefined: current;
                                             Storage.SystemSettings.set(settings);
                                             updateStyle();
+                                            await toast.hide();
+                                        }
+                                    ),
+                                });
+                            }
+                            break;
+                        case "W":
+                            {
+                                const settings = Storage.SystemSettings.get();
+                                const defaultLanguage = "@auto";
+                                const current = settings.locale ?? defaultLanguage;
+                                const list = [ defaultLanguage, ].concat(locale.locales);
+                                const next = <"@auto" | locale.LocaleType>destinationItem(list, current);
+                                settings.locale = defaultLanguage === next ? undefined: <locale.LocaleType>next;
+                                Storage.SystemSettings.set(settings);
+                                locale.setLocale(settings.locale ?? null);
+                                reload(); // no wait
+                                const toast = makeToast
+                                ({
+                                    id: "change-sort",
+                                    content: $span("")(`${locale.string("言語を変更しました！")}: ${locale.getLocaleName(current)} → ${locale.getLocaleName(next)}`),
+                                    backwardOperator: cancelTextButton
+                                    (
+                                        async () =>
+                                        {
+                                            const settings = Storage.SystemSettings.get();
+                                            settings.locale = defaultLanguage === current ? undefined: current;
+                                            Storage.SystemSettings.set(settings);
+                                            locale.setLocale(settings.locale ?? null);
+                                            await reload();
                                             await toast.hide();
                                         }
                                     ),

@@ -64,6 +64,13 @@
         "reverseWithShiftKey": true
     },
     {
+        "key": [ "W" ],
+        "message": "Switch language",
+        "context": "whenever",
+        "category": "config",
+        "reverseWithShiftKey": true
+    },
+    {
         "key": [ "V" ],
         "message": "Switch display style",
         "context": "with tag",
