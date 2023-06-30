@@ -125,6 +125,9 @@ export module CyclicToDo
 {
     export const applicationTitle = config.applicationTitle;
     export type ThemeType = "auto" | "light" | "dark";
+    export type ThemeTypeLocale = `theme.${ThemeType}`
+    export const getThemeLocale = (key: ThemeType) =>
+    <ThemeTypeLocale>`theme.${key}`;
     export interface SystemSettings extends minamo.core.JsonableObject
     {
         theme?: ThemeType;
@@ -2973,7 +2976,7 @@ export module CyclicToDo
                                         children:
                                         [
                                             await Resource.loadSvgOrCache("check-icon"),
-                                            $span("")(label(<"theme.auto" | "theme.light" | "theme.dark">`theme.${key}`)),
+                                            $span("")(label(getThemeLocale(key))),
                                         ],
                                         onclick: async () =>
                                         {
@@ -7124,7 +7127,7 @@ export module CyclicToDo
                                 const toast = makeToast
                                 ({
                                     id: "change-sort",
-                                    content: $span("")(`${locale.string("テーマを変更しました！")}: ${locale.map(<"theme.auto" | "theme.light" | "theme.dark">`theme.${current}`)} → ${locale.map(<"theme.auto" | "theme.light" | "theme.dark">`theme.${next}`)}`),
+                                    content: $span("")(`${locale.string("テーマを変更しました！")}: ${locale.map(getThemeLocale(current))} → ${locale.map(getThemeLocale(next))}`),
                                     backwardOperator: cancelTextButton
                                     (
                                         async () =>
