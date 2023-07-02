@@ -30,6 +30,13 @@
         "category": "move"
     },
     {
+        "key": [ "L" ],
+        "message": "Move to next list",
+        "context": "whenever",
+        "category": "move",
+        "reverseWithShiftKey": true
+    },
+    {
         "key": [ "H" ],
         "message": "Move to Home",
         "context": "with list",
