@@ -7038,7 +7038,7 @@ export module CyclicToDo
                                 const toast = makeToast
                                 ({
                                     id: "change-display-style",
-                                    content: $span("")(`${locale.string("表示スタイルを変更しました！")}: ${locale.map(getTagDisplayStyleText(current))} → ${locale.map(getTagDisplayStyleText(next))}`),
+                                    content: $span("")(`${locale.map("Display style has changed!")}: ${locale.map(getTagDisplayStyleText(current))} → ${locale.map(getTagDisplayStyleText(next))}`),
                                     backwardOperator: cancelTextButton
                                     (
                                         async () =>
