@@ -98,7 +98,7 @@
     98.75% { background: radial-gradient(transparent 95%, @accent-color 100%); }
     100% { background: radial-gradient(transparent 100%, @accent-color 100%); }
 }
-@keyframes progress-flash
+@keyframes gradation-progress-flash
 {
     0% { background: linear-gradient(to right, @flashy-color 0%, @flashy-peak-color 0%); }
     1.25% { background: linear-gradient(to right, @flashy-color 0%, @flashy-peak-color 5%); }
@@ -181,6 +181,12 @@
     97.5% { background: linear-gradient(to right, @flashy-peak-color 90%, @flashy-color 100%); }
     98.75% { background: linear-gradient(to right, @flashy-peak-color 95%, @flashy-color 100%); }
     100% { background: linear-gradient(to right, @flashy-peak-color 100%, @flashy-color 100%); }
+}
+@keyframes solid-progress-flash
+{
+    0% { background: @flashy-color; }
+    89.9% { background: @flashy-color; }
+    90% { background: @flashy-peak-color; }
 }
 #foundation
 {
@@ -1430,7 +1436,7 @@ button
 {
     .progress-flash
     {
-        // animation-name: progress-flash; どうにも負荷になる事がある様なので一旦 disable
+        animation-name: solid-progress-flash;
         animation-direction: normal;
         animation-delay: 0s;
         animation-duration: 5.0s;
