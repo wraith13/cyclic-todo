@@ -184,9 +184,13 @@
 }
 @keyframes solid-progress-flash
 {
-    0% { background: @flashy-color; }
-    89.9% { background: @flashy-color; }
-    90% { background: @flashy-peak-color; }
+    0% { background: @flashy-peak-color; }
+    10% { background: @flashy-color; }
+    49% { background: @flashy-color; }
+    50% { background: @flashy-peak-color; }
+    60% { background: @flashy-color; }
+    99% { background: @flashy-color; }
+    100% { background: @flashy-peak-color; }
 }
 #foundation
 {
