@@ -127,11 +127,14 @@ export module CyclicToDo
     export const applicationTitle = config.applicationTitle;
     export type ThemeType = "auto" | "light" | "dark";
     export type ThemeTypeLocale = `theme.${ThemeType}`
-    export const getThemeLocale = (key: ThemeType) =>
-    <ThemeTypeLocale>`theme.${key}`;
+    export const getThemeLocale = (key: ThemeType) => <ThemeTypeLocale>`theme.${key}`;
+    export type FlashStyleType = "gradation" | "breath" | "solid" | "none";
+    export type FlashStyleTypeLocale = `flashStyle.${FlashStyleType}`
+    export const getFlashStyleLocale = (key: FlashStyleType) => <FlashStyleTypeLocale>`flashStyle.${key}`;
     export interface SystemSettings extends minamo.core.JsonableObject
     {
         theme?: ThemeType;
+        flashStyle?: FlashStyleType;
         locale?: locale.LocaleType;
     }
     export interface ToDoTagEntryOld extends minamo.core.JsonableObject
