@@ -182,6 +182,14 @@
     98.75% { background: linear-gradient(to right, @flashy-peak-color 95%, @flashy-color 100%); }
     100% { background: linear-gradient(to right, @flashy-peak-color 100%, @flashy-color 100%); }
 }
+@keyframes breath-progress-flash
+{
+    0% { background: @flashy-peak-color; }
+    25% { background: @flashy-color; }
+    50% { background: @flashy-peak-color; }
+    75% { background: @flashy-color; }
+    100% { background: @flashy-peak-color; }
+}
 @keyframes solid-progress-flash
 {
     0% { background: @flashy-peak-color; }
@@ -1440,7 +1448,7 @@ button
 {
     .progress-flash
     {
-        animation-name: solid-progress-flash;
+        animation-name: breath-progress-flash;
         animation-direction: normal;
         animation-delay: 0s;
         animation-duration: 5.0s;
