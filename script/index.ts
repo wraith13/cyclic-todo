@@ -3022,6 +3022,72 @@ export module CyclicToDo
                 }
             );
         };
+        export const flashStyleSettingsPopup = async (settings: SystemSettings = Storage.SystemSettings.get()): Promise<boolean> =>
+        {
+            const init = settings.flashStyle ?? "breath";
+            return await new Promise
+            (
+                async resolve =>
+                {
+                    let result = false;
+                    const checkButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
+                    const checkButtonListUpdate = async () => minamo.dom.replaceChildren
+                    (
+                        checkButtonList,
+                        [
+                            await Promise.all
+                            (
+                                (<FlashStyleType[]>[ "gradation", "breath", "solid", "none", ]).map
+                                (
+                                    async (key: FlashStyleType) =>
+                                    ({
+                                        tag: "button",
+                                        className: `check-button ${key === (settings.flashStyle ?? "breath") ? "checked": ""}`,
+                                        children:
+                                        [
+                                            await Resource.loadSvgOrCache("check-icon"),
+                                            $span("")(label(getFlashStyleLocale(key))),
+                                        ],
+                                        onclick: async () =>
+                                        {
+                                            if (key !== (settings.flashStyle ?? "auto"))
+                                            {
+                                                settings.flashStyle = key;
+                                                Storage.SystemSettings.set(settings);
+                                                await checkButtonListUpdate();
+                                                updateFlashStyle();
+                                                result = init !== key;
+                                            }
+                                        }
+                                    })
+                                )
+                            )
+                        ]
+                    );
+                    await checkButtonListUpdate();
+                    const ui = popup
+                    ({
+                        // className: "add-remove-tags-popup",
+                        children:
+                        [
+                            $tag("h2")("")(label("Flash style setting")),
+                            checkButtonList,
+                            $div("popup-operator")
+                            ([{
+                                tag: "button",
+                                className: "default-button",
+                                children: label("Close"),
+                                onclick: () =>
+                                {
+                                    ui.close();
+                                },
+                            }])
+                        ],
+                        onClose: async () => resolve(result),
+                    });
+                }
+            );
+        };
         export const localeSettingsPopup = async (settings: SystemSettings = Storage.SystemSettings.get()): Promise<boolean> =>
         {
             return await new Promise
@@ -6356,6 +6422,17 @@ export module CyclicToDo
             ),
             menuItem
             (
+                label("Flash style setting"),
+                async () =>
+                {
+                    if (await flashStyleSettingsPopup())
+                    {
+                        // updateStyle();
+                    }
+                }
+            ),
+            menuItem
+            (
                 label("Language setting"),
                 async () =>
                 {
@@ -7310,6 +7387,14 @@ export module CyclicToDo
             i => document.body.classList.toggle(i, i === theme)
         );
     };
+    export const updateFlashStyle = () =>
+    {
+        const flashStyle = Storage.SystemSettings.get().flashStyle ?? "breath";
+        [ "gradation", "breath", "solid", "none", ].forEach
+        (
+            i => document.body.classList.toggle(`flash-style-{i}`, i === flashStyle)
+        );
+    };
     export const getLatestBuildTimestamp = async (): Promise<number> =>
         JSON.parse(await minamo.http.get(`./build.timestamp.json?dummy=${new Date().getTime()}`));
     let buildTimestamp: { stamp: string, tick: number, };
@@ -7414,6 +7499,7 @@ export module CyclicToDo
             minamo.core.parseTimespan(config.removedItemDecayInterval) ?? 60 *60 *1000
         )
         updateStyle();
+        updateFlashStyle();
         await Render.showUpdatingScreen(location.href);
         await showPage();
         if (reload || "reload" === (<any>performance.getEntriesByType("navigation"))?.[0]?.type)
