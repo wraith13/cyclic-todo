@@ -1444,18 +1444,31 @@ button
         position: absolute;
     }
 }
+&.flash-style-gradation .progress-flash
+{
+    animation-name: gradation-progress-flash;
+}
+&.flash-style-breath .progress-flash
+{
+    animation-name: breath-progress-flash;
+}
+&.flash-style-solid .progress-flash
+{
+    animation-name: solid-progress-flash;
+}
+&.flash-style-gradation .progress-flash,
+&.flash-style-breath .progress-flash,
+&.flash-style-solid .progress-flash
+{
+    animation-direction: normal;
+    animation-delay: 0s;
+    animation-duration: 5.0s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: both;
+    animation-iteration-count: infinite;
+}
 .task-item
 {
-    .progress-flash
-    {
-        animation-name: breath-progress-flash;
-        animation-direction: normal;
-        animation-delay: 0s;
-        animation-duration: 5.0s;
-        animation-timing-function: ease-in-out;
-        animation-fill-mode: both;
-        animation-iteration-count: infinite;
-    }
     .item-attribute
     {
         display: flex;

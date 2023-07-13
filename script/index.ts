@@ -7392,7 +7392,7 @@ export module CyclicToDo
         const flashStyle = Storage.SystemSettings.get().flashStyle ?? "breath";
         [ "gradation", "breath", "solid", "none", ].forEach
         (
-            i => document.body.classList.toggle(`flash-style-{i}`, i === flashStyle)
+            i => document.body.classList.toggle(`flash-style-${i}`, i === flashStyle)
         );
     };
     export const getLatestBuildTimestamp = async (): Promise<number> =>
