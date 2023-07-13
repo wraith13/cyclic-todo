@@ -7149,7 +7149,7 @@ export module CyclicToDo
                                 const toast = makeToast
                                 ({
                                     id: "change-gauge-style",
-                                    content: $span("")(`${locale.string("ゲージ表示設定を変更しました！")}: ${locale.map(getTagProgressScaleStyleText(current))} → ${locale.map(getTagProgressScaleStyleText(next))}`),
+                                    content: $span("")(`${locale.map("Gauge style has changed!")}: ${locale.map(getTagProgressScaleStyleText(current))} → ${locale.map(getTagProgressScaleStyleText(next))}`),
                                     backwardOperator: cancelTextButton
                                     (
                                         async () =>

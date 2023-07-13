@@ -150,5 +150,6 @@
     "KeyboardShortcutsCategory.general": "全般",
     "KeyboardShortcutsCategory.move": "移動",
     "KeyboardShortcutsCategory.config": "設定",
-    "Display style has changed!": "表示スタイルを変更しました！"
+    "Display style has changed!": "表示スタイルを変更しました！",
+    "Gauge style has changed!": "ゲージ表示設定を変更しました！"
 }

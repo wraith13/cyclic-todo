@@ -150,5 +150,6 @@
     "KeyboardShortcutsCategory.general": "General",
     "KeyboardShortcutsCategory.move": "Move",
     "KeyboardShortcutsCategory.config": "Config",
-    "Display style has changed!": "Display style has changed!"
+    "Display style has changed!": "Display style has changed!",
+    "Gauge style has changed!": "Gauge style has changed!"
 }
