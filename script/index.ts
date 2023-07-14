@@ -7180,7 +7180,7 @@ export module CyclicToDo
                                 const toast = makeToast
                                 ({
                                     id: "change-sort",
-                                    content: $span("")(`${locale.string("表示順を変更しました！")}: ${locale.map(getTagSortSettingsText(current))} → ${locale.map(getTagSortSettingsText(next))}`),
+                                    content: $span("")(`${locale.map("Sort orer has changed!")}: ${locale.map(getTagSortSettingsText(current))} → ${locale.map(getTagSortSettingsText(next))}`),
                                     backwardOperator: cancelTextButton
                                     (
                                         async () =>
