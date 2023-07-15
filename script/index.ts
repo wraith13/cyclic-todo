@@ -7237,7 +7237,7 @@ export module CyclicToDo
                                 const toast = makeToast
                                 ({
                                     id: "change-sort",
-                                    content: $span("")(`${locale.string("言語を変更しました！")}: ${locale.getLocaleName(current)} → ${locale.getLocaleName(next)}`),
+                                    content: $span("")(`${locale.map("Language has changed!")}: ${locale.getLocaleName(current)} → ${locale.getLocaleName(next)}`),
                                     backwardOperator: cancelTextButton
                                     (
                                         async () =>
