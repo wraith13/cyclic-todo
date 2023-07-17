@@ -5336,6 +5336,29 @@ export module CyclicToDo
             ),
             parent: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall", }
         });
+        export const autoTabs = async (entry: ToDoTagEntryOld, _list: ToDoEntry[]) => $div("button-list")
+        (
+            await Promise.all
+            (
+                [ "@overall" ]
+                    .concat(getTagList({ auto: true }))
+                    .map
+                    (
+                        async (i: "@overall" | "@flash" | "@pickup" | "@restriction") =>
+                        ({
+                            tag: "button",
+                            className: "solid-button" +i === entry.tag ? " current-item": "",
+                            children:
+                            [
+                                await Resource.loadTagSvgOrCache(i),
+                                label(i),
+                                monospace(`${OldStorage.TagMember.get(entry.pass, entry.tag).length}`)
+                            ],
+                            onclick: () => showUrl({ pass: entry.pass, tag: i, }),
+                        })
+                    )
+            )
+        );
         export const listScreenFooter = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) => $div("button-list")
         ([
             "@overall" !== entry.tag ?
@@ -5370,6 +5393,7 @@ export module CyclicToDo
         ([
             await historyBar(entry, list),
             $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item, displayStyle, progressScaleShowStyle)))),
+            await autoTabs(entry, list),
             await listScreenFooter(entry, list)
         ]);
         export const listScreen = async (entry: ToDoTagEntryOld, list: ToDoEntry[], filter: string) =>
