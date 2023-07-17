@@ -5336,7 +5336,7 @@ export module CyclicToDo
             ),
             parent: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall", }
         });
-        export const autoTabs = async (entry: ToDoTagEntryOld, _list: ToDoEntry[]) => $div("button-list")
+        export const autoTabs = async (entry: ToDoTagEntryOld, _list: ToDoEntry[]) => $div("button-line locale-parallel-off")
         (
             await Promise.all
             (
@@ -5347,12 +5347,12 @@ export module CyclicToDo
                         async (i: "@overall" | "@flash" | "@pickup" | "@restriction") =>
                         ({
                             tag: "button",
-                            className: "solid-button" +i === entry.tag ? " current-item": "",
+                            className: "solid-button" +(i === entry.tag ? " current-item": ""),
                             children:
                             [
                                 await Resource.loadTagSvgOrCache(i),
                                 label(i),
-                                monospace(`${OldStorage.TagMember.get(entry.pass, entry.tag).length}`)
+                                monospace(`${OldStorage.TagMember.get(entry.pass, i).length}`)
                             ],
                             onclick: () => showUrl({ pass: entry.pass, tag: i, }),
                         })

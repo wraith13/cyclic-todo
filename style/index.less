@@ -639,6 +639,40 @@ h1
         margin-bottom: -1rem;
     }
 }
+.solid-button
+{
+    border-radius: 0rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    white-space: nowrap;
+    overflow-x: hidden;
+    svg
+    {
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-left: -0.25rem;
+        margin-right: 0.5rem;
+    }
+    &.current-item
+    {
+        .primary-operator-coloring-trait;
+    }
+    & > .label + .value
+    {
+        margin-left: 0.5rem;
+        text-align: right;
+        flex-grow: 1;
+    }
+    &:not(.current-item):not(:hover)
+    {
+        & > .label + .value
+        {
+            color: #888;
+        }
+    }
+}
 .text-button
 {
     .link-trait;
@@ -1117,6 +1151,15 @@ button
         {
             right: calc(50vw - 330px);
         }
+    }
+    .solid-button
+    {
+        flex-grow: 1;
+    }
+    .solid-button +.solid-button
+    {
+        border-left-style: none;
+        border-left-width: 0px;
     }
 }
 .horizontal-list
