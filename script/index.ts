@@ -6936,6 +6936,8 @@ export module CyclicToDo
                     list.classList.toggle("empty-list", length <= 0);
                 }
             );
+            minamo.core.existsOrThrow(document.getElementById("screen-toast")).style.bottom =
+                `${minamo.core.existsOrThrow(document.getElementById("screen-footer")).clientHeight}px`;
         };
         let onWindowResizeTimestamp = 0;
         export const onWindowResize = () =>
