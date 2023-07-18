@@ -4581,6 +4581,7 @@ export module CyclicToDo
             className: string;
             header: HeaderSource;
             body: minamo.dom.Source;
+            footer?: minamo.dom.Source;
         }
         const getLastSegmentClass = (data:HeaderSource, ix: number) => ix === data.items.length -1 ?
             //(! data.operator  ? "last-segment fill-header-segment": "last-segment"): undefined;
@@ -5393,7 +5394,6 @@ export module CyclicToDo
         ([
             await historyBar(entry, list),
             $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item, displayStyle, progressScaleShowStyle)))),
-            await autoTabs(entry, list),
             await listScreenFooter(entry, list)
         ]);
         export const listScreen = async (entry: ToDoTagEntryOld, list: ToDoEntry[], filter: string) =>
@@ -5401,6 +5401,7 @@ export module CyclicToDo
             className: "list-screen",
             header: await listScreenHeader(entry, list),
             body: await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))),
+            footer: await autoTabs(entry, list),
         });
         export const showListScreen = async (pass: string, tag: string, urlParams: PageParams) =>
         {
@@ -6700,6 +6701,11 @@ export module CyclicToDo
             (
                 minamo.core.existsOrThrow(document.getElementById("screen-body")),
                 screen.body
+            );
+            minamo.dom.replaceChildren
+            (
+                minamo.core.existsOrThrow(document.getElementById("screen-footer")),
+                screen.footer ?? [],
             );
             getHeaderElement().classList.toggle("header-operator-has-focus", "" !== getFilterText());
             updateTitle();
