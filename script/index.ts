@@ -6936,8 +6936,12 @@ export module CyclicToDo
                     list.classList.toggle("empty-list", length <= 0);
                 }
             );
-            minamo.core.existsOrThrow(document.getElementById("screen-toast")).style.bottom =
-                `${minamo.core.existsOrThrow(document.getElementById("screen-footer")).clientHeight}px`;
+            minamo.dom.setStyleProperty
+            (
+                minamo.core.existsOrThrow(document.getElementById("screen-toast")),
+                "bottom",
+                `${minamo.core.existsOrThrow(document.getElementById("screen-footer")).clientHeight}px`
+            );
         };
         let onWindowResizeTimestamp = 0;
         export const onWindowResize = () =>
