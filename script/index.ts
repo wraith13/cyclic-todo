@@ -5376,6 +5376,12 @@ export module CyclicToDo
             };
             return result;
         };
+        export const bottomTabs = async (entry: ToDoTagEntryOld) => $div("bottom-tabs locale-parallel-off")
+        ([
+            await homeTab(entry),
+            await autoTab(entry),
+            await termTab(entry),
+        ]);
         export const homeTab = async (entry: ToDoTagEntryOld) => bottomTab
         (
             entry,
@@ -5471,12 +5477,7 @@ export module CyclicToDo
             className: "list-screen",
             header: await listScreenHeader(entry, list),
             body: await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))),
-            footer: $div("bottom-tabs locale-parallel-off")
-            ([
-                await homeTab(entry),
-                await autoTab(entry),
-                await termTab(entry),
-            ]),
+            footer: await bottomTabs(entry),
         });
         export const showListScreen = async (pass: string, tag: string, urlParams: PageParams) =>
         {
