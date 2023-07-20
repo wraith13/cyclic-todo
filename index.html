@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Wed Jul 19 2023 21:18:03 GMT+0900 (日本標準時)
+    build at: Thu Jul 20 2023 10:45:24 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -1181,16 +1181,23 @@ body.light .bottom-tabs .bottom-tab .sub-tabs {
   height: 1rem;
 }
 body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab {
+  height: 1rem;
+  flex-grow: 1;
+}
+body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
   cursor: pointer;
+  border-top-color: #228844;
+  border-top-width: 1px;
+  border-top-style: solid;
 }
 @media (hover: hover) {
-  body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(:hover) {
+  body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item):not(:hover) {
     color: #228844;
     fill: #228844;
     border-color: #228844;
     background-color: #FFFFFF;
   }
-  body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab:hover {
+  body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item):hover {
     color: #FFFFFF;
     fill: #FFFFFF;
     border-color: #6F7F00;
@@ -1198,33 +1205,17 @@ body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab {
   }
 }
 @media (hover: none) {
-  body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab {
+  body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
     color: #228844;
     fill: #228844;
     border-color: #228844;
     background-color: #FFFFFF;
   }
 }
-body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab.current-item {
-  cursor: pointer;
-  color: #FFFFFF;
-  fill: #FFFFFF;
-}
-@media (hover: hover) {
-  body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab.current-item:not(:hover) {
-    border-color: #228844;
-    background-color: #228844;
-  }
-  body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab.current-item:hover {
-    border-color: #6F7F00;
-    background-color: #6F7F00;
-  }
-}
-@media (hover: none) {
-  body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab.current-item {
-    border-color: #228844;
-    background-color: #228844;
-  }
+body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab + .sub-tab {
+  border-left-color: #228844;
+  border-left-width: 1px;
+  border-left-style: solid;
 }
 body.light .bottom-tabs .bottom-tab.current-item {
   cursor: pointer;
@@ -3655,16 +3646,23 @@ body.dark .bottom-tabs .bottom-tab .sub-tabs {
   height: 1rem;
 }
 body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab {
+  height: 1rem;
+  flex-grow: 1;
+}
+body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
   cursor: pointer;
+  border-top-color: #228844;
+  border-top-width: 1px;
+  border-top-style: solid;
 }
 @media (hover: hover) {
-  body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(:hover) {
+  body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item):not(:hover) {
     color: #228844;
     fill: #228844;
     border-color: #228844;
     background-color: #000022;
   }
-  body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab:hover {
+  body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item):hover {
     color: #000022;
     fill: #000022;
     border-color: #6F7F00;
@@ -3672,33 +3670,17 @@ body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab {
   }
 }
 @media (hover: none) {
-  body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab {
+  body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
     color: #228844;
     fill: #228844;
     border-color: #228844;
     background-color: #000022;
   }
 }
-body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab.current-item {
-  cursor: pointer;
-  color: #000022;
-  fill: #000022;
-}
-@media (hover: hover) {
-  body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab.current-item:not(:hover) {
-    border-color: #228844;
-    background-color: #228844;
-  }
-  body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab.current-item:hover {
-    border-color: #6F7F00;
-    background-color: #6F7F00;
-  }
-}
-@media (hover: none) {
-  body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab.current-item {
-    border-color: #228844;
-    background-color: #228844;
-  }
+body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab + .sub-tab {
+  border-left-color: #228844;
+  border-left-width: 1px;
+  border-left-style: solid;
 }
 body.dark .bottom-tabs .bottom-tab.current-item {
   cursor: pointer;
@@ -13111,46 +13093,127 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 });
             }); };
-            Render.autoTabs = function (entry, _list) { return __awaiter(_this, void 0, void 0, function () {
-                var _a;
-                var _this = this;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
+            Render.bottomTab = function (current, subTabs) {
+                var ix = subTabs.map(function (i) { return i.href.tag; }).indexOf(current.tag);
+                console.log({ ix: ix, current: current, subTabs: subTabs, });
+                var isCurrent = 0 <= ix;
+                var tab = subTabs[isCurrent ? ix : 0];
+                var result = {
+                    tag: "button",
+                    className: "bottom-tab" + (isCurrent ? " current-item" : ""),
+                    children: [
+                        {
+                            tag: "div",
+                            className: "tab-face",
+                            children: [tab.icon, Render.labelSpan(tab.text),],
+                        },
+                        {
+                            tag: "div",
+                            className: "sub-tabs",
+                            children: subTabs.map(function (i) {
+                                return ({
+                                    tag: "div",
+                                    className: "sub-tab" + (tab.text === i.text ? " current-item" : ""),
+                                    onclick: function (event) {
+                                        event.stopPropagation();
+                                        CyclicToDo.showUrl(i.href);
+                                    }
+                                });
+                            })
+                        }
+                    ],
+                    onclick: function () { return CyclicToDo.showUrl(isCurrent ? exports.nextItem(subTabs, tab).href : tab.href); },
+                };
+                return result;
+            };
+            Render.homeTab = function (entry) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c, _d, _e;
+                var _f, _g, _h;
+                return __generator(this, function (_j) {
+                    switch (_j.label) {
                         case 0:
-                            _a = Render.$div("bottom-tabs locale-parallel-off");
-                            return [4 /*yield*/, Promise.all(["@overall"]
-                                    .concat(Render.getTagList({ auto: true }))
-                                    .map(function (i) { return __awaiter(_this, void 0, void 0, function () {
-                                    var _a, _b;
-                                    return __generator(this, function (_c) {
-                                        switch (_c.label) {
+                            _a = Render.bottomTab;
+                            _b = [entry];
+                            _d = (_c = Promise).all;
+                            _f = {};
+                            return [4 /*yield*/, Resource.loadTagSvgOrCache("@overall")];
+                        case 1:
+                            _e = [
+                                (_f.icon = _j.sent(),
+                                    _f.text = locale.map("@overall"),
+                                    _f.href = { pass: entry.pass, tag: "@overall", },
+                                    _f)
+                            ];
+                            _g = {};
+                            return [4 /*yield*/, Resource.loadTagSvgOrCache("@unoverall")];
+                        case 2:
+                            _e = _e.concat([
+                                (_g.icon = _j.sent(),
+                                    _g.text = locale.map("@unoverall"),
+                                    _g.href = { pass: entry.pass, tag: "@unoverall", },
+                                    _g)
+                            ]);
+                            _h = {};
+                            return [4 /*yield*/, Resource.loadSvgOrCache("history-icon")];
+                        case 3: return [4 /*yield*/, _d.apply(_c, [_e.concat([
+                                    (_h.icon = _j.sent(),
+                                        _h.text = locale.map("History"),
+                                        _h.href = { pass: entry.pass, tag: "@overall", hash: "history" },
+                                        _h)
+                                ])])];
+                        case 4: return [2 /*return*/, _a.apply(void 0, _b.concat([_j.sent()]))];
+                    }
+                });
+            }); };
+            Render.autoTab = function (entry) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b;
+                var _this = this;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            _a = Render.bottomTab;
+                            _b = [entry];
+                            return [4 /*yield*/, Promise.all(Render.getTagList({ auto: true }).map(function (i) { return __awaiter(_this, void 0, void 0, function () {
+                                    var _a;
+                                    return __generator(this, function (_b) {
+                                        switch (_b.label) {
                                             case 0:
-                                                _a = {
-                                                    tag: "button",
-                                                    className: "bottom-tab" + (i === entry.tag ? " current-item" : "")
-                                                };
-                                                _b = {
-                                                    tag: "div",
-                                                    className: "tab-face"
-                                                };
+                                                _a = {};
                                                 return [4 /*yield*/, Resource.loadTagSvgOrCache(i)];
-                                            case 1: return [2 /*return*/, (_a.children = [
-                                                    (_b.children = [
-                                                        _c.sent(),
-                                                        Render.label(i)
-                                                    ],
-                                                        _b),
-                                                    {
-                                                        tag: "div",
-                                                        className: "sub-tabs",
-                                                    }
-                                                ],
-                                                    _a.onclick = function () { return CyclicToDo.showUrl({ pass: entry.pass, tag: i, }); },
+                                            case 1: return [2 /*return*/, (_a.icon = _b.sent(),
+                                                    _a.text = locale.map(i),
+                                                    _a.href = { pass: entry.pass, tag: i, },
                                                     _a)];
                                         }
                                     });
                                 }); }))];
-                        case 1: return [2 /*return*/, _a.apply(void 0, [_b.sent()])];
+                        case 1: return [2 /*return*/, _a.apply(void 0, _b.concat([_c.sent()]))];
+                    }
+                });
+            }); };
+            Render.termTab = function (entry) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b;
+                var _this = this;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            _a = Render.bottomTab;
+                            _b = [entry];
+                            return [4 /*yield*/, Promise.all(Render.getTagList({ term: true }).map(function (i) { return __awaiter(_this, void 0, void 0, function () {
+                                    var _a;
+                                    return __generator(this, function (_b) {
+                                        switch (_b.label) {
+                                            case 0:
+                                                _a = {};
+                                                return [4 /*yield*/, Resource.loadTagSvgOrCache(i)];
+                                            case 1: return [2 /*return*/, (_a.icon = _b.sent(),
+                                                    _a.text = locale.map(i),
+                                                    _a.href = { pass: entry.pass, tag: i, },
+                                                    _a)];
+                                        }
+                                    });
+                                }); }))];
+                        case 1: return [2 /*return*/, _a.apply(void 0, _b.concat([_c.sent()]))];
                     }
                 });
             }); };
@@ -13221,22 +13284,36 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 });
             };
             Render.listScreen = function (entry, list, filter) { return __awaiter(_this, void 0, void 0, function () {
-                var _a;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
+                var _a, _b;
+                var _c;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
                         case 0:
-                            _a = {
+                            _c = {
                                 className: "list-screen"
                             };
                             return [4 /*yield*/, Render.listScreenHeader(entry, list)];
                         case 1:
-                            _a.header = _b.sent();
+                            _c.header = _d.sent();
                             return [4 /*yield*/, Render.listScreenBody(entry, list.filter(function (item) { return Render.isMatchToDoEntry(filter, entry, item); }))];
                         case 2:
-                            _a.body = _b.sent();
-                            return [4 /*yield*/, Render.autoTabs(entry, list)];
-                        case 3: return [2 /*return*/, (_a.footer = _b.sent(),
-                                _a)];
+                            _c.body = _d.sent();
+                            _a = Render.$div("bottom-tabs locale-parallel-off");
+                            return [4 /*yield*/, Render.homeTab(entry)];
+                        case 3:
+                            _b = [
+                                _d.sent()
+                            ];
+                            return [4 /*yield*/, Render.autoTab(entry)];
+                        case 4:
+                            _b = _b.concat([
+                                _d.sent()
+                            ]);
+                            return [4 /*yield*/, Render.termTab(entry)];
+                        case 5: return [2 /*return*/, (_c.footer = _a.apply(void 0, [_b.concat([
+                                    _d.sent()
+                                ])]),
+                                _c)];
                     }
                 });
             }); };
@@ -15959,7 +16036,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Jul 19 2023 21:18:03 GMT+0900 (日本標準時)', buildTimestampTick: 1689769083818, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Jul 20 2023 10:45:24 GMT+0900 (日本標準時)', buildTimestampTick: 1689817524566, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

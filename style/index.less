@@ -711,11 +711,21 @@ h1
             height: 1rem;
             .sub-tab
             {
-                .secondary-operator-coloring-trait;
-                &.current-item
+                height: 1rem;
+                flex-grow: 1;
+                &:not(.current-item)
                 {
-                    .primary-operator-coloring-trait;
+                    .secondary-operator-coloring-trait;
+                    border-top-color: @accent-color;
+                    border-top-width: 1px;
+                    border-top-style: solid;
                 }
+            }
+            .sub-tab + .sub-tab
+            {
+                border-left-color: @accent-color;
+                border-left-width: 1px;
+                border-left-style: solid;
             }
         }
         &.current-item

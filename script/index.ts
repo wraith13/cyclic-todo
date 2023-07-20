@@ -5337,38 +5337,97 @@ export module CyclicToDo
             ),
             parent: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall", }
         });
-        export const autoTabs = async (entry: ToDoTagEntryOld, _list: ToDoEntry[]) => $div("bottom-tabs locale-parallel-off")
+        export const bottomTab = (current: { pass?:string, tag?:string, hash?: string, }, subTabs: { icon: SVGElement, text: string, href: { pass?:string, tag?:string, todo?: string, hash?: string, }, }[]) =>
+        {
+            const ix = subTabs.map(i => i.href.tag).indexOf(current.tag);
+            console.log({ ix, current, subTabs, });
+            const isCurrent = 0 <= ix;
+            const tab = subTabs[isCurrent ? ix: 0];
+            const result =
+            {
+                tag: "button",
+                className: "bottom-tab" +(isCurrent ? " current-item": ""),
+                children:
+                [
+                    {
+                        tag: "div",
+                        className: "tab-face",
+                        children: [ tab.icon, labelSpan(tab.text), ],
+                    },
+                    {
+                        tag: "div",
+                        className: "sub-tabs",
+                        children: subTabs.map
+                        (
+                            i =>
+                            ({
+                                tag: "div",
+                                className: "sub-tab" +(tab.text === i.text ? " current-item": ""),
+                                onclick: (event: MouseEvent) =>
+                                {
+                                    event.stopPropagation();
+                                    showUrl(i.href);
+                                }
+                            })
+                        )
+                    }
+                ],
+                onclick: () => showUrl(isCurrent ? nextItem(subTabs, tab).href: tab.href),
+            };
+            return result;
+        };
+        export const homeTab = async (entry: ToDoTagEntryOld) => bottomTab
         (
+            entry,
+            await Promise.all
+            ([
+                {
+                    icon: await Resource.loadTagSvgOrCache("@overall"),
+                    text: locale.map("@overall"),
+                    href: { pass: entry.pass, tag: "@overall", },
+                },
+                {
+                    icon: await Resource.loadTagSvgOrCache("@unoverall"),
+                    text: locale.map("@unoverall"),
+                    href: { pass: entry.pass, tag: "@unoverall", },
+                },
+                {
+                    icon: await Resource.loadSvgOrCache("history-icon"),
+                    text: locale.map("History"),
+                    href: { pass: entry.pass, tag: "@overall", hash: "history" },
+                },
+            ])
+        );
+        export const autoTab = async (entry: ToDoTagEntryOld) => bottomTab
+        (
+            entry,
             await Promise.all
             (
-                [ "@overall" ]
-                    .concat(getTagList({ auto: true }))
-                    .map
-                    (
-                        async (i: "@overall" | "@flash" | "@pickup" | "@restriction") =>
-                        ({
-                            tag: "button",
-                            className: "bottom-tab" +(i === entry.tag ? " current-item": ""),
-                            children:
-                            [
-                                {
-                                    tag: "div",
-                                    className: "tab-face",
-                                    children:
-                                    [
-                                        await Resource.loadTagSvgOrCache(i),
-                                        label(i),
-                                        //monospace(`${OldStorage.TagMember.get(entry.pass, i).length}`)
-                                    ]
-                                },
-                                {
-                                    tag: "div",
-                                    className: "sub-tabs",
-                                }
-                            ],
-                            onclick: () => showUrl({ pass: entry.pass, tag: i, }),
-                        })
-                    )
+                getTagList({ auto: true }).map
+                (
+                    async (i: "@flash" | "@pickup" | "@restriction") =>
+                    ({
+                        icon: await Resource.loadTagSvgOrCache(i),
+                        text: locale.map(i),
+                        href: { pass: entry.pass, tag: i, },
+                    })
+                )
+            )
+        );
+        export const termTab = async (entry: ToDoTagEntryOld) => bottomTab
+        (
+            entry,
+            await Promise.all
+            (
+                getTagList({ term: true }).map
+                (
+                    async (i: "@short-term" | "@medium-term" | "@irregular-term") =>
+                    ({
+                        icon: await Resource.loadTagSvgOrCache(i),
+                        text: locale.map(i),
+                        href: { pass: entry.pass, tag: i, },
+                    })
+                )
             )
         );
         export const listScreenFooter = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) => $div("button-list")
@@ -5412,7 +5471,12 @@ export module CyclicToDo
             className: "list-screen",
             header: await listScreenHeader(entry, list),
             body: await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))),
-            footer: await autoTabs(entry, list),
+            footer: $div("bottom-tabs locale-parallel-off")
+            ([
+                await homeTab(entry),
+                await autoTab(entry),
+                await termTab(entry),
+            ]),
         });
         export const showListScreen = async (pass: string, tag: string, urlParams: PageParams) =>
         {
