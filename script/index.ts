@@ -4805,11 +4805,11 @@ export module CyclicToDo
             title: Domain.tagMap(current),
             href: { pass, tag: current, },
         });
-        export const getTagList = (params: string | { overall?: boolean, auto?: boolean, term?: boolean, pass?: string, un?: boolean, }): string[] =>
+        export const getTagList = (params: string | { overall?: boolean, auto?: boolean, term?: boolean, pass?: string, tag?: boolean, sublist?: boolean, un?: boolean, }): string[] =>
         {
             if ("string" === typeof params)
             {
-                return getTagList({ overall: true, auto: true, term: true, pass: params, un: true, });
+                return getTagList({ overall: true, auto: true, term: true, pass: params, tag: true, sublist: true, un: true, });
             }
             else
             {
@@ -4828,7 +4828,12 @@ export module CyclicToDo
                 }
                 if ("string" === typeof params.pass)
                 {
-                    result.push(...OldStorage.Tag.get(params.pass).sort(Domain.tagComparerOld(params.pass)));
+                    result.push
+                    (
+                        ...OldStorage.Tag.get(params.pass)
+                            .filter(i => Model.isSublistOld(i) ? params.sublist: params.tag)
+                            .sort(Domain.tagComparerOld(params.pass))
+                    );
                 }
                 if (params.un)
                 {
@@ -5339,49 +5344,50 @@ export module CyclicToDo
         });
         export const bottomTab = (current: { pass?:string, tag?:string, hash?: string, }, subTabs: { icon: SVGElement, text: string, href: { pass?:string, tag?:string, todo?: string, hash?: string, }, }[]) =>
         {
-            const ix = subTabs.map(i => i.href.tag).indexOf(current.tag);
-            console.log({ ix, current, subTabs, });
-            const isCurrent = 0 <= ix;
-            const tab = subTabs[isCurrent ? ix: 0];
-            const result =
+            if (subTabs.length <= 0)
             {
-                tag: "button",
-                className: "bottom-tab" +(isCurrent ? " current-item": ""),
-                children:
-                [
-                    {
-                        tag: "div",
-                        className: "tab-face",
-                        children: [ tab.icon, labelSpan(tab.text), ],
-                    },
-                    {
-                        tag: "div",
-                        className: "sub-tabs",
-                        children: subTabs.map
-                        (
-                            i =>
-                            ({
-                                tag: "div",
-                                className: "sub-tab" +(tab.text === i.text ? " current-item": ""),
-                                onclick: (event: MouseEvent) =>
-                                {
-                                    event.stopPropagation();
-                                    showUrl(i.href);
-                                }
-                            })
-                        )
-                    }
-                ],
-                onclick: () => showUrl(isCurrent ? nextItem(subTabs, tab).href: tab.href),
-            };
-            return result;
+                return [];
+            }
+            else
+            {
+                const ix = subTabs.map(i => i.href.tag).indexOf(current.tag);
+                console.log({ ix, current, subTabs, });
+                const isCurrent = 0 <= ix;
+                const tab = subTabs[isCurrent ? ix: 0];
+                const result =
+                {
+                    tag: "button",
+                    className: "bottom-tab" +(isCurrent ? " current-item": ""),
+                    children:
+                    [
+                        {
+                            tag: "div",
+                            className: "tab-face",
+                            children: [ tab.icon, labelSpan(tab.text), ],
+                        },
+                        {
+                            tag: "div",
+                            className: "sub-tabs",
+                            children: subTabs.map
+                            (
+                                i =>
+                                ({
+                                    tag: "div",
+                                    className: "sub-tab" +(tab.text === i.text ? " current-item": ""),
+                                    onclick: (event: MouseEvent) =>
+                                    {
+                                        event.stopPropagation();
+                                        showUrl(i.href);
+                                    }
+                                })
+                            )
+                        }
+                    ],
+                    onclick: () => showUrl(isCurrent ? nextItem(subTabs, tab).href: tab.href),
+                };
+                return result;
+            }
         };
-        export const bottomTabs = async (entry: ToDoTagEntryOld) => $div("bottom-tabs locale-parallel-off")
-        ([
-            await homeTab(entry),
-            await autoTab(entry),
-            await termTab(entry),
-        ]);
         export const homeTab = async (entry: ToDoTagEntryOld) => bottomTab
         (
             entry,
@@ -5436,6 +5442,46 @@ export module CyclicToDo
                 )
             )
         );
+        export const tagTab = async (entry: ToDoTagEntryOld) => bottomTab
+        (
+            entry,
+            await Promise.all
+            (
+                getTagList({ pass: entry.pass, tag: true, un: true, }).map
+                (
+                    async i =>
+                    ({
+                        icon: await Resource.loadTagSvgOrCache(i),
+                        text: Domain.tagMap(i),
+                        href: { pass: entry.pass, tag: i, },
+                    })
+                )
+            )
+        );
+        export const sublistTab = async (entry: ToDoTagEntryOld) => bottomTab
+        (
+            entry,
+            await Promise.all
+            (
+                getTagList({ pass: entry.pass, sublist: true, }).map
+                (
+                    async i =>
+                    ({
+                        icon: await Resource.loadTagSvgOrCache(i),
+                        text: Domain.tagMap(i),
+                        href: { pass: entry.pass, tag: i, },
+                    })
+                )
+            )
+        );
+        export const bottomTabs = async (entry: ToDoTagEntryOld) => $div("bottom-tabs locale-parallel-off")
+        ([
+            await homeTab(entry),
+            await autoTab(entry),
+            await termTab(entry),
+            await tagTab(entry),
+            await sublistTab(entry),
+        ]);
         export const listScreenFooter = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) => $div("button-list")
         ([
             "@overall" !== entry.tag ?
@@ -7211,7 +7257,7 @@ export module CyclicToDo
                         case "T":
                             if (pass)
                             {
-                                showUrl({ pass: pass, tag: destinationItem(getTagList({ pass, un: true, }), tag),}); // nowait
+                                showUrl({ pass: pass, tag: destinationItem(getTagList({ pass, tag: true, sublist: true, un: true, }), tag),}); // nowait
                             }
                             break;
                         case "V":

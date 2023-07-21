@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Thu Jul 20 2023 21:19:37 GMT+0900 (日本標準時)
+    build at: Fri Jul 21 2023 10:48:27 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -1137,6 +1137,7 @@ body.light .bottom-tabs {
 body.light .bottom-tabs .bottom-tab {
   border-radius: 0rem;
   padding: 0rem;
+  flex: 1;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -1168,6 +1169,10 @@ body.light .bottom-tabs .bottom-tab .tab-face svg {
   }
 }
 @media (max-width: 640px) {
+  body.light .bottom-tabs .bottom-tab .tab-face {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
   body.light .bottom-tabs .bottom-tab .tab-face .label {
     display: none;
   }
@@ -1182,6 +1187,7 @@ body.light .bottom-tabs .bottom-tab .sub-tabs {
 }
 body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab {
   height: 1rem;
+  flex: 1;
   flex-grow: 1;
 }
 body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
@@ -1210,6 +1216,14 @@ body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
     fill: #228844;
     border-color: #228844;
     background-color: #FFFFFF;
+  }
+}
+@media (max-width: 780px) {
+  body.light .bottom-tabs .bottom-tab .sub-tabs {
+    height: 1.5rem;
+  }
+  body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab {
+    height: 1.5rem;
   }
 }
 body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab + .sub-tab {
@@ -3602,6 +3616,7 @@ body.dark .bottom-tabs {
 body.dark .bottom-tabs .bottom-tab {
   border-radius: 0rem;
   padding: 0rem;
+  flex: 1;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -3633,6 +3648,10 @@ body.dark .bottom-tabs .bottom-tab .tab-face svg {
   }
 }
 @media (max-width: 640px) {
+  body.dark .bottom-tabs .bottom-tab .tab-face {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
   body.dark .bottom-tabs .bottom-tab .tab-face .label {
     display: none;
   }
@@ -3647,6 +3666,7 @@ body.dark .bottom-tabs .bottom-tab .sub-tabs {
 }
 body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab {
   height: 1rem;
+  flex: 1;
   flex-grow: 1;
 }
 body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
@@ -3675,6 +3695,14 @@ body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
     fill: #228844;
     border-color: #228844;
     background-color: #000022;
+  }
+}
+@media (max-width: 780px) {
+  body.dark .bottom-tabs .bottom-tab .sub-tabs {
+    height: 1.5rem;
+  }
+  body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab {
+    height: 1.5rem;
   }
 }
 body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab + .sub-tab {
@@ -12507,7 +12535,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             }); };
             Render.getTagList = function (params) {
                 if ("string" === typeof params) {
-                    return Render.getTagList({ overall: true, auto: true, term: true, pass: params, un: true, });
+                    return Render.getTagList({ overall: true, auto: true, term: true, pass: params, tag: true, sublist: true, un: true, });
                 }
                 else {
                     var result = [];
@@ -12521,7 +12549,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         result.push("@short-term", "@medium-term", "@long-term", "@irregular-term");
                     }
                     if ("string" === typeof params.pass) {
-                        result.push.apply(result, OldStorage.Tag.get(params.pass).sort(Domain.tagComparerOld(params.pass)));
+                        result.push.apply(result, OldStorage.Tag.get(params.pass)
+                            .filter(function (i) { return Model.isSublistOld(i) ? params.sublist : params.tag; })
+                            .sort(Domain.tagComparerOld(params.pass)));
                     }
                     if (params.un) {
                         result.push("@unoverall", "@untagged");
@@ -13094,61 +13124,43 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 });
             }); };
             Render.bottomTab = function (current, subTabs) {
-                var ix = subTabs.map(function (i) { return i.href.tag; }).indexOf(current.tag);
-                console.log({ ix: ix, current: current, subTabs: subTabs, });
-                var isCurrent = 0 <= ix;
-                var tab = subTabs[isCurrent ? ix : 0];
-                var result = {
-                    tag: "button",
-                    className: "bottom-tab" + (isCurrent ? " current-item" : ""),
-                    children: [
-                        {
-                            tag: "div",
-                            className: "tab-face",
-                            children: [tab.icon, Render.labelSpan(tab.text),],
-                        },
-                        {
-                            tag: "div",
-                            className: "sub-tabs",
-                            children: subTabs.map(function (i) {
-                                return ({
-                                    tag: "div",
-                                    className: "sub-tab" + (tab.text === i.text ? " current-item" : ""),
-                                    onclick: function (event) {
-                                        event.stopPropagation();
-                                        CyclicToDo.showUrl(i.href);
-                                    }
-                                });
-                            })
-                        }
-                    ],
-                    onclick: function () { return CyclicToDo.showUrl(isCurrent ? exports.nextItem(subTabs, tab).href : tab.href); },
-                };
-                return result;
+                if (subTabs.length <= 0) {
+                    return [];
+                }
+                else {
+                    var ix = subTabs.map(function (i) { return i.href.tag; }).indexOf(current.tag);
+                    console.log({ ix: ix, current: current, subTabs: subTabs, });
+                    var isCurrent_1 = 0 <= ix;
+                    var tab_1 = subTabs[isCurrent_1 ? ix : 0];
+                    var result = {
+                        tag: "button",
+                        className: "bottom-tab" + (isCurrent_1 ? " current-item" : ""),
+                        children: [
+                            {
+                                tag: "div",
+                                className: "tab-face",
+                                children: [tab_1.icon, Render.labelSpan(tab_1.text),],
+                            },
+                            {
+                                tag: "div",
+                                className: "sub-tabs",
+                                children: subTabs.map(function (i) {
+                                    return ({
+                                        tag: "div",
+                                        className: "sub-tab" + (tab_1.text === i.text ? " current-item" : ""),
+                                        onclick: function (event) {
+                                            event.stopPropagation();
+                                            CyclicToDo.showUrl(i.href);
+                                        }
+                                    });
+                                })
+                            }
+                        ],
+                        onclick: function () { return CyclicToDo.showUrl(isCurrent_1 ? exports.nextItem(subTabs, tab_1).href : tab_1.href); },
+                    };
+                    return result;
+                }
             };
-            Render.bottomTabs = function (entry) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
-                        case 0:
-                            _a = Render.$div("bottom-tabs locale-parallel-off");
-                            return [4 /*yield*/, Render.homeTab(entry)];
-                        case 1:
-                            _b = [
-                                _c.sent()
-                            ];
-                            return [4 /*yield*/, Render.autoTab(entry)];
-                        case 2:
-                            _b = _b.concat([
-                                _c.sent()
-                            ]);
-                            return [4 /*yield*/, Render.termTab(entry)];
-                        case 3: return [2 /*return*/, _a.apply(void 0, [_b.concat([
-                                    _c.sent()
-                                ])])];
-                    }
-                });
-            }); };
             Render.homeTab = function (entry) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e;
                 var _f, _g, _h;
@@ -13237,6 +13249,91 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     });
                                 }); }))];
                         case 1: return [2 /*return*/, _a.apply(void 0, _b.concat([_c.sent()]))];
+                    }
+                });
+            }); };
+            Render.tagTab = function (entry) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b;
+                var _this = this;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            _a = Render.bottomTab;
+                            _b = [entry];
+                            return [4 /*yield*/, Promise.all(Render.getTagList({ pass: entry.pass, tag: true, un: true, }).map(function (i) { return __awaiter(_this, void 0, void 0, function () {
+                                    var _a;
+                                    return __generator(this, function (_b) {
+                                        switch (_b.label) {
+                                            case 0:
+                                                _a = {};
+                                                return [4 /*yield*/, Resource.loadTagSvgOrCache(i)];
+                                            case 1: return [2 /*return*/, (_a.icon = _b.sent(),
+                                                    _a.text = Domain.tagMap(i),
+                                                    _a.href = { pass: entry.pass, tag: i, },
+                                                    _a)];
+                                        }
+                                    });
+                                }); }))];
+                        case 1: return [2 /*return*/, _a.apply(void 0, _b.concat([_c.sent()]))];
+                    }
+                });
+            }); };
+            Render.sublistTab = function (entry) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b;
+                var _this = this;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            _a = Render.bottomTab;
+                            _b = [entry];
+                            return [4 /*yield*/, Promise.all(Render.getTagList({ pass: entry.pass, sublist: true, }).map(function (i) { return __awaiter(_this, void 0, void 0, function () {
+                                    var _a;
+                                    return __generator(this, function (_b) {
+                                        switch (_b.label) {
+                                            case 0:
+                                                _a = {};
+                                                return [4 /*yield*/, Resource.loadTagSvgOrCache(i)];
+                                            case 1: return [2 /*return*/, (_a.icon = _b.sent(),
+                                                    _a.text = Domain.tagMap(i),
+                                                    _a.href = { pass: entry.pass, tag: i, },
+                                                    _a)];
+                                        }
+                                    });
+                                }); }))];
+                        case 1: return [2 /*return*/, _a.apply(void 0, _b.concat([_c.sent()]))];
+                    }
+                });
+            }); };
+            Render.bottomTabs = function (entry) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            _a = Render.$div("bottom-tabs locale-parallel-off");
+                            return [4 /*yield*/, Render.homeTab(entry)];
+                        case 1:
+                            _b = [
+                                _c.sent()
+                            ];
+                            return [4 /*yield*/, Render.autoTab(entry)];
+                        case 2:
+                            _b = _b.concat([
+                                _c.sent()
+                            ]);
+                            return [4 /*yield*/, Render.termTab(entry)];
+                        case 3:
+                            _b = _b.concat([
+                                _c.sent()
+                            ]);
+                            return [4 /*yield*/, Render.tagTab(entry)];
+                        case 4:
+                            _b = _b.concat([
+                                _c.sent()
+                            ]);
+                            return [4 /*yield*/, Render.sublistTab(entry)];
+                        case 5: return [2 /*return*/, _a.apply(void 0, [_b.concat([
+                                    _c.sent()
+                                ])])];
                     }
                 });
             }); };
@@ -15489,7 +15586,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 break;
                             case "T":
                                 if (pass_1) {
-                                    CyclicToDo.showUrl({ pass: pass_1, tag: destinationItem(Render.getTagList({ pass: pass_1, un: true, }), tag_2), }); // nowait
+                                    CyclicToDo.showUrl({ pass: pass_1, tag: destinationItem(Render.getTagList({ pass: pass_1, tag: true, sublist: true, un: true, }), tag_2), }); // nowait
                                 }
                                 break;
                             case "V":
@@ -16045,7 +16142,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Jul 20 2023 21:19:37 GMT+0900 (日本標準時)', buildTimestampTick: 1689855577825, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Jul 21 2023 10:48:27 GMT+0900 (日本標準時)', buildTimestampTick: 1689904107150, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

@@ -651,6 +651,7 @@ h1
     {
         border-radius: 0rem;
         padding: 0rem;
+        flex: 1;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
@@ -695,6 +696,8 @@ h1
             }
             @media (max-width:640px)
             {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
                 .label
                 {
                     display: none;
@@ -708,10 +711,11 @@ h1
             align-items: stretch;
             justify-content: stretch;
             flex-direction: row;
-            height: 1rem;
+            height: 1.0rem;
             .sub-tab
             {
-                height: 1rem;
+                height: 1.0rem;
+                flex: 1;
                 flex-grow: 1;
                 &:not(.current-item)
                 {
@@ -719,6 +723,14 @@ h1
                     border-top-color: @accent-color;
                     border-top-width: 1px;
                     border-top-style: solid;
+                }
+            }
+            @media (max-width:780px)
+            {
+                height: 1.5rem;
+                .sub-tab
+                {
+                    height: 1.5rem;
                 }
             }
             .sub-tab + .sub-tab
