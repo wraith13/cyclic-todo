@@ -601,7 +601,7 @@ export module CyclicToDo
             export const getByTodo = (pass: string, todo: string) =>
                 ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"]
                     .concat(get(pass))
-                    .concat(["@unoverall", "@untagged"])
+                    .concat(["@unoverall", "@:@root", "@untagged"])
                     .filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length)
                     .sort
                     (
@@ -616,7 +616,7 @@ export module CyclicToDo
             export const getByTodoRaw = (pass: string, todo: string) =>
                 ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"]
                     .concat(get(pass))
-                    .concat(["@unoverall", "@untagged"])
+                    .concat(["@unoverall", "@:@root", "@untagged"])
                     .filter(tag => 0 < TagMember.getRaw(pass, tag).filter(i => todo === i).length);
             export const rename = (pass: string, oldTag: string, newTag: string) =>
             {
@@ -655,6 +655,8 @@ export module CyclicToDo
                         const tagged = Tag.get(pass).map(tag => get(pass, tag)).reduce((a, b) => a.concat(b), []);
                         return getRaw(pass, "@overall").filter(i => tagged.indexOf(i) < 0);
                     }
+                case "@:@root":
+                    return getRaw(pass, "@overall").filter(i => null === OldStorage.Task.getSublist(i));
                 case "@unoverall":
                 default:
                     return Model.isSublistOld(tag) ?
@@ -1221,6 +1223,7 @@ export module CyclicToDo
             resetSettings = () => this.document.tagSettings.reset(this);
             getRawMember = () => this.document.tagMember.getRaw(this);
             getMember = () => this.document.tagMember.get(this);
+            // addMember = (task: Task) => this.document.tagMember.add(this, task);
         }
         export class Task
         {
@@ -1238,6 +1241,36 @@ export module CyclicToDo
                 const split = this.name.split("@:");
                 return 2 <= split.length ? split[split.length -1]: this.name;
             }
+            getTagsRaw = () => this.document.tag.getByTaskRaw(this);
+            getTags = () => this.document.tag.getByTask(this);
+            // rename = (newName: string) =>
+            // {
+            //     const newTask = new Task(this.document, newName);
+            //     if (0 < newTask.getName().length && this.getName() !== newTask.getName() && TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0)
+            //     {
+            //         const oldSublist = this.getSublist();
+            //         const newSublist = newTask.getSublist();
+            //         this.getTagsRaw().forEach
+            //         (
+            //             tag =>
+            //             {
+            //                 tag.remove(this);
+            //                 if ( ! tag.isSublist() || oldSublist === newSublist)
+            //                 {
+            //                     tag.add(newTask);
+            //                 }
+            //             }
+            //         );
+            //         if (null !== newSublist && oldSublist !== newSublist)
+            //         {
+            //             newSublist.add(newTask);
+            //         }
+            //         History.set(pass, newTask, History.get(pass, oldTask));
+            //         History.removeKey(pass, oldTask);
+            //         return true;
+            //     }
+            //     return false;
+            // }
             getSettings = () => this.document.todoSettings.get(this);
             setSettings = (settings: CyclicToDo.TodoSettings) => this.document.todoSettings.set(this, settings);
             resetSettings = () => this.document.todoSettings.reset(this);
@@ -1304,6 +1337,7 @@ export module CyclicToDo
             transaction =
             {
                 make: () => new Transaction(this),
+                // singleCommit: async (updator: updator_type) => this.transaction.make().add(updator).commit(),
             };
             title =
             {
@@ -1353,6 +1387,8 @@ export module CyclicToDo
                             const tagged = Object.keys(this.content.tags).map(tag => this.content.tags[tag]).reduce((a, b) => a.concat(b), []);
                             return new Tag(this, "@overall").getRawMember().filter(i => tagged.indexOf(i.getName()) < 0);
                         }
+                    case "@:@root":
+                        return tag.getRawMember().filter(i => null === i.getSublist());
                     case "@unoverall":
                     default:
                         return tag.isSublist() ?
@@ -1361,6 +1397,21 @@ export module CyclicToDo
                     }
                 },
                 set: (tag: Tag, list: Task[]) => this.save(content => content.tags[tag.getName()] = list.map(i => i.getName())),
+                // add: (tag: Tag, task: Task) =>
+                // {
+                //     if (tag.isSublist())
+                //     {
+                //         if (tag.getName() !== task.getSublist().getName())
+                //         {
+                //             return task.rename(`${tag}${task.getBody()}`);
+                //         }
+                //     }
+                //     else
+                //     {
+                //         return this.tagMember.set(tag, this.tagMember.get(tag).concat([ task ]).filter(uniqueFilter));
+                //     }
+                //     return null;
+                // }
             };
             task =
             {
@@ -1610,6 +1661,10 @@ export module CyclicToDo
             "string" === typeof pass ?
                 OldStorage.exportJson(pass):
                 pass.exportJson();
+        export const removeList = (pass: string | Model.Document) =>
+            "string" === typeof pass ?
+                OldStorage.Pass.remove(pass):
+                pass.remove();
     }
     export module Domain
     {
@@ -1795,7 +1850,7 @@ export module CyclicToDo
         {
             switch(tag)
             {
-            case "@root":
+            case "@:@root":
             case "@overall":
             case "@unoverall":
             case "@flash":
@@ -2219,9 +2274,9 @@ export module CyclicToDo
                     ),
                 });
             };
-            export const removeList = async (pass: string, onCanceled: () => unknown = () => updateWindow("operate")) =>
+            export const removeList = async (pass: string | Model.Document, onCanceled: () => unknown = () => updateWindow("operate")) =>
             {
-                const list = JSON.parse(OldStorage.exportJson(pass));
+                const list = JSON.parse(MigrateBridge.exportJson(pass));
                 OldStorage.Pass.remove(list.pass);
                 const toast = makeToast
                 ({
@@ -2890,12 +2945,13 @@ export module CyclicToDo
                         [
                             await Promise.all
                             (
-                                ["@root"].concat(OldStorage.Tag.get(pass).filter(tag => Model.isSublistOld(tag)).sort(Domain.tagComparerOld(pass))).map
+                                //["@:@root"].concat(OldStorage.Tag.get(pass).filter(tag => Model.isSublistOld(tag)).sort(Domain.tagComparerOld(pass))).map
+                                getTagList({ pass, sublist: true, }).map
                                 (
                                     async sublist =>
                                     ({
                                         tag: "button",
-                                        className: `check-button ${sublist === (OldStorage.Task.getSublist(item.task) ?? "@root") ? "checked": ""}`,
+                                        className: `check-button ${sublist === (OldStorage.Task.getSublist(item.task) ?? "@:@root") ? "checked": ""}`,
                                         children:
                                         [
                                             await Resource.loadSvgOrCache("check-icon"),
@@ -4834,10 +4890,21 @@ export module CyclicToDo
                             .filter(i => Model.isSublistOld(i) ? params.sublist: params.tag)
                             .sort(Domain.tagComparerOld(params.pass))
                     );
+                    if (params.sublist && ! params.un)
+                    {
+                        result.push("@:@root");
+                    }
                 }
                 if (params.un)
                 {
-                    result.push("@unoverall", "@untagged");
+                    if (params.tag && ! params.sublist)
+                    {
+                        result.push("@unoverall", "@untagged");
+                    }
+                    else
+                    {
+                        result.push("@unoverall", "@:@root", "@untagged");
+                    }
                 }
                 return result;
             }
@@ -5399,14 +5466,14 @@ export module CyclicToDo
                     href: { pass: entry.pass, tag: "@overall", },
                 },
                 {
-                    icon: await Resource.loadTagSvgOrCache("@unoverall"),
-                    text: locale.map("@unoverall"),
-                    href: { pass: entry.pass, tag: "@unoverall", },
-                },
-                {
                     icon: await Resource.loadSvgOrCache("history-icon"),
                     text: locale.map("History"),
                     href: { pass: entry.pass, tag: "@overall", hash: "history" },
+                },
+                {
+                    icon: await Resource.loadSvgOrCache("recycle-bin-icon"),
+                    text: locale.map("@deleted"),
+                    href: { pass: entry.pass, hash: "removed", },
                 },
             ])
         );
@@ -6230,6 +6297,8 @@ export module CyclicToDo
                         return "sleep-icon";
                     case "@unoverall":
                         return "anti-home-icon";
+                    case "@:@root":
+                        return "ghost-tag-icon";
                     case "@untagged":
                         return "ghost-tag-icon";
                     case "@deleted":

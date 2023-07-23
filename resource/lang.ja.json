@@ -27,7 +27,7 @@
     "@deleted": "ごみ箱",
     "@new": "新しいタグ",
     "@new-sublist": "新しいサブリスト",
-    "@root": "ルート",
+    "@:@root": "ルート:",
     "New ToDo": "新しい ToDo",
     "New ToDo List": "新しい ToDo リスト",
     "Import List": "リストをインポート",

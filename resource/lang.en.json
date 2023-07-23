@@ -27,7 +27,7 @@
     "@deleted": "Recycle Bin",
     "@new": "New Tag",
     "@new-sublist": "New Sublist",
-    "@root": "Root",
+    "@:@root": "Root:",
     "New ToDo": "New ToDo",
     "New ToDo List": "New ToDo List",
     "Import List": "Import List",

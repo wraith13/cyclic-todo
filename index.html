@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Fri Jul 21 2023 10:48:27 GMT+0900 (日本標準時)
+    build at: Mon Jul 24 2023 03:56:00 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -6951,7 +6951,7 @@ define("resource/lang.en", [], {
     "@deleted": "Recycle Bin",
     "@new": "New Tag",
     "@new-sublist": "New Sublist",
-    "@root": "Root",
+    "@:@root": "Root:",
     "New ToDo": "New ToDo",
     "New ToDo List": "New ToDo List",
     "Import List": "Import List",
@@ -7109,7 +7109,7 @@ define("resource/lang.ja", [], {
     "@deleted": "ごみ箱",
     "@new": "新しいタグ",
     "@new-sublist": "新しいサブリスト",
-    "@root": "ルート",
+    "@:@root": "ルート:",
     "New ToDo": "新しい ToDo",
     "New ToDo List": "新しい ToDo リスト",
     "Import List": "リストをインポート",
@@ -7721,7 +7721,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 Tag.getByTodo = function (pass, todo) {
                     return ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"]
                         .concat(Tag.get(pass))
-                        .concat(["@unoverall", "@untagged"])
+                        .concat(["@unoverall", "@:@root", "@untagged"])
                         .filter(function (tag) { return 0 < TagMember.get(pass, tag).filter(function (i) { return todo === i; }).length; })
                         .sort(minamo_js_1.minamo.core.comparer.make(function (tag) {
                         return Model.isSystemTagOld(tag) ?
@@ -7732,7 +7732,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 Tag.getByTodoRaw = function (pass, todo) {
                     return ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"]
                         .concat(Tag.get(pass))
-                        .concat(["@unoverall", "@untagged"])
+                        .concat(["@unoverall", "@:@root", "@untagged"])
                         .filter(function (tag) { return 0 < TagMember.getRaw(pass, tag).filter(function (i) { return todo === i; }).length; });
                 };
                 Tag.rename = function (pass, oldTag, newTag) {
@@ -7767,6 +7767,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 var tagged_1 = Tag.get(pass).map(function (tag) { return TagMember.get(pass, tag); }).reduce(function (a, b) { return a.concat(b); }, []);
                                 return TagMember.getRaw(pass, "@overall").filter(function (i) { return tagged_1.indexOf(i) < 0; });
                             }
+                        case "@:@root":
+                            return TagMember.getRaw(pass, "@overall").filter(function (i) { return null === OldStorage.Task.getSublist(i); });
                         case "@unoverall":
                         default:
                             return Model.isSublistOld(tag) ?
@@ -8437,6 +8439,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         var tagged_2 = Object.keys(_this.content.tags).map(function (tag) { return _this.content.tags[tag]; }).reduce(function (a, b) { return a.concat(b); }, []);
                                         return new Tag(_this, "@overall").getRawMember().filter(function (i) { return tagged_2.indexOf(i.getName()) < 0; });
                                     }
+                                case "@:@root":
+                                    return tag.getRawMember().filter(function (i) { return null === i.getSublist(); });
                                 case "@unoverall":
                                 default:
                                     return tag.isSublist() ?
@@ -8923,7 +8927,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Domain.parseTimeSpan = parseTimeSpan;
             Domain.tagMap = function (tag) {
                 switch (tag) {
-                    case "@root":
+                    case "@:@root":
                     case "@overall":
                     case "@unoverall":
                     case "@flash":
@@ -10051,7 +10055,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             tagButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
                                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                             _c = [tagButtonList];
-                                            return [4 /*yield*/, Promise.all(["@root"].concat(OldStorage.Tag.get(pass).filter(function (tag) { return Model.isSublistOld(tag); }).sort(Domain.tagComparerOld(pass))).map(function (sublist) { return __awaiter(_this, void 0, void 0, function () {
+                                            return [4 /*yield*/, Promise.all(
+                                                //["@:@root"].concat(OldStorage.Tag.get(pass).filter(tag => Model.isSublistOld(tag)).sort(Domain.tagComparerOld(pass))).map
+                                                Render.getTagList({ pass: pass, sublist: true, }).map(function (sublist) { return __awaiter(_this, void 0, void 0, function () {
                                                     var _a;
                                                     var _b;
                                                     return __generator(this, function (_c) {
@@ -10059,7 +10065,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             case 0:
                                                                 _a = {
                                                                     tag: "button",
-                                                                    className: "check-button " + (sublist === ((_b = OldStorage.Task.getSublist(item.task)) !== null && _b !== void 0 ? _b : "@root") ? "checked" : "")
+                                                                    className: "check-button " + (sublist === ((_b = OldStorage.Task.getSublist(item.task)) !== null && _b !== void 0 ? _b : "@:@root") ? "checked" : "")
                                                                 };
                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                             case 1: return [2 /*return*/, (_a.children = [
@@ -12552,9 +12558,17 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         result.push.apply(result, OldStorage.Tag.get(params.pass)
                             .filter(function (i) { return Model.isSublistOld(i) ? params.sublist : params.tag; })
                             .sort(Domain.tagComparerOld(params.pass)));
+                        if (params.sublist && !params.un) {
+                            result.push("@:@root");
+                        }
                     }
                     if (params.un) {
-                        result.push("@unoverall", "@untagged");
+                        if (params.tag && !params.sublist) {
+                            result.push("@unoverall", "@untagged");
+                        }
+                        else {
+                            result.push("@unoverall", "@:@root", "@untagged");
+                        }
                     }
                     return result;
                 }
@@ -13180,20 +13194,20 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     _f)
                             ];
                             _g = {};
-                            return [4 /*yield*/, Resource.loadTagSvgOrCache("@unoverall")];
+                            return [4 /*yield*/, Resource.loadSvgOrCache("history-icon")];
                         case 2:
                             _e = _e.concat([
                                 (_g.icon = _j.sent(),
-                                    _g.text = locale.map("@unoverall"),
-                                    _g.href = { pass: entry.pass, tag: "@unoverall", },
+                                    _g.text = locale.map("History"),
+                                    _g.href = { pass: entry.pass, tag: "@overall", hash: "history" },
                                     _g)
                             ]);
                             _h = {};
-                            return [4 /*yield*/, Resource.loadSvgOrCache("history-icon")];
+                            return [4 /*yield*/, Resource.loadSvgOrCache("recycle-bin-icon")];
                         case 3: return [4 /*yield*/, _d.apply(_c, [_e.concat([
                                     (_h.icon = _j.sent(),
-                                        _h.text = locale.map("History"),
-                                        _h.href = { pass: entry.pass, tag: "@overall", hash: "history" },
+                                        _h.text = locale.map("@deleted"),
+                                        _h.href = { pass: entry.pass, hash: "removed", },
                                         _h)
                                 ])])];
                         case 4: return [2 /*return*/, _a.apply(void 0, _b.concat([_j.sent()]))];
@@ -14413,6 +14427,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             return "sleep-icon";
                         case "@unoverall":
                             return "anti-home-icon";
+                        case "@:@root":
+                            return "ghost-tag-icon";
                         case "@untagged":
                             return "ghost-tag-icon";
                         case "@deleted":
@@ -16142,7 +16158,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Jul 21 2023 10:48:27 GMT+0900 (日本標準時)', buildTimestampTick: 1689904107150, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Jul 24 2023 03:56:00 GMT+0900 (日本標準時)', buildTimestampTick: 1690138560501, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
