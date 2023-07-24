@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Jul 24 2023 03:56:00 GMT+0900 (日本標準時)
+    build at: Mon Jul 24 2023 20:41:51 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -7252,6 +7252,7 @@ define("resource/images", [], {
     "medium-term-icon": "./image/medium-term.1024.svg",
     "long-term-icon": "./image/long-term.1024.svg",
     "folder-icon": "./image/folder.1024.svg",
+    "ghost-folder-icon": "./image/ghost-folder.1024.svg",
     "history-icon": "./image/history.1024.svg",
     "task-icon": "./image/task.1024.svg",
     "flash-icon": "./image/sun.1024.svg",
@@ -14428,7 +14429,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         case "@unoverall":
                             return "anti-home-icon";
                         case "@:@root":
-                            return "ghost-tag-icon";
+                            return "ghost-folder-icon";
                         case "@untagged":
                             return "ghost-tag-icon";
                         case "@deleted":
@@ -16158,7 +16159,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Jul 24 2023 03:56:00 GMT+0900 (日本標準時)', buildTimestampTick: 1690138560501, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Jul 24 2023 20:41:51 GMT+0900 (日本標準時)', buildTimestampTick: 1690198911940, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
@@ -16200,6 +16201,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </svg>
 </div><div id="folder-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M436,193.081C448.777,195.441 460.484,203.165 467.492,215.283L527.873,319.688L867.245,319.688C900.776,319.688 928,346.912 928,380.444L928,770.933C928,804.465 900.776,831.688 867.245,831.688L156.755,831.688C123.224,831.688 96,804.465 96,770.933L96,380.444C96,378.757 96.069,377.086 96.204,375.432C95.339,366.266 97.206,356.757 102.149,348.183L178.734,215.338C186.774,201.391 201.035,193.247 216,192.388L216,192.312L436,192.312L436,193.081Z"/>
+</svg>
+</div><div id="ghost-folder-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M216,192.388L216,192.312L427.539,192.312C443.456,192.286 458.958,200.526 467.492,215.283L527.873,319.688L867.245,319.688C900.776,319.688 928,346.912 928,380.444L928,770.933C928,804.465 900.776,831.688 867.245,831.688L156.755,831.688C123.224,831.688 96,804.465 96,770.933L96,380.444C96,378.756 96.069,377.085 96.204,375.432C95.339,366.267 97.206,356.757 102.149,348.183L178.734,215.338C186.773,201.392 201.033,193.248 216,192.388ZM284,288.088C268.201,288.2 252.87,296.449 244.415,311.113L197.859,391.871C192.767,400.704 190.939,410.531 192,419.949L192,736L828,736L828,416L486.155,416L425.464,311.058C416.687,295.883 400.544,287.599 384.156,288.109L384.156,288L284,288L284,288.088Z"/>
 </svg>
 </div><div id="history-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M561.152,59.236C579.856,43.119 608.157,43.938 625.887,61.686L626.43,62.231C637.182,72.994 641.705,87.638 640,101.665L640,148.097C807.056,202.145 928,359.06 928,544C928,773.597 741.597,960 512,960C282.403,960 96,773.597 96,544C96,517.508 117.508,496 144,496C170.492,496 192,517.508 192,544C192,720.613 335.387,864 512,864C688.613,864 832,720.613 832,544C832,412.9 752.992,300.108 640.041,250.684C641.629,264.605 637.093,279.096 626.43,289.769L625.887,290.314C608.157,308.062 579.856,308.881 561.152,292.764C559.536,291.407 558.011,289.945 556.587,288.389L477.954,209.837C468.634,200.526 463.982,188.3 464,176.078L464,176L464,175.922C463.982,163.7 468.634,151.474 477.954,142.163L556.587,63.611C558.011,62.055 559.536,60.593 561.152,59.236ZM489.624,621.751C482.539,619.505 475.871,615.575 470.254,609.961L284.062,423.882C265.324,405.155 265.315,374.738 284.042,356C302.769,337.262 333.186,337.253 351.924,355.979L504.164,508.127L598.486,413.917C617.079,395.345 647.253,395.363 665.824,413.957L666.368,414.501C684.939,433.095 684.921,463.268 666.328,481.839L539.524,608.493C539.075,608.981 538.611,609.464 538.136,609.94C531.085,616.995 522.377,621.395 513.26,623.14L513.085,623.173L513.002,623.189L512.962,623.196L512.893,623.209L512.801,623.226L512.744,623.236L512.667,623.25L512.556,623.269L512.516,623.276L512.487,623.281L512.372,623.302L512.23,623.326C510.638,623.595 509.019,623.786 507.378,623.894L507.256,623.903L507.113,623.911L507.077,623.913L507.049,623.915L506.95,623.921L506.84,623.927L506.79,623.93L506.738,623.932L506.644,623.937L506.561,623.941L506.502,623.944L506.425,623.948L506.337,623.952L506.276,623.955L506.214,623.957L506.108,623.962L506.029,623.965L505.987,623.966L505.927,623.969L505.788,623.973L505.721,623.976L505.695,623.976L505.639,623.978L505.462,623.983L505.413,623.984L505.399,623.985L505.351,623.986L505.126,623.991L505.1,623.991C504.795,623.997 504.491,624 504.186,624L504.175,624L504.043,624L503.911,623.999L503.899,623.999L503.865,623.999L503.653,623.997L503.618,623.997C498.806,623.942 494.164,623.178 489.792,621.804L489.696,621.774L489.624,621.751Z"/>

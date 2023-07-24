@@ -6298,7 +6298,7 @@ export module CyclicToDo
                     case "@unoverall":
                         return "anti-home-icon";
                     case "@:@root":
-                        return "ghost-tag-icon";
+                        return "ghost-folder-icon";
                     case "@untagged":
                         return "ghost-tag-icon";
                     case "@deleted":
