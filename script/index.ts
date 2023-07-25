@@ -601,7 +601,7 @@ export module CyclicToDo
             export const getByTodo = (pass: string, todo: string) =>
                 ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"]
                     .concat(get(pass))
-                    .concat(["@unoverall", "@:@root", "@untagged"])
+                    .concat(["@unoverall", "@untagged"])
                     .filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length)
                     .sort
                     (
@@ -616,7 +616,7 @@ export module CyclicToDo
             export const getByTodoRaw = (pass: string, todo: string) =>
                 ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"]
                     .concat(get(pass))
-                    .concat(["@unoverall", "@:@root", "@untagged"])
+                    .concat(["@unoverall", "@untagged"])
                     .filter(tag => 0 < TagMember.getRaw(pass, tag).filter(i => todo === i).length);
             export const rename = (pass: string, oldTag: string, newTag: string) =>
             {
@@ -5430,6 +5430,7 @@ export module CyclicToDo
                         {
                             tag: "div",
                             className: "tab-face",
+                            title: tab.text,
                             children: [ tab.icon, labelSpan(tab.text), ],
                         },
                         {
@@ -5441,6 +5442,7 @@ export module CyclicToDo
                                 ({
                                     tag: "div",
                                     className: "sub-tab" +(tab.text === i.text ? " current-item": ""),
+                                    title: i.text,
                                     onclick: (event: MouseEvent) =>
                                     {
                                         event.stopPropagation();
@@ -5857,7 +5859,8 @@ export module CyclicToDo
         ({
             className: "history-screen",
             header: await historyScreenHeader(entry, list),
-            body: await historyScreenBody(entry, list.filter(item => isMatchHistoryItem(filter, entry, item)))
+            body: await historyScreenBody(entry, list.filter(item => isMatchHistoryItem(filter, entry, item))),
+            footer: await bottomTabs(entry),
         });
         export const showHistoryScreen = async (urlParams: PageParams, entry: ToDoTagEntryOld) =>
         {
@@ -5972,7 +5975,8 @@ export module CyclicToDo
                 ([
                     messagePanel(label("Items after 30 days are automatically deleted completely.")),
                 ]),
-            ]
+            ],
+            footer: await bottomTabs({ pass, tag: "@deleted", todo: [], }),
         });
         export const showRemovedScreen = async (pass: string) =>
         {
@@ -6187,7 +6191,8 @@ export module CyclicToDo
         ({
             className: "todo-screen",
             header: await todoScreenHeader(pass, item, ticks, tag),
-            body: await todoScreenBody(pass, item, ticks, tag)
+            body: await todoScreenBody(pass, item, ticks, tag),
+            footer: await bottomTabs({ pass, tag, todo: [], }),
         });
         export const getPrimaryTag = (tags: string[]) => minamo.core.simpleDeepCopy(tags).sort
         (
@@ -7030,6 +7035,7 @@ export module CyclicToDo
             await withProgress("update", content, task);
         export const resizeFlexList = () =>
         {
+            const bottomTabsHeight = minamo.core.existsOrThrow(document.getElementById("screen-footer")).clientHeight;
             const minColumns = 1 +Math.floor(window.innerWidth / 780);
             const maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 450)));
             const FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
@@ -7079,7 +7085,7 @@ export module CyclicToDo
                     }
                     else
                     {
-                        const height = window.innerHeight -list.offsetTop;
+                        const height = window.innerHeight -(list.offsetTop +bottomTabsHeight);
                         const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight +1;
                         const columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         const row = Math.max(Math.ceil(length /columns), Math.min(length, Math.floor(height / itemHeight)));
@@ -7114,7 +7120,7 @@ export module CyclicToDo
                     {
                         // const columns = Math.min(maxColumns, Math.max(1, length));
                         // list.classList.add(`max-column-${columns}`);
-                        const height = window.innerHeight -list.offsetTop;
+                        const height = window.innerHeight -(list.offsetTop +bottomTabsHeight);
                         const itemHeight = (list.childNodes[0] as HTMLElement).offsetHeight;
                         const columns = list.classList.contains("compact-flex-list") ?
                             Math.min(maxColumns, length):
@@ -7131,7 +7137,7 @@ export module CyclicToDo
             (
                 minamo.core.existsOrThrow(document.getElementById("screen-toast")),
                 "bottom",
-                `${minamo.core.existsOrThrow(document.getElementById("screen-footer")).clientHeight}px`
+                `${bottomTabsHeight}px`
             );
         };
         let onWindowResizeTimestamp = 0;
