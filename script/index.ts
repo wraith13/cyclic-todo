@@ -5452,7 +5452,12 @@ export module CyclicToDo
                             )
                         }
                     ],
-                    onclick: () => showUrl(isCurrent ? nextItem(subTabs, tab).href: tab.href),
+                    onclick: () => showUrl
+                    (
+                        isCurrent && makeUrl(tab.href) === location.href ?
+                            nextItem(subTabs, tab).href:
+                            tab.href
+                    ),
                 };
                 return result;
             }
