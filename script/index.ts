@@ -4272,7 +4272,12 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
-                                Model.decode(item.task),
+                                Model.decode
+                                (
+                                    Model.isSublistOld(entry.tag) ?
+                                        OldStorage.Task.getBody(item.task):
+                                        item.task
+                                ),
                             ]
                         }),
                         $div("item-operator")
@@ -6039,7 +6044,7 @@ export module CyclicToDo
                 await screenHeaderHomeSegment(),
                 await screenHeaderListSegment(pass),
                 await screenHeaderTagSegment(pass, tag),
-                await screenHeaderTaskSegment(pass, tag, item.task),
+                await screenHeaderTaskSegment(pass, tag, OldStorage.Task.getBody(item.task)),
             ],
             menu: await todoScreenMenu(pass, item),
             parent: { pass, tag, },
