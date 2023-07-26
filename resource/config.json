@@ -7,6 +7,7 @@
     "sleepStandardDeviationRate": 3.0,
     "granceTimespan": "1d",
     "maxHistories": 100,
+    "maxGroupHistories": 1000,
     "maxRestAdjustTimespan": "3h",
     "maxShortTermTimespan": "3d",
     "maxMediumTermTimespan": "15d",

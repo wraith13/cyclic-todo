@@ -5850,7 +5850,7 @@ export module CyclicToDo
         });
         export const historyScreenBody = async (entry: ToDoTagEntryOld, list: { task: string, tick: number | null }[]) =>
         ([
-            $div("column-flex-list history-list")(await Promise.all(list.map(item => historyItem(entry, item)))),
+            $div("column-flex-list history-list")(await Promise.all(list.map(item => historyItem(entry, item)).slice(0, config.maxGroupHistories))),
             $div("button-list")
             (
                 internalLink
@@ -5859,6 +5859,10 @@ export module CyclicToDo
                     children: $tag("button")("default-button main-button long-button")(label("Back to List")),
                 })
             ),
+            messageList
+            ([
+                messagePanel(labelSpan(locale.string("この画面で表示される最大件数") + `: ${config.maxGroupHistories} / ${list.length}`)),
+            ]),
         ]);
         export const historyScreen = async (entry: ToDoTagEntryOld, list: { task: string, tick: number | null }[], filter: string): Promise<ScreenSource> =>
         ({
@@ -6191,6 +6195,10 @@ export module CyclicToDo
                     )
                 )
             ),
+            messageList
+            ([
+                messagePanel(labelSpan(locale.string("履歴が保存される最大件数") + `: ${config.maxHistories}`)),
+            ]),
         ]);
         export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[], tag: string) =>
         ({
