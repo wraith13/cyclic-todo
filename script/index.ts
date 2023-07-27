@@ -599,7 +599,7 @@ export module CyclicToDo
                 return result;
             };
             export const getByTodo = (pass: string, todo: string) =>
-                ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"]
+                Render.getTagList({ auto: true, term: true, })
                     .concat(get(pass))
                     .concat(["@unoverall", "@untagged"])
                     .filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length)
@@ -614,7 +614,7 @@ export module CyclicToDo
                         )
                     );
             export const getByTodoRaw = (pass: string, todo: string) =>
-                ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"]
+                Render.getTagList({ overall: true, auto: true, term: true, })
                     .concat(get(pass))
                     .concat(["@unoverall", "@untagged"])
                     .filter(tag => 0 < TagMember.getRaw(pass, tag).filter(i => todo === i).length);
