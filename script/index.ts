@@ -2414,9 +2414,9 @@ export module CyclicToDo
             className: data.className,
             href: makeUrl(data.href),
             children: data.children,
-            onclick: (_event: MouseEvent) =>
+            onclick: (event: MouseEvent) =>
             {
-                // event.stopPropagation();
+                event.stopPropagation();
                 showUrl(data.href);
                 return false;
             }
@@ -4252,6 +4252,7 @@ export module CyclicToDo
                 await minamo.core.timeout(500);
                 onUpdate();
             };
+            const sublist = OldStorage.Task.getSublist(item.task);
             const itemDom = $make(HTMLDivElement)
             (
                 $div
@@ -4272,12 +4273,17 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
-                                Model.decode
-                                (
-                                    Model.isSublistOld(entry.tag) ?
-                                        OldStorage.Task.getBody(item.task):
-                                        item.task
-                                ),
+                                Model.isSublistOld(entry.tag) ? Model.decode(OldStorage.Task.getBody(item.task)):
+                                null === sublist ? Model.decode(item.task):
+                                [
+                                    internalLink
+                                    ({
+                                        className: "item-sublist",
+                                        href: { pass: entry.pass, tag: sublist, },
+                                        children: Model.decode(sublist)
+                                    }),
+                                    Model.decode(OldStorage.Task.getBody(item.task))
+                                ],
                             ]
                         }),
                         $div("item-operator")

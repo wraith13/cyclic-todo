@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Thu Jul 27 2023 11:24:09 GMT+0900 (日本標準時)
+    build at: Fri Jul 28 2023 00:03:01 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -1983,6 +1983,34 @@ body.light .item-title svg {
 }
 @media (hover: none) {
   body.light .item-title {
+    text-decoration: none;
+  }
+}
+body.light .item-title .item-sublist {
+  color: #000022;
+  fill: #000022;
+  cursor: pointer;
+  white-space: pre;
+}
+@media (hover: hover) {
+  body.light .item-title .item-sublist:hover {
+    color: #6F7F00;
+    fill: #6F7F00;
+  }
+}
+@media (hover: hover) {
+  body.light .item-title .item-sublist:hover {
+    opacity: 1;
+    color: #6F7F00;
+    fill: #6F7F00;
+    text-decoration: underline;
+  }
+  body.light .item-title .item-sublist:not(:hover) {
+    text-decoration: none;
+  }
+}
+@media (hover: none) {
+  body.light .item-title .item-sublist {
     text-decoration: none;
   }
 }
@@ -4462,6 +4490,34 @@ body.dark .item-title svg {
 }
 @media (hover: none) {
   body.dark .item-title {
+    text-decoration: none;
+  }
+}
+body.dark .item-title .item-sublist {
+  color: #FFFFFF;
+  fill: #FFFFFF;
+  cursor: pointer;
+  white-space: pre;
+}
+@media (hover: hover) {
+  body.dark .item-title .item-sublist:hover {
+    color: #6F7F00;
+    fill: #6F7F00;
+  }
+}
+@media (hover: hover) {
+  body.dark .item-title .item-sublist:hover {
+    opacity: 1;
+    color: #6F7F00;
+    fill: #6F7F00;
+    text-decoration: underline;
+  }
+  body.dark .item-title .item-sublist:not(:hover) {
+    text-decoration: none;
+  }
+}
+@media (hover: none) {
+  body.dark .item-title .item-sublist {
     text-decoration: none;
   }
 }
@@ -9499,8 +9555,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     className: data.className,
                     href: CyclicToDo.makeUrl(data.href),
                     children: data.children,
-                    onclick: function (_event) {
-                        // event.stopPropagation();
+                    onclick: function (event) {
+                        event.stopPropagation();
                         CyclicToDo.showUrl(data.href);
                         return false;
                     }
@@ -11700,7 +11756,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return "task-icon";
             };
             Render.todoItem = function (entry, item, displayStyle, progressScaleShowStyle) { return __awaiter(_this, void 0, void 0, function () {
-                var isFirst, onUpdate, onDone, itemDom, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x;
+                var isFirst, onUpdate, onDone, sublist, itemDom, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x;
                 var _y, _z, _0, _1, _2;
                 var _this = this;
                 var _3, _4, _5;
@@ -11728,6 +11784,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     }
                                 });
                             }); };
+                            sublist = OldStorage.Task.getSublist(item.task);
                             _a = Render.$make(HTMLDivElement);
                             _b = Render.$div({
                                 className: "task-item flex-item",
@@ -11747,9 +11804,16 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _f = [
                                 _e.apply(void 0, [(_y.children = [
                                         _6.sent(),
-                                        Model.decode(Model.isSublistOld(entry.tag) ?
-                                            OldStorage.Task.getBody(item.task) :
-                                            item.task)
+                                        Model.isSublistOld(entry.tag) ? Model.decode(OldStorage.Task.getBody(item.task)) :
+                                            null === sublist ? Model.decode(item.task) :
+                                                [
+                                                    Render.internalLink({
+                                                        className: "item-sublist",
+                                                        href: { pass: entry.pass, tag: sublist, },
+                                                        children: Model.decode(sublist)
+                                                    }),
+                                                    Model.decode(OldStorage.Task.getBody(item.task))
+                                                ]
                                     ],
                                         _y)])
                             ];
@@ -16182,7 +16246,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Jul 27 2023 11:24:09 GMT+0900 (日本標準時)', buildTimestampTick: 1690424649017, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Jul 28 2023 00:03:01 GMT+0900 (日本標準時)', buildTimestampTick: 1690470181407, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
