@@ -713,7 +713,7 @@ export module CyclicToDo
             export const isPickupTask = (pass: string, todo: string) => isMember(pass, "@pickup", todo);
             export const isFlashTask = (pass: string, todo: string) => isMember(pass, "@flash", todo);
             export const getAutoTag = (pass: string, todo: string) =>
-                [ "@restriction", "@flash", "@pickup", ].filter(i => isMember(pass, i, todo))[0] ?? null;
+                <"@restriction" | "@flash" | "@pickup" | null>([ "@restriction", "@flash", "@pickup", ].filter(i => isMember(pass, i, todo))[0] ?? null);
         }
         export module TagSettings
         {
@@ -2154,6 +2154,23 @@ export module CyclicToDo
             }
             return null;
         }
+        export const updateAutoTag = (pass: string, item: ToDoEntry) =>
+        {
+            const autoTag = OldStorage.TodoSettings.getAutoTag(pass, item);
+            const autoTagged = OldStorage.TagMember.getAutoTag(pass, item.task);
+            if (autoTagged !== autoTag)
+            {
+                if (null !== autoTag)
+                {
+                    OldStorage.TagMember.add(pass, autoTag, item.task);
+                }
+                if (null !== autoTagged)
+                {
+                    OldStorage.TagMember.remove(pass, autoTagged, item.task);
+                }
+                Render.updateWindow?.("dirty");
+            }
+        };
         export const updateProgress = (pass: string | Model.Document, item: ToDoEntry, now: number = Domain.getTicks()) =>
         {
             if (isFirstOrMoreToDoEntry(item))
@@ -2183,43 +2200,7 @@ export module CyclicToDo
             }
             if ("string" === typeof pass)
             {
-                const autoTag = OldStorage.TodoSettings.getAutoTag(pass, item);
-                const isFlashTarget = "@flash" === autoTag;
-                const isFlashed = OldStorage.TagMember.isFlashTask(pass, item.task);
-                if (isFlashTarget && ! isFlashed)
-                {
-                    OldStorage.TagMember.add(pass, "@flash", item.task);
-                    Render.updateWindow?.("dirty");
-                }
-                if ( ! isFlashTarget && isFlashed)
-                {
-                    OldStorage.TagMember.remove(pass, "@flash", item.task);
-                    Render.updateWindow?.("dirty");
-                }
-                const isPickupTarget = "@pickup" === autoTag;
-                const isPickuped = OldStorage.TagMember.isPickupTask(pass, item.task);
-                if (isPickupTarget && ! isPickuped)
-                {
-                    OldStorage.TagMember.add(pass, "@pickup", item.task);
-                    Render.updateWindow?.("dirty");
-                }
-                if ( ! isPickupTarget && isPickuped)
-                {
-                    OldStorage.TagMember.remove(pass, "@pickup", item.task);
-                    Render.updateWindow?.("dirty");
-                }
-                const isRestrictionTarget = "@restriction" === autoTag;
-                const isRestrictioned = OldStorage.TagMember.isRestrictionTask(pass, item.task);
-                if (isRestrictionTarget && ! isRestrictioned)
-                {
-                    OldStorage.TagMember.add(pass, "@restriction", item.task);
-                    Render.updateWindow?.("dirty");
-                }
-                if ( ! isRestrictionTarget && isRestrictioned)
-                {
-                    OldStorage.TagMember.remove(pass, "@restriction", item.task);
-                    Render.updateWindow?.("dirty");
-                }
+                updateAutoTag(pass, item);
             }
             MigrateBridge.updateTermCategory(pass, item);
             return item;
@@ -2329,7 +2310,7 @@ export module CyclicToDo
                 MigrateBridge.updateTermCategory(pass, MigrateBridge.getToDoEntry(pass, task));
                 const toast = makeToast
                 ({
-                    content: $span("")(`${locale.map("Done!")}: ${task}`),
+                    content: $span("")(`${locale.map("Done!")}: ${Model.decode(task)}`),
                     backwardOperator: cancelTextButton
                     (
                         async () =>
@@ -2929,7 +2910,7 @@ export module CyclicToDo
                         className: "add-remove-tags-popup",
                         children:
                         [
-                            $tag("h2")("")(item.task),
+                            $tag("h2")("")(Model.decode(item.task)),
                             tagButtonList,
                             $div("popup-operator")
                             ([{
@@ -3013,7 +2994,7 @@ export module CyclicToDo
                         className: "add-remove-tags-popup",
                         children:
                         [
-                            $tag("h2")("")(item.task),
+                            $tag("h2")("")(Model.decode(item.task)),
                             tagButtonList,
                             $div("popup-operator")
                             ([{
@@ -3728,7 +3709,7 @@ export module CyclicToDo
                     // className: "add-remove-tags-popup",
                     children:
                     [
-                        $tag("h2")("")(`${locale.map(title)}: ${entry.task}`),
+                        $tag("h2")("")(`${locale.map(title)}: ${Model.decode(entry.task)}`),
                         buttonList,
                         $div("popup-operator")
                         ([{
@@ -3854,7 +3835,7 @@ export module CyclicToDo
                     // className: "add-remove-tags-popup",
                     children:
                     [
-                        $tag("h2")("")(`${locale.map("Auto tag setting")}: ${entry.task}`),
+                        $tag("h2")("")(`${locale.map("Auto tag setting")}: ${Model.decode(entry.task)}`),
                         buttonList,
                         $div("popup-operator")
                         ([{

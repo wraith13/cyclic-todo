@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Fri Jul 28 2023 10:57:17 GMT+0900 (日本標準時)
+    build at: Sat Jul 29 2023 00:25:38 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -7875,7 +7875,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 TagMember.isRestrictionTask = function (pass, todo) { return TagMember.isMember(pass, "@restriction", todo); };
                 TagMember.isPickupTask = function (pass, todo) { return TagMember.isMember(pass, "@pickup", todo); };
                 TagMember.isFlashTask = function (pass, todo) { return TagMember.isMember(pass, "@flash", todo); };
-                TagMember.getAutoTag = function (pass, todo) { var _a; return (_a = ["@restriction", "@flash", "@pickup",].filter(function (i) { return TagMember.isMember(pass, i, todo); })[0]) !== null && _a !== void 0 ? _a : null; };
+                TagMember.getAutoTag = function (pass, todo) { var _a; return ((_a = ["@restriction", "@flash", "@pickup",].filter(function (i) { return TagMember.isMember(pass, i, todo); })[0]) !== null && _a !== void 0 ? _a : null); };
             })(TagMember = OldStorage.TagMember || (OldStorage.TagMember = {}));
             var TagSettings;
             (function (TagSettings) {
@@ -9258,8 +9258,21 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 }
                 return null;
             };
+            Domain.updateAutoTag = function (pass, item) {
+                var _a;
+                var autoTag = OldStorage.TodoSettings.getAutoTag(pass, item);
+                var autoTagged = OldStorage.TagMember.getAutoTag(pass, item.task);
+                if (autoTagged !== autoTag) {
+                    if (null !== autoTag) {
+                        OldStorage.TagMember.add(pass, autoTag, item.task);
+                    }
+                    if (null !== autoTagged) {
+                        OldStorage.TagMember.remove(pass, autoTagged, item.task);
+                    }
+                    (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render, "dirty");
+                }
+            };
             Domain.updateProgress = function (pass, item, now) {
-                var _a, _b, _c, _d, _e, _f;
                 if (now === void 0) { now = Domain.getTicks(); }
                 if (CyclicToDo.isFirstOrMoreToDoEntry(item)) {
                     // todo の順番が前後にブレるのを避ける為、１分以内に複数の todo が done された場合、二つ目以降は +1 分ずつズレた時刻で打刻され( getDoneTicks() 関数の実装を参照 )、直後は素直に計算すると経過時間がマイナスになってしまうので、マイナスの場合はゼロにする。
@@ -9283,37 +9296,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 }
                 if ("string" === typeof pass) {
-                    var autoTag = OldStorage.TodoSettings.getAutoTag(pass, item);
-                    var isFlashTarget = "@flash" === autoTag;
-                    var isFlashed = OldStorage.TagMember.isFlashTask(pass, item.task);
-                    if (isFlashTarget && !isFlashed) {
-                        OldStorage.TagMember.add(pass, "@flash", item.task);
-                        (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render, "dirty");
-                    }
-                    if (!isFlashTarget && isFlashed) {
-                        OldStorage.TagMember.remove(pass, "@flash", item.task);
-                        (_b = Render.updateWindow) === null || _b === void 0 ? void 0 : _b.call(Render, "dirty");
-                    }
-                    var isPickupTarget = "@pickup" === autoTag;
-                    var isPickuped = OldStorage.TagMember.isPickupTask(pass, item.task);
-                    if (isPickupTarget && !isPickuped) {
-                        OldStorage.TagMember.add(pass, "@pickup", item.task);
-                        (_c = Render.updateWindow) === null || _c === void 0 ? void 0 : _c.call(Render, "dirty");
-                    }
-                    if (!isPickupTarget && isPickuped) {
-                        OldStorage.TagMember.remove(pass, "@pickup", item.task);
-                        (_d = Render.updateWindow) === null || _d === void 0 ? void 0 : _d.call(Render, "dirty");
-                    }
-                    var isRestrictionTarget = "@restriction" === autoTag;
-                    var isRestrictioned = OldStorage.TagMember.isRestrictionTask(pass, item.task);
-                    if (isRestrictionTarget && !isRestrictioned) {
-                        OldStorage.TagMember.add(pass, "@restriction", item.task);
-                        (_e = Render.updateWindow) === null || _e === void 0 ? void 0 : _e.call(Render, "dirty");
-                    }
-                    if (!isRestrictionTarget && isRestrictioned) {
-                        OldStorage.TagMember.remove(pass, "@restriction", item.task);
-                        (_f = Render.updateWindow) === null || _f === void 0 ? void 0 : _f.call(Render, "dirty");
-                    }
+                    Domain.updateAutoTag(pass, item);
                 }
                 MigrateBridge.updateTermCategory(pass, item);
                 return item;
@@ -9462,7 +9445,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         }
                         MigrateBridge.updateTermCategory(pass, MigrateBridge.getToDoEntry(pass, task));
                         toast = Render.makeToast({
-                            content: Render.$span("")(locale.map("Done!") + ": " + task),
+                            content: Render.$span("")(locale.map("Done!") + ": " + Model.decode(task)),
                             backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
@@ -10088,7 +10071,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             ui = Render.popup({
                                                 className: "add-remove-tags-popup",
                                                 children: [
-                                                    Render.$tag("h2")("")(item.task),
+                                                    Render.$tag("h2")("")(Model.decode(item.task)),
                                                     tagButtonList,
                                                     Render.$div("popup-operator")([{
                                                             tag: "button",
@@ -10192,7 +10175,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             ui = Render.popup({
                                                 className: "add-remove-tags-popup",
                                                 children: [
-                                                    Render.$tag("h2")("")(item.task),
+                                                    Render.$tag("h2")("")(Model.decode(item.task)),
                                                     tagButtonList,
                                                     Render.$div("popup-operator")([{
                                                             tag: "button",
@@ -11149,7 +11132,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             ui = Render.popup({
                                                 // className: "add-remove-tags-popup",
                                                 children: [
-                                                    Render.$tag("h2")("")(locale.map(title) + ": " + entry.task),
+                                                    Render.$tag("h2")("")(locale.map(title) + ": " + Model.decode(entry.task)),
                                                     buttonList,
                                                     Render.$div("popup-operator")([{
                                                             tag: "button",
@@ -11333,7 +11316,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 ui = Render.popup({
                                                     // className: "add-remove-tags-popup",
                                                     children: [
-                                                        Render.$tag("h2")("")(locale.map("Auto tag setting") + ": " + entry.task),
+                                                        Render.$tag("h2")("")(locale.map("Auto tag setting") + ": " + Model.decode(entry.task)),
                                                         buttonList,
                                                         Render.$div("popup-operator")([{
                                                                 tag: "button",
@@ -16261,7 +16244,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Jul 28 2023 10:57:17 GMT+0900 (日本標準時)', buildTimestampTick: 1690509437472, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Jul 29 2023 00:25:38 GMT+0900 (日本標準時)', buildTimestampTick: 1690557938789, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
