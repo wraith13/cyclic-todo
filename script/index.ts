@@ -712,6 +712,8 @@ export module CyclicToDo
             export const isRestrictionTask = (pass: string, todo: string) => isMember(pass, "@restriction", todo);
             export const isPickupTask = (pass: string, todo: string) => isMember(pass, "@pickup", todo);
             export const isFlashTask = (pass: string, todo: string) => isMember(pass, "@flash", todo);
+            export const getAutoTag = (pass: string, todo: string) =>
+                [ "@restriction", "@flash", "@pickup", ].filter(i => isMember(pass, i, todo))[0] ?? null;
         }
         export module TagSettings
         {
@@ -916,6 +918,22 @@ export module CyclicToDo
                 }
                 return false;
             };
+            export const getAutoTag = (pass: string, item: ToDoEntry, elapsedTime = item.elapsed) =>
+            {
+                if (isRestrictionTarget(pass, item, elapsedTime))
+                {
+                    return "@restriction";
+                }
+                if (isFlashTarget(pass, item, elapsedTime))
+                {
+                    return "@flash";
+                }
+                if (isPickupTarget(pass, item, elapsedTime))
+                {
+                    return "@pickup";
+                }
+                return null;
+            }
             export const hasAutoTagSettings = (pass: string, task: string) =>
             {
                 const settings = get(pass, task);
@@ -2165,7 +2183,8 @@ export module CyclicToDo
             }
             if ("string" === typeof pass)
             {
-                const isFlashTarget = OldStorage.TodoSettings.isFlashTarget(pass, item);
+                const autoTag = OldStorage.TodoSettings.getAutoTag(pass, item);
+                const isFlashTarget = "@flash" === autoTag;
                 const isFlashed = OldStorage.TagMember.isFlashTask(pass, item.task);
                 if (isFlashTarget && ! isFlashed)
                 {
@@ -2177,7 +2196,7 @@ export module CyclicToDo
                     OldStorage.TagMember.remove(pass, "@flash", item.task);
                     Render.updateWindow?.("dirty");
                 }
-                const isPickupTarget = OldStorage.TodoSettings.isPickupTarget(pass, item);
+                const isPickupTarget = "@pickup" === autoTag;
                 const isPickuped = OldStorage.TagMember.isPickupTask(pass, item.task);
                 if (isPickupTarget && ! isPickuped)
                 {
@@ -2189,7 +2208,7 @@ export module CyclicToDo
                     OldStorage.TagMember.remove(pass, "@pickup", item.task);
                     Render.updateWindow?.("dirty");
                 }
-                const isRestrictionTarget = OldStorage.TodoSettings.isRestrictionTarget(pass, item);
+                const isRestrictionTarget = "@restriction" === autoTag;
                 const isRestrictioned = OldStorage.TagMember.isRestrictionTask(pass, item.task);
                 if (isRestrictionTarget && ! isRestrictioned)
                 {
