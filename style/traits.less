@@ -70,7 +70,7 @@
         }
     }
 }
-.secondary-operator-coloring-trait
+.secondary-text-operator-coloring-trait
 {
     .clickable-trait;
     @media (hover: hover)
@@ -79,6 +79,24 @@
         {
             color: @accent-color;
             fill: @accent-color;
+        }
+    }
+    @media (hover: none)
+    {
+        &
+        {
+            color: @accent-color;
+            fill: @accent-color;
+        }
+    }
+}
+.secondary-operator-coloring-trait
+{
+    .secondary-text-operator-coloring-trait;
+    @media (hover: hover)
+    {
+        &:not(:hover)
+        {
             border-color: @accent-color;
             .positive-background-coloring-trait;
         }
@@ -93,8 +111,6 @@
     {
         &
         {
-            color: @accent-color;
-            fill: @accent-color;
             border-color: @accent-color;
             .positive-background-coloring-trait;
         }

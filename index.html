@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sat Jul 29 2023 00:25:38 GMT+0900 (日本標準時)
+    build at: Sat Jul 29 2023 23:31:55 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -111,6 +111,21 @@ body.light .primary-operator-coloring-trait {
     background-color: #228844;
   }
 }
+body.light .secondary-text-operator-coloring-trait {
+  cursor: pointer;
+}
+@media (hover: hover) {
+  body.light .secondary-text-operator-coloring-trait:not(:hover) {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: none) {
+  body.light .secondary-text-operator-coloring-trait {
+    color: #228844;
+    fill: #228844;
+  }
+}
 body.light .secondary-operator-coloring-trait {
   cursor: pointer;
 }
@@ -118,6 +133,16 @@ body.light .secondary-operator-coloring-trait {
   body.light .secondary-operator-coloring-trait:not(:hover) {
     color: #228844;
     fill: #228844;
+  }
+}
+@media (hover: none) {
+  body.light .secondary-operator-coloring-trait {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: hover) {
+  body.light .secondary-operator-coloring-trait:not(:hover) {
     border-color: #228844;
     background-color: #FFFFFF;
   }
@@ -130,8 +155,6 @@ body.light .secondary-operator-coloring-trait {
 }
 @media (hover: none) {
   body.light .secondary-operator-coloring-trait {
-    color: #228844;
-    fill: #228844;
     border-color: #228844;
     background-color: #FFFFFF;
   }
@@ -1200,6 +1223,16 @@ body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
   body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item):not(:hover) {
     color: #228844;
     fill: #228844;
+  }
+}
+@media (hover: none) {
+  body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: hover) {
+  body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item):not(:hover) {
     border-color: #228844;
     background-color: #FFFFFF;
   }
@@ -1212,8 +1245,6 @@ body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
 }
 @media (hover: none) {
   body.light .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
-    color: #228844;
-    fill: #228844;
     border-color: #228844;
     background-color: #FFFFFF;
   }
@@ -1397,6 +1428,16 @@ body.light button {
   body.light button:not(:hover) {
     color: #228844;
     fill: #228844;
+  }
+}
+@media (hover: none) {
+  body.light button {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: hover) {
+  body.light button:not(:hover) {
     border-color: #228844;
     background-color: #FFFFFF;
   }
@@ -1409,8 +1450,6 @@ body.light button {
 }
 @media (hover: none) {
   body.light button {
-    color: #228844;
-    fill: #228844;
     border-color: #228844;
     background-color: #FFFFFF;
   }
@@ -1939,8 +1978,21 @@ body.light .max-column-12 .flex-item {
   min-width: calc((100% - 1px) / 12);
   max-width: calc((100% - 1px) / 12);
 }
-body.light .item-title {
-  z-index: 10;
+body.light .item-title,
+body.light .item-title-frame {
+  position: relative;
+  margin-right: -120px;
+}
+body.light .item-title-frame {
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  white-space: nowrap;
+}
+body.light .item-title,
+body.light .item-title-sublist,
+body.light .item-title-body {
   display: inline-flex;
   flex-direction: row;
   justify-content: start;
@@ -1952,12 +2004,13 @@ body.light .item-title {
   text-overflow: ellipsis;
   white-space: nowrap;
   height: 1.4em;
-  margin-right: -120px;
   color: #000022;
   fill: #000022;
   cursor: pointer;
 }
-body.light .item-title svg {
+body.light .item-title svg,
+body.light .item-title-sublist svg,
+body.light .item-title-body svg {
   width: 1.4em;
   min-width: 1.4em;
   height: 1.4em;
@@ -1965,56 +2018,53 @@ body.light .item-title svg {
   margin-right: 4px;
 }
 @media (hover: hover) {
-  body.light .item-title:hover {
+  body.light .item-title:hover,
+  body.light .item-title-sublist:hover,
+  body.light .item-title-body:hover {
     color: #6F7F00;
     fill: #6F7F00;
   }
 }
 @media (hover: hover) {
-  body.light .item-title:hover {
+  body.light .item-title:hover,
+  body.light .item-title-sublist:hover,
+  body.light .item-title-body:hover {
     opacity: 1;
     color: #6F7F00;
     fill: #6F7F00;
     text-decoration: underline;
   }
-  body.light .item-title:not(:hover) {
+  body.light .item-title:not(:hover),
+  body.light .item-title-sublist:not(:hover),
+  body.light .item-title-body:not(:hover) {
     text-decoration: none;
   }
 }
 @media (hover: none) {
-  body.light .item-title {
+  body.light .item-title,
+  body.light .item-title-sublist,
+  body.light .item-title-body {
     text-decoration: none;
   }
 }
-body.light .item-title .item-sublist {
-  color: #000022;
-  fill: #000022;
+body.light .item-title-sublist {
+  margin-right: 0.5rem;
   cursor: pointer;
-  white-space: pre;
 }
 @media (hover: hover) {
-  body.light .item-title .item-sublist:hover {
-    color: #6F7F00;
-    fill: #6F7F00;
-  }
-}
-@media (hover: hover) {
-  body.light .item-title .item-sublist:hover {
-    opacity: 1;
-    color: #6F7F00;
-    fill: #6F7F00;
-    text-decoration: underline;
-  }
-  body.light .item-title .item-sublist:not(:hover) {
-    text-decoration: none;
+  body.light .item-title-sublist:not(:hover) {
+    color: #228844;
+    fill: #228844;
   }
 }
 @media (hover: none) {
-  body.light .item-title .item-sublist {
-    text-decoration: none;
+  body.light .item-title-sublist {
+    color: #228844;
+    fill: #228844;
   }
 }
-body.light .removed-item .item-title {
+body.light .removed-item .item-title,
+body.light .removed-item .item-title-frame {
   cursor: inherit;
   color: #000022;
   fill: #000022;
@@ -2036,8 +2086,11 @@ body.light .removed-item .item-header {
 }
 body.light .list-item .item-header .item-title,
 body.light .task-item .item-header .item-title,
-body.light .removed-item .item-header .item-title {
-  max-width: calc(100% - 180px);
+body.light .removed-item .item-header .item-title,
+body.light .list-item .item-header .item-title-frame,
+body.light .task-item .item-header .item-title-frame,
+body.light .removed-item .item-header .item-title-frame {
+  max-width: 100%;
 }
 body.light .task-item .progress-bar,
 body.light .tick-item .progress-bar {
@@ -2131,6 +2184,7 @@ body.light .task-item .item-attribute .item-tags a {
   flex-direction: row;
   align-items: center;
   justify-content: start;
+  cursor: pointer;
 }
 body.light .task-item .item-attribute .item-tags a svg {
   width: 1rem;
@@ -2139,22 +2193,14 @@ body.light .task-item .item-attribute .item-tags a svg {
 }
 @media (hover: hover) {
   body.light .task-item .item-attribute .item-tags a:not(:hover) {
-    opacity: 0.6;
-    text-decoration: none;
-    color: #000022;
-    fill: #000022;
-  }
-  body.light .task-item .item-attribute .item-tags a:hover {
-    color: #6F7F00;
-    fill: #6F7F00;
+    color: #228844;
+    fill: #228844;
   }
 }
 @media (hover: none) {
   body.light .task-item .item-attribute .item-tags a {
-    opacity: 0.6;
-    text-decoration: none;
-    color: #000022;
-    fill: #000022;
+    color: #228844;
+    fill: #228844;
   }
 }
 body.light .task-item .item-attribute .item-tags a:not(:last-child) {
@@ -2259,7 +2305,7 @@ body.light .removed-item .item-information .label {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: calc(100% - 180px);
+  max-width: 100%;
 }
 body.light .removed-item .item-information .label::after {
   content: ":";
@@ -2269,11 +2315,13 @@ body.light .removed-item .item-information .value {
   opacity: 0.4;
   float: right;
 }
-body.light .locale-parallel-on .task-item .item-header .item-title {
-  max-width: calc(100% - 180px);
+body.light .locale-parallel-on .task-item .item-header .item-title,
+body.light .locale-parallel-on .task-item .item-header .item-title-frame {
+  max-width: 100%;
 }
-body.light .locale-parallel-off .task-item .item-header .item-title {
-  max-width: calc(100% - 120px);
+body.light .locale-parallel-off .task-item .item-header .item-title,
+body.light .locale-parallel-off .task-item .item-header .item-title-frame {
+  max-width: 100%;
 }
 body.light .item-operator {
   position: relative;
@@ -2298,7 +2346,8 @@ body.light .history-list .history-item {
   white-space: nowrap;
   height: 3.8rem;
 }
-body.light .history-list .history-item .item-title {
+body.light .history-list .history-item .item-title,
+body.light .history-list .history-item .item-title-frame {
   max-width: calc(100% - 150px);
 }
 body.light .history-list .history-item .item-information {
@@ -2618,6 +2667,21 @@ body.dark .primary-operator-coloring-trait {
     background-color: #228844;
   }
 }
+body.dark .secondary-text-operator-coloring-trait {
+  cursor: pointer;
+}
+@media (hover: hover) {
+  body.dark .secondary-text-operator-coloring-trait:not(:hover) {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: none) {
+  body.dark .secondary-text-operator-coloring-trait {
+    color: #228844;
+    fill: #228844;
+  }
+}
 body.dark .secondary-operator-coloring-trait {
   cursor: pointer;
 }
@@ -2625,6 +2689,16 @@ body.dark .secondary-operator-coloring-trait {
   body.dark .secondary-operator-coloring-trait:not(:hover) {
     color: #228844;
     fill: #228844;
+  }
+}
+@media (hover: none) {
+  body.dark .secondary-operator-coloring-trait {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: hover) {
+  body.dark .secondary-operator-coloring-trait:not(:hover) {
     border-color: #228844;
     background-color: #000022;
   }
@@ -2637,8 +2711,6 @@ body.dark .secondary-operator-coloring-trait {
 }
 @media (hover: none) {
   body.dark .secondary-operator-coloring-trait {
-    color: #228844;
-    fill: #228844;
     border-color: #228844;
     background-color: #000022;
   }
@@ -3707,6 +3779,16 @@ body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
   body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item):not(:hover) {
     color: #228844;
     fill: #228844;
+  }
+}
+@media (hover: none) {
+  body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: hover) {
+  body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item):not(:hover) {
     border-color: #228844;
     background-color: #000022;
   }
@@ -3719,8 +3801,6 @@ body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
 }
 @media (hover: none) {
   body.dark .bottom-tabs .bottom-tab .sub-tabs .sub-tab:not(.current-item) {
-    color: #228844;
-    fill: #228844;
     border-color: #228844;
     background-color: #000022;
   }
@@ -3904,6 +3984,16 @@ body.dark button {
   body.dark button:not(:hover) {
     color: #228844;
     fill: #228844;
+  }
+}
+@media (hover: none) {
+  body.dark button {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: hover) {
+  body.dark button:not(:hover) {
     border-color: #228844;
     background-color: #000022;
   }
@@ -3916,8 +4006,6 @@ body.dark button {
 }
 @media (hover: none) {
   body.dark button {
-    color: #228844;
-    fill: #228844;
     border-color: #228844;
     background-color: #000022;
   }
@@ -4446,8 +4534,21 @@ body.dark .max-column-12 .flex-item {
   min-width: calc((100% - 1px) / 12);
   max-width: calc((100% - 1px) / 12);
 }
-body.dark .item-title {
-  z-index: 10;
+body.dark .item-title,
+body.dark .item-title-frame {
+  position: relative;
+  margin-right: -120px;
+}
+body.dark .item-title-frame {
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  white-space: nowrap;
+}
+body.dark .item-title,
+body.dark .item-title-sublist,
+body.dark .item-title-body {
   display: inline-flex;
   flex-direction: row;
   justify-content: start;
@@ -4459,12 +4560,13 @@ body.dark .item-title {
   text-overflow: ellipsis;
   white-space: nowrap;
   height: 1.4em;
-  margin-right: -120px;
   color: #FFFFFF;
   fill: #FFFFFF;
   cursor: pointer;
 }
-body.dark .item-title svg {
+body.dark .item-title svg,
+body.dark .item-title-sublist svg,
+body.dark .item-title-body svg {
   width: 1.4em;
   min-width: 1.4em;
   height: 1.4em;
@@ -4472,56 +4574,53 @@ body.dark .item-title svg {
   margin-right: 4px;
 }
 @media (hover: hover) {
-  body.dark .item-title:hover {
+  body.dark .item-title:hover,
+  body.dark .item-title-sublist:hover,
+  body.dark .item-title-body:hover {
     color: #6F7F00;
     fill: #6F7F00;
   }
 }
 @media (hover: hover) {
-  body.dark .item-title:hover {
+  body.dark .item-title:hover,
+  body.dark .item-title-sublist:hover,
+  body.dark .item-title-body:hover {
     opacity: 1;
     color: #6F7F00;
     fill: #6F7F00;
     text-decoration: underline;
   }
-  body.dark .item-title:not(:hover) {
+  body.dark .item-title:not(:hover),
+  body.dark .item-title-sublist:not(:hover),
+  body.dark .item-title-body:not(:hover) {
     text-decoration: none;
   }
 }
 @media (hover: none) {
-  body.dark .item-title {
+  body.dark .item-title,
+  body.dark .item-title-sublist,
+  body.dark .item-title-body {
     text-decoration: none;
   }
 }
-body.dark .item-title .item-sublist {
-  color: #FFFFFF;
-  fill: #FFFFFF;
+body.dark .item-title-sublist {
+  margin-right: 0.5rem;
   cursor: pointer;
-  white-space: pre;
 }
 @media (hover: hover) {
-  body.dark .item-title .item-sublist:hover {
-    color: #6F7F00;
-    fill: #6F7F00;
-  }
-}
-@media (hover: hover) {
-  body.dark .item-title .item-sublist:hover {
-    opacity: 1;
-    color: #6F7F00;
-    fill: #6F7F00;
-    text-decoration: underline;
-  }
-  body.dark .item-title .item-sublist:not(:hover) {
-    text-decoration: none;
+  body.dark .item-title-sublist:not(:hover) {
+    color: #228844;
+    fill: #228844;
   }
 }
 @media (hover: none) {
-  body.dark .item-title .item-sublist {
-    text-decoration: none;
+  body.dark .item-title-sublist {
+    color: #228844;
+    fill: #228844;
   }
 }
-body.dark .removed-item .item-title {
+body.dark .removed-item .item-title,
+body.dark .removed-item .item-title-frame {
   cursor: inherit;
   color: #FFFFFF;
   fill: #FFFFFF;
@@ -4543,8 +4642,11 @@ body.dark .removed-item .item-header {
 }
 body.dark .list-item .item-header .item-title,
 body.dark .task-item .item-header .item-title,
-body.dark .removed-item .item-header .item-title {
-  max-width: calc(100% - 180px);
+body.dark .removed-item .item-header .item-title,
+body.dark .list-item .item-header .item-title-frame,
+body.dark .task-item .item-header .item-title-frame,
+body.dark .removed-item .item-header .item-title-frame {
+  max-width: 100%;
 }
 body.dark .task-item .progress-bar,
 body.dark .tick-item .progress-bar {
@@ -4638,6 +4740,7 @@ body.dark .task-item .item-attribute .item-tags a {
   flex-direction: row;
   align-items: center;
   justify-content: start;
+  cursor: pointer;
 }
 body.dark .task-item .item-attribute .item-tags a svg {
   width: 1rem;
@@ -4646,22 +4749,14 @@ body.dark .task-item .item-attribute .item-tags a svg {
 }
 @media (hover: hover) {
   body.dark .task-item .item-attribute .item-tags a:not(:hover) {
-    opacity: 0.6;
-    text-decoration: none;
-    color: #FFFFFF;
-    fill: #FFFFFF;
-  }
-  body.dark .task-item .item-attribute .item-tags a:hover {
-    color: #6F7F00;
-    fill: #6F7F00;
+    color: #228844;
+    fill: #228844;
   }
 }
 @media (hover: none) {
   body.dark .task-item .item-attribute .item-tags a {
-    opacity: 0.6;
-    text-decoration: none;
-    color: #FFFFFF;
-    fill: #FFFFFF;
+    color: #228844;
+    fill: #228844;
   }
 }
 body.dark .task-item .item-attribute .item-tags a:not(:last-child) {
@@ -4766,7 +4861,7 @@ body.dark .removed-item .item-information .label {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: calc(100% - 180px);
+  max-width: 100%;
 }
 body.dark .removed-item .item-information .label::after {
   content: ":";
@@ -4776,11 +4871,13 @@ body.dark .removed-item .item-information .value {
   opacity: 0.4;
   float: right;
 }
-body.dark .locale-parallel-on .task-item .item-header .item-title {
-  max-width: calc(100% - 180px);
+body.dark .locale-parallel-on .task-item .item-header .item-title,
+body.dark .locale-parallel-on .task-item .item-header .item-title-frame {
+  max-width: 100%;
 }
-body.dark .locale-parallel-off .task-item .item-header .item-title {
-  max-width: calc(100% - 120px);
+body.dark .locale-parallel-off .task-item .item-header .item-title,
+body.dark .locale-parallel-off .task-item .item-header .item-title-frame {
+  max-width: 100%;
 }
 body.dark .item-operator {
   position: relative;
@@ -4805,7 +4902,8 @@ body.dark .history-list .history-item {
   white-space: nowrap;
   height: 3.8rem;
 }
-body.dark .history-list .history-item .item-title {
+body.dark .history-list .history-item .item-title,
+body.dark .history-list .history-item .item-title-frame {
   max-width: calc(100% - 150px);
 }
 body.dark .history-list .history-item .item-information {
@@ -11754,12 +11852,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return "task-icon";
             };
             Render.todoItem = function (entry, item, displayStyle, progressScaleShowStyle) { return __awaiter(_this, void 0, void 0, function () {
-                var isFirst, onUpdate, onDone, sublist, itemDom, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x;
-                var _y, _z, _0, _1, _2;
+                var isFirst, onUpdate, onDone, sublist, itemDom, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3;
+                var _4, _5, _6, _7, _8, _9, _10;
                 var _this = this;
-                var _3, _4, _5;
-                return __generator(this, function (_6) {
-                    switch (_6.label) {
+                var _11, _12, _13;
+                return __generator(this, function (_14) {
+                    switch (_14.label) {
                         case 0:
                             isFirst = true;
                             onUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -11792,31 +11890,90 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             });
                             _c = ["full" === displayStyle ? [] : Render.itemProgressBar(entry.pass, item)];
                             _d = Render.$div("item-header");
-                            _e = Render.internalLink;
-                            _y = {
+                            if (!("full" === displayStyle)) return [3 /*break*/, 2];
+                            _f = Render.internalLink;
+                            _4 = {
                                 className: "item-title",
                                 href: { pass: entry.pass, todo: item.task, }
                             };
                             return [4 /*yield*/, Resource.loadSvgOrCache(Render.getTodoIcon(entry, item))];
                         case 1:
-                            _f = [
-                                _e.apply(void 0, [(_y.children = [
-                                        _6.sent(),
-                                        Model.isSublistOld(entry.tag) ? Model.decode(OldStorage.Task.getBody(item.task)) :
-                                            null === sublist ? Model.decode(item.task) :
-                                                [
-                                                    Render.internalLink({
-                                                        className: "item-sublist",
-                                                        href: { pass: entry.pass, tag: sublist, },
-                                                        children: Model.decode(sublist)
-                                                    }),
-                                                    Model.decode(OldStorage.Task.getBody(item.task))
-                                                ]
+                            _e = _f.apply(void 0, [(_4.children = [
+                                    _14.sent(),
+                                    Model.isSublistOld(entry.tag) ?
+                                        Model.decode(OldStorage.Task.getBody(item.task)) :
+                                        Model.decode(item.task)
+                                ],
+                                    _4)]);
+                            return [3 /*break*/, 7];
+                        case 2:
+                            _g = Render.$span("item-title-frame");
+                            if (!(Model.isSublistOld(entry.tag) || null === sublist)) return [3 /*break*/, 3];
+                            _h = [];
+                            return [3 /*break*/, 5];
+                        case 3:
+                            _j = Render.internalLink;
+                            _5 = {
+                                className: "item-title-sublist",
+                                href: { pass: entry.pass, tag: sublist, }
+                            };
+                            return [4 /*yield*/, Resource.loadSvgOrCache("folder-icon")];
+                        case 4:
+                            _h = [
+                                _j.apply(void 0, [(_5.children = [
+                                        _14.sent(),
+                                        Model.decode(sublist)
                                     ],
-                                        _y)])
+                                        _5)])
                             ];
-                            _g = Render.$div("item-operator");
-                            _h = [{
+                            _14.label = 5;
+                        case 5:
+                            _k = [
+                                _h
+                            ];
+                            _l = Render.internalLink;
+                            _6 = {
+                                className: "item-title-body",
+                                href: { pass: entry.pass, todo: item.task, }
+                            };
+                            return [4 /*yield*/, Resource.loadSvgOrCache(Render.getTodoIcon(entry, item))];
+                        case 6:
+                            _e = _g.apply(void 0, [_k.concat([
+                                    _l.apply(void 0, [(_6.children = [
+                                            _14.sent(),
+                                            Model.isSublistOld(entry.tag) || null !== sublist ?
+                                                Model.decode(OldStorage.Task.getBody(item.task)) :
+                                                Model.decode(item.task)
+                                        ],
+                                            _6)])
+                                ])]);
+                            _14.label = 7;
+                        case 7:
+                            _m = [
+                                _e
+                            ];
+                            // internalLink
+                            // ({
+                            //     className: "item-title",
+                            //     href: { pass: entry.pass, todo: item.task, },
+                            //     children:
+                            //     [
+                            //         await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
+                            //         Model.isSublistOld(entry.tag) ? Model.decode(OldStorage.Task.getBody(item.task)):
+                            //         null === sublist ? Model.decode(item.task):
+                            //         [
+                            //             internalLink
+                            //             ({
+                            //                 className: "item-sublist",
+                            //                 href: { pass: entry.pass, tag: sublist, },
+                            //                 children: Model.decode(sublist),
+                            //             }),
+                            //             Model.decode(OldStorage.Task.getBody(item.task))
+                            //         ],
+                            //     ]
+                            // }),
+                            _o = Render.$div("item-operator");
+                            _p = [{
                                     tag: "button",
                                     className: item.isDefault ? "default-button main-button" : "main-button",
                                     children: Render.label("Done"),
@@ -11852,17 +12009,37 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.todoTagMenu(entry.pass, item),
                                     Render.todoDeleteMenu(entry.pass, item),
                                 ])];
-                        case 2:
+                        case 8:
                             _c = _c.concat([
-                                _d.apply(void 0, [_f.concat([
-                                        _g.apply(void 0, [_h.concat([
-                                                _6.sent()
+                                _d.apply(void 0, [_m.concat([
+                                        // internalLink
+                                        // ({
+                                        //     className: "item-title",
+                                        //     href: { pass: entry.pass, todo: item.task, },
+                                        //     children:
+                                        //     [
+                                        //         await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
+                                        //         Model.isSublistOld(entry.tag) ? Model.decode(OldStorage.Task.getBody(item.task)):
+                                        //         null === sublist ? Model.decode(item.task):
+                                        //         [
+                                        //             internalLink
+                                        //             ({
+                                        //                 className: "item-sublist",
+                                        //                 href: { pass: entry.pass, tag: sublist, },
+                                        //                 children: Model.decode(sublist),
+                                        //             }),
+                                        //             Model.decode(OldStorage.Task.getBody(item.task))
+                                        //         ],
+                                        //     ]
+                                        // }),
+                                        _o.apply(void 0, [_p.concat([
+                                                _14.sent()
                                             ])])
                                     ])])
                             ]);
-                            if (!("full" === displayStyle)) return [3 /*break*/, 16];
-                            _k = Render.$div("item-attribute");
-                            _l = Render.$div("item-tags");
+                            if (!("full" === displayStyle)) return [3 /*break*/, 22];
+                            _r = Render.$div("item-attribute");
+                            _s = Render.$div("item-tags");
                             return [4 /*yield*/, Promise.all(OldStorage.Tag.getByTodo(entry.pass, item.task).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
                                     var _b;
@@ -11883,20 +12060,20 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         }
                                     });
                                 }); }))];
-                        case 3:
-                            _m = [
-                                _l.apply(void 0, [_6.sent()])
+                        case 9:
+                            _t = [
+                                _s.apply(void 0, [_14.sent()])
                             ];
-                            _o = Render.$div("item-settings");
-                            if (!(null !== ((_3 = OldStorage.TodoSettings.get(entry.pass, item.task).flash) !== null && _3 !== void 0 ? _3 : null))) return [3 /*break*/, 5];
-                            _q = Render.linkButton;
-                            _z = {
+                            _u = Render.$div("item-settings");
+                            if (!(null !== ((_11 = OldStorage.TodoSettings.get(entry.pass, item.task).flash) !== null && _11 !== void 0 ? _11 : null))) return [3 /*break*/, 11];
+                            _w = Render.linkButton;
+                            _7 = {
                                 className: "tag"
                             };
                             return [4 /*yield*/, Resource.loadTagSvgOrCache("@flash")];
-                        case 4:
-                            _p = _q.apply(void 0, [(_z.children = _6.sent(),
-                                    _z.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
+                        case 10:
+                            _v = _w.apply(void 0, [(_7.children = _14.sent(),
+                                    _7.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0:
@@ -11910,24 +12087,24 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             }
                                         });
                                     }); },
-                                    _z)]);
-                            return [3 /*break*/, 6];
-                        case 5:
-                            _p = [];
-                            _6.label = 6;
-                        case 6:
-                            _r = [
-                                _p
+                                    _7)]);
+                            return [3 /*break*/, 12];
+                        case 11:
+                            _v = [];
+                            _14.label = 12;
+                        case 12:
+                            _x = [
+                                _v
                             ];
-                            if (!(null !== ((_4 = OldStorage.TodoSettings.get(entry.pass, item.task).pickup) !== null && _4 !== void 0 ? _4 : null))) return [3 /*break*/, 8];
-                            _t = Render.linkButton;
-                            _0 = {
+                            if (!(null !== ((_12 = OldStorage.TodoSettings.get(entry.pass, item.task).pickup) !== null && _12 !== void 0 ? _12 : null))) return [3 /*break*/, 14];
+                            _z = Render.linkButton;
+                            _8 = {
                                 className: "tag"
                             };
                             return [4 /*yield*/, Resource.loadTagSvgOrCache("@pickup")];
-                        case 7:
-                            _s = _t.apply(void 0, [(_0.children = _6.sent(),
-                                    _0.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
+                        case 13:
+                            _y = _z.apply(void 0, [(_8.children = _14.sent(),
+                                    _8.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0:
@@ -11941,24 +12118,24 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             }
                                         });
                                     }); },
-                                    _0)]);
-                            return [3 /*break*/, 9];
-                        case 8:
-                            _s = [];
-                            _6.label = 9;
-                        case 9:
-                            _r = _r.concat([
-                                _s
+                                    _8)]);
+                            return [3 /*break*/, 15];
+                        case 14:
+                            _y = [];
+                            _14.label = 15;
+                        case 15:
+                            _x = _x.concat([
+                                _y
                             ]);
-                            if (!(null !== ((_5 = OldStorage.TodoSettings.get(entry.pass, item.task).restriction) !== null && _5 !== void 0 ? _5 : null))) return [3 /*break*/, 11];
-                            _v = Render.linkButton;
-                            _1 = {
+                            if (!(null !== ((_13 = OldStorage.TodoSettings.get(entry.pass, item.task).restriction) !== null && _13 !== void 0 ? _13 : null))) return [3 /*break*/, 17];
+                            _1 = Render.linkButton;
+                            _9 = {
                                 className: "tag"
                             };
                             return [4 /*yield*/, Resource.loadTagSvgOrCache("@restriction")];
-                        case 10:
-                            _u = _v.apply(void 0, [(_1.children = _6.sent(),
-                                    _1.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
+                        case 16:
+                            _0 = _1.apply(void 0, [(_9.children = _14.sent(),
+                                    _9.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0:
@@ -11972,24 +12149,24 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             }
                                         });
                                     }); },
-                                    _1)]);
-                            return [3 /*break*/, 12];
-                        case 11:
-                            _u = [];
-                            _6.label = 12;
-                        case 12:
-                            _r = _r.concat([
-                                _u
+                                    _9)]);
+                            return [3 /*break*/, 18];
+                        case 17:
+                            _0 = [];
+                            _14.label = 18;
+                        case 18:
+                            _x = _x.concat([
+                                _0
                             ]);
-                            if (!!OldStorage.TodoSettings.hasAutoTagSettings(entry.pass, item.task)) return [3 /*break*/, 14];
-                            _x = Render.linkButton;
-                            _2 = {
+                            if (!!OldStorage.TodoSettings.hasAutoTagSettings(entry.pass, item.task)) return [3 /*break*/, 20];
+                            _3 = Render.linkButton;
+                            _10 = {
                                 className: "tag"
                             };
                             return [4 /*yield*/, Resource.loadSvgOrCache("setting-icon")];
-                        case 13:
-                            _w = _x.apply(void 0, [(_2.children = _6.sent(),
-                                    _2.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
+                        case 19:
+                            _2 = _3.apply(void 0, [(_10.children = _14.sent(),
+                                    _10.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0:
@@ -12003,27 +12180,27 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             }
                                         });
                                     }); },
-                                    _2)]);
-                            return [3 /*break*/, 15];
-                        case 14:
-                            _w = [];
-                            _6.label = 15;
-                        case 15:
-                            _j = [
-                                _k.apply(void 0, [_m.concat([
-                                        _o.apply(void 0, [_r.concat([
-                                                _w
+                                    _10)]);
+                            return [3 /*break*/, 21];
+                        case 20:
+                            _2 = [];
+                            _14.label = 21;
+                        case 21:
+                            _q = [
+                                _r.apply(void 0, [_t.concat([
+                                        _u.apply(void 0, [_x.concat([
+                                                _2
                                             ])])
                                     ])]),
                                 Render.informationDigest(entry, item, progressScaleShowStyle)
                             ];
-                            return [3 /*break*/, 17];
-                        case 16:
-                            _j = [];
-                            _6.label = 17;
-                        case 17:
+                            return [3 /*break*/, 23];
+                        case 22:
+                            _q = [];
+                            _14.label = 23;
+                        case 23:
                             itemDom = _a.apply(void 0, [_b.apply(void 0, [_c.concat([
-                                        _j
+                                        _q
                                     ])])]);
                             return [2 /*return*/, itemDom];
                     }
@@ -13399,22 +13576,22 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _b = [
                                 _c.sent()
                             ];
-                            return [4 /*yield*/, Render.autoTab(entry)];
+                            return [4 /*yield*/, Render.sublistTab(entry)];
                         case 2:
                             _b = _b.concat([
                                 _c.sent()
                             ]);
-                            return [4 /*yield*/, Render.termTab(entry)];
+                            return [4 /*yield*/, Render.tagTab(entry)];
                         case 3:
                             _b = _b.concat([
                                 _c.sent()
                             ]);
-                            return [4 /*yield*/, Render.tagTab(entry)];
+                            return [4 /*yield*/, Render.autoTab(entry)];
                         case 4:
                             _b = _b.concat([
                                 _c.sent()
                             ]);
-                            return [4 /*yield*/, Render.sublistTab(entry)];
+                            return [4 /*yield*/, Render.termTab(entry)];
                         case 5: return [2 /*return*/, _a.apply(void 0, [_b.concat([
                                     _c.sent()
                                 ])])];
@@ -16244,7 +16421,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Jul 29 2023 00:25:38 GMT+0900 (日本標準時)', buildTimestampTick: 1690557938789, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Jul 29 2023 23:31:55 GMT+0900 (日本標準時)', buildTimestampTick: 1690641115668, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

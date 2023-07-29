@@ -4266,6 +4266,7 @@ export module CyclicToDo
                     "full" === displayStyle ? []: itemProgressBar(entry.pass, item),
                     $div("item-header")
                     ([
+                        "full" === displayStyle ?
                         internalLink
                         ({
                             className: "item-title",
@@ -4273,19 +4274,59 @@ export module CyclicToDo
                             children:
                             [
                                 await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
-                                Model.isSublistOld(entry.tag) ? Model.decode(OldStorage.Task.getBody(item.task)):
-                                null === sublist ? Model.decode(item.task):
-                                [
-                                    internalLink
-                                    ({
-                                        className: "item-sublist",
-                                        href: { pass: entry.pass, tag: sublist, },
-                                        children: Model.decode(sublist)
-                                    }),
-                                    Model.decode(OldStorage.Task.getBody(item.task))
-                                ],
+                                Model.isSublistOld(entry.tag) ?
+                                    Model.decode(OldStorage.Task.getBody(item.task)):
+                                    Model.decode(item.task)
                             ]
-                        }),
+                        }):
+                        $span("item-title-frame")
+                        ([
+                            Model.isSublistOld(entry.tag) || null === sublist ? []:
+                            [
+                                internalLink
+                                ({
+                                    className: "item-title-sublist",
+                                    href: { pass: entry.pass, tag: sublist, },
+                                    children:
+                                    [
+                                        await Resource.loadSvgOrCache("folder-icon"),
+                                        Model.decode(sublist),
+                                    ],
+                                }),
+                            ],
+                            internalLink
+                            ({
+                                className: "item-title-body",
+                                href: { pass: entry.pass, todo: item.task, },
+                                children:
+                                [
+                                    await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
+                                    Model.isSublistOld(entry.tag) || null !== sublist ?
+                                        Model.decode(OldStorage.Task.getBody(item.task)):
+                                        Model.decode(item.task)
+                                ]
+                            }),
+                        ]),
+                        // internalLink
+                        // ({
+                        //     className: "item-title",
+                        //     href: { pass: entry.pass, todo: item.task, },
+                        //     children:
+                        //     [
+                        //         await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
+                        //         Model.isSublistOld(entry.tag) ? Model.decode(OldStorage.Task.getBody(item.task)):
+                        //         null === sublist ? Model.decode(item.task):
+                        //         [
+                        //             internalLink
+                        //             ({
+                        //                 className: "item-sublist",
+                        //                 href: { pass: entry.pass, tag: sublist, },
+                        //                 children: Model.decode(sublist),
+                        //             }),
+                        //             Model.decode(OldStorage.Task.getBody(item.task))
+                        //         ],
+                        //     ]
+                        // }),
                         $div("item-operator")
                         ([
                             {
@@ -5562,10 +5603,10 @@ export module CyclicToDo
         export const bottomTabs = async (entry: ToDoTagEntryOld) => $div("bottom-tabs locale-parallel-off")
         ([
             await homeTab(entry),
+            await sublistTab(entry),
+            await tagTab(entry),
             await autoTab(entry),
             await termTab(entry),
-            await tagTab(entry),
-            await sublistTab(entry),
         ]);
         export const listScreenFooter = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) => $div("button-list")
         ([
