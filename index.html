@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sun Jul 30 2023 15:13:13 GMT+0900 (日本標準時)
+    build at: Mon Jul 31 2023 01:36:03 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -1532,7 +1532,6 @@ body.light .long-button {
 }
 body.light .menu-popup {
   position: absolute;
-  top: calc(10px + 1.5rem);
   z-index: 99999;
   max-height: calc(100vh - 15rem);
   overflow: hidden;
@@ -4119,7 +4118,6 @@ body.dark .long-button {
 }
 body.dark .menu-popup {
   position: absolute;
-  top: calc(10px + 1.5rem);
   z-index: 99999;
   max-height: calc(100vh - 15rem);
   overflow: hidden;
@@ -7939,7 +7937,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 Tag.getByTodo = function (pass, todo) {
                     return Render.getTagList({ auto: true, term: true, })
                         .concat(Tag.get(pass))
-                        .concat(["@unoverall", "@untagged"])
+                        .concat(["@untagged", "@unoverall"])
                         .filter(function (tag) { return 0 < TagMember.get(pass, tag).filter(function (i) { return todo === i; }).length; })
                         .sort(minamo_js_1.minamo.core.comparer.make(function (tag) {
                         return Model.isSystemTagOld(tag) ?
@@ -7950,7 +7948,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 Tag.getByTodoRaw = function (pass, todo) {
                     return Render.getTagList({ overall: true, auto: true, term: true, })
                         .concat(Tag.get(pass))
-                        .concat(["@unoverall", "@untagged"])
+                        .concat(["@untagged", "@unoverall"])
                         .filter(function (tag) { return 0 < TagMember.getRaw(pass, tag).filter(function (i) { return todo === i; }).length; });
                 };
                 Tag.rename = function (pass, oldTag, newTag) {
@@ -8631,14 +8629,14 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         getByTask: function (task) {
                             return ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"].map(function (i) { return _this.tag.get(i); })
                                 .concat(_this.tag.getList())
-                                .concat(["@unoverall", "@untagged"].map(function (i) { return _this.tag.get(i); }))
+                                .concat(["@untagged", "@unoverall",].map(function (i) { return _this.tag.get(i); }))
                                 .filter(function (tag) { return 0 < tag.getMember().filter(function (i) { return task.getName() === i.getName(); }).length; })
                                 .sort(minamo_js_1.minamo.core.comparer.make(function (tag) { return tag.isSublist() ? 0 : 1; }));
                         },
                         getByTaskRaw: function (task) {
                             return ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"].map(function (i) { return _this.tag.get(i); })
                                 .concat(_this.tag.getList())
-                                .concat(["@unoverall", "@untagged"].map(function (i) { return _this.tag.get(i); }))
+                                .concat(["@untagged", "@unoverall",].map(function (i) { return _this.tag.get(i); }))
                                 .filter(function (tag) { return 0 < tag.getRawMember().filter(function (i) { return task.getName() === i.getName(); }).length; });
                         },
                     };
@@ -11646,7 +11644,14 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 case 2:
                                                     popup.classList.add("show");
                                                     buttonRect = button.getBoundingClientRect();
-                                                    popup.style.top = "" + buttonRect.bottom;
+                                                    if (buttonRect.top < window.innerHeight * (2 / 3)) {
+                                                        popup.style.top = "" + buttonRect.bottom;
+                                                        popup.style.removeProperty("bottom");
+                                                    }
+                                                    else {
+                                                        popup.style.removeProperty("top");
+                                                        popup.style.bottom = "" + (window.innerHeight - buttonRect.top);
+                                                    }
                                                     popup.style.right = "" + (window.innerWidth - buttonRect.right);
                                                     cover = Render.screenCover({
                                                         // parent: popup.parentElement,
@@ -12877,10 +12882,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                     if (params.un) {
                         if (params.tag && !params.sublist) {
-                            result.push("@unoverall", "@untagged");
+                            result.push("@untagged", "@unoverall");
                         }
                         else {
-                            result.push("@unoverall", "@:@root", "@untagged");
+                            result.push("@:@root", "@untagged", "@unoverall");
                         }
                     }
                     return result;
@@ -13672,12 +13677,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 var _this = this;
                 return __generator(this, function (_a) {
                     return [2 /*return*/, Render.$div("button-list")([
-                            "@overall" !== entry.tag ?
-                                Render.internalLink({
-                                    href: { pass: entry.pass, tag: "@overall", },
-                                    children: Render.$tag("button")(list.length <= 0 ? "main-button long-button" : "default-button main-button long-button")(Render.label("Back to Home")),
-                                }) :
-                                [],
                             {
                                 tag: "button",
                                 className: list.length <= 0 ? "default-button main-button long-button" : "main-button long-button",
@@ -14243,10 +14242,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _d.body = [
                                 _b,
                                 Render.$div("button-list")([
-                                    Render.internalLink({
-                                        href: { pass: pass, tag: "@overall", },
-                                        children: Render.$tag("button")("default-button main-button long-button")(Render.label("Back to Home")),
-                                    }),
                                     0 < list.length ?
                                         {
                                             tag: "button",
@@ -16501,7 +16496,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Jul 30 2023 15:13:13 GMT+0900 (日本標準時)', buildTimestampTick: 1690697593270, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Jul 31 2023 01:36:03 GMT+0900 (日本標準時)', buildTimestampTick: 1690734963666, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

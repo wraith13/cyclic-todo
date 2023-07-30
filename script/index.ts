@@ -601,7 +601,7 @@ export module CyclicToDo
             export const getByTodo = (pass: string, todo: string) =>
                 Render.getTagList({ auto: true, term: true, })
                     .concat(get(pass))
-                    .concat(["@unoverall", "@untagged"])
+                    .concat(["@untagged", "@unoverall"])
                     .filter(tag => 0 < TagMember.get(pass, tag).filter(i => todo === i).length)
                     .sort
                     (
@@ -616,7 +616,7 @@ export module CyclicToDo
             export const getByTodoRaw = (pass: string, todo: string) =>
                 Render.getTagList({ overall: true, auto: true, term: true, })
                     .concat(get(pass))
-                    .concat(["@unoverall", "@untagged"])
+                    .concat(["@untagged", "@unoverall"])
                     .filter(tag => 0 < TagMember.getRaw(pass, tag).filter(i => todo === i).length);
             export const rename = (pass: string, oldTag: string, newTag: string) =>
             {
@@ -1371,13 +1371,13 @@ export module CyclicToDo
                 getByTask: (task: Task) =>
                     ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"].map(i => this.tag.get(i))
                     .concat(this.tag.getList())
-                    .concat(["@unoverall", "@untagged"].map(i => this.tag.get(i)))
+                    .concat([ "@untagged", "@unoverall", ].map(i => this.tag.get(i)))
                     .filter(tag => 0 < tag.getMember().filter(i => task.getName() === i.getName()).length)
                     .sort(minamo.core.comparer.make(tag => tag.isSublist() ? 0: 1)),
                 getByTaskRaw: (task: Task) =>
                     ["@overall", "@flash", "@pickup", "@restriction", "@short-term", "@medium-term", "@long-term", "@irregular-term"].map(i => this.tag.get(i))
                     .concat(this.tag.getList())
-                    .concat(["@unoverall", "@untagged"].map(i => this.tag.get(i)))
+                    .concat([ "@untagged", "@unoverall",].map(i => this.tag.get(i)))
                     .filter(tag => 0 < tag.getRawMember().filter(i => task.getName() === i.getName()).length),
             };
             tagSettings =
@@ -3975,7 +3975,16 @@ export module CyclicToDo
                     }
                     popup.classList.add("show");
                     const buttonRect = button.getBoundingClientRect();
-                    popup.style.top = `${buttonRect.bottom}`;
+                    if (buttonRect.top < window.innerHeight *(2 /3))
+                    {
+                        popup.style.top = `${buttonRect.bottom}`;
+                        popup.style.removeProperty("bottom");
+                    }
+                    else
+                    {
+                        popup.style.removeProperty("top");
+                        popup.style.bottom = `${window.innerHeight -buttonRect.top}`;
+                    }
                     popup.style.right = `${window.innerWidth -buttonRect.right}`;
                     cover = screenCover
                     ({
@@ -4959,11 +4968,11 @@ export module CyclicToDo
                 {
                     if (params.tag && ! params.sublist)
                     {
-                        result.push("@unoverall", "@untagged");
+                        result.push("@untagged", "@unoverall");
                     }
                     else
                     {
-                        result.push("@unoverall", "@:@root", "@untagged");
+                        result.push("@:@root", "@untagged", "@unoverall");
                     }
                 }
                 return result;
@@ -5618,13 +5627,6 @@ export module CyclicToDo
         ]);
         export const listScreenFooter = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) => $div("button-list")
         ([
-            "@overall" !== entry.tag ?
-                internalLink
-                ({
-                    href: { pass: entry.pass, tag: "@overall", },
-                    children: $tag("button")(list.length <= 0 ? "main-button long-button": "default-button main-button long-button")(label("Back to Home")),
-                }):
-                [],
             {
                 tag: "button",
                 className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
@@ -6019,11 +6021,6 @@ export module CyclicToDo
                 $div("button-list")(label("Recycle Bin is empty.")),
                 $div("button-list")
                 ([
-                    internalLink
-                    ({
-                        href: { pass, tag: "@overall", },
-                        children: $tag("button")("default-button main-button long-button")(label("Back to Home")),
-                    }),
                     0 < list.length ?
                         {
                             tag: "button",
