@@ -3974,14 +3974,20 @@ export module CyclicToDo
                         minamo.dom.replaceChildren(popup, await menu());
                     }
                     popup.classList.add("show");
+                    const buttonRect = button.getBoundingClientRect();
+                    popup.style.top = `${buttonRect.bottom}`;
+                    popup.style.right = `${window.innerWidth -buttonRect.right}`;
                     cover = screenCover
                     ({
-                        parent: popup.parentElement,
+                        // parent: popup.parentElement,
+                        children: popup,
                         onclick: close,
                     });
+                    cover
                 },
             });
-            return [ button, popup, ];
+            // return [ button, popup, ];
+            return button;
         };
         export const menuItem = (children: minamo.dom.Source, onclick?: (event: MouseEvent | TouchEvent) => unknown, className?: string) =>
         ({
@@ -4814,12 +4820,14 @@ export module CyclicToDo
                     popup.style.left = `${Math.max(segment.offsetLeft, 4)}px`;
                     cover = screenCover
                     ({
-                        parent: popup.parentElement,
+                        // parent: popup.parentElement,
+                        children: popup,
                         onclick: close,
                     });
                 },
             });
-            return [ segment, popup, ];
+            // return [ segment, popup, ];
+            return segment;
         };
         export const screenHeaderHomeSegment = async (): Promise<HeaderSegmentSource> =>
         ({
@@ -6900,6 +6908,7 @@ export module CyclicToDo
         export let updateWindow: (event: UpdateWindowEventEype) => unknown;
         let updateWindowTimer: number;
         let updateHighResolutionTimer: number;
+        let previousScrollTop: number = 0;
         export const getHeaderElement = () => document.getElementById("screen-header") as HTMLDivElement;
         export const showWindow = async (screen: ScreenSource, updateWindow?: (event: UpdateWindowEventEype) => unknown) =>
         {
@@ -6937,10 +6946,19 @@ export module CyclicToDo
                     "scroll",
                     () =>
                     {
-                        if ((document.getElementsByClassName("screen-body")[0]?.scrollTop ?? 0) <= 0)
+                        const screenBody = minamo.core.existsOrThrow(document.getElementsByClassName("screen-body")[0]);
+                        const scrollMax = screenBody.scrollHeight -screenBody.clientHeight;
+                        const scrollTop = Math.min(Math.max(screenBody.scrollTop, 0), scrollMax);
+                        if (scrollTop <= 0)
                         {
                             Render.updateWindow?.("scroll");
                         }
+                        const isNearTop = scrollTop < 40;
+                        const isNearBottom = (scrollMax - 58) < scrollTop;
+                        const isNearTopOrBottom = isNearTop || isNearBottom;
+                        const isToDownScroll = previousScrollTop < scrollTop;
+                        minamo.dom.toggleCSSClass(minamo.core.existsOrThrow(document.getElementById("screen")), "immersive", ! isNearTopOrBottom && isToDownScroll);
+                        previousScrollTop = scrollTop;
                     }
                 );
             }

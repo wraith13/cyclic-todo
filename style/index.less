@@ -962,7 +962,7 @@ button
     }
     position: absolute;
     top: calc(10px + 1.5rem);
-    right: 0.0rem;
+    // right: 0.0rem;
     z-index: 99999;
     max-height: calc(100vh - 15rem);
     overflow: hidden;
@@ -1911,6 +1911,43 @@ button
         overflow-x: hidden;
         overflow-y: auto;
         flex-grow: 1;
+        padding-top: 40px;
+        padding-bottom: 58px;
+        @media (max-width:780px)
+        {
+            padding-bottom: 82px;
+        }
+    }
+    & > #screen-header
+    {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        transition: margin-top 500ms;
+    }
+    & > #screen-footer
+    {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
+        transition: margin-bottom 500ms;
+    }
+}
+.screen.immersive
+{
+    & > #screen-header
+    {
+        margin-top: -40px;
+    }
+    & > #screen-footer
+    {
+        margin-bottom: -58px;
+        @media (max-width:780px)
+        {
+            margin-bottom: -82px;
+        }
     }
 }
 .todo-screen
