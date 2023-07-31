@@ -4489,7 +4489,11 @@ export module CyclicToDo
                 ({
                     className: "item-title",
                     href: { pass: entry.pass, todo: item.task, },
-                    children: Model.decode(item.task)
+                    children:
+                    [
+                        await Resource.loadSvgOrCache("tick-icon"),
+                        Model.decode(item.task)
+                    ],
                 }),
                 monospace(Domain.dateStringFromTick(item.tick)),
             ]),
