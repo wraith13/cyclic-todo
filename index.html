@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Tue Aug 01 2023 10:51:49 GMT+0900 (日本標準時)
+    build at: Tue Aug 01 2023 21:27:45 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -766,20 +766,6 @@ body.light #foundation {
 }
 body.light .monospace {
   font-family: monospace;
-}
-body.light .locale-parallel-on .locale-map {
-  display: none;
-}
-body.light .locale-parallel-on .locale-parallel {
-  display: initial;
-}
-body.light .locale-parallel-off .locale-map,
-body.light .menu-popup .locale-map {
-  display: initial;
-}
-body.light .locale-parallel-off .locale-parallel,
-body.light .menu-popup .locale-parallel {
-  display: none;
 }
 body.light h1 {
   z-index: 100;
@@ -2313,12 +2299,8 @@ body.light .removed-item .item-information .value {
   opacity: 0.4;
   float: right;
 }
-body.light .locale-parallel-on .task-item .item-header .item-title,
-body.light .locale-parallel-on .task-item .item-header .item-title-frame {
-  max-width: 100%;
-}
-body.light .locale-parallel-off .task-item .item-header .item-title,
-body.light .locale-parallel-off .task-item .item-header .item-title-frame {
+body.light .task-item .item-header .item-title,
+body.light .task-item .item-header .item-title-frame {
   max-width: 100%;
 }
 body.light .item-operator {
@@ -3352,20 +3334,6 @@ body.dark #foundation {
 }
 body.dark .monospace {
   font-family: monospace;
-}
-body.dark .locale-parallel-on .locale-map {
-  display: none;
-}
-body.dark .locale-parallel-on .locale-parallel {
-  display: initial;
-}
-body.dark .locale-parallel-off .locale-map,
-body.dark .menu-popup .locale-map {
-  display: initial;
-}
-body.dark .locale-parallel-off .locale-parallel,
-body.dark .menu-popup .locale-parallel {
-  display: none;
 }
 body.dark h1 {
   z-index: 100;
@@ -4899,12 +4867,8 @@ body.dark .removed-item .item-information .value {
   opacity: 0.4;
   float: right;
 }
-body.dark .locale-parallel-on .task-item .item-header .item-title,
-body.dark .locale-parallel-on .task-item .item-header .item-title-frame {
-  max-width: 100%;
-}
-body.dark .locale-parallel-off .task-item .item-header .item-title,
-body.dark .locale-parallel-off .task-item .item-header .item-title-frame {
+body.dark .task-item .item-header .item-title,
+body.dark .task-item .item-header .item-title-frame {
   max-width: 100%;
 }
 body.dark .item-operator {
@@ -7653,12 +7617,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 masterKey = key;
             }
         };
-        locale_1.getPrimary = function (key) { return locale_1.master[masterKey][key]; };
-        locale_1.getSecondary = function (key) { return locale_1.master[locale_1.locales.filter(function (locale) { return masterKey !== locale; })[0]][key]; };
-        locale_1.string = function (key) { return locale_1.getPrimary(key) || key; };
+        locale_1.string = function (key) { return locale_1.master[masterKey][key] || key; };
         locale_1.map = function (key) { return locale_1.string(key); };
         locale_1.immutable = function (key) { return key; };
-        locale_1.parallel = function (key) { return locale_1.getPrimary(key) + " / " + locale_1.getSecondary(key); };
     })(locale = exports.locale || (exports.locale = {}));
     var Calculate;
     (function (Calculate) {
@@ -9846,10 +9807,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 (_a = progressBarPadDiv === null || progressBarPadDiv === void 0 ? void 0 : progressBarPadDiv.setAttribute) === null || _a === void 0 ? void 0 : _a.call(progressBarPadDiv, "style", Render.progressPadStyle(item.progress));
             };
             Render.labelSpan = Render.$span("label");
-            Render.label = function (text) { return Render.labelSpan([
-                Render.$span("locale-parallel")(locale.parallel(text)),
-                Render.$span("locale-map")(locale.map(text)),
-            ]); };
+            Render.label = function (text) { return Render.labelSpan(locale.map(text)); };
             Render.monospace = function (classNameOrValue, labelOrValue, valueOrNothing) {
                 return "string" !== typeof classNameOrValue || undefined === labelOrValue ?
                     Render.$span("value monospace")(classNameOrValue) :
@@ -9858,7 +9816,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         Render.$span("value monospace")(valueOrNothing !== null && valueOrNothing !== void 0 ? valueOrNothing : labelOrValue),
                     ]);
             };
-            Render.messagePanel = function (text) { return Render.$div("message-panel locale-parallel-off")(text); };
+            Render.messagePanel = function (text) { return Render.$div("message-panel")(text); };
             Render.messageList = function (source) { return Render.$div("message-list")(source); };
             Render.systemPrompt = function (message, _default) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
@@ -11654,7 +11612,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 var _a;
                 var dom = Render.$make(HTMLDivElement)({
                     tag: "div",
-                    className: "popup locale-parallel-off " + ((_a = data.className) !== null && _a !== void 0 ? _a : ""),
+                    className: "popup " + ((_a = data.className) !== null && _a !== void 0 ? _a : ""),
                     children: data.children,
                     onclick: function (event) { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
@@ -13765,7 +13723,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
-                            _a = Render.$div("bottom-tabs locale-parallel-off");
+                            _a = Render.$div("bottom-tabs");
                             return [4 /*yield*/, Render.homeTab(entry)];
                         case 1:
                             _b = [
@@ -15474,7 +15432,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 _a.apply(void 0, [[_h.sent(), Render.$span("logo-text")(CyclicToDo.applicationTitle)]]),
                                 Render.$div({ style: "text-align: center; padding: 0.5rem;", })("🚧 This static web application is under development. / この Static Web アプリは開発中です。")
                             ];
-                            _c = Render.$div("button-line locale-parallel-on");
+                            _c = Render.$div("button-line");
                             _d = [{
                                     tag: "button",
                                     className: OldStorage.Pass.get().length <= 0 ? "default-button main-button long-button" : "main-button long-button",
@@ -15846,20 +15804,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 var bottomTabsHeight = minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen-footer")).clientHeight;
                 var minColumns = 1 + Math.floor(window.innerWidth / 780);
                 var maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 450)));
-                var FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
-                var border = FontRemUnit * 26 + 10;
-                Array.from(document.getElementsByClassName("menu-popup")).forEach(function (header) {
-                    header.classList.toggle("locale-parallel-on", 2 <= minColumns);
-                    header.classList.toggle("locale-parallel-off", minColumns < 2);
-                });
-                [document.getElementById("screen-toast")].forEach(function (header) {
-                    header.classList.toggle("locale-parallel-on", 2 <= minColumns);
-                    header.classList.toggle("locale-parallel-off", minColumns < 2);
-                });
-                Array.from(document.getElementsByClassName("button-list")).forEach(function (header) {
-                    header.classList.toggle("locale-parallel-on", true);
-                    header.classList.toggle("locale-parallel-off", false);
-                });
                 Array.from(document.getElementsByClassName("column-flex-list")).forEach(function (list) {
                     var length = list.childNodes.length;
                     list.classList.forEach(function (i) {
@@ -15877,11 +15821,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         var row = Math.max(Math.ceil(length / columns), Math.min(length, Math.floor(height / itemHeight)));
                         list.style.height = row * itemHeight + "px";
                         list.classList.add("max-column-" + columns);
-                    }
-                    if (0 < length) {
-                        var itemWidth = Math.min(window.innerWidth, list.childNodes[0].offsetWidth);
-                        list.classList.toggle("locale-parallel-on", border < itemWidth);
-                        list.classList.toggle("locale-parallel-off", itemWidth <= border);
                     }
                     list.classList.toggle("empty-list", length <= 0);
                 });
@@ -15901,9 +15840,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             Math.min(maxColumns, length) :
                             Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         list.classList.add("max-column-" + columns);
-                        var itemWidth = Math.min(window.innerWidth, list.childNodes[0].offsetWidth);
-                        list.classList.toggle("locale-parallel-on", border < itemWidth);
-                        list.classList.toggle("locale-parallel-off", itemWidth <= border);
                     }
                     list.classList.toggle("empty-list", length <= 0);
                 });
@@ -16641,7 +16577,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Aug 01 2023 10:51:49 GMT+0900 (日本標準時)', buildTimestampTick: 1690854709325, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Aug 01 2023 21:27:45 GMT+0900 (日本標準時)', buildTimestampTick: 1690892865402, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

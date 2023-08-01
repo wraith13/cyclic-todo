@@ -60,12 +60,9 @@ export module locale
             masterKey = key;
         }
     };
-    export const getPrimary = (key : LocaleKeyType) => master[masterKey][key];
-    export const getSecondary = (key : LocaleKeyType) => master[locales.filter(locale => masterKey !== locale)[0]][key];
-    export const string = (key : string) : string => getPrimary(key as LocaleKeyType) || key;
+    export const string = (key : string) : string => master[masterKey][key as LocaleKeyType] || key;
     export const map = (key : LocaleKeyType) : string => string(key);
     export const immutable = (key : string) : string => key;
-    export const parallel = (key : LocaleKeyType) : string => `${getPrimary(key)} / ${getSecondary(key)}`;
 }
 export module Calculate
 {
@@ -2558,11 +2555,7 @@ export module CyclicToDo
             progressBarPadDiv?.setAttribute?.("style", progressPadStyle(item.progress));
         };
         export const labelSpan = $span("label");
-        export const label = (text: locale.LocaleKeyType) => labelSpan
-        ([
-            $span("locale-parallel")(locale.parallel(text)),
-            $span("locale-map")(locale.map(text)),
-        ]);
+        export const label = (text: locale.LocaleKeyType) => labelSpan(locale.map(text));
         export const monospace = (classNameOrValue: string | minamo.dom.Source, labelOrValue?: minamo.dom.Source, valueOrNothing?: minamo.dom.Source) =>
             "string" !== typeof classNameOrValue || undefined === labelOrValue ?
                 $span("value monospace")(classNameOrValue):
@@ -2571,7 +2564,7 @@ export module CyclicToDo
                     undefined !== valueOrNothing ? labelOrValue: [],
                     $span("value monospace")(valueOrNothing ?? labelOrValue),
                 ]);
-        export const messagePanel = (text: minamo.dom.Source) => $div("message-panel locale-parallel-off")(text);
+        export const messagePanel = (text: minamo.dom.Source) => $div("message-panel")(text);
         export const messageList = (source: minamo.dom.Source) => $div("message-list")(source);
         export const systemPrompt = async (message?: string, _default?: string): Promise<string | null> =>
         {
@@ -3973,7 +3966,7 @@ export module CyclicToDo
             const dom = $make(HTMLDivElement)
             ({
                 tag: "div",
-                className: `popup locale-parallel-off ${data.className ?? ""}`,
+                className: `popup ${data.className ?? ""}`,
                 children: data.children,
                 onclick: async (event: MouseEvent) =>
                 {
@@ -5693,7 +5686,7 @@ export module CyclicToDo
                 )
             )
         );
-        export const bottomTabs = async (entry: ToDoTagEntryOld) => $div("bottom-tabs locale-parallel-off")
+        export const bottomTabs = async (entry: ToDoTagEntryOld) => $div("bottom-tabs")
         ([
             await homeTab(entry),
             await sublistTab(entry),
@@ -6881,7 +6874,7 @@ export module CyclicToDo
                 $div("logo")([await applicationIcon(),$span("logo-text")(applicationTitle)]),
                 $div({ style: "text-align: center; padding: 0.5rem;", })
                     ("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
-                $div("button-line locale-parallel-on")
+                $div("button-line")
                 ([
                     {
                         tag: "button",
@@ -7211,32 +7204,6 @@ export module CyclicToDo
             const bottomTabsHeight = minamo.core.existsOrThrow(document.getElementById("screen-footer")).clientHeight;
             const minColumns = 1 +Math.floor(window.innerWidth / 780);
             const maxColumns = Math.min(12, Math.max(minColumns, Math.floor(window.innerWidth / 450)));
-            const FontRemUnit = parseFloat(getComputedStyle(document.documentElement).fontSize);
-            const border = FontRemUnit *26 +10;
-            (Array.from(document.getElementsByClassName("menu-popup")) as HTMLDivElement[]).forEach
-            (
-                header =>
-                {
-                    header.classList.toggle("locale-parallel-on", 2 <= minColumns);
-                    header.classList.toggle("locale-parallel-off", minColumns < 2);
-                }
-            );
-            [document.getElementById("screen-toast") as HTMLDivElement].forEach
-            (
-                header =>
-                {
-                    header.classList.toggle("locale-parallel-on", 2 <= minColumns);
-                    header.classList.toggle("locale-parallel-off", minColumns < 2);
-                }
-            );
-            (Array.from(document.getElementsByClassName("button-list")) as HTMLDivElement[]).forEach
-            (
-                header =>
-                {
-                    header.classList.toggle("locale-parallel-on", true);
-                    header.classList.toggle("locale-parallel-off", false);
-                }
-            );
             (Array.from(document.getElementsByClassName("column-flex-list")) as HTMLDivElement[]).forEach
             (
                 list =>
@@ -7264,12 +7231,6 @@ export module CyclicToDo
                         const row = Math.max(Math.ceil(length /columns), Math.min(length, Math.floor(height / itemHeight)));
                         list.style.height = `${row *itemHeight}px`;
                         list.classList.add(`max-column-${columns}`);
-                    }
-                    if (0 < length)
-                    {
-                        const itemWidth = Math.min(window.innerWidth, (list.childNodes[0] as HTMLElement).offsetWidth);
-                        list.classList.toggle("locale-parallel-on", border < itemWidth);
-                        list.classList.toggle("locale-parallel-off", itemWidth <= border);
                     }
                     list.classList.toggle("empty-list", length <= 0);
                 }
@@ -7299,9 +7260,6 @@ export module CyclicToDo
                             Math.min(maxColumns, length):
                             Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         list.classList.add(`max-column-${columns}`);
-                        const itemWidth = Math.min(window.innerWidth, (list.childNodes[0] as HTMLElement).offsetWidth);
-                        list.classList.toggle("locale-parallel-on", border < itemWidth);
-                        list.classList.toggle("locale-parallel-off", itemWidth <= border);
                     }
                     list.classList.toggle("empty-list", length <= 0);
                 }
