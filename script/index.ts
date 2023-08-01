@@ -131,9 +131,13 @@ export module CyclicToDo
     export type FlashStyleType = "gradation" | "breath" | "solid" | "none";
     export type FlashStyleTypeLocale = `flashStyle.${FlashStyleType}`
     export const getFlashStyleLocale = (key: FlashStyleType) => <FlashStyleTypeLocale>`flashStyle.${key}`;
+    export type UiStyleType = "smart" | "fixed";
+    export type UiStyleTypeLocale = `uiStyle.${UiStyleType}`
+    export const getUiStyleLocale = (key: UiStyleType) => <UiStyleTypeLocale>`uiStyle.${key}`;
     export interface SystemSettings extends minamo.core.JsonableObject
     {
         theme?: ThemeType;
+        uiStyle?: UiStyleType;
         flashStyle?: FlashStyleType;
         locale?: locale.LocaleType;
     }
@@ -3078,9 +3082,77 @@ export module CyclicToDo
                 }
             );
         };
+        export const uiStyleSettingsPopup = async (settings: SystemSettings = Storage.SystemSettings.get()): Promise<boolean> =>
+        {
+            const defaultValue = "smart";
+            const init = settings.uiStyle ?? defaultValue;
+            return await new Promise
+            (
+                async resolve =>
+                {
+                    let result = false;
+                    const checkButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
+                    const checkButtonListUpdate = async () => minamo.dom.replaceChildren
+                    (
+                        checkButtonList,
+                        [
+                            await Promise.all
+                            (
+                                (<UiStyleType[]>[ "smart", "fixed", ]).map
+                                (
+                                    async (key: UiStyleType) =>
+                                    ({
+                                        tag: "button",
+                                        className: `check-button ${key === (settings.uiStyle ?? defaultValue) ? "checked": ""}`,
+                                        children:
+                                        [
+                                            await Resource.loadSvgOrCache("check-icon"),
+                                            $span("")(label(getUiStyleLocale(key))),
+                                        ],
+                                        onclick: async () =>
+                                        {
+                                            if (key !== (settings.uiStyle ?? defaultValue))
+                                            {
+                                                settings.uiStyle = key;
+                                                Storage.SystemSettings.set(settings);
+                                                await checkButtonListUpdate();
+                                                updateUiStyle();
+                                                result = init !== key;
+                                            }
+                                        }
+                                    })
+                                )
+                            )
+                        ]
+                    );
+                    await checkButtonListUpdate();
+                    const ui = popup
+                    ({
+                        // className: "add-remove-tags-popup",
+                        children:
+                        [
+                            $tag("h2")("")(label("UI style setting")),
+                            checkButtonList,
+                            $div("popup-operator")
+                            ([{
+                                tag: "button",
+                                className: "default-button",
+                                children: label("Close"),
+                                onclick: () =>
+                                {
+                                    ui.close();
+                                },
+                            }])
+                        ],
+                        onClose: async () => resolve(result),
+                    });
+                }
+            );
+        };
         export const flashStyleSettingsPopup = async (settings: SystemSettings = Storage.SystemSettings.get()): Promise<boolean> =>
         {
-            const init = settings.flashStyle ?? "breath";
+            const defaultValue = "breath";
+            const init = settings.flashStyle ?? defaultValue;
             return await new Promise
             (
                 async resolve =>
@@ -3098,7 +3170,7 @@ export module CyclicToDo
                                     async (key: FlashStyleType) =>
                                     ({
                                         tag: "button",
-                                        className: `check-button ${key === (settings.flashStyle ?? "breath") ? "checked": ""}`,
+                                        className: `check-button ${key === (settings.flashStyle ?? defaultValue) ? "checked": ""}`,
                                         children:
                                         [
                                             await Resource.loadSvgOrCache("check-icon"),
@@ -3106,7 +3178,7 @@ export module CyclicToDo
                                         ],
                                         onclick: async () =>
                                         {
-                                            if (key !== (settings.flashStyle ?? "auto"))
+                                            if (key !== (settings.flashStyle ?? defaultValue))
                                             {
                                                 settings.flashStyle = key;
                                                 Storage.SystemSettings.set(settings);
@@ -6717,6 +6789,17 @@ export module CyclicToDo
             ),
             menuItem
             (
+                label("UI style setting"),
+                async () =>
+                {
+                    if (await uiStyleSettingsPopup())
+                    {
+                        // updateStyle();
+                    }
+                }
+            ),
+            menuItem
+            (
                 label("Flash style setting"),
                 async () =>
                 {
@@ -6954,11 +7037,17 @@ export module CyclicToDo
                         {
                             Render.updateWindow?.("scroll");
                         }
-                        const isNearTop = scrollTop < 40;
-                        const isNearBottom = (scrollMax - 58) < scrollTop;
-                        const isNearTopOrBottom = isNearTop || isNearBottom;
-                        const isToDownScroll = previousScrollTop < scrollTop;
-                        minamo.dom.toggleCSSClass(minamo.core.existsOrThrow(document.getElementById("screen")), "immersive", ! isNearTopOrBottom && isToDownScroll);
+                        const uiStyle = Storage.SystemSettings.get().uiStyle ?? "smart";
+                        let isImmersive = false;
+                        if ("smart" === uiStyle)
+                        {
+                            const isNearTop = scrollTop < 40;
+                            const isNearBottom = (scrollMax - 58) < scrollTop;
+                            const isNearTopOrBottom = isNearTop || isNearBottom;
+                            const isToDownScroll = previousScrollTop < scrollTop;
+                            isImmersive = ! isNearTopOrBottom && isToDownScroll;
+                        }
+                        minamo.dom.toggleCSSClass(minamo.core.existsOrThrow(document.getElementById("screen")), "immersive", isImmersive);
                         previousScrollTop = scrollTop;
                     }
                 );
@@ -7704,6 +7793,14 @@ export module CyclicToDo
             i => document.body.classList.toggle(i, i === theme)
         );
     };
+    export const updateUiStyle = () =>
+    {
+        const uiStyle = Storage.SystemSettings.get().uiStyle ?? "smart";
+        if ("fixed" === uiStyle)
+        {
+            minamo.dom.toggleCSSClass(minamo.core.existsOrThrow(document.getElementById("screen")), "immersive", false);
+        }
+    };
     export const updateFlashStyle = () =>
     {
         const flashStyle = Storage.SystemSettings.get().flashStyle ?? "breath";
@@ -7817,6 +7914,7 @@ export module CyclicToDo
         )
         updateStyle();
         updateFlashStyle();
+        updateUiStyle();
         await Render.showUpdatingScreen(location.href);
         await showPage();
         if (reload || "reload" === (<any>performance.getEntriesByType("navigation"))?.[0]?.type)

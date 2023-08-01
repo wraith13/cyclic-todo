@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Jul 31 2023 11:00:20 GMT+0900 (日本標準時)
+    build at: Tue Aug 01 2023 10:51:49 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -7217,6 +7217,9 @@ define("resource/lang.en", [], {
     "theme.auto": "Auto ( Follows System )",
     "theme.light": "Light",
     "theme.dark": "Dark",
+    "UI style setting": "UI style setting",
+    "uiStyle.smart": "Smart",
+    "uiStyle.fixed": "Fixed",
     "Flash style setting": "Flash style setting",
     "flashStyle.gradation": "Gradation",
     "flashStyle.breath": "Breath",
@@ -7375,6 +7378,9 @@ define("resource/lang.ja", [], {
     "theme.auto": "自動 ( システムに従う )",
     "theme.light": "ライト",
     "theme.dark": "ダーク",
+    "UI style setting": "UIスタイル設定",
+    "uiStyle.smart": "スマート",
+    "uiStyle.fixed": "固定",
     "Flash style setting": "フラッシュスタイル設定",
     "flashStyle.gradation": "グラデーション",
     "flashStyle.breath": "ブレス",
@@ -7702,6 +7708,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
         CyclicToDo.applicationTitle = config_json_1.default.applicationTitle;
         CyclicToDo.getThemeLocale = function (key) { return "theme." + key; };
         CyclicToDo.getFlashStyleLocale = function (key) { return "flashStyle." + key; };
+        CyclicToDo.getUiStyleLocale = function (key) { return "uiStyle." + key; };
         CyclicToDo.isZeroToDoEntry = function (item) {
             return item.count <= 0 || "number" !== typeof item.first;
         };
@@ -10456,16 +10463,118 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     });
                 });
             };
-            Render.flashStyleSettingsPopup = function (settings) {
+            Render.uiStyleSettingsPopup = function (settings) {
                 if (settings === void 0) { settings = Storage.SystemSettings.get(); }
                 return __awaiter(_this, void 0, void 0, function () {
-                    var init;
+                    var defaultValue, init;
                     var _this = this;
                     var _a;
                     return __generator(this, function (_b) {
                         switch (_b.label) {
                             case 0:
-                                init = (_a = settings.flashStyle) !== null && _a !== void 0 ? _a : "breath";
+                                defaultValue = "smart";
+                                init = (_a = settings.uiStyle) !== null && _a !== void 0 ? _a : defaultValue;
+                                return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                        var result, checkButtonList, checkButtonListUpdate, ui;
+                                        var _this = this;
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0:
+                                                    result = false;
+                                                    checkButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
+                                                    checkButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        var _a, _b, _c;
+                                                        var _this = this;
+                                                        return __generator(this, function (_d) {
+                                                            switch (_d.label) {
+                                                                case 0:
+                                                                    _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                                    _c = [checkButtonList];
+                                                                    return [4 /*yield*/, Promise.all(["smart", "fixed",].map(function (key) { return __awaiter(_this, void 0, void 0, function () {
+                                                                            var _a;
+                                                                            var _this = this;
+                                                                            var _b;
+                                                                            return __generator(this, function (_c) {
+                                                                                switch (_c.label) {
+                                                                                    case 0:
+                                                                                        _a = {
+                                                                                            tag: "button",
+                                                                                            className: "check-button " + (key === ((_b = settings.uiStyle) !== null && _b !== void 0 ? _b : defaultValue) ? "checked" : "")
+                                                                                        };
+                                                                                        return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                                                    case 1: return [2 /*return*/, (_a.children = [
+                                                                                            _c.sent(),
+                                                                                            Render.$span("")(Render.label(CyclicToDo.getUiStyleLocale(key)))
+                                                                                        ],
+                                                                                            _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                                var _a;
+                                                                                                return __generator(this, function (_b) {
+                                                                                                    switch (_b.label) {
+                                                                                                        case 0:
+                                                                                                            if (!(key !== ((_a = settings.uiStyle) !== null && _a !== void 0 ? _a : defaultValue))) return [3 /*break*/, 2];
+                                                                                                            settings.uiStyle = key;
+                                                                                                            Storage.SystemSettings.set(settings);
+                                                                                                            return [4 /*yield*/, checkButtonListUpdate()];
+                                                                                                        case 1:
+                                                                                                            _b.sent();
+                                                                                                            CyclicToDo.updateUiStyle();
+                                                                                                            result = init !== key;
+                                                                                                            _b.label = 2;
+                                                                                                        case 2: return [2 /*return*/];
+                                                                                                    }
+                                                                                                });
+                                                                                            }); },
+                                                                                            _a)];
+                                                                                }
+                                                                            });
+                                                                        }); }))];
+                                                                case 1: return [2 /*return*/, _b.apply(_a, _c.concat([[
+                                                                            _d.sent()
+                                                                        ]]))];
+                                                            }
+                                                        });
+                                                    }); };
+                                                    return [4 /*yield*/, checkButtonListUpdate()];
+                                                case 1:
+                                                    _a.sent();
+                                                    ui = Render.popup({
+                                                        // className: "add-remove-tags-popup",
+                                                        children: [
+                                                            Render.$tag("h2")("")(Render.label("UI style setting")),
+                                                            checkButtonList,
+                                                            Render.$div("popup-operator")([{
+                                                                    tag: "button",
+                                                                    className: "default-button",
+                                                                    children: Render.label("Close"),
+                                                                    onclick: function () {
+                                                                        ui.close();
+                                                                    },
+                                                                }])
+                                                        ],
+                                                        onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                            return [2 /*return*/, resolve(result)];
+                                                        }); }); },
+                                                    });
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); })];
+                            case 1: return [2 /*return*/, _b.sent()];
+                        }
+                    });
+                });
+            };
+            Render.flashStyleSettingsPopup = function (settings) {
+                if (settings === void 0) { settings = Storage.SystemSettings.get(); }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var defaultValue, init;
+                    var _this = this;
+                    var _a;
+                    return __generator(this, function (_b) {
+                        switch (_b.label) {
+                            case 0:
+                                defaultValue = "breath";
+                                init = (_a = settings.flashStyle) !== null && _a !== void 0 ? _a : defaultValue;
                                 return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
                                         var result, checkButtonList, checkButtonListUpdate, ui;
                                         var _this = this;
@@ -10491,7 +10600,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                     case 0:
                                                                                         _a = {
                                                                                             tag: "button",
-                                                                                            className: "check-button " + (key === ((_b = settings.flashStyle) !== null && _b !== void 0 ? _b : "breath") ? "checked" : "")
+                                                                                            className: "check-button " + (key === ((_b = settings.flashStyle) !== null && _b !== void 0 ? _b : defaultValue) ? "checked" : "")
                                                                                         };
                                                                                         return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                                     case 1: return [2 /*return*/, (_a.children = [
@@ -10503,7 +10612,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                                 return __generator(this, function (_b) {
                                                                                                     switch (_b.label) {
                                                                                                         case 0:
-                                                                                                            if (!(key !== ((_a = settings.flashStyle) !== null && _a !== void 0 ? _a : "auto"))) return [3 /*break*/, 2];
+                                                                                                            if (!(key !== ((_a = settings.flashStyle) !== null && _a !== void 0 ? _a : defaultValue))) return [3 /*break*/, 2];
                                                                                                             settings.flashStyle = key;
                                                                                                             Storage.SystemSettings.set(settings);
                                                                                                             return [4 /*yield*/, checkButtonListUpdate()];
@@ -15259,6 +15368,18 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         }
                                     });
                                 }); }),
+                                Render.menuItem(Render.label("UI style setting"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, Render.uiStyleSettingsPopup()];
+                                            case 1:
+                                                if (_a.sent()) {
+                                                    // updateStyle();
+                                                }
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); }),
                                 Render.menuItem(Render.label("Flash style setting"), function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
@@ -15559,18 +15680,23 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             if (undefined === updateWindowTimer) {
                                 updateWindowTimer = setInterval(function () { var _a; return (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render, "timer"); }, Domain.timeAccuracy);
                                 (_d = document.getElementsByClassName("screen-body")[0]) === null || _d === void 0 ? void 0 : _d.addEventListener("scroll", function () {
-                                    var _a;
+                                    var _a, _b;
                                     var screenBody = minamo_js_1.minamo.core.existsOrThrow(document.getElementsByClassName("screen-body")[0]);
                                     var scrollMax = screenBody.scrollHeight - screenBody.clientHeight;
                                     var scrollTop = Math.min(Math.max(screenBody.scrollTop, 0), scrollMax);
                                     if (scrollTop <= 0) {
                                         (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render, "scroll");
                                     }
-                                    var isNearTop = scrollTop < 40;
-                                    var isNearBottom = (scrollMax - 58) < scrollTop;
-                                    var isNearTopOrBottom = isNearTop || isNearBottom;
-                                    var isToDownScroll = previousScrollTop < scrollTop;
-                                    minamo_js_1.minamo.dom.toggleCSSClass(minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen")), "immersive", !isNearTopOrBottom && isToDownScroll);
+                                    var uiStyle = (_b = Storage.SystemSettings.get().uiStyle) !== null && _b !== void 0 ? _b : "smart";
+                                    var isImmersive = false;
+                                    if ("smart" === uiStyle) {
+                                        var isNearTop = scrollTop < 40;
+                                        var isNearBottom = (scrollMax - 58) < scrollTop;
+                                        var isNearTopOrBottom = isNearTop || isNearBottom;
+                                        var isToDownScroll = previousScrollTop < scrollTop;
+                                        isImmersive = !isNearTopOrBottom && isToDownScroll;
+                                    }
+                                    minamo_js_1.minamo.dom.toggleCSSClass(minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen")), "immersive", isImmersive);
                                     previousScrollTop = scrollTop;
                                 });
                             }
@@ -16236,6 +16362,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             var theme = "auto" === setting ? system : setting;
             ["light", "dark",].forEach(function (i) { return document.body.classList.toggle(i, i === theme); });
         };
+        CyclicToDo.updateUiStyle = function () {
+            var _a;
+            var uiStyle = (_a = Storage.SystemSettings.get().uiStyle) !== null && _a !== void 0 ? _a : "smart";
+            if ("fixed" === uiStyle) {
+                minamo_js_1.minamo.dom.toggleCSSClass(minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen")), "immersive", false);
+            }
+        };
         CyclicToDo.updateFlashStyle = function () {
             var _a;
             var flashStyle = (_a = Storage.SystemSettings.get().flashStyle) !== null && _a !== void 0 ? _a : "breath";
@@ -16366,6 +16499,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         setInterval(CyclicToDo.decayRemovedItems, (_b = minamo_js_1.minamo.core.parseTimespan(config_json_1.default.removedItemDecayInterval)) !== null && _b !== void 0 ? _b : 60 * 60 * 1000);
                         CyclicToDo.updateStyle();
                         CyclicToDo.updateFlashStyle();
+                        CyclicToDo.updateUiStyle();
                         return [4 /*yield*/, Render.showUpdatingScreen(location.href)];
                     case 1:
                         _e.sent();
@@ -16507,7 +16641,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Jul 31 2023 11:00:20 GMT+0900 (日本標準時)', buildTimestampTick: 1690768820725, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Aug 01 2023 10:51:49 GMT+0900 (日本標準時)', buildTimestampTick: 1690854709325, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
