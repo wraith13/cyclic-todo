@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Wed Aug 02 2023 13:27:38 GMT+0900 (日本標準時)
+    build at: Wed Aug 02 2023 20:21:40 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -10172,15 +10172,18 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                     case 0: return [4 /*yield*/, Render.newTagPrompt(pass)];
                                                                                     case 1:
                                                                                         tag = _a.sent();
-                                                                                        if (!(null !== tag)) return [3 /*break*/, 3];
+                                                                                        if (!(null !== tag)) return [3 /*break*/, 4];
                                                                                         result.push(tag);
                                                                                         OldStorage.TagMember.add(pass, tag, item.task);
                                                                                         hasNewTag = true;
-                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                        return [4 /*yield*/, Render.updateWindow("operate")];
                                                                                     case 2:
                                                                                         _a.sent();
-                                                                                        _a.label = 3;
-                                                                                    case 3: return [2 /*return*/];
+                                                                                        return [4 /*yield*/, tagButtonListUpdate()];
+                                                                                    case 3:
+                                                                                        _a.sent();
+                                                                                        _a.label = 4;
+                                                                                    case 4: return [2 /*return*/];
                                                                                 }
                                                                             });
                                                                         }); },
@@ -10937,9 +10940,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                                     case 0:
                                                                                                         settings.sort = defaultSort === i ? undefined : i;
                                                                                                         OldStorage.TagSettings.set(pass, tag, settings);
+                                                                                                        return [4 /*yield*/, Render.updateWindow("operate")];
+                                                                                                    case 1:
+                                                                                                        _a.sent();
                                                                                                         result = true;
                                                                                                         return [4 /*yield*/, tagButtonListUpdate()];
-                                                                                                    case 1:
+                                                                                                    case 2:
                                                                                                         _a.sent();
                                                                                                         return [2 /*return*/];
                                                                                                 }
@@ -11040,9 +11046,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                                     case 0:
                                                                                                         settings.displayStyle = i;
                                                                                                         OldStorage.TagSettings.set(pass, tag, settings);
+                                                                                                        return [4 /*yield*/, Render.updateWindow("operate")];
+                                                                                                    case 1:
+                                                                                                        _a.sent();
                                                                                                         result = true;
                                                                                                         return [4 /*yield*/, tagButtonListUpdate()];
-                                                                                                    case 1:
+                                                                                                    case 2:
                                                                                                         _a.sent();
                                                                                                         return [2 /*return*/];
                                                                                                 }
@@ -11143,9 +11152,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                                     case 0:
                                                                                                         settings.progressScaleStyle = i;
                                                                                                         OldStorage.TagSettings.set(pass, tag, settings);
+                                                                                                        return [4 /*yield*/, Render.updateWindow("operate")];
+                                                                                                    case 1:
+                                                                                                        _a.sent();
                                                                                                         result = true;
                                                                                                         return [4 /*yield*/, tagButtonListUpdate()];
-                                                                                                    case 1:
+                                                                                                    case 2:
                                                                                                         _a.sent();
                                                                                                         return [2 /*return*/];
                                                                                                 }
@@ -11300,39 +11312,44 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                         return __generator(this, function (_e) {
                                                                                             switch (_e.label) {
                                                                                                 case 0:
-                                                                                                    if (!("elapsed-time" === (i === null || i === void 0 ? void 0 : i.type) && !exports.isValidNumber(i === null || i === void 0 ? void 0 : i.elapsedTime))) return [3 /*break*/, 4];
+                                                                                                    if (!("elapsed-time" === (i === null || i === void 0 ? void 0 : i.type) && !exports.isValidNumber(i === null || i === void 0 ? void 0 : i.elapsedTime))) return [3 /*break*/, 5];
                                                                                                     return [4 /*yield*/, Render.dateTimeSpanPrompt(locale.map("pickup.elapsed-time"), (_b = (_a = getter()) === null || _a === void 0 ? void 0 : _a.elapsedTime) !== null && _b !== void 0 ? _b : 0)];
                                                                                                 case 1:
                                                                                                     elapsedTime = _e.sent();
-                                                                                                    if (!(null !== elapsedTime)) return [3 /*break*/, 3];
-                                                                                                    setter({ type: "elapsed-time", elapsedTime: elapsedTime, });
-                                                                                                    result = true;
-                                                                                                    return [4 /*yield*/, buttonListUpdate()];
+                                                                                                    if (!(null !== elapsedTime)) return [3 /*break*/, 4];
+                                                                                                    return [4 /*yield*/, setter({ type: "elapsed-time", elapsedTime: elapsedTime, })];
                                                                                                 case 2:
                                                                                                     _e.sent();
-                                                                                                    _e.label = 3;
-                                                                                                case 3: return [3 /*break*/, 10];
-                                                                                                case 4:
-                                                                                                    if (!("elapsed-time-standard-score" === (i === null || i === void 0 ? void 0 : i.type) && !exports.isValidNumber(i === null || i === void 0 ? void 0 : i.elapsedTimeStandardScore))) return [3 /*break*/, 8];
-                                                                                                    return [4 /*yield*/, Render.numberPrompt(locale.map("pickup.elapsed-time-standard-score"), (_d = (_c = getter()) === null || _c === void 0 ? void 0 : _c.elapsedTimeStandardScore) !== null && _d !== void 0 ? _d : 50, { min: 0, max: 100, })];
+                                                                                                    result = true;
+                                                                                                    return [4 /*yield*/, buttonListUpdate()];
+                                                                                                case 3:
+                                                                                                    _e.sent();
+                                                                                                    _e.label = 4;
+                                                                                                case 4: return [3 /*break*/, 13];
                                                                                                 case 5:
-                                                                                                    elapsedTimeStandardScore = _e.sent();
-                                                                                                    if (!(null !== elapsedTimeStandardScore)) return [3 /*break*/, 7];
-                                                                                                    setter({ type: "elapsed-time-standard-score", elapsedTimeStandardScore: elapsedTimeStandardScore, });
-                                                                                                    result = true;
-                                                                                                    return [4 /*yield*/, buttonListUpdate()];
+                                                                                                    if (!("elapsed-time-standard-score" === (i === null || i === void 0 ? void 0 : i.type) && !exports.isValidNumber(i === null || i === void 0 ? void 0 : i.elapsedTimeStandardScore))) return [3 /*break*/, 10];
+                                                                                                    return [4 /*yield*/, Render.numberPrompt(locale.map("pickup.elapsed-time-standard-score"), (_d = (_c = getter()) === null || _c === void 0 ? void 0 : _c.elapsedTimeStandardScore) !== null && _d !== void 0 ? _d : 50, { min: 0, max: 100, })];
                                                                                                 case 6:
+                                                                                                    elapsedTimeStandardScore = _e.sent();
+                                                                                                    if (!(null !== elapsedTimeStandardScore)) return [3 /*break*/, 9];
+                                                                                                    return [4 /*yield*/, setter({ type: "elapsed-time-standard-score", elapsedTimeStandardScore: elapsedTimeStandardScore, })];
+                                                                                                case 7:
                                                                                                     _e.sent();
-                                                                                                    _e.label = 7;
-                                                                                                case 7: return [3 /*break*/, 10];
-                                                                                                case 8:
-                                                                                                    setter(i);
                                                                                                     result = true;
                                                                                                     return [4 /*yield*/, buttonListUpdate()];
-                                                                                                case 9:
+                                                                                                case 8:
                                                                                                     _e.sent();
-                                                                                                    _e.label = 10;
-                                                                                                case 10: return [2 /*return*/];
+                                                                                                    _e.label = 9;
+                                                                                                case 9: return [3 /*break*/, 13];
+                                                                                                case 10: return [4 /*yield*/, setter(i)];
+                                                                                                case 11:
+                                                                                                    _e.sent();
+                                                                                                    result = true;
+                                                                                                    return [4 /*yield*/, buttonListUpdate()];
+                                                                                                case 12:
+                                                                                                    _e.sent();
+                                                                                                    _e.label = 13;
+                                                                                                case 13: return [2 /*return*/];
                                                                                             }
                                                                                         });
                                                                                     }); },
@@ -11380,12 +11397,22 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.todoFlashSettingsPopup = function (pass, entry, settings) {
                 if (settings === void 0) { settings = OldStorage.TodoSettings.get(pass, entry.task); }
                 return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4 /*yield*/, Render.todoSpanSettingsPopup(entry, "Flash setting", function (value) {
-                                    settings.flash = value;
-                                    OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                }, function () { return settings.flash; })];
+                            case 0: return [4 /*yield*/, Render.todoSpanSettingsPopup(entry, "Flash setting", function (value) { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                settings.flash = value;
+                                                OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                                return [4 /*yield*/, Render.updateWindow("operate")];
+                                            case 1:
+                                                _a.sent();
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); }, function () { return settings.flash; })];
                             case 1: return [2 /*return*/, _a.sent()];
                         }
                     });
@@ -11394,12 +11421,22 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.todoPickupSettingsPopup = function (pass, entry, settings) {
                 if (settings === void 0) { settings = OldStorage.TodoSettings.get(pass, entry.task); }
                 return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4 /*yield*/, Render.todoSpanSettingsPopup(entry, "Pickup setting", function (value) {
-                                    settings.pickup = value;
-                                    OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                }, function () { return settings.pickup; })];
+                            case 0: return [4 /*yield*/, Render.todoSpanSettingsPopup(entry, "Pickup setting", function (value) { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                settings.pickup = value;
+                                                OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                                return [4 /*yield*/, Render.updateWindow("operate")];
+                                            case 1:
+                                                _a.sent();
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); }, function () { return settings.pickup; })];
                             case 1: return [2 /*return*/, _a.sent()];
                         }
                     });
@@ -11408,12 +11445,22 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.todoRestrictionSettingsPopup = function (pass, entry, settings) {
                 if (settings === void 0) { settings = OldStorage.TodoSettings.get(pass, entry.task); }
                 return __awaiter(_this, void 0, void 0, function () {
+                    var _this = this;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4 /*yield*/, Render.todoSpanSettingsPopup(entry, "Restriction setting", function (value) {
-                                    settings.restriction = value;
-                                    OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                }, function () { return settings.restriction; })];
+                            case 0: return [4 /*yield*/, Render.todoSpanSettingsPopup(entry, "Restriction setting", function (value) { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                settings.restriction = value;
+                                                OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                                return [4 /*yield*/, Render.updateWindow("operate")];
+                                            case 1:
+                                                _a.sent();
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); }, function () { return settings.restriction; })];
                             case 1: return [2 /*return*/, _a.sent()];
                         }
                     });
@@ -16570,7 +16617,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Aug 02 2023 13:27:38 GMT+0900 (日本標準時)', buildTimestampTick: 1690950458502, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Aug 02 2023 20:21:40 GMT+0900 (日本標準時)', buildTimestampTick: 1690975300527, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

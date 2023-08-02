@@ -2890,6 +2890,7 @@ export module CyclicToDo
                                         result.push(tag);
                                         OldStorage.TagMember.add(pass, tag, item.task);
                                         hasNewTag = true;
+                                        await updateWindow("operate");
                                         await tagButtonListUpdate();
                                     }
                                 }
@@ -3440,6 +3441,7 @@ export module CyclicToDo
                                 {
                                     settings.sort = defaultSort === i ? undefined: <"smart" | "simple">i;
                                     OldStorage.TagSettings.set(pass, tag, settings);
+                                    await updateWindow("operate");
                                     result = true;
                                     await tagButtonListUpdate();
                                 }
@@ -3513,6 +3515,7 @@ export module CyclicToDo
                                 {
                                     settings.displayStyle = i;
                                     OldStorage.TagSettings.set(pass, tag, settings);
+                                    await updateWindow("operate");
                                     result = true;
                                     await tagButtonListUpdate();
                                 }
@@ -3586,6 +3589,7 @@ export module CyclicToDo
                                 {
                                     settings.progressScaleStyle = i;
                                     OldStorage.TagSettings.set(pass, tag, settings);
+                                    await updateWindow("operate");
                                     result = true;
                                     await tagButtonListUpdate();
                                 }
@@ -3735,7 +3739,7 @@ export module CyclicToDo
                                         );
                                         if (null !== elapsedTime)
                                         {
-                                            setter({ type: "elapsed-time", elapsedTime, });
+                                            await setter({ type: "elapsed-time", elapsedTime, });
                                             result = true;
                                             await buttonListUpdate();
                                         }
@@ -3751,14 +3755,14 @@ export module CyclicToDo
                                         );
                                         if (null !== elapsedTimeStandardScore)
                                         {
-                                            setter({ type: "elapsed-time-standard-score", elapsedTimeStandardScore, });
+                                            await setter({ type: "elapsed-time-standard-score", elapsedTimeStandardScore, });
                                             result = true;
                                             await buttonListUpdate();
                                         }
                                     }
                                     else
                                     {
-                                        setter(i);
+                                        await setter(i);
                                         result = true;
                                         await buttonListUpdate();
                                     }
@@ -3799,10 +3803,11 @@ export module CyclicToDo
             (
                 entry,
                 "Flash setting",
-                value =>
+                async value =>
                 {
                     settings.flash = value;
                     OldStorage.TodoSettings.set(pass, entry.task, settings);
+                    await updateWindow("operate");
                 },
                 () => settings.flash
             );
@@ -3811,10 +3816,11 @@ export module CyclicToDo
             (
                 entry,
                 "Pickup setting",
-                value =>
+                async value =>
                 {
                     settings.pickup = value;
                     OldStorage.TodoSettings.set(pass, entry.task, settings);
+                    await updateWindow("operate");
                 },
                 () => settings.pickup
             );
@@ -3823,10 +3829,11 @@ export module CyclicToDo
             (
                 entry,
                 "Restriction setting",
-                value =>
+                async value =>
                 {
                     settings.restriction = value;
                     OldStorage.TodoSettings.set(pass, entry.task, settings);
+                    await updateWindow("operate");
                 },
                 () => settings.restriction
             );
