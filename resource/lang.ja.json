@@ -61,7 +61,7 @@
     "sort.home": "ホームと同じ並び順",
     "sort.smart": "スマート",
     "sort.simple": "シンプル",
-    "sort.limit": "リミット",
+    "sort.simple-reverse": "シンプル リバース",
     "pickup.none": "しない",
     "pickup.always": "常に",
     "pickup.elapsed-time": "経過時間(実値)",

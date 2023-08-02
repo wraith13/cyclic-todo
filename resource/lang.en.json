@@ -61,7 +61,7 @@
     "sort.home": "Same order as Home",
     "sort.smart": "Smart",
     "sort.simple": "Simple",
-    "sort.limit": "Limit",
+    "sort.simple-reverse": "Simple reverse",
     "pickup.none": "Never",
     "pickup.always": "Always",
     "pickup.elapsed-time": "Elapsed time ( actual )",

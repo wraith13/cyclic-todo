@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Tue Aug 01 2023 21:27:45 GMT+0900 (日本標準時)
+    build at: Wed Aug 02 2023 13:27:38 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -1275,6 +1275,9 @@ body.light .bottom-tabs .bottom-tab:not(.current-item):not(:hover) > .label + .v
 body.light .bottom-tabs .bottom-tab + .bottom-tab {
   border-left-style: none;
   border-left-width: 0px;
+}
+body.light .main-button {
+  min-width: 8rem;
 }
 body.light .text-button {
   cursor: pointer;
@@ -3843,6 +3846,9 @@ body.dark .bottom-tabs .bottom-tab:not(.current-item):not(:hover) > .label + .va
 body.dark .bottom-tabs .bottom-tab + .bottom-tab {
   border-left-style: none;
   border-left-width: 0px;
+}
+body.dark .main-button {
+  min-width: 8rem;
 }
 body.dark .text-button {
   cursor: pointer;
@@ -7164,7 +7170,7 @@ define("resource/lang.en", [], {
     "sort.home": "Same order as Home",
     "sort.smart": "Smart",
     "sort.simple": "Simple",
-    "sort.limit": "Limit",
+    "sort.simple-reverse": "Simple reverse",
     "pickup.none": "Never",
     "pickup.always": "Always",
     "pickup.elapsed-time": "Elapsed time ( actual )",
@@ -7325,7 +7331,7 @@ define("resource/lang.ja", [], {
     "sort.home": "ホームと同じ並び順",
     "sort.smart": "スマート",
     "sort.simple": "シンプル",
-    "sort.limit": "リミット",
+    "sort.simple-reverse": "シンプル リバース",
     "pickup.none": "しない",
     "pickup.always": "常に",
     "pickup.elapsed-time": "経過時間(実値)",
@@ -9225,18 +9231,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             function (item) { return entry.todo.indexOf(item.task); },
                             function (item) { return item.task; },
                         ]);
-                    // case "limit":
-                    //     return minamo.core.comparer.make<ToDoEntry>
-                    //     ([
-                    //         item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
-                    //         item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
-                    //             item.rest:
-                    //             -(item.progress ?? -1),
-                    //         item => 1 < item.count ? -2: -item.count,
-                    //         item => 1 < item.count ? (item.elapsed -item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate)): -(item.elapsed ?? 0),
-                    //         item => entry.todo.indexOf(item.task),
-                    //         item => item.task,
-                    //     ]);
+                    case "simple-reverse":
+                        return minamo_js_1.minamo.core.comparer.make([
+                            function (item) { var _a; return -((_a = item.previous) !== null && _a !== void 0 ? _a : 0); },
+                            function (item) { return -item.count; },
+                            function (item) { return -entry.todo.indexOf(item.task); },
+                            function (item) { return -item.task; },
+                        ]);
                     default:
                         return Domain.todoComparerOld(entry, "smart");
                 }
@@ -10780,10 +10781,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 {
                                                                     tag: "button",
                                                                     className: "label-button",
-                                                                    children: [
-                                                                        // await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
-                                                                        Render.monospace("auto-tag-flash", Render.label("Display style setting"), Render.label(Render.getTagDisplayStyleText((_a = settings.displayStyle) !== null && _a !== void 0 ? _a : Render.getTagDisplayStyleDefault(tag))))
-                                                                    ],
+                                                                    children: Render.monospace("auto-tag-flash", Render.label("Display style setting"), Render.label(Render.getTagDisplayStyleText((_a = settings.displayStyle) !== null && _a !== void 0 ? _a : Render.getTagDisplayStyleDefault(tag)))),
                                                                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                                         return __generator(this, function (_a) {
                                                                             switch (_a.label) {
@@ -10803,10 +10801,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 {
                                                                     tag: "button",
                                                                     className: "label-button",
-                                                                    children: [
-                                                                        // await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
-                                                                        Render.monospace("auto-tag-flash", Render.label("Progress scale style setting"), Render.label(Render.getTagProgressScaleStyleText((_b = settings.progressScaleStyle) !== null && _b !== void 0 ? _b : Render.getTagProgressScaleStyleDefault(tag)))),
-                                                                    ],
+                                                                    children: Render.monospace("auto-tag-flash", Render.label("Progress scale style setting"), Render.label(Render.getTagProgressScaleStyleText((_b = settings.progressScaleStyle) !== null && _b !== void 0 ? _b : Render.getTagProgressScaleStyleDefault(tag)))),
                                                                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                                         return __generator(this, function (_a) {
                                                                             switch (_a.label) {
@@ -10826,10 +10821,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 {
                                                                     tag: "button",
                                                                     className: "label-button",
-                                                                    children: [
-                                                                        // await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
-                                                                        Render.monospace("auto-tag-flash", Render.label("Sort order setting"), Render.label(Render.getTagSortSettingsText((_c = settings.sort) !== null && _c !== void 0 ? _c : Render.getTagSortSettingsDefault(tag)))),
-                                                                    ],
+                                                                    children: Render.monospace("auto-tag-flash", Render.label("Sort order setting"), Render.label(Render.getTagSortSettingsText((_c = settings.sort) !== null && _c !== void 0 ? _c : Render.getTagSortSettingsDefault(tag)))),
                                                                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                                         return __generator(this, function (_a) {
                                                                             switch (_a.label) {
@@ -10893,6 +10885,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     "@home": "sort.home",
                     "smart": "sort.smart",
                     "simple": "sort.simple",
+                    "simple-reverse": "sort.simple-reverse",
                 };
                 return map[displayStyle];
             };
@@ -10920,8 +10913,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                                                 _c = [tagButtonList];
                                                                 return [4 /*yield*/, Promise.all(("@overall" === tag ?
-                                                                        ["smart", "simple",] :
-                                                                        ["@home", "smart", "simple",])
+                                                                        ["smart", "simple", "simple-reverse",] :
+                                                                        ["@home", "smart", "simple", "simple-reverse",])
                                                                         .map(function (i) { return __awaiter(_this, void 0, void 0, function () {
                                                                         var _a;
                                                                         var _this = this;
@@ -16094,8 +16087,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     var defaultSort_1 = Render.getTagSortSettingsDefault(tag_2);
                                     var current_3 = (_k = settings.sort) !== null && _k !== void 0 ? _k : defaultSort_1;
                                     var list_3 = "@overall" === tag_2 ?
-                                        ["smart", "simple",] :
-                                        ["@home", "smart", "simple",];
+                                        ["smart", "simple", "simple-reverse",] :
+                                        ["@home", "smart", "simple", "simple-reverse",];
                                     var next = destinationItem(list_3, current_3);
                                     settings.sort = defaultSort_1 === next ? undefined : next;
                                     OldStorage.TagSettings.set(pass_1, tag_2, settings);
@@ -16577,7 +16570,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Aug 01 2023 21:27:45 GMT+0900 (日本標準時)', buildTimestampTick: 1690892865402, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Aug 02 2023 13:27:38 GMT+0900 (日本標準時)', buildTimestampTick: 1690950458502, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

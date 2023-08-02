@@ -218,8 +218,7 @@ export module CyclicToDo
         2 <= item.count && "number" === typeof item.first && "number" === typeof item.previous && item.first !== item.previous;
     export interface TagSettings extends minamo.core.JsonableObject
     {
-        // sort?: "smart" | "simple" | "limit";
-        sort?: "smart" | "simple";
+        sort?: "smart" | "simple" | "simple-reverse";
         displayStyle?: "@home" | "full" | "compact";
         progressScaleStyle?: "@home" | "none" | "full";
     }
@@ -1966,18 +1965,14 @@ export module CyclicToDo
                         item => entry.todo.indexOf(item.task),
                         item => item.task,
                     ]);
-                // case "limit":
-                //     return minamo.core.comparer.make<ToDoEntry>
-                //     ([
-                //         item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
-                //         item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
-                //             item.rest:
-                //             -(item.progress ?? -1),
-                //         item => 1 < item.count ? -2: -item.count,
-                //         item => 1 < item.count ? (item.elapsed -item.RecentlySmartAverage +((item.RecentlyStandardDeviation ?? 0) *Domain.standardDeviationRate)): -(item.elapsed ?? 0),
-                //         item => entry.todo.indexOf(item.task),
-                //         item => item.task,
-                //     ]);
+                case "simple-reverse":
+                    return minamo.core.comparer.make<ToDoEntry>
+                    ([
+                        item => -(item.previous ?? 0),
+                        item => -item.count,
+                        item => -entry.todo.indexOf(item.task),
+                        item => -item.task,
+                    ]);
                 default:
                     return todoComparerOld(entry, "smart");
             }
@@ -3315,11 +3310,12 @@ export module CyclicToDo
                         {
                             tag: "button",
                             className: "label-button",
-                            children:
-                            [
-                                // await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
-                                monospace("auto-tag-flash", label("Display style setting"), label(getTagDisplayStyleText(settings.displayStyle ?? getTagDisplayStyleDefault(tag))))
-                            ],
+                            children: monospace
+                            (
+                                "auto-tag-flash",
+                                label("Display style setting"),
+                                label(getTagDisplayStyleText(settings.displayStyle ?? getTagDisplayStyleDefault(tag)))
+                            ),
                             onclick: async () =>
                             {
                                 if (await tagDisplayStyleSettingsPopup(pass, tag))
@@ -3332,11 +3328,12 @@ export module CyclicToDo
                         {
                             tag: "button",
                             className: "label-button",
-                            children:
-                            [
-                                // await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
-                                monospace("auto-tag-flash", label("Progress scale style setting"), label(getTagProgressScaleStyleText(settings.progressScaleStyle ?? getTagProgressScaleStyleDefault(tag)))),
-                            ],
+                            children: monospace
+                            (
+                                "auto-tag-flash",
+                                label("Progress scale style setting"),
+                                label(getTagProgressScaleStyleText(settings.progressScaleStyle ?? getTagProgressScaleStyleDefault(tag)))
+                            ),
                             onclick: async () =>
                             {
                                 if (await tagProgressScaleStyleSettingsPopup(pass, tag))
@@ -3349,11 +3346,12 @@ export module CyclicToDo
                         {
                             tag: "button",
                             className: "label-button",
-                            children:
-                            [
-                                // await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
-                                monospace("auto-tag-flash", label("Sort order setting"), label(getTagSortSettingsText(settings.sort ?? getTagSortSettingsDefault(tag)))),
-                            ],
+                            children: monospace
+                            (
+                                "auto-tag-flash",
+                                label("Sort order setting"),
+                                label(getTagSortSettingsText(settings.sort ?? getTagSortSettingsDefault(tag)))
+                            ),
                             onclick: async () =>
                             {
                                 if (await tagSortSettingsPopup(pass, tag))
@@ -3399,13 +3397,14 @@ export module CyclicToDo
         export const makeTagDefaultGetter = <T extends string>(defaultValue: T) =>
             (tag: string): "@home" | T => "@overall" === tag ? defaultValue: "@home";
         export const getTagSortSettingsDefault = makeTagDefaultGetter("smart");
-        export const getTagSortSettingsText = (displayStyle: "@home" | "smart" | "simple") =>
+        export const getTagSortSettingsText = (displayStyle: "@home" | "smart" | "simple" | "simple-reverse") =>
         {
             const map: { [key: string]: locale.LocaleKeyType; } =
             {
                 "@home": "sort.home",
                 "smart": "sort.smart",
                 "simple": "sort.simple",
+                "simple-reverse": "sort.simple-reverse",
             };
             return map[displayStyle];
         }
@@ -3423,12 +3422,12 @@ export module CyclicToDo
                     (
                         (
                             "@overall" === tag ?
-                            [ "smart", "simple", ]:
-                            [ "@home", "smart", "simple", ]
+                            [ "smart", "simple", "simple-reverse", ]:
+                            [ "@home", "smart", "simple", "simple-reverse", ]
                         )
                         .map
                         (
-                            async (i: "@home" | "smart" | "simple") =>
+                            async (i: "@home" | "smart" | "simple" | "simple-reverse") =>
                             ({
                                 tag: "button",
                                 className: `check-button ${i === (settings.sort ?? defaultSort) ? "checked": ""}`,
@@ -7534,9 +7533,9 @@ export module CyclicToDo
                                 const settings = OldStorage.TagSettings.get(pass, tag);
                                 const defaultSort = getTagSortSettingsDefault(tag);
                                 const current = settings.sort ?? defaultSort;
-                                const list: ("@home" | "smart" | "simple")[] = "@overall" === tag ?
-                                    [ "smart", "simple", ]:
-                                    [ "@home", "smart", "simple", ];
+                                const list: ("@home" | "smart" | "simple" | "simple-reverse")[] = "@overall" === tag ?
+                                    [ "smart", "simple", "simple-reverse", ]:
+                                    [ "@home", "smart", "simple", "simple-reverse", ];
                                 const next = destinationItem(list, current);
                                 settings.sort = defaultSort === next ? undefined: <"smart" | "simple">next;
                                 OldStorage.TagSettings.set(pass, tag, settings);
