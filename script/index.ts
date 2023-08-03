@@ -5562,10 +5562,10 @@ export module CyclicToDo
             }
             else
             {
-                const ix = subTabs.map(i => i.href.tag).indexOf(current.tag);
-                console.log({ ix, current, subTabs, });
-                const isCurrent = 0 <= ix;
-                const tab = subTabs[isCurrent ? ix: 0];
+                const tagIndex = subTabs.map(i => i.href.tag).indexOf(current.tag);
+                const urlIndex = subTabs.map(i => makeUrl(i.href)).indexOf(location.href);
+                const isCurrent = 0 <= tagIndex || 0 <= urlIndex;
+                const tab = subTabs[isCurrent ? (0 <= urlIndex ? urlIndex: tagIndex): 0];
                 const result =
                 {
                     tag: "button",
@@ -5597,7 +5597,7 @@ export module CyclicToDo
                             )
                         }
                     ],
-                    onclick: () => showUrl
+                    onclick: async () => await showUrl
                     (
                         isCurrent && makeUrl(tab.href) === location.href ?
                             nextItem(subTabs, tab).href:
@@ -6948,6 +6948,8 @@ export module CyclicToDo
                 async () => location.href = "https://github.com/wraith13/cyclic-todo/",
             ),
         ];
+        export const updatingBody = async (): Promise<minamo.dom.Source> =>
+            await applicationIcon();
         export const updatingScreen = async (url: string = location.href): Promise<ScreenSource> =>
         ({
             className: "updating-screen",
@@ -7894,7 +7896,11 @@ export module CyclicToDo
     export const showPage = async (url: string = location.href, _wait: number = 0) =>
     {
         window.scrollTo(0,0);
-        minamo.core.existsOrThrow(document.getElementById("screen-body")).scrollTo(0,0);
+        const body = minamo.core.existsOrThrow(document.getElementById("screen-body"));
+        body.scrollTo(0,0);
+        minamo.dom.replaceChildren(body, await Render.updatingBody());
+        await minamo.core.timeout(50);
+        await Render.showUpdatingScreen(url);
         //await minamo.core.timeout(wait);
         const urlParams = getUrlParams(url);
         const hash = getUrlHash(url);
@@ -7938,7 +7944,7 @@ export module CyclicToDo
             {
             case "history":
                 console.log("show history screen");
-                Render.showHistoryScreen
+                await Render.showHistoryScreen
                 (
                     urlParams,
                     {
@@ -7953,21 +7959,21 @@ export module CyclicToDo
             //     break;
             case "removed":
                 console.log("show removed screen");
-                Render.showRemovedScreen(pass);
+                await Render.showRemovedScreen(pass);
                 break;
             case "import":
                 console.log("show import screen");
-                Render.showImportScreen();
+                await Render.showImportScreen();
                 break;
             case "export":
                 console.log("show export screen");
-                Render.showExportScreen(pass);
+                await Render.showExportScreen(pass);
                 break;
             default:
                 if (0 <= OldStorage.Pass.get().indexOf(pass))
                 {
                     console.log("show list screen");
-                    Render.showListScreen(pass, tag, urlParams);
+                    await Render.showListScreen(pass, tag, urlParams);
                 }
                 else
                 {
@@ -7980,8 +7986,8 @@ export module CyclicToDo
     export const showUrl = async (data: { pass?:string, tag?:string, todo?: string, hash?: string}) =>
     {
         const url = makeUrl(data);
-        await showPage(url);
         history.pushState(null, applicationTitle, url);
+        await showPage(url);
     };
     export const reload = async () => await showPage(location.href, 600);
 }
