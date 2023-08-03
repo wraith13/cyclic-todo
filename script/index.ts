@@ -1204,6 +1204,7 @@ export module CyclicToDo
         export const encode = (tag: string) => tag.replace(/@/g, "@=");
         export const encodeSublist = (tag: string) => encode(tag) +"@:";
         export const decode = (tag: string) => tag.replace(/@\:/g, ": ").replace(/@=/g, "@");
+        export const decodeSublist = (tag: string) => decode(tag.replace(/@\:$/, ""));
         export interface Live
         {
             tasks: ToDoEntry[];
