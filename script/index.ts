@@ -7898,9 +7898,9 @@ export module CyclicToDo
         window.scrollTo(0,0);
         const body = minamo.core.existsOrThrow(document.getElementById("screen-body"));
         body.scrollTo(0,0);
-        minamo.dom.replaceChildren(body, await Render.updatingBody());
-        await minamo.core.timeout(50);
-        await Render.showUpdatingScreen(url);
+        minamo.dom.appendChildren(body, await Render.updatingBody());
+        await minamo.core.timeout(150);
+        //await Render.showUpdatingScreen(url);
         //await minamo.core.timeout(wait);
         const urlParams = getUrlParams(url);
         const hash = getUrlHash(url);
@@ -7929,7 +7929,7 @@ export module CyclicToDo
                 break;
             case "loading": // for debug only
                 console.log("show loading screen");
-                // await Render.showUpdatingScreen(url);
+                await Render.showUpdatingScreen(url);
                 break;
             default:
                 console.log("show welcome screen");

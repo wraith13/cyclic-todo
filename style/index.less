@@ -2016,25 +2016,26 @@ button
 {
     & > .application-icon
     {
-        margin-top: 5vh;
-        margin-left: auto;
-        margin-right: auto;
-        // width: 240px;
-        // height: 240px;
-        // max-width: 60vw;
-        // max-height: 50vh;
-        width: 400px;
-        height: 400px;
-        min-width: 25vw;
-        min-height: 25vw;
-        max-width: 90vw;
-        // max-height: 80vh;
-        display: block;
-        .loading-spinner;
-        // animation-iteration-count: infinite;
-        animation-iteration-count: 1;
+        position: absolute;
+        top:0px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        animation-name: fade-in;
+        animation-delay: 0.3s;
+        animation-duration: 1.0s;
+        animation-fill-mode: both;
+        background-color: @base-color;
         svg
         {
+            width: 61.8%;
+            height: 61.8%;
+            // .loading-spinner;
+            .loading-breath;
             color: @accent-color;
             fill: @accent-color;
         }
@@ -2177,12 +2178,56 @@ button
     {
         transform: rotate(0deg);
     }
-    30%
+    70%
+    {
+        transform: rotate(0deg);
+    }
+    100%
+    {
+        transform: rotate(360deg);
+    }
+}
+.loading-breath
+{
+    animation-name: loading-breath;
+    animation-direction: normal;
+    animation-delay: 0s;
+    animation-duration: 3.0s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: both;
+    animation-iteration-count: infinite;
+}
+@keyframes loading-breath
+{
+    0%
+    {
+        color: @accent-color;
+        fill: @accent-color;
+        width: calc(100vw / 6);
+        height: calc(100vw / 6);
+        transform: rotate(0deg);
+    }
+    42.5%
+    {
+        transform: rotate(0deg);
+    }
+    50%
+    {
+        color: @flashy-peak-color;
+        fill: @flashy-peak-color;
+        width: calc(100vw / 5);
+        height: calc(100vw / 5);
+    }
+    57.5%
     {
         transform: rotate(360deg);
     }
     100%
     {
+        color: @accent-color;
+        fill: @accent-color;
+        width: calc(100vw / 6);
+        height: calc(100vw / 6);
         transform: rotate(360deg);
     }
 }

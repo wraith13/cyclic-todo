@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Thu Aug 03 2023 22:31:39 GMT+0900 (日本標準時)
+    build at: Fri Aug 04 2023 11:07:52 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2460,25 +2460,31 @@ body.light .updating-screen .screen-body .button-list {
   width: calc(100vw - 1rem);
 }
 body.light .screen-body > .application-icon {
-  margin-top: 5vh;
-  margin-left: auto;
-  margin-right: auto;
-  width: 400px;
-  height: 400px;
-  min-width: 25vw;
-  min-height: 25vw;
-  max-width: 90vw;
-  display: block;
-  animation-name: loading-spinner;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  animation-name: fade-in;
+  animation-delay: 0.3s;
+  animation-duration: 1s;
+  animation-fill-mode: both;
+  background-color: #FFFFFF;
+}
+body.light .screen-body > .application-icon svg {
+  width: 61.8%;
+  height: 61.8%;
+  animation-name: loading-breath;
   animation-direction: normal;
   animation-delay: 0s;
-  animation-duration: 1s;
+  animation-duration: 3s;
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
   animation-iteration-count: infinite;
-  animation-iteration-count: 1;
-}
-body.light .screen-body > .application-icon svg {
   color: #228844;
   fill: #228844;
 }
@@ -2578,10 +2584,47 @@ body.light .loading-spinner {
   0% {
     transform: rotate(0deg);
   }
-  30% {
+  70% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+body.light .loading-breath {
+  animation-name: loading-breath;
+  animation-direction: normal;
+  animation-delay: 0s;
+  animation-duration: 3s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+  animation-iteration-count: infinite;
+}
+@keyframes loading-breath {
+  0% {
+    color: #228844;
+    fill: #228844;
+    width: calc(100vw / 6);
+    height: calc(100vw / 6);
+    transform: rotate(0deg);
+  }
+  42.5% {
+    transform: rotate(0deg);
+  }
+  50% {
+    color: #0000FF;
+    fill: #0000FF;
+    width: calc(100vw / 5);
+    height: calc(100vw / 5);
+  }
+  57.5% {
     transform: rotate(360deg);
   }
   100% {
+    color: #228844;
+    fill: #228844;
+    width: calc(100vw / 6);
+    height: calc(100vw / 6);
     transform: rotate(360deg);
   }
 }
@@ -5035,25 +5078,31 @@ body.dark .updating-screen .screen-body .button-list {
   width: calc(100vw - 1rem);
 }
 body.dark .screen-body > .application-icon {
-  margin-top: 5vh;
-  margin-left: auto;
-  margin-right: auto;
-  width: 400px;
-  height: 400px;
-  min-width: 25vw;
-  min-height: 25vw;
-  max-width: 90vw;
-  display: block;
-  animation-name: loading-spinner;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  animation-name: fade-in;
+  animation-delay: 0.3s;
+  animation-duration: 1s;
+  animation-fill-mode: both;
+  background-color: #000022;
+}
+body.dark .screen-body > .application-icon svg {
+  width: 61.8%;
+  height: 61.8%;
+  animation-name: loading-breath;
   animation-direction: normal;
   animation-delay: 0s;
-  animation-duration: 1s;
+  animation-duration: 3s;
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
   animation-iteration-count: infinite;
-  animation-iteration-count: 1;
-}
-body.dark .screen-body > .application-icon svg {
   color: #228844;
   fill: #228844;
 }
@@ -5153,10 +5202,47 @@ body.dark .loading-spinner {
   0% {
     transform: rotate(0deg);
   }
-  30% {
+  70% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+body.dark .loading-breath {
+  animation-name: loading-breath;
+  animation-direction: normal;
+  animation-delay: 0s;
+  animation-duration: 3s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+  animation-iteration-count: infinite;
+}
+@keyframes loading-breath {
+  0% {
+    color: #228844;
+    fill: #228844;
+    width: calc(100vw / 6);
+    height: calc(100vw / 6);
+    transform: rotate(0deg);
+  }
+  42.5% {
+    transform: rotate(0deg);
+  }
+  50% {
+    color: #0000FF;
+    fill: #0000FF;
+    width: calc(100vw / 5);
+    height: calc(100vw / 5);
+  }
+  57.5% {
     transform: rotate(360deg);
   }
   100% {
+    color: #228844;
+    fill: #228844;
+    width: calc(100vw / 6);
+    height: calc(100vw / 6);
     transform: rotate(360deg);
   }
 }
@@ -16526,48 +16612,47 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             window.scrollTo(0, 0);
                             body = minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen-body"));
                             body.scrollTo(0, 0);
-                            _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                            _b = (_a = minamo_js_1.minamo.dom).appendChildren;
                             _c = [body];
                             return [4 /*yield*/, Render.updatingBody()];
                         case 1:
                             _b.apply(_a, _c.concat([_h.sent()]));
-                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(50)];
+                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(150)];
                         case 2:
-                            _h.sent();
-                            return [4 /*yield*/, Render.showUpdatingScreen(url)];
-                        case 3:
                             _h.sent();
                             urlParams = CyclicToDo.getUrlParams(url);
                             hash = CyclicToDo.getUrlHash(url);
                             tag = (_f = urlParams["tag"]) !== null && _f !== void 0 ? _f : "";
                             todo = urlParams["todo"];
                             pass = (_g = urlParams["pass"]) !== null && _g !== void 0 ? _g : OldStorage.sessionPassPrefix + ":" + new Date().getTime();
-                            if (!(pass && todo)) return [3 /*break*/, 5];
+                            if (!(pass && todo)) return [3 /*break*/, 4];
                             console.log("show todo screen");
                             return [4 /*yield*/, Render.showTodoScreen(pass, todo)];
-                        case 4:
+                        case 3:
                             _h.sent();
                             return [3 /*break*/, 26];
-                        case 5:
+                        case 4:
                             if (!(OldStorage.isSessionPass(pass) && !tag)) return [3 /*break*/, 12];
                             _d = hash;
                             switch (_d) {
-                                case "import": return [3 /*break*/, 6];
-                                case "removed": return [3 /*break*/, 7];
-                                case "loading": return [3 /*break*/, 8];
+                                case "import": return [3 /*break*/, 5];
+                                case "removed": return [3 /*break*/, 6];
+                                case "loading": return [3 /*break*/, 7];
                             }
                             return [3 /*break*/, 9];
-                        case 6:
+                        case 5:
                             console.log("show import screen");
                             Render.showImportScreen();
                             return [3 /*break*/, 11];
-                        case 7:
+                        case 6:
                             console.log("show removed-list screen");
                             Render.showRemovedListScreen();
                             return [3 /*break*/, 11];
-                        case 8:
+                        case 7:
                             console.log("show loading screen");
-                            // await Render.showUpdatingScreen(url);
+                            return [4 /*yield*/, Render.showUpdatingScreen(url)];
+                        case 8:
+                            _h.sent();
                             return [3 /*break*/, 11];
                         case 9:
                             console.log("show welcome screen");
@@ -16661,7 +16746,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Aug 03 2023 22:31:39 GMT+0900 (日本標準時)', buildTimestampTick: 1691069499359, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Aug 04 2023 11:07:52 GMT+0900 (日本標準時)', buildTimestampTick: 1691114872195, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
