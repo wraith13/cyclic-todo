@@ -2,6 +2,6 @@
 .DS_Store
 /node_modules/*
 script/index.js
-style/index.css
+style/primary.css
 style/theme.dark.css
 style/theme.light.css

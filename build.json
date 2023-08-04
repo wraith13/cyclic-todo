@@ -23,6 +23,7 @@
                 "__BUILD_TIMESTAMP_TICK__": { "call": "timestamp_tick" },
                 "__REPOSITORY_URL_": { "json": "./resource/config.json", "key": "repositoryUrl" },
                 "__LICENSE__": { "path": "./LICENSE_1_0.txt" },
+                "__PRIMARY_STYLE__": { "path": "./style/primary.css" },
                 "__LIGHT_STYLE__": { "path": "./style/theme.light.css" },
                 "__DARK_STYLE__": { "path": "./style/theme.dark.css" },
                 "__EVIL_COMMONJS__": { "path": "./nephila/evil-commonjs/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=nephila/evil-commonjs/index.js.map" } },
@@ -39,6 +40,7 @@
         {
             "preprocesses":
             [
+                "npm run-script \"build primary style\"",
                 "npm run-script \"build light style\"",
                 "npm run-script \"build dark style\"",
                 "npm run-script \"build script\""
@@ -48,6 +50,7 @@
         {
             "preprocesses":
             [
+                "npm run-script \"debug build primary style\"",
                 "npm run-script \"debug build light style\"",
                 "npm run-script \"debug build dark style\"",
                 "npm run-script \"debug build script\""
