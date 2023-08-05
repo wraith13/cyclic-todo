@@ -5006,11 +5006,11 @@ export module CyclicToDo
             title: Domain.tagMap(current),
             href: { pass, tag: current, },
         });
-        export const getTagList = (params: string | { overall?: boolean, auto?: boolean, term?: boolean, pass?: string, tag?: boolean, sublist?: boolean, un?: boolean, }): string[] =>
+        export const getTagList = (params: string | { overall?: boolean, pass?: string, sublist?: boolean, tag?: boolean, auto?: boolean, term?: boolean, }): string[] =>
         {
             if ("string" === typeof params)
             {
-                return getTagList({ overall: true, auto: true, term: true, pass: params, tag: true, sublist: true, un: true, });
+                return getTagList({ overall: true, pass: params, sublist: true, tag: true, auto: true, term: true, });
             }
             else
             {
@@ -5019,6 +5019,30 @@ export module CyclicToDo
                 {
                     result.push("@overall");
                 }
+                if ("string" === typeof params.pass)
+                {
+                    const base = OldStorage.Tag.get(params.pass);
+                    if (params.sublist)
+                    {
+                        result.push
+                        (
+                            ...base
+                                .filter(i => Model.isSublistOld(i))
+                                .sort(Domain.tagComparerOld(params.pass))
+                        );
+                        result.push("@:@root");
+                    }
+                    if (params.tag)
+                    {
+                        result.push
+                        (
+                            ...base
+                                .filter(i => ! Model.isSublistOld(i))
+                                .sort(Domain.tagComparerOld(params.pass))
+                        );
+                        result.push("@untagged", "@unoverall");
+                    }
+                }
                 if (params.auto)
                 {
                     result.push("@flash", "@pickup", "@restriction");
@@ -5026,30 +5050,6 @@ export module CyclicToDo
                 if (params.term)
                 {
                     result.push("@short-term", "@medium-term", "@long-term", "@irregular-term");
-                }
-                if ("string" === typeof params.pass)
-                {
-                    result.push
-                    (
-                        ...OldStorage.Tag.get(params.pass)
-                            .filter(i => Model.isSublistOld(i) ? params.sublist: params.tag)
-                            .sort(Domain.tagComparerOld(params.pass))
-                    );
-                    if (params.sublist && ! params.un)
-                    {
-                        result.push("@:@root");
-                    }
-                }
-                if (params.un)
-                {
-                    if (params.tag && ! params.sublist)
-                    {
-                        result.push("@untagged", "@unoverall");
-                    }
-                    else
-                    {
-                        result.push("@:@root", "@untagged", "@unoverall");
-                    }
                 }
                 return result;
             }
@@ -5666,7 +5666,7 @@ export module CyclicToDo
             entry,
             await Promise.all
             (
-                getTagList({ pass: entry.pass, tag: true, un: true, }).map
+                getTagList({ pass: entry.pass, tag: true, }).map
                 (
                     async i =>
                     ({
@@ -7472,7 +7472,7 @@ export module CyclicToDo
                         case "T":
                             if (pass)
                             {
-                                showUrl({ pass: pass, tag: destinationItem(getTagList({ pass, tag: true, sublist: true, un: true, }), tag),}); // nowait
+                                showUrl({ pass: pass, tag: destinationItem(getTagList({ pass, tag: true, sublist: true, }), tag),}); // nowait
                             }
                             break;
                         case "V":
