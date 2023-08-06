@@ -4183,12 +4183,15 @@ export module CyclicToDo
             label("Rename"),
             async () =>
             {
-                const newTask = await prompt(locale.map("Input a ToDo's name."), item.task);
-                if (null !== newTask && 0 < newTask.length && newTask !== item.task)
+                const sublist = OldStorage.Task.getSublist(item.task) ?? "";
+                const oldTask = OldStorage.Task.decode(OldStorage.Task.getBody(item.task));
+                const newTask = await prompt(locale.map("Input a ToDo's name."), oldTask);
+                if (null !== newTask && 0 < newTask.length && newTask !== oldTask)
                 {
-                    if (OldStorage.Task.rename(pass, item.task, newTask))
+                    const newTaskFullname = `${sublist}${OldStorage.Task.encode(newTask)}`;
+                    if (OldStorage.Task.rename(pass, item.task, newTaskFullname))
                     {
-                        await onRename(newTask);
+                        await onRename(OldStorage.Task.decode(newTaskFullname));
                     }
                     else
                     {
