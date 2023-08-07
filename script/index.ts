@@ -778,9 +778,21 @@ export module CyclicToDo
             {
                 OldStorage.TagMember.add(pass, "@overall", task);
             };
+            export const isExist = (pass: string, task: string, tag?: string): boolean =>
+            {
+                if ("string" === typeof tag && Model.isSublistOld(tag))
+                {
+                    const taskFullname = `${tag}${Task.getBody(task)}`;
+                    return isExist(pass, taskFullname);
+                }
+                else
+                {
+                    return 0 <= TagMember.getRaw(pass, "@overall").indexOf(task);
+                }
+            };
             export const rename = (pass: string, oldTask: string, newTask: string) =>
             {
-                if (0 < newTask.length && oldTask !== newTask && TagMember.getRaw(pass, "@overall").indexOf(newTask) < 0)
+                if (0 < newTask.length && oldTask !== newTask && ! isExist(pass, newTask))
                 {
                     const oldSublist = getSublist(oldTask);
                     const newSublist = getSublist(newTask);
@@ -3294,9 +3306,32 @@ export module CyclicToDo
             const newTask = await prompt(locale.map("Input a ToDo's name."), _default);
             if (null !== newTask)
             {
-                OldStorage.Task.add(entry.pass, newTask);
-                const newTask2 = OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
-                await showUrl({ pass: entry.pass, todo: newTask2, });
+                const encodedNewTask = OldStorage.Task.encode(newTask);
+                if ( ! OldStorage.Task.isExist(entry.pass, encodedNewTask, entry.tag))
+                {
+                    OldStorage.Task.add(entry.pass, encodedNewTask);
+                    const newTask2 = OldStorage.TagMember.add(entry.pass, entry.tag, encodedNewTask);
+                    const urlParams = getUrlParams(location.href);
+                    await showUrl({ pass: entry.pass, todo: newTask2, });
+                    const toast = makeToast
+                    ({
+                        id: "add-new-task",
+                        content: $span("")(`${locale.string("ToDo を作成しました！")}: ${OldStorage.Task.decode(newTask2)}`),
+                        backwardOperator: cancelTextButton
+                        (
+                            async () =>
+                            {
+                                OldStorage.Task.removeRaw(entry.pass, encodedNewTask);
+                                await showUrl(urlParams);
+                                await toast.hide();
+                            }
+                        ),
+                    });
+                }
+                else
+                {
+                    alert(locale.string("その名前の ToDo は既に存在しています。"));
+                }
             }
         };
         export const getTagSettingTitle = (tag: string): locale.LocaleKeyType =>
@@ -4205,7 +4240,7 @@ export module CyclicToDo
                     }
                     else
                     {
-                        alert("その名前の ToDo は既に存在しています。");
+                        alert(locale.string("その名前の ToDo は既に存在しています。"));
                     }
                 }
             }
@@ -4441,9 +4476,12 @@ export module CyclicToDo
                                     {
                                         alert
                                         (
-                                            "This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
-                                            +"\n"
-                                            +"これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。"
+                                            locale.string
+                                            (
+                                                "This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                                                +"\n"
+                                                +"これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。"
+                                            )
                                         );
                                     }
                                     else
@@ -5258,7 +5296,7 @@ export module CyclicToDo
                             }
                             else
                             {
-                                alert("その名前のタグは既に存在しています。");
+                                alert(locale.string("その名前のタグは既に存在しています。"));
                             }
                         }
                     }
@@ -5896,7 +5934,7 @@ export module CyclicToDo
                             }
                             else
                             {
-                                alert("その名前のタグは既に存在しています。");
+                                alert(locale.string("その名前のタグは既に存在しています。"));
                             }
                         }
                     }
@@ -6017,7 +6055,7 @@ export module CyclicToDo
                         }
                         else
                         {
-                            await alert("復元できませんでした。( 同名の項目が存在すると復元できません。また、サブリスト内の ToDo の場合、元のサブリストが存在している必要があります。 )");
+                            await alert(locale.string("復元できませんでした。( 同名の項目が存在すると復元できません。また、サブリスト内の ToDo の場合、元のサブリストが存在している必要があります。 )"));
                         }
                     }
                 }])
