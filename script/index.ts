@@ -3289,6 +3289,16 @@ export module CyclicToDo
                 }
             );
         };
+        export const newTaskPopup = async (entry: { pass: string, tag: string, }, _default?: string) =>
+        {
+            const newTask = await prompt(locale.map("Input a ToDo's name."), _default);
+            if (null !== newTask)
+            {
+                OldStorage.Task.add(entry.pass, newTask);
+                const newTask2 = OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
+                await showUrl({ pass: entry.pass, todo: newTask2, });
+            }
+        };
         export const getTagSettingTitle = (tag: string): locale.LocaleKeyType =>
         {
             const map: { [key: string]: locale.LocaleKeyType; } =
@@ -5161,16 +5171,7 @@ export module CyclicToDo
                             await Resource.loadSvgOrCache("add-task-icon"), // 本来は plus だけど、まだ作ってない
                             label("New ToDo"),
                         ],
-                        async () =>
-                        {
-                            const newTask = await prompt(locale.map("Input a ToDo's name."));
-                            if (null !== newTask)
-                            {
-                                OldStorage.Task.add(pass, newTask);
-                                const newTask2 = OldStorage.TagMember.add(pass, tag, newTask);
-                                await showUrl({ pass, todo: newTask2, });
-                            }
-                        }
+                        async () => newTaskPopup({ pass, tag, }),
                     ),
                     menuLinkItem
                     (
@@ -5270,16 +5271,7 @@ export module CyclicToDo
             menuItem
             (
                 label("New ToDo"),
-                async () =>
-                {
-                    const newTask = await prompt(locale.map("Input a ToDo's name."));
-                    if (null !== newTask)
-                    {
-                        OldStorage.Task.add(entry.pass, newTask);
-                        const newTask2 = OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
-                        await showUrl({ pass: entry.pass, todo: newTask2, });
-                    }
-                }
+                async () => newTaskPopup(entry)
             ),
             // {
             //     tag: "button",
@@ -5710,16 +5702,7 @@ export module CyclicToDo
                 tag: "button",
                 className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
                 children: label("New ToDo"),
-                onclick: async () =>
-                {
-                    const newTask = await prompt(locale.map("Input a ToDo's name."), getFilterText());
-                    if (null !== newTask)
-                    {
-                        OldStorage.Task.add(entry.pass, newTask);
-                        const newTask2 = OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
-                        await showUrl({ pass: entry.pass, todo: newTask2, });
-                    }
-                }
+                onclick: async () => newTaskPopup(entry, getFilterText()),
             },
             internalLink
             ({
@@ -5921,16 +5904,7 @@ export module CyclicToDo
             menuItem
             (
                 label("New ToDo"),
-                async () =>
-                {
-                    const newTask = await prompt(locale.map("Input a ToDo's name."));
-                    if (null !== newTask)
-                    {
-                        OldStorage.Task.add(entry.pass, newTask);
-                        const newTask2 = OldStorage.TagMember.add(entry.pass, entry.tag, newTask);
-                        await showUrl({ pass: entry.pass, todo: newTask2, });
-                    }
-                }
+                async () => newTaskPopup(entry)
             ),
             // {
             //     tag: "button",
