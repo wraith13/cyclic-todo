@@ -48,16 +48,15 @@
 {
     .clickable-trait;
     .negative-foreground-coloring-trait;
+    border-color: @base-color;
     @media (hover: hover)
     {
         &:not(:hover)
         {
-            border-color: @accent-color;
             background-color: @accent-color;
         }
         &:hover
         {
-            border-color: @active-color;
             background-color: @active-color;
         }
     }
@@ -65,7 +64,6 @@
     {
         &
         {
-            border-color: @accent-color;
             background-color: @accent-color;
         }
     }

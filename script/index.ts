@@ -3315,7 +3315,6 @@ export module CyclicToDo
                     await showUrl({ pass: entry.pass, todo: newTask2, });
                     const toast = makeToast
                     ({
-                        id: "add-new-task",
                         content: $span("")(`${locale.string("ToDo を作成しました！")}: ${OldStorage.Task.decode(newTask2)}`),
                         backwardOperator: cancelTextButton
                         (
@@ -3324,13 +3323,28 @@ export module CyclicToDo
                                 OldStorage.Task.removeRaw(entry.pass, encodedNewTask);
                                 await showUrl(urlParams);
                                 await toast.hide();
+                                await newTaskPopup(entry, newTask);
                             }
                         ),
                     });
                 }
                 else
                 {
-                    alert(locale.string("その名前の ToDo は既に存在しています。"));
+                    const toast = makeToast
+                    ({
+                        content: $span("")(locale.string("その名前の ToDo は既に存在しています。")),
+                        backwardOperator:
+                        {
+                            tag: "button",
+                            className: "text-button",
+                            children: label("Retry"),
+                            onclick: async () =>
+                            {
+                                await toast.hide();
+                                await newTaskPopup(entry, newTask);
+                            },
+                        },
+                    });
                 }
             }
         };
