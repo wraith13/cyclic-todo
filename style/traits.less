@@ -68,6 +68,28 @@
         }
     }
 }
+.primary-solid-operator-coloring-trait
+{
+    .primary-operator-coloring-trait;
+    @media (hover: hover)
+    {
+        &:not(:hover)
+        {
+            border-color: @accent-color;
+        }
+        &:hover
+        {
+            border-color: @active-color;
+        }
+    }
+    @media (hover: none)
+    {
+        &
+        {
+            border-color: @accent-color;
+        }
+    }
+}
 .secondary-text-operator-coloring-trait
 {
     .clickable-trait;

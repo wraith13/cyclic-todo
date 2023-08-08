@@ -3311,17 +3311,32 @@ export module CyclicToDo
                 {
                     OldStorage.Task.add(entry.pass, encodedNewTask);
                     const newTask2 = OldStorage.TagMember.add(entry.pass, entry.tag, encodedNewTask);
-                    const urlParams = getUrlParams(location.href);
-                    await showUrl({ pass: entry.pass, todo: newTask2, });
+                    updateWindow("operate");
                     const toast = makeToast
                     ({
                         content: $span("")(`${locale.string("ToDo を作成しました！")}: ${OldStorage.Task.decode(newTask2)}`),
+                        forwardOperator:
+                        {
+                            tag: "button",
+                            className: "text-button",
+                            children: label("Done"),
+                            onclick: async () =>
+                            {
+                                await Operate.done
+                                (
+                                    entry.pass,
+                                    newTask2,
+                                    MigrateBridge.getDoneTicks(entry.pass),
+                                    () => updateWindow("operate")
+                                );
+                                updateWindow("operate");
+                            },
+                        },
                         backwardOperator: cancelTextButton
                         (
                             async () =>
                             {
                                 OldStorage.Task.removeRaw(entry.pass, encodedNewTask);
-                                await showUrl(urlParams);
                                 await toast.hide();
                                 await newTaskPopup(entry, newTask);
                             }
