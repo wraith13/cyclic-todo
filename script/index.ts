@@ -3314,7 +3314,7 @@ export module CyclicToDo
                     updateWindow("operate");
                     const toast = makeToast
                     ({
-                        content: $span("")(`${locale.string("ToDo を作成しました！")}: ${OldStorage.Task.decode(newTask2)}`),
+                        content: $span("")(`${locale.map("ToDo has been created!")}: ${OldStorage.Task.decode(newTask2)}`),
                         forwardOperator:
                         {
                             tag: "button",
