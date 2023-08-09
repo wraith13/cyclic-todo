@@ -2270,6 +2270,7 @@ export module CyclicToDo
                     (
                         async () =>
                         {
+                            toast.hide(); // nowait
                             await withUpdateProgress
                             (
                                 $span("")(locale.map("Storing")),
@@ -2277,7 +2278,6 @@ export module CyclicToDo
                                     .add(MigrateBridge.Title.updator(pass, backup))
                                     .commit()
                             );
-                            await toast.hide();
                             onCanceled();
                         }
                     ),
@@ -2295,7 +2295,7 @@ export module CyclicToDo
                         async () =>
                         {
                             OldStorage.importJson(JSON.stringify(list));
-                            await toast.hide();
+                            toast.hide(); // nowait
                             onCanceled();
                         }
                     ),
@@ -2334,7 +2334,7 @@ export module CyclicToDo
                                 OldStorage.TagMember.add(pass, "@pickup", task);
                             }
                             MigrateBridge.updateTermCategory(pass, MigrateBridge.getToDoEntry(pass, task));
-                            await toast.hide();
+                            toast.hide(); // nowait
                             onCanceled();
                         }
                     ),
@@ -2386,28 +2386,33 @@ export module CyclicToDo
                         async () =>
                         {
                             Storage.Filter.set(backup);
-                            await toast.hide();
+                            toast.hide(); // nowait
                             onCanceled();
                         }
                     ),
                 });
             };
         }
-        export const cancelTextButton = (onCanceled: () => unknown) =>
+        export const textButton = (text: locale.LocaleKeyType, onclick: () => unknown) =>
         ({
             tag: "button",
             className: "text-button",
-            children: label("roll-back"),
-            onclick: async () =>
+            children: label(text),
+            onclick,
+        });
+        export const cancelTextButton = (onCanceled: () => unknown) => textButton
+        (
+            "roll-back",
+            async () =>
             {
                 onCanceled();
                 makeToast
                 ({
-                    content: $span("")(label("roll-backed")),
+                    content: label("roll-backed"),
                     wait: 3000,
                 });
-            },
-        });
+            }
+        );
         export interface PageParamsRaw
         {
             pass?:string;
@@ -3315,13 +3320,12 @@ export module CyclicToDo
                     const toast = makeToast
                     ({
                         content: $span("")(`${locale.map("ToDo has been created!")}: ${OldStorage.Task.decode(newTask2)}`),
-                        forwardOperator:
-                        {
-                            tag: "button",
-                            className: "text-button",
-                            children: label("Done"),
-                            onclick: async () =>
+                        forwardOperator: textButton
+                        (
+                            "Done",
+                            async () =>
                             {
+                                toast.hide(); // nowait
                                 await Operate.done
                                 (
                                     entry.pass,
@@ -3330,14 +3334,14 @@ export module CyclicToDo
                                     () => updateWindow("operate")
                                 );
                                 updateWindow("operate");
-                            },
-                        },
+                            }
+                        ),
                         backwardOperator: cancelTextButton
                         (
                             async () =>
                             {
                                 OldStorage.Task.removeRaw(entry.pass, encodedNewTask);
-                                await toast.hide();
+                                toast.hide(); // nowait
                                 await newTaskPopup(entry, newTask);
                             }
                         ),
@@ -3348,17 +3352,24 @@ export module CyclicToDo
                     const toast = makeToast
                     ({
                         content: $span("")(locale.string("その名前の ToDo は既に存在しています。")),
-                        backwardOperator:
-                        {
-                            tag: "button",
-                            className: "text-button",
-                            children: label("Retry"),
-                            onclick: async () =>
+                        forwardOperator: textButton
+                        (
+                            "Show",
+                            async () =>
                             {
-                                await toast.hide();
+                                toast.hide(); // nowait
+                                await showUrl({ pass: entry.pass, todo: encodedNewTask, });
+                            }
+                        ),
+                        backwardOperator: textButton
+                        (
+                            "Respecify",
+                            async () =>
+                            {
+                                toast.hide(); // nowait
                                 await newTaskPopup(entry, newTask);
-                            },
-                        },
+                            }
+                        ),
                     });
                 }
             }
@@ -4354,7 +4365,7 @@ export module CyclicToDo
                         {
                             const removedItem = OldStorage.Removed.get(pass).filter(i => isRemovedTask(i) && item.task === i.name)[0];
                             OldStorage.Removed.restore(pass, removedItem);
-                            await toast.hide();
+                            toast.hide(); // nowait
                             onCanceled();
                         }
                     ),
@@ -6763,7 +6774,7 @@ export module CyclicToDo
                 (
                     async () =>
                     {
-                        await loadingToast.hide();
+                        loadingToast.hide(); // nowait
                         isCanceled = true;
                     }
                 ),
@@ -6789,24 +6800,17 @@ export module CyclicToDo
                 loadingToast.hide();
                 const retryToast = makeToast
                 ({
-                    forwardOperator:{
-                        tag: "button",
-                        className: "text-button",
-                        children: $span("")(locale.map("Retry")),
-                        onclick: async () =>
-                        {
-                            reloadScreen();
-                            await retryToast.hide();
-                        },
-                    },
-                    content: $span("")(locale.map("Could not access the server successfully.")),
-                    backwardOperator: cancelTextButton
+                    forwardOperator: textButton
                     (
+                        "Retry",
                         async () =>
                         {
-                            await retryToast.hide();
+                            retryToast.hide(); // nowait
+                            reloadScreen();
                         }
                     ),
+                    content: label("Could not access the server successfully."),
+                    backwardOperator: cancelTextButton(async () => await retryToast.hide()),
                     wait: 0,
                 });
                 console.error(error);
@@ -7355,18 +7359,16 @@ export module CyclicToDo
                         wasShowNewVersionToast = true;
                         const toast = makeToast
                         ({
-                            forwardOperator:
-                            {
-                                tag: "button",
-                                className: "text-button",
-                                children: $span("")(locale.map("Update")),
-                                onclick: () =>
+                            forwardOperator: textButton
+                            (
+                                "Update",
+                                () =>
                                 {
-                                    toast.hide();
+                                    toast.hide(); // nowait
                                     reloadScreen();
-                                },
-                            },
-                            content: $span("")(locale.map("There is a new version!")),
+                                }
+                            ),
+                            content: label("There is a new version!"),
                             wait: 0,
                         });
                     }
@@ -7543,8 +7545,8 @@ export module CyclicToDo
                                             const settings = OldStorage.TagSettings.get(pass, tag);
                                             settings.displayStyle = defaultStyle === current ? undefined: <"full" | "compact">current;
                                             OldStorage.TagSettings.set(pass, tag, settings);
+                                            toast.hide(); // nowait
                                             await reload();
-                                            await toast.hide();
                                         }
                                     ),
                                 });
@@ -7574,8 +7576,8 @@ export module CyclicToDo
                                             const settings = OldStorage.TagSettings.get(pass, tag);
                                             settings.progressScaleStyle = defaultStyle === current ? undefined: <"none" | "full">current;
                                             OldStorage.TagSettings.set(pass, tag, settings);
+                                            toast.hide(); // nowait
                                             await reload();
-                                            await toast.hide();
                                         }
                                     ),
                                 });
@@ -7605,8 +7607,8 @@ export module CyclicToDo
                                             const settings = OldStorage.TagSettings.get(pass, tag);
                                             settings.sort = defaultSort === current ? undefined: <"smart" | "simple">current;
                                             OldStorage.TagSettings.set(pass, tag, settings);
+                                            toast.hide(); // nowait
                                             await reload();
-                                            await toast.hide();
                                         }
                                     ),
                                 });
@@ -7633,8 +7635,8 @@ export module CyclicToDo
                                             const settings = Storage.SystemSettings.get();
                                             settings.theme = defaultTheme === current ? undefined: current;
                                             Storage.SystemSettings.set(settings);
+                                            toast.hide(); // nowait
                                             updateStyle();
-                                            await toast.hide();
                                         }
                                     ),
                                 });
@@ -7663,8 +7665,8 @@ export module CyclicToDo
                                             settings.locale = defaultLanguage === current ? undefined: current;
                                             Storage.SystemSettings.set(settings);
                                             locale.setLocale(settings.locale ?? null);
+                                            toast.hide(); // nowait
                                             await reload();
-                                            await toast.hide();
                                         }
                                     ),
                                 });
@@ -7873,18 +7875,16 @@ export module CyclicToDo
             {
                 const toast = Render.makeToast
                 ({
-                    forwardOperator:
-                    {
-                        tag: "button",
-                        className: "text-button",
-                        children: Render.$span("")(locale.map("Full screen")),
-                        onclick: async () =>
+                    forwardOperator: Render.textButton
+                    (
+                        "Full screen",
+                        async () =>
                         {
-                            toast.hide();
+                            toast.hide(); // nowait
                             await Render.requestFullscreen();
-                        },
-                    },
-                    content: Render.$span("")(locale.map("Full screen has been canceled due to reloading.")),
+                        }
+                    ),
+                    content: Render.label("Full screen has been canceled due to reloading."),
                 });
             }
         }

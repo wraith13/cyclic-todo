@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Wed Aug 09 2023 18:56:15 GMT+0900 (日本標準時)
+    build at: Thu Aug 10 2023 00:39:45 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -7385,6 +7385,7 @@ define("resource/lang.en", [], {
     "Input a Sublist's name.": "Input a Sublist's name.",
     "This action cannot be undone. Do you want to continue?": "This action cannot be undone. Do you want to continue?",
     "Close": "Close",
+    "Show": "Show",
     "Done!": "Done!",
     "Storing": "Storing",
     "week.short.0": "Sun",
@@ -7401,6 +7402,7 @@ define("resource/lang.en", [], {
     "ToDo has been created!": "ToDo has been created!",
     "ToDo has been deleted!": "ToDo has been deleted!",
     "ToDo list has been deleted!": "ToDo list has been deleted!",
+    "Respecify": "Respecify",
     "Retry": "Retry",
     "Update": "Update",
     "There is a new version!": "There is a new version!",
@@ -7547,6 +7549,7 @@ define("resource/lang.ja", [], {
     "Input a Sublist's name.": "サブリストの名前を入力してください。",
     "This action cannot be undone. Do you want to continue?": "この操作は取り消せません。続行しますか？",
     "Close": "閉じる",
+    "Show": "表示",
     "Done!": "完了！",
     "Storing": "保存中",
     "week.short.0": "日",
@@ -7563,6 +7566,7 @@ define("resource/lang.ja", [], {
     "ToDo has been created!": "ToDo を作成しました！",
     "ToDo has been deleted!": "ToDo を削除しました！",
     "ToDo list has been deleted!": "ToDo リストを削除しました！",
+    "Respecify": "指定し直す",
     "Retry": "リトライ",
     "Update": "アップデート",
     "There is a new version!": "新しいバージョンがあります！",
@@ -9684,13 +9688,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, Render.withUpdateProgress(Render.$span("")(locale.map("Storing")), new MigrateBridge.Transaction(pass)
-                                                            .add(MigrateBridge.Title.updator(pass, backup))
-                                                            .commit())];
+                                                    case 0:
+                                                        toast.hide(); // nowait
+                                                        return [4 /*yield*/, Render.withUpdateProgress(Render.$span("")(locale.map("Storing")), new MigrateBridge.Transaction(pass)
+                                                                .add(MigrateBridge.Title.updator(pass, backup))
+                                                                .commit())];
                                                     case 1:
-                                                        _a.sent();
-                                                        return [4 /*yield*/, toast.hide()];
-                                                    case 2:
                                                         _a.sent();
                                                         onCanceled();
                                                         return [2 /*return*/];
@@ -9715,15 +9718,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 content: Render.$span("")(locale.map("ToDo list has been deleted!") + ": " + list.title),
                                 backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                OldStorage.importJson(JSON.stringify(list));
-                                                return [4 /*yield*/, toast.hide()];
-                                            case 1:
-                                                _a.sent();
-                                                onCanceled();
-                                                return [2 /*return*/];
-                                        }
+                                        OldStorage.importJson(JSON.stringify(list));
+                                        toast.hide(); // nowait
+                                        onCanceled();
+                                        return [2 /*return*/];
                                     });
                                 }); }),
                             });
@@ -9752,22 +9750,17 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             content: Render.$span("")(locale.map("Done!") + ": " + Model.decode(task)),
                             backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
-                                    switch (_a.label) {
-                                        case 0:
-                                            OldStorage.History.removeTickRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
-                                            if (isFlashed) {
-                                                OldStorage.TagMember.add(pass, "@flash", task);
-                                            }
-                                            if (isPickuped) {
-                                                OldStorage.TagMember.add(pass, "@pickup", task);
-                                            }
-                                            MigrateBridge.updateTermCategory(pass, MigrateBridge.getToDoEntry(pass, task));
-                                            return [4 /*yield*/, toast.hide()];
-                                        case 1:
-                                            _a.sent();
-                                            onCanceled();
-                                            return [2 /*return*/];
+                                    OldStorage.History.removeTickRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
+                                    if (isFlashed) {
+                                        OldStorage.TagMember.add(pass, "@flash", task);
                                     }
+                                    if (isPickuped) {
+                                        OldStorage.TagMember.add(pass, "@pickup", task);
+                                    }
+                                    MigrateBridge.updateTermCategory(pass, MigrateBridge.getToDoEntry(pass, task));
+                                    toast.hide(); // nowait
+                                    onCanceled();
+                                    return [2 /*return*/];
                                 });
                             }); }),
                         });
@@ -9818,15 +9811,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             content: Render.$span("")(locale.map("Filter history cleared.")),
                             backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
-                                    switch (_a.label) {
-                                        case 0:
-                                            Storage.Filter.set(backup);
-                                            return [4 /*yield*/, toast.hide()];
-                                        case 1:
-                                            _a.sent();
-                                            onCanceled();
-                                            return [2 /*return*/];
-                                    }
+                                    Storage.Filter.set(backup);
+                                    toast.hide(); // nowait
+                                    onCanceled();
+                                    return [2 /*return*/];
                                 });
                             }); }),
                         });
@@ -9834,23 +9822,24 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     });
                 }); };
             })(Operate = Render.Operate || (Render.Operate = {}));
-            Render.cancelTextButton = function (onCanceled) {
+            Render.textButton = function (text, onclick) {
                 return ({
                     tag: "button",
                     className: "text-button",
-                    children: Render.label("roll-back"),
-                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            onCanceled();
-                            Render.makeToast({
-                                content: Render.$span("")(Render.label("roll-backed")),
-                                wait: 3000,
-                            });
-                            return [2 /*return*/];
-                        });
-                    }); },
+                    children: Render.label(text),
+                    onclick: onclick,
                 });
             };
+            Render.cancelTextButton = function (onCanceled) { return Render.textButton("roll-back", function () { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    onCanceled();
+                    Render.makeToast({
+                        content: Render.label("roll-backed"),
+                        wait: 3000,
+                    });
+                    return [2 /*return*/];
+                });
+            }); }); };
             Render.internalLink = function (data) {
                 return ({
                     tag: "a",
@@ -10947,32 +10936,27 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.updateWindow("operate");
                                     toast_1 = Render.makeToast({
                                         content: Render.$span("")(locale.map("ToDo has been created!") + ": " + OldStorage.Task.decode(newTask2_1)),
-                                        forwardOperator: {
-                                            tag: "button",
-                                            className: "text-button",
-                                            children: Render.label("Done"),
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0: return [4 /*yield*/, Operate.done(entry.pass, newTask2_1, MigrateBridge.getDoneTicks(entry.pass), function () { return Render.updateWindow("operate"); })];
-                                                        case 1:
-                                                            _a.sent();
-                                                            Render.updateWindow("operate");
-                                                            return [2 /*return*/];
-                                                    }
-                                                });
-                                            }); },
-                                        },
+                                        forwardOperator: Render.textButton("Done", function () { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        toast_1.hide(); // nowait
+                                                        return [4 /*yield*/, Operate.done(entry.pass, newTask2_1, MigrateBridge.getDoneTicks(entry.pass), function () { return Render.updateWindow("operate"); })];
+                                                    case 1:
+                                                        _a.sent();
+                                                        Render.updateWindow("operate");
+                                                        return [2 /*return*/];
+                                                }
+                                            });
+                                        }); }),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0:
                                                         OldStorage.Task.removeRaw(entry.pass, encodedNewTask_1);
-                                                        return [4 /*yield*/, toast_1.hide()];
-                                                    case 1:
-                                                        _a.sent();
+                                                        toast_1.hide(); // nowait
                                                         return [4 /*yield*/, Render.newTaskPopup(entry, newTask)];
-                                                    case 2:
+                                                    case 1:
                                                         _a.sent();
                                                         return [2 /*return*/];
                                                 }
@@ -10983,24 +10967,30 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 else {
                                     toast_2 = Render.makeToast({
                                         content: Render.$span("")(locale.string("その名前の ToDo は既に存在しています。")),
-                                        backwardOperator: {
-                                            tag: "button",
-                                            className: "text-button",
-                                            children: Render.label("Retry"),
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0: return [4 /*yield*/, toast_2.hide()];
-                                                        case 1:
-                                                            _a.sent();
-                                                            return [4 /*yield*/, Render.newTaskPopup(entry, newTask)];
-                                                        case 2:
-                                                            _a.sent();
-                                                            return [2 /*return*/];
-                                                    }
-                                                });
-                                            }); },
-                                        },
+                                        forwardOperator: Render.textButton("Show", function () { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        toast_2.hide(); // nowait
+                                                        return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, todo: encodedNewTask_1, })];
+                                                    case 1:
+                                                        _a.sent();
+                                                        return [2 /*return*/];
+                                                }
+                                            });
+                                        }); }),
+                                        backwardOperator: Render.textButton("Respecify", function () { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0:
+                                                        toast_2.hide(); // nowait
+                                                        return [4 /*yield*/, Render.newTaskPopup(entry, newTask)];
+                                                    case 1:
+                                                        _a.sent();
+                                                        return [2 /*return*/];
+                                                }
+                                            });
+                                        }); }),
                                     });
                                 }
                             }
@@ -12241,16 +12231,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                         var removedItem;
                                         return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0:
-                                                    removedItem = OldStorage.Removed.get(pass).filter(function (i) { return CyclicToDo.isRemovedTask(i) && item.task === i.name; })[0];
-                                                    OldStorage.Removed.restore(pass, removedItem);
-                                                    return [4 /*yield*/, toast.hide()];
-                                                case 1:
-                                                    _a.sent();
-                                                    onCanceled();
-                                                    return [2 /*return*/];
-                                            }
+                                            removedItem = OldStorage.Removed.get(pass).filter(function (i) { return CyclicToDo.isRemovedTask(i) && item.task === i.name; })[0];
+                                            OldStorage.Removed.restore(pass, removedItem);
+                                            toast.hide(); // nowait
+                                            onCanceled();
+                                            return [2 /*return*/];
                                         });
                                     }); }),
                                 });
@@ -15480,13 +15465,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 content: Render.$span("")(locale.map("Communicating with server...")),
                                 backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0: return [4 /*yield*/, loadingToast.hide()];
-                                            case 1:
-                                                _a.sent();
-                                                isCanceled = true;
-                                                return [2 /*return*/];
-                                        }
+                                        loadingToast.hide(); // nowait
+                                        isCanceled = true;
+                                        return [2 /*return*/];
                                     });
                                 }); }),
                                 wait: 0,
@@ -15513,34 +15494,20 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             error_1 = _a.sent();
                             loadingToast.hide();
                             retryToast_1 = Render.makeToast({
-                                forwardOperator: {
-                                    tag: "button",
-                                    className: "text-button",
-                                    children: Render.$span("")(locale.map("Retry")),
-                                    onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0:
-                                                    Render.reloadScreen();
-                                                    return [4 /*yield*/, retryToast_1.hide()];
-                                                case 1:
-                                                    _a.sent();
-                                                    return [2 /*return*/];
-                                            }
-                                        });
-                                    }); },
-                                },
-                                content: Render.$span("")(locale.map("Could not access the server successfully.")),
-                                backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
+                                forwardOperator: Render.textButton("Retry", function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0: return [4 /*yield*/, retryToast_1.hide()];
-                                            case 1:
-                                                _a.sent();
-                                                return [2 /*return*/];
-                                        }
+                                        retryToast_1.hide(); // nowait
+                                        Render.reloadScreen();
+                                        return [2 /*return*/];
                                     });
                                 }); }),
+                                content: Render.label("Could not access the server successfully."),
+                                backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, retryToast_1.hide()];
+                                        case 1: return [2 /*return*/, _a.sent()];
+                                    }
+                                }); }); }),
                                 wait: 0,
                             });
                             console.error(error_1);
@@ -16121,16 +16088,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             if (_a.sent()) {
                                 wasShowNewVersionToast = true;
                                 toast_3 = Render.makeToast({
-                                    forwardOperator: {
-                                        tag: "button",
-                                        className: "text-button",
-                                        children: Render.$span("")(locale.map("Update")),
-                                        onclick: function () {
-                                            toast_3.hide();
-                                            Render.reloadScreen();
-                                        },
-                                    },
-                                    content: Render.$span("")(locale.map("There is a new version!")),
+                                    forwardOperator: Render.textButton("Update", function () {
+                                        toast_3.hide(); // nowait
+                                        Render.reloadScreen();
+                                    }),
+                                    content: Render.label("There is a new version!"),
                                     wait: 0,
                                 });
                             }
@@ -16290,11 +16252,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                         settings = OldStorage.TagSettings.get(pass_1, tag_2);
                                                         settings.displayStyle = defaultStyle_1 === current_1 ? undefined : current_1;
                                                         OldStorage.TagSettings.set(pass_1, tag_2, settings);
+                                                        toast_4.hide(); // nowait
                                                         return [4 /*yield*/, CyclicToDo.reload()];
                                                     case 1:
-                                                        _a.sent();
-                                                        return [4 /*yield*/, toast_4.hide()];
-                                                    case 2:
                                                         _a.sent();
                                                         return [2 /*return*/];
                                                 }
@@ -16326,11 +16286,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                         settings = OldStorage.TagSettings.get(pass_1, tag_2);
                                                         settings.progressScaleStyle = defaultStyle_2 === current_2 ? undefined : current_2;
                                                         OldStorage.TagSettings.set(pass_1, tag_2, settings);
+                                                        toast_5.hide(); // nowait
                                                         return [4 /*yield*/, CyclicToDo.reload()];
                                                     case 1:
-                                                        _a.sent();
-                                                        return [4 /*yield*/, toast_5.hide()];
-                                                    case 2:
                                                         _a.sent();
                                                         return [2 /*return*/];
                                                 }
@@ -16362,11 +16320,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                         settings = OldStorage.TagSettings.get(pass_1, tag_2);
                                                         settings.sort = defaultSort_1 === current_3 ? undefined : current_3;
                                                         OldStorage.TagSettings.set(pass_1, tag_2, settings);
+                                                        toast_6.hide(); // nowait
                                                         return [4 /*yield*/, CyclicToDo.reload()];
                                                     case 1:
-                                                        _a.sent();
-                                                        return [4 /*yield*/, toast_6.hide()];
-                                                    case 2:
                                                         _a.sent();
                                                         return [2 /*return*/];
                                                 }
@@ -16391,17 +16347,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             var settings;
                                             return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0:
-                                                        settings = Storage.SystemSettings.get();
-                                                        settings.theme = defaultTheme_1 === current_4 ? undefined : current_4;
-                                                        Storage.SystemSettings.set(settings);
-                                                        CyclicToDo.updateStyle();
-                                                        return [4 /*yield*/, toast_7.hide()];
-                                                    case 1:
-                                                        _a.sent();
-                                                        return [2 /*return*/];
-                                                }
+                                                settings = Storage.SystemSettings.get();
+                                                settings.theme = defaultTheme_1 === current_4 ? undefined : current_4;
+                                                Storage.SystemSettings.set(settings);
+                                                toast_7.hide(); // nowait
+                                                CyclicToDo.updateStyle();
+                                                return [2 /*return*/];
                                             });
                                         }); }),
                                     });
@@ -16431,11 +16382,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                         settings.locale = defaultLanguage_1 === current_5 ? undefined : current_5;
                                                         Storage.SystemSettings.set(settings);
                                                         locale.setLocale((_a = settings.locale) !== null && _a !== void 0 ? _a : null);
+                                                        toast_8.hide(); // nowait
                                                         return [4 /*yield*/, CyclicToDo.reload()];
                                                     case 1:
-                                                        _b.sent();
-                                                        return [4 /*yield*/, toast_8.hide()];
-                                                    case 2:
                                                         _b.sent();
                                                         return [2 /*return*/];
                                                 }
@@ -16622,24 +16571,19 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             fullscreen = json["fullscreen"];
                             if (fullscreen && Render.fullscreenEnabled()) {
                                 toast_9 = Render.makeToast({
-                                    forwardOperator: {
-                                        tag: "button",
-                                        className: "text-button",
-                                        children: Render.$span("")(locale.map("Full screen")),
-                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                            return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0:
-                                                        toast_9.hide();
-                                                        return [4 /*yield*/, Render.requestFullscreen()];
-                                                    case 1:
-                                                        _a.sent();
-                                                        return [2 /*return*/];
-                                                }
-                                            });
-                                        }); },
-                                    },
-                                    content: Render.$span("")(locale.map("Full screen has been canceled due to reloading.")),
+                                    forwardOperator: Render.textButton("Full screen", function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0:
+                                                    toast_9.hide(); // nowait
+                                                    return [4 /*yield*/, Render.requestFullscreen()];
+                                                case 1:
+                                                    _a.sent();
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }),
+                                    content: Render.label("Full screen has been canceled due to reloading."),
                                 });
                             }
                         }
@@ -16849,7 +16793,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Aug 09 2023 18:56:15 GMT+0900 (日本標準時)', buildTimestampTick: 1691574975340, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Aug 10 2023 00:39:45 GMT+0900 (日本標準時)', buildTimestampTick: 1691595585400, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
