@@ -4240,7 +4240,7 @@ export module CyclicToDo
         ) =>
         menuItem
         (
-            label("Done with timestamp or memo"),
+            label("Done with timestamp"),
             async () =>
             {
                 const result = Domain.parseDate(await dateTimePrompt(item.task, Domain.getTicks()));
@@ -6385,7 +6385,7 @@ export module CyclicToDo
             ),
             messageList
             ([
-                messagePanel(labelSpan(locale.string("履歴が保存される最大件数") + `: ${config.maxHistories}`)),
+                messagePanel(labelSpan(locale.map("Maximum number of histories saved") + `: ${config.maxHistories}`)),
             ]),
         ]);
         export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[], tag: string) =>

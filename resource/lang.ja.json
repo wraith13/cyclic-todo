@@ -11,7 +11,7 @@
     "elapsed time": "経過時間",
     "count": "回数",
     "Done": "完了",
-    "Done with timestamp or memo": "日時やメモを指定して完了",
+    "Done with timestamp": "日時を指定して完了",
     "Open": "開く",
     "days": "日",
     "@overall": "ホーム",
@@ -160,5 +160,6 @@
     "Gauge style has changed!": "ゲージ表示設定を変更しました！",
     "Sort orer has changed!": "表示順を変更しました！",
     "Theme has changed!": "テーマを変更しました！",
-    "Language has changed!": "言語を変更しました！"
+    "Language has changed!": "言語を変更しました！",
+    "Maximum number of histories saved": "履歴が保存される最大件数"
 }

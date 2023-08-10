@@ -11,7 +11,7 @@
     "elapsed time": "elapsed time",
     "count": "count",
     "Done": "Done",
-    "Done with timestamp or memo": "Done with timestamp or memo",
+    "Done with timestamp": "Done with timestamp",
     "Open": "Open",
     "days": "days",
     "@overall": "Home",
@@ -160,5 +160,6 @@
     "Gauge style has changed!": "Gauge style has changed!",
     "Sort orer has changed!": "Sort orer has changed!",
     "Theme has changed!": "Theme has changed!",
-    "Language has changed!": "Language has changed!"
+    "Language has changed!": "Language has changed!",
+    "Maximum number of histories saved": "Maximum number of histories saved"
 }
