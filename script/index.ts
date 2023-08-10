@@ -2431,6 +2431,7 @@ export module CyclicToDo
             onclick: (event: MouseEvent) =>
             {
                 event.stopPropagation();
+                getScreenCover()?.click();
                 showUrl(data.href);
                 return false;
             }
@@ -6567,7 +6568,7 @@ export module CyclicToDo
                 items:
                 [
                     await screenHeaderHomeSegment(),
-                    await screenHeaderListSegment("@import")
+                    await screenHeaderListMenuSegment("@import")
                 ],
                 menu: await importScreenMenu(),
                 parent: { },
@@ -6664,7 +6665,7 @@ export module CyclicToDo
                 items:
                 [
                     await screenHeaderHomeSegment(),
-                    await screenHeaderListSegment("@removed")
+                    await screenHeaderListMenuSegment("@removed")
                 ],
                 menu: await removedListScreenMenu(),
                 parent: { },
