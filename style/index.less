@@ -1171,6 +1171,19 @@ button
         opacity: 0.0;
     }
 }
+@keyframes cut-in
+{
+    0%
+    {
+        top:50%;
+        bottom: 50%;
+    }
+    100%
+    {
+        top:0%;
+        bottom: 0%;
+    }
+}
 .check-button-list,
 .label-button-list
 {
@@ -2024,15 +2037,18 @@ button
         flex-direction: row;
         align-items: center;
         justify-content: center;
-        animation-name: fade-in;
-        animation-delay: 0.3s;
-        animation-duration: 1.0s;
+        animation-name: cut-in;
+        animation-delay: 0.0s;
+        animation-duration: 0.250s;
         animation-fill-mode: both;
         background-color: @base-color;
+        overflow: hidden;
         svg
         {
             width: 61.8%;
             height: 61.8%;
+            min-width: 240px;
+            min-height: 240px;
             // .loading-spinner;
             .loading-breath;
             color: @accent-color;

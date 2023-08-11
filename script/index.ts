@@ -7927,7 +7927,7 @@ export module CyclicToDo
         updateStyle();
         updateFlashStyle();
         updateUiStyle();
-        await Render.showUpdatingScreen(location.href);
+        // await Render.showUpdatingScreen(location.href);
         await showPage();
         if (reload || "reload" === (<any>performance.getEntriesByType("navigation"))?.[0]?.type)
         {
@@ -7944,7 +7944,7 @@ export module CyclicToDo
         const body = minamo.core.existsOrThrow(document.getElementById("screen-body"));
         body.scrollTo(0,0);
         minamo.dom.appendChildren(body, await Render.updatingBody());
-        await minamo.core.timeout(150);
+        await minamo.core.timeout(250);
         //await Render.showUpdatingScreen(url);
         //await minamo.core.timeout(wait);
         const urlParams = getUrlParams(url);
