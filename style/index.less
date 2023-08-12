@@ -2220,7 +2220,9 @@ button
         fill: @accent-color;
         width: calc(100vw / 6);
         height: calc(100vw / 6);
-        transform: rotate(0deg);
+        min-width: 240px;
+        min-height: 240px;
+    transform: rotate(0deg);
     }
     42.5%
     {
@@ -2232,7 +2234,9 @@ button
         fill: @flashy-peak-color;
         width: calc(100vw / 5);
         height: calc(100vw / 5);
-    }
+        min-width: 300px;
+        min-height: 300px;
+}
     57.5%
     {
         transform: rotate(360deg);
@@ -2243,7 +2247,9 @@ button
         fill: @accent-color;
         width: calc(100vw / 6);
         height: calc(100vw / 6);
-        transform: rotate(360deg);
+        min-width: 240px;
+        min-height: 240px;
+    transform: rotate(360deg);
     }
 }
 kbd

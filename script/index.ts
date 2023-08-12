@@ -6999,7 +6999,7 @@ export module CyclicToDo
         ];
         export const updatingBody = async (): Promise<minamo.dom.Source> =>
             await applicationIcon();
-        export const updatingScreen = async (url: string = location.href): Promise<ScreenSource> =>
+        export const updatingScreen = async (_url: string = location.href): Promise<ScreenSource> =>
         ({
             className: "updating-screen",
             header:
@@ -7020,13 +7020,13 @@ export module CyclicToDo
                 //await applicationColorIcon(),
                 await applicationIcon(),
                 // $div("message")(label("Updating...")),
-                $div("button-list")
-                ({
-                    tag: "button",
-                    className: "default-button main-button long-button",
-                    children: label("Reload"),
-                    onclick: async () => await showPage(url),
-                }),
+                // $div("button-list")
+                // ({
+                //     tag: "button",
+                //     className: "default-button main-button long-button",
+                //     children: label("Reload"),
+                //     onclick: async () => await showPage(url),
+                // }),
             ]
         });
         export const showUpdatingScreen = async (url: string = location.href) =>
@@ -7504,6 +7504,18 @@ export module CyclicToDo
                                 showUrl({ pass: pass, tag: "@overall", }); // nowait
                             }
                             break;
+                        case "D":
+                            if (pass)
+                            {
+                                showUrl({ pass: pass, tag: destinationItem(getTagList({ pass, sublist: true, }), tag),}); // nowait
+                            }
+                            break;
+                        case "T":
+                            if (pass)
+                            {
+                                showUrl({ pass: pass, tag: destinationItem(getTagList({ pass, tag: true, }), tag),}); // nowait
+                            }
+                            break;
                         case "A":
                             if (pass)
                             {
@@ -7514,12 +7526,6 @@ export module CyclicToDo
                             if (pass)
                             {
                                 showUrl({ pass: pass, tag: destinationItem(getTagList({ term: true, }), tag),}); // nowait
-                            }
-                            break;
-                        case "T":
-                            if (pass)
-                            {
-                                showUrl({ pass: pass, tag: destinationItem(getTagList({ pass, tag: true, sublist: true, }), tag),}); // nowait
                             }
                             break;
                         case "V":
