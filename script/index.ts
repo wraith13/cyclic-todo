@@ -674,7 +674,6 @@ export module CyclicToDo
                     if (tag !== Task.getSublist(todo))
                     {
                         const renamedTodo = `${tag}${Task.getBody(todo)}`;
-                        console.log(`Task.rename(${pass}, ${todo}, "${renamedTodo}")`);
                         Task.rename(pass, todo, renamedTodo);
                         return renamedTodo;
                     }
@@ -4023,7 +4022,6 @@ export module CyclicToDo
                 children: data.children,
                 onclick: async () =>
                 {
-                    console.log("screen-cover.click!");
                     dom.onclick = null;
                     data.onclick();
                     close();
@@ -4063,7 +4061,6 @@ export module CyclicToDo
                 children: data.children,
                 onclick: async (event: MouseEvent) =>
                 {
-                    console.log("popup.click!");
                     event.stopPropagation();
                     //(Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[]).forEach(i => i.click());
                 },
@@ -4110,7 +4107,6 @@ export module CyclicToDo
                 onclick: async (event: MouseEvent) =>
                 {
                     event.stopPropagation();
-                    console.log("menu-popup.click!");
                     cover?.close();
                     close();
                 },
@@ -4126,7 +4122,6 @@ export module CyclicToDo
                 onclick: async (event: MouseEvent) =>
                 {
                     event.stopPropagation();
-                    console.log("menu-button.click!");
                     if ("function" === typeof menu)
                     {
                         minamo.dom.replaceChildren(popup, await menu());
@@ -4972,7 +4967,6 @@ export module CyclicToDo
                 onclick: async (event: MouseEvent) =>
                 {
                     event.stopPropagation();
-                    console.log("menu-popup.click!");
                     cover?.close();
                     close();
                 },
@@ -4985,7 +4979,6 @@ export module CyclicToDo
                 onclick: async (event: MouseEvent) =>
                 {
                     event.stopPropagation();
-                    console.log("menu-button.click!");
                     if ("function" === typeof item.menu)
                     {
                         minamo.dom.replaceChildren(popup, await item.menu());
@@ -6478,7 +6471,7 @@ export module CyclicToDo
                 }
                 catch(error)
                 {
-                    console.log({key});
+                    console.error({key, error});
                     throw error;
                 }
             };
@@ -7962,7 +7955,6 @@ export module CyclicToDo
         // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
         if (pass && todo)
         {
-            console.log("show todo screen");
             await Render.showTodoScreen(pass, todo);
         }
         else
@@ -7971,19 +7963,15 @@ export module CyclicToDo
             switch(hash)
             {
             case "import":
-                console.log("show import screen");
                 Render.showImportScreen();
                 break;
             case "removed":
-                console.log("show removed-list screen");
                 Render.showRemovedListScreen();
                 break;
             case "loading": // for debug only
-                console.log("show loading screen");
                 await Render.showUpdatingScreen(url);
                 break;
             default:
-                console.log("show welcome screen");
                 await Render.showWelcomeScreen();
                 break;
             }
@@ -7994,7 +7982,6 @@ export module CyclicToDo
             switch(hash)
             {
             case "history":
-                console.log("show history screen");
                 await Render.showHistoryScreen
                 (
                     urlParams,
@@ -8009,21 +7996,17 @@ export module CyclicToDo
             //     dom.updateStatisticsScreen(title, pass, todo);
             //     break;
             case "removed":
-                console.log("show removed screen");
                 await Render.showRemovedScreen(pass);
                 break;
             case "import":
-                console.log("show import screen");
                 await Render.showImportScreen();
                 break;
             case "export":
-                console.log("show export screen");
                 await Render.showExportScreen(pass);
                 break;
             default:
                 if (0 <= OldStorage.Pass.get().indexOf(pass))
                 {
-                    console.log("show list screen");
                     await Render.showListScreen(pass, tag, urlParams);
                 }
                 else

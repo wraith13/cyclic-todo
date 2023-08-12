@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sat Aug 12 2023 10:31:19 GMT+0900 (日本標準時)
+    build at: Sat Aug 12 2023 21:07:59 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -8194,7 +8194,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     if (Model.isSublistOld(tag)) {
                         if (tag !== Task.getSublist(todo)) {
                             var renamedTodo = "" + tag + Task.getBody(todo);
-                            console.log("Task.rename(" + pass + ", " + todo + ", \"" + renamedTodo + "\")");
                             Task.rename(pass, todo, renamedTodo);
                             return renamedTodo;
                         }
@@ -11912,7 +11911,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     children: data.children,
                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
-                            console.log("screen-cover.click!");
                             dom.onclick = null;
                             data.onclick();
                             close();
@@ -11951,7 +11949,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     children: data.children,
                     onclick: function (event) { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
-                            console.log("popup.click!");
                             event.stopPropagation();
                             return [2 /*return*/];
                         });
@@ -12012,7 +12009,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 onclick: function (event) { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         event.stopPropagation();
-                                        console.log("menu-popup.click!");
                                         cover === null || cover === void 0 ? void 0 : cover.close();
                                         close();
                                         return [2 /*return*/];
@@ -12035,7 +12031,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             switch (_d.label) {
                                                 case 0:
                                                     event.stopPropagation();
-                                                    console.log("menu-button.click!");
                                                     if (!("function" === typeof menu)) return [3 /*break*/, 2];
                                                     _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                                     _c = [popup];
@@ -13103,7 +13098,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     onclick: function (event) { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
                                             event.stopPropagation();
-                                            console.log("menu-popup.click!");
                                             cover === null || cover === void 0 ? void 0 : cover.close();
                                             close();
                                             return [2 /*return*/];
@@ -13124,7 +13118,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 switch (_d.label) {
                                                     case 0:
                                                         event.stopPropagation();
-                                                        console.log("menu-button.click!");
                                                         if (!("function" === typeof item.menu)) return [3 /*break*/, 2];
                                                         _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                                         _c = [popup];
@@ -15087,7 +15080,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             return [2 /*return*/, new DOMParser().parseFromString(minamo_js_1.minamo.core.existsOrThrow(document.getElementById(key)).innerHTML, "image/svg+xml").documentElement];
                         }
                         catch (error) {
-                            console.log({ key: key });
+                            console.error({ key: key, error: error });
                             throw error;
                         }
                         return [2 /*return*/];
@@ -16715,7 +16708,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             todo = urlParams["todo"];
                             pass = (_g = urlParams["pass"]) !== null && _g !== void 0 ? _g : OldStorage.sessionPassPrefix + ":" + new Date().getTime();
                             if (!(pass && todo)) return [3 /*break*/, 4];
-                            console.log("show todo screen");
                             return [4 /*yield*/, Render.showTodoScreen(pass, todo)];
                         case 3:
                             _h.sent();
@@ -16730,22 +16722,17 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             }
                             return [3 /*break*/, 9];
                         case 5:
-                            console.log("show import screen");
                             Render.showImportScreen();
                             return [3 /*break*/, 11];
                         case 6:
-                            console.log("show removed-list screen");
                             Render.showRemovedListScreen();
                             return [3 /*break*/, 11];
-                        case 7:
-                            console.log("show loading screen");
-                            return [4 /*yield*/, Render.showUpdatingScreen(url)];
+                        case 7: // for debug only
+                        return [4 /*yield*/, Render.showUpdatingScreen(url)];
                         case 8:
                             _h.sent();
                             return [3 /*break*/, 11];
-                        case 9:
-                            console.log("show welcome screen");
-                            return [4 /*yield*/, Render.showWelcomeScreen()];
+                        case 9: return [4 /*yield*/, Render.showWelcomeScreen()];
                         case 10:
                             _h.sent();
                             return [3 /*break*/, 11];
@@ -16759,37 +16746,28 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 case "export": return [3 /*break*/, 19];
                             }
                             return [3 /*break*/, 21];
-                        case 13:
-                            console.log("show history screen");
-                            return [4 /*yield*/, Render.showHistoryScreen(urlParams, {
-                                    tag: tag,
-                                    pass: pass,
-                                    todo: OldStorage.TagMember.get(pass, "@pickup" === tag ? "@pickup-all" : tag),
-                                })];
+                        case 13: return [4 /*yield*/, Render.showHistoryScreen(urlParams, {
+                                tag: tag,
+                                pass: pass,
+                                todo: OldStorage.TagMember.get(pass, "@pickup" === tag ? "@pickup-all" : tag),
+                            })];
                         case 14:
                             _h.sent();
                             return [3 /*break*/, 26];
-                        case 15:
-                            console.log("show removed screen");
-                            return [4 /*yield*/, Render.showRemovedScreen(pass)];
+                        case 15: return [4 /*yield*/, Render.showRemovedScreen(pass)];
                         case 16:
                             _h.sent();
                             return [3 /*break*/, 26];
-                        case 17:
-                            console.log("show import screen");
-                            return [4 /*yield*/, Render.showImportScreen()];
+                        case 17: return [4 /*yield*/, Render.showImportScreen()];
                         case 18:
                             _h.sent();
                             return [3 /*break*/, 26];
-                        case 19:
-                            console.log("show export screen");
-                            return [4 /*yield*/, Render.showExportScreen(pass)];
+                        case 19: return [4 /*yield*/, Render.showExportScreen(pass)];
                         case 20:
                             _h.sent();
                             return [3 /*break*/, 26];
                         case 21:
                             if (!(0 <= OldStorage.Pass.get().indexOf(pass))) return [3 /*break*/, 23];
-                            console.log("show list screen");
                             return [4 /*yield*/, Render.showListScreen(pass, tag, urlParams)];
                         case 22:
                             _h.sent();
@@ -16835,7 +16813,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Aug 12 2023 10:31:19 GMT+0900 (日本標準時)', buildTimestampTick: 1691803879191, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Aug 12 2023 21:07:59 GMT+0900 (日本標準時)', buildTimestampTick: 1691842079694, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
