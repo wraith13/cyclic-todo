@@ -2262,6 +2262,11 @@ kbd
     margin: 2px;
     background-color: fade(@main-color, 15%);
 }
+.key
+{
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+}
 .keyboard-shortcuts
 {
     margin: 0px;
@@ -2274,11 +2279,11 @@ kbd
         display: flex;
         flex-direction: row;
         align-items: center;
-        .key
+        .key:first-child
         {
-            width: 3.5rem;
-            margin-right: 0.5rem;
+            width: 5.0rem;
             text-align: right;
+            margin-right: 0.5rem;
         }
     }
 }

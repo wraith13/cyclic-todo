@@ -43,6 +43,12 @@
         "category": "move"
     },
     {
+        "key": [ "Shift", "H" ],
+        "message": "Move to History",
+        "context": "with list",
+        "category": "move"
+    },
+    {
         "key": [ "D" ],
         "message": "Move to next sublist",
         "context": "with list",

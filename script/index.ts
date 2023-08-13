@@ -7177,11 +7177,11 @@ export module CyclicToDo
                     await minamo.core.timeout(wait);
                     minamo.dom.remove(dom);
                     // 以下は Safari での CSS バグをクリアする為の細工。本質的には必要の無い呼び出し。
-                    if (minamo.core.existsOrThrow(document.getElementById("screen-toast")).getElementsByClassName("item").length <= 0)
-                    {
-                        await minamo.core.timeout(10);
-                        updateWindow("operate");
-                    }
+                    // if (minamo.core.existsOrThrow(document.getElementById("screen-toast")).getElementsByClassName("item").length <= 0)
+                    // {
+                    //     await minamo.core.timeout(10);
+                    //     updateWindow("operate");
+                    // }
                 }
             };
             const wait = data.wait ?? 5000;
@@ -7464,7 +7464,7 @@ export module CyclicToDo
                 {
                     const url = location.href;
                     const urlParams = getUrlParams(url);
-                    // const hash = getUrlHash(url);
+                    const hash = getUrlHash(url);
                     const tag = urlParams["tag"] ?? "";
                     // const todo = urlParams["todo"];
                     const pass = urlParams["pass"] ?? `${OldStorage.sessionPassPrefix}:${new Date().getTime()}`;
@@ -7494,35 +7494,45 @@ export module CyclicToDo
                         case "H":
                             if (pass)
                             {
-                                showUrl({ pass: pass, tag: "@overall", }); // nowait
+                                if (event.shiftKey)
+                                {
+                                    if (tag)
+                                    {
+                                        showUrl({ pass, tag, hash: nextItem(["", "history"], hash)}); // nowait
+                                    }
+                                }
+                                else
+                                {
+                                    showUrl({ pass, tag: "@overall", }); // nowait
+                                }
                             }
                             break;
                         case "D":
                             if (pass)
                             {
-                                showUrl({ pass: pass, tag: destinationItem(getTagList({ pass, sublist: true, }), tag),}); // nowait
+                                showUrl({ pass, tag: destinationItem(getTagList({ pass, sublist: true, }), tag),}); // nowait
                             }
                             break;
                         case "T":
                             if (pass)
                             {
-                                showUrl({ pass: pass, tag: destinationItem(getTagList({ pass, tag: true, }), tag),}); // nowait
+                                showUrl({ pass, tag: destinationItem(getTagList({ pass, tag: true, }), tag),}); // nowait
                             }
                             break;
                         case "A":
                             if (pass)
                             {
-                                showUrl({ pass: pass, tag: destinationItem(getTagList({ auto: true, }), tag),}); // nowait
+                                showUrl({ pass, tag: destinationItem(getTagList({ auto: true, }), tag),}); // nowait
                             }
                             break;
                         case "P":
                             if (pass)
                             {
-                                showUrl({ pass: pass, tag: destinationItem(getTagList({ term: true, }), tag),}); // nowait
+                                showUrl({ pass, tag: destinationItem(getTagList({ term: true, }), tag),}); // nowait
                             }
                             break;
                         case "V":
-                            if (pass && tag)
+                            if (pass && tag && undefined !== hash)
                             {
                                 const settings = OldStorage.TagSettings.get(pass, tag);
                                 const defaultStyle = getTagDisplayStyleDefault(tag);
@@ -7553,7 +7563,7 @@ export module CyclicToDo
                             }
                             break;
                         case "G":
-                            if (pass && tag)
+                            if (pass && tag && undefined !== hash)
                             {
                                 const settings = OldStorage.TagSettings.get(pass, tag);
                                 const defaultStyle = getTagProgressScaleStyleDefault(tag);
@@ -7584,7 +7594,7 @@ export module CyclicToDo
                             }
                             break;
                         case "O":
-                            if (pass && tag)
+                            if (pass && tag && undefined !== hash)
                             {
                                 const settings = OldStorage.TagSettings.get(pass, tag);
                                 const defaultSort = getTagSortSettingsDefault(tag);
