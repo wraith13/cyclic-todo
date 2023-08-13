@@ -3517,11 +3517,23 @@ export module CyclicToDo
                             async (i: "@home" | "smart" | "simple" | "simple-reverse") =>
                             ({
                                 tag: "button",
-                                className: `check-button ${i === (settings.sort ?? defaultSort) ? "checked": ""}`,
+                                className: `description-button check-button ${i === (settings.sort ?? defaultSort) ? "checked": ""}`,
                                 children:
                                 [
-                                    await Resource.loadSvgOrCache("check-icon"),
-                                    $span("")(label(getTagSortSettingsText(i))),
+                                    {
+                                        tag: "div",
+                                        className: "button-title",
+                                        children:
+                                        [
+                                            await Resource.loadSvgOrCache("check-icon"),
+                                            $span("")(label(getTagSortSettingsText(i))),
+                                        ],
+                                    },
+                                    {
+                                        tag: "div",
+                                        className: "button-description",
+                                        children: "説明文。説明文。説明文。説明文。説明文。説明文。説明文。説明文。説明文。説明文。説明文。説明文。説明文。",
+                                    }
                                 ],
                                 onclick: async () =>
                                 {

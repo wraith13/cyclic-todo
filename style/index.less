@@ -750,6 +750,52 @@ h1
     background-color: transparent !important;
     text-decoration: none !important;
 }
+.description-button
+{
+    position: relative;
+    width: 640px;
+    max-width: 90%;
+    &.check-button
+    {
+        text-align: left;
+        padding: 4px;
+        padding-right: 1rem;
+        margin: 0px;
+        border-radius: 0px;
+        border-style: none;
+        border-width: 0px;
+        & > .button-title
+        {
+            display: flex;
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: stretch;
+            flex-direction: row;
+            svg
+            {
+                width: 1.5em;
+                height: 1.5em;
+                margin-right: 4px;
+            }
+        }
+        &:not(.checked) > .button-title svg
+        {
+            visibility: hidden;
+        }
+        & > .button-description
+        {
+            margin-left: 32px;
+        }
+    }
+    & > .button-description
+    {
+        .positive-foreground-coloring-trait;
+        font-size: 0.9rem;
+        font-weight: 400;
+    }
+}
 .filter-frame
 {
     .positive-foreground-coloring-trait;
@@ -1009,7 +1055,7 @@ button
 {
     display: none;
 }
-.check-button
+.check-button:not(.description-button)
 {
     display: flex;
     position: relative;
