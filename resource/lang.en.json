@@ -62,6 +62,7 @@
     "sort.smart": "Smart",
     "sort.simple": "Simple",
     "sort.simple-reverse": "Simple reverse",
+    "sort.description": "Specify the sort order of ToDoes. This setting can be specified individually for each tag or sublist.",
     "sort.home.description": "Displays ToDoes in the same sort order as the Home setting. If the home settings are changed, the order of the ToDoes on this screen will be changed accordingly.",
     "sort.smart.description": "The ToDoes are displayed in order of expected execution timing approaching from the average interval, standard deviation, and elapsed time from the previous time. This order of ToDoes is generally recommended.",
     "sort.simple.description": "It simply displays ToDoes in order of the longest elapsed time since the previous time. It is used for a set of ToDoes whose order of execution is fixed.",

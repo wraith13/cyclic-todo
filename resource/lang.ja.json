@@ -62,6 +62,7 @@
     "sort.smart": "スマート",
     "sort.simple": "シンプル",
     "sort.simple-reverse": "シンプル リバース",
+    "sort.description": "ToDo の並び順を指定します。この設定はタグやサブリストごとに個別に指定できます。",
     "sort.home.description": "ホームの設定と同じ並び順で表示します。ホームの設定が変更されるとそれに合わせてこちらの画面の並び順も変更されます。",
     "sort.smart.description": "平均間隔、標準偏差、前回からの経過時間から、そろそろ実行タイミングが近づいてきたと予想される ToDo 順に表示します。通常、この並び順を推奨します。",
     "sort.simple.description": "単純に前回からの経過時間が長い ToDo 順に表示します。実行する順番が決まってる ToDo の集合に対して使用します。",

@@ -757,16 +757,17 @@ h1
     display: flex;
     position: relative;
     flex-wrap: wrap;
-    align-items: start;
+    align-items: stretch;
     justify-content: start;
     flex-direction: column;
+    border-radius: 0px;
+    text-align: left;
+    padding: 0px;
     &.check-button
     {
-        text-align: left;
         padding: 4px;
         padding-right: 1rem;
         margin: 0px;
-        border-radius: 0px;
         & > .button-title
         {
             display: flex;
@@ -797,6 +798,10 @@ h1
         opacity: 0.618;
         font-size: 1rem;
         font-weight: 400;
+    }
+    & > .label-button + .button-description
+    {
+        padding: 0px 12px 12px 12px;
     }
 }
 .filter-frame

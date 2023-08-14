@@ -3432,13 +3432,25 @@ export module CyclicToDo
                         },
                         {
                             tag: "button",
-                            className: "label-button",
-                            children: monospace
-                            (
-                                "auto-tag-flash",
-                                label("Sort order setting"),
-                                label(getTagSortSettingsText(settings.sort ?? getTagSortSettingsDefault(tag)))
-                            ),
+                            className: "description-button",
+                            children:
+                            [
+                                {
+                                    tag: "div",
+                                    className: "label-button button-title",
+                                    children: monospace
+                                    (
+                                        "auto-tag-flash",
+                                        label("Sort order setting"),
+                                        label(getTagSortSettingsText(settings.sort ?? getTagSortSettingsDefault(tag)))
+                                    ),
+                                },
+                                {
+                                    tag: "div",
+                                    className: "button-description",
+                                    children: label("sort.description"),
+                                },
+                            ],
                             onclick: async () =>
                             {
                                 if (await tagSortSettingsPopup(pass, tag))
@@ -3535,7 +3547,7 @@ export module CyclicToDo
                                         tag: "div",
                                         className: "button-description",
                                         children: label(getTagSortSettingsDescription(i)),
-                                    }
+                                    },
                                 ],
                                 onclick: async () =>
                                 {
