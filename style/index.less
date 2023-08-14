@@ -752,9 +752,14 @@ h1
 }
 .description-button
 {
+    width: 540px;
+    max-width: 90vw;
+    display: flex;
     position: relative;
-    width: 640px;
-    max-width: 90%;
+    flex-wrap: wrap;
+    align-items: start;
+    justify-content: start;
+    flex-direction: column;
     &.check-button
     {
         text-align: left;
@@ -762,13 +767,10 @@ h1
         padding-right: 1rem;
         margin: 0px;
         border-radius: 0px;
-        border-style: none;
-        border-width: 0px;
         & > .button-title
         {
             display: flex;
             position: relative;
-            display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: stretch;
@@ -786,13 +788,14 @@ h1
         }
         & > .button-description
         {
-            margin-left: 32px;
+            margin-left: 30px;
         }
     }
     & > .button-description
     {
         .positive-foreground-coloring-trait;
-        font-size: 0.9rem;
+        opacity: 0.618;
+        font-size: 1rem;
         font-weight: 400;
     }
 }
@@ -1069,9 +1072,6 @@ button
     padding-right: 1rem;
     margin: 0px;
     border-radius: 0px;
-    border-style: none;
-    border-width: 0px;
-
     svg
     {
         width: 1.5em;

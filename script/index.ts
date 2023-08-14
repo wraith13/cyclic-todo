@@ -3495,6 +3495,8 @@ export module CyclicToDo
             };
             return map[displayStyle];
         }
+        export const getTagSortSettingsDescription = (displayStyle: "@home" | "smart" | "simple" | "simple-reverse") =>
+            `${getTagSortSettingsText(displayStyle)}.description` as locale.LocaleKeyType;
         export const tagSortSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
         (
             async resolve =>
@@ -3532,7 +3534,7 @@ export module CyclicToDo
                                     {
                                         tag: "div",
                                         className: "button-description",
-                                        children: "説明文。説明文。説明文。説明文。説明文。説明文。説明文。説明文。説明文。説明文。説明文。説明文。説明文。",
+                                        children: label(getTagSortSettingsDescription(i)),
                                     }
                                 ],
                                 onclick: async () =>
