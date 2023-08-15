@@ -3961,11 +3961,23 @@ export module CyclicToDo
                     [
                         {
                             tag: "button",
-                            className: "label-button",
+                            className: "description-button",
                             children:
                             [
-                                await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
-                                monospace("auto-tag-flash", label("@flash"), getAutoTagSettingText(settings.flash, "compact"))
+                                {
+                                    tag: "div",
+                                    className: "label-button button-title",
+                                    children:
+                                    [
+                                        await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
+                                        monospace("auto-tag-flash", label("@flash"), getAutoTagSettingText(settings.flash, "compact"))
+                                    ],
+                                },
+                                {
+                                    tag: "div",
+                                    className: "button-description",
+                                    children: label("flash.description"),
+                                },
                             ],
                             onclick: async () =>
                             {
@@ -3978,11 +3990,23 @@ export module CyclicToDo
                         },
                         {
                             tag: "button",
-                            className: "label-button",
+                            className: "description-button",
                             children:
                             [
-                                await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
-                                monospace("auto-tag-flash", label("@pickup"), getAutoTagSettingText(settings.pickup, "compact")),
+                                {
+                                    tag: "div",
+                                    className: "label-button button-title",
+                                    children:
+                                    [
+                                        await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
+                                        monospace("auto-tag-flash", label("@pickup"), getAutoTagSettingText(settings.pickup, "compact")),
+                                    ],
+                                },
+                                {
+                                    tag: "div",
+                                    className: "button-description",
+                                    children: label("pickup.description"),
+                                },
                             ],
                             onclick: async () =>
                             {
@@ -3995,11 +4019,23 @@ export module CyclicToDo
                         },
                         {
                             tag: "button",
-                            className: "label-button",
+                            className: "description-button",
                             children:
                             [
-                                await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
-                                monospace("auto-tag-flash", label("@restriction"), getAutoTagSettingText(settings.restriction, "compact")),
+                                {
+                                    tag: "div",
+                                    className: "label-button button-title",
+                                    children:
+                                    [
+                                        await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
+                                        monospace("auto-tag-flash", label("@restriction"), getAutoTagSettingText(settings.restriction, "compact")),
+                                    ],
+                                },
+                                {
+                                    tag: "div",
+                                    className: "button-description",
+                                    children: label("restriction.description"),
+                                },
                             ],
                             onclick: async () =>
                             {
