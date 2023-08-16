@@ -5921,6 +5921,7 @@ export module CyclicToDo
                         isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list)));
                         if (isDirty)
                         {
+                            await updatingScreenBody();
                             await updateWindow("operate");
                         }
                         break;
@@ -7012,8 +7013,15 @@ export module CyclicToDo
                 async () => location.href = "https://github.com/wraith13/cyclic-todo/",
             ),
         ];
-        export const updatingBody = async (): Promise<minamo.dom.Source> =>
-            await applicationIcon();
+        export const updatingScreenBody = async () =>
+        {
+            minamo.dom.appendChildren
+            (
+                document.getElementsByClassName("screen-body")[0],
+                await applicationIcon()
+            );
+            await minamo.core.timeout(250);
+        };
         export const updatingScreen = async (_url: string = location.href): Promise<ScreenSource> =>
         ({
             className: "updating-screen",
@@ -7974,8 +7982,7 @@ export module CyclicToDo
         window.scrollTo(0,0);
         const body = minamo.core.existsOrThrow(document.getElementById("screen-body"));
         body.scrollTo(0,0);
-        minamo.dom.appendChildren(body, await Render.updatingBody());
-        await minamo.core.timeout(250);
+        await Render.updatingScreenBody();
         //await Render.showUpdatingScreen(url);
         //await minamo.core.timeout(wait);
         const urlParams = getUrlParams(url);

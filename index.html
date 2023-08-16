@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Wed Aug 16 2023 11:12:24 GMT+0900 (日本標準時)
+    build at: Thu Aug 17 2023 00:25:32 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -14271,14 +14271,14 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 case "focus": return [3 /*break*/, 4];
                                                 case "blur": return [3 /*break*/, 4];
                                                 case "scroll": return [3 /*break*/, 4];
-                                                case "storage": return [3 /*break*/, 7];
-                                                case "operate": return [3 /*break*/, 9];
-                                                case "dirty": return [3 /*break*/, 16];
+                                                case "storage": return [3 /*break*/, 8];
+                                                case "operate": return [3 /*break*/, 10];
+                                                case "dirty": return [3 /*break*/, 17];
                                             }
-                                            return [3 /*break*/, 17];
+                                            return [3 /*break*/, 18];
                                         case 1:
                                             Render.updateHeaderTimestamp();
-                                            return [3 /*break*/, 17];
+                                            return [3 /*break*/, 18];
                                         case 2:
                                             Domain.updateListProgress(entry.pass, list);
                                             if ("@pickup" === tag) {
@@ -14344,22 +14344,25 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 }); }); });
                                             }
                                             // }
-                                            return [3 /*break*/, 17];
+                                            return [3 /*break*/, 18];
                                         case 4:
                                             Domain.updateListProgress(entry.pass, list);
                                             isDirty = isDirty || (!Domain.sortList(entry, minamo_js_1.minamo.core.simpleDeepCopy(list)));
-                                            if (!isDirty) return [3 /*break*/, 6];
-                                            return [4 /*yield*/, updateWindow("operate")];
+                                            if (!isDirty) return [3 /*break*/, 7];
+                                            return [4 /*yield*/, Render.updatingScreenBody()];
                                         case 5:
                                             _c.sent();
-                                            _c.label = 6;
-                                        case 6: return [3 /*break*/, 17];
-                                        case 7: return [4 /*yield*/, CyclicToDo.reload()];
-                                        case 8:
+                                            return [4 /*yield*/, updateWindow("operate")];
+                                        case 6:
                                             _c.sent();
-                                            return [3 /*break*/, 17];
+                                            _c.label = 7;
+                                        case 7: return [3 /*break*/, 18];
+                                        case 8: return [4 /*yield*/, CyclicToDo.reload()];
                                         case 9:
-                                            if (!(0 <= OldStorage.Pass.get().indexOf(entry.pass))) return [3 /*break*/, 13];
+                                            _c.sent();
+                                            return [3 /*break*/, 18];
+                                        case 10:
+                                            if (!(0 <= OldStorage.Pass.get().indexOf(entry.pass))) return [3 /*break*/, 14];
                                             Render.removeProgressStyle("obsolescence");
                                             entry_1 = { tag: tag, pass: pass, todo: OldStorage.TagMember.get(pass, tag) };
                                             list = entry_1.todo.map(function (task) { return Domain.getToDoEntryOld(entry_1.pass, task); });
@@ -14374,25 +14377,25 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             filter_2 = Render.getFilterText();
                                             _b = Render.replaceScreenBody;
                                             return [4 /*yield*/, Render.listScreenBody(entry_1, list.filter(function (item) { return Render.isMatchToDoEntry(filter_2, entry_1, item); }))];
-                                        case 10:
+                                        case 11:
                                             _b.apply(void 0, [_c.sent()]);
                                             Render.resizeFlexList();
-                                            if (!("@pickup" === tag)) return [3 /*break*/, 12];
+                                            if (!("@pickup" === tag)) return [3 /*break*/, 13];
                                             return [4 /*yield*/, updateWindow("timer")];
-                                        case 11:
+                                        case 12:
                                             _c.sent();
-                                            _c.label = 12;
-                                        case 12: return [3 /*break*/, 15];
-                                        case 13: return [4 /*yield*/, CyclicToDo.showUrl({})];
-                                        case 14:
+                                            _c.label = 13;
+                                        case 13: return [3 /*break*/, 16];
+                                        case 14: return [4 /*yield*/, CyclicToDo.showUrl({})];
+                                        case 15:
                                             _c.sent();
-                                            _c.label = 15;
-                                        case 15: return [3 /*break*/, 17];
-                                        case 16:
+                                            _c.label = 16;
+                                        case 16: return [3 /*break*/, 18];
+                                        case 17:
                                             isDirty = true;
                                             Render.setProgressStyle("obsolescence", 0);
-                                            return [3 /*break*/, 17];
-                                        case 17: return [2 /*return*/];
+                                            return [3 /*break*/, 18];
+                                        case 18: return [2 /*return*/];
                                     }
                                 });
                             }); };
@@ -15905,12 +15908,23 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         ]];
                 });
             }); };
-            Render.updatingBody = function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, Render.applicationIcon()];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            }); }); };
+            Render.updatingScreenBody = function () { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            _b = (_a = minamo_js_1.minamo.dom).appendChildren;
+                            _c = [document.getElementsByClassName("screen-body")[0]];
+                            return [4 /*yield*/, Render.applicationIcon()];
+                        case 1:
+                            _b.apply(_a, _c.concat([_d.sent()]));
+                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(250)];
+                        case 2:
+                            _d.sent();
+                            return [2 /*return*/];
+                    }
+                });
+            }); };
             Render.updatingScreen = function (_url) {
                 if (_url === void 0) { _url = location.href; }
                 return __awaiter(_this, void 0, void 0, function () {
@@ -16808,98 +16822,93 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             if (url === void 0) { url = location.href; }
             if (_wait === void 0) { _wait = 0; }
             return __awaiter(_this, void 0, void 0, function () {
-                var body, _a, _b, _c, urlParams, hash, tag, todo, pass, _d, _e;
-                var _f, _g;
-                return __generator(this, function (_h) {
-                    switch (_h.label) {
+                var body, urlParams, hash, tag, todo, pass, _a, _b;
+                var _c, _d;
+                return __generator(this, function (_e) {
+                    switch (_e.label) {
                         case 0:
                             window.scrollTo(0, 0);
                             body = minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen-body"));
                             body.scrollTo(0, 0);
-                            _b = (_a = minamo_js_1.minamo.dom).appendChildren;
-                            _c = [body];
-                            return [4 /*yield*/, Render.updatingBody()];
+                            return [4 /*yield*/, Render.updatingScreenBody()];
                         case 1:
-                            _b.apply(_a, _c.concat([_h.sent()]));
-                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(250)];
-                        case 2:
-                            _h.sent();
+                            _e.sent();
                             urlParams = CyclicToDo.getUrlParams(url);
                             hash = CyclicToDo.getUrlHash(url);
-                            tag = (_f = urlParams["tag"]) !== null && _f !== void 0 ? _f : "";
+                            tag = (_c = urlParams["tag"]) !== null && _c !== void 0 ? _c : "";
                             todo = urlParams["todo"];
-                            pass = (_g = urlParams["pass"]) !== null && _g !== void 0 ? _g : OldStorage.sessionPassPrefix + ":" + new Date().getTime();
-                            if (!(pass && todo)) return [3 /*break*/, 4];
+                            pass = (_d = urlParams["pass"]) !== null && _d !== void 0 ? _d : OldStorage.sessionPassPrefix + ":" + new Date().getTime();
+                            if (!(pass && todo)) return [3 /*break*/, 3];
                             return [4 /*yield*/, Render.showTodoScreen(pass, todo)];
+                        case 2:
+                            _e.sent();
+                            return [3 /*break*/, 25];
                         case 3:
-                            _h.sent();
-                            return [3 /*break*/, 26];
+                            if (!(OldStorage.isSessionPass(pass) && !tag)) return [3 /*break*/, 11];
+                            _a = hash;
+                            switch (_a) {
+                                case "import": return [3 /*break*/, 4];
+                                case "removed": return [3 /*break*/, 5];
+                                case "loading": return [3 /*break*/, 6];
+                            }
+                            return [3 /*break*/, 8];
                         case 4:
-                            if (!(OldStorage.isSessionPass(pass) && !tag)) return [3 /*break*/, 12];
-                            _d = hash;
-                            switch (_d) {
-                                case "import": return [3 /*break*/, 5];
-                                case "removed": return [3 /*break*/, 6];
-                                case "loading": return [3 /*break*/, 7];
-                            }
-                            return [3 /*break*/, 9];
-                        case 5:
                             Render.showImportScreen();
-                            return [3 /*break*/, 11];
-                        case 6:
+                            return [3 /*break*/, 10];
+                        case 5:
                             Render.showRemovedListScreen();
-                            return [3 /*break*/, 11];
-                        case 7: // for debug only
+                            return [3 /*break*/, 10];
+                        case 6: // for debug only
                         return [4 /*yield*/, Render.showUpdatingScreen(url)];
-                        case 8:
-                            _h.sent();
-                            return [3 /*break*/, 11];
-                        case 9: return [4 /*yield*/, Render.showWelcomeScreen()];
-                        case 10:
-                            _h.sent();
-                            return [3 /*break*/, 11];
-                        case 11: return [3 /*break*/, 26];
-                        case 12:
-                            _e = hash;
-                            switch (_e) {
-                                case "history": return [3 /*break*/, 13];
-                                case "removed": return [3 /*break*/, 15];
-                                case "import": return [3 /*break*/, 17];
-                                case "export": return [3 /*break*/, 19];
+                        case 7:
+                            _e.sent();
+                            return [3 /*break*/, 10];
+                        case 8: return [4 /*yield*/, Render.showWelcomeScreen()];
+                        case 9:
+                            _e.sent();
+                            return [3 /*break*/, 10];
+                        case 10: return [3 /*break*/, 25];
+                        case 11:
+                            _b = hash;
+                            switch (_b) {
+                                case "history": return [3 /*break*/, 12];
+                                case "removed": return [3 /*break*/, 14];
+                                case "import": return [3 /*break*/, 16];
+                                case "export": return [3 /*break*/, 18];
                             }
-                            return [3 /*break*/, 21];
-                        case 13: return [4 /*yield*/, Render.showHistoryScreen(urlParams, {
+                            return [3 /*break*/, 20];
+                        case 12: return [4 /*yield*/, Render.showHistoryScreen(urlParams, {
                                 tag: tag,
                                 pass: pass,
                                 todo: OldStorage.TagMember.get(pass, "@pickup" === tag ? "@pickup-all" : tag),
                             })];
-                        case 14:
-                            _h.sent();
-                            return [3 /*break*/, 26];
-                        case 15: return [4 /*yield*/, Render.showRemovedScreen(pass)];
-                        case 16:
-                            _h.sent();
-                            return [3 /*break*/, 26];
-                        case 17: return [4 /*yield*/, Render.showImportScreen()];
-                        case 18:
-                            _h.sent();
-                            return [3 /*break*/, 26];
-                        case 19: return [4 /*yield*/, Render.showExportScreen(pass)];
-                        case 20:
-                            _h.sent();
-                            return [3 /*break*/, 26];
-                        case 21:
-                            if (!(0 <= OldStorage.Pass.get().indexOf(pass))) return [3 /*break*/, 23];
-                            return [4 /*yield*/, Render.showListScreen(pass, tag, urlParams)];
-                        case 22:
-                            _h.sent();
+                        case 13:
+                            _e.sent();
                             return [3 /*break*/, 25];
-                        case 23: return [4 /*yield*/, CyclicToDo.showUrl({})];
-                        case 24:
-                            _h.sent();
-                            _h.label = 25;
-                        case 25: return [3 /*break*/, 26];
-                        case 26: return [2 /*return*/];
+                        case 14: return [4 /*yield*/, Render.showRemovedScreen(pass)];
+                        case 15:
+                            _e.sent();
+                            return [3 /*break*/, 25];
+                        case 16: return [4 /*yield*/, Render.showImportScreen()];
+                        case 17:
+                            _e.sent();
+                            return [3 /*break*/, 25];
+                        case 18: return [4 /*yield*/, Render.showExportScreen(pass)];
+                        case 19:
+                            _e.sent();
+                            return [3 /*break*/, 25];
+                        case 20:
+                            if (!(0 <= OldStorage.Pass.get().indexOf(pass))) return [3 /*break*/, 22];
+                            return [4 /*yield*/, Render.showListScreen(pass, tag, urlParams)];
+                        case 21:
+                            _e.sent();
+                            return [3 /*break*/, 24];
+                        case 22: return [4 /*yield*/, CyclicToDo.showUrl({})];
+                        case 23:
+                            _e.sent();
+                            _e.label = 24;
+                        case 24: return [3 /*break*/, 25];
+                        case 25: return [2 /*return*/];
                     }
                 });
             });
@@ -16935,7 +16944,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Aug 16 2023 11:12:24 GMT+0900 (日本標準時)', buildTimestampTick: 1692151944981, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Aug 17 2023 00:25:32 GMT+0900 (日本標準時)', buildTimestampTick: 1692199532988, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
