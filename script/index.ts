@@ -2392,13 +2392,33 @@ export module CyclicToDo
                 });
             };
         }
-        export const textButton = (text: locale.LocaleKeyType, onclick: () => unknown) =>
+        export const button = (className: string, children: minamo.dom.Source, onclick: () => unknown) =>
         ({
             tag: "button",
-            className: "text-button",
-            children: label(text),
+            className,
+            children,
             onclick,
         });
+        export const textButton = (text: locale.LocaleKeyType, onclick: () => unknown) =>
+            button("text-button", label(text), onclick);
+        export const descriptionButton = (className: string, title: minamo.dom.Source, description: locale.LocaleKeyType, onclick: () => unknown) =>
+            button
+            (
+                `description-button ${className}`,
+                [
+                    {
+                        tag: "div",
+                        className: "label-button button-title",
+                        children: title,
+                    },
+                    {
+                        tag: "div",
+                        className: "button-description",
+                        children: label(description),
+                    },
+                ],
+                onclick
+            );
         export const cancelTextButton = (onCanceled: () => unknown) => textButton
         (
             "roll-back",
@@ -3430,28 +3450,17 @@ export module CyclicToDo
                                 }
                             }
                         },
-                        {
-                            tag: "button",
-                            className: "description-button",
-                            children:
-                            [
-                                {
-                                    tag: "div",
-                                    className: "label-button button-title",
-                                    children: monospace
-                                    (
-                                        "auto-tag-flash",
-                                        label("Sort order setting"),
-                                        label(getTagSortSettingsText(settings.sort ?? getTagSortSettingsDefault(tag)))
-                                    ),
-                                },
-                                {
-                                    tag: "div",
-                                    className: "button-description",
-                                    children: label("sort.description"),
-                                },
-                            ],
-                            onclick: async () =>
+                        descriptionButton
+                        (
+                            "",
+                            monospace
+                            (
+                                "auto-tag-flash",
+                                label("Sort order setting"),
+                                label(getTagSortSettingsText(settings.sort ?? getTagSortSettingsDefault(tag)))
+                            ),
+                            "sort.description",
+                            async () =>
                             {
                                 if (await tagSortSettingsPopup(pass, tag))
                                 {
@@ -3459,7 +3468,7 @@ export module CyclicToDo
                                     await buttonListUpdate();
                                 }
                             }
-                        },
+                        ),
                     ]
                 );
                 await buttonListUpdate();
@@ -3528,28 +3537,15 @@ export module CyclicToDo
                         )
                         .map
                         (
-                            async (i: "@home" | "smart" | "simple" | "simple-reverse") =>
-                            ({
-                                tag: "button",
-                                className: `description-button check-button ${i === (settings.sort ?? defaultSort) ? "checked": ""}`,
-                                children:
+                            async (i: "@home" | "smart" | "simple" | "simple-reverse") => descriptionButton
+                            (
+                                `check-button ${i === (settings.sort ?? defaultSort) ? "checked": ""}`,
                                 [
-                                    {
-                                        tag: "div",
-                                        className: "button-title",
-                                        children:
-                                        [
-                                            await Resource.loadSvgOrCache("check-icon"),
-                                            $span("")(label(getTagSortSettingsText(i))),
-                                        ],
-                                    },
-                                    {
-                                        tag: "div",
-                                        className: "button-description",
-                                        children: label(getTagSortSettingsDescription(i)),
-                                    },
+                                    await Resource.loadSvgOrCache("check-icon"),
+                                    $span("")(label(getTagSortSettingsText(i))),
                                 ],
-                                onclick: async () =>
+                                getTagSortSettingsDescription(i),
+                                async () =>
                                 {
                                     settings.sort = defaultSort === i ? undefined: <"smart" | "simple">i;
                                     OldStorage.TagSettings.set(pass, tag, settings);
@@ -3557,7 +3553,7 @@ export module CyclicToDo
                                     result = true;
                                     await tagButtonListUpdate();
                                 }
-                            })
+                            )
                         )
                     )
                 );
@@ -3959,27 +3955,15 @@ export module CyclicToDo
                 (
                     buttonList,
                     [
-                        {
-                            tag: "button",
-                            className: "description-button",
-                            children:
+                        descriptionButton
+                        (
+                            "",
                             [
-                                {
-                                    tag: "div",
-                                    className: "label-button button-title",
-                                    children:
-                                    [
-                                        await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
-                                        monospace("auto-tag-flash", label("@flash"), getAutoTagSettingText(settings.flash, "compact"))
-                                    ],
-                                },
-                                {
-                                    tag: "div",
-                                    className: "button-description",
-                                    children: label("flash.description"),
-                                },
+                                await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
+                                monospace("auto-tag-flash", label("@flash"), getAutoTagSettingText(settings.flash, "compact"))
                             ],
-                            onclick: async () =>
+                            "flash.description",
+                            async () =>
                             {
                                 if (await todoFlashSettingsPopup(pass, entry, settings))
                                 {
@@ -3987,28 +3971,16 @@ export module CyclicToDo
                                     await buttonListUpdate();
                                 }
                             }
-                        },
-                        {
-                            tag: "button",
-                            className: "description-button",
-                            children:
+                        ),
+                        descriptionButton
+                        (
+                            "",
                             [
-                                {
-                                    tag: "div",
-                                    className: "label-button button-title",
-                                    children:
-                                    [
-                                        await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
-                                        monospace("auto-tag-flash", label("@pickup"), getAutoTagSettingText(settings.pickup, "compact")),
-                                    ],
-                                },
-                                {
-                                    tag: "div",
-                                    className: "button-description",
-                                    children: label("pickup.description"),
-                                },
+                                await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
+                                monospace("auto-tag-flash", label("@pickup"), getAutoTagSettingText(settings.pickup, "compact")),
                             ],
-                            onclick: async () =>
+                            "pickup.description",
+                            async () =>
                             {
                                 if (await todoPickupSettingsPopup(pass, entry, settings))
                                 {
@@ -4016,28 +3988,16 @@ export module CyclicToDo
                                     await buttonListUpdate();
                                 }
                             }
-                        },
-                        {
-                            tag: "button",
-                            className: "description-button",
-                            children:
+                        ),
+                        descriptionButton
+                        (
+                            "",
                             [
-                                {
-                                    tag: "div",
-                                    className: "label-button button-title",
-                                    children:
-                                    [
-                                        await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
-                                        monospace("auto-tag-flash", label("@restriction"), getAutoTagSettingText(settings.restriction, "compact")),
-                                    ],
-                                },
-                                {
-                                    tag: "div",
-                                    className: "button-description",
-                                    children: label("restriction.description"),
-                                },
+                                await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
+                                monospace("auto-tag-flash", label("@restriction"), getAutoTagSettingText(settings.restriction, "compact")),
                             ],
-                            onclick: async () =>
+                            "restriction.description",
+                            async () =>
                             {
                                 if (await todoRestrictionSettingsPopup(pass, entry, settings))
                                 {
@@ -4045,7 +4005,7 @@ export module CyclicToDo
                                     await buttonListUpdate();
                                 }
                             }
-                        },
+                        ),
                     ]
                 );
                 await buttonListUpdate();
