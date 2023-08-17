@@ -5915,7 +5915,7 @@ export module CyclicToDo
                         if (isDirty)
                         {
                             await updatingScreenBody();
-                            await updateWindow("operate");
+                            await Render.updateWindow("operate");
                         }
                         break;
                     case "storage":
@@ -5941,7 +5941,7 @@ export module CyclicToDo
                             resizeFlexList();
                             if ("@pickup" === tag)
                             {
-                                await updateWindow("timer");
+                                await Render.updateWindow("timer");
                             }
                         }
                         else
@@ -5959,7 +5959,7 @@ export module CyclicToDo
             await showWindow(await listScreen(entry, list, filter), updateWindow);
             if ("@pickup" === tag)
             {
-                await updateWindow("timer");
+                await Render.updateWindow("timer");
             }
         };
         export const historyScreenMenu = async (entry: ToDoTagEntryOld) =>
@@ -6453,7 +6453,7 @@ export module CyclicToDo
                     case "scroll":
                         if (isDirty)
                         {
-                            await updateWindow("operate");
+                            await Render.updateWindow("operate");
                         }
                         break;
                     case "storage":
