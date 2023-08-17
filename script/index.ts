@@ -2406,16 +2406,8 @@ export module CyclicToDo
             (
                 `description-button ${className}`,
                 [
-                    {
-                        tag: "div",
-                        className: "label-button button-title",
-                        children: title,
-                    },
-                    {
-                        tag: "div",
-                        className: "button-description",
-                        children: label(description),
-                    },
+                    $div("label-button button-title")(title),
+                    $div("button-description")(label(description)),
                 ],
                 onclick
             );
@@ -5278,9 +5270,10 @@ export module CyclicToDo
                     ),
                 ])
         });
+        export const getScreenBody = () => minamo.core.existsOrThrow(document.getElementsByClassName("screen-body")[0]);
         export const replaceScreenBody = (body: minamo.dom.Source) => minamo.dom.replaceChildren
         (
-            document.getElementsByClassName("screen-body")[0],
+            getScreenBody(),
             body
         );
         export const listRenameMenu =
@@ -5853,7 +5846,7 @@ export module CyclicToDo
                         // (
                         //     isDirty &&
                         //     document.body.scrollTop <= 0 &&
-                        //     (document.getElementsByClassName("screen-body")[0]?.scrollTop ?? 0) <= 0 &&
+                        //     (getScreenBody()?.scrollTop ?? 0) <= 0 &&
                         //     ! hasScreenCover() &&
                         //     ! (getHeaderElement().classList.contains("header-operator-has-focus") ?? false)
                         // )
@@ -6806,6 +6799,7 @@ export module CyclicToDo
                     {
                         url: location.href,
                         fullscreen: fullscreenEnabled() && null !== fullscreenElement(),
+                        scroll: getScreenBody().scrollTop,
                         dummy: new Date().getTime(),
                     };
                     location.href = `?reload=${encodeURIComponent(JSON.stringify(reload))}`;
@@ -7017,7 +7011,7 @@ export module CyclicToDo
         {
             minamo.dom.appendChildren
             (
-                document.getElementsByClassName("screen-body")[0],
+                getScreenBody(),
                 await applicationIcon()
             );
             await minamo.core.timeout(250);
@@ -7099,12 +7093,12 @@ export module CyclicToDo
                     () => Render.updateWindow?.("timer"),
                     Domain.timeAccuracy
                 );
-                document.getElementsByClassName("screen-body")[0]?.addEventListener
+                const screenBody = getScreenBody();
+                screenBody.addEventListener
                 (
                     "scroll",
                     () =>
                     {
-                        const screenBody = minamo.core.existsOrThrow(document.getElementsByClassName("screen-body")[0]);
                         const scrollMax = screenBody.scrollHeight -screenBody.clientHeight;
                         const scrollTop = Math.min(Math.max(screenBody.scrollTop, 0), scrollMax);
                         if (scrollTop <= 0)
@@ -7140,11 +7134,7 @@ export module CyclicToDo
                 getHeaderElement(),
                 await screenSegmentedHeader(screen.header)
             );
-            minamo.dom.replaceChildren
-            (
-                minamo.core.existsOrThrow(document.getElementById("screen-body")),
-                screen.body
-            );
+            replaceScreenBody(screen.body);
             minamo.dom.replaceChildren
             (
                 minamo.core.existsOrThrow(document.getElementById("screen-footer")),
@@ -7902,6 +7892,7 @@ export module CyclicToDo
         console.log(`${JSON.stringify(params)}`);
         const urlParams = getUrlParams(location.href);
         const reload = urlParams["reload"];
+        let scroll: number | undefined;
         if (reload)
         {
             const json = JSON.parse(reload);
@@ -7927,6 +7918,7 @@ export module CyclicToDo
                     content: Render.label("Full screen has been canceled due to reloading."),
                 });
             }
+            scroll = json["scroll"];
         }
         locale.setLocale(Storage.SystemSettings.get().locale ?? null);
         window.onpopstate = () => showPage();
@@ -7943,7 +7935,7 @@ export module CyclicToDo
             'click',
             async () =>
             {
-                const body = minamo.core.existsOrThrow(document.getElementById("screen-body"));
+                const body = Render.getScreenBody();
                 let top = body.scrollTop;
                 for(let i = 0; i < 25; ++i)
                 {
@@ -7968,6 +7960,10 @@ export module CyclicToDo
         updateUiStyle();
         // await Render.showUpdatingScreen(location.href);
         await showPage();
+        if ("number" === typeof scroll)
+        {
+            Render.getScreenBody().scrollTop = scroll;
+        }
         if (reload || "reload" === (<any>performance.getEntriesByType("navigation"))?.[0]?.type)
         {
             Render.makeToast
@@ -7980,7 +7976,7 @@ export module CyclicToDo
     export const showPage = async (url: string = location.href, _wait: number = 0) =>
     {
         window.scrollTo(0,0);
-        const body = minamo.core.existsOrThrow(document.getElementById("screen-body"));
+        const body = Render.getScreenBody();
         body.scrollTo(0,0);
         await Render.updatingScreenBody();
         //await Render.showUpdatingScreen(url);
