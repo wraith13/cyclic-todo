@@ -5823,6 +5823,15 @@ export module CyclicToDo
                 Domain.sortList(entry, pickupAll);
             }
             let isDirty = false;
+            let isUpdating = false;
+            let dirtyAt = 0;
+            const getMSTicks = () => new Date().getTime();
+            const onDirty = () =>
+            {
+                isUpdating = false;
+                dirtyAt = getMSTicks();
+                setProgressStyle("obsolescence", 0);
+            };
             const displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag);
             const updateWindow = async (event: UpdateWindowEventEype) =>
             {
@@ -5830,6 +5839,12 @@ export module CyclicToDo
                 {
                     case "high-resolution-timer":
                         updateHeaderTimestamp();
+                        if (isDirty && ! isUpdating && dirtyAt +(10 *1000) <= getMSTicks())
+                        {
+                            isUpdating = true;
+                            await updatingScreenBody();
+                            await Render.updateWindow("operate");
+                        }
                         break;
                     case "timer":
                         Domain.updateListProgress(entry.pass, list);
@@ -5837,10 +5852,13 @@ export module CyclicToDo
                         {
                             Domain.updateListProgress(entry.pass, pickupAll);
                         }
-                        isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list)));
-                        if (isDirty)
+                        if ( ! isDirty)
                         {
-                            setProgressStyle("obsolescence", 0);
+                            isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list)));
+                            if (isDirty)
+                            {
+                                onDirty();
+                            }
                         }
                         // if
                         // (
@@ -5907,24 +5925,23 @@ export module CyclicToDo
                             }
                         // }
                         break;
-                    case "focus":
-                    case "blur":
-                    case "scroll":
-                        Domain.updateListProgress(entry.pass, list);
-                        isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list)));
-                        if (isDirty)
-                        {
-                            await updatingScreenBody();
-                            await Render.updateWindow("operate");
-                        }
-                        break;
+                    // case "focus":
+                    // case "blur":
+                    // case "scroll":
+                    //     Domain.updateListProgress(entry.pass, list);
+                    //     isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list)));
+                    //     if (isDirty)
+                    //     {
+                    //         await updatingScreenBody();
+                    //         await Render.updateWindow("operate");
+                    //     }
+                    //     break;
                     case "storage":
                         await reload();
                         break;
                     case "operate":
                         if (0 <= OldStorage.Pass.get().indexOf(entry.pass))
                         {
-                            removeProgressStyle("obsolescence");
                             let entry = { tag, pass, todo: OldStorage.TagMember.get(pass, tag) };
                             list = entry.todo.map(task => Domain.getToDoEntryOld(entry.pass, task));
                             Domain.updateListProgress(entry.pass, list);
@@ -5935,7 +5952,6 @@ export module CyclicToDo
                                 Domain.updateListProgress(entry.pass, pickupAll);
                                 Domain.sortList(entry, pickupAll);
                             }
-                            isDirty = false;
                             const filter = getFilterText();
                             replaceScreenBody(await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))));
                             resizeFlexList();
@@ -5943,6 +5959,8 @@ export module CyclicToDo
                             {
                                 await Render.updateWindow("timer");
                             }
+                            removeProgressStyle("obsolescence");
+                            isDirty = false;
                         }
                         else
                         {
@@ -5950,8 +5968,11 @@ export module CyclicToDo
                         }
                         break;
                     case "dirty":
-                        isDirty = true;
-                        setProgressStyle("obsolescence", 0);
+                        if ( ! isDirty)
+                        {
+                            isDirty = true;
+                            onDirty();
+                        }
                         break;
                 }
             };
