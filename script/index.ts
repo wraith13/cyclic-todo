@@ -1,5 +1,6 @@
 import { minamo } from "../nephila/minamo.js";
 import config from "../resource/config.json";
+import style from "../resource/style.json";
 import localeEn from "../resource/lang.en.json";
 import localeJa from "../resource/lang.ja.json";
 import resource from "../resource/images.json";
@@ -2505,22 +2506,22 @@ export module CyclicToDo
                 const restriction = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.restriction));
                 if ("number" === typeof restriction)
                 {
-                    lines.push({ percent: restriction, color: "#831B50"});
+                    lines.push({ percent: restriction, color: style.__DELETE_COLOR__, });
                 }
                 const pickup = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.pickup));
                 if ("number" === typeof pickup)
                 {
-                    lines.push({ percent: pickup, color: "#6F7F00"});
+                    lines.push({ percent: pickup, color: style.__ACTIVE_COLOR__, });
                 }
                 const flash = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.flash));
                 if ("number" === typeof flash)
                 {
-                    lines.push({ percent: flash, color: "#0F4699"});
+                    lines.push({ percent: flash, color: style.__FLASHY_COLOR__, });
                 }
-                const short = Domain.calcProgress(item, item.expectedInterval?.min);
-                if ("number" === typeof short)
+                const recentlyAverage = Domain.calcProgress(item, item.RecentlyAverage);
+                if ("number" === typeof recentlyAverage)
                 {
-                    lines.push({ percent: short, color: "#228844"});
+                    lines.push({ percent: recentlyAverage, color: style.__ACCENT_COLOR__, });
                 }
                 return scaleLinesStyle(lines.map(i => ({ percent: Math.min(i.percent, 1), color: i.color })));
             }
@@ -5822,16 +5823,19 @@ export module CyclicToDo
                 Domain.updateListProgress(entry.pass, pickupAll);
                 Domain.sortList(entry, pickupAll);
             }
-            let isDirty = false;
+            const idDirty = () => ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list));
+            const getMSTicks = () => new Date().getTime();
+            let updatedAt = getMSTicks();
+            let isDirtied = false;
             let isUpdating = false;
             let dirtyAt = 0;
-            const getMSTicks = () => new Date().getTime();
             const onDirty = () =>
             {
                 isUpdating = false;
                 dirtyAt = getMSTicks();
                 setProgressStyle("obsolescence", 0);
             };
+            const obsolescenceProgressBarDuration = minamo.core.parseTimespan(style.__OBSOLESCENCE_PROGRESS_BAR_DURATION__) ?? (30 *1000);
             const displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag);
             const updateWindow = async (event: UpdateWindowEventEype) =>
             {
@@ -5839,7 +5843,7 @@ export module CyclicToDo
                 {
                     case "high-resolution-timer":
                         updateHeaderTimestamp();
-                        if (isDirty && ! isUpdating && dirtyAt +(10 *1000) <= getMSTicks())
+                        if (isDirtied && ! isUpdating && dirtyAt +obsolescenceProgressBarDuration <= getMSTicks())
                         {
                             isUpdating = true;
                             await updatingScreenBody();
@@ -5852,10 +5856,10 @@ export module CyclicToDo
                         {
                             Domain.updateListProgress(entry.pass, pickupAll);
                         }
-                        if ( ! isDirty)
+                        if ( ! isDirtied && updatedAt +(300 *1000) <= getMSTicks())
                         {
-                            isDirty = isDirty || ( ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list)));
-                            if (isDirty)
+                            isDirtied = isDirtied || idDirty();
+                            if (isDirtied)
                             {
                                 onDirty();
                             }
@@ -5942,6 +5946,7 @@ export module CyclicToDo
                     case "operate":
                         if (0 <= OldStorage.Pass.get().indexOf(entry.pass))
                         {
+                            isUpdating = true;
                             let entry = { tag, pass, todo: OldStorage.TagMember.get(pass, tag) };
                             list = entry.todo.map(task => Domain.getToDoEntryOld(entry.pass, task));
                             Domain.updateListProgress(entry.pass, list);
@@ -5960,7 +5965,8 @@ export module CyclicToDo
                                 await Render.updateWindow("timer");
                             }
                             removeProgressStyle("obsolescence");
-                            isDirty = false;
+                            isDirtied = false;
+                            updatedAt = getMSTicks();
                         }
                         else
                         {
@@ -5968,10 +5974,21 @@ export module CyclicToDo
                         }
                         break;
                     case "dirty":
-                        if ( ! isDirty)
+                        if ( ! isDirtied)
                         {
-                            isDirty = true;
+                            isDirtied = true;
                             onDirty();
+                        }
+                        break;
+                    case "click-header":
+                        if (idDirty())
+                        {
+                            isUpdating = true;
+                            if (isDirtied)
+                            {
+                                await updatingScreenBody();
+                            }
+                            await Render.updateWindow("operate");
                         }
                         break;
                 }
@@ -7077,7 +7094,7 @@ export module CyclicToDo
                 ?.join(" / ")
                 ?? applicationTitle;
         };
-        export type UpdateWindowEventEype = "high-resolution-timer" | "timer" | "scroll" | "storage" | "focus" | "blur" | "operate" | "dirty";
+        export type UpdateWindowEventEype = "high-resolution-timer" | "timer" | "scroll" | "storage" | "focus" | "blur" | "operate" | "dirty" | "click-header";
         export let updateWindow: (event: UpdateWindowEventEype) => unknown;
         let updateWindowTimer: number;
         let updateHighResolutionTimer: number;
@@ -7956,6 +7973,7 @@ export module CyclicToDo
             'click',
             async () =>
             {
+                Render.updateWindow?.("click-header");
                 const body = Render.getScreenBody();
                 let top = body.scrollTop;
                 for(let i = 0; i < 25; ++i)

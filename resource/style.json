@@ -1,0 +1,11 @@
+{
+    "__WHITE_COLOR__": "#FFFFFF",
+    "__BLACK_COLOR__": "#000022",
+    "__ACCENT_COLOR__": "#228844",
+    "__FLASHY_COLOR__": "#0F4699",
+    "__FLASHY_PEAK_COLOR__": "#0000FF",
+    "__ACTIVE_COLOR__": "#6F7F00",
+    "__DELETE_COLOR__": "#831B50",
+    "__DISABLED_COLOR__": "#808080",
+    "__OBSOLESCENCE_PROGRESS_BAR_DURATION__": "30.0s"
+}

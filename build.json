@@ -4,17 +4,6 @@
     {
         "default":
         {
-            "files":
-            [
-                {
-                    "template": { "path": "./index.template.html" },
-                    "output": { "path": "./index.html" }
-                },
-                {
-                    "template": "__BUILD_TIMESTAMP_TICK__",
-                    "output": { "path": "./build.timestamp.json" }
-                }
-            ],
             "parameters":
             {
                 "__BUILD_MESSAGE__": "This file is genereted by build.js. このファイルは build.js によって生成されました。",
@@ -22,7 +11,21 @@
                 "__BUILD_TIMESTAMP__": { "call": "timestamp" },
                 "__BUILD_TIMESTAMP_TICK__": { "call": "timestamp_tick" },
                 "__REPOSITORY_URL_": { "json": "./resource/config.json", "key": "repositoryUrl" },
-                "__LICENSE__": { "path": "./LICENSE_1_0.txt" },
+                "__LICENSE__": { "path": "./LICENSE_1_0.txt" }
+            }
+        },
+        "params.less":
+        {
+            "template": { "path": "./style/params.template.less" },
+            "output": { "path": "./style/params.less" },
+            "parameters": { "json": "./resource/style.json", "key": [ ] }
+        },
+        "index.html":
+        {
+            "template": { "path": "./index.template.html" },
+            "output": { "path": "./index.html" },
+            "parameters":
+            {
                 "__PRIMARY_STYLE__": { "path": "./style/primary.css" },
                 "__LIGHT_STYLE__": { "path": "./style/theme.light.css" },
                 "__DARK_STYLE__": { "path": "./style/theme.dark.css" },
@@ -32,28 +35,71 @@
                 "__IMAGES__": { "resource": "./resource/images.json" }
             }
         },
-        "none":
+        "build.timestamp.json":
         {
-            "preprocesses": [ ]
+            "template": "__BUILD_TIMESTAMP_TICK__",
+            "output": { "path": "./build.timestamp.json" }
         },
-        "release":
+        "release.style":
         {
-            "preprocesses":
+            "processes":
             [
                 "npm run-script \"build primary style\"",
                 "npm run-script \"build light style\"",
-                "npm run-script \"build dark style\"",
+                "npm run-script \"build dark style\""
+            ]
+        },
+        "release.script":
+        {
+            "processes":
+            [
                 "npm run-script \"build script\""
+            ]
+        },
+        "debug.style":
+        {
+            "processes":
+            [
+                "npm run-script \"build primary style\"",
+                "npm run-script \"build light style\"",
+                "npm run-script \"build dark style\""
+            ]
+        },
+        "debug.script":
+        {
+            "processes":
+            [
+                "npm run-script \"build script\""
+            ]
+        },
+        "none":
+        {
+            "steps":
+            [
+                { "references": "index.html" },
+                { "references": "build.timestamp.json" }
+            ]
+        },
+        "release":
+        {
+            "steps":
+            [
+                { "references": "params.less" },
+                { "references": "release.style" },
+                { "references": "release.script" },
+                { "references": "index.html" },
+                { "references": "build.timestamp.json" }
             ]
         },
         "debug":
         {
-            "preprocesses":
+            "steps":
             [
-                "npm run-script \"debug build primary style\"",
-                "npm run-script \"debug build light style\"",
-                "npm run-script \"debug build dark style\"",
-                "npm run-script \"debug build script\""
+                { "references": "params.less" },
+                { "references": "debug.style" },
+                { "references": "debug.script" },
+                { "references": "index.html" },
+                { "references": "build.timestamp.json" }
             ]
         }
     }

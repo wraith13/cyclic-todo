@@ -1,0 +1,38 @@
+{
+    "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+    "name": "Cyclic ToDo",
+    "short_name": "Cyclic ToDo",
+    "start_url": "https://wraith13.github.io/cyclic-todo/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#228844",
+    "description": {
+      "en": "Cyclic ToDo is a simple and intuitive task manager that helps you organize your tasks cyclically.",
+      "ja": "Cyclic ToDo は、タスクを循環的に管理するのに役立つシンプルで直感的なタスクマネージャーです。"
+    },
+    "icons": [
+      {
+        "src": "/image/cyclictodohex-ios.1024.png",
+        "sizes": "1024x1024",
+        "type": "image/png"
+      }
+    ],
+    "lang": [
+      {
+        "lang": "en",
+        "dir": "ltr"
+      },
+      {
+        "lang": "ja",
+        "dir": "ltr"
+      }
+    ],
+    "prefer_related_applications": false,
+    "related_applications": [],
+    "scope": "/",
+    "serviceworker": {
+      "src": "/sw.js",
+      "scope": "/"
+    },
+    "offline_access": true
+  }
