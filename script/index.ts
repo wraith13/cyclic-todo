@@ -5823,7 +5823,7 @@ export module CyclicToDo
                 Domain.updateListProgress(entry.pass, pickupAll);
                 Domain.sortList(entry, pickupAll);
             }
-            const idDirty = () => ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list));
+            const isDirty = () => ! Domain.sortList(entry, minamo.core.simpleDeepCopy(list));
             const getMSTicks = () => new Date().getTime();
             let updatedAt = getMSTicks();
             let isDirtied = false;
@@ -5858,7 +5858,7 @@ export module CyclicToDo
                         }
                         if ( ! isDirtied && updatedAt +(300 *1000) <= getMSTicks())
                         {
-                            isDirtied = isDirtied || idDirty();
+                            isDirtied = isDirtied || isDirty();
                             if (isDirtied)
                             {
                                 onDirty();
@@ -5981,7 +5981,7 @@ export module CyclicToDo
                         }
                         break;
                     case "click-header":
-                        if (idDirty())
+                        if (isDirty())
                         {
                             isUpdating = true;
                             if (isDirtied)

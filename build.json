@@ -10,7 +10,7 @@
                 "__BUILD_OPTIONS__": { "call": "command_options" },
                 "__BUILD_TIMESTAMP__": { "call": "timestamp" },
                 "__BUILD_TIMESTAMP_TICK__": { "call": "timestamp_tick" },
-                "__REPOSITORY_URL_": { "json": "./resource/config.json", "key": "repositoryUrl" },
+                "__REPOSITORY_URL_": { "json": "./resource/config.json", "value": "repositoryUrl" },
                 "__LICENSE__": { "path": "./LICENSE_1_0.txt" }
             }
         },
@@ -18,7 +18,30 @@
         {
             "template": { "path": "./style/params.template.less" },
             "output": { "path": "./style/params.less" },
-            "parameters": { "json": "./resource/style.json", "key": [ ] }
+            "parameters": { "json": "./resource/style.json" }
+        },
+        "web.manifest":
+        {
+            "meta":
+            {
+                "template": { "path": "./style/web.manifest.template.json" },
+                "output": { "path": "./style/web.manifest.__LOCALE__.json" },
+                "parameters":
+                {
+                    "__DESCRIPTION__": { "json": "./resource/lang.__LOCALE__.json", "value": "description" },
+                    "__LANG__": "__LOCALE__"
+                }
+                    
+            },
+            "parameters":
+            [
+                {
+                    "__LOCALE__": "en"
+                },
+                {
+                    "__LOCALE__": "ja"
+                }
+            ]
         },
         "index.html":
         {
