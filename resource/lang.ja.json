@@ -1,5 +1,6 @@
 {
     "$name": "日本語",
+    "description": "Cyclic ToDo は日常の繰り返す ToDo 専用の ToDo アプリです。",
     "Reload screen": "画面の再読み込み",
     "Full screen": "フルスクリーン表示",
     "Cancel full screen": "フルスクリーン解除",

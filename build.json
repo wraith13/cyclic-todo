@@ -24,12 +24,15 @@
         {
             "meta":
             {
-                "template": { "path": "./style/web.manifest.template.json" },
-                "output": { "path": "./style/web.manifest.__LOCALE__.json" },
+                "template": { "path": "./web.manifest.template.json" },
+                "output": { "path": "./web.manifest.__LOCALE__.json" },
                 "parameters":
                 {
+                    "__APPLICATION_TITLE__": { "json": "./resource/CONFIG.json", "value": "applicationTitle" },
                     "__DESCRIPTION__": { "json": "./resource/lang.__LOCALE__.json", "value": "description" },
-                    "__LANG__": "__LOCALE__"
+                    "__LANG__": "__LOCALE__",
+                    "__WHITE_COLOR__": { "json": "./resource/style.json", "value": "__WHITE_COLOR__" },
+                    "__ACCENT_COLOR__": { "json": "./resource/style.json", "value": "__ACCENT_COLOR__" }
                 }
                     
             },
@@ -110,6 +113,7 @@
                 { "references": "params.less" },
                 { "references": "release.style" },
                 { "references": "release.script" },
+                { "references": "web.manifest" },
                 { "references": "index.html" },
                 { "references": "build.timestamp.json" }
             ]
@@ -121,6 +125,7 @@
                 { "references": "params.less" },
                 { "references": "debug.style" },
                 { "references": "debug.script" },
+                { "references": "web.manifest" },
                 { "references": "index.html" },
                 { "references": "build.timestamp.json" }
             ]

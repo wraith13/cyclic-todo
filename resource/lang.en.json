@@ -1,5 +1,6 @@
 {
     "$name": "English",
+    "description": "Cyclic ToDo is a ToDo app dedicated to daily repeating ToDoes.",
     "Reload screen": "Reload screen",
     "Full screen": "Full screen",
     "Cancel full screen": "Cancel full screen",

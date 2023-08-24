@@ -1,12 +1,12 @@
 {
     "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-    "name": "__APPLICATION_TITLE__",
-    "short_name": "__APPLICATION_TITLE__",
+    "name": "Cyclic ToDo",
+    "short_name": "Cyclic ToDo",
     "start_url": "https://wraith13.github.io/cyclic-todo/",
     "display": "standalone",
-    "background_color": "__WHITE_COLOR__",
-    "theme_color": "__ACCENT_COLOR__",
-    "description": "__DESCRIPTION__",
+    "background_color": "#FFFFFF",
+    "theme_color": "#228844",
+    "description": "Cyclic ToDo は日常の繰り返す ToDo 専用の ToDo アプリです。",
     "icons": [
       {
         "src": "/image/cyclictodohex-ios.1024.png",
@@ -14,7 +14,7 @@
         "type": "image/png"
       }
     ],
-    "lang": "__LANG__",
+    "lang": "ja",
     "prefer_related_applications": false,
     "related_applications": [],
     "scope": "/",
