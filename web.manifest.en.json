@@ -7,16 +7,14 @@
     "background_color": "#FFFFFF",
     "theme_color": "#228844",
     "description": "Cyclic ToDo is a ToDo app dedicated to daily repeating ToDoes.",
-    "icons": [
-      {
+    "icons": [{
         "src": "/image/cyclictodohex-ios.1024.png",
         "sizes": "1024x1024",
         "type": "image/png"
-      }
-    ],
+    }],
     "lang": "en",
     "prefer_related_applications": false,
     "related_applications": [],
     "scope": "/",
     "offline_access": true
-  }
+}

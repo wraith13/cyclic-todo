@@ -2868,7 +2868,8 @@ export module CyclicToDo
                         [
                             await Promise.all
                             (
-                                OldStorage.Tag.get(pass).sort(Domain.tagComparerOld(pass)).concat("@unoverall").map
+                                getTagList({ pass, tag: true, }).filter(i => "@untagged" !== i).map
+                                // OldStorage.Tag.get(pass).sort(Domain.tagComparerOld(pass)).concat("@unoverall").map
                                 (
                                     async tag =>
                                     {

@@ -7,16 +7,14 @@
     "background_color": "__WHITE_COLOR__",
     "theme_color": "__ACCENT_COLOR__",
     "description": "__DESCRIPTION__",
-    "icons": [
-      {
+    "icons": [{
         "src": "/image/cyclictodohex-ios.1024.png",
         "sizes": "1024x1024",
         "type": "image/png"
-      }
-    ],
+    }],
     "lang": "__LANG__",
     "prefer_related_applications": false,
     "related_applications": [],
     "scope": "/",
     "offline_access": true
-  }
+}

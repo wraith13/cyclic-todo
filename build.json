@@ -6,6 +6,7 @@
         {
             "parameters":
             {
+                "__APPLICATION_TITLE__": { "json": "./resource/CONFIG.json", "value": "applicationTitle" },
                 "__BUILD_MESSAGE__": "This file is genereted by build.js. このファイルは build.js によって生成されました。",
                 "__BUILD_OPTIONS__": { "call": "command_options" },
                 "__BUILD_TIMESTAMP__": { "call": "timestamp" },
@@ -28,7 +29,6 @@
                 "output": { "path": "./web.manifest.__LOCALE__.json" },
                 "parameters":
                 {
-                    "__APPLICATION_TITLE__": { "json": "./resource/CONFIG.json", "value": "applicationTitle" },
                     "__DESCRIPTION__": { "json": "./resource/lang.__LOCALE__.json", "value": "description" },
                     "__LANG__": "__LOCALE__",
                     "__WHITE_COLOR__": { "json": "./resource/style.json", "value": "__WHITE_COLOR__" },
@@ -52,6 +52,8 @@
             "output": { "path": "./index.html" },
             "parameters":
             {
+                "__EN_DESCRIPTION__": { "json": "./resource/lang.en.json", "value": "description" },
+                "__JA_DESCRIPTION__": { "json": "./resource/lang.ja.json", "value": "description" },
                 "__PRIMARY_STYLE__": { "path": "./style/primary.css" },
                 "__LIGHT_STYLE__": { "path": "./style/theme.light.css" },
                 "__DARK_STYLE__": { "path": "./style/theme.dark.css" },
