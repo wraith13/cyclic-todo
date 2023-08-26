@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sat Aug 26 2023 20:07:41 GMT+0900 (日本標準時)
+    build at: Sun Aug 27 2023 05:41:45 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -7509,7 +7509,7 @@ define("resource/lang.en", [], {
     "progressScaleStyle.none": "Hide",
     "progressScaleStyle.full": "Show",
     "Theme setting": "Theme setting",
-    "theme.auto": "Auto ( Follows System )",
+    "theme.auto": "Auto",
     "theme.light": "Light",
     "theme.dark": "Dark",
     "UI style setting": "UI style setting",
@@ -7522,6 +7522,7 @@ define("resource/lang.en", [], {
     "flashStyle.none": "no flash",
     "language.auto": "Auto",
     "please input": "Please input.",
+    "System settings": "System settings",
     "Home setting": "Home setting",
     "Tag setting": "Tag setting",
     "Sublist setting": "Sublist setting",
@@ -7685,7 +7686,7 @@ define("resource/lang.ja", [], {
     "progressScaleStyle.none": "非表示",
     "progressScaleStyle.full": "表示",
     "Theme setting": "テーマ設定",
-    "theme.auto": "自動 ( システムに従う )",
+    "theme.auto": "自動",
     "theme.light": "ライト",
     "theme.dark": "ダーク",
     "UI style setting": "UIスタイル設定",
@@ -7698,6 +7699,7 @@ define("resource/lang.ja", [], {
     "flashStyle.none": "フラッシュなし",
     "language.auto": "自動",
     "please input": "入力してください。",
+    "System settings": "システム設定",
     "Home setting": "ホーム設定",
     "Tag setting": "タグ設定",
     "Sublist setting": "サブリスト設定",
@@ -11193,6 +11195,145 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 }
                             }
                             return [2 /*return*/];
+                    }
+                });
+            }); };
+            Render.systemSettingsPopup = function () { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                var result, header, buttonList, update, ui;
+                                var _this = this;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            result = false;
+                                            header = Render.$make({ tag: "h2", });
+                                            buttonList = Render.$make(HTMLDivElement)({ className: "label-button-list" });
+                                            update = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                var settings;
+                                                var _this = this;
+                                                var _a, _b, _c, _d;
+                                                return __generator(this, function (_e) {
+                                                    minamo_js_1.minamo.dom.replaceChildren(header, Render.label("System settings"));
+                                                    settings = Storage.SystemSettings.get();
+                                                    minamo_js_1.minamo.dom.replaceChildren(buttonList, [
+                                                        {
+                                                            tag: "button",
+                                                            className: "label-button",
+                                                            children: Render.monospace("auto-tag-flash", Render.label("Theme setting"), Render.label(CyclicToDo.getThemeLocale((_a = settings.theme) !== null && _a !== void 0 ? _a : "auto"))),
+                                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                return __generator(this, function (_a) {
+                                                                    switch (_a.label) {
+                                                                        case 0: return [4 /*yield*/, Render.themeSettingsPopup()];
+                                                                        case 1:
+                                                                            if (!_a.sent()) return [3 /*break*/, 3];
+                                                                            result = true;
+                                                                            return [4 /*yield*/, update()];
+                                                                        case 2:
+                                                                            _a.sent();
+                                                                            _a.label = 3;
+                                                                        case 3: return [2 /*return*/];
+                                                                    }
+                                                                });
+                                                            }); }
+                                                        },
+                                                        {
+                                                            tag: "button",
+                                                            className: "label-button",
+                                                            children: Render.monospace("auto-tag-flash", Render.label("UI style setting"), Render.label(CyclicToDo.getUiStyleLocale((_b = settings.uiStyle) !== null && _b !== void 0 ? _b : "smart"))),
+                                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                return __generator(this, function (_a) {
+                                                                    switch (_a.label) {
+                                                                        case 0: return [4 /*yield*/, Render.uiStyleSettingsPopup()];
+                                                                        case 1:
+                                                                            if (!_a.sent()) return [3 /*break*/, 3];
+                                                                            result = true;
+                                                                            return [4 /*yield*/, update()];
+                                                                        case 2:
+                                                                            _a.sent();
+                                                                            _a.label = 3;
+                                                                        case 3: return [2 /*return*/];
+                                                                    }
+                                                                });
+                                                            }); }
+                                                        },
+                                                        {
+                                                            tag: "button",
+                                                            className: "label-button",
+                                                            children: Render.monospace("auto-tag-flash", Render.label("Flash style setting"), Render.label(CyclicToDo.getFlashStyleLocale((_c = settings.flashStyle) !== null && _c !== void 0 ? _c : "breath"))),
+                                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                return __generator(this, function (_a) {
+                                                                    switch (_a.label) {
+                                                                        case 0: return [4 /*yield*/, Render.flashStyleSettingsPopup()];
+                                                                        case 1:
+                                                                            if (!_a.sent()) return [3 /*break*/, 3];
+                                                                            result = true;
+                                                                            return [4 /*yield*/, update()];
+                                                                        case 2:
+                                                                            _a.sent();
+                                                                            _a.label = 3;
+                                                                        case 3: return [2 /*return*/];
+                                                                    }
+                                                                });
+                                                            }); }
+                                                        },
+                                                        {
+                                                            tag: "button",
+                                                            className: "label-button",
+                                                            children: Render.monospace("auto-tag-flash", Render.label("Language setting"), Render.$span("")(locale.getLocaleName((_d = settings.locale) !== null && _d !== void 0 ? _d : "@auto"))),
+                                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                var _a;
+                                                                return __generator(this, function (_b) {
+                                                                    switch (_b.label) {
+                                                                        case 0: return [4 /*yield*/, Render.localeSettingsPopup()];
+                                                                        case 1:
+                                                                            if (!_b.sent()) return [3 /*break*/, 3];
+                                                                            locale.setLocale((_a = Storage.SystemSettings.get().locale) !== null && _a !== void 0 ? _a : null);
+                                                                            result = true;
+                                                                            return [4 /*yield*/, update()];
+                                                                        case 2:
+                                                                            _b.sent();
+                                                                            _b.label = 3;
+                                                                        case 3: return [2 /*return*/];
+                                                                    }
+                                                                });
+                                                            }); }
+                                                        },
+                                                    ]);
+                                                    return [2 /*return*/];
+                                                });
+                                            }); };
+                                            return [4 /*yield*/, update()];
+                                        case 1:
+                                            _a.sent();
+                                            ui = Render.popup({
+                                                // className: "add-remove-tags-popup",
+                                                children: [
+                                                    header,
+                                                    buttonList,
+                                                    Render.$div("popup-operator")([{
+                                                            tag: "button",
+                                                            className: "default-button",
+                                                            children: Render.label("Close"),
+                                                            onclick: function () {
+                                                                ui.close();
+                                                            },
+                                                        }]),
+                                                ],
+                                                onClose: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    return __generator(this, function (_a) {
+                                                        resolve(result);
+                                                        return [2 /*return*/];
+                                                    });
+                                                }); },
+                                            });
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); })];
+                        case 1: return [2 /*return*/, _a.sent()];
                     }
                 });
             }); };
@@ -15730,54 +15871,16 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             return [4 /*yield*/, Render.fullscreenMenuItem()];
                         case 1: return [2 /*return*/, _a.concat([
                                 _b.sent(),
-                                Render.menuItem(Render.label("Theme setting"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                Render.menuItem(Render.label("System settings"), function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
-                                            case 0: return [4 /*yield*/, Render.themeSettingsPopup()];
+                                            case 0: return [4 /*yield*/, Render.systemSettingsPopup()];
                                             case 1:
-                                                if (_a.sent()) {
-                                                    // updateStyle();
-                                                }
-                                                return [2 /*return*/];
-                                        }
-                                    });
-                                }); }),
-                                Render.menuItem(Render.label("UI style setting"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0: return [4 /*yield*/, Render.uiStyleSettingsPopup()];
-                                            case 1:
-                                                if (_a.sent()) {
-                                                    // updateStyle();
-                                                }
-                                                return [2 /*return*/];
-                                        }
-                                    });
-                                }); }),
-                                Render.menuItem(Render.label("Flash style setting"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0: return [4 /*yield*/, Render.flashStyleSettingsPopup()];
-                                            case 1:
-                                                if (_a.sent()) {
-                                                    // updateStyle();
-                                                }
-                                                return [2 /*return*/];
-                                        }
-                                    });
-                                }); }),
-                                Render.menuItem(Render.label("Language setting"), function () { return __awaiter(_this, void 0, void 0, function () {
-                                    var _a;
-                                    return __generator(this, function (_b) {
-                                        switch (_b.label) {
-                                            case 0: return [4 /*yield*/, Render.localeSettingsPopup()];
-                                            case 1:
-                                                if (!_b.sent()) return [3 /*break*/, 3];
-                                                locale.setLocale((_a = Storage.SystemSettings.get().locale) !== null && _a !== void 0 ? _a : null);
+                                                if (!_a.sent()) return [3 /*break*/, 3];
                                                 return [4 /*yield*/, CyclicToDo.reload()];
                                             case 2:
-                                                _b.sent();
-                                                _b.label = 3;
+                                                _a.sent();
+                                                _a.label = 3;
                                             case 3: return [2 /*return*/];
                                         }
                                     });
@@ -16994,7 +17097,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Aug 26 2023 20:07:41 GMT+0900 (日本標準時)', buildTimestampTick: 1693048061660, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Aug 27 2023 05:41:45 GMT+0900 (日本標準時)', buildTimestampTick: 1693082505119, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

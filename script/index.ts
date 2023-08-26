@@ -52,7 +52,7 @@ export module locale
         navigator.language as LocaleType:
         locales[0];
     export const getLocaleName = (locale: "@auto" | LocaleType) =>
-        "@auto" === locale ?  map("language.auto"): master[locale].$name;
+        "@auto" === locale ? map("language.auto"): master[locale].$name;
     export const setLocale = (locale: LocaleType | null) =>
     {
         const key = locale ?? navigator.language as LocaleType;
@@ -3388,6 +3388,123 @@ export module CyclicToDo
                 }
             }
         };
+        export const systemSettingsPopup = async (): Promise<boolean> => await new Promise
+        (
+            async resolve =>
+            {
+                let result = false;
+                const header = <HTMLHeadingElement>$make({ tag: "h2", });
+                const buttonList = $make(HTMLDivElement)({ className: "label-button-list" });
+                const update = async () =>
+                {
+                    minamo.dom.replaceChildren(header, label("System settings"));
+                    const settings = Storage.SystemSettings.get();
+                    minamo.dom.replaceChildren
+                    (
+                        buttonList,
+                        [
+                            {
+                                tag: "button",
+                                className: "label-button",
+                                children: monospace
+                                (
+                                    "auto-tag-flash",
+                                    label("Theme setting"),
+                                    label(getThemeLocale(settings.theme ?? "auto"))
+                                ),
+                                onclick: async () =>
+                                {
+                                    if (await themeSettingsPopup())
+                                    {
+                                        result = true;
+                                        await update();
+                                    }
+                                }
+                            },
+                            {
+                                tag: "button",
+                                className: "label-button",
+                                children: monospace
+                                (
+                                    "auto-tag-flash",
+                                    label("UI style setting"),
+                                    label(getUiStyleLocale(settings.uiStyle ?? "smart"))
+                                ),
+                                onclick: async () =>
+                                {
+                                    if (await uiStyleSettingsPopup())
+                                    {
+                                        result = true;
+                                        await update();
+                                    }
+                                }
+                            },
+                            {
+                                tag: "button",
+                                className: "label-button",
+                                children: monospace
+                                (
+                                    "auto-tag-flash",
+                                    label("Flash style setting"),
+                                    label(getFlashStyleLocale(settings.flashStyle ?? "breath"))
+                                ),
+                                onclick: async () =>
+                                {
+                                    if (await flashStyleSettingsPopup())
+                                    {
+                                        result = true;
+                                        await update();
+                                    }
+                                }
+                            },
+                            {
+                                tag: "button",
+                                className: "label-button",
+                                children: monospace
+                                (
+                                    "auto-tag-flash",
+                                    label("Language setting"),
+                                    $span("")(locale.getLocaleName(settings.locale ?? "@auto"))
+                                ),
+                                onclick: async () =>
+                                {
+                                    if (await localeSettingsPopup())
+                                    {
+                                        locale.setLocale(Storage.SystemSettings.get().locale ?? null);
+                                        result = true;
+                                        await update();
+                                    }
+                                }
+                            },
+                        ]
+                    );
+                };
+                await update();
+                const ui = popup
+                ({
+                    // className: "add-remove-tags-popup",
+                    children:
+                    [
+                        header,
+                        buttonList,
+                        $div("popup-operator")
+                        ([{
+                            tag: "button",
+                            className: "default-button",
+                            children: label("Close"),
+                            onclick: () =>
+                            {
+                                ui.close();
+                            },
+                        }]),
+                    ],
+                    onClose: async () =>
+                    {
+                        resolve(result);
+                    },
+                });
+            }
+        );
         export const getTagSettingTitle = (tag: string): locale.LocaleKeyType =>
         {
             const map: { [key: string]: locale.LocaleKeyType; } =
@@ -6876,45 +6993,11 @@ export module CyclicToDo
             await fullscreenMenuItem(),
             menuItem
             (
-                label("Theme setting"),
+                label("System settings"),
                 async () =>
                 {
-                    if (await themeSettingsPopup())
+                    if (await systemSettingsPopup())
                     {
-                        // updateStyle();
-                    }
-                }
-            ),
-            menuItem
-            (
-                label("UI style setting"),
-                async () =>
-                {
-                    if (await uiStyleSettingsPopup())
-                    {
-                        // updateStyle();
-                    }
-                }
-            ),
-            menuItem
-            (
-                label("Flash style setting"),
-                async () =>
-                {
-                    if (await flashStyleSettingsPopup())
-                    {
-                        // updateStyle();
-                    }
-                }
-            ),
-            menuItem
-            (
-                label("Language setting"),
-                async () =>
-                {
-                    if (await localeSettingsPopup())
-                    {
-                        locale.setLocale(Storage.SystemSettings.get().locale ?? null);
                         await reload();
                     }
                 }
