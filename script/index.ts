@@ -7422,6 +7422,7 @@ export module CyclicToDo
                                 }
                             ),
                             content: label("There is a new version!"),
+                            backwardOperator: cancelTextButton(async () => await toast.hide()),
                             wait: 0,
                         });
                     }
