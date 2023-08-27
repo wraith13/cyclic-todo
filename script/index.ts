@@ -4448,6 +4448,17 @@ export module CyclicToDo
             ),
             menuItem
             (
+                label("System settings"),
+                async () =>
+                {
+                    if (await systemSettingsPopup())
+                    {
+                        await reload();
+                    }
+                }
+            ),
+            menuItem
+            (
                 label("Add/Remove Tag"),
                 async () =>
                 {
@@ -5448,6 +5459,17 @@ export module CyclicToDo
                     }
                 }
             ),
+            menuItem
+            (
+                label("System settings"),
+                async () =>
+                {
+                    if (await systemSettingsPopup())
+                    {
+                        await reload();
+                    }
+                }
+            ),
             "@overall" === entry.tag ? listRenameMenu(entry.pass): [],
             Model.isSystemTagOld(entry.tag) ? []:
                 menuItem
@@ -6125,6 +6147,17 @@ export module CyclicToDo
                 label("Back to List"),
                 async () => await showUrl({ pass: entry.pass, tag: entry.tag, })
             ),
+            menuItem
+            (
+                label("System settings"),
+                async () =>
+                {
+                    if (await systemSettingsPopup())
+                    {
+                        await reload();
+                    }
+                }
+            ),
             Model.isSystemTagOld(entry.tag) ? []:
                 menuItem
                 (
@@ -6280,6 +6313,17 @@ export module CyclicToDo
             ),
             menuItem
             (
+                label("System settings"),
+                async () =>
+                {
+                    if (await systemSettingsPopup())
+                    {
+                        await reload();
+                    }
+                }
+            ),
+            menuItem
+            (
                 label("Permanently Delete"),
                 async () =>
                 {
@@ -6367,6 +6411,17 @@ export module CyclicToDo
         export const todoScreenMenu = async (pass: string, item: ToDoEntry) =>
         [
             todoDoneMenu(pass, item),
+            menuItem
+            (
+                label("System settings"),
+                async () =>
+                {
+                    if (await systemSettingsPopup())
+                    {
+                        await reload();
+                    }
+                }
+            ),
             todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
             todoTagMenu(pass, item),
             todoDeleteMenu
@@ -6691,7 +6746,18 @@ export module CyclicToDo
             (
                 label("Back to List"),
                 async () => async () => await showUrl({ pass, tag: "@overall", }),
-            )
+            ),
+            menuItem
+            (
+                label("System settings"),
+                async () =>
+                {
+                    if (await systemSettingsPopup())
+                    {
+                        await reload();
+                    }
+                }
+            ),
         ];
         export const exportScreen = async (pass: string): Promise<ScreenSource> =>
         ({
@@ -6723,7 +6789,18 @@ export module CyclicToDo
             (
                 label("Back to Top"),
                 async () => await showUrl({ }),
-            )
+            ),
+            menuItem
+            (
+                label("System settings"),
+                async () =>
+                {
+                    if (await systemSettingsPopup())
+                    {
+                        await reload();
+                    }
+                }
+            ),
         ];
         export const importScreen = async () =>
         ({
@@ -6820,7 +6897,18 @@ export module CyclicToDo
             (
                 label("Back to Top"),
                 async () => await showUrl({ }),
-            )
+            ),
+            menuItem
+            (
+                label("System settings"),
+                async () =>
+                {
+                    if (await systemSettingsPopup())
+                    {
+                        await reload();
+                    }
+                }
+            ),
         ];
         export const removedListScreen = async (list: RemovedContent[]) =>
         ({
