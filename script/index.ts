@@ -5477,16 +5477,34 @@ export module CyclicToDo
                     label("Rename"),
                     async () =>
                     {
-                        const newTag = await prompt(locale.map("Input a tag's name."), entry.tag);
-                        if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
+                        if (Model.isSublistOld(entry.tag))
                         {
-                            if (OldStorage.Tag.rename(entry.pass, entry.tag, newTag))
+                            const newTag = minamo.core.nullable(Model.encodeSublist)(await prompt(locale.map("Input a tag's name."), Model.decodeSublist(entry.tag)));
+                            if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
                             {
-                                await showUrl({ pass: entry.pass, tag: newTag });
+                                if (OldStorage.Tag.rename(entry.pass, entry.tag, newTag))
+                                {
+                                    await showUrl({ pass: entry.pass, tag: newTag });
+                                }
+                                else
+                                {
+                                    alert(locale.string("その名前のサブリストは既に存在しています。"));
+                                }
                             }
-                            else
+                        }
+                        else
+                        {
+                            const newTag = await prompt(locale.map("Input a tag's name."), entry.tag);
+                            if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
                             {
-                                alert(locale.string("その名前のタグは既に存在しています。"));
+                                if (OldStorage.Tag.rename(entry.pass, entry.tag, newTag))
+                                {
+                                    await showUrl({ pass: entry.pass, tag: newTag });
+                                }
+                                else
+                                {
+                                    alert(locale.string("その名前のタグは既に存在しています。"));
+                                }
                             }
                         }
                     }
