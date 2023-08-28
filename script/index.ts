@@ -624,7 +624,22 @@ export module CyclicToDo
                 if (0 < newTag.length && ! Model.isSystemTagOld(oldTag) && ! Model.isSystemTagOld(newTag) && oldTag !== newTag && get(pass).indexOf(newTag) < 0)
                 {
                     add(pass, newTag);
-                    TagMember.set(pass, newTag, TagMember.getRaw(pass, oldTag));
+                    if (Model.isSublistOld(newTag))
+                    {
+                        TagMember.get(pass, oldTag).forEach
+                        (
+                            i =>
+                            {
+                                const task = OldStorage.Task.getBody(i);
+                                const result = `${newTag}${task}`;
+                                OldStorage.Task.rename(pass, i, result);
+                            }
+                        );
+                    }
+                    else
+                    {
+                        TagMember.set(pass, newTag, TagMember.getRaw(pass, oldTag));
+                    }
                     TagSettings.set(pass, newTag, TagSettings.get(pass, oldTag));
                     removeRaw(pass, oldTag);
                     TagMember.removeKey(pass, oldTag);
