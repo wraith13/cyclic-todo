@@ -2412,7 +2412,12 @@ export module CyclicToDo
                 ],
                 onclick
             );
-        export const cancelTextButton = (onCanceled: () => unknown) => textButton
+            export const closeTextButton = (onClosed: () => unknown) => textButton
+            (
+                "Close",
+                async () => onClosed()
+            );
+            export const cancelTextButton = (onCanceled: () => unknown) => textButton
         (
             "roll-back",
             async () =>
@@ -7611,7 +7616,7 @@ export module CyclicToDo
                                 }
                             ),
                             content: label("There is a new version!"),
-                            backwardOperator: cancelTextButton(async () => await toast.hide()),
+                            backwardOperator: closeTextButton(async () => await toast.hide()),
                             wait: 0,
                         });
                     }
