@@ -219,7 +219,7 @@ export module CyclicToDo
         2 <= item.count && "number" === typeof item.first && "number" === typeof item.previous && item.first !== item.previous;
     export interface TagSettings extends minamo.core.JsonableObject
     {
-        sort?: "smart" | "simple" | "simple-reverse";
+        sort?: "smart" | "auto-tag" | "simple" | "simple-reverse";
         displayStyle?: "@home" | "full" | "compact";
         progressScaleStyle?: "@home" | "none" | "full";
     }
@@ -1986,6 +1986,24 @@ export module CyclicToDo
                         item => entry.todo.indexOf(item.task),
                         item => item.task,
                     ]);
+                case "auto-tag":
+                    return minamo.core.comparer.make<ToDoEntry>
+                    ([
+                        item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ? -1: 1,
+                        item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
+                            Math.min(item.smartRest ?? 1, 0):
+                            -(item.progress ?? -1),
+                        item =>
+                        (
+                            {
+                                "@restriction": 1,
+                                "default": 0,
+                                "@pickup": -1,
+                                "@flash": -2,
+                            }[OldStorage.TodoSettings.getAutoTag(entry.pass, item) ?? "default"]
+                        ),
+                        { raw: todoComparerOld(entry, "smart"), },
+                    ]);
                 case "simple":
                     return minamo.core.comparer.make<ToDoEntry>
                     ([
@@ -3637,18 +3655,19 @@ export module CyclicToDo
         export const makeTagDefaultGetter = <T extends string>(defaultValue: T) =>
             (tag: string): "@home" | T => "@overall" === tag ? defaultValue: "@home";
         export const getTagSortSettingsDefault = makeTagDefaultGetter("smart");
-        export const getTagSortSettingsText = (displayStyle: "@home" | "smart" | "simple" | "simple-reverse") =>
+        export const getTagSortSettingsText = (displayStyle: "@home" | "smart" | "auto-tag" | "simple" | "simple-reverse") =>
         {
             const map: { [key: string]: locale.LocaleKeyType; } =
             {
                 "@home": "sort.home",
                 "smart": "sort.smart",
+                "auto-tag": "sort.auto-tag",
                 "simple": "sort.simple",
                 "simple-reverse": "sort.simple-reverse",
             };
             return map[displayStyle];
         }
-        export const getTagSortSettingsDescription = (displayStyle: "@home" | "smart" | "simple" | "simple-reverse") =>
+        export const getTagSortSettingsDescription = (displayStyle: "@home" | "smart" | "auto-tag" | "simple" | "simple-reverse") =>
             `${getTagSortSettingsText(displayStyle)}.description` as locale.LocaleKeyType;
         export const tagSortSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
         (
@@ -3664,12 +3683,12 @@ export module CyclicToDo
                     (
                         (
                             "@overall" === tag ?
-                            [ "smart", "simple", "simple-reverse", ]:
-                            [ "@home", "smart", "simple", "simple-reverse", ]
+                            [ "smart", "auto-tag", "simple", "simple-reverse", ]:
+                            [ "@home", "smart", "auto-tag", "simple", "simple-reverse", ]
                         )
                         .map
                         (
-                            async (i: "@home" | "smart" | "simple" | "simple-reverse") => descriptionButton
+                            async (i: "@home" | "smart" | "auto-tag" | "simple" | "simple-reverse") => descriptionButton
                             (
                                 `check-button ${i === (settings.sort ?? defaultSort) ? "checked": ""}`,
                                 [
@@ -3679,7 +3698,7 @@ export module CyclicToDo
                                 getTagSortSettingsDescription(i),
                                 async () =>
                                 {
-                                    settings.sort = defaultSort === i ? undefined: <"smart" | "simple">i;
+                                    settings.sort = defaultSort === i ? undefined: <"smart" | "auto-tag" | "simple" | "simple-reverse">i;
                                     OldStorage.TagSettings.set(pass, tag, settings);
                                     await updateWindow("operate");
                                     result = true;
@@ -7869,9 +7888,9 @@ export module CyclicToDo
                                 const settings = OldStorage.TagSettings.get(pass, tag);
                                 const defaultSort = getTagSortSettingsDefault(tag);
                                 const current = settings.sort ?? defaultSort;
-                                const list: ("@home" | "smart" | "simple" | "simple-reverse")[] = "@overall" === tag ?
-                                    [ "smart", "simple", "simple-reverse", ]:
-                                    [ "@home", "smart", "simple", "simple-reverse", ];
+                                const list: ("@home" | "smart" | "auto-tag" | "simple" | "simple-reverse")[] = "@overall" === tag ?
+                                    [ "smart", "auto-tag", "simple", "simple-reverse", ]:
+                                    [ "@home", "smart", "auto-tag", "simple", "simple-reverse", ];
                                 const next = destinationItem(list, current);
                                 settings.sort = defaultSort === next ? undefined: <"smart" | "simple">next;
                                 OldStorage.TagSettings.set(pass, tag, settings);
