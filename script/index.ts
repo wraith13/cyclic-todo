@@ -624,9 +624,10 @@ export module CyclicToDo
                 if (0 < newTag.length && ! Model.isSystemTagOld(oldTag) && ! Model.isSystemTagOld(newTag) && oldTag !== newTag && get(pass).indexOf(newTag) < 0)
                 {
                     add(pass, newTag);
+                    const member = TagMember.get(pass, oldTag);
                     if (Model.isSublistOld(newTag))
                     {
-                        TagMember.get(pass, oldTag).forEach
+                        member.forEach
                         (
                             i =>
                             {
@@ -638,7 +639,7 @@ export module CyclicToDo
                     }
                     else
                     {
-                        TagMember.set(pass, newTag, TagMember.getRaw(pass, oldTag));
+                        TagMember.set(pass, newTag, member);
                     }
                     TagSettings.set(pass, newTag, TagSettings.get(pass, oldTag));
                     removeRaw(pass, oldTag);
