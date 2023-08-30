@@ -4343,6 +4343,17 @@ export module CyclicToDo
         //     href,
         //     children,
         // });
+        export const systemSettingsMenuItem = menuItem
+        (
+            label("System settings"),
+            async () =>
+            {
+                if (await systemSettingsPopup())
+                {
+                    await reload();
+                }
+            }
+        );
         export const informationDigest = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
         ({
             className: "item-information",
@@ -4486,17 +4497,7 @@ export module CyclicToDo
                     }
                 }
             ),
-            menuItem
-            (
-                label("System settings"),
-                async () =>
-                {
-                    if (await systemSettingsPopup())
-                    {
-                        await reload();
-                    }
-                }
-            ),
+            systemSettingsMenuItem,
             menuItem
             (
                 label("Add/Remove Tag"),
@@ -5499,17 +5500,7 @@ export module CyclicToDo
                     }
                 }
             ),
-            menuItem
-            (
-                label("System settings"),
-                async () =>
-                {
-                    if (await systemSettingsPopup())
-                    {
-                        await reload();
-                    }
-                }
-            ),
+            systemSettingsMenuItem,
             "@overall" === entry.tag ? listRenameMenu(entry.pass): [],
             Model.isSystemTagOld(entry.tag) ? []:
                 menuItem
@@ -6205,17 +6196,7 @@ export module CyclicToDo
                 label("Back to List"),
                 async () => await showUrl({ pass: entry.pass, tag: entry.tag, })
             ),
-            menuItem
-            (
-                label("System settings"),
-                async () =>
-                {
-                    if (await systemSettingsPopup())
-                    {
-                        await reload();
-                    }
-                }
-            ),
+            systemSettingsMenuItem,
             Model.isSystemTagOld(entry.tag) ? []:
                 menuItem
                 (
@@ -6369,17 +6350,7 @@ export module CyclicToDo
                 label("Back to List"),
                 async () => await showUrl({ pass, tag: "@overall", })
             ),
-            menuItem
-            (
-                label("System settings"),
-                async () =>
-                {
-                    if (await systemSettingsPopup())
-                    {
-                        await reload();
-                    }
-                }
-            ),
+            systemSettingsMenuItem,
             menuItem
             (
                 label("Permanently Delete"),
@@ -6469,17 +6440,7 @@ export module CyclicToDo
         export const todoScreenMenu = async (pass: string, item: ToDoEntry) =>
         [
             todoDoneMenu(pass, item),
-            menuItem
-            (
-                label("System settings"),
-                async () =>
-                {
-                    if (await systemSettingsPopup())
-                    {
-                        await reload();
-                    }
-                }
-            ),
+            systemSettingsMenuItem,
             todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
             todoTagMenu(pass, item),
             todoDeleteMenu
@@ -6805,17 +6766,7 @@ export module CyclicToDo
                 label("Back to List"),
                 async () => async () => await showUrl({ pass, tag: "@overall", }),
             ),
-            menuItem
-            (
-                label("System settings"),
-                async () =>
-                {
-                    if (await systemSettingsPopup())
-                    {
-                        await reload();
-                    }
-                }
-            ),
+            systemSettingsMenuItem,
         ];
         export const exportScreen = async (pass: string): Promise<ScreenSource> =>
         ({
@@ -6848,17 +6799,7 @@ export module CyclicToDo
                 label("Back to Top"),
                 async () => await showUrl({ }),
             ),
-            menuItem
-            (
-                label("System settings"),
-                async () =>
-                {
-                    if (await systemSettingsPopup())
-                    {
-                        await reload();
-                    }
-                }
-            ),
+            systemSettingsMenuItem,
         ];
         export const importScreen = async () =>
         ({
@@ -6956,17 +6897,7 @@ export module CyclicToDo
                 label("Back to Top"),
                 async () => await showUrl({ }),
             ),
-            menuItem
-            (
-                label("System settings"),
-                async () =>
-                {
-                    if (await systemSettingsPopup())
-                    {
-                        await reload();
-                    }
-                }
-            ),
+            systemSettingsMenuItem,
         ];
         export const removedListScreen = async (list: RemovedContent[]) =>
         ({
@@ -7137,17 +7068,7 @@ export module CyclicToDo
                 reloadScreen
             ),
             await fullscreenMenuItem(),
-            menuItem
-            (
-                label("System settings"),
-                async () =>
-                {
-                    if (await systemSettingsPopup())
-                    {
-                        await reload();
-                    }
-                }
-            ),
+            systemSettingsMenuItem,
             menuItem
             (
                 label("New ToDo List"),
