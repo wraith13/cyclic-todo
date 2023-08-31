@@ -175,5 +175,6 @@
     "Sort orer has changed!": "表示順を変更しました！",
     "Theme has changed!": "テーマを変更しました！",
     "Language has changed!": "言語を変更しました！",
-    "Maximum number of histories saved": "履歴が保存される最大件数"
+    "Maximum number of histories saved": "履歴が保存される最大件数",
+    "A ToDo with that name already exists.": "その名前の ToDo は既に存在しています。"
 }

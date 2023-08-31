@@ -3404,7 +3404,7 @@ export module CyclicToDo
                 {
                     const toast = makeToast
                     ({
-                        content: $span("")(locale.string("その名前の ToDo は既に存在しています。")),
+                        content: label("A ToDo with that name already exists."),
                         forwardOperator: textButton
                         (
                             "Show",
@@ -4465,7 +4465,7 @@ export module CyclicToDo
                     }
                     else
                     {
-                        alert(locale.string("その名前の ToDo は既に存在しています。"));
+                        alert(locale.map("A ToDo with that name already exists."));
                     }
                 }
             }

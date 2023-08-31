@@ -175,5 +175,6 @@
     "Sort orer has changed!": "Sort orer has changed!",
     "Theme has changed!": "Theme has changed!",
     "Language has changed!": "Language has changed!",
-    "Maximum number of histories saved": "Maximum number of histories saved"
+    "Maximum number of histories saved": "Maximum number of histories saved",
+    "A ToDo with that name already exists.": "その名前の ToDo は既に存在しています。"
 }
