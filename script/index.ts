@@ -7191,7 +7191,7 @@ export module CyclicToDo
         ];
         export const updatingScreenBody = async () =>
         {
-            setProgressStyle("progress-flash");
+            removeProgressStyle();
             minamo.dom.appendChildren
             (
                 getScreenBody(),
