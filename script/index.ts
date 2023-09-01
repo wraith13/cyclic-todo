@@ -6027,7 +6027,7 @@ export module CyclicToDo
             {
                 isUpdating = false;
                 dirtyAt = getMSTicks();
-                setProgressStyle("obsolescence", 0);
+                setProgressStyle("obsolescence");
             };
             const obsolescenceProgressBarDuration = minamo.core.parseTimespan(style.__OBSOLESCENCE_PROGRESS_BAR_DURATION__) ?? (30 *1000);
             const displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag);
@@ -6158,7 +6158,7 @@ export module CyclicToDo
                             {
                                 await Render.updateWindow("timer");
                             }
-                            removeProgressStyle("obsolescence");
+                            removeProgressStyle();
                             isDirtied = false;
                             updatedAt = getMSTicks();
                         }
@@ -6697,7 +6697,7 @@ export module CyclicToDo
                         break;
                     case "dirty":
                         isDirty = true;
-                        setProgressStyle("obsolescence", 0);
+                        setProgressStyle("obsolescence");
                         break;
                 }
             };
@@ -7191,6 +7191,7 @@ export module CyclicToDo
         ];
         export const updatingScreenBody = async () =>
         {
+            setProgressStyle("progress-flash");
             minamo.dom.appendChildren
             (
                 getScreenBody(),
@@ -7246,7 +7247,7 @@ export module CyclicToDo
         export const getHeaderElement = () => document.getElementById("screen-header") as HTMLDivElement;
         export const showWindow = async (screen: ScreenSource, updateWindow?: (event: UpdateWindowEventEype) => unknown) =>
         {
-            removeProgressStyle("obsolescence");
+            removeProgressStyle();
             if (undefined !== updateWindow)
             {
                 Render.updateWindow = updateWindow;
@@ -7418,12 +7419,12 @@ export module CyclicToDo
         export const getProgressElement = () => minamo.core.existsOrThrow(document.getElementById("screen-header"));
         export const setProgressStyleRaw = (className: string) => getProgressElement().className = `segmented ${className}`;
         let lastSetProgressAt = 0;
-        export const setProgressStyle = async (className: string, timeout: number) =>
+        export const setProgressStyle = async (className: string, timeout: number = 0) =>
         {
-            const timestamp = lastSetProgressAt = new Date().getTime();
             setProgressStyleRaw(className);
             if (0 < timeout)
             {
+                const timestamp = lastSetProgressAt = new Date().getTime();
                 await minamo.core.timeout(timeout);
                 if (timestamp === lastSetProgressAt)
                 {
@@ -7436,17 +7437,17 @@ export module CyclicToDo
                 }
             }
         };
-        export const removeProgressStyle = (className: string) => getProgressElement().classList.remove(className);
+        export const removeProgressStyle = () => setProgressStyleRaw("");
         export const withProgress = async <T>(className: string, content: minamo.dom.Source, task: Promise<T>): Promise<T> =>
         {
-            setProgressStyle(className, 0);
+            setProgressStyle(className);
             const toast = makeToast
             ({
                 content,
                 wait: 0,
             });
             const result = await task;
-            setProgressStyle("", 0);
+            setProgressStyle("");
             toast.hide();
             return result;
         };

@@ -437,6 +437,31 @@ h1
             animation-fill-mode: both;
         }
     }
+    &.progress-flash
+    {
+        .progress-bar
+        {
+            background-color: @flashy-color;
+            animation-direction: normal;
+            animation-delay: 0s;
+            animation-duration: 5.0s;
+            animation-timing-function: ease-in-out;
+            animation-fill-mode: both;
+            animation-iteration-count: infinite;
+        }
+    }
+}
+&.flash-style-gradation h1.progress-flash .progress-bar
+{
+    animation-name: gradation-progress-flash;
+}
+&.flash-style-breath h1.progress-flash .progress-bar
+{
+    animation-name: breath-progress-flash;
+}
+&.flash-style-solid h1.progress-flash .progress-bar
+{
+    animation-name: solid-progress-flash;
 }
 @keyframes update-progress
 {
