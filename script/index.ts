@@ -3040,7 +3040,7 @@ export module CyclicToDo
                                 ],
                                 onclick: async () =>
                                 {
-                                    const sublist = await prompt(locale.map("Input a Sublist's name."), "");
+                                    const sublist = await prompt(locale.map("Input a sublist's name."), "");
                                     if (null !== sublist)
                                     {
                                         const tag = Model.encodeSublist(sublist.trim());
@@ -5524,7 +5524,7 @@ export module CyclicToDo
                                 }
                                 else
                                 {
-                                    alert(locale.string("その名前のサブリストは既に存在しています。"));
+                                    alert(locale.map("A sublist with that name already exists."));
                                 }
                             }
                         }
@@ -5539,7 +5539,7 @@ export module CyclicToDo
                                 }
                                 else
                                 {
-                                    alert(locale.string("その名前のタグは既に存在しています。"));
+                                    alert(locale.map("A tag with that name already exists."));
                                 }
                             }
                         }

@@ -120,7 +120,7 @@
     "Input a ToDo list's name.": "Input a ToDo list's name.",
     "Input a tag's name.": "Input a tag's name.",
     "Input a ToDo's name.": "Input a ToDo's name.",
-    "Input a Sublist's name.": "Input a Sublist's name.",
+    "Input a sublist's name.": "Input a Sublist's name.",
     "This action cannot be undone. Do you want to continue?": "This action cannot be undone. Do you want to continue?",
     "Close": "Close",
     "Show": "Show",
@@ -176,5 +176,7 @@
     "Theme has changed!": "Theme has changed!",
     "Language has changed!": "Language has changed!",
     "Maximum number of histories saved": "Maximum number of histories saved",
-    "A ToDo with that name already exists.": "その名前の ToDo は既に存在しています。"
+    "A ToDo with that name already exists.": "A ToDo with that name already exists.",
+    "A tag with that name already exists.": "A tag with that name already exists.",
+    "A sublist with that name already exists.": "A sublist with that name already exists."
 }
