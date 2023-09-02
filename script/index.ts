@@ -1758,6 +1758,18 @@ export module CyclicToDo
                 return `${date.getFullYear()}-${("0" +(date.getMonth() +1)).substr(-2)}-${("0" +date.getDate()).substr(-2)}`;
             }
         };
+        export const dayStringFromTick = (tick: null | number) =>
+        {
+            if (null === tick)
+            {
+                return "N/A";
+            }
+            else
+            {
+                const date = new Date(tick *timeAccuracy);
+                return locale.map(`week.short.${date.getDay()}` as locale.LocaleKeyType);
+            }
+        };
         export function getTime(tick: null): null;
         export function getTime(tick: number): number;
         export function getTime(tick: null | number): null | number;
@@ -1795,7 +1807,7 @@ export module CyclicToDo
             }
             else
             {
-                return `${dateCoreStringFromTick(tick)} ${timeCoreStringFromTick(getTime(tick))}`;
+                return `${dateCoreStringFromTick(tick)}(${dayStringFromTick(tick)}) ${timeCoreStringFromTick(getTime(tick))}`;
             }
         }
         export const timeCoreStringFromTick = (tick: null | number): string =>
