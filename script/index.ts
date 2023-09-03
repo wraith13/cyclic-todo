@@ -4371,6 +4371,11 @@ export module CyclicToDo
             label("Back to List"),
             async () => await showUrl({ pass, tag, }),
         );
+        export const newTaskMenuItem = (entry: { pass: string, tag: string, }) => menuItem
+        (
+            label("New ToDo"),
+            async () => newTaskPopup(entry, getFilterText())
+        );
         export const informationDigest = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
         ({
             className: "item-information",
@@ -4856,7 +4861,7 @@ export module CyclicToDo
                         Model.decode(item.task)
                     ],
                 }),
-                monospace(Domain.dateStringFromTick(item.tick)),
+                monospace("tick-timestamp", label("timestamp"),Domain.dateStringFromTick(item.tick)),
             ]),
             $div("item-operator")
             (
@@ -5445,7 +5450,7 @@ export module CyclicToDo
                             await Resource.loadSvgOrCache("add-task-icon"), // 本来は plus だけど、まだ作ってない
                             label("New ToDo"),
                         ],
-                        async () => newTaskPopup({ pass, tag, }),
+                        async () => newTaskPopup({ pass, tag, }, getFilterText()),
                     ),
                     menuLinkItem
                     (
@@ -5562,11 +5567,7 @@ export module CyclicToDo
                 href: { pass: entry.pass, hash: "removed" },
                 children: menuItem(label("@deleted")),
             }),
-            menuItem
-            (
-                label("New ToDo"),
-                async () => newTaskPopup(entry)
-            ),
+            newTaskMenuItem(entry),
             // {
             //     tag: "button",
             //     children: "🚫 リストをシェア",
@@ -6230,11 +6231,7 @@ export module CyclicToDo
                         }
                     }
                 ),
-            menuItem
-            (
-                label("New ToDo"),
-                async () => newTaskPopup(entry)
-            ),
+            newTaskMenuItem(entry),
             // {
             //     tag: "button",
             //     children: "🚫 リストをシェア",
