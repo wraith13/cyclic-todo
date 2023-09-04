@@ -4366,14 +4366,14 @@ export module CyclicToDo
                 }
             }
         );
-        export const backToListMenuItem = (pass: string, tag: string = "@overall") => menuItem
-        (
-            label("Back to List"),
-            async () => await showUrl({ pass, tag, }),
-        );
+        export const backToListMenuItem = (pass: string, tag: string = "@overall") => internalLink
+        ({
+            href: { pass, tag, },
+            children: menuItem(label("Back to List")),
+        });
         export const exportListMenuItem = (pass: string) => internalLink
         ({
-            href: { pass, hash: "export" },
+            href: { pass, hash: "export", },
             children: menuItem(label("Export")),
         });
         export const newTaskMenuItem = (entry: { pass: string, tag: string, }) => menuItem
