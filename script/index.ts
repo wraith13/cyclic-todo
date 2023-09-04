@@ -4371,6 +4371,11 @@ export module CyclicToDo
             label("Back to List"),
             async () => await showUrl({ pass, tag, }),
         );
+        export const exportListMenuItem = (pass: string) => internalLink
+        ({
+            href: { pass, hash: "export" },
+            children: menuItem(label("Export")),
+        });
         export const newTaskMenuItem = (entry: { pass: string, tag: string, }) => menuItem
         (
             label("New ToDo"),
@@ -5572,11 +5577,7 @@ export module CyclicToDo
             //     tag: "button",
             //     children: "🚫 リストをシェア",
             // },
-            internalLink
-            ({
-                href: { pass: entry.pass, hash: "export" },
-                children: menuItem(label("Export")),
-            }),
+            exportListMenuItem(entry.pass),
             Model.isSystemTagOld(entry.tag) ? []:
                 menuItem
                 (
@@ -6236,11 +6237,7 @@ export module CyclicToDo
             //     tag: "button",
             //     children: "🚫 リストをシェア",
             // },
-            menuItem
-            (
-                label("Export"),
-                async () => await showUrl({ pass: entry.pass, hash: "export", })
-            ),
+            exportListMenuItem(entry.pass),
             // Storage.Tag.isSystemTag(entry.tag) ? []:
             //     menuItem
             //     (
@@ -6460,11 +6457,7 @@ export module CyclicToDo
             //     tag: "button",
             //     children: "🚫 ToDo をシェア",
             // },
-            menuItem
-            (
-                label("Export"),
-                async () => await showUrl({ pass, hash: "export", })
-            ),
+            exportListMenuItem(pass),
         ];
         export const todoScreenHeader = async (pass: string, item: ToDoEntry, _ticks: number[], tag: string) =>
         ({
@@ -6988,11 +6981,7 @@ export module CyclicToDo
                             href: { pass: list.pass, tag: "@overall", hash: "history" },
                             children: menuItem(label("History")),
                         }),
-                        internalLink
-                        ({
-                            href: { pass: list.pass, hash: "export", },
-                            children: menuItem(label("Export")),
-                        }),
+                        exportListMenuItem(list.pass),
                         menuItem
                         (
                             label("Delete"),
