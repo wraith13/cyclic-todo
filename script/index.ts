@@ -4343,12 +4343,11 @@ export module CyclicToDo
             children,
             onclick,
         });
-        export const menuLinkItem = (children: minamo.dom.Source, href: PageParams, className?: string) => menuItem
-        (
-            children,
-            () => showUrl(href),
-            className,
-        );
+        export const menuLinkItem = (children: minamo.dom.Source, href: PageParams, className?: string) => internalLink
+        ({
+            href,
+            children: menuItem(children, undefined, className),
+        });
         // export const menuLinkItem = (children: minamo.dom.Source, href: PageParams, className?: string) => internalLink
         // ({
         //     className,
@@ -4371,11 +4370,11 @@ export module CyclicToDo
             href: { pass, tag, },
             children: menuItem(label("Back to List")),
         });
-        export const exportListMenuItem = (pass: string) => internalLink
-        ({
-            href: { pass, hash: "export", },
-            children: menuItem(label("Export")),
-        });
+        export const exportListMenuItem = (pass: string) => menuLinkItem
+        (
+            label("Export"),
+            { pass, hash: "export", }
+        );
         export const newTaskMenuItem = (entry: { pass: string, tag: string, }) => menuItem
         (
             label("New ToDo"),
