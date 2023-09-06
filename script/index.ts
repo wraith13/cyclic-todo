@@ -4365,11 +4365,11 @@ export module CyclicToDo
                 }
             }
         );
-        export const backToListMenuItem = (pass: string, tag: string = "@overall") => internalLink
-        ({
-            href: { pass, tag, },
-            children: menuItem(label("Back to List")),
-        });
+        export const backToListMenuItem = (pass: string, tag: string = "@overall") => menuLinkItem
+        (
+            label("Back to List"),
+            { pass, tag, },
+        );
         export const exportListMenuItem = (pass: string) => menuLinkItem
         (
             label("Export"),
