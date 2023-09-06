@@ -5247,13 +5247,13 @@ export module CyclicToDo
                     ],
                     newListPrompt,
                 ),
-                menuItem
+                menuLinkItem
                 (
                     [
                         await Resource.loadSvgOrCache("import-icon"),
                         label("Import List"),
                     ],
-                    async () => await showUrl({ hash: "import", }),
+                    { hash: "import", },
                     pass === "@import" ? "current-item": undefined
                 ),
                 menuLinkItem
