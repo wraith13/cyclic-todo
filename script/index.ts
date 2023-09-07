@@ -5401,7 +5401,7 @@ export module CyclicToDo
                         ],
                         async () =>
                         {
-                            const sublist = await prompt("サブリストの名前を入力してください", "");
+                            const sublist = await prompt(locale.string("サブリストの名前を入力してください"), "");
                             if (null !== sublist)
                             {
                                 const tag = Model.encodeSublist(sublist.trim());
@@ -5451,7 +5451,7 @@ export module CyclicToDo
                     menuItem
                     (
                         [
-                            await Resource.loadSvgOrCache("add-task-icon"), // 本来は plus だけど、まだ作ってない
+                            await Resource.loadSvgOrCache("add-task-icon"),
                             label("New ToDo"),
                         ],
                         async () => newTaskPopup({ pass, tag, }, getFilterText()),
@@ -5459,7 +5459,7 @@ export module CyclicToDo
                     menuLinkItem
                     (
                         [
-                            await Resource.loadSvgOrCache("history-icon"), // 本来は plus だけど、まだ作ってない
+                            await Resource.loadSvgOrCache("history-icon"),
                             label("History"),
                         ],
                         { pass, tag: tag, hash: "history" },
@@ -5510,11 +5510,11 @@ export module CyclicToDo
         export const listScreenMenu = async (entry: ToDoTagEntryOld) =>
         [
             await fullscreenMenuItem(),
-            internalLink
-            ({
-                href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                children: menuItem(label("History")),
-            }),
+            menuLinkItem
+            (
+                label("History"),
+                { pass: entry.pass, tag: entry.tag, hash: "history" }
+            ),
             menuItem
             (
                 label(getTagSettingTitle(entry.tag)),
@@ -6788,11 +6788,7 @@ export module CyclicToDo
             await showWindow(await importScreen());
         export const importScreenMenu = async () =>
         [
-            menuItem
-            (
-                label("Back to Top"),
-                async () => await showUrl({ }),
-            ),
+            menuLinkItem(label("Back to Top"), { }),
             systemSettingsMenuItem(),
         ];
         export const importScreen = async () =>
@@ -6886,11 +6882,7 @@ export module CyclicToDo
         };
         export const removedListScreenMenu = async () =>
         [
-            menuItem
-            (
-                label("Back to Top"),
-                async () => await showUrl({ }),
-            ),
+            menuLinkItem(label("Back to Top"), { }),
             systemSettingsMenuItem(),
         ];
         export const removedListScreen = async (list: RemovedContent[]) =>
