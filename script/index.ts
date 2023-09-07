@@ -5566,11 +5566,11 @@ export module CyclicToDo
                         }
                     }
                 ),
-            internalLink
-            ({
-                href: { pass: entry.pass, hash: "removed" },
-                children: menuItem(label("@deleted")),
-            }),
+            menuLinkItem
+            (
+                label("@deleted"),
+                { pass: entry.pass, hash: "removed" }
+            ),
             newTaskMenuItem(entry),
             // {
             //     tag: "button",
