@@ -4348,12 +4348,11 @@ export module CyclicToDo
             href,
             children: menuItem(children, undefined, className),
         });
-        // export const menuLinkItem = (children: minamo.dom.Source, href: PageParams, className?: string) => internalLink
-        // ({
-        //     className,
-        //     href,
-        //     children,
-        // });
+        export const menuExteralLinkItem = (children: minamo.dom.Source, href: string, className?: string) => externalLink
+        ({
+            href,
+            children: menuItem(children, undefined, className),
+        });
         export const systemSettingsMenuItem = () => menuItem
         (
             label("System settings"),
@@ -7066,11 +7065,11 @@ export module CyclicToDo
                 label("@deleted"),
                 { hash: "removed", }
             ),
-            externalLink
-            ({
-                href: config.repositoryUrl,
-                children: menuItem(labelSpan("GitHub")),
-            }),
+            menuExteralLinkItem
+            (
+                labelSpan("GitHub"),
+                config.repositoryUrl
+            ),
         ];
         export const getVersionInfromationText = () => `${locale.immutable("build timestamp")}: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} ${locale.map("ago")} )`;
         export const matchKeyboardShortcutsContext = (urlParams: PageParams, context: KeyboardShortcutsContext) =>
@@ -7172,10 +7171,10 @@ export module CyclicToDo
                 label("Back to Top"),
                 { },
             ),
-            menuItem
+            menuExteralLinkItem
             (
-                "GitHub",
-                async () => location.href = "https://github.com/wraith13/cyclic-todo/",
+                labelSpan("GitHub"),
+                config.repositoryUrl
             ),
         ];
         export const updatingScreenBody = async () =>
