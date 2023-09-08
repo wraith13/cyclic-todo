@@ -7056,16 +7056,16 @@ export module CyclicToDo
                 label("New ToDo List"),
                 newListPrompt,
             ),
-            internalLink
-            ({
-                href: { hash: "import", },
-                children: menuItem(label("Import List")),
-            }),
-            internalLink
-            ({
-                href: { hash: "removed", },
-                children: menuItem(label("@deleted")),
-            }),
+            menuLinkItem
+            (
+                label("Import List"),
+                { hash: "import", }
+            ),
+            menuLinkItem
+            (
+                label("@deleted"),
+                { hash: "removed", }
+            ),
             externalLink
             ({
                 href: config.repositoryUrl,
@@ -7121,16 +7121,16 @@ export module CyclicToDo
                     },
                     await menuButton
                     ([
-                        internalLink
-                        ({
-                            href: { hash: "import", },
-                            children: menuItem(label("Import List")),
-                        }),
-                        internalLink
-                        ({
-                            href: { hash: "removed", },
-                            children: menuItem(label("@deleted")),
-                        }),
+                        menuLinkItem
+                        (
+                            label("Import List"),
+                            { hash: "import", }
+                        ),
+                        menuLinkItem
+                        (
+                            label("@deleted"),
+                            { hash: "removed", }
+                        ),
                     ]),
                 ]),
                 $div("row-flex-list compact-flex-list list-list")
@@ -7167,10 +7167,10 @@ export module CyclicToDo
         };
         export const updatingScreenMenu = async () =>
         [
-            menuItem
+            menuLinkItem
             (
                 label("Back to Top"),
-                async () => await showUrl({ }),
+                { },
             ),
             menuItem
             (
