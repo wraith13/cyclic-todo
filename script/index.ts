@@ -4379,6 +4379,11 @@ export module CyclicToDo
             label("New ToDo"),
             async () => newTaskPopup(entry, getFilterText())
         );
+        export const repositoryMenuItem = () => menuExteralLinkItem
+        (
+            labelSpan("GitHub"),
+            config.repositoryUrl
+        );
         export const informationDigest = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
         ({
             className: "item-information",
@@ -7065,11 +7070,7 @@ export module CyclicToDo
                 label("@deleted"),
                 { hash: "removed", }
             ),
-            menuExteralLinkItem
-            (
-                labelSpan("GitHub"),
-                config.repositoryUrl
-            ),
+            repositoryMenuItem(),
         ];
         export const getVersionInfromationText = () => `${locale.immutable("build timestamp")}: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} ${locale.map("ago")} )`;
         export const matchKeyboardShortcutsContext = (urlParams: PageParams, context: KeyboardShortcutsContext) =>
@@ -7171,11 +7172,7 @@ export module CyclicToDo
                 label("Back to Top"),
                 { },
             ),
-            menuExteralLinkItem
-            (
-                labelSpan("GitHub"),
-                config.repositoryUrl
-            ),
+            repositoryMenuItem(),
         ];
         export const updatingScreenBody = async () =>
         {
