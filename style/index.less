@@ -202,6 +202,7 @@
 }
 #foundation
 {
+    transition: background-color 1s;
     .positive-background-coloring-trait;
     position: absolute;
     top: 0px;
@@ -503,6 +504,7 @@ h1
         {
             margin-top: 0.5rem;
         }
+        transition: background-color 1s;
         .positive-background-coloring-trait;
         border-color: @accent-color;
         border-width: 1px;
@@ -832,6 +834,7 @@ h1
 .filter-frame
 {
     .positive-foreground-coloring-trait;
+    transition: background-color 1s;
     .positive-background-coloring-trait;
     display: flex;
     flex-direction: row;
@@ -874,6 +877,7 @@ h1
             display: none;
         }
         position: fixed;
+        transition: background-color 1s;
         .positive-background-coloring-trait;
         top: 2.5rem;
         max-height: 50vh;
@@ -1170,6 +1174,7 @@ button
     border-width: 1px;
     border-radius: 16px;
     border-color: @accent-color;
+    transition: background-color 1s;
     .positive-background-coloring-trait;
     overflow: auto;
     min-width: 240px;
@@ -1209,6 +1214,7 @@ button
     // justify-content: center;
     justify-content: space-around;
     align-items: center;
+    transition: background-color 1s;
     background-color: fade(@main-color, 61.8%);
     z-index: 88888;
     &.fade-in
@@ -1967,11 +1973,10 @@ button
 }
 .screen
 {
-    .positive-background-coloring-trait;
     display: flex;
     flex-direction: column;
     position: absolute;
-    background-color: transparent;
+    // background-color: transparent;
     top: 0px;
     bottom: 0px;
     right: 0px;

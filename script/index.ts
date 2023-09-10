@@ -4624,6 +4624,69 @@ export module CyclicToDo
             }
             return "task-icon";
         };
+        export const todoItemSettings = async (pass: string, item: ToDoEntry) => $div("item-settings")
+        ([
+            null !== (OldStorage.TodoSettings.get(pass, item.task).flash ?? null) ?
+                linkButton
+                ({
+                    className: "tag",
+                    children: await Resource.loadTagSvgOrCache("@flash"),
+                    onclick: async (event: MouseEvent) =>
+                    {
+                        event.preventDefault();
+                        if (await autoTagSettingsPopup(pass, item))
+                        {
+                            updateWindow("operate");
+                        }
+                    }
+                }):
+                [],
+            null !== (OldStorage.TodoSettings.get(pass, item.task).pickup ?? null) ?
+                linkButton
+                ({
+                    className: "tag",
+                    children: await Resource.loadTagSvgOrCache("@pickup"),
+                    onclick: async (event: MouseEvent) =>
+                    {
+                        event.preventDefault();
+                        if (await autoTagSettingsPopup(pass, item))
+                        {
+                            updateWindow("operate");
+                        }
+                    }
+                }):
+                [],
+            null !== (OldStorage.TodoSettings.get(pass, item.task).restriction ?? null) ?
+                linkButton
+                ({
+                    className: "tag",
+                    children: await Resource.loadTagSvgOrCache("@restriction"),
+                    onclick: async (event: MouseEvent) =>
+                    {
+                        event.preventDefault();
+                        if (await autoTagSettingsPopup(pass, item))
+                        {
+                            updateWindow("operate");
+                        }
+                    }
+                }):
+                [],
+            ! OldStorage.TodoSettings.hasAutoTagSettings(pass, item.task) ?
+                linkButton
+                ({
+                    className: "tag",
+                    children: await Resource.loadSvgOrCache("setting-icon"),
+                    onclick: async (event: MouseEvent) =>
+                    {
+                        event.preventDefault();
+                        if (await autoTagSettingsPopup(pass, item))
+                        {
+                            updateWindow("operate");
+                        }
+                    }
+                }):
+                [],
+        ]);
         export const todoItem = async (entry: ToDoTagEntryOld, item: ToDoEntry, displayStyle: "full" | "compact", progressScaleShowStyle: "none" | "full") =>
         {
             let isFirst = true;
@@ -4784,69 +4847,7 @@ export module CyclicToDo
                                         )
                                     )
                                 ),
-                                $div("item-settings")
-                                ([
-                                    null !== (OldStorage.TodoSettings.get(entry.pass, item.task).flash ?? null) ?
-                                        linkButton
-                                        ({
-                                            className: "tag",
-                                            children: await Resource.loadTagSvgOrCache("@flash"),
-                                            onclick: async (event: MouseEvent) =>
-                                            {
-                                                event.preventDefault();
-                                                if (await autoTagSettingsPopup(entry.pass, item))
-                                                {
-                                                    updateWindow("operate");
-                                                }
-                                            }
-                                        }):
-                                        [],
-                                    null !== (OldStorage.TodoSettings.get(entry.pass, item.task).pickup ?? null) ?
-                                        linkButton
-                                        ({
-                                            className: "tag",
-                                            children: await Resource.loadTagSvgOrCache("@pickup"),
-                                            onclick: async (event: MouseEvent) =>
-                                            {
-                                                event.preventDefault();
-                                                if (await autoTagSettingsPopup(entry.pass, item))
-                                                {
-                                                    updateWindow("operate");
-                                                }
-                                            }
-                                        }):
-                                        [],
-                                    null !== (OldStorage.TodoSettings.get(entry.pass, item.task).restriction ?? null) ?
-                                        linkButton
-                                        ({
-                                            className: "tag",
-                                            children: await Resource.loadTagSvgOrCache("@restriction"),
-                                            onclick: async (event: MouseEvent) =>
-                                            {
-                                                event.preventDefault();
-                                                if (await autoTagSettingsPopup(entry.pass, item))
-                                                {
-                                                    updateWindow("operate");
-                                                }
-                                            }
-                                        }):
-                                        [],
-                                    ! OldStorage.TodoSettings.hasAutoTagSettings(entry.pass, item.task) ?
-                                        linkButton
-                                        ({
-                                            className: "tag",
-                                            children: await Resource.loadSvgOrCache("setting-icon"),
-                                            onclick: async (event: MouseEvent) =>
-                                            {
-                                                event.preventDefault();
-                                                if (await autoTagSettingsPopup(entry.pass, item))
-                                                {
-                                                    updateWindow("operate");
-                                                }
-                                            }
-                                        }):
-                                        [],
-                                ]),
+                                await todoItemSettings(entry.pass, item),
                             ]),
                             informationDigest(entry, item, progressScaleShowStyle),
                         ]:
@@ -6541,69 +6542,7 @@ export module CyclicToDo
                                 )
                             )
                         ),
-                        $div("item-settings")
-                        ([
-                            null !== (OldStorage.TodoSettings.get(pass, item.task).flash ?? null) ?
-                                linkButton
-                                ({
-                                    className: "tag",
-                                    children: await Resource.loadTagSvgOrCache("@flash"),
-                                    onclick: async (event: MouseEvent) =>
-                                    {
-                                        event.preventDefault();
-                                        if (await autoTagSettingsPopup(pass, item))
-                                        {
-                                            updateWindow("operate");
-                                        }
-                                    }
-                                }):
-                                [],
-                            null !== (OldStorage.TodoSettings.get(pass, item.task).pickup ?? null) ?
-                                linkButton
-                                ({
-                                    className: "tag",
-                                    children: await Resource.loadTagSvgOrCache("@pickup"),
-                                    onclick: async (event: MouseEvent) =>
-                                    {
-                                        event.preventDefault();
-                                        if (await autoTagSettingsPopup(pass, item))
-                                        {
-                                            updateWindow("operate");
-                                        }
-                                    }
-                                }):
-                                [],
-                            null !== (OldStorage.TodoSettings.get(pass, item.task).restriction ?? null) ?
-                                linkButton
-                                ({
-                                    className: "tag",
-                                    children: await Resource.loadTagSvgOrCache("@restriction"),
-                                    onclick: async (event: MouseEvent) =>
-                                    {
-                                        event.preventDefault();
-                                        if (await autoTagSettingsPopup(pass, item))
-                                        {
-                                            updateWindow("operate");
-                                        }
-                                    }
-                                }):
-                                [],
-                            ! OldStorage.TodoSettings.hasAutoTagSettings(pass, item.task) ?
-                                linkButton
-                                ({
-                                    className: "tag",
-                                    children: await Resource.loadSvgOrCache("setting-icon"),
-                                    onclick: async (event: MouseEvent) =>
-                                    {
-                                        event.preventDefault();
-                                        if (await autoTagSettingsPopup(pass, item))
-                                        {
-                                            updateWindow("operate");
-                                        }
-                                    }
-                                }):
-                                [],
-                        ]),
+                        await todoItemSettings(pass, item),
                     ]),
                     informationFull(pass, item, OldStorage.TagSettings.getProgressScaleStyle(pass, "@home")),
                 ]),
