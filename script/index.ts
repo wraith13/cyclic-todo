@@ -4624,6 +4624,25 @@ export module CyclicToDo
             }
             return "task-icon";
         };
+        export const todoItemTags = async (pass: string, item: ToDoEntry) => $div("item-tags")
+        (
+            await Promise.all
+            (
+                OldStorage.Tag.getByTodo(pass, item.task).map
+                (
+                    async tag => internalLink
+                    ({
+                        className: "tag",
+                        href: { pass, tag, },
+                        children:
+                        [
+                            await Resource.loadTagSvgOrCache(tag),
+                            Domain.tagMap(tag)
+                        ],
+                    })
+                )
+            )
+        );
         export const todoItemSettings = async (pass: string, item: ToDoEntry) => $div("item-settings")
         ([
             null !== (OldStorage.TodoSettings.get(pass, item.task).flash ?? null) ?
@@ -4828,25 +4847,7 @@ export module CyclicToDo
                         [
                             $div("item-attribute")
                             ([
-                                $div("item-tags")
-                                (
-                                    await Promise.all
-                                    (
-                                        OldStorage.Tag.getByTodo(entry.pass, item.task).map
-                                        (
-                                            async tag => internalLink
-                                            ({
-                                                className: "tag",
-                                                href: { pass: entry.pass, tag, },
-                                                children:
-                                                [
-                                                    await Resource.loadTagSvgOrCache(tag),
-                                                    Domain.tagMap(tag)
-                                                ],
-                                            })
-                                        )
-                                    )
-                                ),
+                                await todoItemTags(entry.pass, item),
                                 await todoItemSettings(entry.pass, item),
                             ]),
                             informationDigest(entry, item, progressScaleShowStyle),
@@ -6523,25 +6524,7 @@ export module CyclicToDo
                 ([
                     $div("item-attribute")
                     ([
-                        $div("item-tags")
-                        (
-                            await Promise.all
-                            (
-                                OldStorage.Tag.getByTodo(pass, item.task).map
-                                (
-                                    async tag => internalLink
-                                    ({
-                                        className: "tag",
-                                        href: { pass, tag, },
-                                        children:
-                                        [
-                                            await Resource.loadTagSvgOrCache(tag),
-                                            Domain.tagMap(tag)
-                                        ],
-                                    })
-                                )
-                            )
-                        ),
+                        await todoItemTags(pass, item),
                         await todoItemSettings(pass, item),
                     ]),
                     informationFull(pass, item, OldStorage.TagSettings.getProgressScaleStyle(pass, "@home")),
