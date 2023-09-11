@@ -4369,6 +4369,16 @@ export module CyclicToDo
             label("Back to List"),
             { pass, tag, },
         );
+        export const importListMenuItem = () => menuLinkItem
+        (
+            label("Import List"),
+            { hash: "import", }
+        );
+        export const removedListMenuItem = () => menuLinkItem
+        (
+            label("@deleted"),
+            { hash: "removed", }
+        );
         export const exportListMenuItem = (pass: string) => menuLinkItem
         (
             label("Export"),
@@ -6982,16 +6992,8 @@ export module CyclicToDo
                 label("New ToDo List"),
                 newListPrompt,
             ),
-            menuLinkItem
-            (
-                label("Import List"),
-                { hash: "import", }
-            ),
-            menuLinkItem
-            (
-                label("@deleted"),
-                { hash: "removed", }
-            ),
+            importListMenuItem(),
+            removedListMenuItem(),
             repositoryMenuItem(),
         ];
         export const getVersionInfromationText = () => `${locale.immutable("build timestamp")}: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} ${locale.map("ago")} )`;
@@ -7043,16 +7045,8 @@ export module CyclicToDo
                     },
                     await menuButton
                     ([
-                        menuLinkItem
-                        (
-                            label("Import List"),
-                            { hash: "import", }
-                        ),
-                        menuLinkItem
-                        (
-                            label("@deleted"),
-                            { hash: "removed", }
-                        ),
+                        importListMenuItem(),
+                        removedListMenuItem(),
                     ]),
                 ]),
                 $div("row-flex-list compact-flex-list list-list")
