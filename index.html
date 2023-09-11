@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Sep 11 2023 11:16:22 GMT+0900 (日本標準時)
+    build at: Tue Sep 12 2023 01:46:41 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -7554,13 +7554,11 @@ define("resource/lang.en", [], {
     "Move to Sublist": "Move to Sublist",
     "sort.home": "Same order as Home",
     "sort.smart": "Smart",
-    "sort.auto-tag": "Auto Tag",
     "sort.simple": "Simple",
     "sort.simple-reverse": "Simple reverse",
     "sort.description": "Specify the sort order of ToDoes. This setting can be specified individually for each tag or sublist.",
     "sort.home.description": "Displays ToDoes in the same sort order as the Home setting. If the home settings are changed, the order of the ToDoes on this screen will be changed accordingly.",
-    "sort.smart.description": "The ToDoes are displayed in order of expected execution timing approaching from the average interval, standard deviation, and elapsed time from the previous time. This order of ToDoes is generally recommended.",
-    "sort.auto-tag.description": "Displays in auto tag order based on `Smart`. If auto tag is not set, it will have the same sorting order as `Smart`.",
+    "sort.smart.description": "The ToDoes are displayed in order of expected execution timing approaching from auto tag, average interval, standard deviation, and elapsed time from the previous time. This order of ToDoes is generally recommended.",
     "sort.simple.description": "It simply displays ToDoes in order of the longest elapsed time since the previous time. It is used for a set of ToDoes whose order of execution is fixed.",
     "sort.simple-reverse.description": "It simply displays ToDoes in order of the shortest elapsed time since the previous time. It is used for a set of ToDoes that are more likely to be executed again soon if they have been executed recently.",
     "pickup.none": "Never",
@@ -7736,13 +7734,11 @@ define("resource/lang.ja", [], {
     "Move to Sublist": "サブリストへ移動",
     "sort.home": "ホームと同じ並び順",
     "sort.smart": "スマート",
-    "sort.auto-tag": "自動タグ",
     "sort.simple": "シンプル",
     "sort.simple-reverse": "シンプル リバース",
     "sort.description": "ToDo の並び順を指定します。この設定はタグやサブリストごとに個別に指定できます。",
     "sort.home.description": "ホームの設定と同じ並び順で表示します。ホームの設定が変更されるとそれに合わせてこちらの画面の並び順も変更されます。",
-    "sort.smart.description": "平均間隔、標準偏差、前回からの経過時間から、そろそろ実行タイミングが近づいてきたと予想される ToDo 順に表示します。通常、この並び順を推奨します。",
-    "sort.auto-tag.description": "スマートをベースに自動タグ順に表示します。自動タグが設定されてない場合、スマートと同一の並び順になります。",
+    "sort.smart.description": "自動タグ、平均間隔、標準偏差、前回からの経過時間から、そろそろ実行タイミングが近づいてきたと予想される ToDo 順に表示します。通常、この並び順を推奨します。",
     "sort.simple.description": "単純に前回からの経過時間が長い ToDo 順に表示します。実行する順番が決まってる ToDo の集合に対して使用します。",
     "sort.simple-reverse.description": "単純に前回からの経過時間が短い ToDo 順に表示します。直近で実行した ToDo ほどすぐにまた実行する可能性が高い ToDo の集合に対して使用します。",
     "pickup.none": "しない",
@@ -9670,29 +9666,30 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 });
             };
             Domain.tagComparerOld = function (pass) { return minamo_js_1.minamo.core.comparer.make(function (tag) { return -OldStorage.TagMember.get(pass, tag).map(function (todo) { return OldStorage.History.getTicks(pass, todo).length; }).reduce(function (a, b) { return a + b; }, 0); }); };
+            Domain.todoComparerSmartBaseOld = function (entry) {
+                return minamo_js_1.minamo.core.comparer.make([
+                    function (item) { var _a, _b; return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ? -1 : 1; },
+                    function (item) {
+                        var _a, _b, _c;
+                        return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ?
+                            item.smartRest :
+                            -((_c = item.progress) !== null && _c !== void 0 ? _c : -1);
+                    },
+                    function (item) { return 1 < item.count ? -2 : -item.count; },
+                    function (item) {
+                        var _a, _b;
+                        return 1 < item.count && null !== item.elapsed && null !== item.RecentlySmartAverage ?
+                            (item.elapsed - item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate)) :
+                            -((_b = item.elapsed) !== null && _b !== void 0 ? _b : 0);
+                    },
+                    function (item) { return entry.todo.indexOf(item.task); },
+                    function (item) { return item.task; },
+                ]);
+            };
             Domain.todoComparerOld = function (entry, sort) {
                 if (sort === void 0) { sort = OldStorage.TagSettings.getSort(entry.pass, entry.tag); }
                 switch (sort) {
                     case "smart":
-                        return minamo_js_1.minamo.core.comparer.make([
-                            function (item) { var _a, _b; return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ? -1 : 1; },
-                            function (item) {
-                                var _a, _b, _c;
-                                return (2.0 / 3.0) <= ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ?
-                                    item.smartRest :
-                                    -((_c = item.progress) !== null && _c !== void 0 ? _c : -1);
-                            },
-                            function (item) { return 1 < item.count ? -2 : -item.count; },
-                            function (item) {
-                                var _a, _b;
-                                return 1 < item.count && null !== item.elapsed && null !== item.RecentlySmartAverage ?
-                                    (item.elapsed - item.RecentlySmartAverage + (((_a = item.RecentlyStandardDeviation) !== null && _a !== void 0 ? _a : 0) * Domain.standardDeviationRate)) :
-                                    -((_b = item.elapsed) !== null && _b !== void 0 ? _b : 0);
-                            },
-                            function (item) { return entry.todo.indexOf(item.task); },
-                            function (item) { return item.task; },
-                        ]);
-                    case "auto-tag":
                         return minamo_js_1.minamo.core.comparer.make([
                             function (item) { var _a, _b; return 0 < ((_a = item.progress) !== null && _a !== void 0 ? _a : 0) || item.isDefault || ((_b = item.smartRest) !== null && _b !== void 0 ? _b : 1) <= 0 ? -1 : 1; },
                             function (item) {
@@ -9710,7 +9707,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     "@flash": -2,
                                 }[(_a = OldStorage.TodoSettings.getAutoTag(entry.pass, item)) !== null && _a !== void 0 ? _a : "default"]);
                             },
-                            { raw: Domain.todoComparerOld(entry, "smart"), },
+                            { raw: Domain.todoComparerSmartBaseOld(entry), },
                         ]);
                     case "simple":
                         return minamo_js_1.minamo.core.comparer.make([
@@ -11585,7 +11582,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 var map = {
                     "@home": "sort.home",
                     "smart": "sort.smart",
-                    "auto-tag": "sort.auto-tag",
                     "simple": "sort.simple",
                     "simple-reverse": "sort.simple-reverse",
                 };
@@ -11618,8 +11614,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                                                 _c = [tagButtonList];
                                                                 return [4 /*yield*/, Promise.all(("@overall" === tag ?
-                                                                        ["smart", "auto-tag", "simple", "simple-reverse",] :
-                                                                        ["@home", "smart", "auto-tag", "simple", "simple-reverse",])
+                                                                        ["smart", "simple", "simple-reverse",] :
+                                                                        ["@home", "smart", "simple", "simple-reverse",])
                                                                         .map(function (i) { return __awaiter(_this, void 0, void 0, function () {
                                                                         var _a, _b;
                                                                         var _this = this;
@@ -16576,8 +16572,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     var defaultSort_1 = Render.getTagSortSettingsDefault(tag_2);
                                     var current_3 = (_k = settings.sort) !== null && _k !== void 0 ? _k : defaultSort_1;
                                     var list_3 = "@overall" === tag_2 ?
-                                        ["smart", "auto-tag", "simple", "simple-reverse",] :
-                                        ["@home", "smart", "auto-tag", "simple", "simple-reverse",];
+                                        ["smart", "simple", "simple-reverse",] :
+                                        ["@home", "smart", "simple", "simple-reverse",];
                                     var next = destinationItem(list_3, current_3);
                                     settings.sort = defaultSort_1 === next ? undefined : next;
                                     OldStorage.TagSettings.set(pass_1, tag_2, settings);
@@ -17051,7 +17047,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Sep 11 2023 11:16:22 GMT+0900 (日本標準時)', buildTimestampTick: 1694398582292, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Sep 12 2023 01:46:41 GMT+0900 (日本標準時)', buildTimestampTick: 1694450801813, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
