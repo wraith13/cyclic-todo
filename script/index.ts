@@ -3566,73 +3566,77 @@ export module CyclicToDo
             };
             return map[<string>Model.getTagCategory(tag)];
         };
-        export const tagSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
+        export const tagSettingsPopup = async (pass: string, tag: string): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
                 let result = false;
                 const buttonList = $make(HTMLDivElement)({ className: "label-button-list" });
-                const buttonListUpdate = async () => minamo.dom.replaceChildren
-                (
-                    buttonList,
-                    [
-                        {
-                            tag: "button",
-                            className: "label-button",
-                            children: monospace
-                            (
-                                "auto-tag-flash",
-                                label("Display style setting"),
-                                label(getTagDisplayStyleText(settings.displayStyle ?? getTagDisplayStyleDefault(tag)))
-                            ),
-                            onclick: async () =>
+                const buttonListUpdate = async () =>
+                {
+                    const settings = OldStorage.TagSettings.get(pass, tag);
+                    minamo.dom.replaceChildren
+                    (
+                        buttonList,
+                        [
                             {
-                                if (await tagDisplayStyleSettingsPopup(pass, tag))
+                                tag: "button",
+                                className: "label-button",
+                                children: monospace
+                                (
+                                    "auto-tag-flash",
+                                    label("Display style setting"),
+                                    label(getTagDisplayStyleText(settings.displayStyle ?? getTagDisplayStyleDefault(tag)))
+                                ),
+                                onclick: async () =>
                                 {
-                                    result = true;
-                                    await buttonListUpdate();
+                                    if (await tagDisplayStyleSettingsPopup(pass, tag))
+                                    {
+                                        result = true;
+                                        await buttonListUpdate();
+                                    }
                                 }
-                            }
-                        },
-                        {
-                            tag: "button",
-                            className: "label-button",
-                            children: monospace
-                            (
-                                "auto-tag-flash",
-                                label("Progress scale style setting"),
-                                label(getTagProgressScaleStyleText(settings.progressScaleStyle ?? getTagProgressScaleStyleDefault(tag)))
-                            ),
-                            onclick: async () =>
+                            },
                             {
-                                if (await tagProgressScaleStyleSettingsPopup(pass, tag))
+                                tag: "button",
+                                className: "label-button",
+                                children: monospace
+                                (
+                                    "auto-tag-flash",
+                                    label("Progress scale style setting"),
+                                    label(getTagProgressScaleStyleText(settings.progressScaleStyle ?? getTagProgressScaleStyleDefault(tag)))
+                                ),
+                                onclick: async () =>
                                 {
-                                    result = true;
-                                    await buttonListUpdate();
+                                    if (await tagProgressScaleStyleSettingsPopup(pass, tag))
+                                    {
+                                        result = true;
+                                        await buttonListUpdate();
+                                    }
                                 }
-                            }
-                        },
-                        descriptionButton
-                        (
-                            "",
-                            monospace
+                            },
+                            descriptionButton
                             (
-                                "auto-tag-flash",
-                                label("Sort order setting"),
-                                label(getTagSortSettingsText(settings.sort ?? getTagSortSettingsDefault(tag)))
-                            ),
-                            "sort.description",
-                            async () =>
-                            {
-                                if (await tagSortSettingsPopup(pass, tag))
+                                "",
+                                monospace
+                                (
+                                    "auto-tag-flash",
+                                    label("Sort order setting"),
+                                    label(getTagSortSettingsText(settings.sort ?? getTagSortSettingsDefault(tag)))
+                                ),
+                                "sort.description",
+                                async () =>
                                 {
-                                    result = true;
-                                    await buttonListUpdate();
+                                    if (await tagSortSettingsPopup(pass, tag))
+                                    {
+                                        result = true;
+                                        await buttonListUpdate();
+                                    }
                                 }
-                            }
-                        ),
-                    ]
-                );
+                            ),
+                        ]
+                    );
+                };
                 await buttonListUpdate();
                 const ui = popup
                 ({
