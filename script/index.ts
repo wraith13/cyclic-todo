@@ -1925,7 +1925,7 @@ export module CyclicToDo
             case "@new-sublist":
                 return locale.map(tag);
             default:
-                return Model.decode(tag);
+                return Model.decodeSublist(tag);
             }
         };
         export const getStandardScore = (item: ToDoEntry, elapsedTime = item.elapsed) =>
