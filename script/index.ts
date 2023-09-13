@@ -1746,6 +1746,11 @@ export module CyclicToDo
         export const maxMediumTermMinutes = (minamo.core.parseTimespan(config.maxMediumTermTimespan) ?? (15 *dayUnit)) / minuteUnit;
         export const removedItemExpire = (minamo.core.parseTimespan(config.removedItemExpire) ?? (30 *dayUnit)) / minuteUnit;
         export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / timeAccuracy);
+        export const tickScalePreset = config.tickScalePreset
+            .map(i => minamo.core.parseTimespan(i))
+            .filter(isNumber)
+            .map(i => i / Domain.timeAccuracy)
+            .sort(minamo.core.comparer.make(i => -i));
         export const dateCoreStringFromTick = (tick: null | number) =>
         {
             if (null === tick)
@@ -4908,16 +4913,7 @@ export module CyclicToDo
         {
             if ("number" === typeof max)
             {
-                const preset =
-                [
-                    ...[ 1, 5, 10, 30, ].map(i => i *Domain.minuteUnit),
-                    ...[ 1, 3, 6, 12, ].map(i => i *Domain.hourUnit),
-                    ...[ 1, 7, 30, ].map(i => i *Domain.dayUnit),
-                    ...[ 0.25, 1, 10, ].map(i => i *Domain.yearUnit),
-                ]
-                .map(i => i / Domain.timeAccuracy);
-                preset.reverse();
-                const first = preset.filter(i => 3 <= max /i)[0];
+                const first = Domain.tickScalePreset.filter(i => 3 <= max /i)[0];
                 if ("number" === typeof first)
                 {
                     return first /max;
