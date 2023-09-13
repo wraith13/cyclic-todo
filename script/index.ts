@@ -4397,6 +4397,30 @@ export module CyclicToDo
             labelSpan("GitHub"),
             config.repositoryUrl
         );
+        export const editTickMenuItem = async (pass: string, task: string, tick: number) => menuItem
+        (
+            label("Edit"),
+            async () =>
+            {
+                const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), tick));
+                if (null !== result && tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
+                {
+                    OldStorage.History.removeTickRaw(pass, task, tick);
+                    OldStorage.History.addTick(pass, task, Domain.getTicks(result));
+                    await reload();
+                }
+            }
+        );
+        export const deleteTickMenuItem = async (pass: string, task: string, tick: number) => menuItem
+        (
+            label("Delete"),
+            async () =>
+            {
+                OldStorage.History.removeTick(pass, task, tick);
+                await reload();
+            },
+            "delete-button"
+        );
         export const informationDigest = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
         ({
             className: "item-information",
@@ -4510,25 +4534,6 @@ export module CyclicToDo
         );
         export const todoTagMenu = (pass: string, item: ToDoEntry) =>
         [
-            // OldStorage.TagMember.isPickupTask(pass, item.task) ?
-            //     menuItem
-            //     (
-            //         label("Remove from Pickup"),
-            //         async () =>
-            //         {
-            //             await Operate.removeFromPickup(pass, item.task, () => updateWindow("operate"));
-            //             updateWindow("operate");
-            //         }
-            //     ):
-            //     menuItem
-            //     (
-            //         label("Add to Pickup"),
-            //         async () =>
-            //         {
-            //             await Operate.addToPickup(pass, item.task, () => updateWindow("operate"));
-            //             updateWindow("operate");
-            //         }
-            //     ),
             menuItem
             (
                 label("Auto tag setting"),
@@ -4890,38 +4895,10 @@ export module CyclicToDo
             (
                 null !== item.tick ?
                 [
-                    // {
-                    //     tag: "button",
-                    //     className: "default-button main-button",
-                    //     children: "開く",
-                    //     onclick: async () => { }
-                    // },
                     await menuButton
                     ([
-                        menuItem
-                        (
-                            label("Edit"),
-                            async () =>
-                            {
-                                const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), <number>item.tick));
-                                if (null !== result && item.tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
-                                {
-                                    OldStorage.History.removeTickRaw(entry.pass, item.task, <number>item.tick);
-                                    OldStorage.History.addTick(entry.pass, item.task, Domain.getTicks(result));
-                                    await reload();
-                                }
-                            }
-                        ),
-                        menuItem
-                        (
-                            label("Delete"),
-                            async () =>
-                            {
-                                OldStorage.History.removeTick(entry.pass, item.task, <number>item.tick);
-                                await reload();
-                            },
-                            "delete-button"
-                        )
+                        await editTickMenuItem(entry.pass, item.task, item.tick),
+                        await deleteTickMenuItem(entry.pass, item.task, item.tick),
                     ]),
                 ]:
                 []
@@ -4983,38 +4960,10 @@ export module CyclicToDo
             ]),
             $div("item-operator")
             ([
-                // {
-                //     tag: "button",
-                //     className: "default-button main-button",
-                //     children: "開く",
-                //     onclick: async () => { }
-                // },
                 await menuButton
                 ([
-                    menuItem
-                    (
-                        label("Edit"),
-                        async () =>
-                        {
-                            const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), tick));
-                            if (null !== result && tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
-                            {
-                                OldStorage.History.removeTickRaw(pass, item.task, tick);
-                                OldStorage.History.addTick(pass, item.task, Domain.getTicks(result));
-                                await reload();
-                            }
-                        }
-                    ),
-                    menuItem
-                    (
-                        label("Delete"),
-                        async () =>
-                        {
-                            OldStorage.History.removeTick(pass, item.task, tick);
-                            await reload();
-                        },
-                        "delete-button"
-                    )
+                    await editTickMenuItem(pass, item.task, tick),
+                    await deleteTickMenuItem(pass, item.task, tick),
                 ]),
             ])
         ]);
