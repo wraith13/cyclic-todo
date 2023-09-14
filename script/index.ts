@@ -1750,7 +1750,7 @@ export module CyclicToDo
             .map(i => minamo.core.parseTimespan(i))
             .filter(isNumber)
             .map(i => i / Domain.timeAccuracy)
-            .sort(minamo.core.comparer.make(i => -i));
+            .sort(simpleReverseComparer);
         export const dateCoreStringFromTick = (tick: null | number) =>
         {
             if (null === tick)
