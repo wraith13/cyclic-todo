@@ -26,7 +26,7 @@ export const makeObject = <T>(items: { key: string, value: T}[]) =>
     return result;
 };
 export const simpleComparer = minamo.core.comparer.basic;
-export const simpleReverseComparer = <T>(a: T, b: T) => -simpleComparer(a, b);
+export const simpleReverseComparer = minamo.core.comparer.reverse(minamo.core.comparer.basic);
 export const uniqueFilter = <T>(value: T, index: number, list: T[]) => index === list.indexOf(value);
 export const takeFilter = (max: number) => <T>(_value: T, index: number) => index < max;
 export const toPercentSting = (value: number) => value.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 });
@@ -2011,14 +2011,13 @@ export module CyclicToDo
                             Math.min(item.smartRest ?? 1, 0):
                             -(item.progress ?? -1),
                         item =>
-                        (
-                            {
-                                "@restriction": 1,
-                                "default": 0,
-                                "@pickup": -1,
-                                "@flash": -2,
-                            }[OldStorage.TodoSettings.getAutoTag(entry.pass, item) ?? "default"]
-                        ),
+                            [
+                                "@flash",
+                                "@pickup",
+                                "default",
+                                "@restriction",
+                            ]
+                            .indexOf(OldStorage.TodoSettings.getAutoTag(entry.pass, item) ?? "default"),
                         { raw: todoComparerSmartBaseOld(entry), },
                     ]);
                 case "simple":
@@ -2030,13 +2029,7 @@ export module CyclicToDo
                         item => item.task,
                     ]);
                 case "simple-reverse":
-                    return minamo.core.comparer.make<ToDoEntry>
-                    ([
-                        item => -(item.previous ?? 0),
-                        item => -item.count,
-                        item => -entry.todo.indexOf(item.task),
-                        item => -item.task,
-                    ]);
+                    return minamo.core.comparer.reverse(todoComparerOld(entry, "simple"));
                 default:
                     return todoComparerOld(entry, "smart");
             }
