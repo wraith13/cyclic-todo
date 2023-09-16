@@ -27,5 +27,12 @@
     "timespanStandardScorePreset": [ 50, 40, 60, 30, 70 ],
     "timespanStandardScorePresetMaxCount": 5,
     "removedItemExpire": "30d",
-    "removedItemDecayInterval": "6h"
+    "removedItemDecayInterval": "6h",
+    "autoTagSortOrder":
+    [
+        "@flash",
+        "@pickup",
+        "default",
+        "@restriction"
+    ]
 }

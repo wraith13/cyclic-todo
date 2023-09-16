@@ -2010,13 +2010,7 @@ export module CyclicToDo
                         item => 0 < (item.progress ?? 0) || item.isDefault || (item.smartRest ?? 1) <= 0 ?
                             Math.min(item.smartRest ?? 1, 0):
                             -(item.progress ?? -1),
-                        item =>
-                            [
-                                "@flash",
-                                "@pickup",
-                                "default",
-                                "@restriction",
-                            ]
+                        item => config.autoTagSortOrder
                             .indexOf(OldStorage.TodoSettings.getAutoTag(entry.pass, item) ?? "default"),
                         { raw: todoComparerSmartBaseOld(entry), },
                     ]);
