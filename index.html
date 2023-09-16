@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sat Sep 16 2023 11:18:13 GMT+0900 (日本標準時)
+    build at: Sat Sep 16 2023 22:53:54 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2799,6 +2799,30 @@ body.light .keyboard-shortcuts li .key:first-child {
   text-align: right;
   margin-right: 0.5rem;
 }
+body.light .poem {
+  display: block;
+  padding: 1rem;
+}
+body.light .poem .poem-subtitle {
+  display: block;
+  opacity: 0.6;
+  font-size: 1rem;
+  line-height: 120%;
+  padding: 0.5rem;
+}
+body.light .poem .poem-title {
+  display: block;
+  font-size: 1.618rem;
+  font-weight: 700;
+  line-height: 120%;
+  padding: 0.5rem;
+}
+body.light .poem .poem-description {
+  display: block;
+  font-size: 1rem;
+  line-height: 120%;
+  padding: 0.5rem;
+}
 /*# sourceMappingURL=style/theme.light.css.map */
 </style>
 <style type="text/css" id="style">
@@ -5550,6 +5574,30 @@ body.dark .keyboard-shortcuts li .key:first-child {
   width: 5rem;
   text-align: right;
   margin-right: 0.5rem;
+}
+body.dark .poem {
+  display: block;
+  padding: 1rem;
+}
+body.dark .poem .poem-subtitle {
+  display: block;
+  opacity: 0.6;
+  font-size: 1rem;
+  line-height: 120%;
+  padding: 0.5rem;
+}
+body.dark .poem .poem-title {
+  display: block;
+  font-size: 1.618rem;
+  font-weight: 700;
+  line-height: 120%;
+  padding: 0.5rem;
+}
+body.dark .poem .poem-description {
+  display: block;
+  font-size: 1rem;
+  line-height: 120%;
+  padding: 0.5rem;
 }
 /*# sourceMappingURL=style/theme.dark.css.map */
 </style>
@@ -15859,15 +15907,14 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         case 2:
                             _f.header = (_g.menu = _h.sent(),
                                 _g);
-                            //$div("logo")([await applicationColorIcon(),$span("logo-text")(applicationTitle)]),
-                            _a = Render.$div("logo");
+                            _a = [Render.$div({ style: "text-align: center; padding: 0.5rem;", })("🚧 This static web application is under development. / この Static Web アプリは開発中です。")];
+                            _b = Render.$div("logo");
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 3:
-                            _b = [
-                                //$div("logo")([await applicationColorIcon(),$span("logo-text")(applicationTitle)]),
-                                _a.apply(void 0, [[_h.sent(), Render.$span("logo-text")(CyclicToDo.applicationTitle)]]),
-                                Render.$div({ style: "text-align: center; padding: 0.5rem;", })("🚧 This static web application is under development. / この Static Web アプリは開発中です。")
-                            ];
+                            _a = _a.concat([
+                                _b.apply(void 0, [[_h.sent(), Render.$span("logo-text")(CyclicToDo.applicationTitle)]]),
+                                Render.$div("poem")([Render.$span("poem-subtitle")("繰り返すタスクの ToDo アプリ"), Render.$span("poem-title")("責務ではなく、あなたの誇りを！"), Render.$span("poem-description")("Cyclic ToDo で扱うのは「未来の責務」ではなく「いままでの実績」であり、あなたを責める事なく、あなたを勇気づけ、あなたの行動を後押しします。")])
+                            ]);
                             _c = Render.$div("button-line");
                             _d = [{
                                     tag: "button",
@@ -15880,14 +15927,14 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.removedListMenuItem(),
                                 ])];
                         case 4:
-                            _b = _b.concat([
+                            _a = _a.concat([
                                 _c.apply(void 0, [_d.concat([
                                         _h.sent()
                                     ])])
                             ]);
                             _e = Render.$div("row-flex-list compact-flex-list list-list");
                             return [4 /*yield*/, Promise.all(OldStorage.Pass.get().map(function (pass) { return Render.listItem(JSON.parse(OldStorage.exportJson(pass))); }))];
-                        case 5: return [2 /*return*/, (_f.body = _b.concat([
+                        case 5: return [2 /*return*/, (_f.body = _a.concat([
                                 _e.apply(void 0, [_h.sent()]),
                                 Render.messageList([
                                     Render.messagePanel(Render.label("You can use this web app like an app by registering it on the home screen of your smartphone.")),
@@ -17004,7 +17051,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Sep 16 2023 11:18:13 GMT+0900 (日本標準時)', buildTimestampTick: 1694830693870, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Sep 16 2023 22:53:54 GMT+0900 (日本標準時)', buildTimestampTick: 1694872434905, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

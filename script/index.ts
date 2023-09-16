@@ -6966,10 +6966,10 @@ export module CyclicToDo
             },
             body:
             [
-                //$div("logo")([await applicationColorIcon(),$span("logo-text")(applicationTitle)]),
-                $div("logo")([await applicationIcon(),$span("logo-text")(applicationTitle)]),
                 $div({ style: "text-align: center; padding: 0.5rem;", })
                     ("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
+                $div("logo")([await applicationIcon(),$span("logo-text")(applicationTitle)]),
+                $div("poem")([$span("poem-subtitle")("繰り返すタスクの ToDo アプリ"), $span("poem-title")("責務ではなく、あなたの誇りを！"), $span("poem-description")("Cyclic ToDo で扱うのは「未来の責務」ではなく「いままでの実績」であり、あなたを責める事なく、あなたを勇気づけ、あなたの行動を後押しします。")]),
                 $div("button-line")
                 ([
                     {
