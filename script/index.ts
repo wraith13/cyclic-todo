@@ -6966,15 +6966,17 @@ export module CyclicToDo
             },
             body:
             [
-                $div({ style: "text-align: center; padding: 0.5rem;", })
-                    ("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
-                $div("logo")([await applicationIcon(),$span("logo-text")(applicationTitle)]),
-                $div("poem")([$span("poem-subtitle")("繰り返すタスクの ToDo アプリ"), $span("poem-title")("責務ではなく、あなたの誇りを！"), $span("poem-description")("Cyclic ToDo で扱うのは「未来の責務」ではなく「いままでの実績」であり、あなたを責める事なく、あなたを勇気づけ、あなたの行動を後押しします。")]),
+                $div("signboard")
+                ([
+                    $div("logo")([await applicationIcon(),$span("logo-text")(applicationTitle)]),
+                    $div("poem")([$span("poem-subtitle")("繰り返すタスクの ToDo アプリ"), $span("poem-title")("責務ではなく、あなたの誇りを！"), $span("poem-description")("Cyclic ToDo で扱うのは「未来の責務」ではなく「いままでの実績」であり、あなたを責める事なく、あなたを勇気づけ、あなたの行動を後押しします。")]),
+                ]),
                 $div("button-line")
                 ([
                     {
                         tag: "button",
-                        className: OldStorage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
+                        // className: OldStorage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
+                        className: "default-button main-button long-button",
                         children: label("New ToDo List"),
                         onclick: newListPrompt,
                     },
@@ -6986,6 +6988,8 @@ export module CyclicToDo
                 ]),
                 $div("row-flex-list compact-flex-list list-list")
                     (await Promise.all(OldStorage.Pass.get().map(pass => listItem(JSON.parse(OldStorage.exportJson(pass)) as Content)))),
+                $div({ style: "text-align: center; padding: 0.5rem;", })
+                    ("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
                 messageList
                 ([
                     messagePanel(label("You can use this web app like an app by registering it on the home screen of your smartphone.")),

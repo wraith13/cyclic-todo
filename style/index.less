@@ -2183,6 +2183,70 @@ button
         white-space: nowrap;
     }
 }
+.poem
+{
+    display: block;
+    padding: 3vw;
+    .poem-subtitle
+    {
+        display: block;
+        opacity: 0.6;
+        font-size: 1.0rem;
+        line-height: 120%;
+        padding: 0.5rem;
+    }
+    .poem-title
+    {
+        display: block;
+        font-size: 1.618rem;
+        font-weight: 700;
+        line-height: 120%;
+        padding: 0.5rem;
+    }
+    .poem-description
+    {
+        display: block;
+        font-size: 1.0rem;
+        line-height: 120%;
+        padding: 0.5rem;
+    }
+}
+.signboard
+{
+    width: 100%;
+    .logo
+    {
+        justify-content: center;
+    }
+    @media (min-width:1440px)
+    {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        .logo
+        {
+            flex: 2;
+            & > .application-icon
+            {
+                width: calc(100vw / 15);
+                height: calc(100vw / 15);
+            }
+            & > .application-icon + .logo-text
+            {
+                margin-left: calc(100vw / 60);
+            }
+            & > .logo-text
+            {
+                font-size: calc(100vw / 20);
+            }
+        }
+        .poem
+        {
+            flex: 1;
+        }
+    }
+}
 .bottom-line
 {
     display: flex;
@@ -2378,33 +2442,5 @@ kbd
             text-align: right;
             margin-right: 0.5rem;
         }
-    }
-}
-.poem
-{
-    display: block;
-    padding: 1.0rem;
-    .poem-subtitle
-    {
-        display: block;
-        opacity: 0.6;
-        font-size: 1.0rem;
-        line-height: 120%;
-        padding: 0.5rem;
-    }
-    .poem-title
-    {
-        display: block;
-        font-size: 1.618rem;
-        font-weight: 700;
-        line-height: 120%;
-        padding: 0.5rem;
-    }
-    .poem-description
-    {
-        display: block;
-        font-size: 1.0rem;
-        line-height: 120%;
-        padding: 0.5rem;
     }
 }
