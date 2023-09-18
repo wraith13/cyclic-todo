@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Sep 18 2023 01:48:00 GMT+0900 (日本標準時)
+    build at: Mon Sep 18 2023 01:57:19 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -7619,6 +7619,9 @@ define("resource/style", [], {
 define("resource/lang.en", [], {
     "$name": "English",
     "description": "Cyclic ToDo is a ToDo app dedicated to daily repeating ToDoes.",
+    "ToDo app for repeating tasks": "ToDo app for repeating tasks",
+    "Not your duty, but your pride!": "Not your duty, but your pride!",
+    "Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.": "Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.",
     "Reload screen": "Reload screen",
     "Full screen": "Full screen",
     "Cancel full screen": "Cancel full screen",
@@ -7799,6 +7802,9 @@ define("resource/lang.en", [], {
 define("resource/lang.ja", [], {
     "$name": "日本語",
     "description": "Cyclic ToDo は日常の繰り返す ToDo 専用の ToDo アプリです。",
+    "ToDo app for repeating tasks": "繰り返すタスクの ToDo アプリ",
+    "Not your duty, but your pride!": "責務ではなく、あなたの誇りを！",
+    "Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.": "Cyclic ToDo で扱うのは「未来の責務」ではなく「いままでの実績」であり、あなたを責める事なく、あなたを勇気づけ、あなたの行動を後押しします。",
     "Reload screen": "画面の再読み込み",
     "Full screen": "フルスクリーン表示",
     "Cancel full screen": "フルスクリーン解除",
@@ -15976,7 +15982,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _c = [
                                 _a.apply(void 0, [[
                                         _b.apply(void 0, [[_j.sent(), Render.$span("logo-text")(CyclicToDo.applicationTitle)]]),
-                                        Render.$div("poem")([Render.$span("poem-subtitle")("繰り返すタスクの ToDo アプリ"), Render.$span("poem-title")("責務ではなく、あなたの誇りを！"), Render.$span("poem-description")("Cyclic ToDo で扱うのは「未来の責務」ではなく「いままでの実績」であり、あなたを責める事なく、あなたを勇気づけ、あなたの行動を後押しします。")])
+                                        Render.$div("poem")([
+                                            Render.$span("poem-subtitle")(locale.map("ToDo app for repeating tasks")),
+                                            Render.$span("poem-title")(locale.map("Not your duty, but your pride!")),
+                                            Render.$span("poem-description")(locale.map("Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.")),
+                                        ])
                                     ]])
                             ];
                             _d = Render.$div("button-line");
@@ -17117,7 +17127,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Sep 18 2023 01:48:00 GMT+0900 (日本標準時)', buildTimestampTick: 1694969280183, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Sep 18 2023 01:57:19 GMT+0900 (日本標準時)', buildTimestampTick: 1694969839820, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

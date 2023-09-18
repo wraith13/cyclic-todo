@@ -1,6 +1,9 @@
 {
     "$name": "English",
     "description": "Cyclic ToDo is a ToDo app dedicated to daily repeating ToDoes.",
+    "ToDo app for repeating tasks": "ToDo app for repeating tasks",
+    "Not your duty, but your pride!": "Not your duty, but your pride!",
+    "Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.": "Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.",
     "Reload screen": "Reload screen",
     "Full screen": "Full screen",
     "Cancel full screen": "Cancel full screen",

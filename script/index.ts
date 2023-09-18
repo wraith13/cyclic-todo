@@ -6969,7 +6969,12 @@ export module CyclicToDo
                 $div("signboard")
                 ([
                     $div("logo")([await applicationIcon(),$span("logo-text")(applicationTitle)]),
-                    $div("poem")([$span("poem-subtitle")("繰り返すタスクの ToDo アプリ"), $span("poem-title")("責務ではなく、あなたの誇りを！"), $span("poem-description")("Cyclic ToDo で扱うのは「未来の責務」ではなく「いままでの実績」であり、あなたを責める事なく、あなたを勇気づけ、あなたの行動を後押しします。")]),
+                    $div("poem")
+                    ([
+                        $span("poem-subtitle")(locale.map("ToDo app for repeating tasks")),
+                        $span("poem-title")(locale.map("Not your duty, but your pride!")),
+                        $span("poem-description")(locale.map("Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.")),
+                    ]),
                 ]),
                 $div("button-line")
                 ([
