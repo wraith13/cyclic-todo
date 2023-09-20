@@ -667,6 +667,8 @@ export module CyclicToDo
                     }
                 case "@pickup-all":
                     return getRaw(pass, "@overall").filter(task => null !== (TodoSettings.get(pass, task).pickup ?? null));
+                case "@regular":
+                    return getRaw(pass, "@overall").filter(i => null === TagMember.getAutoTag(pass, i));
                 case "@untagged":
                     {
                         const tagged = Tag.get(pass).map(tag => get(pass, tag)).reduce((a, b) => a.concat(b), []);
@@ -1919,6 +1921,7 @@ export module CyclicToDo
             case "@unoverall":
             case "@flash":
             case "@pickup":
+            case "@regular":
             case "@restriction":
             case "@short-term":
             case "@medium-term":
@@ -5292,7 +5295,7 @@ export module CyclicToDo
                 }
                 if (params.auto)
                 {
-                    result.push("@flash", "@pickup", "@restriction");
+                    result.push("@flash", "@pickup", "@regular", "@restriction");
                 }
                 if (params.term)
                 {
@@ -6600,6 +6603,8 @@ export module CyclicToDo
                         return "flash-icon";
                     case "@pickup":
                         return "pickup-icon";
+                    // case "@regular":
+                    //     return "regular-icon";
                     case "@restriction":
                         return "forbidden-icon";
                     case "@short-term":
