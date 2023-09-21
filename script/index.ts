@@ -4362,6 +4362,43 @@ export module CyclicToDo
                 }
             }
         );
+        export const renameTagMenuItem = (entry: ToDoTagEntryOld, hash?: string) => menuItem
+        (
+            label("Rename"),
+            async () =>
+            {
+                if (Model.isSublistOld(entry.tag))
+                {
+                    const newTag = minamo.core.nullable(Model.encodeSublist)(await prompt(locale.map("Input a tag's name."), Model.decodeSublist(entry.tag)));
+                    if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
+                    {
+                        if (OldStorage.Tag.rename(entry.pass, entry.tag, newTag))
+                        {
+                            await showUrl({ pass: entry.pass, tag: newTag, hash });
+                        }
+                        else
+                        {
+                            alert(locale.map("A sublist with that name already exists."));
+                        }
+                    }
+                }
+                else
+                {
+                    const newTag = await prompt(locale.map("Input a tag's name."), entry.tag);
+                    if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
+                    {
+                        if (OldStorage.Tag.rename(entry.pass, entry.tag, newTag))
+                        {
+                            await showUrl({ pass: entry.pass, tag: newTag, hash });
+                        }
+                        else
+                        {
+                            alert(locale.map("A tag with that name already exists."));
+                        }
+                    }
+                }
+            }
+        );
         export const backToListMenuItem = (pass: string, tag: string = "@overall") => menuLinkItem
         (
             label("Back to List"),
@@ -5482,44 +5519,7 @@ export module CyclicToDo
             ),
             systemSettingsMenuItem(),
             "@overall" === entry.tag ? listRenameMenu(entry.pass): [],
-            Model.isSystemTagOld(entry.tag) ? []:
-                menuItem
-                (
-                    label("Rename"),
-                    async () =>
-                    {
-                        if (Model.isSublistOld(entry.tag))
-                        {
-                            const newTag = minamo.core.nullable(Model.encodeSublist)(await prompt(locale.map("Input a tag's name."), Model.decodeSublist(entry.tag)));
-                            if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
-                            {
-                                if (OldStorage.Tag.rename(entry.pass, entry.tag, newTag))
-                                {
-                                    await showUrl({ pass: entry.pass, tag: newTag });
-                                }
-                                else
-                                {
-                                    alert(locale.map("A sublist with that name already exists."));
-                                }
-                            }
-                        }
-                        else
-                        {
-                            const newTag = await prompt(locale.map("Input a tag's name."), entry.tag);
-                            if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
-                            {
-                                if (OldStorage.Tag.rename(entry.pass, entry.tag, newTag))
-                                {
-                                    await showUrl({ pass: entry.pass, tag: newTag });
-                                }
-                                else
-                                {
-                                    alert(locale.map("A tag with that name already exists."));
-                                }
-                            }
-                        }
-                    }
-                ),
+            Model.isSystemTagOld(entry.tag) ? []: renameTagMenuItem(entry),
             menuLinkItem
             (
                 label("@deleted"),
@@ -6165,26 +6165,7 @@ export module CyclicToDo
         [
             backToListMenuItem(entry.pass, entry.tag),
             systemSettingsMenuItem(),
-            Model.isSystemTagOld(entry.tag) ? []:
-                menuItem
-                (
-                    label("Rename"),
-                    async () =>
-                    {
-                        const newTag = await prompt(locale.map("Input a tag's name."), entry.tag);
-                        if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
-                        {
-                            if (OldStorage.Tag.rename(entry.pass, entry.tag, newTag))
-                            {
-                                await showUrl({ pass: entry.pass, tag: newTag, hash: "history", });
-                            }
-                            else
-                            {
-                                alert(locale.string("その名前のタグは既に存在しています。"));
-                            }
-                        }
-                    }
-                ),
+            Model.isSystemTagOld(entry.tag) ? []: renameTagMenuItem(entry, "history"),
             newTaskMenuItem(entry),
             // {
             //     tag: "button",
