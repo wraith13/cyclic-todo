@@ -6603,8 +6603,8 @@ export module CyclicToDo
                         return "flash-icon";
                     case "@pickup":
                         return "pickup-icon";
-                    // case "@regular":
-                    //     return "regular-icon";
+                    case "@regular":
+                        return "ghost-flag-icon";
                     case "@restriction":
                         return "forbidden-icon";
                     case "@short-term":
