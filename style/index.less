@@ -2186,7 +2186,11 @@ button
 .poem
 {
     display: block;
-    padding: 3vw;
+    margin: 0.5rem;
+    border-radius: 1rem;
+    padding: 1rem;
+    background: linear-gradient(to bottom, fade(@accent-color, 60%) 0%, fade(@accent-color, 10%) 100%);
+
     .poem-subtitle
     {
         display: block;
@@ -2209,6 +2213,14 @@ button
         font-size: 1.0rem;
         line-height: 120%;
         padding: 0.5rem;
+    }
+    .poem-image
+    {
+        display: block;
+        font-size: 15.0rem;
+        line-height: 100%;
+        padding: 0.5rem;
+        text-align: center;
     }
 }
 .signboard

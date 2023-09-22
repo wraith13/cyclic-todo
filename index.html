@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Fri Sep 22 2023 05:54:27 GMT+0900 (日本標準時)
+    build at: Sat Sep 23 2023 02:05:07 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2649,7 +2649,10 @@ body.light .logo > .logo-text {
 }
 body.light .poem {
   display: block;
-  padding: 3vw;
+  margin: 0.5rem;
+  border-radius: 1rem;
+  padding: 1rem;
+  background: linear-gradient(to bottom, rgba(34, 136, 68, 0.6) 0%, rgba(34, 136, 68, 0.1) 100%);
 }
 body.light .poem .poem-subtitle {
   display: block;
@@ -2670,6 +2673,13 @@ body.light .poem .poem-description {
   font-size: 1rem;
   line-height: 120%;
   padding: 0.5rem;
+}
+body.light .poem .poem-image {
+  display: block;
+  font-size: 15rem;
+  line-height: 100%;
+  padding: 0.5rem;
+  text-align: center;
 }
 body.light .signboard {
   width: 100%;
@@ -5456,7 +5466,10 @@ body.dark .logo > .logo-text {
 }
 body.dark .poem {
   display: block;
-  padding: 3vw;
+  margin: 0.5rem;
+  border-radius: 1rem;
+  padding: 1rem;
+  background: linear-gradient(to bottom, rgba(34, 136, 68, 0.6) 0%, rgba(34, 136, 68, 0.1) 100%);
 }
 body.dark .poem .poem-subtitle {
   display: block;
@@ -5477,6 +5490,13 @@ body.dark .poem .poem-description {
   font-size: 1rem;
   line-height: 120%;
   padding: 0.5rem;
+}
+body.dark .poem .poem-image {
+  display: block;
+  font-size: 15rem;
+  line-height: 100%;
+  padding: 0.5rem;
+  text-align: center;
 }
 body.dark .signboard {
   width: 100%;
@@ -15973,6 +15993,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             Render.$span("poem-subtitle")(locale.map("ToDo app for repeating tasks")),
                                             Render.$span("poem-title")(locale.map("Not your duty, but your pride!")),
                                             Render.$span("poem-description")(locale.map("Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.")),
+                                            Render.$span("poem-image")("🏆"),
                                         ])
                                     ]])
                             ];
@@ -17114,7 +17135,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Sep 22 2023 05:54:27 GMT+0900 (日本標準時)', buildTimestampTick: 1695329667905, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Sep 23 2023 02:05:07 GMT+0900 (日本標準時)', buildTimestampTick: 1695402307711, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

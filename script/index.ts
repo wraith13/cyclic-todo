@@ -6960,6 +6960,7 @@ export module CyclicToDo
                         $span("poem-subtitle")(locale.map("ToDo app for repeating tasks")),
                         $span("poem-title")(locale.map("Not your duty, but your pride!")),
                         $span("poem-description")(locale.map("Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.")),
+                        $span("poem-image")("🏆"),
                     ]),
                 ]),
                 $div("button-line")
