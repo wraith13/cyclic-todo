@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sat Sep 23 2023 02:05:07 GMT+0900 (日本標準時)
+    build at: Sat Sep 23 2023 23:23:42 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2574,10 +2574,6 @@ body.light .todo-screen .tick-list .tick-item .item-information > * {
 body.light .todo-screen .tick-list .tick-item .item-operator {
   padding-left: 0.5rem;
 }
-body.light .welcome-screen .screen-body .list-list:not(:empty) {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-}
 body.light .welcome-screen .screen-body,
 body.light .updating-screen .screen-body {
   display: flex;
@@ -2676,10 +2672,40 @@ body.light .poem .poem-description {
 }
 body.light .poem .poem-image {
   display: block;
-  font-size: 15rem;
+  font-size: 7rem;
   line-height: 100%;
   padding: 0.5rem;
   text-align: center;
+}
+body.light .poem-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+}
+@media (min-width: 640px) {
+  body.light .poem-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  body.light .poem-list .poem {
+    padding-bottom: 8rem;
+    position: relative;
+  }
+  body.light .poem-list .poem .poem-description {
+    max-width: 320px;
+  }
+  body.light .poem-list .poem .poem-image {
+    position: absolute;
+    padding: 1.5rem;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+  }
+}
+body.light .poem-list .poem {
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 body.light .signboard {
   width: 100%;
@@ -2707,8 +2733,12 @@ body.light .signboard .logo {
   body.light .signboard .logo > .logo-text {
     font-size: calc(100vw / 20);
   }
-  body.light .signboard .poem {
+  body.light .signboard .poem,
+  body.light .signboard .button-line {
     flex: 1;
+  }
+  body.light .signboard .button-line {
+    padding: 3vw;
   }
 }
 body.light .bottom-line {
@@ -5391,10 +5421,6 @@ body.dark .todo-screen .tick-list .tick-item .item-information > * {
 body.dark .todo-screen .tick-list .tick-item .item-operator {
   padding-left: 0.5rem;
 }
-body.dark .welcome-screen .screen-body .list-list:not(:empty) {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-}
 body.dark .welcome-screen .screen-body,
 body.dark .updating-screen .screen-body {
   display: flex;
@@ -5493,10 +5519,40 @@ body.dark .poem .poem-description {
 }
 body.dark .poem .poem-image {
   display: block;
-  font-size: 15rem;
+  font-size: 7rem;
   line-height: 100%;
   padding: 0.5rem;
   text-align: center;
+}
+body.dark .poem-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+}
+@media (min-width: 640px) {
+  body.dark .poem-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  body.dark .poem-list .poem {
+    padding-bottom: 8rem;
+    position: relative;
+  }
+  body.dark .poem-list .poem .poem-description {
+    max-width: 320px;
+  }
+  body.dark .poem-list .poem .poem-image {
+    position: absolute;
+    padding: 1.5rem;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+  }
+}
+body.dark .poem-list .poem {
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 body.dark .signboard {
   width: 100%;
@@ -5524,8 +5580,12 @@ body.dark .signboard .logo {
   body.dark .signboard .logo > .logo-text {
     font-size: calc(100vw / 20);
   }
-  body.dark .signboard .poem {
+  body.dark .signboard .poem,
+  body.dark .signboard .button-line {
     flex: 1;
+  }
+  body.dark .signboard .button-line {
+    padding: 3vw;
   }
 }
 body.dark .bottom-line {
@@ -15964,41 +16024,54 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 ];
             };
             Render.welcomeScreen = function () { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e, _f;
-                var _g, _h;
-                return __generator(this, function (_j) {
-                    switch (_j.label) {
+                var _a, _b, _c, _d, _e, _f, _g;
+                var _h, _j;
+                return __generator(this, function (_k) {
+                    switch (_k.label) {
                         case 0:
-                            _g = {
+                            _h = {
                                 className: "welcome-screen"
                             };
-                            _h = {};
+                            _j = {};
                             return [4 /*yield*/, Render.screenHeaderHomeSegment()];
                         case 1:
-                            _h.items = [
-                                _j.sent()
+                            _j.items = [
+                                _k.sent()
                             ];
                             return [4 /*yield*/, Render.welcomeScreenMenu()];
                         case 2:
-                            _g.header = (_h.menu = _j.sent(),
-                                _h);
-                            _a = Render.$div("signboard");
-                            _b = Render.$div("logo");
-                            return [4 /*yield*/, Render.applicationIcon()];
+                            _h.header = (_j.menu = _k.sent(),
+                                _j);
+                            _a = Render.$div("row-flex-list compact-flex-list list-list");
+                            return [4 /*yield*/, Promise.all(OldStorage.Pass.get().map(function (pass) { return Render.listItem(JSON.parse(OldStorage.exportJson(pass))); }))];
                         case 3:
-                            _c = [
-                                _a.apply(void 0, [[
-                                        _b.apply(void 0, [[_j.sent(), Render.$span("logo-text")(CyclicToDo.applicationTitle)]]),
-                                        Render.$div("poem")([
-                                            Render.$span("poem-subtitle")(locale.map("ToDo app for repeating tasks")),
-                                            Render.$span("poem-title")(locale.map("Not your duty, but your pride!")),
-                                            Render.$span("poem-description")(locale.map("Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.")),
-                                            Render.$span("poem-image")("🏆"),
-                                        ])
-                                    ]])
+                            _b = [
+                                _a.apply(void 0, [_k.sent()])
                             ];
-                            _d = Render.$div("button-line");
-                            _e = [{
+                            // $div("button-line")
+                            // ([
+                            //     {
+                            //         tag: "button",
+                            //         // className: OldStorage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
+                            //         className: "default-button main-button long-button",
+                            //         children: label("New ToDo List"),
+                            //         onclick: newListPrompt,
+                            //     },
+                            //     await menuButton
+                            //     ([
+                            //         importListMenuItem(),
+                            //         removedListMenuItem(),
+                            //     ]),
+                            // ]),
+                            _c = Render.$div("signboard");
+                            _d = Render.$div("logo");
+                            return [4 /*yield*/, Render.applicationIcon()];
+                        case 4:
+                            _e = [
+                                _d.apply(void 0, [[_k.sent(), Render.$span("logo-text")(CyclicToDo.applicationTitle)]])
+                            ];
+                            _f = Render.$div("button-line");
+                            _g = [{
                                     tag: "button",
                                     // className: OldStorage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
                                     className: "default-button main-button long-button",
@@ -16009,24 +16082,105 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.importListMenuItem(),
                                     Render.removedListMenuItem(),
                                 ])];
-                        case 4:
-                            _c = _c.concat([
-                                _d.apply(void 0, [_e.concat([
-                                        _j.sent()
-                                    ])])
-                            ]);
-                            _f = Render.$div("row-flex-list compact-flex-list list-list");
-                            return [4 /*yield*/, Promise.all(OldStorage.Pass.get().map(function (pass) { return Render.listItem(JSON.parse(OldStorage.exportJson(pass))); }))];
-                        case 5: return [2 /*return*/, (_g.body = _c.concat([
-                                _f.apply(void 0, [_j.sent()]),
-                                Render.$div({ style: "text-align: center; padding: 0.5rem;", })("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
-                                Render.messageList([
-                                    Render.messagePanel(Render.label("You can use this web app like an app by registering it on the home screen of your smartphone.")),
-                                    Render.messagePanel(Render.labelSpan(Render.keyboardShortcutsItem(exports.keyboardShortcuts[0]))),
+                        case 5: return [2 /*return*/, (_h.body = _b.concat([
+                                // $div("button-line")
+                                // ([
+                                //     {
+                                //         tag: "button",
+                                //         // className: OldStorage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
+                                //         className: "default-button main-button long-button",
+                                //         children: label("New ToDo List"),
+                                //         onclick: newListPrompt,
+                                //     },
+                                //     await menuButton
+                                //     ([
+                                //         importListMenuItem(),
+                                //         removedListMenuItem(),
+                                //     ]),
+                                // ]),
+                                _c.apply(void 0, [_e.concat([
+                                        _f.apply(void 0, [_g.concat([
+                                                _k.sent()
+                                            ])])
+                                    ])]),
+                                Render.$div("poem-list")([
+                                    Render.$div("poem")([
+                                        Render.$span("poem-subtitle")("公開ベータ版"),
+                                        Render.$span("poem-title")("開発中です"),
+                                        Render.$span("poem-description")("This static web application is under development. / この Static Web アプリは開発中です。"),
+                                        Render.$span("poem-image")("🚧"),
+                                    ]),
+                                    Render.$div("poem")([
+                                        Render.$span("poem-subtitle")(locale.map("ToDo app for repeating tasks")),
+                                        Render.$span("poem-title")(locale.map("Not your duty, but your pride!")),
+                                        Render.$span("poem-description")(locale.map("Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.")),
+                                        Render.$span("poem-image")("🏆"),
+                                    ]),
+                                    Render.$div("poem")([
+                                        Render.$span("poem-subtitle")(locale.string("備忘録と提案")),
+                                        Render.$span("poem-title")(locale.string("あなたは実行するだけ")),
+                                        Render.$span("poem-description")(locale.string("登録されたタスクの数が増えても、適宜、「そろそろ実行するタイミングのタスク」を優先的に表示するので、備忘録的な機能と提案的な機能を兼ね備え、「次のどのタスクを消化するべきか？」であなたは悩む必要はありません。")),
+                                        Render.$span("poem-image")("🧠"),
+                                    ]),
+                                    Render.$div("poem")([
+                                        Render.$span("poem-subtitle")(locale.string("アカウント不要")),
+                                        Render.$span("poem-title")(locale.string("今すぐに使えます")),
+                                        Render.$span("poem-description")(locale.string("Cyclic ToDo はアカウント登録やログイン不要でいますぐに使えます。[新しい ToDo リスト]ボタンをクリックしていますぐに始められます。")),
+                                        Render.$span("poem-image")("🚀"),
+                                    ]),
+                                    Render.$div("poem")([
+                                        Render.$span("poem-subtitle")(locale.string("Progressive Web App")),
+                                        Render.$span("poem-title")(locale.string("あなたのスマホと共に")),
+                                        Render.$span("poem-description")(locale.map("You can use this web app like an app by registering it on the home screen of your smartphone.")),
+                                        Render.$span("poem-image")("📱"),
+                                    ]),
+                                    Render.$div("poem")([
+                                        Render.$span("poem-subtitle")(locale.string("ダークモード")),
+                                        Render.$span("poem-title")(locale.string("お好きなモードで")),
+                                        Render.$span("poem-description")(locale.string("あなたの好みに合わせてライトモード/ダークモードをお使いください。")),
+                                        Render.$span("poem-image")("🌙"),
+                                    ]),
+                                    Render.$div("poem")([
+                                        Render.$span("poem-subtitle")(locale.string("多言語対応")),
+                                        Render.$span("poem-title")(locale.string("あなたの言語で")),
+                                        Render.$span("poem-description")(locale.string("現在、英語と日本語に対応してます。")),
+                                        Render.$span("poem-image")("🇬🇧"),
+                                    ]),
+                                    Render.$div("poem")([
+                                        Render.$span("poem-subtitle")(locale.string("キーボードショートカット")),
+                                        Render.$span("poem-title")(locale.string("キーボード操作で快適に")),
+                                        Render.$span("poem-description")(Render.keyboardShortcutsItem(exports.keyboardShortcuts[0])),
+                                        Render.$span("poem-image")("⌨️"),
+                                    ]),
+                                    Render.$div("poem")([
+                                        Render.$span("poem-subtitle")(locale.string("取り消し")),
+                                        Render.$span("poem-title")(locale.string("取り消せます")),
+                                        Render.$span("poem-description")(locale.string("誤操作してしまっても、操作直後に表示されるトーストの[取り消し]から取り消せます。")),
+                                        Render.$span("poem-image")("⌛️"),
+                                    ]),
+                                    Render.$div("poem")([
+                                        Render.$span("poem-subtitle")(locale.string("ゴミ箱")),
+                                        Render.$span("poem-title")(locale.string("ゴミ箱もあります")),
+                                        Render.$span("poem-description")(locale.string("削除してしまったアイテムも３０日以内ならゴミ箱から復元できます。( ゴミ箱は、リスト本体のゴミ箱と、リスト内のゴミ箱の２種類があります。 )")),
+                                        Render.$span("poem-image")("🗑️"),
+                                    ]),
+                                    Render.$div("poem")([
+                                        Render.$span("poem-subtitle")(locale.string("evil-timer.js")),
+                                        Render.$span("poem-title")(locale.string("時間を支配できます")),
+                                        Render.$span("poem-description")(locale.string("evil-timer.js を組み込んであるので、時間経過に伴う Cyclic ToDo の細かい挙動を簡単に確認できます。")),
+                                        Render.$span("poem-image")("👿"),
+                                    ]),
                                 ]),
+                                // $div({ style: "text-align: center; padding: 0.5rem;", })
+                                //     ("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
+                                // messageList
+                                // ([
+                                //     messagePanel(label("You can use this web app like an app by registering it on the home screen of your smartphone.")),
+                                //     messagePanel(labelSpan(keyboardShortcutsItem(keyboardShortcuts[0]))),
+                                // ]),
                                 Render.$div("bottom-line version-information")(Render.getVersionInfromationText())
                             ]),
-                                _g)];
+                                _h)];
                     }
                 });
             }); };
@@ -17135,7 +17289,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Sep 23 2023 02:05:07 GMT+0900 (日本標準時)', buildTimestampTick: 1695402307711, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Sep 23 2023 23:23:42 GMT+0900 (日本標準時)', buildTimestampTick: 1695479022931, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented"></h1><div id="screen-body" class="screen-body"></div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

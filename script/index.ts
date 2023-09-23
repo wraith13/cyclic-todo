@@ -5963,7 +5963,7 @@ export module CyclicToDo
         ([
             await historyBar(entry, list),
             $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item, displayStyle, progressScaleShowStyle)))),
-            await listScreenFooter(entry, list)
+            await listScreenFooter(entry, list),
         ]);
         export const listScreen = async (entry: ToDoTagEntryOld, list: ToDoEntry[], filter: string) =>
         ({
@@ -6952,9 +6952,58 @@ export module CyclicToDo
             },
             body:
             [
+                $div("row-flex-list compact-flex-list list-list")
+                    (await Promise.all(OldStorage.Pass.get().map(pass => listItem(JSON.parse(OldStorage.exportJson(pass)) as Content)))),
+                // $div("button-line")
+                // ([
+                //     {
+                //         tag: "button",
+                //         // className: OldStorage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
+                //         className: "default-button main-button long-button",
+                //         children: label("New ToDo List"),
+                //         onclick: newListPrompt,
+                //     },
+                //     await menuButton
+                //     ([
+                //         importListMenuItem(),
+                //         removedListMenuItem(),
+                //     ]),
+                // ]),
                 $div("signboard")
                 ([
                     $div("logo")([await applicationIcon(),$span("logo-text")(applicationTitle)]),
+                    $div("button-line")
+                    ([
+                        {
+                            tag: "button",
+                            // className: OldStorage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
+                            className: "default-button main-button long-button",
+                            children: label("New ToDo List"),
+                            onclick: newListPrompt,
+                        },
+                        await menuButton
+                        ([
+                            importListMenuItem(),
+                            removedListMenuItem(),
+                        ]),
+                    ]),
+                    // $div("poem")
+                    // ([
+                    //     $span("poem-subtitle")(locale.map("ToDo app for repeating tasks")),
+                    //     $span("poem-title")(locale.map("Not your duty, but your pride!")),
+                    //     $span("poem-description")(locale.map("Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.")),
+                    //     $span("poem-image")("🏆"),
+                    // ]),
+                ]),
+                $div("poem-list")
+                ([
+                    $div("poem")
+                    ([
+                        $span("poem-subtitle")("公開ベータ版"),
+                        $span("poem-title")("開発中です"),
+                        $span("poem-description")("This static web application is under development. / この Static Web アプリは開発中です。"),
+                        $span("poem-image")("🚧"),
+                    ]),
                     $div("poem")
                     ([
                         $span("poem-subtitle")(locale.map("ToDo app for repeating tasks")),
@@ -6962,31 +7011,77 @@ export module CyclicToDo
                         $span("poem-description")(locale.map("Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.")),
                         $span("poem-image")("🏆"),
                     ]),
-                ]),
-                $div("button-line")
-                ([
-                    {
-                        tag: "button",
-                        // className: OldStorage.Pass.get().length <= 0 ? "default-button main-button long-button": "main-button long-button",
-                        className: "default-button main-button long-button",
-                        children: label("New ToDo List"),
-                        onclick: newListPrompt,
-                    },
-                    await menuButton
+                    $div("poem")
                     ([
-                        importListMenuItem(),
-                        removedListMenuItem(),
+                        $span("poem-subtitle")(locale.string("備忘録と提案")),
+                        $span("poem-title")(locale.string("あなたは実行するだけ")),
+                        $span("poem-description")(locale.string("登録されたタスクの数が増えても、適宜、「そろそろ実行するタイミングのタスク」を優先的に表示するので、備忘録的な機能と提案的な機能を兼ね備え、「次のどのタスクを消化するべきか？」であなたは悩む必要はありません。")),
+                        $span("poem-image")("🧠"),
+                    ]),
+                    $div("poem")
+                    ([
+                        $span("poem-subtitle")(locale.string("アカウント不要")),
+                        $span("poem-title")(locale.string("今すぐに使えます")),
+                        $span("poem-description")(locale.string("Cyclic ToDo はアカウント登録やログイン不要でいますぐに使えます。[新しい ToDo リスト]ボタンをクリックしていますぐに始められます。")),
+                        $span("poem-image")("🚀"),
+                    ]),
+                    $div("poem")
+                    ([
+                        $span("poem-subtitle")(locale.string("Progressive Web App")),
+                        $span("poem-title")(locale.string("あなたのスマホと共に")),
+                        $span("poem-description")(locale.map("You can use this web app like an app by registering it on the home screen of your smartphone.")),
+                        $span("poem-image")("📱"),
+                    ]),
+                    $div("poem")
+                    ([
+                        $span("poem-subtitle")(locale.string("ダークモード")),
+                        $span("poem-title")(locale.string("お好きなモードで")),
+                        $span("poem-description")(locale.string("あなたの好みに合わせてライトモード/ダークモードをお使いください。")),
+                        $span("poem-image")("🌙"),
+                    ]),
+                    $div("poem")
+                    ([
+                        $span("poem-subtitle")(locale.string("多言語対応")),
+                        $span("poem-title")(locale.string("あなたの言語で")),
+                        $span("poem-description")(locale.string("現在、英語と日本語に対応してます。")),
+                        $span("poem-image")("🇬🇧"),
+                    ]),
+                    $div("poem")
+                    ([
+                        $span("poem-subtitle")(locale.string("キーボードショートカット")),
+                        $span("poem-title")(locale.string("キーボード操作で快適に")),
+                        $span("poem-description")(keyboardShortcutsItem(keyboardShortcuts[0])),
+                        $span("poem-image")("⌨️"),
+                    ]),
+                    $div("poem")
+                    ([
+                        $span("poem-subtitle")(locale.string("取り消し")),
+                        $span("poem-title")(locale.string("取り消せます")),
+                        $span("poem-description")(locale.string("誤操作してしまっても、操作直後に表示されるトーストの[取り消し]から取り消せます。")),
+                        $span("poem-image")("⌛️"),
+                    ]),
+                    $div("poem")
+                    ([
+                        $span("poem-subtitle")(locale.string("ゴミ箱")),
+                        $span("poem-title")(locale.string("ゴミ箱もあります")),
+                        $span("poem-description")(locale.string("削除してしまったアイテムも３０日以内ならゴミ箱から復元できます。( ゴミ箱は、リスト本体のゴミ箱と、リスト内のゴミ箱の２種類があります。 )")),
+                        $span("poem-image")("🗑️"),
+                    ]),
+                    $div("poem")
+                    ([
+                        $span("poem-subtitle")(locale.string("evil-timer.js")),
+                        $span("poem-title")(locale.string("時間を支配できます")),
+                        $span("poem-description")(locale.string("evil-timer.js を組み込んであるので、時間経過に伴う Cyclic ToDo の細かい挙動を簡単に確認できます。")),
+                        $span("poem-image")("👿"),
                     ]),
                 ]),
-                $div("row-flex-list compact-flex-list list-list")
-                    (await Promise.all(OldStorage.Pass.get().map(pass => listItem(JSON.parse(OldStorage.exportJson(pass)) as Content)))),
-                $div({ style: "text-align: center; padding: 0.5rem;", })
-                    ("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
-                messageList
-                ([
-                    messagePanel(label("You can use this web app like an app by registering it on the home screen of your smartphone.")),
-                    messagePanel(labelSpan(keyboardShortcutsItem(keyboardShortcuts[0]))),
-                ]),
+                // $div({ style: "text-align: center; padding: 0.5rem;", })
+                //     ("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
+                // messageList
+                // ([
+                //     messagePanel(label("You can use this web app like an app by registering it on the home screen of your smartphone.")),
+                //     messagePanel(labelSpan(keyboardShortcutsItem(keyboardShortcuts[0]))),
+                // ]),
                 $div("bottom-line version-information")(getVersionInfromationText()),
             ]
         });

@@ -2082,17 +2082,17 @@ button
         }
     }
 }
-.welcome-screen
-{
-    .screen-body
-    {
-        .list-list:not(:empty)
-        {
-            margin-top: 2rem;
-            margin-bottom: 2rem;
-        }
-    }
-}
+// .welcome-screen
+// {
+//     .screen-body
+//     {
+//         .list-list:not(:empty)
+//         {
+//             margin-top: 2rem;
+//             margin-bottom: 2rem;
+//         }
+//     }
+// }
 .welcome-screen,
 .updating-screen
 {
@@ -2217,10 +2217,44 @@ button
     .poem-image
     {
         display: block;
-        font-size: 15.0rem;
+        font-size: 7.0rem;
         line-height: 100%;
         padding: 0.5rem;
         text-align: center;
+    }
+}
+.poem-list
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    @media (min-width:640px)
+    {
+        flex-direction: row;
+        flex-wrap: wrap;
+        .poem
+        {
+            padding-bottom: 8rem;
+            position: relative;
+            .poem-description
+            {
+                max-width: 320px;
+            }
+            .poem-image
+            {
+                position: absolute;
+                padding: 1.5rem;
+                bottom: 0px;
+                left: 0px;
+                right: 0px;
+            }
+        }
+    }
+    .poem
+    {
+        flex-grow: 1;
+        flex-shrink: 1;
     }
 }
 .signboard
@@ -2253,9 +2287,14 @@ button
                 font-size: calc(100vw / 20);
             }
         }
-        .poem
+        .poem,
+        .button-line
         {
             flex: 1;
+        }
+        .button-line
+        {
+            padding: 3vw;
         }
     }
 }
