@@ -2186,40 +2186,39 @@ button
 .poem
 {
     display: block;
-    margin: 0.5rem;
+    margin: 0.25rem;
     border-radius: 1rem;
     padding: 1rem;
-    background: linear-gradient(to bottom, fade(@accent-color, 60%) 0%, fade(@accent-color, 10%) 100%);
-
+    background: linear-gradient(to bottom, fade(@accent-color, 50%) 0%, fade(@accent-color, 10%) 100%);
     .poem-subtitle
     {
         display: block;
         opacity: 0.6;
         font-size: 1.0rem;
         line-height: 120%;
-        padding: 0.5rem;
+        padding: 0.25rem;
     }
     .poem-title
     {
         display: block;
-        font-size: 1.618rem;
+        font-size: 1.4rem;
         font-weight: 700;
         line-height: 120%;
-        padding: 0.5rem;
+        padding: 0.25rem;
     }
     .poem-description
     {
         display: block;
         font-size: 1.0rem;
         line-height: 120%;
-        padding: 0.5rem;
+        padding: 0.25rem;
     }
     .poem-image
     {
         display: block;
         font-size: 7.0rem;
         line-height: 100%;
-        padding: 0.5rem;
+        padding: 0.25rem;
         text-align: center;
     }
 }
@@ -2229,14 +2228,21 @@ button
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
+    padding: 0.25rem;
     @media (min-width:640px)
     {
         flex-direction: row;
         flex-wrap: wrap;
         .poem
         {
-            padding-bottom: 8rem;
+            padding-bottom: 9rem;
             position: relative;
+            .poem-subtitle,
+            .poem-title,
+            .poem-description
+            {
+                margin-right: -1.5rem;
+            }
             .poem-description
             {
                 max-width: 320px;
@@ -2248,6 +2254,16 @@ button
                 bottom: 0px;
                 left: 0px;
                 right: 0px;
+            }
+        }
+    }
+    @media (min-width:1280px)
+    {
+        .poem
+        {
+            .poem-description
+            {
+                max-width: 25vw;
             }
         }
     }

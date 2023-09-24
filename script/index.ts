@@ -7021,9 +7021,16 @@ export module CyclicToDo
                     $div("poem")
                     ([
                         $span("poem-subtitle")(locale.string("アカウント不要")),
-                        $span("poem-title")(locale.string("今すぐに使えます")),
+                        $span("poem-title")(locale.string("いますぐ使えます")),
                         $span("poem-description")(locale.string("Cyclic ToDo はアカウント登録やログイン不要でいますぐに使えます。[新しい ToDo リスト]ボタンをクリックしていますぐに始められます。")),
                         $span("poem-image")("🚀"),
+                    ]),
+                    $div("poem")
+                    ([
+                        $span("poem-subtitle")(locale.string("ToDo リスト")),
+                        $span("poem-title")(locale.string("複数の ToDo リストが使えます")),
+                        $span("poem-description")(locale.string("個人的なタスクと仕事上のタスクといった大きく前提が異なるモノや、ラーメンやカレーをいつ食べた？といった様な他の情報と混ざって表示されてもノイズになるようなタスクはリストを分けて扱えます。")),
+                        $span("poem-image")("🗄️"),
                     ]),
                     $div("poem")
                     ([
@@ -7044,7 +7051,7 @@ export module CyclicToDo
                         $span("poem-subtitle")(locale.string("多言語対応")),
                         $span("poem-title")(locale.string("あなたの言語で")),
                         $span("poem-description")(locale.string("現在、英語と日本語に対応してます。")),
-                        $span("poem-image")("🇬🇧"),
+                        $span("poem-image")("🌐"),
                     ]),
                     $div("poem")
                     ([
