@@ -6971,7 +6971,14 @@ export module CyclicToDo
                 // ]),
                 $div("signboard")
                 ([
-                    $div("logo")([await applicationIcon(),$span("logo-text")(applicationTitle)]),
+                    // $div("logo")([await applicationIcon(),$span("logo-text")(applicationTitle)]),
+                    $div("poem primary-poem")
+                    ([
+                        $span("poem-subtitle")(locale.map("ToDo app for repeating tasks")),
+                        $span("poem-title")(locale.map("Not your duty, but your pride!")),
+                        $span("poem-description")(locale.map("Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.")),
+                        $span("poem-image")("🏆"),
+                    ]),
                     $div("button-line")
                     ([
                         {
@@ -7006,13 +7013,6 @@ export module CyclicToDo
                     ]),
                     $div("poem")
                     ([
-                        $span("poem-subtitle")(locale.map("ToDo app for repeating tasks")),
-                        $span("poem-title")(locale.map("Not your duty, but your pride!")),
-                        $span("poem-description")(locale.map("Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.")),
-                        $span("poem-image")("🏆"),
-                    ]),
-                    $div("poem")
-                    ([
                         $span("poem-subtitle")(locale.string("備忘録と提案")),
                         $span("poem-title")(locale.string("あなたは実行するだけ")),
                         $span("poem-description")(locale.string("登録されたタスクの数が増えても、適宜、「そろそろ実行するタイミングのタスク」を優先的に表示するので、備忘録的な機能と提案的な機能を兼ね備え、「次のどのタスクを消化するべきか？」であなたは悩む必要はありません。")),
@@ -7022,8 +7022,15 @@ export module CyclicToDo
                     ([
                         $span("poem-subtitle")(locale.string("アカウント不要")),
                         $span("poem-title")(locale.string("いますぐ使えます")),
-                        $span("poem-description")(locale.string("Cyclic ToDo はアカウント登録やログイン不要でいますぐに使えます。[新しい ToDo リスト]ボタンをクリックしていますぐに始められます。")),
+                        $span("poem-description")(locale.string("Cyclic ToDo はアカウント登録やログイン不要でいますぐに使えます。[新しい ToDo リスト]ボタンをクリックしてください。")),
                         $span("poem-image")("🚀"),
+                    ]),
+                    $div("poem")
+                    ([
+                        $span("poem-subtitle")(locale.string("履歴")),
+                        $span("poem-title")(locale.string("あなたのライフログ")),
+                        $span("poem-description")(locale.string("実際のところ、 Cyclic ToDo は ToDo アプリのガワを被せてるライフログアプリの様なモノです。「アレやったのはいつだっけ？」なんて事を履歴から確認できます。")),
+                        $span("poem-image")("📔"),
                     ]),
                     $div("poem")
                     ([
@@ -7031,6 +7038,20 @@ export module CyclicToDo
                         $span("poem-title")(locale.string("複数の ToDo リストが使えます")),
                         $span("poem-description")(locale.string("個人的なタスクと仕事上のタスクといった大きく前提が異なるモノや、ラーメンやカレーをいつ食べた？といった様な他の情報と混ざって表示されてもノイズになるようなタスクはリストを分けて扱えます。")),
                         $span("poem-image")("🗄️"),
+                    ]),
+                    $div("poem")
+                    ([
+                        $span("poem-subtitle")(locale.string("サブリスト")),
+                        $span("poem-title")(locale.string("購入と消費")),
+                        $span("poem-description")(locale.string("`ビタミン剤`と言うタスクはなんでしょうか？ 購入のタスクとしての`ビタミン剤`と、服用(消費)のタスクとしての`ビタミン剤`がありますよね？ そんな時はサブリストをお使いください。")),
+                        $span("poem-image")("📂"),
+                    ]),
+                    $div("poem")
+                    ([
+                        $span("poem-subtitle")(locale.string("タグ")),
+                        $span("poem-title")(locale.string("毎朝やるのは")),
+                        $span("poem-description")(locale.string("毎朝、祝日、コンビニ等々、特定の条件で実行するタスクはタグをつけましょう。もちろん１つのタスクに複数のタグをつけられます。")),
+                        $span("poem-image")("🏷️"),
                     ]),
                     $div("poem")
                     ([

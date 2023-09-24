@@ -2110,11 +2110,11 @@ button
         //     padding: 0.5rem;
         //     font-size: 2.5rem;
         // }
-        .button-line,
-        .button-list
-        {
-            width: calc(100vw - 1.0rem);
-        }
+        // .button-line,
+        // .button-list
+        // {
+        //     width: calc(100vw - 1.0rem);
+        // }
     }
 }
 .screen-body
@@ -2189,7 +2189,35 @@ button
     margin: 0.25rem;
     border-radius: 1rem;
     padding: 1rem;
-    background: linear-gradient(to bottom, fade(@accent-color, 50%) 0%, fade(@accent-color, 10%) 100%);
+    background: linear-gradient(to bottom, fade(@accent-color, 15%) 0%, fade(@accent-color, 35%) 100%);
+    &.primary-poem
+    {
+        background: transparent;
+        .poem-image
+        {
+            font-size: 10.0rem;
+        }
+        @media (min-width:640px)
+        {
+            .poem-subtitle
+            {
+                font-size: 1.0rem;
+            }
+            .poem-title
+            {
+                font-size: 2rem;
+            }
+            .poem-description
+            {
+                font-size: 1.4rem;
+            }
+            .poem-image
+            {
+                margin-top: 1rem;
+                font-size: 14.0rem;
+            }
+        }
+    }
     .poem-subtitle
     {
         display: block;
@@ -2303,15 +2331,27 @@ button
                 font-size: calc(100vw / 20);
             }
         }
-        .poem,
+        .poem
+        {
+            flex: 2;
+            margin: 5vw;
+        }
         .button-line
         {
             flex: 1;
-        }
-        .button-line
-        {
             padding: 3vw;
         }
+    }
+    @media not (min-width:1440px)
+    {
+        .button-line
+        {
+            margin-bottom: 1rem;
+        }
+    }
+    .default-button
+    {
+        height: 3rem;
     }
 }
 .bottom-line
