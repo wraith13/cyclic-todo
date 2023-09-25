@@ -6940,12 +6940,12 @@ export module CyclicToDo
             locale.map(i.message),
             i.reverseWithShiftKey ? [ " ( + ", $span("key monospace")($tag("kbd")({})(`Shift`)), locale.map("Reverse") +" )", ]: "",
         ];
-        export const poem = (poem: { subtitle: string, title: string, description: string, image: minamo.dom.Source }, className: string = "") => $div(`poem ${className}`)
+        export const poem = (poem: keyof typeof pomeJson, className: string = "") => $div(`poem ${className}`)
         ([
-            $span("poem-subtitle")(locale.string(poem.subtitle)),
-            $span("poem-title")(locale.string(poem.title)),
-            $span("poem-description")(locale.string(poem.description)),
-            $span("poem-image")(poem.image),
+            $span("poem-subtitle")(locale.string(`poem.${poem}.subtitle`)),
+            $span("poem-title")(locale.string(`poem.${poem}.title`)),
+            $span("poem-description")(locale.string(`poem.${poem}.description`)),
+            $span("poem-image")(pomeJson[poem]),
         ]);
         export const welcomeScreen = async (): Promise<ScreenSource> =>
         ({
@@ -6980,7 +6980,7 @@ export module CyclicToDo
                 $div("signboard")
                 ([
                     // $div("logo")([await applicationIcon(),$span("logo-text")(applicationTitle)]),
-                    poem(pomeJson.primary, "poem primary-poem"),
+                    poem("primary", "poem primary-poem"),
                     $div("button-list")
                     ([
                         {

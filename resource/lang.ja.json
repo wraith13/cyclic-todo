@@ -1,9 +1,9 @@
 {
     "$name": "日本語",
     "description": "Cyclic ToDo は日常の繰り返す ToDo 専用の ToDo アプリです。",
-    "ToDo app for repeating tasks": "繰り返すタスクの ToDo アプリ",
-    "Not your duty, but your pride!": "責務ではなく、あなたの誇りを！",
-    "Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.": "Cyclic ToDo で扱うのは「未来の責務」ではなく「いままでの実績」であり、あなたを責める事なく、あなたを勇気づけ、あなたの行動を後押しします。",
+    "poem.primary.subtitle": "繰り返すタスクの ToDo アプリ",
+    "poem.primary.title": "責務ではなく、あなたの誇りを！",
+    "poem.primary.description": "Cyclic ToDo で扱うのは「未来の責務」ではなく「いままでの実績」であり、あなたを責める事なく、あなたを勇気づけ、あなたの行動を後押しします。",
     "Reload screen": "画面の再読み込み",
     "Full screen": "フルスクリーン表示",
     "Cancel full screen": "フルスクリーン解除",
