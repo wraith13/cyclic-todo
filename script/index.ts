@@ -1,5 +1,6 @@
 import { minamo } from "../nephila/minamo.js";
 import config from "../resource/config.json";
+import pomeJson from "../resource/poem.json";
 import style from "../resource/style.json";
 import localeEn from "../resource/lang.en.json";
 import localeJa from "../resource/lang.ja.json";
@@ -6939,6 +6940,13 @@ export module CyclicToDo
             locale.map(i.message),
             i.reverseWithShiftKey ? [ " ( + ", $span("key monospace")($tag("kbd")({})(`Shift`)), locale.map("Reverse") +" )", ]: "",
         ];
+        export const poem = (poem: { subtitle: string, title: string, description: string, image: minamo.dom.Source }, className: string = "") => $div(`poem ${className}`)
+        ([
+            $span("poem-subtitle")(locale.string(poem.subtitle)),
+            $span("poem-title")(locale.string(poem.title)),
+            $span("poem-description")(locale.string(poem.description)),
+            $span("poem-image")(poem.image),
+        ]);
         export const welcomeScreen = async (): Promise<ScreenSource> =>
         ({
             className: "welcome-screen",
@@ -6972,14 +6980,8 @@ export module CyclicToDo
                 $div("signboard")
                 ([
                     // $div("logo")([await applicationIcon(),$span("logo-text")(applicationTitle)]),
-                    $div("poem primary-poem")
-                    ([
-                        $span("poem-subtitle")(locale.map("ToDo app for repeating tasks")),
-                        $span("poem-title")(locale.map("Not your duty, but your pride!")),
-                        $span("poem-description")(locale.map("Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.")),
-                        $span("poem-image")("🏆"),
-                    ]),
-                    $div("button-line")
+                    poem(pomeJson.primary, "poem primary-poem"),
+                    $div("button-list")
                     ([
                         {
                             tag: "button",
@@ -6988,11 +6990,25 @@ export module CyclicToDo
                             children: label("New ToDo List"),
                             onclick: newListPrompt,
                         },
-                        await menuButton
+                        // await menuButton
+                        // ([
+                        //     importListMenuItem(),
+                        //     removedListMenuItem(),
+                        // ]),
+                        $div("button-list")
                         ([
-                            importListMenuItem(),
-                            removedListMenuItem(),
-                        ]),
+                            textButton
+                            (
+                                "Import List",
+                                async () => showUrl({ hash: "import", })
+                            ),
+                            $span("separator")("・"),
+                            textButton
+                            (
+                                "@deleted",
+                                async () => showUrl({ hash: "removed", })
+                            ),
+                        ])
                     ]),
                     // $div("poem")
                     // ([

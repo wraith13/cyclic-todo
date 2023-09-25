@@ -2331,15 +2331,28 @@ button
                 font-size: calc(100vw / 20);
             }
         }
-        .poem
+        & > .poem
         {
             flex: 2;
             margin: 5vw;
         }
-        .button-line
+        & > .button-list
         {
             flex: 1;
             padding: 3vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            .button-list
+            {
+                flex: 1;
+                padding: 0;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+            }
         }
     }
     @media not (min-width:1440px)
@@ -2352,6 +2365,21 @@ button
     .default-button
     {
         height: 3rem;
+    }
+    .button-list
+    {
+        button
+        {
+            margin: 0.75rem;
+        }
+        .button-list
+        {
+            padding: 0px;
+        }
+    }
+    .separator
+    {
+        color: fade(@main-color, 30%);
     }
 }
 .bottom-line

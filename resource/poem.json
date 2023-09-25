@@ -1,0 +1,12 @@
+{
+    "primary":
+    {
+        "subtitle": "ToDo app for repeating tasks",
+        "title": "Not your duty, but your pride!",
+        "description": "Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.",
+        "image": "🏆"
+    },
+    "list":
+    [
+    ]
+}
