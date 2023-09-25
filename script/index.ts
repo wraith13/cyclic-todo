@@ -6736,7 +6736,7 @@ export module CyclicToDo
                         break;
                 }
             };
-            await showWindow(await removedListScreen(OldStorage.Backup.get().map(json => JSON.parse(json) as RemovedContent)), updateWindow);
+            await showWindow(await removedListScreen(OldStorage.Backup.get().map(json => JSON.parse(json) as RemovedContent).sort(minamo.core.comparer.make(i => -i.deteledAt))), updateWindow);
         };
         export const removedListScreenMenu = async () =>
         [
@@ -7108,7 +7108,7 @@ export module CyclicToDo
                     ([
                         $span("poem-subtitle")(locale.string("ゴミ箱")),
                         $span("poem-title")(locale.string("ゴミ箱もあります")),
-                        $span("poem-description")(locale.string("削除してしまったアイテムも３０日以内ならゴミ箱から復元できます。( ゴミ箱は、リスト本体のゴミ箱と、リスト内のゴミ箱の２種類があります。 )")),
+                        $span("poem-description")(locale.string("削除してしまったアイテムも３０日以内ならゴミ箱から復元できます。")),
                         $span("poem-image")("🗑️"),
                     ]),
                     $div("poem")
