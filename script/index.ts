@@ -6942,8 +6942,8 @@ export module CyclicToDo
         ];
         export const poem = (poem: keyof typeof pomeJson, className: string = "") => $div(`poem ${className}`)
         ([
-            $span("poem-subtitle")(locale.string(`poem.${poem}.subtitle`)),
             $span("poem-title")(locale.string(`poem.${poem}.title`)),
+            $span("poem-subtitle")(locale.string(`poem.${poem}.subtitle`)),
             $span("poem-description")(locale.string(`poem.${poem}.description`)),
             $span("poem-image")(pomeJson[poem]),
         ]);
@@ -7010,111 +7010,98 @@ export module CyclicToDo
                             ),
                         ])
                     ]),
-                    // $div("poem")
-                    // ([
-                    //     $span("poem-subtitle")(locale.map("ToDo app for repeating tasks")),
-                    //     $span("poem-title")(locale.map("Not your duty, but your pride!")),
-                    //     $span("poem-description")(locale.map("Cyclic ToDo deals with \"past achievements\" rather than \"future responsibilities\", and does not blame you, but rather encourages you and supports your actions.")),
-                    //     $span("poem-image")("🏆"),
-                    // ]),
                 ]),
                 $div("poem-list")
                 ([
+                    poem("beta"),
                     $div("poem")
                     ([
-                        $span("poem-subtitle")("公開ベータ版"),
-                        $span("poem-title")("開発中です"),
-                        $span("poem-description")("This static web application is under development. / この Static Web アプリは開発中です。"),
-                        $span("poem-image")("🚧"),
-                    ]),
-                    $div("poem")
-                    ([
-                        $span("poem-subtitle")(locale.string("備忘録と提案")),
-                        $span("poem-title")(locale.string("あなたは実行するだけ")),
+                        $span("poem-title")(locale.string("備忘録と提案")),
+                        $span("poem-subtitle")(locale.string("あなたは実行するだけ")),
                         $span("poem-description")(locale.string("登録されたタスクの数が増えても、適宜、「そろそろ実行するタイミングのタスク」を優先的に表示するので、備忘録的な機能と提案的な機能を兼ね備え、「次のどのタスクを消化するべきか？」であなたは悩む必要はありません。")),
                         $span("poem-image")("🧠"),
                     ]),
                     $div("poem")
                     ([
-                        $span("poem-subtitle")(locale.string("アカウント不要")),
-                        $span("poem-title")(locale.string("いますぐ使えます")),
+                        $span("poem-title")(locale.string("アカウント不要")),
+                        $span("poem-subtitle")(locale.string("いますぐ使えます")),
                         $span("poem-description")(locale.string("Cyclic ToDo はアカウント登録やログイン不要でいますぐに使えます。[新しい ToDo リスト]ボタンをクリックしてください。")),
                         $span("poem-image")("🚀"),
                     ]),
                     $div("poem")
                     ([
-                        $span("poem-subtitle")(locale.string("履歴")),
-                        $span("poem-title")(locale.string("あなたのライフログ")),
+                        $span("poem-title")(locale.string("履歴")),
+                        $span("poem-subtitle")(locale.string("あなたのライフログ")),
                         $span("poem-description")(locale.string("実際のところ、 Cyclic ToDo は ToDo アプリのガワを被せてるライフログアプリの様なモノです。「アレやったのはいつだっけ？」なんて事を履歴から確認できます。")),
                         $span("poem-image")("📔"),
                     ]),
                     $div("poem")
                     ([
-                        $span("poem-subtitle")(locale.string("ToDo リスト")),
-                        $span("poem-title")(locale.string("複数の ToDo リストが使えます")),
+                        $span("poem-title")(locale.string("ToDo リスト")),
+                        $span("poem-subtitle")(locale.string("複数の ToDo リストが使えます")),
                         $span("poem-description")(locale.string("個人的なタスクと仕事上のタスクといった大きく前提が異なるモノや、ラーメンやカレーをいつ食べた？といった様な他の情報と混ざって表示されてもノイズになるようなタスクはリストを分けて扱えます。")),
                         $span("poem-image")("🗄️"),
                     ]),
                     $div("poem")
                     ([
-                        $span("poem-subtitle")(locale.string("サブリスト")),
-                        $span("poem-title")(locale.string("購入と消費")),
+                        $span("poem-title")(locale.string("サブリスト")),
+                        $span("poem-subtitle")(locale.string("購入と消費")),
                         $span("poem-description")(locale.string("`ビタミン剤`と言うタスクはなんでしょうか？ 購入のタスクとしての`ビタミン剤`と、服用(消費)のタスクとしての`ビタミン剤`がありますよね？ そんな時はサブリストをお使いください。")),
                         $span("poem-image")("📂"),
                     ]),
                     $div("poem")
                     ([
-                        $span("poem-subtitle")(locale.string("タグ")),
-                        $span("poem-title")(locale.string("毎朝やるのは")),
+                        $span("poem-title")(locale.string("タグ")),
+                        $span("poem-subtitle")(locale.string("毎朝やるのは")),
                         $span("poem-description")(locale.string("毎朝、祝日、コンビニ等々、特定の条件で実行するタスクはタグをつけましょう。もちろん１つのタスクに複数のタグをつけられます。")),
                         $span("poem-image")("🏷️"),
                     ]),
                     $div("poem")
                     ([
-                        $span("poem-subtitle")(locale.string("Progressive Web App")),
-                        $span("poem-title")(locale.string("あなたのスマホと共に")),
+                        $span("poem-title")(locale.string("Progressive Web App")),
+                        $span("poem-subtitle")(locale.string("あなたのスマホと共に")),
                         $span("poem-description")(locale.map("You can use this web app like an app by registering it on the home screen of your smartphone.")),
                         $span("poem-image")("📱"),
                     ]),
                     $div("poem")
                     ([
-                        $span("poem-subtitle")(locale.string("ダークモード")),
-                        $span("poem-title")(locale.string("お好きなモードで")),
+                        $span("poem-title")(locale.string("ダークモード")),
+                        $span("poem-subtitle")(locale.string("お好きなモードで")),
                         $span("poem-description")(locale.string("あなたの好みに合わせてライトモード/ダークモードをお使いください。")),
                         $span("poem-image")("🌙"),
                     ]),
                     $div("poem")
                     ([
-                        $span("poem-subtitle")(locale.string("多言語対応")),
-                        $span("poem-title")(locale.string("あなたの言語で")),
+                        $span("poem-title")(locale.string("多言語対応")),
+                        $span("poem-subtitle")(locale.string("あなたの言語で")),
                         $span("poem-description")(locale.string("現在、英語と日本語に対応してます。")),
                         $span("poem-image")("🌐"),
                     ]),
                     $div("poem")
                     ([
-                        $span("poem-subtitle")(locale.string("キーボードショートカット")),
-                        $span("poem-title")(locale.string("キーボード操作で快適に")),
+                        $span("poem-title")(locale.string("キーボードショートカット")),
+                        $span("poem-subtitle")(locale.string("キーボード操作で快適に")),
                         $span("poem-description")(keyboardShortcutsItem(keyboardShortcuts[0])),
                         $span("poem-image")("⌨️"),
                     ]),
                     $div("poem")
                     ([
-                        $span("poem-subtitle")(locale.string("取り消し")),
-                        $span("poem-title")(locale.string("取り消せます")),
+                        $span("poem-title")(locale.string("取り消し")),
+                        $span("poem-subtitle")(locale.string("取り消せます")),
                         $span("poem-description")(locale.string("誤操作してしまっても、操作直後に表示されるトーストの[取り消し]から取り消せます。")),
                         $span("poem-image")("⌛️"),
                     ]),
                     $div("poem")
                     ([
-                        $span("poem-subtitle")(locale.string("ゴミ箱")),
-                        $span("poem-title")(locale.string("ゴミ箱もあります")),
+                        $span("poem-title")(locale.string("ゴミ箱")),
+                        $span("poem-subtitle")(locale.string("ゴミ箱もあります")),
                         $span("poem-description")(locale.string("削除してしまったアイテムも３０日以内ならゴミ箱から復元できます。")),
                         $span("poem-image")("🗑️"),
                     ]),
                     $div("poem")
                     ([
-                        $span("poem-subtitle")(locale.string("evil-timer.js")),
-                        $span("poem-title")(locale.string("時間を支配できます")),
+                        $span("poem-title")(locale.string("evil-timer.js")),
+                        $span("poem-subtitle")(locale.string("時間を支配できます")),
                         $span("poem-description")(locale.string("evil-timer.js を組み込んであるので、時間経過に伴う Cyclic ToDo の細かい挙動を簡単に確認できます。")),
                         $span("poem-image")("👿"),
                     ]),
