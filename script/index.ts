@@ -7018,16 +7018,10 @@ export module CyclicToDo
                     ([
                         $span("poem-title")(locale.string("備忘録と提案")),
                         $span("poem-subtitle")(locale.string("あなたは実行するだけ")),
-                        $span("poem-description")(locale.string("登録されたタスクの数が増えても、適宜、「そろそろ実行するタイミングのタスク」を優先的に表示するので、備忘録的な機能と提案的な機能を兼ね備え、「次のどのタスクを消化するべきか？」であなたは悩む必要はありません。")),
+                        $span("poem-description")(locale.string("登録されたタスクの数が増えても、適宜、「そろそろ実行するタイミングだと予測されるタスク」を優先的に表示するので、備忘録的な機能と提案的な機能を兼ね備え、「次のどのタスクを消化するべきか？」であなたは悩む必要はありません。")),
                         $span("poem-image")("🧠"),
                     ]),
-                    $div("poem")
-                    ([
-                        $span("poem-title")(locale.string("アカウント不要")),
-                        $span("poem-subtitle")(locale.string("いますぐ使えます")),
-                        $span("poem-description")(locale.string("Cyclic ToDo はアカウント登録やログイン不要でいますぐに使えます。[新しい ToDo リスト]ボタンをクリックしてください。")),
-                        $span("poem-image")("🚀"),
-                    ]),
+                    poem("no-account"),
                     $div("poem")
                     ([
                         $span("poem-title")(locale.string("履歴")),
