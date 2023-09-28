@@ -7016,20 +7016,14 @@ export module CyclicToDo
                     poem("beta"),
                     $div("poem")
                     ([
-                        $span("poem-title")(locale.string("備忘録と提案")),
+                        $span("poem-title")(locale.string("スマートな表示順")),
                         $span("poem-subtitle")(locale.string("あなたは実行するだけ")),
                         $span("poem-description")(locale.string("自動タグ設定や過去の履歴から「そろそろ実行するタイミングだと予測されるタスク」を優先的に表示するので、次に実行するべきタスクを簡単に把握できます。")),
                         $span("poem-image")("🧠"),
                     ]),
                     poem("no-account"),
                     poem("hisotry"),
-                    $div("poem")
-                    ([
-                        $span("poem-title")(locale.string("ToDo リスト")),
-                        $span("poem-subtitle")(locale.string("複数の ToDo リストが使えます")),
-                        $span("poem-description")(locale.string("個人的なタスクと仕事上のタスクといった大きく前提が異なるモノや、ラーメンやカレーをいつ食べた？といった様な他の情報と混ざって表示されてもノイズになるようなタスクはリストを分けて扱えます。")),
-                        $span("poem-image")("🗄️"),
-                    ]),
+                    poem("list"),
                     $div("poem")
                     ([
                         $span("poem-title")(locale.string("サブリスト")),
