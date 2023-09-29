@@ -7024,13 +7024,7 @@ export module CyclicToDo
                     poem("no-account"),
                     poem("hisotry"),
                     poem("list"),
-                    $div("poem")
-                    ([
-                        $span("poem-title")(locale.string("サブリスト")),
-                        $span("poem-subtitle")(locale.string("購入と消費")),
-                        $span("poem-description")(locale.string("`ビタミン剤`と言うタスクはなんでしょうか？ 購入のタスクとしての`ビタミン剤`と、服用(消費)のタスクとしての`ビタミン剤`がありますよね？ そんな時はサブリストをお使いください。")),
-                        $span("poem-image")("📂"),
-                    ]),
+                    poem("sublist"),
                     $div("poem")
                     ([
                         $span("poem-title")(locale.string("タグ")),
