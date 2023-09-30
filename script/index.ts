@@ -6232,10 +6232,20 @@ export module CyclicToDo
                     children: $tag("button")("default-button main-button long-button")(label("Back to List")),
                 })
             ),
-            messageList
+            $div("poem-list")
             ([
-                messagePanel(labelSpan(locale.string("この画面で表示される最大件数") + `: ${config.maxGroupHistories} / ${list.length}`)),
+                $div("poem")
+                ([
+                    $span("poem-title")(locale.string("この画面で表示される件数")),
+                    $span("poem-subtitle")(`${config.maxGroupHistories} / ${list.length}`),
+                    $span("poem-description")(locale.string("処理パフォーマンスの都合上、この画面で表示される件数には上限があります。")),
+                    $span("poem-image")("🚫"),
+                ]),
             ]),
+            // messageList
+            // ([
+            //     messagePanel(labelSpan(locale.string("この画面で表示される最大件数") + `: ${config.maxGroupHistories} / ${list.length}`)),
+            // ]),
         ]);
         export const historyScreen = async (entry: ToDoTagEntryOld, list: { task: string, tick: number | null }[], filter: string): Promise<ScreenSource> =>
         ({
