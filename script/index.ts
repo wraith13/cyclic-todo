@@ -7076,6 +7076,13 @@ export module CyclicToDo
                     ]),
                     $div("poem")
                     ([
+                        $span("poem-title")(locale.string("Local Storage")),
+                        $span("poem-subtitle")(locale.string("Webブラウザに保存されてます")),
+                        $span("poem-description")(locale.string("情報はすべて Web ブラウザの Local Storage に保存されています。 Web ブラウザのクッキーなどを消す操作を行うとゴミ箱も含めて ToDo リストの情報が全て削除されるのでご注意下さい。")),
+                        $span("poem-image")("🔥"),
+                    ]),
+                    $div("poem")
+                    ([
                         $span("poem-title")(locale.string("evil-timer.js")),
                         $span("poem-subtitle")(locale.string("時間を支配できます")),
                         $span("poem-description")(locale.string("evil-timer.js を組み込んであるので、時間経過に伴う Cyclic ToDo の細かい挙動を簡単に確認できます。")),
