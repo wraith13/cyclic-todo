@@ -4335,7 +4335,6 @@ export module CyclicToDo
                         children: popup,
                         onclick: close,
                     });
-                    cover
                 },
             });
             // return [ button, popup, ];
@@ -7120,13 +7119,13 @@ export module CyclicToDo
                         $span("poem-description")(locale.string("削除してしまったアイテムも３０日以内ならゴミ箱から復元できます。")),
                         $span("poem-image")("🗑️"),
                     ]),
-                    $div("poem")
-                    ([
-                        $span("poem-title")(locale.string("Local Storage")),
-                        $span("poem-subtitle")(locale.string("Webブラウザに保存されてます")),
-                        $span("poem-description")(locale.string("情報はすべて Web ブラウザの Local Storage に保存されています。 Web ブラウザのクッキーなどを消す操作を行うとゴミ箱も含めて ToDo リストの情報が全て削除されるのでご注意下さい。")),
-                        $span("poem-image")("🔥"),
-                    ]),
+                    poem
+                    ({
+                        title: locale.string("Local Storage"),
+                        subtitle: locale.string("Webブラウザに保存されてます"),
+                        description: locale.string("情報はすべて Web ブラウザの Local Storage に保存されています。 Web ブラウザのクッキーなどを消す操作を行うとゴミ箱も含めて ToDo リストの情報が全て削除されるのでご注意下さい。"),
+                        image: "🔥",
+                    }),
                     poem
                     ({
                         title: locale.string("evil-timer.js"),
