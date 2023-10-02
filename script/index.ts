@@ -26,6 +26,8 @@ export const makeObject = <T>(items: { key: string, value: T}[]) =>
     items.forEach(i => result[i.key] = i.value);
     return result;
 };
+export const JsonHeader = "JSON:";
+export const stringOrJson = <T>(text: string): string | T => text.startsWith(JsonHeader) ? JSON.parse(text.substring(JsonHeader.length)): text;
 export const simpleComparer = minamo.core.comparer.basic;
 export const simpleReverseComparer = minamo.core.comparer.reverse(minamo.core.comparer.basic);
 export const uniqueFilter = <T>(value: T, index: number, list: T[]) => index === list.indexOf(value);
@@ -4299,6 +4301,10 @@ export module CyclicToDo
             ({
                 tag: "button",
                 className: "menu-button",
+                attributes:
+                {
+                    tabindex: "0",
+                },
                 children:
                 [
                     await Resource.loadSvgOrCache("ellipsis-icon"),
@@ -4851,6 +4857,10 @@ export module CyclicToDo
                             {
                                 tag: "button",
                                 className: item.isDefault ? "default-button main-button": "main-button",
+                                attributes:
+                                {
+                                    tabindex: "0",
+                                },
                                 children: label("Done"),
                                 onclick: async () =>
                                 {
@@ -6234,13 +6244,27 @@ export module CyclicToDo
             ),
             $div("poem-list")
             ([
-                $div("poem")
-                ([
-                    $span("poem-title")(locale.string("この画面で表示される件数")),
-                    $span("poem-subtitle")(`${config.maxGroupHistories} / ${list.length}`),
-                    $span("poem-description")(locale.string("処理パフォーマンスの都合上、この画面で表示される件数には上限があります。")),
-                    $span("poem-image")("🚫"),
-                ]),
+                poem
+                ({
+                    title: locale.string("この画面で表示される件数"),
+                    subtitle: `${config.maxGroupHistories} / ${list.length}`,
+                    description: locale.string("処理パフォーマンスの都合上、この画面で表示される件数には上限があります。"),
+                    image: "🚫",
+                }),
+                poem
+                ({
+                    title: locale.string("ヘッダーの余白"),
+                    subtitle: locale.string("一番上へスクロール"),
+                    description: locale.string("ヘッダーの余白部分をクリックすると、一番上までスクロールします。また、表示内容が古くなっている場合、表示内容の更新も行われます。"),
+                    image: "⬆️",
+                }),
+                poem
+                ({
+                    title: locale.string("二段ボトムタブ"),
+                    subtitle: locale.string("画面下部のタブ"),
+                    description: locale.string("画面下部のタブは上半分の広い領域をクリックするサブタブが順繰りに表示されます。下半分の狭い領域をクリックすると直接サブタブに移動できます。"),
+                    image: "📑",
+                }),
             ]),
             // messageList
             // ([
@@ -6950,14 +6974,14 @@ export module CyclicToDo
             locale.map(i.message),
             i.reverseWithShiftKey ? [ " ( + ", $span("key monospace")($tag("kbd")({})(`Shift`)), locale.map("Reverse") +" )", ]: "",
         ];
-        export const poem = (data: keyof typeof pomeJson | { title:string, subtitle: string, description: minamo.dom.Source, image: string, }, className: string = ""):minamo.dom.Source =>
+        export const poem = (data: keyof typeof pomeJson | { title:string, subtitle: string, description: minamo.dom.Source, image: string, }, className: string = ""): minamo.dom.Source =>
             "string" === typeof data ?
                 poem
                 (
                     {
                         title:locale.string(`poem.${data}.title`),
                         subtitle: locale.string(`poem.${data}.subtitle`),
-                        description: locale.string(`poem.${data}.description`),
+                        description: stringOrJson<minamo.dom.Source>(locale.string(`poem.${data}.description`)),
                         image: pomeJson[data],
                     },
                     className
@@ -7103,13 +7127,13 @@ export module CyclicToDo
                         $span("poem-description")(locale.string("情報はすべて Web ブラウザの Local Storage に保存されています。 Web ブラウザのクッキーなどを消す操作を行うとゴミ箱も含めて ToDo リストの情報が全て削除されるのでご注意下さい。")),
                         $span("poem-image")("🔥"),
                     ]),
-                    $div("poem")
-                    ([
-                        $span("poem-title")(locale.string("evil-timer.js")),
-                        $span("poem-subtitle")(locale.string("時間を支配できます")),
-                        $span("poem-description")(locale.string("evil-timer.js を組み込んであるので、時間経過に伴う Cyclic ToDo の細かい挙動を簡単に確認できます。")),
-                        $span("poem-image")("👿"),
-                    ]),
+                    poem
+                    ({
+                        title: locale.string("evil-timer.js"),
+                        subtitle: locale.string("時間を支配できます"),
+                        description: { tag:"span", children: [ { tag:"a", href:"https://github.com/wraith13/evil-timer.js", target:"_blank", children: "evil-timer.js", }, " を組み込んであるので、時間経過に伴う Cyclic ToDo の細かい挙動を簡単に確認できます。", ]},
+                        image: "👿",
+                    }),
                 ]),
                 // $div({ style: "text-align: center; padding: 0.5rem;", })
                 //     ("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
