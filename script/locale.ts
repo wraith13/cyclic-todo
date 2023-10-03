@@ -13,17 +13,14 @@ export module locale
         keyof typeof localeJa;
     export type LocaleType = keyof typeof master;
     export const locales = Object.keys(master) as LocaleType[];
-    let masterKey: LocaleType = 0 <= locales.indexOf(navigator.language as LocaleType) ?
-        navigator.language as LocaleType:
-        locales[0];
+    let masterKey: LocaleType = locales[0];
     export const getLocaleName = (locale: "@auto" | LocaleType) =>
         "@auto" === locale ? map("language.auto"): master[locale].$name;
-    export const setLocale = (locale: LocaleType | null) =>
+    export const setLocale = (locale: LocaleType) =>
     {
-        const key = locale ?? navigator.language as LocaleType;
-        if (0 <= locales.indexOf(key))
+        if (0 <= locales.indexOf(locale))
         {
-            masterKey = key;
+            masterKey = locale;
         }
     };
     export const string = (key : string) : string => master[masterKey][key as LocaleKeyType] || key;

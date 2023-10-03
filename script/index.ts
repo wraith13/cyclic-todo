@@ -4,6 +4,10 @@ import pomeJson from "../resource/poem.json";
 import style from "../resource/style.json";
 import { locale } from "./locale";
 import resource from "../resource/images.json";
+export const setLocale = (lang: locale.LocaleType | null) =>
+{
+    locale.setLocale(lang ?? navigator.language as locale.LocaleType);
+};
 import keyboardShortcutsJson from "../resource/keyboard.shortcuts.json";
 export const keyboardShortcuts = keyboardShortcutsJson as keyboardShortcutsItem[];
 export type KeyboardShortcutsContext = "whenever" | "with filter" | "with list" | "with tag";
@@ -3489,7 +3493,7 @@ export module CyclicToDo
                                 {
                                     if (await localeSettingsPopup())
                                     {
-                                        locale.setLocale(Storage.SystemSettings.get().locale ?? null);
+                                        setLocale(Storage.SystemSettings.get().locale ?? null);
                                         result = true;
                                         await update();
                                     }
@@ -7197,8 +7201,8 @@ export module CyclicToDo
         };
         export type UpdateWindowEventEype = "high-resolution-timer" | "timer" | "scroll" | "storage" | "focus" | "blur" | "operate" | "dirty" | "click-header";
         export let updateWindow: (event: UpdateWindowEventEype) => unknown;
-        let updateWindowTimer: number;
-        let updateHighResolutionTimer: number;
+        let updateWindowTimer: NodeJS.Timeout;
+        let updateHighResolutionTimer: NodeJS.Timeout;
         let previousScrollTop: number = 0;
         export const getHeaderElement = () => document.getElementById("screen-header") as HTMLDivElement;
         export const showWindow = async (screen: ScreenSource, updateWindow?: (event: UpdateWindowEventEype) => unknown) =>
@@ -7287,7 +7291,7 @@ export module CyclicToDo
         export interface Toast
         {
             dom: HTMLDivElement;
-            timer: number | null;
+            timer: NodeJS.Timeout | null;
             hide: ()  => Promise<unknown>;
         }
         const toastMap: { [id: string]: Toast } = { };
@@ -7344,7 +7348,7 @@ export module CyclicToDo
                 }
             };
             const wait = data.wait ?? 5000;
-            const result =
+            const result: Toast =
             {
                 dom,
                 timer: 0 < wait ? setTimeout
@@ -7572,7 +7576,7 @@ export module CyclicToDo
         };
         let isPressedShift: boolean = false;
         let pausedToastList: Toast[] = [];
-        let releaseToastsTimer = 0;
+        let releaseToastsTimer: NodeJS.Timeout = 0 as unknown as NodeJS.Timeout;
         export const releaseToasts = () =>
         {
             if (releaseToastsTimer)
@@ -7821,7 +7825,7 @@ export module CyclicToDo
                                 const next = <"@auto" | locale.LocaleType>destinationItem(list, current);
                                 settings.locale = defaultLanguage === next ? undefined: <locale.LocaleType>next;
                                 Storage.SystemSettings.set(settings);
-                                locale.setLocale(settings.locale ?? null);
+                                setLocale(settings.locale ?? null);
                                 reload(); // no wait
                                 const toast = makeToast
                                 ({
@@ -7834,7 +7838,7 @@ export module CyclicToDo
                                             const settings = Storage.SystemSettings.get();
                                             settings.locale = defaultLanguage === current ? undefined: current;
                                             Storage.SystemSettings.set(settings);
-                                            locale.setLocale(settings.locale ?? null);
+                                            setLocale(settings.locale ?? null);
                                             toast.hide(); // nowait
                                             await reload();
                                         }
@@ -8060,7 +8064,7 @@ export module CyclicToDo
             }
             scroll = json["scroll"];
         }
-        locale.setLocale(Storage.SystemSettings.get().locale ?? null);
+        setLocale(Storage.SystemSettings.get().locale ?? null);
         window.onpopstate = () => showPage();
         window.addEventListener('resize', Render.onWindowResize);
         window.addEventListener('focus', Render.onWindowFocus);

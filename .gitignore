@@ -2,7 +2,12 @@
 .DS_Store
 /node_modules/*
 /private/*
+build/index.js
+build/index.js.map
 script/index.js
+script/index.js.map
+script/locale.js
+script/locale.js.map
 style/primary.css
 style/theme.dark.css
 style/theme.light.css
