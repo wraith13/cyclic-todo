@@ -2,8 +2,7 @@ import { minamo } from "../nephila/minamo.js";
 import config from "../resource/config.json";
 import pomeJson from "../resource/poem.json";
 import style from "../resource/style.json";
-import localeEn from "../resource/lang.en.json";
-import localeJa from "../resource/lang.ja.json";
+import { locale } from "./locale";
 import resource from "../resource/images.json";
 import keyboardShortcutsJson from "../resource/keyboard.shortcuts.json";
 export const keyboardShortcuts = keyboardShortcutsJson as keyboardShortcutsItem[];
@@ -39,35 +38,6 @@ export const nextItem = <T>(list: T[], current: T): T => list[(list.indexOf(curr
 export const previousItem = <T>(list: T[], current: T): T => list[(list.indexOf(current) +(list.length -1)) %list.length];
 export const groupBy = <T, G>(list: T[], getGroup: (i: T) => G): { group: G, list: T[], }[] =>
     list.map(i => getGroup(i)).filter(uniqueFilter).map(group => ({ group, list: list.filter(i => group === getGroup(i))}));
-export module locale
-{
-    export const master =
-    {
-        en: localeEn,
-        ja: localeJa,
-    };
-    export type LocaleKeyType =
-        keyof typeof localeEn &
-        keyof typeof localeJa;
-    export type LocaleType = keyof typeof master;
-    export const locales = Object.keys(master) as LocaleType[];
-    let masterKey: LocaleType = 0 <= locales.indexOf(navigator.language as LocaleType) ?
-        navigator.language as LocaleType:
-        locales[0];
-    export const getLocaleName = (locale: "@auto" | LocaleType) =>
-        "@auto" === locale ? map("language.auto"): master[locale].$name;
-    export const setLocale = (locale: LocaleType | null) =>
-    {
-        const key = locale ?? navigator.language as LocaleType;
-        if (0 <= locales.indexOf(key))
-        {
-            masterKey = key;
-        }
-    };
-    export const string = (key : string) : string => master[masterKey][key as LocaleKeyType] || key;
-    export const map = (key : LocaleKeyType) : string => string(key);
-    export const immutable = (key : string) : string => key;
-}
 export module Calculate
 {
     export const phi = 1.618033988749894;

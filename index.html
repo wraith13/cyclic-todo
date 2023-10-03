@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Tue Oct 03 2023 08:13:11 GMT+0900 (日本標準時)
+    build at: Tue Oct 03 2023 21:38:53 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -1347,7 +1347,22 @@ body.light .bottom-tabs .bottom-tab + .bottom-tab {
   border-left-width: 0px;
 }
 body.light .main-button {
-  min-width: 8rem;
+  min-width: 7rem;
+}
+@media (max-width: 780px) {
+  body.light .main-button {
+    min-width: 6rem;
+  }
+}
+@media (max-width: 710px) {
+  body.light .main-button {
+    min-width: 5rem;
+  }
+}
+@media (max-width: 640px) {
+  body.light .main-button {
+    min-width: 4rem;
+  }
 }
 body.light .text-button {
   cursor: pointer;
@@ -4250,7 +4265,22 @@ body.dark .bottom-tabs .bottom-tab + .bottom-tab {
   border-left-width: 0px;
 }
 body.dark .main-button {
-  min-width: 8rem;
+  min-width: 7rem;
+}
+@media (max-width: 780px) {
+  body.dark .main-button {
+    min-width: 6rem;
+  }
+}
+@media (max-width: 710px) {
+  body.dark .main-button {
+    min-width: 5rem;
+  }
+}
+@media (max-width: 640px) {
+  body.dark .main-button {
+    min-width: 4rem;
+  }
 }
 body.dark .text-button {
   cursor: pointer;
@@ -6669,13 +6699,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
         to[j] = from[i];
     return to;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 define("nephila/minamo.js/index", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -8214,6 +8244,36 @@ define("resource/lang.ja", [], {
     "A tag with that name already exists.": "その名前のタグは既に存在しています。",
     "A sublist with that name already exists.": "その名前のサブリストは既に存在しています。"
 });
+define("script/locale", ["require", "exports", "resource/lang.en", "resource/lang.ja"], function (require, exports, lang_en_json_1, lang_ja_json_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.locale = void 0;
+    lang_en_json_1 = __importDefault(lang_en_json_1);
+    lang_ja_json_1 = __importDefault(lang_ja_json_1);
+    var locale;
+    (function (locale_1) {
+        locale_1.master = {
+            en: lang_en_json_1.default,
+            ja: lang_ja_json_1.default,
+        };
+        locale_1.locales = Object.keys(locale_1.master);
+        var masterKey = 0 <= locale_1.locales.indexOf(navigator.language) ?
+            navigator.language :
+            locale_1.locales[0];
+        locale_1.getLocaleName = function (locale) {
+            return "@auto" === locale ? locale_1.map("language.auto") : locale_1.master[locale].$name;
+        };
+        locale_1.setLocale = function (locale) {
+            var key = locale !== null && locale !== void 0 ? locale : navigator.language;
+            if (0 <= locale_1.locales.indexOf(key)) {
+                masterKey = key;
+            }
+        };
+        locale_1.string = function (key) { return locale_1.master[masterKey][key] || key; };
+        locale_1.map = function (key) { return locale_1.string(key); };
+        locale_1.immutable = function (key) { return key; };
+    })(locale = exports.locale || (exports.locale = {}));
+});
 define("resource/images", [], {
     "application-icon": "./image/cyclictodohex.1024.svg",
     "ellipsis-icon": "./image/ellipsis.1024.svg",
@@ -8363,15 +8423,13 @@ define("resource/keyboard.shortcuts", [], [
         "reverseWithShiftKey": true
     }
 ]);
-define("script/index", ["require", "exports", "nephila/minamo.js/index", "resource/config", "resource/poem", "resource/style", "resource/lang.en", "resource/lang.ja", "resource/keyboard.shortcuts"], function (require, exports, minamo_js_1, config_json_1, poem_json_1, style_json_1, lang_en_json_1, lang_ja_json_1, keyboard_shortcuts_json_1) {
+define("script/index", ["require", "exports", "nephila/minamo.js/index", "resource/config", "resource/poem", "resource/style", "script/locale", "resource/keyboard.shortcuts"], function (require, exports, minamo_js_1, config_json_1, poem_json_1, style_json_1, locale_2, keyboard_shortcuts_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.CyclicToDo = exports.Calculate = exports.locale = exports.groupBy = exports.previousItem = exports.nextItem = exports.isValidNumber = exports.isNumber = exports.toPercentSting = exports.takeFilter = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.stringOrJson = exports.JsonHeader = exports.makeObject = exports.getKeyboardShortcutsCategoryLocale = exports.keyboardShortcuts = void 0;
+    exports.CyclicToDo = exports.Calculate = exports.groupBy = exports.previousItem = exports.nextItem = exports.isValidNumber = exports.isNumber = exports.toPercentSting = exports.takeFilter = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.stringOrJson = exports.JsonHeader = exports.makeObject = exports.getKeyboardShortcutsCategoryLocale = exports.keyboardShortcuts = void 0;
     config_json_1 = __importDefault(config_json_1);
     poem_json_1 = __importDefault(poem_json_1);
     style_json_1 = __importDefault(style_json_1);
-    lang_en_json_1 = __importDefault(lang_en_json_1);
-    lang_ja_json_1 = __importDefault(lang_ja_json_1);
     keyboard_shortcuts_json_1 = __importDefault(keyboard_shortcuts_json_1);
     exports.keyboardShortcuts = keyboard_shortcuts_json_1.default;
     var getKeyboardShortcutsCategoryLocale = function (key) {
@@ -8407,29 +8465,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
         return list.map(function (i) { return getGroup(i); }).filter(exports.uniqueFilter).map(function (group) { return ({ group: group, list: list.filter(function (i) { return group === getGroup(i); }) }); });
     };
     exports.groupBy = groupBy;
-    var locale;
-    (function (locale_1) {
-        locale_1.master = {
-            en: lang_en_json_1.default,
-            ja: lang_ja_json_1.default,
-        };
-        locale_1.locales = Object.keys(locale_1.master);
-        var masterKey = 0 <= locale_1.locales.indexOf(navigator.language) ?
-            navigator.language :
-            locale_1.locales[0];
-        locale_1.getLocaleName = function (locale) {
-            return "@auto" === locale ? locale_1.map("language.auto") : locale_1.master[locale].$name;
-        };
-        locale_1.setLocale = function (locale) {
-            var key = locale !== null && locale !== void 0 ? locale : navigator.language;
-            if (0 <= locale_1.locales.indexOf(key)) {
-                masterKey = key;
-            }
-        };
-        locale_1.string = function (key) { return locale_1.master[masterKey][key] || key; };
-        locale_1.map = function (key) { return locale_1.string(key); };
-        locale_1.immutable = function (key) { return key; };
-    })(locale = exports.locale || (exports.locale = {}));
     var Calculate;
     (function (Calculate) {
         Calculate.phi = 1.618033988749894;
@@ -8645,7 +8680,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             var Title;
             (function (Title) {
                 Title.makeKey = function (pass) { return "pass:(" + pass + ").title"; };
-                Title.get = function (pass) { var _a; return (_a = OldStorage.getStorage(pass).getOrNull(Title.makeKey(pass))) !== null && _a !== void 0 ? _a : locale.map("ToDo List"); };
+                Title.get = function (pass) { var _a; return (_a = OldStorage.getStorage(pass).getOrNull(Title.makeKey(pass))) !== null && _a !== void 0 ? _a : locale_2.locale.map("ToDo List"); };
                 Title.set = function (pass, title) {
                     return OldStorage.getStorage(pass).set(Title.makeKey(pass), title);
                 };
@@ -9106,7 +9141,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                     return result;
                 };
-                Removed.getTypeName = function (item) { return locale.map(item.type); };
+                Removed.getTypeName = function (item) { return locale_2.locale.map(item.type); };
                 Removed.getIcon = function (item) {
                     switch (item.type) {
                         case "Tag":
@@ -9416,7 +9451,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         // singleCommit: async (updator: updator_type) => this.transaction.make().add(updator).commit(),
                     };
                     this.title = {
-                        get: function () { var _a; return (_a = _this.content.title) !== null && _a !== void 0 ? _a : locale.map("ToDo List"); },
+                        get: function () { var _a; return (_a = _this.content.title) !== null && _a !== void 0 ? _a : locale_2.locale.map("ToDo List"); },
                         updator: function (title) {
                             return function (content) { return content.title = title; };
                         },
@@ -9864,7 +9899,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 }
                 else {
                     var date = new Date(tick * Domain.timeAccuracy);
-                    return locale.map("week.short." + date.getDay());
+                    return locale_2.locale.map("week.short." + date.getDay());
                 }
             };
             function getTime(tick) {
@@ -9920,9 +9955,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 else {
                     var days = Math.floor(tick / (24 * 60));
                     return 10 <= days ?
-                        days.toLocaleString() + " " + locale.map("days") :
+                        days.toLocaleString() + " " + locale_2.locale.map("days") :
                         0 < days ?
-                            days.toLocaleString() + " " + locale.map("days") + " " + Domain.timeCoreStringFromTick(tick) :
+                            days.toLocaleString() + " " + locale_2.locale.map("days") + " " + Domain.timeCoreStringFromTick(tick) :
                             Domain.timeCoreStringFromTick(tick);
                 }
             };
@@ -9936,7 +9971,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 else {
                     var days = Math.floor(tick / (24 * 60));
                     return 0 < days ?
-                        days.toLocaleString() + " " + locale.map("days") + " " + Domain.timeCoreStringFromTick(tick) :
+                        days.toLocaleString() + " " + locale_2.locale.map("days") + " " + Domain.timeCoreStringFromTick(tick) :
                         Domain.timeCoreStringFromTick(tick);
                 }
             };
@@ -9984,7 +10019,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     case "@deleted":
                     case "@new":
                     case "@new-sublist":
-                        return locale.map(tag);
+                        return locale_2.locale.map(tag);
                     default:
                         return Model.decodeSublist(tag);
                 }
@@ -10348,19 +10383,19 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             switch (_a.label) {
                                 case 0:
                                     backup = MigrateBridge.Title.get(pass);
-                                    return [4 /*yield*/, Render.withUpdateProgress(Render.$span("")(locale.map("Storing")), new MigrateBridge.Transaction(pass)
+                                    return [4 /*yield*/, Render.withUpdateProgress(Render.$span("")(locale_2.locale.map("Storing")), new MigrateBridge.Transaction(pass)
                                             .add(MigrateBridge.Title.updator(pass, newName))
                                             .commit())];
                                 case 1:
                                     _a.sent();
                                     toast = Render.makeToast({
-                                        content: Render.$span("")(locale.map("ToDo list has been renamed!") + ": " + backup + " \u2192 " + newName),
+                                        content: Render.$span("")(locale_2.locale.map("ToDo list has been renamed!") + ": " + backup + " \u2192 " + newName),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
                                                     case 0:
                                                         toast.hide(); // nowait
-                                                        return [4 /*yield*/, Render.withUpdateProgress(Render.$span("")(locale.map("Storing")), new MigrateBridge.Transaction(pass)
+                                                        return [4 /*yield*/, Render.withUpdateProgress(Render.$span("")(locale_2.locale.map("Storing")), new MigrateBridge.Transaction(pass)
                                                                 .add(MigrateBridge.Title.updator(pass, backup))
                                                                 .commit())];
                                                     case 1:
@@ -10385,7 +10420,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             list = JSON.parse(MigrateBridge.exportJson(pass));
                             OldStorage.Pass.remove(list.pass);
                             toast = Render.makeToast({
-                                content: Render.$span("")(locale.map("ToDo list has been deleted!") + ": " + list.title),
+                                content: Render.$span("")(locale_2.locale.map("ToDo list has been deleted!") + ": " + list.title),
                                 backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         OldStorage.importJson(JSON.stringify(list));
@@ -10417,7 +10452,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         }
                         MigrateBridge.updateTermCategory(pass, MigrateBridge.getToDoEntry(pass, task));
                         toast = Render.makeToast({
-                            content: Render.$span("")(locale.map("Done!") + ": " + Model.decode(task)),
+                            content: Render.$span("")(locale_2.locale.map("Done!") + ": " + Model.decode(task)),
                             backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     OldStorage.History.removeTickRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
@@ -10478,7 +10513,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         backup = Storage.Filter.get();
                         Storage.Filter.set([]);
                         toast = Render.makeToast({
-                            content: Render.$span("")(locale.map("Filter history cleared.")),
+                            content: Render.$span("")(locale_2.locale.map("Filter history cleared.")),
                             backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     Storage.Filter.set(backup);
@@ -10657,7 +10692,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 (_a = progressBarPadDiv === null || progressBarPadDiv === void 0 ? void 0 : progressBarPadDiv.setAttribute) === null || _a === void 0 ? void 0 : _a.call(progressBarPadDiv, "style", Render.progressPadStyle(item.progress));
             };
             Render.labelSpan = Render.$span("label");
-            Render.label = function (text) { return Render.labelSpan(locale.map(text)); };
+            Render.label = function (text) { return Render.labelSpan(locale_2.locale.map(text)); };
             Render.monospace = function (classNameOrValue, labelOrValue, valueOrNothing) {
                 return "string" !== typeof classNameOrValue || undefined === labelOrValue ?
                     Render.$span("value monospace")(classNameOrValue) :
@@ -10696,13 +10731,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     var result = null;
                                     var ui = Render.popup({
                                         children: [
-                                            Render.$tag("h2")("")(message !== null && message !== void 0 ? message : locale.map("please input")),
+                                            Render.$tag("h2")("")(message !== null && message !== void 0 ? message : locale_2.locale.map("please input")),
                                             input,
                                             Render.$div("popup-operator")([
                                                 {
                                                     tag: "button",
                                                     className: "cancel-button",
-                                                    children: locale.map("Cancel"),
+                                                    children: locale_2.locale.map("Cancel"),
                                                     onclick: function () {
                                                         result = null;
                                                         ui.close();
@@ -10711,7 +10746,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 {
                                                     tag: "button",
                                                     className: "default-button",
-                                                    children: locale.map("OK"),
+                                                    children: locale_2.locale.map("OK"),
                                                     onclick: function () {
                                                         result = input.value;
                                                         ui.close();
@@ -10761,7 +10796,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 {
                                                     tag: "button",
                                                     className: "cancel-button",
-                                                    children: locale.map("Cancel"),
+                                                    children: locale_2.locale.map("Cancel"),
                                                     onclick: function () {
                                                         result = null;
                                                         ui.close();
@@ -10770,7 +10805,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 {
                                                     tag: "button",
                                                     className: "default-button",
-                                                    children: locale.map("OK"),
+                                                    children: locale_2.locale.map("OK"),
                                                     onclick: function () {
                                                         result = parseInt(input.value);
                                                         ui.close();
@@ -10791,7 +10826,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 var newList, pass;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a ToDo list's name."), locale.map("ToDo List"))];
+                        case 0: return [4 /*yield*/, Render.prompt(locale_2.locale.map("Input a ToDo list's name."), locale_2.locale.map("ToDo List"))];
                         case 1:
                             newList = _a.sent();
                             if (!(null !== newList)) return [3 /*break*/, 3];
@@ -10809,7 +10844,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 var newTag, tag;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a tag's name."), "")];
+                        case 0: return [4 /*yield*/, Render.prompt(locale_2.locale.map("Input a tag's name."), "")];
                         case 1:
                             newTag = _a.sent();
                             if (null !== newTag) {
@@ -10850,7 +10885,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 {
                                                     tag: "button",
                                                     className: "cancel-button",
-                                                    children: locale.map("Cancel"),
+                                                    children: locale_2.locale.map("Cancel"),
                                                     onclick: function () {
                                                         result = null;
                                                         ui.close();
@@ -10859,7 +10894,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 {
                                                     tag: "button",
                                                     className: "default-button",
-                                                    children: locale.map("OK"),
+                                                    children: locale_2.locale.map("OK"),
                                                     onclick: function () {
                                                         result = inputDate.value + "T" + inputTime.value;
                                                         ui.close();
@@ -10908,7 +10943,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 {
                                                     tag: "button",
                                                     className: "cancel-button",
-                                                    children: locale.map("Cancel"),
+                                                    children: locale_2.locale.map("Cancel"),
                                                     onclick: function () {
                                                         result = null;
                                                         ui.close();
@@ -10917,7 +10952,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 {
                                                     tag: "button",
                                                     className: "default-button",
-                                                    children: locale.map("OK"),
+                                                    children: locale_2.locale.map("OK"),
                                                     onclick: function () {
                                                         var day = parseInt(inputDate.value);
                                                         var time = Domain.parseTimeSpan(inputTime.value);
@@ -11132,7 +11167,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             var sublist, tag;
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
-                                                                    case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a sublist's name."), "")];
+                                                                    case 0: return [4 /*yield*/, Render.prompt(locale_2.locale.map("Input a sublist's name."), "")];
                                                                     case 1:
                                                                         sublist = _a.sent();
                                                                         if (null !== sublist) {
@@ -11530,7 +11565,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                         }); },
                                                                         _e)
                                                                 ];
-                                                                return [4 /*yield*/, Promise.all(locale.locales.map(function (key) { return __awaiter(_this, void 0, void 0, function () {
+                                                                return [4 /*yield*/, Promise.all(locale_2.locale.locales.map(function (key) { return __awaiter(_this, void 0, void 0, function () {
                                                                         var _a;
                                                                         var _this = this;
                                                                         var _b;
@@ -11544,7 +11579,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                     return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                                 case 1: return [2 /*return*/, (_a.children = [
                                                                                         _c.sent(),
-                                                                                        Render.$span("")(Render.labelSpan(locale.getLocaleName(key)))
+                                                                                        Render.$span("")(Render.labelSpan(locale_2.locale.getLocaleName(key)))
                                                                                     ],
                                                                                         _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
                                                                                             var _a;
@@ -11608,7 +11643,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a ToDo's name."), _default)];
+                        case 0: return [4 /*yield*/, Render.prompt(locale_2.locale.map("Input a ToDo's name."), _default)];
                         case 1:
                             newTask = _a.sent();
                             if (null !== newTask) {
@@ -11618,7 +11653,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     newTask2_1 = OldStorage.TagMember.add(entry.pass, entry.tag, encodedNewTask_1);
                                     Render.updateWindow("operate");
                                     toast_1 = Render.makeToast({
-                                        content: Render.$span("")(locale.map("ToDo has been created!") + ": " + OldStorage.Task.decode(newTask2_1)),
+                                        content: Render.$span("")(locale_2.locale.map("ToDo has been created!") + ": " + OldStorage.Task.decode(newTask2_1)),
                                         forwardOperator: Render.textButton("Done", function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
@@ -11765,7 +11800,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                         {
                                                             tag: "button",
                                                             className: "label-button",
-                                                            children: Render.monospace("auto-tag-flash", Render.label("Language setting"), Render.$span("")(locale.getLocaleName((_d = settings.locale) !== null && _d !== void 0 ? _d : "@auto"))),
+                                                            children: Render.monospace("auto-tag-flash", Render.label("Language setting"), Render.$span("")(locale_2.locale.getLocaleName((_d = settings.locale) !== null && _d !== void 0 ? _d : "@auto"))),
                                                             onclick: function () { return __awaiter(_this, void 0, void 0, function () {
                                                                 var _a;
                                                                 return __generator(this, function (_b) {
@@ -11773,7 +11808,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                         case 0: return [4 /*yield*/, Render.localeSettingsPopup()];
                                                                         case 1:
                                                                             if (!_b.sent()) return [3 /*break*/, 3];
-                                                                            locale.setLocale((_a = Storage.SystemSettings.get().locale) !== null && _a !== void 0 ? _a : null);
+                                                                            locale_2.locale.setLocale((_a = Storage.SystemSettings.get().locale) !== null && _a !== void 0 ? _a : null);
                                                                             result = true;
                                                                             return [4 /*yield*/, update()];
                                                                         case 2:
@@ -11913,8 +11948,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 // className: "add-remove-tags-popup",
                                                 children: [
                                                     Render.$tag("h2")("")(Model.isHomeOld(tag) ?
-                                                        locale.map(Render.getTagSettingTitle(tag)) :
-                                                        locale.map(Render.getTagSettingTitle(tag)) + ": " + Domain.tagMap(tag)),
+                                                        locale_2.locale.map(Render.getTagSettingTitle(tag)) :
+                                                        locale_2.locale.map(Render.getTagSettingTitle(tag)) + ": " + Domain.tagMap(tag)),
                                                     buttonList,
                                                     Render.$div("popup-operator")([{
                                                             tag: "button",
@@ -12025,7 +12060,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 ui = Render.popup({
                                                     // className: "add-remove-tags-popup",
                                                     children: [
-                                                        Render.$tag("h2")("")(locale.map("Sort order setting") + ": " + Domain.tagMap(tag)),
+                                                        Render.$tag("h2")("")(locale_2.locale.map("Sort order setting") + ": " + Domain.tagMap(tag)),
                                                         tagButtonList,
                                                         Render.$div("popup-operator")([{
                                                                 tag: "button",
@@ -12131,7 +12166,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 ui = Render.popup({
                                                     // className: "add-remove-tags-popup",
                                                     children: [
-                                                        Render.$tag("h2")("")(locale.map("Display style setting") + ": " + Domain.tagMap(tag)),
+                                                        Render.$tag("h2")("")(locale_2.locale.map("Display style setting") + ": " + Domain.tagMap(tag)),
                                                         tagButtonList,
                                                         Render.$div("popup-operator")([{
                                                                 tag: "button",
@@ -12237,7 +12272,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 ui = Render.popup({
                                                     // className: "add-remove-tags-popup",
                                                     children: [
-                                                        Render.$tag("h2")("")(locale.map("Progress scale style setting") + ": " + Domain.tagMap(tag)),
+                                                        Render.$tag("h2")("")(locale_2.locale.map("Progress scale style setting") + ": " + Domain.tagMap(tag)),
                                                         tagButtonList,
                                                         Render.$div("popup-operator")([{
                                                                 tag: "button",
@@ -12373,7 +12408,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                             switch (_e.label) {
                                                                                                 case 0:
                                                                                                     if (!("elapsed-time" === (i === null || i === void 0 ? void 0 : i.type) && !exports.isValidNumber(i === null || i === void 0 ? void 0 : i.elapsedTime))) return [3 /*break*/, 5];
-                                                                                                    return [4 /*yield*/, Render.dateTimeSpanPrompt(locale.map("pickup.elapsed-time"), (_b = (_a = getter()) === null || _a === void 0 ? void 0 : _a.elapsedTime) !== null && _b !== void 0 ? _b : 0)];
+                                                                                                    return [4 /*yield*/, Render.dateTimeSpanPrompt(locale_2.locale.map("pickup.elapsed-time"), (_b = (_a = getter()) === null || _a === void 0 ? void 0 : _a.elapsedTime) !== null && _b !== void 0 ? _b : 0)];
                                                                                                 case 1:
                                                                                                     elapsedTime = _e.sent();
                                                                                                     if (!(null !== elapsedTime)) return [3 /*break*/, 4];
@@ -12388,7 +12423,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                                 case 4: return [3 /*break*/, 13];
                                                                                                 case 5:
                                                                                                     if (!("elapsed-time-standard-score" === (i === null || i === void 0 ? void 0 : i.type) && !exports.isValidNumber(i === null || i === void 0 ? void 0 : i.elapsedTimeStandardScore))) return [3 /*break*/, 10];
-                                                                                                    return [4 /*yield*/, Render.numberPrompt(locale.map("pickup.elapsed-time-standard-score"), (_d = (_c = getter()) === null || _c === void 0 ? void 0 : _c.elapsedTimeStandardScore) !== null && _d !== void 0 ? _d : 50, { min: 0, max: 100, })];
+                                                                                                    return [4 /*yield*/, Render.numberPrompt(locale_2.locale.map("pickup.elapsed-time-standard-score"), (_d = (_c = getter()) === null || _c === void 0 ? void 0 : _c.elapsedTimeStandardScore) !== null && _d !== void 0 ? _d : 50, { min: 0, max: 100, })];
                                                                                                 case 6:
                                                                                                     elapsedTimeStandardScore = _e.sent();
                                                                                                     if (!(null !== elapsedTimeStandardScore)) return [3 /*break*/, 9];
@@ -12427,7 +12462,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             ui = Render.popup({
                                                 // className: "add-remove-tags-popup",
                                                 children: [
-                                                    Render.$tag("h2")("")(locale.map(title) + ": " + Model.decode(entry.task)),
+                                                    Render.$tag("h2")("")(locale_2.locale.map(title) + ": " + Model.decode(entry.task)),
                                                     buttonList,
                                                     Render.$div("popup-operator")([{
                                                             tag: "button",
@@ -12628,7 +12663,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 ui = Render.popup({
                                                     // className: "add-remove-tags-popup",
                                                     children: [
-                                                        Render.$tag("h2")("")(locale.map("Auto tag setting") + ": " + Model.decode(entry.task)),
+                                                        Render.$tag("h2")("")(locale_2.locale.map("Auto tag setting") + ": " + Model.decode(entry.task)),
                                                         buttonList,
                                                         Render.$div("popup-operator")([{
                                                                 tag: "button",
@@ -12858,7 +12893,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         case 0:
                             if (!Model.isSublistOld(entry.tag)) return [3 /*break*/, 5];
                             _a = minamo_js_1.minamo.core.nullable(Model.encodeSublist);
-                            return [4 /*yield*/, Render.prompt(locale.map("Input a tag's name."), Model.decodeSublist(entry.tag))];
+                            return [4 /*yield*/, Render.prompt(locale_2.locale.map("Input a tag's name."), Model.decodeSublist(entry.tag))];
                         case 1:
                             newTag = _a.apply(void 0, [_b.sent()]);
                             if (!(null !== newTag && 0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 4];
@@ -12868,10 +12903,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _b.sent();
                             return [3 /*break*/, 4];
                         case 3:
-                            Render.alert(locale.map("A sublist with that name already exists."));
+                            Render.alert(locale_2.locale.map("A sublist with that name already exists."));
                             _b.label = 4;
                         case 4: return [3 /*break*/, 9];
-                        case 5: return [4 /*yield*/, Render.prompt(locale.map("Input a tag's name."), entry.tag)];
+                        case 5: return [4 /*yield*/, Render.prompt(locale_2.locale.map("Input a tag's name."), entry.tag)];
                         case 6:
                             newTag = _b.sent();
                             if (!(null !== newTag && 0 < newTag.length && newTag !== entry.tag)) return [3 /*break*/, 9];
@@ -12881,7 +12916,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _b.sent();
                             return [3 /*break*/, 9];
                         case 8:
-                            Render.alert(locale.map("A tag with that name already exists."));
+                            Render.alert(locale_2.locale.map("A tag with that name already exists."));
                             _b.label = 9;
                         case 9: return [2 /*return*/];
                     }
@@ -12907,7 +12942,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 switch (_c.label) {
                                     case 0:
                                         _b = (_a = Domain).parseDate;
-                                        return [4 /*yield*/, Render.dateTimePrompt(locale.map("Edit"), tick)];
+                                        return [4 /*yield*/, Render.dateTimePrompt(locale_2.locale.map("Edit"), tick)];
                                     case 1:
                                         result = _b.apply(_a, [_c.sent()]);
                                         if (!(null !== result && tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())) return [3 /*break*/, 3];
@@ -13027,7 +13062,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             case 0:
                                 sublist = (_a = OldStorage.Task.getSublist(item.task)) !== null && _a !== void 0 ? _a : "";
                                 oldTask = OldStorage.Task.decode(OldStorage.Task.getBody(item.task));
-                                return [4 /*yield*/, Render.prompt(locale.map("Input a ToDo's name."), oldTask)];
+                                return [4 /*yield*/, Render.prompt(locale_2.locale.map("Input a ToDo's name."), oldTask)];
                             case 1:
                                 newTask = _b.sent();
                                 if (!(null !== newTask && 0 < newTask.length && newTask !== oldTask)) return [3 /*break*/, 4];
@@ -13038,7 +13073,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 _b.sent();
                                 return [3 /*break*/, 4];
                             case 3:
-                                Render.alert(locale.map("A ToDo with that name already exists."));
+                                Render.alert(locale_2.locale.map("A ToDo with that name already exists."));
                                 _b.label = 4;
                             case 4: return [2 /*return*/];
                         }
@@ -13114,7 +13149,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 //Storage.TagMember.add(pass, "@deleted", item.task);
                                 _a.sent();
                                 toast = Render.makeToast({
-                                    content: Render.$span("")(locale.map("ToDo has been deleted!") + ": " + item.task),
+                                    content: Render.$span("")(locale_2.locale.map("ToDo has been deleted!") + ": " + item.task),
                                     backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                         var removedItem;
                                         return __generator(this, function (_a) {
@@ -13463,7 +13498,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 case 0:
                                                     fxxkingTypeScriptCompiler = OldStorage.isSessionPass(entry.pass);
                                                     if (!fxxkingTypeScriptCompiler) return [3 /*break*/, 1];
-                                                    Render.alert(locale.string("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                                                    Render.alert(locale_2.locale.string("This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
                                                         + "\n"
                                                         + "これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。"));
                                                     return [3 /*break*/, 4];
@@ -13705,7 +13740,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _d = [
                                 _b.apply(void 0, [(_e.children = _c.apply(void 0, [[
                                             _f.sent(),
-                                            locale.map("History")
+                                            locale_2.locale.map("History")
                                         ]]),
                                         _e)])
                             ];
@@ -13809,7 +13844,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             }); };
             Render.headerTimestamp = function () {
                 var now = new Date();
-                var day = locale.map("week.short." + now.getDay());
+                var day = locale_2.locale.map("week.short." + now.getDay());
                 var tick = Domain.getTicks(now);
                 return Domain.dateCoreStringFromTick(tick) + "(" + day + ") " + Domain.timeCoreStringFromTick(Domain.getTime(tick)) + ":" + ("00" + now.getSeconds()).slice(-2);
             };
@@ -13994,7 +14029,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         case 4: return [2 /*return*/, _b.apply(_a, [_d.concat([
                                     _f.apply(void 0, [[
                                             _g.sent(),
-                                            Render.labelSpan(locale.map("@deleted")),
+                                            Render.labelSpan(locale_2.locale.map("@deleted")),
                                             Render.monospace("" + OldStorage.Backup.get().length)
                                         ], { hash: "removed" },
                                         pass === "@removed" ? "current-item" : undefined])
@@ -14011,8 +14046,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 "@import": "import-icon",
                             }[pass]) !== null && _a !== void 0 ? _a : "list-icon",
                             title: (_b = {
-                                "@removed": locale.map("@deleted"),
-                                "@import": locale.map("Import List"),
+                                "@removed": locale_2.locale.map("@deleted"),
+                                "@import": locale_2.locale.map("Import List"),
                             }[pass]) !== null && _b !== void 0 ? _b : OldStorage.Title.get(pass),
                             href: { pass: pass, tag: "@overall", },
                             //menu: await screenHeaderListSegmentMenu(pass),
@@ -14031,8 +14066,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     "@import": "import-icon",
                                 }[pass]) !== null && _b !== void 0 ? _b : "list-icon",
                                 title: (_c = {
-                                    "@removed": locale.map("@deleted"),
-                                    "@import": locale.map("Import List"),
+                                    "@removed": locale_2.locale.map("@deleted"),
+                                    "@import": locale_2.locale.map("Import List"),
                                 }[pass]) !== null && _c !== void 0 ? _c : OldStorage.Title.get(pass)
                             };
                             return [4 /*yield*/, Render.screenHeaderListSegmentMenu(pass)];
@@ -14148,7 +14183,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         var sublist, tag;
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
-                                                case 0: return [4 /*yield*/, Render.prompt(locale.map("Input a sublist's name."), "")];
+                                                case 0: return [4 /*yield*/, Render.prompt(locale_2.locale.map("Input a sublist's name."), "")];
                                                 case 1:
                                                     sublist = _a.sent();
                                                     if (!(null !== sublist)) return [3 /*break*/, 3];
@@ -14168,7 +14203,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         case 4: return [2 /*return*/, (_g.menu = _b.apply(_a, [_d.concat([
                                     _f.apply(void 0, [[
                                             _h.sent(),
-                                            Render.labelSpan(locale.map("@deleted")),
+                                            Render.labelSpan(locale_2.locale.map("@deleted")),
                                             Render.monospace("" + OldStorage.Removed.get(pass).length)
                                         ], { pass: pass, hash: "removed" }, current === "@deleted" ? "current-item" : undefined])
                                 ])]),
@@ -14185,7 +14220,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         case 0:
                             _f = {
                                 icon: "@history" === current ? "history-icon" : "task-icon",
-                                title: "@history" === current ? locale.map("History") : Model.decode(current)
+                                title: "@history" === current ? locale_2.locale.map("History") : Model.decode(current)
                             };
                             return [4 /*yield*/, Promise.all(OldStorage.TagMember.get(pass, tag).map(function (task) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
@@ -14243,7 +14278,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         switch (_a.label) {
                             case 0:
                                 oldTitle = OldStorage.Title.get(pass);
-                                return [4 /*yield*/, Render.prompt(locale.map("Input a ToDo list's name."), oldTitle)];
+                                return [4 /*yield*/, Render.prompt(locale_2.locale.map("Input a ToDo list's name."), oldTitle)];
                             case 1:
                                 newTitle = _a.sent();
                                 if (!(null !== newTitle && 0 < newTitle.length && newTitle !== oldTitle)) return [3 /*break*/, 3];
@@ -14425,7 +14460,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 type: "text",
                                 value: init,
                                 className: "filter-text",
-                                placeholder: locale.map("Filter"),
+                                placeholder: locale_2.locale.map("Filter"),
                                 onfocus: onfocus,
                                 onblur: onblur,
                                 onkeyup: function () { return onchange(); },
@@ -14451,7 +14486,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         .concat([{
                                             tag: "button",
                                             className: "delete-button",
-                                            children: locale.map("Clear Filter History"),
+                                            children: locale_2.locale.map("Clear Filter History"),
                                             onclick: function () {
                                                 Operate.clearFilterHistory(function () { return __awaiter(_this, void 0, void 0, function () {
                                                     return __generator(this, function (_a) {
@@ -14651,7 +14686,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         case 1:
                             _e = [
                                 (_f.icon = _j.sent(),
-                                    _f.text = locale.map("@overall"),
+                                    _f.text = locale_2.locale.map("@overall"),
                                     _f.href = { pass: entry.pass, tag: "@overall", },
                                     _f)
                             ];
@@ -14660,7 +14695,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         case 2:
                             _e = _e.concat([
                                 (_g.icon = _j.sent(),
-                                    _g.text = locale.map("History"),
+                                    _g.text = locale_2.locale.map("History"),
                                     _g.href = { pass: entry.pass, tag: "@overall", hash: "history" },
                                     _g)
                             ]);
@@ -14668,7 +14703,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             return [4 /*yield*/, Resource.loadSvgOrCache("recycle-bin-icon")];
                         case 3: return [4 /*yield*/, _d.apply(_c, [_e.concat([
                                     (_h.icon = _j.sent(),
-                                        _h.text = locale.map("@deleted"),
+                                        _h.text = locale_2.locale.map("@deleted"),
                                         _h.href = { pass: entry.pass, hash: "removed", },
                                         _h)
                                 ])])];
@@ -14692,7 +14727,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 _a = {};
                                                 return [4 /*yield*/, Resource.loadTagSvgOrCache(i)];
                                             case 1: return [2 /*return*/, (_a.icon = _b.sent(),
-                                                    _a.text = locale.map(i),
+                                                    _a.text = locale_2.locale.map(i),
                                                     _a.href = { pass: entry.pass, tag: i, },
                                                     _a)];
                                         }
@@ -14718,7 +14753,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 _a = {};
                                                 return [4 /*yield*/, Resource.loadTagSvgOrCache(i)];
                                             case 1: return [2 /*return*/, (_a.icon = _b.sent(),
-                                                    _a.text = locale.map(i),
+                                                    _a.text = locale_2.locale.map(i),
                                                     _a.href = { pass: entry.pass, tag: i, },
                                                     _a)];
                                         }
@@ -15187,21 +15222,21 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 })),
                                 Render.$div("poem-list")([
                                     Render.poem({
-                                        title: locale.string("この画面で表示される件数"),
+                                        title: locale_2.locale.string("この画面で表示される件数"),
                                         subtitle: config_json_1.default.maxGroupHistories + " / " + list.length,
-                                        description: locale.string("処理パフォーマンスの都合上、この画面で表示される件数には上限があります。"),
+                                        description: locale_2.locale.string("処理パフォーマンスの都合上、この画面で表示される件数には上限があります。"),
                                         image: "🚫",
                                     }),
                                     Render.poem({
-                                        title: locale.string("ヘッダーの余白"),
-                                        subtitle: locale.string("一番上へスクロール"),
-                                        description: locale.string("ヘッダーの余白部分をクリックすると、一番上までスクロールします。また、表示内容が古くなっている場合、表示内容の更新も行われます。"),
+                                        title: locale_2.locale.string("ヘッダーの余白"),
+                                        subtitle: locale_2.locale.string("一番上へスクロール"),
+                                        description: locale_2.locale.string("ヘッダーの余白部分をクリックすると、一番上までスクロールします。また、表示内容が古くなっている場合、表示内容の更新も行われます。"),
                                         image: "⬆️",
                                     }),
                                     Render.poem({
-                                        title: locale.string("二段ボトムタブ"),
-                                        subtitle: locale.string("画面下部のタブ"),
-                                        description: locale.string("画面下部のタブは上半分の広い領域をクリックするサブタブが順繰りに表示されます。下半分の狭い領域をクリックすると直接サブタブに移動できます。"),
+                                        title: locale_2.locale.string("二段ボトムタブ"),
+                                        subtitle: locale_2.locale.string("画面下部のタブ"),
+                                        description: locale_2.locale.string("画面下部のタブは上半分の広い領域をクリックするサブタブが順繰りに表示されます。下半分の狭い領域をクリックすると直接サブタブに移動できます。"),
                                         image: "📑",
                                     }),
                                 ])
@@ -15278,7 +15313,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 case 1:
                                                                     _a.sent();
                                                                     return [3 /*break*/, 4];
-                                                                case 2: return [4 /*yield*/, Render.alert(locale.string("復元できませんでした。( 同名の項目が存在すると復元できません。また、サブリスト内の ToDo の場合、元のサブリストが存在している必要があります。 )"))];
+                                                                case 2: return [4 /*yield*/, Render.alert(locale_2.locale.string("復元できませんでした。( 同名の項目が存在すると復元できません。また、サブリスト内の ToDo の場合、元のサブリストが存在している必要があります。 )"))];
                                                                 case 3:
                                                                     _a.sent();
                                                                     _a.label = 4;
@@ -15371,7 +15406,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
                                                         case 0:
-                                                            if (!Render.systemConfirm(locale.map("This action cannot be undone. Do you want to continue?"))) return [3 /*break*/, 2];
+                                                            if (!Render.systemConfirm(locale_2.locale.map("This action cannot be undone. Do you want to continue?"))) return [3 /*break*/, 2];
                                                             OldStorage.Removed.clear(pass);
                                                             return [4 /*yield*/, CyclicToDo.reload()];
                                                         case 1:
@@ -15571,7 +15606,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             case 3: return [2 /*return*/, (_a.concat([
                                     _f.apply(void 0, [_g.sent()]),
                                     Render.messageList([
-                                        Render.messagePanel(Render.labelSpan(locale.map("Maximum number of histories saved") + (": " + config_json_1.default.maxHistories))),
+                                        Render.messagePanel(Render.labelSpan(locale_2.locale.map("Maximum number of histories saved") + (": " + config_json_1.default.maxHistories))),
                                     ])
                                 ]))];
                         }
@@ -15782,7 +15817,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 _d.sent(),
                                 {
                                     icon: "export-icon",
-                                    title: locale.map("Export"),
+                                    title: locale_2.locale.map("Export"),
                                 }
                             ]);
                             return [4 /*yield*/, Render.exportScreenMenu(pass)];
@@ -15839,7 +15874,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 _c.parent = {},
                                 _c),
                                 _b.body = [
-                                    Render.$tag("textarea")({ className: "json", attributes: { placeholder: locale.map("Paste the exported JSON."), }, })(""),
+                                    Render.$tag("textarea")({ className: "json", attributes: { placeholder: locale_2.locale.map("Paste the exported JSON."), }, })(""),
                                     Render.$div("button-list")({
                                         tag: "button",
                                         className: "default-button main-button long-button",
@@ -15876,7 +15911,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     _b.apply(void 0, [[
                                             _c.apply(void 0, [[
                                                     _e.sent(),
-                                                    (_d = list.title) !== null && _d !== void 0 ? _d : locale.map("ToDo List") + " ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )"
+                                                    (_d = list.title) !== null && _d !== void 0 ? _d : locale_2.locale.map("ToDo List") + " ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )"
                                                 ]]),
                                             Render.$div("item-operator")([{
                                                     tag: "button",
@@ -16007,7 +16042,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
                                                         case 0:
-                                                            if (!Render.systemConfirm(locale.map("This action cannot be undone. Do you want to continue?"))) return [3 /*break*/, 2];
+                                                            if (!Render.systemConfirm(locale_2.locale.map("This action cannot be undone. Do you want to continue?"))) return [3 /*break*/, 2];
                                                             OldStorage.Backup.clear();
                                                             return [4 /*yield*/, CyclicToDo.reload()];
                                                         case 1:
@@ -16105,7 +16140,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         case 0:
                             isCanceled = false;
                             loadingToast = Render.makeToast({
-                                content: Render.$span("")(locale.map("Communicating with server...")),
+                                content: Render.$span("")(locale_2.locale.map("Communicating with server...")),
                                 backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         loadingToast.hide(); // nowait
@@ -16178,7 +16213,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 });
             }); };
-            Render.getVersionInfromationText = function () { return locale.immutable("build timestamp") + ": " + Domain.dateStringFromTick(buildTimestamp.tick / Domain.timeAccuracy) + " ( " + Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) / Domain.timeAccuracy) + " " + locale.map("ago") + " )"; };
+            Render.getVersionInfromationText = function () { return locale_2.locale.immutable("build timestamp") + ": " + Domain.dateStringFromTick(buildTimestamp.tick / Domain.timeAccuracy) + " ( " + Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) / Domain.timeAccuracy) + " " + locale_2.locale.map("ago") + " )"; };
             Render.matchKeyboardShortcutsContext = function (urlParams, context) {
                 switch (context) {
                     case "whenever":
@@ -16195,17 +16230,17 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.keyboardShortcutsItem = function (i) {
                 return [
                     Render.$span("key monospace")(i.key.map(function (k) { return Render.$tag("kbd")({})("" + k); })),
-                    locale.map(i.message),
-                    i.reverseWithShiftKey ? [" ( + ", Render.$span("key monospace")(Render.$tag("kbd")({})("Shift")), locale.map("Reverse") + " )",] : "",
+                    locale_2.locale.map(i.message),
+                    i.reverseWithShiftKey ? [" ( + ", Render.$span("key monospace")(Render.$tag("kbd")({})("Shift")), locale_2.locale.map("Reverse") + " )",] : "",
                 ];
             };
             Render.poem = function (data, className) {
                 if (className === void 0) { className = ""; }
                 return "string" === typeof data ?
                     Render.poem({
-                        title: locale.string("poem." + data + ".title"),
-                        subtitle: locale.string("poem." + data + ".subtitle"),
-                        description: exports.stringOrJson(locale.string("poem." + data + ".description")),
+                        title: locale_2.locale.string("poem." + data + ".title"),
+                        subtitle: locale_2.locale.string("poem." + data + ".subtitle"),
+                        description: exports.stringOrJson(locale_2.locale.string("poem." + data + ".description")),
                         image: poem_json_1.default[data],
                     }, className) :
                     Render.$div("poem " + className)([
@@ -16284,9 +16319,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 Render.$div("poem-list")([
                                     Render.poem("beta"),
                                     Render.$div("poem")([
-                                        Render.$span("poem-title")(locale.string("スマートな表示順")),
-                                        Render.$span("poem-subtitle")(locale.string("あなたは実行するだけ")),
-                                        Render.$span("poem-description")(locale.string("自動タグ設定や過去の履歴から「そろそろ実行するタイミングだと予測されるタスク」を優先的に表示するので、次に実行するべきタスクを簡単に把握できます。")),
+                                        Render.$span("poem-title")(locale_2.locale.string("スマートな表示順")),
+                                        Render.$span("poem-subtitle")(locale_2.locale.string("あなたは実行するだけ")),
+                                        Render.$span("poem-description")(locale_2.locale.string("自動タグ設定や過去の履歴から「そろそろ実行するタイミングだと予測されるタスク」を優先的に表示するので、次に実行するべきタスクを簡単に把握できます。")),
                                         Render.$span("poem-image")("🧠"),
                                     ]),
                                     Render.poem("no-account"),
@@ -16294,56 +16329,56 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.poem("list"),
                                     Render.poem("sublist"),
                                     Render.$div("poem")([
-                                        Render.$span("poem-title")(locale.string("タグ")),
-                                        Render.$span("poem-subtitle")(locale.string("毎朝やるのは")),
-                                        Render.$span("poem-description")(locale.string("毎朝、祝日、コンビニ等々、特定の条件で実行するタスクはタグをつけましょう。もちろん１つのタスクに複数のタグをつけられます。")),
+                                        Render.$span("poem-title")(locale_2.locale.string("タグ")),
+                                        Render.$span("poem-subtitle")(locale_2.locale.string("毎朝やるのは")),
+                                        Render.$span("poem-description")(locale_2.locale.string("毎朝、祝日、コンビニ等々、特定の条件で実行するタスクはタグをつけましょう。もちろん１つのタスクに複数のタグをつけられます。")),
                                         Render.$span("poem-image")("🏷️"),
                                     ]),
                                     Render.$div("poem")([
-                                        Render.$span("poem-title")(locale.string("Progressive Web App")),
-                                        Render.$span("poem-subtitle")(locale.string("あなたのスマホと共に")),
-                                        Render.$span("poem-description")(locale.map("You can use this web app like an app by registering it on the home screen of your smartphone.")),
+                                        Render.$span("poem-title")(locale_2.locale.string("Progressive Web App")),
+                                        Render.$span("poem-subtitle")(locale_2.locale.string("あなたのスマホと共に")),
+                                        Render.$span("poem-description")(locale_2.locale.map("You can use this web app like an app by registering it on the home screen of your smartphone.")),
                                         Render.$span("poem-image")("📱"),
                                     ]),
                                     Render.$div("poem")([
-                                        Render.$span("poem-title")(locale.string("ダークモード")),
-                                        Render.$span("poem-subtitle")(locale.string("お好きなモードで")),
-                                        Render.$span("poem-description")(locale.string("あなたの好みに合わせてライトモード/ダークモードをお使いください。")),
+                                        Render.$span("poem-title")(locale_2.locale.string("ダークモード")),
+                                        Render.$span("poem-subtitle")(locale_2.locale.string("お好きなモードで")),
+                                        Render.$span("poem-description")(locale_2.locale.string("あなたの好みに合わせてライトモード/ダークモードをお使いください。")),
                                         Render.$span("poem-image")("🌙"),
                                     ]),
                                     Render.$div("poem")([
-                                        Render.$span("poem-title")(locale.string("多言語対応")),
-                                        Render.$span("poem-subtitle")(locale.string("あなたの言語で")),
-                                        Render.$span("poem-description")(locale.string("現在、英語と日本語に対応してます。")),
+                                        Render.$span("poem-title")(locale_2.locale.string("多言語対応")),
+                                        Render.$span("poem-subtitle")(locale_2.locale.string("あなたの言語で")),
+                                        Render.$span("poem-description")(locale_2.locale.string("現在、英語と日本語に対応してます。")),
                                         Render.$span("poem-image")("🌐"),
                                     ]),
                                     Render.$div("poem")([
-                                        Render.$span("poem-title")(locale.string("キーボードショートカット")),
-                                        Render.$span("poem-subtitle")(locale.string("キーボード操作で快適に")),
+                                        Render.$span("poem-title")(locale_2.locale.string("キーボードショートカット")),
+                                        Render.$span("poem-subtitle")(locale_2.locale.string("キーボード操作で快適に")),
                                         Render.$span("poem-description")(Render.keyboardShortcutsItem(exports.keyboardShortcuts[0])),
                                         Render.$span("poem-image")("⌨️"),
                                     ]),
                                     Render.$div("poem")([
-                                        Render.$span("poem-title")(locale.string("取り消し")),
-                                        Render.$span("poem-subtitle")(locale.string("取り消せます")),
-                                        Render.$span("poem-description")(locale.string("誤操作してしまっても、操作直後に表示されるトーストの[取り消し]から取り消せます。")),
+                                        Render.$span("poem-title")(locale_2.locale.string("取り消し")),
+                                        Render.$span("poem-subtitle")(locale_2.locale.string("取り消せます")),
+                                        Render.$span("poem-description")(locale_2.locale.string("誤操作してしまっても、操作直後に表示されるトーストの[取り消し]から取り消せます。")),
                                         Render.$span("poem-image")("⌛️"),
                                     ]),
                                     Render.$div("poem")([
-                                        Render.$span("poem-title")(locale.string("ゴミ箱")),
-                                        Render.$span("poem-subtitle")(locale.string("ゴミ箱もあります")),
-                                        Render.$span("poem-description")(locale.string("削除してしまったアイテムも３０日以内ならゴミ箱から復元できます。")),
+                                        Render.$span("poem-title")(locale_2.locale.string("ゴミ箱")),
+                                        Render.$span("poem-subtitle")(locale_2.locale.string("ゴミ箱もあります")),
+                                        Render.$span("poem-description")(locale_2.locale.string("削除してしまったアイテムも３０日以内ならゴミ箱から復元できます。")),
                                         Render.$span("poem-image")("🗑️"),
                                     ]),
                                     Render.poem({
-                                        title: locale.string("Local Storage"),
-                                        subtitle: locale.string("Webブラウザに保存されてます"),
-                                        description: locale.string("情報はすべて Web ブラウザの Local Storage に保存されています。 Web ブラウザのクッキーなどを消す操作を行うとゴミ箱も含めて ToDo リストの情報が全て削除されるのでご注意下さい。"),
+                                        title: locale_2.locale.string("Local Storage"),
+                                        subtitle: locale_2.locale.string("Webブラウザに保存されてます"),
+                                        description: locale_2.locale.string("情報はすべて Web ブラウザの Local Storage に保存されています。 Web ブラウザのクッキーなどを消す操作を行うとゴミ箱も含めて ToDo リストの情報が全て削除されるのでご注意下さい。"),
                                         image: "🔥",
                                     }),
                                     Render.poem({
-                                        title: locale.string("evil-timer.js"),
-                                        subtitle: locale.string("時間を支配できます"),
+                                        title: locale_2.locale.string("evil-timer.js"),
+                                        subtitle: locale_2.locale.string("時間を支配できます"),
                                         description: { tag: "span", children: [{ tag: "a", href: "https://github.com/wraith13/evil-timer.js", target: "_blank", children: "evil-timer.js", }, " を組み込んであるので、時間経過に伴う Cyclic ToDo の細かい挙動を簡単に確認できます。",] },
                                         image: "👿",
                                     }),
@@ -16931,7 +16966,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     CyclicToDo.reload(); // nowait
                                     var toast_4 = Render.makeToast({
                                         id: "change-display-style",
-                                        content: Render.$span("")(locale.map("Display style has changed!") + ": " + locale.map(Render.getTagDisplayStyleText(current_1)) + " \u2192 " + locale.map(Render.getTagDisplayStyleText(next))),
+                                        content: Render.$span("")(locale_2.locale.map("Display style has changed!") + ": " + locale_2.locale.map(Render.getTagDisplayStyleText(current_1)) + " \u2192 " + locale_2.locale.map(Render.getTagDisplayStyleText(next))),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             var settings;
                                             return __generator(this, function (_a) {
@@ -16965,7 +17000,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     CyclicToDo.reload(); // nowait
                                     var toast_5 = Render.makeToast({
                                         id: "change-gauge-style",
-                                        content: Render.$span("")(locale.map("Gauge style has changed!") + ": " + locale.map(Render.getTagProgressScaleStyleText(current_2)) + " \u2192 " + locale.map(Render.getTagProgressScaleStyleText(next))),
+                                        content: Render.$span("")(locale_2.locale.map("Gauge style has changed!") + ": " + locale_2.locale.map(Render.getTagProgressScaleStyleText(current_2)) + " \u2192 " + locale_2.locale.map(Render.getTagProgressScaleStyleText(next))),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             var settings;
                                             return __generator(this, function (_a) {
@@ -16999,7 +17034,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     CyclicToDo.reload(); // nowait
                                     var toast_6 = Render.makeToast({
                                         id: "change-sort",
-                                        content: Render.$span("")(locale.map("Sort orer has changed!") + ": " + locale.map(Render.getTagSortSettingsText(current_3)) + " \u2192 " + locale.map(Render.getTagSortSettingsText(next))),
+                                        content: Render.$span("")(locale_2.locale.map("Sort orer has changed!") + ": " + locale_2.locale.map(Render.getTagSortSettingsText(current_3)) + " \u2192 " + locale_2.locale.map(Render.getTagSortSettingsText(next))),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             var settings;
                                             return __generator(this, function (_a) {
@@ -17031,7 +17066,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     CyclicToDo.updateStyle();
                                     var toast_7 = Render.makeToast({
                                         id: "change-sort",
-                                        content: Render.$span("")(locale.map("Theme has changed!") + ": " + locale.map(CyclicToDo.getThemeLocale(current_4)) + " \u2192 " + locale.map(CyclicToDo.getThemeLocale(next))),
+                                        content: Render.$span("")(locale_2.locale.map("Theme has changed!") + ": " + locale_2.locale.map(CyclicToDo.getThemeLocale(current_4)) + " \u2192 " + locale_2.locale.map(CyclicToDo.getThemeLocale(next))),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             var settings;
                                             return __generator(this, function (_a) {
@@ -17051,15 +17086,15 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     var settings = Storage.SystemSettings.get();
                                     var defaultLanguage_1 = "@auto";
                                     var current_5 = (_m = settings.locale) !== null && _m !== void 0 ? _m : defaultLanguage_1;
-                                    var list_5 = [defaultLanguage_1,].concat(locale.locales);
+                                    var list_5 = [defaultLanguage_1,].concat(locale_2.locale.locales);
                                     var next = destinationItem(list_5, current_5);
                                     settings.locale = defaultLanguage_1 === next ? undefined : next;
                                     Storage.SystemSettings.set(settings);
-                                    locale.setLocale((_o = settings.locale) !== null && _o !== void 0 ? _o : null);
+                                    locale_2.locale.setLocale((_o = settings.locale) !== null && _o !== void 0 ? _o : null);
                                     CyclicToDo.reload(); // no wait
                                     var toast_8 = Render.makeToast({
                                         id: "change-sort",
-                                        content: Render.$span("")(locale.map("Language has changed!") + ": " + locale.getLocaleName(current_5) + " \u2192 " + locale.getLocaleName(next)),
+                                        content: Render.$span("")(locale_2.locale.map("Language has changed!") + ": " + locale_2.locale.getLocaleName(current_5) + " \u2192 " + locale_2.locale.getLocaleName(next)),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             var settings;
                                             var _a;
@@ -17069,7 +17104,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                         settings = Storage.SystemSettings.get();
                                                         settings.locale = defaultLanguage_1 === current_5 ? undefined : current_5;
                                                         Storage.SystemSettings.set(settings);
-                                                        locale.setLocale((_a = settings.locale) !== null && _a !== void 0 ? _a : null);
+                                                        locale_2.locale.setLocale((_a = settings.locale) !== null && _a !== void 0 ? _a : null);
                                                         toast_8.hide(); // nowait
                                                         return [4 /*yield*/, CyclicToDo.reload()];
                                                     case 1:
@@ -17092,7 +17127,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 Render.makeToast({
                                     id: "keyboard-shortcuts",
                                     content: Render.$tag("dl")({})(exports.groupBy(exports.keyboardShortcuts
-                                        .filter(function (i) { return Render.matchKeyboardShortcutsContext(urlParams_1, i.context); }), function (i) { return locale.map(exports.getKeyboardShortcutsCategoryLocale(i.category)); })
+                                        .filter(function (i) { return Render.matchKeyboardShortcutsContext(urlParams_1, i.context); }), function (i) { return locale_2.locale.map(exports.getKeyboardShortcutsCategoryLocale(i.category)); })
                                         .map(function (i) {
                                         return [
                                             Render.$tag("dt")({})(i.group),
@@ -17276,7 +17311,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             }
                             scroll = json["scroll"];
                         }
-                        locale.setLocale((_a = Storage.SystemSettings.get().locale) !== null && _a !== void 0 ? _a : null);
+                        locale_2.locale.setLocale((_a = Storage.SystemSettings.get().locale) !== null && _a !== void 0 ? _a : null);
                         window.onpopstate = function () { return CyclicToDo.showPage(); };
                         window.addEventListener('resize', Render.onWindowResize);
                         window.addEventListener('focus', Render.onWindowFocus);
@@ -17466,7 +17501,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Oct 03 2023 08:13:11 GMT+0900 (日本標準時)', buildTimestampTick: 1696288391378, })">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Oct 03 2023 21:38:53 GMT+0900 (日本標準時)', buildTimestampTick: 1696336733708, })">
 <div id="foundation"></div><div id="screen"><h1 id="screen-header" class="segmented">Cyclic ToDo</h1><div id="screen-body" class="screen-body">
 <div class="poem" lang="en">
     <span class="poem-title">🏆 ToDo app for repeating tasks</span>
