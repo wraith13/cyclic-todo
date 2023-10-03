@@ -2,6 +2,7 @@
 .DS_Store
 /node_modules/*
 /private/*
+poem.html
 build/index.js
 build/index.js.map
 script/index.js
