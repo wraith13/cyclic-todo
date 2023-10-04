@@ -67,6 +67,7 @@
                 "__EVIL_COMMONJS__": { "path": "./nephila/evil-commonjs/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=nephila/evil-commonjs/index.js.map" } },
                 "__EVIL_TIMER__": { "path": "./nephila/evil-timer.js/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=nephila/evil-timer.js/index.js.map" } },
                 "__SCRIPT__": { "path": "./script/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=script/index.js.map" } },
+                "__APPLICATION_ICON__": { "path": "./image/cyclictodohex.1024.svg" },
                 "__POEM_HTML__": { "path": "./poem.html" },
                 "__IMAGES__": { "resource": "./resource/images.json" }
             }
