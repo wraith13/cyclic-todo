@@ -363,11 +363,14 @@ h1
     button.icon-button,
     button.menu-button
     {
-        .primary-operator-coloring-trait;
-        border-color: transparent !important;
-        &:not(:hover)
+        &:not(.default-button)
         {
-            background-color: transparent !important;
+            .primary-operator-coloring-trait;
+            border-color: transparent !important;
+            &:not(:hover)
+            {
+                background-color: transparent !important;
+            }
         }
     }
     .menu-popup:not(.segment-popup)
@@ -976,10 +979,13 @@ input
 }
 button
 {
-    .secondary-operator-coloring-trait;
     &.default-button
     {
         .primary-operator-coloring-trait;
+    }
+    &:not(.default-button)
+    {
+        .secondary-operator-coloring-trait;
     }
     margin: 0px;
     padding: 0.25rem 1rem;
@@ -2229,6 +2235,12 @@ button
                 font-size: 14.0rem;
             }
         }
+    }
+    &.error-poem
+    {
+        background: linear-gradient(to bottom, fade(@delete-color, 15%) 0%, fade(@delete-color, 35%) 100%);
+        margin: 0.5rem;
+        margin-bottom: 0rem;
     }
     .poem-title
     {

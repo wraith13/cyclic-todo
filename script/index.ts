@@ -7973,11 +7973,11 @@ export module CyclicToDo
     export const updateStyle = () =>
     {
         const setting = Storage.SystemSettings.get().theme ?? "auto";
-        const system = window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark": "light";
-        const theme = "auto" === setting ? system: setting;
-        [ "light", "dark", ].forEach
+        // const system = window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark": "light";
+        // const theme = "auto" === setting ? system: setting;
+        [ "auto", "light", "dark", ].forEach
         (
-            i => document.body.classList.toggle(i, i === theme)
+            i => document.body.classList.toggle(i, i === setting)
         );
     };
     export const updateUiStyle = () =>
@@ -8034,6 +8034,7 @@ export module CyclicToDo
         };
         console.log(`start timestamp: ${new Date()}`);
         console.log(`${JSON.stringify(params)}`);
+        setLocale(Storage.SystemSettings.get().locale ?? null);
         const urlParams = getUrlParams(location.href);
         const reload = urlParams["reload"];
         let scroll: number | undefined;
@@ -8064,7 +8065,6 @@ export module CyclicToDo
             }
             scroll = json["scroll"];
         }
-        setLocale(Storage.SystemSettings.get().locale ?? null);
         window.onpopstate = () => showPage();
         window.addEventListener('resize', Render.onWindowResize);
         window.addEventListener('focus', Render.onWindowFocus);
@@ -8093,7 +8093,7 @@ export module CyclicToDo
         );
         document.addEventListener('fullscreenchange', Render.onFullscreenChange);
         document.addEventListener('webkitfullscreenchange', Render.onWebkitFullscreenChange);
-        window.matchMedia('(prefers-color-scheme: dark)').addListener(updateStyle);
+        // window.matchMedia('(prefers-color-scheme: dark)').addEventListener("change", updateStyle);
         decayRemovedItems();
         setInterval
         (

@@ -77,6 +77,13 @@
             "template": "__BUILD_TIMESTAMP_TICK__",
             "output": { "path": "./build.timestamp.json" }
         },
+        "build.script":
+        {
+            "processes":
+            [
+                "npm run-script \"build build script\""
+            ]
+        },
         "release.style":
         {
             "processes":
@@ -125,6 +132,7 @@
                 { "references": "release.style" },
                 { "references": "release.script" },
                 { "references": "web.manifest" },
+                { "references": "build.script" },
                 { "references": "poem.html" },
                 { "references": "index.html" },
                 { "references": "build.timestamp.json" }
@@ -138,6 +146,7 @@
                 { "references": "debug.style" },
                 { "references": "debug.script" },
                 { "references": "web.manifest" },
+                { "references": "build.script" },
                 { "references": "poem.html" },
                 { "references": "index.html" },
                 { "references": "build.timestamp.json" }

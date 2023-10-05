@@ -2,11 +2,22 @@
 @main-color: @white-color;
 @base-color: @black-color;
 
-body.dark
+.dark-theme-trait
 {
     ::-webkit-calendar-picker-indicator
     {
         filter: invert(1);
     }
     @import "style/index.less";
+}
+body.dark
+{
+    .dark-theme-trait;
+}
+@media (prefers-color-scheme: dark)
+{
+    body.auto
+    {
+        .dark-theme-trait;
+    }
 }

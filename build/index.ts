@@ -6,10 +6,10 @@ const makePoem = (key: keyof typeof pomeJson) =>
 {
     var result = "";
     result += "<div class=\"poem\">\r\n";
-    result += `<span class=\"poem-image\">${pomeJson[key]}</span>\r\n`;
     result += `<span class=\"poem-title\">${locale.string(`poem.${key}.title`)}</span>\r\n`;
     result += `<span class=\"poem-subtitle\">${locale.string(`poem.${key}.subtitle`)}</span>\r\n`;
     result += `<span class=\"poem-description\">${locale.string(`poem.${key}.description`)}</span>\r\n`;
+    result += `<span class=\"poem-image\">${pomeJson[key]}</span>\r\n`;
     result += "</div>\r\n";
     return result;
 }

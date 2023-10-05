@@ -2,11 +2,22 @@
 @main-color: @black-color;
 @base-color: @white-color;
 
-body.light
+.light-theme-trait
 {
     // ::-webkit-calendar-picker-indicator
     // {
     //     filter: invert(1);
     // }
     @import "style/index.less";
+}
+body.light
+{
+    .light-theme-trait;
+}
+@media (prefers-color-scheme: light)
+{
+    body.auto
+    {
+        .light-theme-trait;
+    }
 }
