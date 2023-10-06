@@ -2,6 +2,23 @@
 @import "traits.less";
 @import "base.less";
 
+.slow-fadein
+{
+    .screen-body
+    {
+        animation-name: slow-fadein;
+        animation-direction: normal;
+        animation-delay: 0s;
+        animation-duration: 1.0s;
+        animation-timing-function: ease-in-out;
+    }
+}
+@keyframes slow-fadein
+{
+    0% { opacity: 0.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
 &.flash
 {
     .screen
