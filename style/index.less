@@ -1,6 +1,5 @@
 @import "params.less";
 @import "traits.less";
-@import "base.less";
 
 .slow-fadein
 {
@@ -800,6 +799,7 @@ h1
 }
 .text-button
 {
+    .secondary-text-operator-coloring-trait;
     .link-trait;
     border-style: none;
     border-width: 0px;
@@ -1000,7 +1000,7 @@ button
     {
         .primary-operator-coloring-trait;
     }
-    &:not(.default-button)
+    &:not(.default-button):not(.text-button)
     {
         .secondary-operator-coloring-trait;
     }

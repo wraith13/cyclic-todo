@@ -7104,7 +7104,7 @@ export module CyclicToDo
                     ({
                         title: locale.string("evil-timer.js"),
                         subtitle: locale.string("時間を支配できます"),
-                        description: { tag:"span", children: [ { tag:"a", href:"https://github.com/wraith13/evil-timer.js", target:"_blank", children: "evil-timer.js", }, " を組み込んであるので、時間経過に伴う Cyclic ToDo の細かい挙動を簡単に確認できます。", ]},
+                        description: { tag:"span", children: [ { tag:"a", className:"plain", href:"https://github.com/wraith13/evil-timer.js", target:"_blank", children: "evil-timer.js", }, " を組み込んであるので、時間経過に伴う Cyclic ToDo の細かい挙動を簡単に確認できます。", ]},
                         image: "👿",
                     }),
                 ]),

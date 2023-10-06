@@ -1,6 +1,7 @@
 @import "style/params.less";
 @main-color: @white-color;
 @base-color: @black-color;
+@import "style/base.less";
 
 .dark-theme-trait
 {
@@ -8,6 +9,7 @@
     {
         filter: invert(1);
     }
+    .base-trait;
     @import "style/index.less";
 }
 body.dark
