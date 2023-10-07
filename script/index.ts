@@ -7048,7 +7048,7 @@ export module CyclicToDo
                     ([
                         $span("poem-title")(locale.string("タグ")),
                         $span("poem-subtitle")(locale.string("毎朝やるのは")),
-                        $span("poem-description")(locale.string("毎朝、祝日、コンビニ等々、特定の条件で実行するタスクはタグをつけましょう。もちろん１つのタスクに複数のタグをつけられます。")),
+                        $span("poem-description")(locale.string("毎朝、祝日、コンビニ等々、特定の条件で実行するタスクはタグをつけてまとめられます。もちろん１つのタスクに複数のタグをつけられます。")),
                         $span("poem-image")("🏷️"),
                     ]),
                     $div("poem")
@@ -7157,7 +7157,7 @@ export module CyclicToDo
                 getScreenBody(),
                 await applicationIcon()
             );
-            await minamo.core.timeout(250);
+            await minamo.core.timeout(50);
         };
         export const updatingScreen = async (_url: string = location.href): Promise<ScreenSource> =>
         ({

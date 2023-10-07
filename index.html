@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sat Oct 07 2023 15:55:27 GMT+0900 (日本標準時)
+    build at: Sun Oct 08 2023 04:10:54 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2741,7 +2741,6 @@ h2 {
   animation-fill-mode: both;
   animation-iteration-count: infinite;
   overflow: hidden;
-  opacity: 0.7;
 }
 .light-theme-trait .screen-body > .application-icon svg {
   animation-name: loading-breath-icon;
@@ -3048,13 +3047,13 @@ h2 {
 }
 @keyframes loading-breath {
   0% {
-    background-color: #228844;
+    opacity: 0.5;
   }
   50% {
-    background-color: #6F7F00;
+    opacity: 0.8;
   }
   100% {
-    background-color: #228844;
+    opacity: 0.5;
   }
 }
 @keyframes loading-breath-icon {
@@ -5568,7 +5567,6 @@ body.light .screen-body > .application-icon {
   animation-fill-mode: both;
   animation-iteration-count: infinite;
   overflow: hidden;
-  opacity: 0.7;
 }
 body.light .screen-body > .application-icon svg {
   animation-name: loading-breath-icon;
@@ -5875,13 +5873,13 @@ body.light .loading-breath svg {
 }
 @keyframes loading-breath {
   0% {
-    background-color: #228844;
+    opacity: 0.5;
   }
   50% {
-    background-color: #6F7F00;
+    opacity: 0.8;
   }
   100% {
-    background-color: #228844;
+    opacity: 0.5;
   }
 }
 @keyframes loading-breath-icon {
@@ -7912,7 +7910,6 @@ body.light .keyboard-shortcuts li .key:first-child {
     animation-fill-mode: both;
     animation-iteration-count: infinite;
     overflow: hidden;
-    opacity: 0.7;
   }
   body.auto .screen-body > .application-icon svg {
     animation-name: loading-breath-icon;
@@ -8129,13 +8126,13 @@ body.light .keyboard-shortcuts li .key:first-child {
   }
   @keyframes loading-breath {
     0% {
-      background-color: #228844;
+      opacity: 0.5;
     }
     50% {
-      background-color: #6F7F00;
+      opacity: 0.8;
     }
     100% {
-      background-color: #228844;
+      opacity: 0.5;
     }
   }
   @keyframes loading-breath-icon {
@@ -11465,7 +11462,6 @@ body.light .keyboard-shortcuts li .key:first-child {
   animation-fill-mode: both;
   animation-iteration-count: infinite;
   overflow: hidden;
-  opacity: 0.7;
 }
 .dark-theme-trait .screen-body > .application-icon svg {
   animation-name: loading-breath-icon;
@@ -11772,13 +11768,13 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @keyframes loading-breath {
   0% {
-    background-color: #228844;
+    opacity: 0.5;
   }
   50% {
-    background-color: #6F7F00;
+    opacity: 0.8;
   }
   100% {
-    background-color: #228844;
+    opacity: 0.5;
   }
 }
 @keyframes loading-breath-icon {
@@ -14295,7 +14291,6 @@ body.dark .screen-body > .application-icon {
   animation-fill-mode: both;
   animation-iteration-count: infinite;
   overflow: hidden;
-  opacity: 0.7;
 }
 body.dark .screen-body > .application-icon svg {
   animation-name: loading-breath-icon;
@@ -14602,13 +14597,13 @@ body.dark .loading-breath svg {
 }
 @keyframes loading-breath {
   0% {
-    background-color: #228844;
+    opacity: 0.5;
   }
   50% {
-    background-color: #6F7F00;
+    opacity: 0.8;
   }
   100% {
-    background-color: #228844;
+    opacity: 0.5;
   }
 }
 @keyframes loading-breath-icon {
@@ -16642,7 +16637,6 @@ body.dark .keyboard-shortcuts li .key:first-child {
     animation-fill-mode: both;
     animation-iteration-count: infinite;
     overflow: hidden;
-    opacity: 0.7;
   }
   body.auto .screen-body > .application-icon svg {
     animation-name: loading-breath-icon;
@@ -16859,13 +16853,13 @@ body.dark .keyboard-shortcuts li .key:first-child {
   }
   @keyframes loading-breath {
     0% {
-      background-color: #228844;
+      opacity: 0.5;
     }
     50% {
-      background-color: #6F7F00;
+      opacity: 0.8;
     }
     100% {
-      background-color: #228844;
+      opacity: 0.5;
     }
   }
   @keyframes loading-breath-icon {
@@ -27950,7 +27944,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.$div("poem")([
                                         Render.$span("poem-title")(locale_2.locale.string("タグ")),
                                         Render.$span("poem-subtitle")(locale_2.locale.string("毎朝やるのは")),
-                                        Render.$span("poem-description")(locale_2.locale.string("毎朝、祝日、コンビニ等々、特定の条件で実行するタスクはタグをつけましょう。もちろん１つのタスクに複数のタグをつけられます。")),
+                                        Render.$span("poem-description")(locale_2.locale.string("毎朝、祝日、コンビニ等々、特定の条件で実行するタスクはタグをつけてまとめられます。もちろん１つのタスクに複数のタグをつけられます。")),
                                         Render.$span("poem-image")("🏷️"),
                                     ]),
                                     Render.$div("poem")([
@@ -28078,7 +28072,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
                             _b.apply(_a, _c.concat([_d.sent()]));
-                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(250)];
+                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(50)];
                         case 2:
                             _d.sent();
                             return [2 /*return*/];
@@ -29121,7 +29115,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Oct 07 2023 15:55:27 GMT+0900 (日本標準時)', buildTimestampTick: 1696661727463, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Oct 08 2023 04:10:54 GMT+0900 (日本標準時)', buildTimestampTick: 1696705854592, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -29213,7 +29207,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Sat Oct 07 2023 15:55:27 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Sun Oct 08 2023 04:10:54 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
@@ -29259,20 +29253,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div><div id="ghost-folder-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M216,192.388L216,192.312L427.539,192.312C443.456,192.286 458.958,200.526 467.492,215.283L527.873,319.688L867.245,319.688C900.776,319.688 928,346.912 928,380.444L928,770.933C928,804.465 900.776,831.688 867.245,831.688L156.755,831.688C123.224,831.688 96,804.465 96,770.933L96,380.444C96,378.756 96.069,377.085 96.204,375.432C95.339,366.267 97.206,356.757 102.149,348.183L178.734,215.338C186.773,201.392 201.033,193.248 216,192.388ZM284,288.088C268.201,288.2 252.87,296.449 244.415,311.113L197.859,391.871C192.767,400.704 190.939,410.531 192,419.949L192,736L828,736L828,416L486.155,416L425.464,311.058C416.687,295.883 400.544,287.599 384.156,288.109L384.156,288L284,288L284,288.088Z"/>
 </svg>
-</div><div id="ghost-flag-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
-    <g id="本体">
-        <g transform="matrix(0.576963,-2.16014,-1.44719,-0.386538,264.391,1182.34)">
-            <path d="M480,127.924C480,110.305 470.417,96 458.613,96L117.387,96C105.583,96 96,110.305 96,127.924L96,128.076C96,145.695 105.583,160 117.387,160L458.613,160C470.417,160 480,145.695 480,128.076L480,127.924Z" style="stroke-width:0.53px;"/>
-        </g>
-        <g transform="matrix(0.289353,-1.08333,-1.44719,-0.386538,906.752,799.819)">
-            <path d="M480,127.924C480,110.305 460.891,96 437.354,96L138.646,96C115.109,96 96,110.305 96,127.924L96,128.076C96,145.695 115.109,160 138.646,160L437.354,160C460.891,160 480,145.695 480,128.076L480,127.924Z" style="stroke-width:0.76px;"/>
-        </g>
-        <g transform="matrix(1.00803,-2.73199e-17,0,0.984305,-6.79518,4.33195)">
-            <path d="M348,141.895C368.886,164.227 410.658,208.89 452,220.061C493.342,231.232 548.053,212.64 596.053,208.923C644.036,205.207 698.342,186.577 740,197.757C781.658,208.936 824.553,253.645 846,276" style="stroke-width:100.38px;"/>
-        </g>
-        <g transform="matrix(1.00803,-2.73199e-17,0,0.984305,-90.7952,326.332)">
-            <path d="M348,141.895C368.886,164.227 410.658,208.89 452,220.061C493.342,231.232 548.053,212.64 596.053,208.923C644.036,205.207 698.342,186.577 740,197.757C781.658,208.936 824.553,253.645 846,276" style="stroke-width:100.38px;"/>
-        </g>
+</div><div id="ghost-flag-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(0.576963,-2.16014,-1.44719,-0.386538,264.391,1182.34)">
+        <path d="M264.068,96L117.387,96C105.583,96 96,110.305 96,127.924L96,128.076C96,145.695 105.583,160 117.387,160L458.613,160C470.417,160 480,145.695 480,128.076L480,127.924C480,123.699 479.449,119.665 478.449,115.973C478.217,115.119 477.962,114.283 477.683,113.467C475.842,107.385 471.184,91.677 469.395,82.604C467.142,71.18 465.142,59.358 464.931,47.429C464.708,34.864 465.635,20.07 468.057,7.216C470.479,-5.639 475.18,-18.045 479.463,-29.697C483.684,-41.18 490.007,-51.29 493.754,-62.695C497.44,-73.912 500.06,-85.953 501.946,-98.125C503.94,-110.992 505.234,-127.652 505.717,-139.897C506.134,-150.454 505.796,-161.385 504.845,-171.596C503.91,-181.644 502.289,-191.603 500.014,-201.162C497.976,-209.727 492.507,-226.762 490.416,-233.189C490.164,-234.054 489.887,-234.9 489.587,-235.723C485.961,-245.662 478.899,-252.413 470.79,-252.413L308.961,-252.413C297.157,-252.413 287.574,-238.108 287.574,-220.489L287.574,-220.336C287.574,-216.788 287.963,-213.375 288.68,-210.185C288.918,-209.127 289.192,-208.093 289.5,-207.087C290.931,-201.618 293.839,-190.191 294.996,-183.395C296.802,-172.788 299.325,-159.028 299.512,-146.543C299.7,-134.031 297.739,-118.48 296.125,-108.318C294.857,-100.334 292.473,-92.76 289.828,-85.567C286.43,-76.326 279.75,-64.365 275.737,-52.874C271.52,-40.8 267.169,-26.946 264.527,-13.12C261.664,1.862 259.024,20.618 258.558,37.016C258.1,53.164 259.325,70.489 261.735,85.27C262.245,88.397 263.078,92.111 264.068,96ZM426.03,96L310.628,96C309.545,91.83 308.568,87.78 307.942,84.572C305.707,73.114 303.69,61.326 303.478,49.397C303.255,36.832 304.183,22.038 306.605,9.183C309.027,-3.671 313.727,-16.077 318.01,-27.729C322.231,-39.212 328.554,-49.323 332.301,-60.727C335.987,-71.944 338.607,-83.985 340.493,-96.157C342.487,-109.024 343.781,-125.684 344.264,-137.929C344.681,-148.486 344.343,-159.418 343.392,-169.628C342.818,-175.805 341.837,-182.318 340.728,-188.413L455.879,-188.413C456.096,-187.326 456.289,-186.3 456.449,-185.363C458.254,-174.756 460.777,-160.996 460.965,-148.511C461.153,-135.998 459.192,-120.448 457.578,-110.285C456.31,-102.301 453.926,-94.728 451.281,-87.535C447.883,-78.294 441.203,-66.333 437.19,-54.842C432.973,-42.768 428.622,-28.914 425.98,-15.088C423.117,-0.106 420.477,18.65 420.011,35.048C419.553,51.196 420.778,68.522 423.188,83.302C423.783,86.954 424.819,91.404 426.03,96Z"/>
     </g>
 </svg>
 </div><div id="history-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">

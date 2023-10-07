@@ -2161,21 +2161,15 @@ button
         animation-delay: 0.0s;
         animation-duration: 0.250s;
         animation-fill-mode: both;
-        // background-color: @base-color;
         background-color: @accent-color;
         .loading-breath;
         overflow: hidden;
-        opacity: 0.7;
         svg
         {
             width: 61.8%;
             height: 61.8%;
             min-width: 240px;
             min-height: 240px;
-            // .loading-spinner;
-            // .loading-breath;
-            // color: @accent-color;
-            // fill: @accent-color;
             color: @base-color;
             fill: @base-color;
         }
@@ -2556,15 +2550,15 @@ button
 {
     0%
     {
-        background-color: @accent-color;
+        opacity: 0.5;
     }
     50%
     {
-        background-color: @active-color;
+        opacity: 0.8;
     }
     100%
     {
-        background-color: @accent-color;
+        opacity: 0.5;
     }
 }
 @keyframes loading-breath-icon
