@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sat Oct 07 2023 00:24:24 GMT+0900 (日本標準時)
+    build at: Sat Oct 07 2023 09:51:10 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -97,6 +97,8 @@ h2 {
 }
 @media (hover: hover) {
   .primary-operator-coloring-trait:not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
   .primary-operator-coloring-trait:hover {
@@ -105,6 +107,8 @@ h2 {
 }
 @media (hover: none) {
   .primary-operator-coloring-trait {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
 }
@@ -116,6 +120,8 @@ h2 {
 }
 @media (hover: hover) {
   .primary-solid-operator-coloring-trait:not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
   .primary-solid-operator-coloring-trait:hover {
@@ -124,6 +130,8 @@ h2 {
 }
 @media (hover: none) {
   .primary-solid-operator-coloring-trait {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
 }
@@ -964,6 +972,8 @@ h2 {
 }
 @media (hover: hover) {
   .light-theme-trait h1 .segment:not(.label-segment):not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
   .light-theme-trait h1 .segment:not(.label-segment):hover {
@@ -972,6 +982,8 @@ h2 {
 }
 @media (hover: none) {
   .light-theme-trait h1 .segment:not(.label-segment) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
 }
@@ -1037,8 +1049,8 @@ h2 {
     max-width: initial;
   }
 }
-.light-theme-trait h1 button.icon-button:not(.default-button),
-.light-theme-trait h1 button.menu-button:not(.default-button) {
+.light-theme-trait h1 button.icon-button,
+.light-theme-trait h1 button.menu-button {
   cursor: pointer;
   color: #FFFFFF;
   fill: #FFFFFF;
@@ -1046,23 +1058,27 @@ h2 {
   border-color: transparent !important;
 }
 @media (hover: hover) {
-  .light-theme-trait h1 button.icon-button:not(.default-button):not(:hover),
-  .light-theme-trait h1 button.menu-button:not(.default-button):not(:hover) {
+  .light-theme-trait h1 button.icon-button:not(:hover),
+  .light-theme-trait h1 button.menu-button:not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
-  .light-theme-trait h1 button.icon-button:not(.default-button):hover,
-  .light-theme-trait h1 button.menu-button:not(.default-button):hover {
+  .light-theme-trait h1 button.icon-button:hover,
+  .light-theme-trait h1 button.menu-button:hover {
     background-color: #6F7F00;
   }
 }
 @media (hover: none) {
-  .light-theme-trait h1 button.icon-button:not(.default-button),
-  .light-theme-trait h1 button.menu-button:not(.default-button) {
+  .light-theme-trait h1 button.icon-button,
+  .light-theme-trait h1 button.menu-button {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
 }
-.light-theme-trait h1 button.icon-button:not(.default-button):not(:hover),
-.light-theme-trait h1 button.menu-button:not(.default-button):not(:hover) {
+.light-theme-trait h1 button.icon-button:not(:hover),
+.light-theme-trait h1 button.menu-button:not(:hover) {
   background-color: transparent !important;
 }
 .light-theme-trait h1 .menu-popup:not(.segment-popup) {
@@ -1410,6 +1426,8 @@ h2 {
 }
 @media (hover: hover) {
   .light-theme-trait .bottom-tabs .bottom-tab.current-item:not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
   .light-theme-trait .bottom-tabs .bottom-tab.current-item:hover {
@@ -1418,6 +1436,8 @@ h2 {
 }
 @media (hover: none) {
   .light-theme-trait .bottom-tabs .bottom-tab.current-item {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
 }
@@ -1468,18 +1488,6 @@ h2 {
   margin: 0px;
   background-color: transparent !important;
   text-decoration: none !important;
-}
-@media (hover: hover) {
-  .light-theme-trait .text-button:not(:hover) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (hover: none) {
-  .light-theme-trait .text-button {
-    color: #228844;
-    fill: #228844;
-  }
 }
 @media (hover: hover) {
   .light-theme-trait .text-button:hover {
@@ -1644,6 +1652,7 @@ h2 {
   min-width: 120px;
 }
 .light-theme-trait button {
+  cursor: pointer;
   margin: 0px;
   padding: 0.25rem 1rem;
   border-radius: 32px;
@@ -1651,6 +1660,36 @@ h2 {
   border-width: 1px;
   font-weight: bold;
   font-size: 1rem;
+}
+@media (hover: hover) {
+  .light-theme-trait button:not(:hover) {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: none) {
+  .light-theme-trait button {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: hover) {
+  .light-theme-trait button:not(:hover) {
+    border-color: #228844;
+    background-color: #FFFFFF;
+  }
+  .light-theme-trait button:hover {
+    color: #FFFFFF;
+    fill: #FFFFFF;
+    border-color: #6F7F00;
+    background-color: #6F7F00;
+  }
+}
+@media (hover: none) {
+  .light-theme-trait button {
+    border-color: #228844;
+    background-color: #FFFFFF;
+  }
 }
 .light-theme-trait button.default-button {
   cursor: pointer;
@@ -1660,6 +1699,8 @@ h2 {
 }
 @media (hover: hover) {
   .light-theme-trait button.default-button:not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
   .light-theme-trait button.default-button:hover {
@@ -1668,40 +1709,9 @@ h2 {
 }
 @media (hover: none) {
   .light-theme-trait button.default-button {
-    background-color: #228844;
-  }
-}
-.light-theme-trait button:not(.default-button):not(.text-button) {
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .light-theme-trait button:not(.default-button):not(.text-button):not(:hover) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (hover: none) {
-  .light-theme-trait button:not(.default-button):not(.text-button) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (hover: hover) {
-  .light-theme-trait button:not(.default-button):not(.text-button):not(:hover) {
-    border-color: #228844;
-    background-color: #FFFFFF;
-  }
-  .light-theme-trait button:not(.default-button):not(.text-button):hover {
     color: #FFFFFF;
     fill: #FFFFFF;
-    border-color: #6F7F00;
-    background-color: #6F7F00;
-  }
-}
-@media (hover: none) {
-  .light-theme-trait button:not(.default-button):not(.text-button) {
-    border-color: #228844;
-    background-color: #FFFFFF;
+    background-color: #228844;
   }
 }
 .light-theme-trait button.icon-button,
@@ -1814,6 +1824,8 @@ h2 {
 @media (hover: hover) {
   .light-theme-trait .menu-popup a.current-item:not(:hover),
   .light-theme-trait .menu-popup button.current-item:not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
   .light-theme-trait .menu-popup a.current-item:hover,
@@ -1824,6 +1836,8 @@ h2 {
 @media (hover: none) {
   .light-theme-trait .menu-popup a.current-item,
   .light-theme-trait .menu-popup button.current-item {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
 }
@@ -3763,6 +3777,8 @@ body.light h1 .segment:not(.label-segment) {
 }
 @media (hover: hover) {
   body.light h1 .segment:not(.label-segment):not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
   body.light h1 .segment:not(.label-segment):hover {
@@ -3771,6 +3787,8 @@ body.light h1 .segment:not(.label-segment) {
 }
 @media (hover: none) {
   body.light h1 .segment:not(.label-segment) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
 }
@@ -3836,8 +3854,8 @@ body.light h1 .segment + .menu-popup {
     max-width: initial;
   }
 }
-body.light h1 button.icon-button:not(.default-button),
-body.light h1 button.menu-button:not(.default-button) {
+body.light h1 button.icon-button,
+body.light h1 button.menu-button {
   cursor: pointer;
   color: #FFFFFF;
   fill: #FFFFFF;
@@ -3845,23 +3863,27 @@ body.light h1 button.menu-button:not(.default-button) {
   border-color: transparent !important;
 }
 @media (hover: hover) {
-  body.light h1 button.icon-button:not(.default-button):not(:hover),
-  body.light h1 button.menu-button:not(.default-button):not(:hover) {
+  body.light h1 button.icon-button:not(:hover),
+  body.light h1 button.menu-button:not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
-  body.light h1 button.icon-button:not(.default-button):hover,
-  body.light h1 button.menu-button:not(.default-button):hover {
+  body.light h1 button.icon-button:hover,
+  body.light h1 button.menu-button:hover {
     background-color: #6F7F00;
   }
 }
 @media (hover: none) {
-  body.light h1 button.icon-button:not(.default-button),
-  body.light h1 button.menu-button:not(.default-button) {
+  body.light h1 button.icon-button,
+  body.light h1 button.menu-button {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
 }
-body.light h1 button.icon-button:not(.default-button):not(:hover),
-body.light h1 button.menu-button:not(.default-button):not(:hover) {
+body.light h1 button.icon-button:not(:hover),
+body.light h1 button.menu-button:not(:hover) {
   background-color: transparent !important;
 }
 body.light h1 .menu-popup:not(.segment-popup) {
@@ -4209,6 +4231,8 @@ body.light .bottom-tabs .bottom-tab.current-item {
 }
 @media (hover: hover) {
   body.light .bottom-tabs .bottom-tab.current-item:not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
   body.light .bottom-tabs .bottom-tab.current-item:hover {
@@ -4217,6 +4241,8 @@ body.light .bottom-tabs .bottom-tab.current-item {
 }
 @media (hover: none) {
   body.light .bottom-tabs .bottom-tab.current-item {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
 }
@@ -4267,18 +4293,6 @@ body.light .text-button {
   margin: 0px;
   background-color: transparent !important;
   text-decoration: none !important;
-}
-@media (hover: hover) {
-  body.light .text-button:not(:hover) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (hover: none) {
-  body.light .text-button {
-    color: #228844;
-    fill: #228844;
-  }
 }
 @media (hover: hover) {
   body.light .text-button:hover {
@@ -4443,6 +4457,7 @@ body.light input {
   min-width: 120px;
 }
 body.light button {
+  cursor: pointer;
   margin: 0px;
   padding: 0.25rem 1rem;
   border-radius: 32px;
@@ -4450,6 +4465,36 @@ body.light button {
   border-width: 1px;
   font-weight: bold;
   font-size: 1rem;
+}
+@media (hover: hover) {
+  body.light button:not(:hover) {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: none) {
+  body.light button {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: hover) {
+  body.light button:not(:hover) {
+    border-color: #228844;
+    background-color: #FFFFFF;
+  }
+  body.light button:hover {
+    color: #FFFFFF;
+    fill: #FFFFFF;
+    border-color: #6F7F00;
+    background-color: #6F7F00;
+  }
+}
+@media (hover: none) {
+  body.light button {
+    border-color: #228844;
+    background-color: #FFFFFF;
+  }
 }
 body.light button.default-button {
   cursor: pointer;
@@ -4459,6 +4504,8 @@ body.light button.default-button {
 }
 @media (hover: hover) {
   body.light button.default-button:not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
   body.light button.default-button:hover {
@@ -4467,40 +4514,9 @@ body.light button.default-button {
 }
 @media (hover: none) {
   body.light button.default-button {
-    background-color: #228844;
-  }
-}
-body.light button:not(.default-button):not(.text-button) {
-  cursor: pointer;
-}
-@media (hover: hover) {
-  body.light button:not(.default-button):not(.text-button):not(:hover) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (hover: none) {
-  body.light button:not(.default-button):not(.text-button) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (hover: hover) {
-  body.light button:not(.default-button):not(.text-button):not(:hover) {
-    border-color: #228844;
-    background-color: #FFFFFF;
-  }
-  body.light button:not(.default-button):not(.text-button):hover {
     color: #FFFFFF;
     fill: #FFFFFF;
-    border-color: #6F7F00;
-    background-color: #6F7F00;
-  }
-}
-@media (hover: none) {
-  body.light button:not(.default-button):not(.text-button) {
-    border-color: #228844;
-    background-color: #FFFFFF;
+    background-color: #228844;
   }
 }
 body.light button.icon-button,
@@ -4613,6 +4629,8 @@ body.light .menu-popup button.current-item {
 @media (hover: hover) {
   body.light .menu-popup a.current-item:not(:hover),
   body.light .menu-popup button.current-item:not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
   body.light .menu-popup a.current-item:hover,
@@ -4623,6 +4641,8 @@ body.light .menu-popup button.current-item {
 @media (hover: none) {
   body.light .menu-popup a.current-item,
   body.light .menu-popup button.current-item {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
 }
@@ -6565,16 +6585,16 @@ body.light .keyboard-shortcuts li .key:first-child {
   body.auto h1 .segment + .menu-popup {
     white-space: nowrap;
   }
-  body.auto h1 button.icon-button:not(.default-button),
-  body.auto h1 button.menu-button:not(.default-button) {
+  body.auto h1 button.icon-button,
+  body.auto h1 button.menu-button {
     cursor: pointer;
     color: #FFFFFF;
     fill: #FFFFFF;
     border-color: #FFFFFF;
     border-color: transparent !important;
   }
-  body.auto h1 button.icon-button:not(.default-button):not(:hover),
-  body.auto h1 button.menu-button:not(.default-button):not(:hover) {
+  body.auto h1 button.icon-button:not(:hover),
+  body.auto h1 button.menu-button:not(:hover) {
     background-color: transparent !important;
   }
   body.auto h1 .menu-popup:not(.segment-popup) {
@@ -7022,6 +7042,7 @@ body.light .keyboard-shortcuts li .key:first-child {
     min-width: 120px;
   }
   body.auto button {
+    cursor: pointer;
     margin: 0px;
     padding: 0.25rem 1rem;
     border-radius: 32px;
@@ -7035,9 +7056,6 @@ body.light .keyboard-shortcuts li .key:first-child {
     color: #FFFFFF;
     fill: #FFFFFF;
     border-color: #FFFFFF;
-  }
-  body.auto button:not(.default-button):not(.text-button) {
-    cursor: pointer;
   }
   body.auto button.icon-button,
   body.auto button.menu-button {
@@ -8143,6 +8161,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (prefers-color-scheme: light) and (hover: hover) {
   body.auto h1 .segment:not(.label-segment):not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
   body.auto h1 .segment:not(.label-segment):hover {
@@ -8151,6 +8171,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (prefers-color-scheme: light) and (hover: none) {
   body.auto h1 .segment:not(.label-segment) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
 }
@@ -8185,18 +8207,22 @@ body.light .keyboard-shortcuts li .key:first-child {
   }
 }
 @media (prefers-color-scheme: light) and (hover: hover) {
-  body.auto h1 button.icon-button:not(.default-button):not(:hover),
-  body.auto h1 button.menu-button:not(.default-button):not(:hover) {
+  body.auto h1 button.icon-button:not(:hover),
+  body.auto h1 button.menu-button:not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
-  body.auto h1 button.icon-button:not(.default-button):hover,
-  body.auto h1 button.menu-button:not(.default-button):hover {
+  body.auto h1 button.icon-button:hover,
+  body.auto h1 button.menu-button:hover {
     background-color: #6F7F00;
   }
 }
 @media (prefers-color-scheme: light) and (hover: none) {
-  body.auto h1 button.icon-button:not(.default-button),
-  body.auto h1 button.menu-button:not(.default-button) {
+  body.auto h1 button.icon-button,
+  body.auto h1 button.menu-button {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
 }
@@ -8262,6 +8288,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (prefers-color-scheme: light) and (hover: hover) {
   body.auto .bottom-tabs .bottom-tab.current-item:not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
   body.auto .bottom-tabs .bottom-tab.current-item:hover {
@@ -8270,6 +8298,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (prefers-color-scheme: light) and (hover: none) {
   body.auto .bottom-tabs .bottom-tab.current-item {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
 }
@@ -8302,18 +8332,6 @@ body.light .keyboard-shortcuts li .key:first-child {
   }
 }
 @media (prefers-color-scheme: light) and (hover: hover) {
-  body.auto .text-button:not(:hover) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (prefers-color-scheme: light) and (hover: none) {
-  body.auto .text-button {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (prefers-color-scheme: light) and (hover: hover) {
   body.auto .text-button:hover {
     opacity: 1;
     color: #6F7F00;
@@ -8335,7 +8353,39 @@ body.light .keyboard-shortcuts li .key:first-child {
   }
 }
 @media (prefers-color-scheme: light) and (hover: hover) {
+  body.auto button:not(:hover) {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (prefers-color-scheme: light) and (hover: none) {
+  body.auto button {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (prefers-color-scheme: light) and (hover: hover) {
+  body.auto button:not(:hover) {
+    border-color: #228844;
+    background-color: #FFFFFF;
+  }
+  body.auto button:hover {
+    color: #FFFFFF;
+    fill: #FFFFFF;
+    border-color: #6F7F00;
+    background-color: #6F7F00;
+  }
+}
+@media (prefers-color-scheme: light) and (hover: none) {
+  body.auto button {
+    border-color: #228844;
+    background-color: #FFFFFF;
+  }
+}
+@media (prefers-color-scheme: light) and (hover: hover) {
   body.auto button.default-button:not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
   body.auto button.default-button:hover {
@@ -8344,37 +8394,9 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (prefers-color-scheme: light) and (hover: none) {
   body.auto button.default-button {
-    background-color: #228844;
-  }
-}
-@media (prefers-color-scheme: light) and (hover: hover) {
-  body.auto button:not(.default-button):not(.text-button):not(:hover) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (prefers-color-scheme: light) and (hover: none) {
-  body.auto button:not(.default-button):not(.text-button) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (prefers-color-scheme: light) and (hover: hover) {
-  body.auto button:not(.default-button):not(.text-button):not(:hover) {
-    border-color: #228844;
-    background-color: #FFFFFF;
-  }
-  body.auto button:not(.default-button):not(.text-button):hover {
     color: #FFFFFF;
     fill: #FFFFFF;
-    border-color: #6F7F00;
-    background-color: #6F7F00;
-  }
-}
-@media (prefers-color-scheme: light) and (hover: none) {
-  body.auto button:not(.default-button):not(.text-button) {
-    border-color: #228844;
-    background-color: #FFFFFF;
+    background-color: #228844;
   }
 }
 @media (prefers-color-scheme: light) and (hover: hover) {
@@ -8416,6 +8438,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 @media (prefers-color-scheme: light) and (hover: hover) {
   body.auto .menu-popup a.current-item:not(:hover),
   body.auto .menu-popup button.current-item:not(:hover) {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
   body.auto .menu-popup a.current-item:hover,
@@ -8426,6 +8450,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 @media (prefers-color-scheme: light) and (hover: none) {
   body.auto .menu-popup a.current-item,
   body.auto .menu-popup button.current-item {
+    color: #FFFFFF;
+    fill: #FFFFFF;
     background-color: #228844;
   }
 }
@@ -8726,6 +8752,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (hover: hover) {
   .primary-operator-coloring-trait:not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
   .primary-operator-coloring-trait:hover {
@@ -8734,6 +8762,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (hover: none) {
   .primary-operator-coloring-trait {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
 }
@@ -8745,6 +8775,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (hover: hover) {
   .primary-solid-operator-coloring-trait:not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
   .primary-solid-operator-coloring-trait:hover {
@@ -8753,6 +8785,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (hover: none) {
   .primary-solid-operator-coloring-trait {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
 }
@@ -9596,6 +9630,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (hover: hover) {
   .dark-theme-trait h1 .segment:not(.label-segment):not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
   .dark-theme-trait h1 .segment:not(.label-segment):hover {
@@ -9604,6 +9640,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (hover: none) {
   .dark-theme-trait h1 .segment:not(.label-segment) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
 }
@@ -9669,8 +9707,8 @@ body.light .keyboard-shortcuts li .key:first-child {
     max-width: initial;
   }
 }
-.dark-theme-trait h1 button.icon-button:not(.default-button),
-.dark-theme-trait h1 button.menu-button:not(.default-button) {
+.dark-theme-trait h1 button.icon-button,
+.dark-theme-trait h1 button.menu-button {
   cursor: pointer;
   color: #000022;
   fill: #000022;
@@ -9678,23 +9716,27 @@ body.light .keyboard-shortcuts li .key:first-child {
   border-color: transparent !important;
 }
 @media (hover: hover) {
-  .dark-theme-trait h1 button.icon-button:not(.default-button):not(:hover),
-  .dark-theme-trait h1 button.menu-button:not(.default-button):not(:hover) {
+  .dark-theme-trait h1 button.icon-button:not(:hover),
+  .dark-theme-trait h1 button.menu-button:not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
-  .dark-theme-trait h1 button.icon-button:not(.default-button):hover,
-  .dark-theme-trait h1 button.menu-button:not(.default-button):hover {
+  .dark-theme-trait h1 button.icon-button:hover,
+  .dark-theme-trait h1 button.menu-button:hover {
     background-color: #6F7F00;
   }
 }
 @media (hover: none) {
-  .dark-theme-trait h1 button.icon-button:not(.default-button),
-  .dark-theme-trait h1 button.menu-button:not(.default-button) {
+  .dark-theme-trait h1 button.icon-button,
+  .dark-theme-trait h1 button.menu-button {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
 }
-.dark-theme-trait h1 button.icon-button:not(.default-button):not(:hover),
-.dark-theme-trait h1 button.menu-button:not(.default-button):not(:hover) {
+.dark-theme-trait h1 button.icon-button:not(:hover),
+.dark-theme-trait h1 button.menu-button:not(:hover) {
   background-color: transparent !important;
 }
 .dark-theme-trait h1 .menu-popup:not(.segment-popup) {
@@ -10042,6 +10084,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (hover: hover) {
   .dark-theme-trait .bottom-tabs .bottom-tab.current-item:not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
   .dark-theme-trait .bottom-tabs .bottom-tab.current-item:hover {
@@ -10050,6 +10094,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (hover: none) {
   .dark-theme-trait .bottom-tabs .bottom-tab.current-item {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
 }
@@ -10100,18 +10146,6 @@ body.light .keyboard-shortcuts li .key:first-child {
   margin: 0px;
   background-color: transparent !important;
   text-decoration: none !important;
-}
-@media (hover: hover) {
-  .dark-theme-trait .text-button:not(:hover) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (hover: none) {
-  .dark-theme-trait .text-button {
-    color: #228844;
-    fill: #228844;
-  }
 }
 @media (hover: hover) {
   .dark-theme-trait .text-button:hover {
@@ -10276,6 +10310,7 @@ body.light .keyboard-shortcuts li .key:first-child {
   min-width: 120px;
 }
 .dark-theme-trait button {
+  cursor: pointer;
   margin: 0px;
   padding: 0.25rem 1rem;
   border-radius: 32px;
@@ -10283,6 +10318,36 @@ body.light .keyboard-shortcuts li .key:first-child {
   border-width: 1px;
   font-weight: bold;
   font-size: 1rem;
+}
+@media (hover: hover) {
+  .dark-theme-trait button:not(:hover) {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: none) {
+  .dark-theme-trait button {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: hover) {
+  .dark-theme-trait button:not(:hover) {
+    border-color: #228844;
+    background-color: #000022;
+  }
+  .dark-theme-trait button:hover {
+    color: #000022;
+    fill: #000022;
+    border-color: #6F7F00;
+    background-color: #6F7F00;
+  }
+}
+@media (hover: none) {
+  .dark-theme-trait button {
+    border-color: #228844;
+    background-color: #000022;
+  }
 }
 .dark-theme-trait button.default-button {
   cursor: pointer;
@@ -10292,6 +10357,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (hover: hover) {
   .dark-theme-trait button.default-button:not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
   .dark-theme-trait button.default-button:hover {
@@ -10300,40 +10367,9 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (hover: none) {
   .dark-theme-trait button.default-button {
-    background-color: #228844;
-  }
-}
-.dark-theme-trait button:not(.default-button):not(.text-button) {
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .dark-theme-trait button:not(.default-button):not(.text-button):not(:hover) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (hover: none) {
-  .dark-theme-trait button:not(.default-button):not(.text-button) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (hover: hover) {
-  .dark-theme-trait button:not(.default-button):not(.text-button):not(:hover) {
-    border-color: #228844;
-    background-color: #000022;
-  }
-  .dark-theme-trait button:not(.default-button):not(.text-button):hover {
     color: #000022;
     fill: #000022;
-    border-color: #6F7F00;
-    background-color: #6F7F00;
-  }
-}
-@media (hover: none) {
-  .dark-theme-trait button:not(.default-button):not(.text-button) {
-    border-color: #228844;
-    background-color: #000022;
+    background-color: #228844;
   }
 }
 .dark-theme-trait button.icon-button,
@@ -10446,6 +10482,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 @media (hover: hover) {
   .dark-theme-trait .menu-popup a.current-item:not(:hover),
   .dark-theme-trait .menu-popup button.current-item:not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
   .dark-theme-trait .menu-popup a.current-item:hover,
@@ -10456,6 +10494,8 @@ body.light .keyboard-shortcuts li .key:first-child {
 @media (hover: none) {
   .dark-theme-trait .menu-popup a.current-item,
   .dark-theme-trait .menu-popup button.current-item {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
 }
@@ -12398,6 +12438,8 @@ body.dark h1 .segment:not(.label-segment) {
 }
 @media (hover: hover) {
   body.dark h1 .segment:not(.label-segment):not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
   body.dark h1 .segment:not(.label-segment):hover {
@@ -12406,6 +12448,8 @@ body.dark h1 .segment:not(.label-segment) {
 }
 @media (hover: none) {
   body.dark h1 .segment:not(.label-segment) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
 }
@@ -12471,8 +12515,8 @@ body.dark h1 .segment + .menu-popup {
     max-width: initial;
   }
 }
-body.dark h1 button.icon-button:not(.default-button),
-body.dark h1 button.menu-button:not(.default-button) {
+body.dark h1 button.icon-button,
+body.dark h1 button.menu-button {
   cursor: pointer;
   color: #000022;
   fill: #000022;
@@ -12480,23 +12524,27 @@ body.dark h1 button.menu-button:not(.default-button) {
   border-color: transparent !important;
 }
 @media (hover: hover) {
-  body.dark h1 button.icon-button:not(.default-button):not(:hover),
-  body.dark h1 button.menu-button:not(.default-button):not(:hover) {
+  body.dark h1 button.icon-button:not(:hover),
+  body.dark h1 button.menu-button:not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
-  body.dark h1 button.icon-button:not(.default-button):hover,
-  body.dark h1 button.menu-button:not(.default-button):hover {
+  body.dark h1 button.icon-button:hover,
+  body.dark h1 button.menu-button:hover {
     background-color: #6F7F00;
   }
 }
 @media (hover: none) {
-  body.dark h1 button.icon-button:not(.default-button),
-  body.dark h1 button.menu-button:not(.default-button) {
+  body.dark h1 button.icon-button,
+  body.dark h1 button.menu-button {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
 }
-body.dark h1 button.icon-button:not(.default-button):not(:hover),
-body.dark h1 button.menu-button:not(.default-button):not(:hover) {
+body.dark h1 button.icon-button:not(:hover),
+body.dark h1 button.menu-button:not(:hover) {
   background-color: transparent !important;
 }
 body.dark h1 .menu-popup:not(.segment-popup) {
@@ -12844,6 +12892,8 @@ body.dark .bottom-tabs .bottom-tab.current-item {
 }
 @media (hover: hover) {
   body.dark .bottom-tabs .bottom-tab.current-item:not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
   body.dark .bottom-tabs .bottom-tab.current-item:hover {
@@ -12852,6 +12902,8 @@ body.dark .bottom-tabs .bottom-tab.current-item {
 }
 @media (hover: none) {
   body.dark .bottom-tabs .bottom-tab.current-item {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
 }
@@ -12902,18 +12954,6 @@ body.dark .text-button {
   margin: 0px;
   background-color: transparent !important;
   text-decoration: none !important;
-}
-@media (hover: hover) {
-  body.dark .text-button:not(:hover) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (hover: none) {
-  body.dark .text-button {
-    color: #228844;
-    fill: #228844;
-  }
 }
 @media (hover: hover) {
   body.dark .text-button:hover {
@@ -13078,6 +13118,7 @@ body.dark input {
   min-width: 120px;
 }
 body.dark button {
+  cursor: pointer;
   margin: 0px;
   padding: 0.25rem 1rem;
   border-radius: 32px;
@@ -13085,6 +13126,36 @@ body.dark button {
   border-width: 1px;
   font-weight: bold;
   font-size: 1rem;
+}
+@media (hover: hover) {
+  body.dark button:not(:hover) {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: none) {
+  body.dark button {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (hover: hover) {
+  body.dark button:not(:hover) {
+    border-color: #228844;
+    background-color: #000022;
+  }
+  body.dark button:hover {
+    color: #000022;
+    fill: #000022;
+    border-color: #6F7F00;
+    background-color: #6F7F00;
+  }
+}
+@media (hover: none) {
+  body.dark button {
+    border-color: #228844;
+    background-color: #000022;
+  }
 }
 body.dark button.default-button {
   cursor: pointer;
@@ -13094,6 +13165,8 @@ body.dark button.default-button {
 }
 @media (hover: hover) {
   body.dark button.default-button:not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
   body.dark button.default-button:hover {
@@ -13102,40 +13175,9 @@ body.dark button.default-button {
 }
 @media (hover: none) {
   body.dark button.default-button {
-    background-color: #228844;
-  }
-}
-body.dark button:not(.default-button):not(.text-button) {
-  cursor: pointer;
-}
-@media (hover: hover) {
-  body.dark button:not(.default-button):not(.text-button):not(:hover) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (hover: none) {
-  body.dark button:not(.default-button):not(.text-button) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (hover: hover) {
-  body.dark button:not(.default-button):not(.text-button):not(:hover) {
-    border-color: #228844;
-    background-color: #000022;
-  }
-  body.dark button:not(.default-button):not(.text-button):hover {
     color: #000022;
     fill: #000022;
-    border-color: #6F7F00;
-    background-color: #6F7F00;
-  }
-}
-@media (hover: none) {
-  body.dark button:not(.default-button):not(.text-button) {
-    border-color: #228844;
-    background-color: #000022;
+    background-color: #228844;
   }
 }
 body.dark button.icon-button,
@@ -13248,6 +13290,8 @@ body.dark .menu-popup button.current-item {
 @media (hover: hover) {
   body.dark .menu-popup a.current-item:not(:hover),
   body.dark .menu-popup button.current-item:not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
   body.dark .menu-popup a.current-item:hover,
@@ -13258,6 +13302,8 @@ body.dark .menu-popup button.current-item {
 @media (hover: none) {
   body.dark .menu-popup a.current-item,
   body.dark .menu-popup button.current-item {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
 }
@@ -15203,16 +15249,16 @@ body.dark .keyboard-shortcuts li .key:first-child {
   body.auto h1 .segment + .menu-popup {
     white-space: nowrap;
   }
-  body.auto h1 button.icon-button:not(.default-button),
-  body.auto h1 button.menu-button:not(.default-button) {
+  body.auto h1 button.icon-button,
+  body.auto h1 button.menu-button {
     cursor: pointer;
     color: #000022;
     fill: #000022;
     border-color: #000022;
     border-color: transparent !important;
   }
-  body.auto h1 button.icon-button:not(.default-button):not(:hover),
-  body.auto h1 button.menu-button:not(.default-button):not(:hover) {
+  body.auto h1 button.icon-button:not(:hover),
+  body.auto h1 button.menu-button:not(:hover) {
     background-color: transparent !important;
   }
   body.auto h1 .menu-popup:not(.segment-popup) {
@@ -15660,6 +15706,7 @@ body.dark .keyboard-shortcuts li .key:first-child {
     min-width: 120px;
   }
   body.auto button {
+    cursor: pointer;
     margin: 0px;
     padding: 0.25rem 1rem;
     border-radius: 32px;
@@ -15673,9 +15720,6 @@ body.dark .keyboard-shortcuts li .key:first-child {
     color: #000022;
     fill: #000022;
     border-color: #000022;
-  }
-  body.auto button:not(.default-button):not(.text-button) {
-    cursor: pointer;
   }
   body.auto button.icon-button,
   body.auto button.menu-button {
@@ -16781,6 +16825,8 @@ body.dark .keyboard-shortcuts li .key:first-child {
 }
 @media (prefers-color-scheme: dark) and (hover: hover) {
   body.auto h1 .segment:not(.label-segment):not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
   body.auto h1 .segment:not(.label-segment):hover {
@@ -16789,6 +16835,8 @@ body.dark .keyboard-shortcuts li .key:first-child {
 }
 @media (prefers-color-scheme: dark) and (hover: none) {
   body.auto h1 .segment:not(.label-segment) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
 }
@@ -16823,18 +16871,22 @@ body.dark .keyboard-shortcuts li .key:first-child {
   }
 }
 @media (prefers-color-scheme: dark) and (hover: hover) {
-  body.auto h1 button.icon-button:not(.default-button):not(:hover),
-  body.auto h1 button.menu-button:not(.default-button):not(:hover) {
+  body.auto h1 button.icon-button:not(:hover),
+  body.auto h1 button.menu-button:not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
-  body.auto h1 button.icon-button:not(.default-button):hover,
-  body.auto h1 button.menu-button:not(.default-button):hover {
+  body.auto h1 button.icon-button:hover,
+  body.auto h1 button.menu-button:hover {
     background-color: #6F7F00;
   }
 }
 @media (prefers-color-scheme: dark) and (hover: none) {
-  body.auto h1 button.icon-button:not(.default-button),
-  body.auto h1 button.menu-button:not(.default-button) {
+  body.auto h1 button.icon-button,
+  body.auto h1 button.menu-button {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
 }
@@ -16900,6 +16952,8 @@ body.dark .keyboard-shortcuts li .key:first-child {
 }
 @media (prefers-color-scheme: dark) and (hover: hover) {
   body.auto .bottom-tabs .bottom-tab.current-item:not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
   body.auto .bottom-tabs .bottom-tab.current-item:hover {
@@ -16908,6 +16962,8 @@ body.dark .keyboard-shortcuts li .key:first-child {
 }
 @media (prefers-color-scheme: dark) and (hover: none) {
   body.auto .bottom-tabs .bottom-tab.current-item {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
 }
@@ -16940,18 +16996,6 @@ body.dark .keyboard-shortcuts li .key:first-child {
   }
 }
 @media (prefers-color-scheme: dark) and (hover: hover) {
-  body.auto .text-button:not(:hover) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (prefers-color-scheme: dark) and (hover: none) {
-  body.auto .text-button {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (prefers-color-scheme: dark) and (hover: hover) {
   body.auto .text-button:hover {
     opacity: 1;
     color: #6F7F00;
@@ -16973,7 +17017,39 @@ body.dark .keyboard-shortcuts li .key:first-child {
   }
 }
 @media (prefers-color-scheme: dark) and (hover: hover) {
+  body.auto button:not(:hover) {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (prefers-color-scheme: dark) and (hover: none) {
+  body.auto button {
+    color: #228844;
+    fill: #228844;
+  }
+}
+@media (prefers-color-scheme: dark) and (hover: hover) {
+  body.auto button:not(:hover) {
+    border-color: #228844;
+    background-color: #000022;
+  }
+  body.auto button:hover {
+    color: #000022;
+    fill: #000022;
+    border-color: #6F7F00;
+    background-color: #6F7F00;
+  }
+}
+@media (prefers-color-scheme: dark) and (hover: none) {
+  body.auto button {
+    border-color: #228844;
+    background-color: #000022;
+  }
+}
+@media (prefers-color-scheme: dark) and (hover: hover) {
   body.auto button.default-button:not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
   body.auto button.default-button:hover {
@@ -16982,37 +17058,9 @@ body.dark .keyboard-shortcuts li .key:first-child {
 }
 @media (prefers-color-scheme: dark) and (hover: none) {
   body.auto button.default-button {
-    background-color: #228844;
-  }
-}
-@media (prefers-color-scheme: dark) and (hover: hover) {
-  body.auto button:not(.default-button):not(.text-button):not(:hover) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (prefers-color-scheme: dark) and (hover: none) {
-  body.auto button:not(.default-button):not(.text-button) {
-    color: #228844;
-    fill: #228844;
-  }
-}
-@media (prefers-color-scheme: dark) and (hover: hover) {
-  body.auto button:not(.default-button):not(.text-button):not(:hover) {
-    border-color: #228844;
-    background-color: #000022;
-  }
-  body.auto button:not(.default-button):not(.text-button):hover {
     color: #000022;
     fill: #000022;
-    border-color: #6F7F00;
-    background-color: #6F7F00;
-  }
-}
-@media (prefers-color-scheme: dark) and (hover: none) {
-  body.auto button:not(.default-button):not(.text-button) {
-    border-color: #228844;
-    background-color: #000022;
+    background-color: #228844;
   }
 }
 @media (prefers-color-scheme: dark) and (hover: hover) {
@@ -17054,6 +17102,8 @@ body.dark .keyboard-shortcuts li .key:first-child {
 @media (prefers-color-scheme: dark) and (hover: hover) {
   body.auto .menu-popup a.current-item:not(:hover),
   body.auto .menu-popup button.current-item:not(:hover) {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
   body.auto .menu-popup a.current-item:hover,
@@ -17064,6 +17114,8 @@ body.dark .keyboard-shortcuts li .key:first-child {
 @media (prefers-color-scheme: dark) and (hover: none) {
   body.auto .menu-popup a.current-item,
   body.auto .menu-popup button.current-item {
+    color: #000022;
+    fill: #000022;
     background-color: #228844;
   }
 }
@@ -28936,7 +28988,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Oct 07 2023 00:24:24 GMT+0900 (日本標準時)', buildTimestampTick: 1696605864288, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Oct 07 2023 09:51:10 GMT+0900 (日本標準時)', buildTimestampTick: 1696639870755, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -29028,7 +29080,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Sat Oct 07 2023 00:24:24 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Sat Oct 07 2023 09:51:10 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

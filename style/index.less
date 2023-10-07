@@ -379,14 +379,11 @@ h1
     button.icon-button,
     button.menu-button
     {
-        &:not(.default-button)
+        .primary-operator-coloring-trait;
+        border-color: transparent !important;
+        &:not(:hover)
         {
-            .primary-operator-coloring-trait;
-            border-color: transparent !important;
-            &:not(:hover)
-            {
-                background-color: transparent !important;
-            }
+            background-color: transparent !important;
         }
     }
     .menu-popup:not(.segment-popup)
@@ -799,7 +796,6 @@ h1
 }
 .text-button
 {
-    .secondary-text-operator-coloring-trait;
     .link-trait;
     border-style: none;
     border-width: 0px;
@@ -996,13 +992,10 @@ input
 }
 button
 {
+    .secondary-operator-coloring-trait;
     &.default-button
     {
         .primary-operator-coloring-trait;
-    }
-    &:not(.default-button):not(.text-button)
-    {
-        .secondary-operator-coloring-trait;
     }
     margin: 0px;
     padding: 0.25rem 1rem;
@@ -1031,7 +1024,6 @@ button
                 border-color: transparent;
             }
         }
-    
         padding: 4px;
         svg
         {
