@@ -8035,6 +8035,7 @@ export module CyclicToDo
         console.log(`start timestamp: ${new Date()}`);
         console.log(`${JSON.stringify(params)}`);
         setLocale(Storage.SystemSettings.get().locale ?? null);
+        minamo.dom.removeChildren(Render.getScreenBody());
         const urlParams = getUrlParams(location.href);
         const reload = urlParams["reload"];
         let scroll: number | undefined;
