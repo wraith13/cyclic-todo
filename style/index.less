@@ -996,6 +996,20 @@ button
     &.default-button
     {
         .primary-operator-coloring-trait;
+        @media (hover: hover)
+        {
+            &:not(:hover)
+            {
+                border-color: @base-color;
+            }
+        }
+        @media (hover: none)
+        {
+            &
+            {
+                border-color: @base-color;
+            }
+        }
     }
     margin: 0px;
     padding: 0.25rem 1rem;
@@ -2215,6 +2229,8 @@ button
     margin: 0.25rem;
     border-radius: 1rem;
     padding: 1rem;
+    padding-left: 0rem;
+    padding-right: 0rem;
     background: linear-gradient(to bottom, fade(@accent-color, 15%) 0%, fade(@accent-color, 35%) 100%);
     &.primary-poem
     {
@@ -2256,7 +2272,7 @@ button
         opacity: 0.6;
         font-size: 1.0rem;
         line-height: 120%;
-        padding: 0.25rem;
+        margin: 0.5rem 1.5rem;
     }
     .poem-subtitle
     {
@@ -2264,22 +2280,22 @@ button
         font-size: 1.4rem;
         font-weight: 700;
         line-height: 120%;
-        padding: 0.25rem;
+        margin: 0.5rem 1.5rem;
     }
     .poem-description
     {
         display: block;
         font-size: 1.0rem;
         line-height: 120%;
-        padding: 0.25rem;
+        margin: 0.5rem 1.5rem;
     }
     .poem-image
     {
         display: block;
         font-size: 7.0rem;
         line-height: 100%;
-        padding: 0.25rem;
         text-align: center;
+        margin: 0.5rem 1.5rem;
     }
 }
 .poem-list
@@ -2289,6 +2305,11 @@ button
     justify-content: center;
     align-items: stretch;
     padding: 0.25rem;
+    & + .poem-list
+    {
+        margin-top: -0.25rem;
+        padding-top: 0rem;
+    }
     @media (min-width:640px)
     {
         flex-direction: row;
@@ -2297,20 +2318,15 @@ button
         {
             padding-bottom: 9rem;
             position: relative;
-            .poem-title,
-            .poem-subtitle,
-            .poem-description
-            {
-                margin-right: -1.5rem;
-            }
             .poem-description
             {
                 max-width: 320px;
+                margin-right: 0.5rem;
             }
             .poem-image
             {
                 position: absolute;
-                padding: 1.5rem;
+                padding: 1.0rem;
                 bottom: 0px;
                 left: 0px;
                 right: 0px;

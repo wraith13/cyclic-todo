@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sun Oct 08 2023 04:10:54 GMT+0900 (日本標準時)
+    build at: Sun Oct 08 2023 11:29:58 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -1714,6 +1714,16 @@ h2 {
     background-color: #228844;
   }
 }
+@media (hover: hover) {
+  .light-theme-trait button.default-button:not(:hover) {
+    border-color: #FFFFFF;
+  }
+}
+@media (hover: none) {
+  .light-theme-trait button.default-button {
+    border-color: #FFFFFF;
+  }
+}
 .light-theme-trait button.icon-button,
 .light-theme-trait button.menu-button {
   padding: 4px;
@@ -2787,6 +2797,8 @@ h2 {
   margin: 0.25rem;
   border-radius: 1rem;
   padding: 1rem;
+  padding-left: 0rem;
+  padding-right: 0rem;
   background: linear-gradient(to bottom, rgba(34, 136, 68, 0.15) 0%, rgba(34, 136, 68, 0.35) 100%);
 }
 .light-theme-trait .poem.primary-poem {
@@ -2820,27 +2832,27 @@ h2 {
   opacity: 0.6;
   font-size: 1rem;
   line-height: 120%;
-  padding: 0.25rem;
+  margin: 0.5rem 1.5rem;
 }
 .light-theme-trait .poem .poem-subtitle {
   display: block;
   font-size: 1.4rem;
   font-weight: 700;
   line-height: 120%;
-  padding: 0.25rem;
+  margin: 0.5rem 1.5rem;
 }
 .light-theme-trait .poem .poem-description {
   display: block;
   font-size: 1rem;
   line-height: 120%;
-  padding: 0.25rem;
+  margin: 0.5rem 1.5rem;
 }
 .light-theme-trait .poem .poem-image {
   display: block;
   font-size: 7rem;
   line-height: 100%;
-  padding: 0.25rem;
   text-align: center;
+  margin: 0.5rem 1.5rem;
 }
 .light-theme-trait .poem-list {
   display: flex;
@@ -2848,6 +2860,10 @@ h2 {
   justify-content: center;
   align-items: stretch;
   padding: 0.25rem;
+}
+.light-theme-trait .poem-list + .poem-list {
+  margin-top: -0.25rem;
+  padding-top: 0rem;
 }
 @media (min-width: 640px) {
   .light-theme-trait .poem-list {
@@ -2858,17 +2874,13 @@ h2 {
     padding-bottom: 9rem;
     position: relative;
   }
-  .light-theme-trait .poem-list .poem .poem-title,
-  .light-theme-trait .poem-list .poem .poem-subtitle,
-  .light-theme-trait .poem-list .poem .poem-description {
-    margin-right: -1.5rem;
-  }
   .light-theme-trait .poem-list .poem .poem-description {
     max-width: 320px;
+    margin-right: 0.5rem;
   }
   .light-theme-trait .poem-list .poem .poem-image {
     position: absolute;
-    padding: 1.5rem;
+    padding: 1rem;
     bottom: 0px;
     left: 0px;
     right: 0px;
@@ -4540,6 +4552,16 @@ body.light button.default-button {
     background-color: #228844;
   }
 }
+@media (hover: hover) {
+  body.light button.default-button:not(:hover) {
+    border-color: #FFFFFF;
+  }
+}
+@media (hover: none) {
+  body.light button.default-button {
+    border-color: #FFFFFF;
+  }
+}
 body.light button.icon-button,
 body.light button.menu-button {
   padding: 4px;
@@ -5613,6 +5635,8 @@ body.light .poem {
   margin: 0.25rem;
   border-radius: 1rem;
   padding: 1rem;
+  padding-left: 0rem;
+  padding-right: 0rem;
   background: linear-gradient(to bottom, rgba(34, 136, 68, 0.15) 0%, rgba(34, 136, 68, 0.35) 100%);
 }
 body.light .poem.primary-poem {
@@ -5646,27 +5670,27 @@ body.light .poem .poem-title {
   opacity: 0.6;
   font-size: 1rem;
   line-height: 120%;
-  padding: 0.25rem;
+  margin: 0.5rem 1.5rem;
 }
 body.light .poem .poem-subtitle {
   display: block;
   font-size: 1.4rem;
   font-weight: 700;
   line-height: 120%;
-  padding: 0.25rem;
+  margin: 0.5rem 1.5rem;
 }
 body.light .poem .poem-description {
   display: block;
   font-size: 1rem;
   line-height: 120%;
-  padding: 0.25rem;
+  margin: 0.5rem 1.5rem;
 }
 body.light .poem .poem-image {
   display: block;
   font-size: 7rem;
   line-height: 100%;
-  padding: 0.25rem;
   text-align: center;
+  margin: 0.5rem 1.5rem;
 }
 body.light .poem-list {
   display: flex;
@@ -5674,6 +5698,10 @@ body.light .poem-list {
   justify-content: center;
   align-items: stretch;
   padding: 0.25rem;
+}
+body.light .poem-list + .poem-list {
+  margin-top: -0.25rem;
+  padding-top: 0rem;
 }
 @media (min-width: 640px) {
   body.light .poem-list {
@@ -5684,17 +5712,13 @@ body.light .poem-list {
     padding-bottom: 9rem;
     position: relative;
   }
-  body.light .poem-list .poem .poem-title,
-  body.light .poem-list .poem .poem-subtitle,
-  body.light .poem-list .poem .poem-description {
-    margin-right: -1.5rem;
-  }
   body.light .poem-list .poem .poem-description {
     max-width: 320px;
+    margin-right: 0.5rem;
   }
   body.light .poem-list .poem .poem-image {
     position: absolute;
-    padding: 1.5rem;
+    padding: 1rem;
     bottom: 0px;
     left: 0px;
     right: 0px;
@@ -7956,6 +7980,8 @@ body.light .keyboard-shortcuts li .key:first-child {
     margin: 0.25rem;
     border-radius: 1rem;
     padding: 1rem;
+    padding-left: 0rem;
+    padding-right: 0rem;
     background: linear-gradient(to bottom, rgba(34, 136, 68, 0.15) 0%, rgba(34, 136, 68, 0.35) 100%);
   }
   body.auto .poem.primary-poem {
@@ -7975,27 +8001,27 @@ body.light .keyboard-shortcuts li .key:first-child {
     opacity: 0.6;
     font-size: 1rem;
     line-height: 120%;
-    padding: 0.25rem;
+    margin: 0.5rem 1.5rem;
   }
   body.auto .poem .poem-subtitle {
     display: block;
     font-size: 1.4rem;
     font-weight: 700;
     line-height: 120%;
-    padding: 0.25rem;
+    margin: 0.5rem 1.5rem;
   }
   body.auto .poem .poem-description {
     display: block;
     font-size: 1rem;
     line-height: 120%;
-    padding: 0.25rem;
+    margin: 0.5rem 1.5rem;
   }
   body.auto .poem .poem-image {
     display: block;
     font-size: 7rem;
     line-height: 100%;
-    padding: 0.25rem;
     text-align: center;
+    margin: 0.5rem 1.5rem;
   }
   body.auto .poem-list {
     display: flex;
@@ -8003,6 +8029,10 @@ body.light .keyboard-shortcuts li .key:first-child {
     justify-content: center;
     align-items: stretch;
     padding: 0.25rem;
+  }
+  body.auto .poem-list + .poem-list {
+    margin-top: -0.25rem;
+    padding-top: 0rem;
   }
   body.auto .poem-list .poem {
     flex-grow: 1;
@@ -8463,6 +8493,16 @@ body.light .keyboard-shortcuts li .key:first-child {
   }
 }
 @media (prefers-color-scheme: light) and (hover: hover) {
+  body.auto button.default-button:not(:hover) {
+    border-color: #FFFFFF;
+  }
+}
+@media (prefers-color-scheme: light) and (hover: none) {
+  body.auto button.default-button {
+    border-color: #FFFFFF;
+  }
+}
+@media (prefers-color-scheme: light) and (hover: hover) {
   body.auto button.icon-button:not(:hover),
   body.auto button.menu-button:not(:hover) {
     background-color: transparent;
@@ -8701,17 +8741,13 @@ body.light .keyboard-shortcuts li .key:first-child {
     padding-bottom: 9rem;
     position: relative;
   }
-  body.auto .poem-list .poem .poem-title,
-  body.auto .poem-list .poem .poem-subtitle,
-  body.auto .poem-list .poem .poem-description {
-    margin-right: -1.5rem;
-  }
   body.auto .poem-list .poem .poem-description {
     max-width: 320px;
+    margin-right: 0.5rem;
   }
   body.auto .poem-list .poem .poem-image {
     position: absolute;
-    padding: 1.5rem;
+    padding: 1rem;
     bottom: 0px;
     left: 0px;
     right: 0px;
@@ -10435,6 +10471,16 @@ body.light .keyboard-shortcuts li .key:first-child {
     background-color: #228844;
   }
 }
+@media (hover: hover) {
+  .dark-theme-trait button.default-button:not(:hover) {
+    border-color: #000022;
+  }
+}
+@media (hover: none) {
+  .dark-theme-trait button.default-button {
+    border-color: #000022;
+  }
+}
 .dark-theme-trait button.icon-button,
 .dark-theme-trait button.menu-button {
   padding: 4px;
@@ -11508,6 +11554,8 @@ body.light .keyboard-shortcuts li .key:first-child {
   margin: 0.25rem;
   border-radius: 1rem;
   padding: 1rem;
+  padding-left: 0rem;
+  padding-right: 0rem;
   background: linear-gradient(to bottom, rgba(34, 136, 68, 0.15) 0%, rgba(34, 136, 68, 0.35) 100%);
 }
 .dark-theme-trait .poem.primary-poem {
@@ -11541,27 +11589,27 @@ body.light .keyboard-shortcuts li .key:first-child {
   opacity: 0.6;
   font-size: 1rem;
   line-height: 120%;
-  padding: 0.25rem;
+  margin: 0.5rem 1.5rem;
 }
 .dark-theme-trait .poem .poem-subtitle {
   display: block;
   font-size: 1.4rem;
   font-weight: 700;
   line-height: 120%;
-  padding: 0.25rem;
+  margin: 0.5rem 1.5rem;
 }
 .dark-theme-trait .poem .poem-description {
   display: block;
   font-size: 1rem;
   line-height: 120%;
-  padding: 0.25rem;
+  margin: 0.5rem 1.5rem;
 }
 .dark-theme-trait .poem .poem-image {
   display: block;
   font-size: 7rem;
   line-height: 100%;
-  padding: 0.25rem;
   text-align: center;
+  margin: 0.5rem 1.5rem;
 }
 .dark-theme-trait .poem-list {
   display: flex;
@@ -11569,6 +11617,10 @@ body.light .keyboard-shortcuts li .key:first-child {
   justify-content: center;
   align-items: stretch;
   padding: 0.25rem;
+}
+.dark-theme-trait .poem-list + .poem-list {
+  margin-top: -0.25rem;
+  padding-top: 0rem;
 }
 @media (min-width: 640px) {
   .dark-theme-trait .poem-list {
@@ -11579,17 +11631,13 @@ body.light .keyboard-shortcuts li .key:first-child {
     padding-bottom: 9rem;
     position: relative;
   }
-  .dark-theme-trait .poem-list .poem .poem-title,
-  .dark-theme-trait .poem-list .poem .poem-subtitle,
-  .dark-theme-trait .poem-list .poem .poem-description {
-    margin-right: -1.5rem;
-  }
   .dark-theme-trait .poem-list .poem .poem-description {
     max-width: 320px;
+    margin-right: 0.5rem;
   }
   .dark-theme-trait .poem-list .poem .poem-image {
     position: absolute;
-    padding: 1.5rem;
+    padding: 1rem;
     bottom: 0px;
     left: 0px;
     right: 0px;
@@ -13264,6 +13312,16 @@ body.dark button.default-button {
     background-color: #228844;
   }
 }
+@media (hover: hover) {
+  body.dark button.default-button:not(:hover) {
+    border-color: #000022;
+  }
+}
+@media (hover: none) {
+  body.dark button.default-button {
+    border-color: #000022;
+  }
+}
 body.dark button.icon-button,
 body.dark button.menu-button {
   padding: 4px;
@@ -14337,6 +14395,8 @@ body.dark .poem {
   margin: 0.25rem;
   border-radius: 1rem;
   padding: 1rem;
+  padding-left: 0rem;
+  padding-right: 0rem;
   background: linear-gradient(to bottom, rgba(34, 136, 68, 0.15) 0%, rgba(34, 136, 68, 0.35) 100%);
 }
 body.dark .poem.primary-poem {
@@ -14370,27 +14430,27 @@ body.dark .poem .poem-title {
   opacity: 0.6;
   font-size: 1rem;
   line-height: 120%;
-  padding: 0.25rem;
+  margin: 0.5rem 1.5rem;
 }
 body.dark .poem .poem-subtitle {
   display: block;
   font-size: 1.4rem;
   font-weight: 700;
   line-height: 120%;
-  padding: 0.25rem;
+  margin: 0.5rem 1.5rem;
 }
 body.dark .poem .poem-description {
   display: block;
   font-size: 1rem;
   line-height: 120%;
-  padding: 0.25rem;
+  margin: 0.5rem 1.5rem;
 }
 body.dark .poem .poem-image {
   display: block;
   font-size: 7rem;
   line-height: 100%;
-  padding: 0.25rem;
   text-align: center;
+  margin: 0.5rem 1.5rem;
 }
 body.dark .poem-list {
   display: flex;
@@ -14398,6 +14458,10 @@ body.dark .poem-list {
   justify-content: center;
   align-items: stretch;
   padding: 0.25rem;
+}
+body.dark .poem-list + .poem-list {
+  margin-top: -0.25rem;
+  padding-top: 0rem;
 }
 @media (min-width: 640px) {
   body.dark .poem-list {
@@ -14408,17 +14472,13 @@ body.dark .poem-list {
     padding-bottom: 9rem;
     position: relative;
   }
-  body.dark .poem-list .poem .poem-title,
-  body.dark .poem-list .poem .poem-subtitle,
-  body.dark .poem-list .poem .poem-description {
-    margin-right: -1.5rem;
-  }
   body.dark .poem-list .poem .poem-description {
     max-width: 320px;
+    margin-right: 0.5rem;
   }
   body.dark .poem-list .poem .poem-image {
     position: absolute;
-    padding: 1.5rem;
+    padding: 1rem;
     bottom: 0px;
     left: 0px;
     right: 0px;
@@ -16683,6 +16743,8 @@ body.dark .keyboard-shortcuts li .key:first-child {
     margin: 0.25rem;
     border-radius: 1rem;
     padding: 1rem;
+    padding-left: 0rem;
+    padding-right: 0rem;
     background: linear-gradient(to bottom, rgba(34, 136, 68, 0.15) 0%, rgba(34, 136, 68, 0.35) 100%);
   }
   body.auto .poem.primary-poem {
@@ -16702,27 +16764,27 @@ body.dark .keyboard-shortcuts li .key:first-child {
     opacity: 0.6;
     font-size: 1rem;
     line-height: 120%;
-    padding: 0.25rem;
+    margin: 0.5rem 1.5rem;
   }
   body.auto .poem .poem-subtitle {
     display: block;
     font-size: 1.4rem;
     font-weight: 700;
     line-height: 120%;
-    padding: 0.25rem;
+    margin: 0.5rem 1.5rem;
   }
   body.auto .poem .poem-description {
     display: block;
     font-size: 1rem;
     line-height: 120%;
-    padding: 0.25rem;
+    margin: 0.5rem 1.5rem;
   }
   body.auto .poem .poem-image {
     display: block;
     font-size: 7rem;
     line-height: 100%;
-    padding: 0.25rem;
     text-align: center;
+    margin: 0.5rem 1.5rem;
   }
   body.auto .poem-list {
     display: flex;
@@ -16730,6 +16792,10 @@ body.dark .keyboard-shortcuts li .key:first-child {
     justify-content: center;
     align-items: stretch;
     padding: 0.25rem;
+  }
+  body.auto .poem-list + .poem-list {
+    margin-top: -0.25rem;
+    padding-top: 0rem;
   }
   body.auto .poem-list .poem {
     flex-grow: 1;
@@ -17190,6 +17256,16 @@ body.dark .keyboard-shortcuts li .key:first-child {
   }
 }
 @media (prefers-color-scheme: dark) and (hover: hover) {
+  body.auto button.default-button:not(:hover) {
+    border-color: #000022;
+  }
+}
+@media (prefers-color-scheme: dark) and (hover: none) {
+  body.auto button.default-button {
+    border-color: #000022;
+  }
+}
+@media (prefers-color-scheme: dark) and (hover: hover) {
   body.auto button.icon-button:not(:hover),
   body.auto button.menu-button:not(:hover) {
     background-color: transparent;
@@ -17428,17 +17504,13 @@ body.dark .keyboard-shortcuts li .key:first-child {
     padding-bottom: 9rem;
     position: relative;
   }
-  body.auto .poem-list .poem .poem-title,
-  body.auto .poem-list .poem .poem-subtitle,
-  body.auto .poem-list .poem .poem-description {
-    margin-right: -1.5rem;
-  }
   body.auto .poem-list .poem .poem-description {
     max-width: 320px;
+    margin-right: 0.5rem;
   }
   body.auto .poem-list .poem .poem-image {
     position: absolute;
-    padding: 1.5rem;
+    padding: 1rem;
     bottom: 0px;
     left: 0px;
     right: 0px;
@@ -29115,7 +29187,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Oct 08 2023 04:10:54 GMT+0900 (日本標準時)', buildTimestampTick: 1696705854592, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Oct 08 2023 11:29:58 GMT+0900 (日本標準時)', buildTimestampTick: 1696732198402, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -29207,7 +29279,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Sun Oct 08 2023 04:10:54 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Sun Oct 08 2023 11:29:58 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
