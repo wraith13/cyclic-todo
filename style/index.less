@@ -8,8 +8,9 @@
         animation-name: slow-fadein;
         animation-direction: normal;
         animation-delay: 0s;
-        animation-duration: 1.0s;
+        animation-duration: 2.0s;
         animation-timing-function: ease-in-out;
+        animation-fill-mode: both;
     }
 }
 @keyframes slow-fadein
@@ -227,6 +228,10 @@
     left: 0px;
     & > .application-icon
     {
+        animation-name: fade-in;
+        animation-delay: 0.0s;
+        animation-duration: 5.0s;
+        animation-fill-mode: both;
         filter: blur(3px);
         @media (min-width:640px)
         {
@@ -2194,10 +2199,6 @@ button
         flex-direction: row;
         align-items: center;
         justify-content: center;
-        animation-name: cut-in;
-        animation-delay: 0.0s;
-        animation-duration: 0.250s;
-        animation-fill-mode: both;
         overflow: hidden;
         svg
         {

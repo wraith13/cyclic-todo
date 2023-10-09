@@ -7254,6 +7254,17 @@ export module CyclicToDo
                         }
                         minamo.dom.toggleCSSClass(minamo.core.existsOrThrow(document.getElementById("screen")), "immersive", isImmersive);
                         previousScrollTop = scrollTop;
+                        const logo = document.getElementById("foundation")?.getElementsByTagName("svg")?.[0];
+                        if (logo)
+                        {
+                            const frame = screenBody.clientHeight +logo.clientHeight;
+                            let y = (scrollTop /50) %frame;
+                            if (frame /2 < y)
+                            {
+                                y -= frame;
+                            }
+                            logo.style.transform = `translateY(${-y}px)`;
+                        }
                     }
                 );
             }
