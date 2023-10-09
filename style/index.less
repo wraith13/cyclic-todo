@@ -225,6 +225,27 @@
     bottom: 0px;
     right: 0px;
     left: 0px;
+    & > .application-icon
+    {
+        filter: blur(3px);
+        @media (min-width:640px)
+        {
+            filter: blur(4px);
+        }
+        @media (min-width:780px)
+        {
+            filter: blur(5px);
+        }
+        @media (min-width:960px)
+        {
+            filter: blur(6px);
+        }
+        svg
+        {
+            color: fade(@accent-color, 20);
+            fill: fade(@accent-color, 20);
+        }
+    }
 }
 .monospace
 {
@@ -2144,6 +2165,7 @@ button
         align-items: center;
         right: 0px;
         left: 0px;
+        background-color: @base-color;
 
         // .message
         // {
@@ -2158,6 +2180,7 @@ button
         // }
     }
 }
+#foundation,
 .screen-body
 {
     & > .application-icon
@@ -2175,8 +2198,6 @@ button
         animation-delay: 0.0s;
         animation-duration: 0.250s;
         animation-fill-mode: both;
-        background-color: @accent-color;
-        .loading-breath;
         overflow: hidden;
         svg
         {
@@ -2184,6 +2205,17 @@ button
             height: 61.8%;
             min-width: 240px;
             min-height: 240px;
+        }
+    }
+}
+.screen-body
+{
+    & > .application-icon
+    {
+        background-color: @accent-color;
+        .loading-breath;
+        svg
+        {
             color: @base-color;
             fill: @base-color;
         }
@@ -2566,7 +2598,7 @@ button
 {
     0%
     {
-        opacity: 0.5;
+        opacity: 0.4;
     }
     50%
     {
@@ -2574,7 +2606,7 @@ button
     }
     100%
     {
-        opacity: 0.5;
+        opacity: 0.4;
     }
 }
 @keyframes loading-breath-icon

@@ -7033,13 +7033,7 @@ export module CyclicToDo
                 $div("poem-list")
                 ([
                     poem("beta"),
-                    $div("poem")
-                    ([
-                        $span("poem-title")(locale.string("スマートな表示順")),
-                        $span("poem-subtitle")(locale.string("あなたは実行するだけ")),
-                        $span("poem-description")(locale.string("自動タグ設定や過去の履歴から「そろそろ実行するタイミングだと予測されるタスク」を優先的に表示するので、次に実行するべきタスクを簡単に把握できます。")),
-                        $span("poem-image")("🧠"),
-                    ]),
+                    poem("smart"),
                     poem("no-account"),
                     poem("hisotry"),
                     poem("list"),
@@ -7157,7 +7151,7 @@ export module CyclicToDo
                 getScreenBody(),
                 await applicationIcon()
             );
-            await minamo.core.timeout(50);
+            await minamo.core.timeout(20);
         };
         export const updatingScreen = async (_url: string = location.href): Promise<ScreenSource> =>
         ({
@@ -8036,6 +8030,11 @@ export module CyclicToDo
         console.log(`${JSON.stringify(params)}`);
         setLocale(Storage.SystemSettings.get().locale ?? null);
         minamo.dom.removeChildren(Render.getScreenBody());
+        minamo.dom.appendChildren
+        (
+            document.getElementById("foundation") as HTMLDivElement,
+            await Render.applicationIcon()
+        );
         const urlParams = getUrlParams(location.href);
         const reload = urlParams["reload"];
         let scroll: number | undefined;

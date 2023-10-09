@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sun Oct 08 2023 11:29:58 GMT+0900 (日本標準時)
+    build at: Mon Oct 09 2023 09:52:55 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -910,6 +910,28 @@ h2 {
   bottom: 0px;
   right: 0px;
   left: 0px;
+}
+.light-theme-trait #foundation > .application-icon {
+  filter: blur(3px);
+}
+@media (min-width: 640px) {
+  .light-theme-trait #foundation > .application-icon {
+    filter: blur(4px);
+  }
+}
+@media (min-width: 780px) {
+  .light-theme-trait #foundation > .application-icon {
+    filter: blur(5px);
+  }
+}
+@media (min-width: 960px) {
+  .light-theme-trait #foundation > .application-icon {
+    filter: blur(6px);
+  }
+}
+.light-theme-trait #foundation > .application-icon svg {
+  color: rgba(34, 136, 68, 0.2);
+  fill: rgba(34, 136, 68, 0.2);
 }
 .light-theme-trait .monospace {
   font-family: monospace;
@@ -2729,7 +2751,9 @@ h2 {
   align-items: center;
   right: 0px;
   left: 0px;
+  background-color: #FFFFFF;
 }
+.light-theme-trait #foundation > .application-icon,
 .light-theme-trait .screen-body > .application-icon {
   position: absolute;
   top: 0px;
@@ -2741,7 +2765,19 @@ h2 {
   align-items: center;
   justify-content: center;
   animation-name: cut-in;
+  animation-delay: 0s;
   animation-duration: 0.25s;
+  animation-fill-mode: both;
+  overflow: hidden;
+}
+.light-theme-trait #foundation > .application-icon svg,
+.light-theme-trait .screen-body > .application-icon svg {
+  width: 61.8%;
+  height: 61.8%;
+  min-width: 240px;
+  min-height: 240px;
+}
+.light-theme-trait .screen-body > .application-icon {
   background-color: #228844;
   animation-name: loading-breath;
   animation-direction: normal;
@@ -2750,7 +2786,6 @@ h2 {
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
   animation-iteration-count: infinite;
-  overflow: hidden;
 }
 .light-theme-trait .screen-body > .application-icon svg {
   animation-name: loading-breath-icon;
@@ -2762,10 +2797,6 @@ h2 {
   animation-iteration-count: infinite;
 }
 .light-theme-trait .screen-body > .application-icon svg {
-  width: 61.8%;
-  height: 61.8%;
-  min-width: 240px;
-  min-height: 240px;
   color: #FFFFFF;
   fill: #FFFFFF;
 }
@@ -3059,13 +3090,13 @@ h2 {
 }
 @keyframes loading-breath {
   0% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
   50% {
     opacity: 0.8;
   }
   100% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
 }
 @keyframes loading-breath-icon {
@@ -3748,6 +3779,28 @@ body.light #foundation {
   bottom: 0px;
   right: 0px;
   left: 0px;
+}
+body.light #foundation > .application-icon {
+  filter: blur(3px);
+}
+@media (min-width: 640px) {
+  body.light #foundation > .application-icon {
+    filter: blur(4px);
+  }
+}
+@media (min-width: 780px) {
+  body.light #foundation > .application-icon {
+    filter: blur(5px);
+  }
+}
+@media (min-width: 960px) {
+  body.light #foundation > .application-icon {
+    filter: blur(6px);
+  }
+}
+body.light #foundation > .application-icon svg {
+  color: rgba(34, 136, 68, 0.2);
+  fill: rgba(34, 136, 68, 0.2);
 }
 body.light .monospace {
   font-family: monospace;
@@ -5567,7 +5620,9 @@ body.light .updating-screen .screen-body {
   align-items: center;
   right: 0px;
   left: 0px;
+  background-color: #FFFFFF;
 }
+body.light #foundation > .application-icon,
 body.light .screen-body > .application-icon {
   position: absolute;
   top: 0px;
@@ -5579,7 +5634,19 @@ body.light .screen-body > .application-icon {
   align-items: center;
   justify-content: center;
   animation-name: cut-in;
+  animation-delay: 0s;
   animation-duration: 0.25s;
+  animation-fill-mode: both;
+  overflow: hidden;
+}
+body.light #foundation > .application-icon svg,
+body.light .screen-body > .application-icon svg {
+  width: 61.8%;
+  height: 61.8%;
+  min-width: 240px;
+  min-height: 240px;
+}
+body.light .screen-body > .application-icon {
   background-color: #228844;
   animation-name: loading-breath;
   animation-direction: normal;
@@ -5588,7 +5655,6 @@ body.light .screen-body > .application-icon {
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
   animation-iteration-count: infinite;
-  overflow: hidden;
 }
 body.light .screen-body > .application-icon svg {
   animation-name: loading-breath-icon;
@@ -5600,10 +5666,6 @@ body.light .screen-body > .application-icon svg {
   animation-iteration-count: infinite;
 }
 body.light .screen-body > .application-icon svg {
-  width: 61.8%;
-  height: 61.8%;
-  min-width: 240px;
-  min-height: 240px;
   color: #FFFFFF;
   fill: #FFFFFF;
 }
@@ -5897,13 +5959,13 @@ body.light .loading-breath svg {
 }
 @keyframes loading-breath {
   0% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
   50% {
     opacity: 0.8;
   }
   100% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
 }
 @keyframes loading-breath-icon {
@@ -6559,6 +6621,13 @@ body.light .keyboard-shortcuts li .key:first-child {
     bottom: 0px;
     right: 0px;
     left: 0px;
+  }
+  body.auto #foundation > .application-icon {
+    filter: blur(3px);
+  }
+  body.auto #foundation > .application-icon svg {
+    color: rgba(34, 136, 68, 0.2);
+    fill: rgba(34, 136, 68, 0.2);
   }
   body.auto .monospace {
     font-family: monospace;
@@ -7912,7 +7981,9 @@ body.light .keyboard-shortcuts li .key:first-child {
     align-items: center;
     right: 0px;
     left: 0px;
+    background-color: #FFFFFF;
   }
+  body.auto #foundation > .application-icon,
   body.auto .screen-body > .application-icon {
     position: absolute;
     top: 0px;
@@ -7924,7 +7995,19 @@ body.light .keyboard-shortcuts li .key:first-child {
     align-items: center;
     justify-content: center;
     animation-name: cut-in;
+    animation-delay: 0s;
     animation-duration: 0.25s;
+    animation-fill-mode: both;
+    overflow: hidden;
+  }
+  body.auto #foundation > .application-icon svg,
+  body.auto .screen-body > .application-icon svg {
+    width: 61.8%;
+    height: 61.8%;
+    min-width: 240px;
+    min-height: 240px;
+  }
+  body.auto .screen-body > .application-icon {
     background-color: #228844;
     animation-name: loading-breath;
     animation-direction: normal;
@@ -7933,7 +8016,6 @@ body.light .keyboard-shortcuts li .key:first-child {
     animation-timing-function: ease-in-out;
     animation-fill-mode: both;
     animation-iteration-count: infinite;
-    overflow: hidden;
   }
   body.auto .screen-body > .application-icon svg {
     animation-name: loading-breath-icon;
@@ -7945,10 +8027,6 @@ body.light .keyboard-shortcuts li .key:first-child {
     animation-iteration-count: infinite;
   }
   body.auto .screen-body > .application-icon svg {
-    width: 61.8%;
-    height: 61.8%;
-    min-width: 240px;
-    min-height: 240px;
     color: #FFFFFF;
     fill: #FFFFFF;
   }
@@ -8156,13 +8234,13 @@ body.light .keyboard-shortcuts li .key:first-child {
   }
   @keyframes loading-breath {
     0% {
-      opacity: 0.5;
+      opacity: 0.4;
     }
     50% {
       opacity: 0.8;
     }
     100% {
-      opacity: 0.5;
+      opacity: 0.4;
     }
   }
   @keyframes loading-breath-icon {
@@ -8250,6 +8328,21 @@ body.light .keyboard-shortcuts li .key:first-child {
   body.auto a.plain {
     color: #228844;
     fill: #228844;
+  }
+}
+@media (prefers-color-scheme: light) and (min-width: 640px) {
+  body.auto #foundation > .application-icon {
+    filter: blur(4px);
+  }
+}
+@media (prefers-color-scheme: light) and (min-width: 780px) {
+  body.auto #foundation > .application-icon {
+    filter: blur(5px);
+  }
+}
+@media (prefers-color-scheme: light) and (min-width: 960px) {
+  body.auto #foundation > .application-icon {
+    filter: blur(6px);
   }
 }
 @media (prefers-color-scheme: light) and (hover: hover) {
@@ -9667,6 +9760,28 @@ body.light .keyboard-shortcuts li .key:first-child {
   bottom: 0px;
   right: 0px;
   left: 0px;
+}
+.dark-theme-trait #foundation > .application-icon {
+  filter: blur(3px);
+}
+@media (min-width: 640px) {
+  .dark-theme-trait #foundation > .application-icon {
+    filter: blur(4px);
+  }
+}
+@media (min-width: 780px) {
+  .dark-theme-trait #foundation > .application-icon {
+    filter: blur(5px);
+  }
+}
+@media (min-width: 960px) {
+  .dark-theme-trait #foundation > .application-icon {
+    filter: blur(6px);
+  }
+}
+.dark-theme-trait #foundation > .application-icon svg {
+  color: rgba(34, 136, 68, 0.2);
+  fill: rgba(34, 136, 68, 0.2);
 }
 .dark-theme-trait .monospace {
   font-family: monospace;
@@ -11486,7 +11601,9 @@ body.light .keyboard-shortcuts li .key:first-child {
   align-items: center;
   right: 0px;
   left: 0px;
+  background-color: #000022;
 }
+.dark-theme-trait #foundation > .application-icon,
 .dark-theme-trait .screen-body > .application-icon {
   position: absolute;
   top: 0px;
@@ -11498,7 +11615,19 @@ body.light .keyboard-shortcuts li .key:first-child {
   align-items: center;
   justify-content: center;
   animation-name: cut-in;
+  animation-delay: 0s;
   animation-duration: 0.25s;
+  animation-fill-mode: both;
+  overflow: hidden;
+}
+.dark-theme-trait #foundation > .application-icon svg,
+.dark-theme-trait .screen-body > .application-icon svg {
+  width: 61.8%;
+  height: 61.8%;
+  min-width: 240px;
+  min-height: 240px;
+}
+.dark-theme-trait .screen-body > .application-icon {
   background-color: #228844;
   animation-name: loading-breath;
   animation-direction: normal;
@@ -11507,7 +11636,6 @@ body.light .keyboard-shortcuts li .key:first-child {
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
   animation-iteration-count: infinite;
-  overflow: hidden;
 }
 .dark-theme-trait .screen-body > .application-icon svg {
   animation-name: loading-breath-icon;
@@ -11519,10 +11647,6 @@ body.light .keyboard-shortcuts li .key:first-child {
   animation-iteration-count: infinite;
 }
 .dark-theme-trait .screen-body > .application-icon svg {
-  width: 61.8%;
-  height: 61.8%;
-  min-width: 240px;
-  min-height: 240px;
   color: #000022;
   fill: #000022;
 }
@@ -11816,13 +11940,13 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @keyframes loading-breath {
   0% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
   50% {
     opacity: 0.8;
   }
   100% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
 }
 @keyframes loading-breath-icon {
@@ -12508,6 +12632,28 @@ body.dark #foundation {
   bottom: 0px;
   right: 0px;
   left: 0px;
+}
+body.dark #foundation > .application-icon {
+  filter: blur(3px);
+}
+@media (min-width: 640px) {
+  body.dark #foundation > .application-icon {
+    filter: blur(4px);
+  }
+}
+@media (min-width: 780px) {
+  body.dark #foundation > .application-icon {
+    filter: blur(5px);
+  }
+}
+@media (min-width: 960px) {
+  body.dark #foundation > .application-icon {
+    filter: blur(6px);
+  }
+}
+body.dark #foundation > .application-icon svg {
+  color: rgba(34, 136, 68, 0.2);
+  fill: rgba(34, 136, 68, 0.2);
 }
 body.dark .monospace {
   font-family: monospace;
@@ -14327,7 +14473,9 @@ body.dark .updating-screen .screen-body {
   align-items: center;
   right: 0px;
   left: 0px;
+  background-color: #000022;
 }
+body.dark #foundation > .application-icon,
 body.dark .screen-body > .application-icon {
   position: absolute;
   top: 0px;
@@ -14339,7 +14487,19 @@ body.dark .screen-body > .application-icon {
   align-items: center;
   justify-content: center;
   animation-name: cut-in;
+  animation-delay: 0s;
   animation-duration: 0.25s;
+  animation-fill-mode: both;
+  overflow: hidden;
+}
+body.dark #foundation > .application-icon svg,
+body.dark .screen-body > .application-icon svg {
+  width: 61.8%;
+  height: 61.8%;
+  min-width: 240px;
+  min-height: 240px;
+}
+body.dark .screen-body > .application-icon {
   background-color: #228844;
   animation-name: loading-breath;
   animation-direction: normal;
@@ -14348,7 +14508,6 @@ body.dark .screen-body > .application-icon {
   animation-timing-function: ease-in-out;
   animation-fill-mode: both;
   animation-iteration-count: infinite;
-  overflow: hidden;
 }
 body.dark .screen-body > .application-icon svg {
   animation-name: loading-breath-icon;
@@ -14360,10 +14519,6 @@ body.dark .screen-body > .application-icon svg {
   animation-iteration-count: infinite;
 }
 body.dark .screen-body > .application-icon svg {
-  width: 61.8%;
-  height: 61.8%;
-  min-width: 240px;
-  min-height: 240px;
   color: #000022;
   fill: #000022;
 }
@@ -14657,13 +14812,13 @@ body.dark .loading-breath svg {
 }
 @keyframes loading-breath {
   0% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
   50% {
     opacity: 0.8;
   }
   100% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
 }
 @keyframes loading-breath-icon {
@@ -15322,6 +15477,13 @@ body.dark .keyboard-shortcuts li .key:first-child {
     bottom: 0px;
     right: 0px;
     left: 0px;
+  }
+  body.auto #foundation > .application-icon {
+    filter: blur(3px);
+  }
+  body.auto #foundation > .application-icon svg {
+    color: rgba(34, 136, 68, 0.2);
+    fill: rgba(34, 136, 68, 0.2);
   }
   body.auto .monospace {
     font-family: monospace;
@@ -16675,7 +16837,9 @@ body.dark .keyboard-shortcuts li .key:first-child {
     align-items: center;
     right: 0px;
     left: 0px;
+    background-color: #000022;
   }
+  body.auto #foundation > .application-icon,
   body.auto .screen-body > .application-icon {
     position: absolute;
     top: 0px;
@@ -16687,7 +16851,19 @@ body.dark .keyboard-shortcuts li .key:first-child {
     align-items: center;
     justify-content: center;
     animation-name: cut-in;
+    animation-delay: 0s;
     animation-duration: 0.25s;
+    animation-fill-mode: both;
+    overflow: hidden;
+  }
+  body.auto #foundation > .application-icon svg,
+  body.auto .screen-body > .application-icon svg {
+    width: 61.8%;
+    height: 61.8%;
+    min-width: 240px;
+    min-height: 240px;
+  }
+  body.auto .screen-body > .application-icon {
     background-color: #228844;
     animation-name: loading-breath;
     animation-direction: normal;
@@ -16696,7 +16872,6 @@ body.dark .keyboard-shortcuts li .key:first-child {
     animation-timing-function: ease-in-out;
     animation-fill-mode: both;
     animation-iteration-count: infinite;
-    overflow: hidden;
   }
   body.auto .screen-body > .application-icon svg {
     animation-name: loading-breath-icon;
@@ -16708,10 +16883,6 @@ body.dark .keyboard-shortcuts li .key:first-child {
     animation-iteration-count: infinite;
   }
   body.auto .screen-body > .application-icon svg {
-    width: 61.8%;
-    height: 61.8%;
-    min-width: 240px;
-    min-height: 240px;
     color: #000022;
     fill: #000022;
   }
@@ -16919,13 +17090,13 @@ body.dark .keyboard-shortcuts li .key:first-child {
   }
   @keyframes loading-breath {
     0% {
-      opacity: 0.5;
+      opacity: 0.4;
     }
     50% {
       opacity: 0.8;
     }
     100% {
-      opacity: 0.5;
+      opacity: 0.4;
     }
   }
   @keyframes loading-breath-icon {
@@ -17013,6 +17184,21 @@ body.dark .keyboard-shortcuts li .key:first-child {
   body.auto a.plain {
     color: #228844;
     fill: #228844;
+  }
+}
+@media (prefers-color-scheme: dark) and (min-width: 640px) {
+  body.auto #foundation > .application-icon {
+    filter: blur(4px);
+  }
+}
+@media (prefers-color-scheme: dark) and (min-width: 780px) {
+  body.auto #foundation > .application-icon {
+    filter: blur(5px);
+  }
+}
+@media (prefers-color-scheme: dark) and (min-width: 960px) {
+  body.auto #foundation > .application-icon {
+    filter: blur(6px);
   }
 }
 @media (prefers-color-scheme: dark) and (hover: hover) {
@@ -19514,6 +19700,7 @@ define("resource/config", [], {
 define("resource/poem", [], {
     "primary": "🏆",
     "beta": "🚧",
+    "smart": "🧠",
     "no-account": "🚀",
     "hisotry": "📔",
     "list": "🗄️",
@@ -19539,6 +19726,9 @@ define("resource/lang.en", [], {
     "poem.beta.title": "Public beta version",
     "poem.beta.subtitle": "Under development",
     "poem.beta.description": "This static web application is under development.",
+    "poem.smart.title": "Smart display order",
+    "poem.smart.subtitle": "You just do it",
+    "poem.smart.description": "Tasks that are predicted to be ready for execution based on auto-tagging and past history are displayed in priority order, making it easy to grasp the next task to be executed.",
     "poem.no-account.title": "No account required",
     "poem.no-account.subtitle": "Ready to use now",
     "poem.no-account.description": "Cyclic ToDo can be used immediately without requiring account registration or login. Click the [New ToDo List] button.",
@@ -19738,6 +19928,9 @@ define("resource/lang.ja", [], {
     "poem.beta.title": "公開ベータ版",
     "poem.beta.subtitle": "開発中です",
     "poem.beta.description": "この Static Web アプリは開発中です。",
+    "poem.smart.title": "スマートな表示順",
+    "poem.smart.subtitle": "あなたは実行するだけ",
+    "poem.smart.description": "自動タグ設定や過去の履歴から「そろそろ実行するタイミングだと予測されるタスク」を優先的に表示するので、次に実行するべきタスクを簡単に把握できます。",
     "poem.no-account.title": "アカウント不要",
     "poem.no-account.subtitle": "いますぐ使えます",
     "poem.no-account.description": "Cyclic ToDo はアカウント登録やログイン不要でいますぐに使えます。[新しい ToDo リスト]ボタンをクリックしてください。",
@@ -28003,12 +28196,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 ]),
                                 Render.$div("poem-list")([
                                     Render.poem("beta"),
-                                    Render.$div("poem")([
-                                        Render.$span("poem-title")(locale_2.locale.string("スマートな表示順")),
-                                        Render.$span("poem-subtitle")(locale_2.locale.string("あなたは実行するだけ")),
-                                        Render.$span("poem-description")(locale_2.locale.string("自動タグ設定や過去の履歴から「そろそろ実行するタイミングだと予測されるタスク」を優先的に表示するので、次に実行するべきタスクを簡単に把握できます。")),
-                                        Render.$span("poem-image")("🧠"),
-                                    ]),
+                                    Render.poem("smart"),
                                     Render.poem("no-account"),
                                     Render.poem("hisotry"),
                                     Render.poem("list"),
@@ -28144,7 +28332,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             return [4 /*yield*/, Render.applicationIcon()];
                         case 1:
                             _b.apply(_a, _c.concat([_d.sent()]));
-                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(50)];
+                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(20)];
                         case 2:
                             _d.sent();
                             return [2 /*return*/];
@@ -28955,11 +29143,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             }
         };
         CyclicToDo.start = function (params) { return __awaiter(_this, void 0, void 0, function () {
-            var urlParams, reload, scroll, json, url, fullscreen, toast_9;
+            var _a, _b, _c, urlParams, reload, scroll, json, url, fullscreen, toast_9;
             var _this = this;
-            var _a, _b, _c, _d;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
+            var _d, _e, _f, _g;
+            return __generator(this, function (_h) {
+                switch (_h.label) {
                     case 0:
                         buildTimestamp =
                             {
@@ -28968,8 +29156,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             };
                         console.log("start timestamp: " + new Date());
                         console.log("" + JSON.stringify(params));
-                        exports.setLocale((_a = Storage.SystemSettings.get().locale) !== null && _a !== void 0 ? _a : null);
+                        exports.setLocale((_d = Storage.SystemSettings.get().locale) !== null && _d !== void 0 ? _d : null);
                         minamo_js_1.minamo.dom.removeChildren(Render.getScreenBody());
+                        _b = (_a = minamo_js_1.minamo.dom).appendChildren;
+                        _c = [document.getElementById("foundation")];
+                        return [4 /*yield*/, Render.applicationIcon()];
+                    case 1:
+                        _b.apply(_a, _c.concat([_h.sent()]));
                         urlParams = CyclicToDo.getUrlParams(location.href);
                         reload = urlParams["reload"];
                         if (reload) {
@@ -29039,19 +29232,19 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         document.addEventListener('webkitfullscreenchange', Render.onWebkitFullscreenChange);
                         // window.matchMedia('(prefers-color-scheme: dark)').addEventListener("change", updateStyle);
                         CyclicToDo.decayRemovedItems();
-                        setInterval(CyclicToDo.decayRemovedItems, (_b = minamo_js_1.minamo.core.parseTimespan(config_json_1.default.removedItemDecayInterval)) !== null && _b !== void 0 ? _b : 60 * 60 * 1000);
+                        setInterval(CyclicToDo.decayRemovedItems, (_e = minamo_js_1.minamo.core.parseTimespan(config_json_1.default.removedItemDecayInterval)) !== null && _e !== void 0 ? _e : 60 * 60 * 1000);
                         CyclicToDo.updateStyle();
                         CyclicToDo.updateFlashStyle();
                         CyclicToDo.updateUiStyle();
                         // await Render.showUpdatingScreen(location.href);
                         return [4 /*yield*/, CyclicToDo.showPage()];
-                    case 1:
+                    case 2:
                         // await Render.showUpdatingScreen(location.href);
-                        _e.sent();
+                        _h.sent();
                         if ("number" === typeof scroll) {
                             Render.getScreenBody().scrollTop = scroll;
                         }
-                        if (reload || "reload" === ((_d = (_c = performance.getEntriesByType("navigation")) === null || _c === void 0 ? void 0 : _c[0]) === null || _d === void 0 ? void 0 : _d.type)) {
+                        if (reload || "reload" === ((_g = (_f = performance.getEntriesByType("navigation")) === null || _f === void 0 ? void 0 : _f[0]) === null || _g === void 0 ? void 0 : _g.type)) {
                             Render.makeToast({
                                 content: Render.$span("")(Render.getVersionInfromationText()),
                                 isWideContent: true,
@@ -29187,7 +29380,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Oct 08 2023 11:29:58 GMT+0900 (日本標準時)', buildTimestampTick: 1696732198402, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Oct 09 2023 09:52:55 GMT+0900 (日本標準時)', buildTimestampTick: 1696812775138, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -29214,6 +29407,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <span class="poem-subtitle">Under development</span>
 <span class="poem-description">This static web application is under development.</span>
 <span class="poem-image">🚧</span>
+</div>
+<div class="poem">
+<span class="poem-title">Smart display order</span>
+<span class="poem-subtitle">You just do it</span>
+<span class="poem-description">Tasks that are predicted to be ready for execution based on auto-tagging and past history are displayed in priority order, making it easy to grasp the next task to be executed.</span>
+<span class="poem-image">🧠</span>
 </div>
 <div class="poem">
 <span class="poem-title">No account required</span>
@@ -29254,6 +29453,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <span class="poem-image">🚧</span>
 </div>
 <div class="poem">
+<span class="poem-title">スマートな表示順</span>
+<span class="poem-subtitle">あなたは実行するだけ</span>
+<span class="poem-description">自動タグ設定や過去の履歴から「そろそろ実行するタイミングだと予測されるタスク」を優先的に表示するので、次に実行するべきタスクを簡単に把握できます。</span>
+<span class="poem-image">🧠</span>
+</div>
+<div class="poem">
 <span class="poem-title">アカウント不要</span>
 <span class="poem-subtitle">いますぐ使えます</span>
 <span class="poem-description">Cyclic ToDo はアカウント登録やログイン不要でいますぐに使えます。[新しい ToDo リスト]ボタンをクリックしてください。</span>
@@ -29279,7 +29484,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Sun Oct 08 2023 11:29:58 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Mon Oct 09 2023 09:52:55 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
