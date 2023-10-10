@@ -2337,6 +2337,21 @@ export module CyclicToDo
                 MigrateBridge.updateTermCategory(pass, MigrateBridge.getToDoEntry(pass, task));
                 const toast = makeToast
                 ({
+                    forwardOperator: textButton
+                    (
+                        "Edit",
+                        async () =>
+                        {
+                            toast.hide(); // nowait
+                            const result = Domain.parseDate(await dateTimePrompt(`${locale.map("Edit")}: ${Model.decode(task)}`, tick));
+                            if (null !== result && tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
+                            {
+                                OldStorage.History.removeTickRaw(pass, task, tick);
+                                OldStorage.History.addTick(pass, task, Domain.getTicks(result));
+                                await reload();
+                            }
+                        }
+                    ),
                     content: $span("")(`${locale.map("Done!")}: ${Model.decode(task)}`),
                     backwardOperator: cancelTextButton
                     (
@@ -4414,7 +4429,7 @@ export module CyclicToDo
             label("Edit"),
             async () =>
             {
-                const result = Domain.parseDate(await dateTimePrompt(locale.map("Edit"), tick));
+                const result = Domain.parseDate(await dateTimePrompt(`${locale.map("Edit")}: ${Model.decode(task)}`, tick));
                 if (null !== result && tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
                 {
                     OldStorage.History.removeTickRaw(pass, task, tick);
@@ -7038,13 +7053,7 @@ export module CyclicToDo
                     poem("hisotry"),
                     poem("list"),
                     poem("sublist"),
-                    $div("poem")
-                    ([
-                        $span("poem-title")(locale.string("タグ")),
-                        $span("poem-subtitle")(locale.string("毎朝やるのは")),
-                        $span("poem-description")(locale.string("毎朝、祝日、コンビニ等々、特定の条件で実行するタスクはタグをつけてまとめられます。もちろん１つのタスクに複数のタグをつけられます。")),
-                        $span("poem-image")("🏷️"),
-                    ]),
+                    poem("tag"),
                     $div("poem")
                     ([
                         $span("poem-title")(locale.string("Progressive Web App")),
@@ -7151,7 +7160,7 @@ export module CyclicToDo
                 getScreenBody(),
                 await applicationIcon()
             );
-            await minamo.core.timeout(20);
+            await minamo.core.timeout(30);
         };
         export const updatingScreen = async (_url: string = location.href): Promise<ScreenSource> =>
         ({
@@ -7265,6 +7274,12 @@ export module CyclicToDo
                             }
                             logo.style.transform = `translateY(${-y}px)`;
                         }
+                        // if (logo)
+                        // {
+                        //     const frame = screenBody.clientHeight +logo.clientHeight;
+                        //     const rate = (scrollTop /10) /frame;
+                        //     logo.style.transform = `scale(${1 +rate},${1 +rate})`;
+                        // }
                     }
                 );
             }
