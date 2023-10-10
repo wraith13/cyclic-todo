@@ -25,6 +25,11 @@
     "poem.tag.title": "Tag",
     "poem.tag.subtitle": "What I do every morning",
     "poem.tag.description": "Tasks that are executed under specific conditions, such as every morning, holidays, convenience stores, etc., can be grouped together with tags. Of course, you can add multiple tags to one task.",
+
+    "poem.pwa.title": "Progressive Web App",
+    "poem.pwa.subtitle": "With your smartphone",
+    "poem.pwa.description": "You can use this web app like an app by registering it on the home screen of your smartphone.This web app can also be registered as an app on your PC. ( The registration method differs depending on your web browser. )",
+
     "Reload screen": "Reload screen",
     "Full screen": "Full screen",
     "Cancel full screen": "Cancel full screen",
@@ -158,7 +163,6 @@
     "week.short.6": "Sat",
     "ago": "ago",
     "Reverse": "Reverse",
-    "You can use this web app like an app by registering it on the home screen of your smartphone.": "You can use this web app like an app by registering it on the home screen of your smartphone.",
     "Items after 30 days are automatically deleted completely.": "Items after 30 days are automatically deleted completely.",
     "ToDo has been created!": "ToDo has been created!",
     "ToDo has been deleted!": "ToDo has been deleted!",

@@ -7054,13 +7054,7 @@ export module CyclicToDo
                     poem("list"),
                     poem("sublist"),
                     poem("tag"),
-                    $div("poem")
-                    ([
-                        $span("poem-title")(locale.string("Progressive Web App")),
-                        $span("poem-subtitle")(locale.string("あなたのスマホと共に")),
-                        $span("poem-description")(locale.map("You can use this web app like an app by registering it on the home screen of your smartphone.")),
-                        $span("poem-image")("📱"),
-                    ]),
+                    poem("pwa"),
                     $div("poem")
                     ([
                         $span("poem-title")(locale.string("ダークモード")),

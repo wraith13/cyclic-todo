@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Tue Oct 10 2023 20:55:56 GMT+0900 (日本標準時)
+    build at: Wed Oct 11 2023 06:35:26 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -19711,7 +19711,8 @@ define("resource/poem", [], {
     "hisotry": "📔",
     "list": "🗄️",
     "sublist": "📂",
-    "tag": "🏷️"
+    "tag": "🏷️",
+    "pwa": "📱"
 });
 define("resource/style", [], {
     "__WHITE_COLOR__": "#FFFFFF",
@@ -19751,6 +19752,9 @@ define("resource/lang.en", [], {
     "poem.tag.title": "Tag",
     "poem.tag.subtitle": "What I do every morning",
     "poem.tag.description": "Tasks that are executed under specific conditions, such as every morning, holidays, convenience stores, etc., can be grouped together with tags. Of course, you can add multiple tags to one task.",
+    "poem.pwa.title": "Progressive Web App",
+    "poem.pwa.subtitle": "With your smartphone",
+    "poem.pwa.description": "You can use this web app like an app by registering it on the home screen of your smartphone.This web app can also be registered as an app on your PC. ( The registration method differs depending on your web browser. )",
     "Reload screen": "Reload screen",
     "Full screen": "Full screen",
     "Cancel full screen": "Cancel full screen",
@@ -19884,7 +19888,6 @@ define("resource/lang.en", [], {
     "week.short.6": "Sat",
     "ago": "ago",
     "Reverse": "Reverse",
-    "You can use this web app like an app by registering it on the home screen of your smartphone.": "You can use this web app like an app by registering it on the home screen of your smartphone.",
     "Items after 30 days are automatically deleted completely.": "Items after 30 days are automatically deleted completely.",
     "ToDo has been created!": "ToDo has been created!",
     "ToDo has been deleted!": "ToDo has been deleted!",
@@ -19956,6 +19959,9 @@ define("resource/lang.ja", [], {
     "poem.tag.title": "タグ",
     "poem.tag.subtitle": "毎朝やるのは",
     "poem.tag.description": "毎朝、祝日、コンビニ等々、特定の条件で実行するタスクはタグをつけてまとめられます。もちろん１つのタスクに複数のタグをつけられます。",
+    "poem.pwa.title": "Progressive Web App",
+    "poem.pwa.subtitle": "あなたのスマホと共に",
+    "poem.pwa.description": "スマートフォンのホーム画面に登録する事でアプリのようにも使えます。また PC でもアプリとして登録可能です。( 登録方法はお使いの Web ブラウザによって異なります。 )",
     "Reload screen": "画面の再読み込み",
     "Full screen": "フルスクリーン表示",
     "Cancel full screen": "フルスクリーン解除",
@@ -20089,7 +20095,6 @@ define("resource/lang.ja", [], {
     "week.short.6": "土",
     "ago": "前",
     "Reverse": "逆転",
-    "You can use this web app like an app by registering it on the home screen of your smartphone.": "スマートフォンのホーム画面に登録する事でアプリのようにも使えます。",
     "Items after 30 days are automatically deleted completely.": "３０日経過したアイテムは自動的に完全消去されます。",
     "ToDo has been created!": "ToDo を作成しました！",
     "ToDo has been deleted!": "ToDo を削除しました！",
@@ -28236,12 +28241,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.poem("list"),
                                     Render.poem("sublist"),
                                     Render.poem("tag"),
-                                    Render.$div("poem")([
-                                        Render.$span("poem-title")(locale_2.locale.string("Progressive Web App")),
-                                        Render.$span("poem-subtitle")(locale_2.locale.string("あなたのスマホと共に")),
-                                        Render.$span("poem-description")(locale_2.locale.map("You can use this web app like an app by registering it on the home screen of your smartphone.")),
-                                        Render.$span("poem-image")("📱"),
-                                    ]),
+                                    Render.poem("pwa"),
                                     Render.$div("poem")([
                                         Render.$span("poem-title")(locale_2.locale.string("ダークモード")),
                                         Render.$span("poem-subtitle")(locale_2.locale.string("お好きなモードで")),
@@ -29424,7 +29424,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Oct 10 2023 20:55:56 GMT+0900 (日本標準時)', buildTimestampTick: 1696938956942, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Oct 11 2023 06:35:26 GMT+0900 (日本標準時)', buildTimestampTick: 1696973726559, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -29488,6 +29488,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <span class="poem-description">Tasks that are executed under specific conditions, such as every morning, holidays, convenience stores, etc., can be grouped together with tags. Of course, you can add multiple tags to one task.</span>
 <span class="poem-image">🏷️</span>
 </div>
+<div class="poem">
+<span class="poem-title">Progressive Web App</span>
+<span class="poem-subtitle">With your smartphone</span>
+<span class="poem-description">You can use this web app like an app by registering it on the home screen of your smartphone.This web app can also be registered as an app on your PC. ( The registration method differs depending on your web browser. )</span>
+<span class="poem-image">📱</span>
+</div>
 </div>
 <div class="poem-list">
 <div class="poem">
@@ -29538,9 +29544,15 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <span class="poem-description">毎朝、祝日、コンビニ等々、特定の条件で実行するタスクはタグをつけてまとめられます。もちろん１つのタスクに複数のタグをつけられます。</span>
 <span class="poem-image">🏷️</span>
 </div>
+<div class="poem">
+<span class="poem-title">Progressive Web App</span>
+<span class="poem-subtitle">あなたのスマホと共に</span>
+<span class="poem-description">スマートフォンのホーム画面に登録する事でアプリのようにも使えます。また PC でもアプリとして登録可能です。( 登録方法はお使いの Web ブラウザによって異なります。 )</span>
+<span class="poem-image">📱</span>
+</div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Tue Oct 10 2023 20:55:56 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Wed Oct 11 2023 06:35:26 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
