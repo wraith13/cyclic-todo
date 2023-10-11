@@ -25,11 +25,12 @@
     "poem.tag.title": "タグ",
     "poem.tag.subtitle": "毎朝やるのは",
     "poem.tag.description": "毎朝、祝日、コンビニ等々、特定の条件で実行するタスクはタグをつけてまとめられます。もちろん１つのタスクに複数のタグをつけられます。",
-
     "poem.pwa.title": "Progressive Web App",
     "poem.pwa.subtitle": "あなたのスマホと共に",
     "poem.pwa.description": "スマートフォンのホーム画面に登録する事でアプリのようにも使えます。また PC でもアプリとして登録可能です。( 登録方法はお使いの Web ブラウザによって異なります。 )",
-
+    "poem.dark.title": "ダークモード",
+    "poem.dark.subtitle": "お好きなモードで",
+    "poem.dark.description": "あなたの好みに合わせてライトモード/ダークモードをお使いください。",
     "Reload screen": "画面の再読み込み",
     "Full screen": "フルスクリーン表示",
     "Cancel full screen": "フルスクリーン解除",

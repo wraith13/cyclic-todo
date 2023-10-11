@@ -25,11 +25,12 @@
     "poem.tag.title": "Tag",
     "poem.tag.subtitle": "What I do every morning",
     "poem.tag.description": "Tasks that are executed under specific conditions, such as every morning, holidays, convenience stores, etc., can be grouped together with tags. Of course, you can add multiple tags to one task.",
-
     "poem.pwa.title": "Progressive Web App",
     "poem.pwa.subtitle": "With your smartphone",
     "poem.pwa.description": "You can use this web app like an app by registering it on the home screen of your smartphone.This web app can also be registered as an app on your PC. ( The registration method differs depending on your web browser. )",
-
+    "poem.dark.title": "Dark mode",
+    "poem.dark.subtitle": "In your favorite mode",
+    "poem.dark.description": "Please use light mode / dark mode according to your preference.",
     "Reload screen": "Reload screen",
     "Full screen": "Full screen",
     "Cancel full screen": "Cancel full screen",

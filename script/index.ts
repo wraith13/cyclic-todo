@@ -7055,13 +7055,7 @@ export module CyclicToDo
                     poem("sublist"),
                     poem("tag"),
                     poem("pwa"),
-                    $div("poem")
-                    ([
-                        $span("poem-title")(locale.string("ダークモード")),
-                        $span("poem-subtitle")(locale.string("お好きなモードで")),
-                        $span("poem-description")(locale.string("あなたの好みに合わせてライトモード/ダークモードをお使いください。")),
-                        $span("poem-image")("🌙"),
-                    ]),
+                    poem("dark"),
                     $div("poem")
                     ([
                         $span("poem-title")(locale.string("多言語対応")),
