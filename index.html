@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Wed Oct 11 2023 20:51:57 GMT+0900 (日本標準時)
+    build at: Thu Oct 12 2023 07:56:11 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2682,10 +2682,12 @@ h2 {
   overflow-y: auto;
   flex-grow: 1;
   padding-top: 40px;
+}
+.light-theme-trait .screen.has-bottom-tabs > .screen-body {
   padding-bottom: 58px;
 }
 @media (max-width: 780px) {
-  .light-theme-trait .screen > .screen-body {
+  .light-theme-trait .screen.has-bottom-tabs > .screen-body {
     padding-bottom: 82px;
   }
 }
@@ -5552,10 +5554,12 @@ body.light .screen > .screen-body {
   overflow-y: auto;
   flex-grow: 1;
   padding-top: 40px;
+}
+body.light .screen.has-bottom-tabs > .screen-body {
   padding-bottom: 58px;
 }
 @media (max-width: 780px) {
-  body.light .screen > .screen-body {
+  body.light .screen.has-bottom-tabs > .screen-body {
     padding-bottom: 82px;
   }
 }
@@ -7924,6 +7928,8 @@ body.light .keyboard-shortcuts li .key:first-child {
     overflow-y: auto;
     flex-grow: 1;
     padding-top: 40px;
+  }
+  body.auto .screen.has-bottom-tabs > .screen-body {
     padding-bottom: 58px;
   }
   body.auto .screen > #screen-header {
@@ -8805,7 +8811,7 @@ body.light .keyboard-shortcuts li .key:first-child {
   }
 }
 @media (prefers-color-scheme: light) and (max-width: 780px) {
-  body.auto .screen > .screen-body {
+  body.auto .screen.has-bottom-tabs > .screen-body {
     padding-bottom: 82px;
   }
 }
@@ -11535,10 +11541,12 @@ body.light .keyboard-shortcuts li .key:first-child {
   overflow-y: auto;
   flex-grow: 1;
   padding-top: 40px;
+}
+.dark-theme-trait .screen.has-bottom-tabs > .screen-body {
   padding-bottom: 58px;
 }
 @media (max-width: 780px) {
-  .dark-theme-trait .screen > .screen-body {
+  .dark-theme-trait .screen.has-bottom-tabs > .screen-body {
     padding-bottom: 82px;
   }
 }
@@ -14408,10 +14416,12 @@ body.dark .screen > .screen-body {
   overflow-y: auto;
   flex-grow: 1;
   padding-top: 40px;
+}
+body.dark .screen.has-bottom-tabs > .screen-body {
   padding-bottom: 58px;
 }
 @media (max-width: 780px) {
-  body.dark .screen > .screen-body {
+  body.dark .screen.has-bottom-tabs > .screen-body {
     padding-bottom: 82px;
   }
 }
@@ -16783,6 +16793,8 @@ body.dark .keyboard-shortcuts li .key:first-child {
     overflow-y: auto;
     flex-grow: 1;
     padding-top: 40px;
+  }
+  body.auto .screen.has-bottom-tabs > .screen-body {
     padding-bottom: 58px;
   }
   body.auto .screen > #screen-header {
@@ -17664,7 +17676,7 @@ body.dark .keyboard-shortcuts li .key:first-child {
   }
 }
 @media (prefers-color-scheme: dark) and (max-width: 780px) {
-  body.auto .screen > .screen-body {
+  body.auto .screen.has-bottom-tabs > .screen-body {
     padding-bottom: 82px;
   }
 }
@@ -19713,7 +19725,8 @@ define("resource/poem", [], {
     "sublist": "📂",
     "tag": "🏷️",
     "pwa": "📱",
-    "dark": "🌙"
+    "dark": "🌙",
+    "language": "🌐"
 });
 define("resource/style", [], {
     "__WHITE_COLOR__": "#FFFFFF",
@@ -19759,6 +19772,9 @@ define("resource/lang.en", [], {
     "poem.dark.title": "Dark mode",
     "poem.dark.subtitle": "In your favorite mode",
     "poem.dark.description": "Please use light mode / dark mode according to your preference.",
+    "poem.language.title": "Multilingual",
+    "poem.language.subtitle": "In your language",
+    "poem.language.description": "Currently, it supports English and Japanese.",
     "Reload screen": "Reload screen",
     "Full screen": "Full screen",
     "Cancel full screen": "Cancel full screen",
@@ -19969,6 +19985,9 @@ define("resource/lang.ja", [], {
     "poem.dark.title": "ダークモード",
     "poem.dark.subtitle": "お好きなモードで",
     "poem.dark.description": "あなたの好みに合わせてライトモード/ダークモードをお使いください。",
+    "poem.language.title": "多言語対応",
+    "poem.language.subtitle": "あなたの言語で",
+    "poem.language.description": "現在、英語と日本語に対応してます。",
     "Reload screen": "画面の再読み込み",
     "Full screen": "フルスクリーン表示",
     "Cancel full screen": "フルスクリーン解除",
@@ -26823,7 +26842,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     switch (_b.label) {
                         case 0:
                             _a = {
-                                className: "list-screen"
+                                className: "list-screen has-bottom-tabs"
                             };
                             return [4 /*yield*/, Render.listScreenHeader(entry, list)];
                         case 1:
@@ -27174,7 +27193,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     switch (_b.label) {
                         case 0:
                             _a = {
-                                className: "history-screen"
+                                className: "history-screen has-bottom-tabs"
                             };
                             return [4 /*yield*/, Render.historyScreenHeader(entry, list)];
                         case 1:
@@ -27283,7 +27302,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     switch (_f.label) {
                         case 0:
                             _d = {
-                                className: "removed-screen"
+                                className: "removed-screen has-bottom-tabs"
                             };
                             _e = {};
                             return [4 /*yield*/, Render.screenHeaderHomeSegment()];
@@ -27543,7 +27562,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     switch (_b.label) {
                         case 0:
                             _a = {
-                                className: "todo-screen"
+                                className: "todo-screen has-bottom-tabs"
                             };
                             return [4 /*yield*/, Render.todoScreenHeader(pass, item, ticks, tag)];
                         case 1:
@@ -28250,12 +28269,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.poem("tag"),
                                     Render.poem("pwa"),
                                     Render.poem("dark"),
-                                    Render.$div("poem")([
-                                        Render.$span("poem-title")(locale_2.locale.string("多言語対応")),
-                                        Render.$span("poem-subtitle")(locale_2.locale.string("あなたの言語で")),
-                                        Render.$span("poem-description")(locale_2.locale.string("現在、英語と日本語に対応してます。")),
-                                        Render.$span("poem-image")("🌐"),
-                                    ]),
+                                    Render.poem("language"),
                                     Render.$div("poem")([
                                         Render.$span("poem-title")(locale_2.locale.string("キーボードショートカット")),
                                         Render.$span("poem-subtitle")(locale_2.locale.string("キーボード操作で快適に")),
@@ -29426,7 +29440,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Oct 11 2023 20:51:57 GMT+0900 (日本標準時)', buildTimestampTick: 1697025117997, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Oct 12 2023 07:56:11 GMT+0900 (日本標準時)', buildTimestampTick: 1697064971139, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -29502,6 +29516,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <span class="poem-description">Please use light mode / dark mode according to your preference.</span>
 <span class="poem-image">🌙</span>
 </div>
+<div class="poem">
+<span class="poem-title">Multilingual</span>
+<span class="poem-subtitle">In your language</span>
+<span class="poem-description">Currently, it supports English and Japanese.</span>
+<span class="poem-image">🌐</span>
+</div>
 </div>
 <div class="poem-list">
 <div class="poem">
@@ -29564,9 +29584,15 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <span class="poem-description">あなたの好みに合わせてライトモード/ダークモードをお使いください。</span>
 <span class="poem-image">🌙</span>
 </div>
+<div class="poem">
+<span class="poem-title">多言語対応</span>
+<span class="poem-subtitle">あなたの言語で</span>
+<span class="poem-description">現在、英語と日本語に対応してます。</span>
+<span class="poem-image">🌐</span>
+</div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Wed Oct 11 2023 20:51:57 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Thu Oct 12 2023 07:56:11 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

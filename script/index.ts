@@ -5966,7 +5966,7 @@ export module CyclicToDo
         ]);
         export const listScreen = async (entry: ToDoTagEntryOld, list: ToDoEntry[], filter: string) =>
         ({
-            className: "list-screen",
+            className: "list-screen has-bottom-tabs",
             header: await listScreenHeader(entry, list),
             body: await listScreenBody(entry, list.filter(item => isMatchToDoEntry(filter, entry, item))),
             footer: await bottomTabs(entry),
@@ -6261,7 +6261,7 @@ export module CyclicToDo
         ]);
         export const historyScreen = async (entry: ToDoTagEntryOld, list: { task: string, tick: number | null }[], filter: string): Promise<ScreenSource> =>
         ({
-            className: "history-screen",
+            className: "history-screen has-bottom-tabs",
             header: await historyScreenHeader(entry, list),
             body: await historyScreenBody(entry, list.filter(item => isMatchHistoryItem(filter, entry, item))),
             footer: await bottomTabs(entry),
@@ -6324,7 +6324,7 @@ export module CyclicToDo
         ];
         export const removedScreen = async (pass: string, list: RemovedType[]) =>
         ({
-            className: "removed-screen",
+            className: "removed-screen has-bottom-tabs",
             header:
             {
                 items:
@@ -6506,7 +6506,7 @@ export module CyclicToDo
         ]);
         export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[], tag: string) =>
         ({
-            className: "todo-screen",
+            className: "todo-screen has-bottom-tabs",
             header: await todoScreenHeader(pass, item, ticks, tag),
             body: await todoScreenBody(pass, item, ticks, tag),
             footer: await bottomTabs({ pass, tag, todo: [], }),
@@ -7056,13 +7056,7 @@ export module CyclicToDo
                     poem("tag"),
                     poem("pwa"),
                     poem("dark"),
-                    $div("poem")
-                    ([
-                        $span("poem-title")(locale.string("多言語対応")),
-                        $span("poem-subtitle")(locale.string("あなたの言語で")),
-                        $span("poem-description")(locale.string("現在、英語と日本語に対応してます。")),
-                        $span("poem-image")("🌐"),
-                    ]),
+                    poem("language"),
                     $div("poem")
                     ([
                         $span("poem-title")(locale.string("キーボードショートカット")),

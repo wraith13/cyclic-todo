@@ -2060,10 +2060,16 @@ button
         overflow-y: auto;
         flex-grow: 1;
         padding-top: 40px;
-        padding-bottom: 58px;
-        @media (max-width:780px)
+    }
+    &.has-bottom-tabs
+    {
+        & > .screen-body
         {
-            padding-bottom: 82px;
+            padding-bottom: 58px;
+            @media (max-width:780px)
+            {
+                padding-bottom: 82px;
+            }
         }
     }
     & > #screen-header
