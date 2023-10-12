@@ -30,7 +30,8 @@ export const makeObject = <T>(items: { key: string, value: T}[]) =>
     return result;
 };
 export const JsonHeader = "JSON:";
-export const stringOrJson = <T>(text: string): string | T => text.startsWith(JsonHeader) ? JSON.parse(text.substring(JsonHeader.length)): text;
+export const stringOrJson = <T>(text: string): string | T =>
+    text.startsWith(JsonHeader) ? JSON.parse(text.substring(JsonHeader.length)): text;
 export const simpleComparer = minamo.core.comparer.basic;
 export const simpleReverseComparer = minamo.core.comparer.reverse(minamo.core.comparer.basic);
 export const uniqueFilter = <T>(value: T, index: number, list: T[]) => index === list.indexOf(value);
@@ -7085,13 +7086,7 @@ export module CyclicToDo
                         description: locale.string("情報はすべて Web ブラウザの Local Storage に保存されています。 Web ブラウザのクッキーなどを消す操作を行うとゴミ箱も含めて ToDo リストの情報が全て削除されるのでご注意下さい。"),
                         image: "🔥",
                     }),
-                    poem
-                    ({
-                        title: locale.string("evil-timer.js"),
-                        subtitle: locale.string("時間を支配できます"),
-                        description: { tag:"span", children: [ { tag:"a", className:"plain", href:"https://github.com/wraith13/evil-timer.js", target:"_blank", children: "evil-timer.js", }, " を組み込んであるので、時間経過に伴う Cyclic ToDo の細かい挙動を簡単に確認できます。", ]},
-                        image: "👿",
-                    }),
+                    poem("eviltimerjs"),
                 ]),
                 // $div({ style: "text-align: center; padding: 0.5rem;", })
                 //     ("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
