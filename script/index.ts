@@ -6963,7 +6963,7 @@ export module CyclicToDo
             locale.map(i.message),
             i.reverseWithShiftKey ? [ " ( + ", $span("key monospace")($tag("kbd")({})(`Shift`)), locale.map("Reverse") +" )", ]: "",
         ];
-        export const poem = (data: keyof typeof pomeJson | { title:string, subtitle: string, description: minamo.dom.Source, image: string, }, className: string = ""): minamo.dom.Source =>
+        export const poem = (data: keyof typeof pomeJson.image | { title:string, subtitle: string, description: minamo.dom.Source, image: string, }, className: string = ""): minamo.dom.Source =>
             "string" === typeof data ?
                 poem
                 (
@@ -6971,7 +6971,7 @@ export module CyclicToDo
                         title:locale.string(`poem.${data}.title`),
                         subtitle: locale.string(`poem.${data}.subtitle`),
                         description: stringOrJson<minamo.dom.Source>(locale.string(`poem.${data}.description`)),
-                        image: pomeJson[data],
+                        image: pomeJson.image[data],
                     },
                     className
                 ):

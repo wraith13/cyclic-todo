@@ -1,15 +1,37 @@
 {
-    "primary": "🏆",
-    "beta": "🚧",
-    "smart": "🧠",
-    "no-account": "🚀",
-    "hisotry": "📔",
-    "list": "🗄️",
-    "sublist": "📂",
-    "tag": "🏷️",
-    "pwa": "📱",
-    "dark": "🌙",
-    "language": "🌐",
-    "recyclebin": "🗑️",
-    "eviltimerjs": "👿"
+    "list":
+    {
+        "welcome":
+        [
+            "primary",
+            "beta",
+            "smart",
+            "no-account",
+            "hisotry",
+            "list",
+            "sublist",
+            "tag",
+            "pwa",
+            "dark",
+            "language",
+            "recyclebin",
+            "eviltimerjs"
+        ]
+    },
+    "image":
+    {
+        "primary": "🏆",
+        "beta": "🚧",
+        "smart": "🧠",
+        "no-account": "🚀",
+        "hisotry": "📔",
+        "list": "🗄️",
+        "sublist": "📂",
+        "tag": "🏷️",
+        "pwa": "📱",
+        "dark": "🌙",
+        "language": "🌐",
+        "recyclebin": "🗑️",
+        "eviltimerjs": "👿"
+    }
 }
