@@ -7072,13 +7072,7 @@ export module CyclicToDo
                         $span("poem-description")(locale.string("誤操作してしまっても、操作直後に表示されるトーストの[取り消し]から取り消せます。")),
                         $span("poem-image")("⌛️"),
                     ]),
-                    $div("poem")
-                    ([
-                        $span("poem-title")(locale.string("ゴミ箱")),
-                        $span("poem-subtitle")(locale.string("ゴミ箱もあります")),
-                        $span("poem-description")(locale.string("削除してしまったアイテムも３０日以内ならゴミ箱から復元できます。")),
-                        $span("poem-image")("🗑️"),
-                    ]),
+                    poem("recyclebin"),
                     poem
                     ({
                         title: locale.string("Local Storage"),
