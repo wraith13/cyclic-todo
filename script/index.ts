@@ -7058,13 +7058,7 @@ export module CyclicToDo
                     poem("pwa"),
                     poem("dark"),
                     poem("language"),
-                    $div("poem")
-                    ([
-                        $span("poem-title")(locale.string("キーボードショートカット")),
-                        $span("poem-subtitle")(locale.string("キーボード操作で快適に")),
-                        $span("poem-description")(keyboardShortcutsItem(keyboardShortcuts[0])),
-                        $span("poem-image")("⌨️"),
-                    ]),
+                    poem("keyboard"),
                     $div("poem")
                     ([
                         $span("poem-title")(locale.string("取り消し")),
