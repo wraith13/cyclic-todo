@@ -15,6 +15,7 @@
             "dark",
             "language",
             "keyboard",
+            "undo",
             "recyclebin",
             "eviltimerjs"
         ]
@@ -33,6 +34,7 @@
         "dark": "🌙",
         "language": "🌐",
         "keyboard": "⌨️",
+        "undo":"⌛️",
         "recyclebin": "🗑️",
         "eviltimerjs": "👿"
     }

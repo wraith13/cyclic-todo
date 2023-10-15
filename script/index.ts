@@ -7059,13 +7059,7 @@ export module CyclicToDo
                     poem("dark"),
                     poem("language"),
                     poem("keyboard"),
-                    $div("poem")
-                    ([
-                        $span("poem-title")(locale.string("取り消し")),
-                        $span("poem-subtitle")(locale.string("取り消せます")),
-                        $span("poem-description")(locale.string("誤操作してしまっても、操作直後に表示されるトーストの[取り消し]から取り消せます。")),
-                        $span("poem-image")("⌛️"),
-                    ]),
+                    poem("undo"),
                     poem("recyclebin"),
                     poem
                     ({
