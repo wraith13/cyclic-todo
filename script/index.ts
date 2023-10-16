@@ -7046,30 +7046,7 @@ export module CyclicToDo
                         ])
                     ]),
                 ]),
-                $div("poem-list")
-                ([
-                    poem("beta"),
-                    poem("smart"),
-                    poem("no-account"),
-                    poem("hisotry"),
-                    poem("list"),
-                    poem("sublist"),
-                    poem("tag"),
-                    poem("pwa"),
-                    poem("dark"),
-                    poem("language"),
-                    poem("keyboard"),
-                    poem("undo"),
-                    poem("recyclebin"),
-                    poem
-                    ({
-                        title: locale.string("Local Storage"),
-                        subtitle: locale.string("Webブラウザに保存されてます"),
-                        description: locale.string("情報はすべて Web ブラウザの Local Storage に保存されています。 Web ブラウザのクッキーなどを消す操作を行うとゴミ箱も含めて ToDo リストの情報が全て削除されるのでご注意下さい。"),
-                        image: "🔥",
-                    }),
-                    poem("eviltimerjs"),
-                ]),
+                $div("poem-list")((<(keyof typeof pomeJson.image)[]>pomeJson.list.welcome).map(i => poem(i))),
                 // $div({ style: "text-align: center; padding: 0.5rem;", })
                 //     ("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
                 // messageList
