@@ -17,6 +17,7 @@
             "keyboard",
             "undo",
             "recyclebin",
+            "localstorage",
             "eviltimerjs"
         ]
     },
@@ -36,6 +37,7 @@
         "keyboard": "⌨️",
         "undo":"⌛️",
         "recyclebin": "🗑️",
+        "localstorage": "🔥",
         "eviltimerjs": "👿"
     }
 }
