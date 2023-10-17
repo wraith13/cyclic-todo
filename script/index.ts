@@ -6240,13 +6240,7 @@ export module CyclicToDo
                     description: locale.string("処理パフォーマンスの都合上、この画面で表示される件数には上限があります。"),
                     image: "🚫",
                 }),
-                poem
-                ({
-                    title: locale.string("ヘッダーの余白"),
-                    subtitle: locale.string("一番上へスクロール"),
-                    description: locale.string("ヘッダーの余白部分をクリックすると、一番上までスクロールします。また、表示内容が古くなっている場合、表示内容の更新も行われます。"),
-                    image: "⬆️",
-                }),
+                poem("header"),
                 poem
                 ({
                     title: locale.string("二段ボトムタブ"),
