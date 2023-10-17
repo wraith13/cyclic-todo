@@ -6241,13 +6241,7 @@ export module CyclicToDo
                     image: "🚫",
                 }),
                 poem("header"),
-                poem
-                ({
-                    title: locale.string("二段ボトムタブ"),
-                    subtitle: locale.string("画面下部のタブ"),
-                    description: locale.string("画面下部のタブは上半分の広い領域をクリックするサブタブが順繰りに表示されます。下半分の狭い領域をクリックすると直接サブタブに移動できます。"),
-                    image: "📑",
-                }),
+                poem("bottomtabs"),
             ]),
             // messageList
             // ([
