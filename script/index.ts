@@ -3461,16 +3461,17 @@ export module CyclicToDo
                                     }
                                 }
                             ),
-                            {
-                                tag: "button",
-                                className: "label-button",
-                                children: monospace
+                            descriptionButton
+                            (
+                                "",
+                                monospace
                                 (
                                     "auto-tag-flash",
                                     label("UI style setting"),
                                     label(getUiStyleLocale(settings.uiStyle ?? "smart"))
                                 ),
-                                onclick: async () =>
+                                "theme.description",
+                                async () =>
                                 {
                                     if (await uiStyleSettingsPopup())
                                     {
@@ -3478,7 +3479,7 @@ export module CyclicToDo
                                         await update();
                                     }
                                 }
-                            },
+                            ),
                             {
                                 tag: "button",
                                 className: "label-button",
