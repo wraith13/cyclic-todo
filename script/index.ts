@@ -3442,16 +3442,17 @@ export module CyclicToDo
                     (
                         buttonList,
                         [
-                            {
-                                tag: "button",
-                                className: "label-button",
-                                children: monospace
+                            descriptionButton
+                            (
+                                "",
+                                monospace
                                 (
                                     "auto-tag-flash",
                                     label("Theme setting"),
                                     label(getThemeLocale(settings.theme ?? "auto"))
                                 ),
-                                onclick: async () =>
+                                "theme.description",
+                                async () =>
                                 {
                                     if (await themeSettingsPopup())
                                     {
@@ -3459,7 +3460,7 @@ export module CyclicToDo
                                         await update();
                                     }
                                 }
-                            },
+                            ),
                             {
                                 tag: "button",
                                 className: "label-button",

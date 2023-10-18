@@ -142,6 +142,7 @@
     "theme.auto": "Auto",
     "theme.light": "Light",
     "theme.dark": "Dark",
+    "theme.description": "Set light mode/dark mode for screen coloring.",
     "UI style setting": "UI style setting",
     "uiStyle.smart": "Smart",
     "uiStyle.fixed": "Fixed",

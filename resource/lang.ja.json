@@ -142,6 +142,7 @@
     "theme.auto": "自動",
     "theme.light": "ライト",
     "theme.dark": "ダーク",
+    "theme.description": "画面カラーリングのライトモード/ダークモードを設定します。",
     "UI style setting": "UIスタイル設定",
     "uiStyle.smart": "スマート",
     "uiStyle.fixed": "固定",
