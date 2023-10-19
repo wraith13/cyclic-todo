@@ -78,7 +78,7 @@ const makePoemList = (lang: locale.LocaleType) =>
     locale.setLocale(lang);
     var result = "";
     result += "<div class=\"poem-list\">\r\n";
-    pomeJson.list.welcome.map(key => result += makePoem(key as keyof typeof pomeJson.image));
+    pomeJson.list.static.map(key => result += makePoem(key as keyof typeof pomeJson.image));
     result += "</div>\r\n";
     return result;
 };

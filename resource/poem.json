@@ -1,9 +1,27 @@
 {
     "list":
     {
-        "welcome":
+        "static":
         [
             "primary",
+            "beta",
+            "smart",
+            "no-account",
+            "hisotry",
+            "list",
+            "sublist",
+            "tag",
+            "pwa",
+            "dark",
+            "language",
+            "keyboard",
+            "undo",
+            "recyclebin",
+            "localstorage",
+            "eviltimerjs"
+        ],
+        "welcome":
+        [
             "beta",
             "smart",
             "no-account",
