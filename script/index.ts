@@ -3480,16 +3480,17 @@ export module CyclicToDo
                                     }
                                 }
                             ),
-                            {
-                                tag: "button",
-                                className: "label-button",
-                                children: monospace
+                            descriptionButton
+                            (
+                                "",
+                                monospace
                                 (
                                     "auto-tag-flash",
                                     label("Flash style setting"),
                                     label(getFlashStyleLocale(settings.flashStyle ?? "breath"))
                                 ),
-                                onclick: async () =>
+                                "flashStyle.description",
+                                async () =>
                                 {
                                     if (await flashStyleSettingsPopup())
                                     {
@@ -3497,7 +3498,7 @@ export module CyclicToDo
                                         await update();
                                     }
                                 }
-                            },
+                            ),
                             {
                                 tag: "button",
                                 className: "label-button",

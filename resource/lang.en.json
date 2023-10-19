@@ -152,6 +152,7 @@
     "flashStyle.breath": "Breath",
     "flashStyle.solid": "Solid",
     "flashStyle.none": "no flash",
+    "flashStyle.description": "Set the flash display effect for tasks set to flash.",
     "language.auto": "Auto",
     "please input": "Please input.",
     "System settings": "System settings",

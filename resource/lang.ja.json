@@ -152,6 +152,7 @@
     "flashStyle.breath": "ブレス",
     "flashStyle.solid": "ソリッド",
     "flashStyle.none": "フラッシュなし",
+    "flashStyle.description": "フラッシュ設定されたタスクのフラッシュ表示効果を設定します。",
     "language.auto": "自動",
     "please input": "入力してください。",
     "System settings": "システム設定",
