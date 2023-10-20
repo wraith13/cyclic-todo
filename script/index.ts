@@ -5948,20 +5948,28 @@ export module CyclicToDo
             await autoTab(entry),
             await termTab(entry),
         ]);
-        export const listScreenFooter = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) => $div("button-list")
-        ([
-            {
-                tag: "button",
-                className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
-                children: label("New ToDo"),
-                onclick: async () => newTaskPopup(entry, getFilterText()),
-            },
-            internalLink
-            ({
-                href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                children: $tag("button")("main-button long-button")(label("History")),
-            }),
-        ]);
+        export const listScreenFooter = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) =>
+        [
+            $div("button-list")
+            ([
+                {
+                    tag: "button",
+                    className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
+                    children: label("New ToDo"),
+                    onclick: async () => newTaskPopup(entry, getFilterText()),
+                },
+                internalLink
+                ({
+                    href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                    children: $tag("button")("main-button long-button")(label("History")),
+                }),
+            ]),
+            $div("poem-list")
+            ([
+                poem("header"),
+                poem("bottomtabs"),
+            ]),
+        ];
         export const listScreenBody = async (entry: ToDoTagEntryOld, list: ToDoEntry[], displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag), progressScaleShowStyle = OldStorage.TagSettings.getProgressScaleStyle(entry.pass, entry.tag)) =>
         ([
             await historyBar(entry, list),
