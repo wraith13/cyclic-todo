@@ -5948,22 +5948,63 @@ export module CyclicToDo
             await autoTab(entry),
             await termTab(entry),
         ]);
-        export const listScreenFooter = async (entry: ToDoTagEntryOld, list: ToDoEntry[]) =>
+        export const listScreenFooter = async (entry: ToDoTagEntryOld, _list: ToDoEntry[]) =>
         [
-            $div("button-list")
+            $div("signboard")
             ([
-                {
-                    tag: "button",
-                    className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
-                    children: label("New ToDo"),
-                    onclick: async () => newTaskPopup(entry, getFilterText()),
-                },
-                internalLink
-                ({
-                    href: { pass: entry.pass, tag: entry.tag, hash: "history" },
-                    children: $tag("button")("main-button long-button")(label("History")),
-                }),
+                poem
+                (
+                    {
+                        title: "新しい ToDo",
+                        subtitle: "繰り返す ToDo を登録しましょう！",
+                        description: "実行されないままの ToDo が増えていく事を避ける為、なにか繰り返す ToDo を実行してから、登録することを推奨します。時間のかかる ToDo に関しては、開始タイミングを把握しやすくする為に着手するタイミングで完了扱いにする事をオススメします。",
+                        image: "✨",
+                    },
+                    "poem primary-poem"
+                ),
+                $div("button-list")
+                ([
+                    {
+                        tag: "button",
+                        className: "default-button main-button long-button",
+                        children: label("New ToDo"),
+                        onclick: async () => newTaskPopup(entry, getFilterText()),
+                    },
+                    // await menuButton
+                    // ([
+                    //     importListMenuItem(),
+                    //     removedListMenuItem(),
+                    // ]),
+                    $div("button-list")
+                    ([
+                        textButton
+                        (
+                            "History",
+                            async () => showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })
+                        ),
+                        $span("separator")("・"),
+                        textButton
+                        (
+                            "@deleted",
+                            async () => showUrl({ pass: entry.pass, hash: "removed", })
+                        ),
+                    ])
+                ]),
             ]),
+            // $div("button-list")
+            // ([
+            //     {
+            //         tag: "button",
+            //         className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
+            //         children: label("New ToDo"),
+            //         onclick: async () => newTaskPopup(entry, getFilterText()),
+            //     },
+            //     internalLink
+            //     ({
+            //         href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+            //         children: $tag("button")("main-button long-button")(label("History")),
+            //     }),
+            // ]),
             $div("poem-list")
             ([
                 poem("header"),
