@@ -5970,11 +5970,6 @@ export module CyclicToDo
                         children: label("New ToDo"),
                         onclick: async () => newTaskPopup(entry, getFilterText()),
                     },
-                    // await menuButton
-                    // ([
-                    //     importListMenuItem(),
-                    //     removedListMenuItem(),
-                    // ]),
                     $div("button-list")
                     ([
                         textButton
@@ -6389,30 +6384,58 @@ export module CyclicToDo
                             .map(item => removedItem(pass, item))
                     )
                 ):
-                $div("button-list")(label("Recycle Bin is empty.")),
-                $div("button-list")
+                messageList([messagePanel(label("Recycle Bin is empty."))]),
+                $div("signboard")
                 ([
-                    0 < list.length ?
+                    poem
+                    (
                         {
-                            tag: "button",
-                            className: "main-button long-button delete-button",
-                            children: label("Permanently Delete"),
-                            onclick: async () =>
+                            title: locale.map("@deleted"),
+                            subtitle: "30日間保存されます",
+                            description: locale.string("Items after 30 days are automatically deleted completely."),
+                            image: "🗑️",
+                        },
+                        "poem primary-poem"
+                    ),
+                    $div("button-list")
+                    ([
+                        0 < list.length ?
                             {
-                                if (systemConfirm(locale.map("This action cannot be undone. Do you want to continue?")))
+                                tag: "button",
+                                className: "main-button long-button delete-button",
+                                children: label("Permanently Delete"),
+                                onclick: async () =>
                                 {
-                                    OldStorage.Removed.clear(pass);
-                                    await reload();
-                                }
-                            },
-                        }:
-                        [],
+                                    if (systemConfirm(locale.map("This action cannot be undone. Do you want to continue?")))
+                                    {
+                                        OldStorage.Removed.clear(pass);
+                                        await reload();
+                                    }
+                                },
+                            }:
+                            [],
+                        $div("button-list")
+                        ([
+                            textButton
+                            (
+                                "Back to List",
+                                async () => showUrl({ pass, tag: "@overall" })
+                            ),
+                            $span("separator")("・"),
+                            textButton
+                            (
+                                "History",
+                                async () => showUrl({ pass, tag: "@overall", hash: "history" })
+                            ),
+                        ])
+                    ]),
                 ]),
-                messageList
+                $div("poem-list")
                 ([
-                    messagePanel(label("Items after 30 days are automatically deleted completely.")),
+                    poem("header"),
+                    poem("bottomtabs"),
                 ]),
-            ],
+                ],
             footer: await bottomTabs({ pass, tag: "@deleted", todo: [], }),
         });
         export const showRemovedScreen = async (pass: string) =>
@@ -6823,33 +6846,45 @@ export module CyclicToDo
             [
                 0 < list.length ?
                     $div("column-flex-list removed-list-list")(await Promise.all(list.map(item => removedListItem(item)))):
-                    $div("button-list")(label("Recycle Bin is empty.")),
-                $div("button-list")
+                    messageList([messagePanel(label("Recycle Bin is empty."))]),
+                $div("signboard")
                 ([
-                    internalLink
-                    ({
-                        href: {  },
-                        children: $tag("button")("default-button main-button long-button")(label("Back to Top")),
-                    }),
-                    0 < list.length ?
+                    poem
+                    (
                         {
-                            tag: "button",
-                            className: "main-button long-button delete-button",
-                            children: label("Permanently Delete"),
-                            onclick: async () =>
+                            title: locale.map("@deleted"),
+                            subtitle: "30日間保存されます",
+                            description: locale.string("Items after 30 days are automatically deleted completely."),
+                            image: "🗑️",
+                        },
+                        "poem primary-poem"
+                    ),
+                    $div("button-list")
+                    ([
+                        0 < list.length ?
                             {
-                                if (systemConfirm(locale.map("This action cannot be undone. Do you want to continue?")))
+                                tag: "button",
+                                className: "main-button long-button delete-button",
+                                children: label("Permanently Delete"),
+                                onclick: async () =>
                                 {
-                                    OldStorage.Backup.clear();
-                                    await reload();
-                                }
-                            },
-                        }:
-                        [],
-                ]),
-                messageList
-                ([
-                    messagePanel(label("Items after 30 days are automatically deleted completely.")),
+                                    if (systemConfirm(locale.map("This action cannot be undone. Do you want to continue?")))
+                                    {
+                                        OldStorage.Backup.clear();
+                                        await reload();
+                                    }
+                                },
+                            }:
+                            [],
+                        $div("button-list")
+                        ([
+                            textButton
+                            (
+                                "Back to Top",
+                                async () => showUrl({ })
+                            ),
+                        ])
+                    ]),
                 ]),
             ]
         });
