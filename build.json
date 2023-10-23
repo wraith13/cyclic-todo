@@ -69,7 +69,8 @@
                 "__SCRIPT__": { "path": "./script/index.js", "replace": { "match": "sourceMappingURL=index.js.map", "text": "sourceMappingURL=script/index.js.map" } },
                 "__APPLICATION_ICON__": { "path": "./image/cyclictodohex.1024.svg" },
                 "__POEM_HTML__": { "path": "./poem.html" },
-                "__IMAGES__": { "resource": "./resource/images.json" }
+                "__IMAGES__": { "resource": "./resource/images.json" },
+                "__EMOJIS__": { "resource": "./emoji/noto-emoji/index.json" }
             }
         },
         "build.timestamp.json":

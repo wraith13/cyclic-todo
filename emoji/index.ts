@@ -1,7 +1,7 @@
 import pomeJson from "../resource/poem.json";
 const fs = require("fs");
 const https = require("https");
-const makePath = (key: string) => `./emoji/font/${key}.svg`;
+const makePath = (key: string) => `./emoji/noto-emoji/${key}.svg`;
 const makeUrl = (key: string) => `https://raw.githubusercontent.com/googlefonts/noto-emoji/main/svg/emoji_${key}.svg`;
 const download = (url: string) => new Promise<string>
 (
@@ -23,13 +23,21 @@ const download = (url: string) => new Promise<string>
     )
     .on("error", () => reject())
 );
+const resource: { [key:string]: string; } = { };
 const step = async (key: string) =>
 {
     const filename = `u${key.codePointAt(0)?.toString(16).toLowerCase()}`;
+    const path = makePath(filename);
     fs.writeFileSync
     (
-        makePath(filename),
+        path,
         await download(makeUrl(filename))
     );
+    resource[filename] = path;
 };
-Object.values(pomeJson.image).map(key => step(key));
+const main = async () =>
+{
+    await Promise.all(Object.values(pomeJson.image).map(key => step(key)));
+    fs.writeFileSync(`./emoji/noto-emoji/index.json`, JSON.stringify(resource, null, 4));
+};
+main();

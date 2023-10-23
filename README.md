@@ -70,3 +70,7 @@ Debug builds embed map files.
 ## License
 
 [Boost Software License](./LICENSE_1_0.txt)
+
+### Noto Emoji's License
+
+[SIL OPEN FONT LICENSE Version 1.1](./emoji/noto-emoji/LICENSE)

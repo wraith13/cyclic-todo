@@ -5952,7 +5952,7 @@ export module CyclicToDo
         [
             $div("signboard")
             ([
-                poem
+                await poem
                 (
                     {
                         title: "新しい ToDo",
@@ -6002,8 +6002,8 @@ export module CyclicToDo
             // ]),
             $div("poem-list")
             ([
-                poem("header"),
-                poem("bottomtabs"),
+                await poem("header"),
+                await poem("bottomtabs"),
             ]),
         ];
         export const listScreenBody = async (entry: ToDoTagEntryOld, list: ToDoEntry[], displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag), progressScaleShowStyle = OldStorage.TagSettings.getProgressScaleStyle(entry.pass, entry.tag)) =>
@@ -6270,25 +6270,47 @@ export module CyclicToDo
         export const historyScreenBody = async (entry: ToDoTagEntryOld, list: { task: string, tick: number | null }[]) =>
         ([
             $div("column-flex-list history-list")(await Promise.all(list.map(item => historyItem(entry, item)).slice(0, config.maxGroupHistories))),
-            $div("button-list")
-            (
-                internalLink
-                ({
-                    href: { pass: entry.pass, tag: entry.tag, },
-                    children: $tag("button")("default-button main-button long-button")(label("Back to List")),
-                })
-            ),
+            $div("signboard")
+            ([
+                //poem(),
+                $div("button-list")
+                ([
+                    //button(),
+                    $div("button-list")
+                    ([
+                        textButton
+                        (
+                            "Back to List",
+                            async () => showUrl({ pass: entry.pass, tag: entry.tag, })
+                        ),
+                        $span("separator")("・"),
+                        textButton
+                        (
+                            "@deleted",
+                            async () => showUrl({ pass: entry.pass, hash: "removed", })
+                        ),
+                    ])
+                ]),
+            ]),
+            // $div("button-list")
+            // (
+            //     internalLink
+            //     ({
+            //         href: { pass: entry.pass, tag: entry.tag, },
+            //         children: $tag("button")("default-button main-button long-button")(label("Back to List")),
+            //     })
+            // ),
             $div("poem-list")
             ([
-                poem
+                await poem
                 ({
                     title: locale.string("この画面で表示される件数"),
                     subtitle: `${config.maxGroupHistories} / ${list.length}`,
                     description: locale.string("処理パフォーマンスの都合上、この画面で表示される件数には上限があります。"),
                     image: "🚫",
                 }),
-                poem("header"),
-                poem("bottomtabs"),
+                await poem("header"),
+                await poem("bottomtabs"),
             ]),
             // messageList
             // ([
@@ -6387,7 +6409,7 @@ export module CyclicToDo
                 messageList([messagePanel(label("Recycle Bin is empty."))]),
                 $div("signboard")
                 ([
-                    poem
+                    await poem
                     (
                         {
                             title: locale.map("@deleted"),
@@ -6432,10 +6454,10 @@ export module CyclicToDo
                 ]),
                 $div("poem-list")
                 ([
-                    poem("header"),
-                    poem("bottomtabs"),
+                    await poem("header"),
+                    await poem("bottomtabs"),
                 ]),
-                ],
+            ],
             footer: await bottomTabs({ pass, tag: "@deleted", todo: [], }),
         });
         export const showRemovedScreen = async (pass: string) =>
@@ -6648,6 +6670,7 @@ export module CyclicToDo
         };
         export module Resource
         {
+            export type EmojiType = (typeof pomeJson.image)[keyof typeof pomeJson.image];
             export type KeyType = keyof typeof resource;
             export const loadSvgOrCache = async (key: KeyType): Promise<SVGElement> =>
             {
@@ -6698,6 +6721,7 @@ export module CyclicToDo
                 }
             };
             export const loadTagSvgOrCache = async (tag: string): Promise<SVGElement> => loadSvgOrCache(getTagIcon(tag));
+            export const loadEmojiSvgOrCache = async (emoji: EmojiType): Promise<SVGElement> => loadSvgOrCache(`u${emoji.codePointAt(0)?.toString(16).toLowerCase()}` as KeyType);
         }
         export const showExportScreen = async (pass: string) =>
             await showWindow(await exportScreen(pass));
@@ -6849,7 +6873,7 @@ export module CyclicToDo
                     messageList([messagePanel(label("Recycle Bin is empty."))]),
                 $div("signboard")
                 ([
-                    poem
+                    await poem
                     (
                         {
                             title: locale.map("@deleted"),
@@ -7038,9 +7062,9 @@ export module CyclicToDo
             locale.map(i.message),
             i.reverseWithShiftKey ? [ " ( + ", $span("key monospace")($tag("kbd")({})(`Shift`)), locale.map("Reverse") +" )", ]: "",
         ];
-        export const poem = (data: keyof typeof pomeJson.image | { title:string, subtitle: string, description: minamo.dom.Source, image: string, }, className: string = ""): minamo.dom.Source =>
+        export const poem = async (data: keyof typeof pomeJson.image | { title:string, subtitle: string, description: minamo.dom.Source, image: Resource.EmojiType, }, className: string = ""): Promise<minamo.dom.Source> =>
             "string" === typeof data ?
-                poem
+                await poem
                 (
                     {
                         title:locale.string(`poem.${data}.title`),
@@ -7055,7 +7079,8 @@ export module CyclicToDo
                     $span("poem-title")(data.title),
                     $span("poem-subtitle")(data.subtitle),
                     $span("poem-description")(data.description),
-                    $span("poem-image")(data.image),
+                    // $span("poem-image")(data.image),
+                    $span("poem-image")(await Resource.loadEmojiSvgOrCache(data.image)),
                 ]);
         export const welcomeScreen = async (): Promise<ScreenSource> =>
         ({
@@ -7090,7 +7115,7 @@ export module CyclicToDo
                 $div("signboard")
                 ([
                     // $div("logo")([await applicationIcon(),$span("logo-text")(applicationTitle)]),
-                    poem("primary", "poem primary-poem"),
+                    await poem("primary", "poem primary-poem"),
                     $div("button-list")
                     ([
                         {
@@ -7121,7 +7146,7 @@ export module CyclicToDo
                         ])
                     ]),
                 ]),
-                $div("poem-list")((<(keyof typeof pomeJson.image)[]>pomeJson.list.welcome).map(i => poem(i))),
+                $div("poem-list")(await Promise.all((<(keyof typeof pomeJson.image)[]>pomeJson.list.welcome).map(i => poem(i)))),
                 // $div({ style: "text-align: center; padding: 0.5rem;", })
                 //     ("🚧 This static web application is under development. / この Static Web アプリは開発中です。"),
                 // messageList
