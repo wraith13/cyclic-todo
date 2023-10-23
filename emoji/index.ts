@@ -1,13 +1,13 @@
 import pomeJson from "../resource/poem.json";
 const fs = require("fs");
 const https = require("https");
-const makePath = (key: string) => `./emoji/${key}.svg`;
+const makePath = (key: string) => `./emoji/font/${key}.svg`;
 const makeUrl = (key: string) => `https://raw.githubusercontent.com/googlefonts/noto-emoji/main/svg/emoji_${key}.svg`;
-const download = (path: string) => new Promise<string>
+const download = (url: string) => new Promise<string>
 (
     (resolve, reject) => https.get
     (
-        path, (response: any) =>
+        url, (response: any) =>
         {
             if (200 <= response.statusCode && response.statusCode < 300)
             {

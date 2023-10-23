@@ -5,7 +5,6 @@
 poem.html
 emoji/index.js
 emoji/index.js.map
-emoji/*.svg
 build/index.js
 build/index.js.map
 script/index.js
