@@ -7062,6 +7062,10 @@ export module CyclicToDo
             locale.map(i.message),
             i.reverseWithShiftKey ? [ " ( + ", $span("key monospace")($tag("kbd")({})(`Shift`)), locale.map("Reverse") +" )", ]: "",
         ];
+        export const isMac = /Macintosh/.test(navigator.userAgent);
+        export const isiPhone = /iPhone/.test(navigator.userAgent);
+        export const isiPad = /iPad/.test(navigator.userAgent);
+        export const isApple = isMac || isiPhone || isiPad;
         export const poem = async (data: keyof typeof pomeJson.image | { title:string, subtitle: string, description: minamo.dom.Source, image: Resource.EmojiType, }, className: string = ""): Promise<minamo.dom.Source> =>
             "string" === typeof data ?
                 await poem
@@ -7080,7 +7084,12 @@ export module CyclicToDo
                     $span("poem-subtitle")(data.subtitle),
                     $span("poem-description")(data.description),
                     // $span("poem-image")(data.image),
-                    $span("poem-image")(await Resource.loadEmojiSvgOrCache(data.image)),
+                    $span("poem-image")
+                    (
+                        isApple ?
+                            data.image:
+                            await Resource.loadEmojiSvgOrCache(data.image)
+                    ),
                 ]);
         export const welcomeScreen = async (): Promise<ScreenSource> =>
         ({
