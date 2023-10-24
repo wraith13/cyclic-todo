@@ -23,6 +23,32 @@ const download = (url: string) => new Promise<string>
     )
     .on("error", () => reject())
 );
+const extractIdList = (svg: string): string[] =>
+{
+    const regex = /<[^>]+id="([^"]*)"/g;
+    const result: string[] = [];
+    let match;
+    while(null !== (match = regex.exec(svg)))
+    {
+        if (match[1])
+        {
+            result.push(match[1]);
+        }
+    }
+    return result;
+};
+const regulateSvg = (filename:string, svg: string): string =>
+{
+    let result = svg.replace(/(<svg[^>]*)(\sid="(?:[^"]*)")([^>]*>)/g, "$1$3");
+    extractIdList(result).forEach
+    (
+        id =>
+        {
+            result = result.replace(new RegExp(id, "g"), `${filename}_${id}`)
+        }
+    );
+    return result;
+};
 const resource: { [key:string]: string; } = { };
 const step = async (key: string) =>
 {
@@ -31,7 +57,7 @@ const step = async (key: string) =>
     fs.writeFileSync
     (
         path,
-        await download(makeUrl(filename))
+        regulateSvg(filename, await download(makeUrl(filename)))
     );
     resource[filename] = path;
 };
