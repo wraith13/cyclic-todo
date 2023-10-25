@@ -110,12 +110,16 @@ export module CyclicToDo
     export type UiStyleType = "smart" | "fixed";
     export type UiStyleTypeLocale = `uiStyle.${UiStyleType}`
     export const getUiStyleLocale = (key: UiStyleType) => <UiStyleTypeLocale>`uiStyle.${key}`;
+    export type EmojiType = "auto" | "system" | "noto-emoji";
+    export type EmojiTypeLocale = `emoji.${EmojiType}`
+    export const getEmojiTypeLocale = (key: EmojiType) => <EmojiTypeLocale>`emoji.${key}`;
     export interface SystemSettings extends minamo.core.JsonableObject
     {
         theme?: ThemeType;
         uiStyle?: UiStyleType;
         flashStyle?: FlashStyleType;
         locale?: locale.LocaleType;
+        emoji?: EmojiType;
     }
     export interface ToDoTagEntryOld extends minamo.core.JsonableObject
     {
