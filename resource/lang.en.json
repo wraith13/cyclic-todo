@@ -154,6 +154,7 @@
     "flashStyle.none": "no flash",
     "flashStyle.description": "Set the flash display effect for ToDoes set to flash.",
     "language.auto": "Auto",
+    "language.description": "Set the language used on the UI. / UI 上で使用する言語を設定します。",
     "Emoji setting": "Emoji setting",
     "emoji.auto": "Auto",
     "emoji.system": "System",

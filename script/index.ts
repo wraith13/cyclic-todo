@@ -3363,6 +3363,72 @@ export module CyclicToDo
                 }
             );
         };
+        export const emojiSettingsPopup = async (settings: SystemSettings = Storage.SystemSettings.get()): Promise<boolean> =>
+        {
+            const defaultValue = "auto";
+            const init = settings.emoji ?? defaultValue;
+            return await new Promise
+            (
+                async resolve =>
+                {
+                    let result = false;
+                    const checkButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
+                    const checkButtonListUpdate = async () => minamo.dom.replaceChildren
+                    (
+                        checkButtonList,
+                        [
+                            await Promise.all
+                            (
+                                (<EmojiType[]>[ "auto", "system", "noto-emoji", ]).map
+                                (
+                                    async (key: EmojiType) =>
+                                    ({
+                                        tag: "button",
+                                        className: `check-button ${key === (settings.emoji ?? defaultValue) ? "checked": ""}`,
+                                        children:
+                                        [
+                                            await Resource.loadSvgOrCache("check-icon"),
+                                            $span("")(label(getEmojiTypeLocale(key))),
+                                        ],
+                                        onclick: async () =>
+                                        {
+                                            if (key !== (settings.emoji ?? defaultValue))
+                                            {
+                                                settings.emoji = key;
+                                                Storage.SystemSettings.set(settings);
+                                                await checkButtonListUpdate();
+                                                result = init !== key;
+                                            }
+                                        }
+                                    })
+                                )
+                            )
+                        ]
+                    );
+                    await checkButtonListUpdate();
+                    const ui = popup
+                    ({
+                        // className: "add-remove-tags-popup",
+                        children:
+                        [
+                            $tag("h2")("")(label("Emoji setting")),
+                            checkButtonList,
+                            $div("popup-operator")
+                            ([{
+                                tag: "button",
+                                className: "default-button",
+                                children: label("Close"),
+                                onclick: () =>
+                                {
+                                    ui.close();
+                                },
+                            }])
+                        ],
+                        onClose: async () => resolve(result),
+                    });
+                }
+            );
+        };
         export const newTaskPopup = async (entry: { pass: string, tag: string, }, _default?: string) =>
         {
             const newTask = await prompt(locale.map("Input a ToDo's name."), _default);
@@ -3474,7 +3540,7 @@ export module CyclicToDo
                                     label("UI style setting"),
                                     label(getUiStyleLocale(settings.uiStyle ?? "smart"))
                                 ),
-                                "theme.description",
+                                "uiStyle.description",
                                 async () =>
                                 {
                                     if (await uiStyleSettingsPopup())
@@ -3503,16 +3569,17 @@ export module CyclicToDo
                                     }
                                 }
                             ),
-                            {
-                                tag: "button",
-                                className: "label-button",
-                                children: monospace
+                            descriptionButton
+                            (
+                                "",
+                                monospace
                                 (
                                     "auto-tag-flash",
                                     label("Language setting"),
                                     $span("")(locale.getLocaleName(settings.locale ?? "@auto"))
                                 ),
-                                onclick: async () =>
+                                "language.description",
+                                async () =>
                                 {
                                     if (await localeSettingsPopup())
                                     {
@@ -3521,7 +3588,26 @@ export module CyclicToDo
                                         await update();
                                     }
                                 }
-                            },
+                            ),
+                            descriptionButton
+                            (
+                                "",
+                                monospace
+                                (
+                                    "auto-tag-flash",
+                                    label("Emoji setting"),
+                                    label(getEmojiTypeLocale(settings.emoji ?? "auto"))
+                                ),
+                                "emoji.description",
+                                async () =>
+                                {
+                                    if (await emojiSettingsPopup())
+                                    {
+                                        result = true;
+                                        await update();
+                                    }
+                                }
+                            ),
                         ]
                     );
                 };
@@ -7070,6 +7156,19 @@ export module CyclicToDo
         export const isiPhone = /iPhone/.test(navigator.userAgent);
         export const isiPad = /iPad/.test(navigator.userAgent);
         export const isApple = isMac || isiPhone || isiPad;
+        export const emoji = async (image: Resource.EmojiType) =>
+        {
+            const setting = Storage.SystemSettings.get().emoji ?? "auto";
+            if ("system" === setting || ("auto" === setting && isApple))
+            {
+                return image;
+            }
+            else
+            //if ("note-emoji" === setting || ("auto" === setting && ! isApple))
+            {
+                return await Resource.loadEmojiSvgOrCache(image);
+            }
+        };
         export const poem = async (data: keyof typeof pomeJson.image | { title:string, subtitle: string, description: minamo.dom.Source, image: Resource.EmojiType, }, className: string = ""): Promise<minamo.dom.Source> =>
             "string" === typeof data ?
                 await poem
@@ -7088,12 +7187,7 @@ export module CyclicToDo
                     $span("poem-subtitle")(data.subtitle),
                     $span("poem-description")(data.description),
                     // $span("poem-image")(data.image),
-                    $span("poem-image")
-                    (
-                        isApple ?
-                            data.image:
-                            await Resource.loadEmojiSvgOrCache(data.image)
-                    ),
+                    $span("poem-image")(await emoji(data.image)),
                 ]);
         export const welcomeScreen = async (): Promise<ScreenSource> =>
         ({
