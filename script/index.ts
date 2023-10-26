@@ -6997,6 +6997,12 @@ export module CyclicToDo
                                 "Back to Top",
                                 async () => showUrl({ })
                             ),
+                            $span("separator")("・"),
+                            textButton
+                            (
+                                "Import List",
+                                async () => showUrl({ hash: "import", })
+                            ),
                         ])
                     ]),
                 ]),
