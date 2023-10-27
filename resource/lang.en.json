@@ -9,7 +9,7 @@
     "poem.beta.description": "This static web application is under development.",
     "poem.smart.title": "Smart display order",
     "poem.smart.subtitle": "You just do it",
-    "poem.smart.description": "ToDoes that are predicted to be ready for execution based on auto-tagging and past history are displayed in priority order, making it easy to grasp the next ToDo to be executed.",
+    "poem.smart.description": "With Cyclic ToDo, you do not need to explicitly set the repeating cycle of ToDo. ToDoes that are predicted to be ready for execution based on auto-tagging and past history are displayed in priority order, making it easy to grasp the next ToDo to be executed.",
     "poem.no-account.title": "No account required",
     "poem.no-account.subtitle": "Ready to use now",
     "poem.no-account.description": "Cyclic ToDo can be used immediately without requiring account registration or login. Click the [New ToDo List] button.",
