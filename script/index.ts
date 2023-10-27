@@ -8378,5 +8378,11 @@ export module CyclicToDo
         history.pushState(null, applicationTitle, url);
         await showPage(url);
     };
-    export const reload = async () => await showPage(location.href, 600);
+    export const reload = async () =>
+    {
+        const body = Render.getScreenBody();
+        const scrollTop = body.scrollTop;
+        await showPage(location.href, 600);
+        body.scrollTop = scrollTop;
+    };
 }
