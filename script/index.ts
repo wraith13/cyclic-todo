@@ -6479,7 +6479,7 @@ export module CyclicToDo
                 [
                     await screenHeaderHomeSegment(),
                     await screenHeaderListSegment(pass),
-                    await screenHeaderTagSegment(pass, "@deleted"),
+                    await screenHeaderTagMenuSegment(pass, "@deleted"),
                 ],
                 menu: await removedScreenMenu(pass),
                 parent: { pass, tag: "@overall", },
@@ -8380,9 +8380,8 @@ export module CyclicToDo
     };
     export const reload = async () =>
     {
-        const body = Render.getScreenBody();
-        const scrollTop = body.scrollTop;
+        const scrollTop = Render.getScreenBody().scrollTop;
         await showPage(location.href, 600);
-        body.scrollTop = scrollTop;
+        Render.getScreenBody().scrollTop = scrollTop;
     };
 }
