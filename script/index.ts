@@ -3042,18 +3042,16 @@ export module CyclicToDo
                                     await Resource.loadSvgOrCache("check-icon"),
                                     $span("")(Domain.tagMap("@new-sublist")),
                                 ],
-                                onclick: async () =>
-                                {
-                                    const sublist = await prompt(locale.map("Input a sublist's name."), "");
-                                    if (null !== sublist)
+                                onclick: async () => await newSublistPopup
+                                (
+                                    pass,
+                                    async (tag) =>
                                     {
-                                        const tag = Model.encodeSublist(sublist.trim());
-                                        OldStorage.Tag.add(pass, tag);
                                         OldStorage.TagMember.add(pass, tag, item.task);
                                         result = true;
                                         ui.close();
                                     }
-                                }
+                                ),
                             },
                         ]
                     );
@@ -3495,6 +3493,16 @@ export module CyclicToDo
                         ),
                     });
                 }
+            }
+        };
+        export const newSublistPopup = async (pass: string, onNew: (tag: string) => Promise<unknown> = async (tag) => await showUrl({ pass, tag, })) =>
+        {
+            const sublist = await prompt(locale.map("Input a sublist's name."), "");
+            if (null !== sublist)
+            {
+                const tag = Model.encodeSublist(sublist.trim());
+                OldStorage.Tag.add(pass, tag);
+                await onNew(tag);
             }
         };
         export const systemSettingsPopup = async (): Promise<boolean> => await new Promise
@@ -5483,16 +5491,7 @@ export module CyclicToDo
                             await Resource.loadSvgOrCache("add-folder-icon"),
                             label("@new-sublist"),
                         ],
-                        async () =>
-                        {
-                            const sublist = await prompt(locale.map("Input a sublist's name."), "");
-                            if (null !== sublist)
-                            {
-                                const tag = Model.encodeSublist(sublist.trim());
-                                OldStorage.Tag.add(pass, tag);
-                                await showUrl({ pass, tag, });
-                            }
-                        }
+                        async () => await newSublistPopup(pass),
                     ),
                     menuLinkItem
                     (
@@ -6041,41 +6040,97 @@ export module CyclicToDo
         export const listScreenFooter = async (entry: ToDoTagEntryOld, _list: ToDoEntry[]) =>
         [
             $div("signboard")
-            ([
-                await poem
-                (
-                    {
-                        title: "新しい ToDo",
-                        subtitle: "繰り返す ToDo を登録しましょう！",
-                        description: "実行されないままの ToDo が増えていく事を避ける為、なにか繰り返す ToDo を実行してから、登録することを推奨します。実行周期が短い割には時間のかかる ToDo に関しては、例外的に、開始タイミングを把握しやすくする為に着手するタイミングで完了扱いにする事をオススメします。",
-                        image: "✨",
-                    },
-                    "poem primary-poem"
-                ),
-                $div("button-list")
-                ([
-                    {
-                        tag: "button",
-                        className: "default-button main-button long-button",
-                        children: label("New ToDo"),
-                        onclick: async () => newTaskPopup(entry, getFilterText()),
-                    },
+            (
+                "@:@root" === entry.tag ?
+                [
+                    await poem("sublist", "poem primary-poem"),
                     $div("button-list")
                     ([
-                        textButton
-                        (
-                            "History",
-                            async () => showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })
-                        ),
-                        $span("separator")("・"),
-                        textButton
-                        (
-                            "@deleted",
-                            async () => showUrl({ pass: entry.pass, hash: "removed", })
-                        ),
-                    ])
-                ]),
-            ]),
+                        {
+                            tag: "button",
+                            className: "default-button main-button long-button",
+                            children: label("@new-sublist"),
+                            onclick: async () => newSublistPopup(entry.pass),
+                        },
+                        $div("button-list")
+                        ([
+                            textButton
+                            (
+                                "History",
+                                async () => showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })
+                            ),
+                            $span("separator")("・"),
+                            textButton
+                            (
+                                "@deleted",
+                                async () => showUrl({ pass: entry.pass, hash: "removed", })
+                            ),
+                        ])
+                    ]),
+                ]:
+                "@untagged" === entry.tag ?
+                [
+                    await poem("tag", "poem primary-poem"),
+                    $div("button-list")
+                    ([
+                        {
+                            tag: "button",
+                            className: "default-button main-button long-button",
+                            children: label("New ToDo"),
+                            onclick: async () => newTaskPopup(entry, getFilterText()),
+                        },
+                        $div("button-list")
+                        ([
+                            textButton
+                            (
+                                "History",
+                                async () => showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })
+                            ),
+                            $span("separator")("・"),
+                            textButton
+                            (
+                                "@deleted",
+                                async () => showUrl({ pass: entry.pass, hash: "removed", })
+                            ),
+                        ])
+                    ]),
+                ]:
+                [
+                    await poem
+                    (
+                        {
+                            title: "新しい ToDo",
+                            subtitle: "繰り返す ToDo を登録しましょう！",
+                            description: "実行されないままの ToDo が増えていく事を避ける為、なにか繰り返す ToDo を実行してから、登録することを推奨します。実行周期が短い割には時間のかかる ToDo に関しては、例外的に、開始タイミングを把握しやすくする為に着手するタイミングで完了扱いにする事をオススメします。",
+                            image: "✨",
+                        },
+                        "poem primary-poem"
+                    ),
+                    $div("button-list")
+                    ([
+                        {
+                            tag: "button",
+                            className: "default-button main-button long-button",
+                            children: label("New ToDo"),
+                            onclick: async () => newTaskPopup(entry, getFilterText()),
+                        },
+                        $div("button-list")
+                        ([
+                            textButton
+                            (
+                                "History",
+                                async () => showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })
+                            ),
+                            $span("separator")("・"),
+                            textButton
+                            (
+                                "@deleted",
+                                async () => showUrl({ pass: entry.pass, hash: "removed", })
+                            ),
+                        ])
+                    ]),
+                ]
+            ),
             // $div("button-list")
             // ([
             //     {

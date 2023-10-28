@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sat Oct 28 2023 13:56:07 GMT+0900 (日本標準時)
+    build at: Sat Oct 28 2023 23:45:31 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -23362,20 +23362,18 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                         Render.$span("")(Domain.tagMap("@new-sublist"))
                                                     ],
                                                         _e.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
-                                                            var sublist, tag;
+                                                            var _this = this;
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
-                                                                    case 0: return [4 /*yield*/, Render.prompt(locale_2.locale.map("Input a sublist's name."), "")];
-                                                                    case 1:
-                                                                        sublist = _a.sent();
-                                                                        if (null !== sublist) {
-                                                                            tag = Model.encodeSublist(sublist.trim());
-                                                                            OldStorage.Tag.add(pass, tag);
-                                                                            OldStorage.TagMember.add(pass, tag, item.task);
-                                                                            result = true;
-                                                                            ui.close();
-                                                                        }
-                                                                        return [2 /*return*/];
+                                                                    case 0: return [4 /*yield*/, Render.newSublistPopup(pass, function (tag) { return __awaiter(_this, void 0, void 0, function () {
+                                                                            return __generator(this, function (_a) {
+                                                                                OldStorage.TagMember.add(pass, tag, item.task);
+                                                                                result = true;
+                                                                                ui.close();
+                                                                                return [2 /*return*/];
+                                                                            });
+                                                                        }); })];
+                                                                    case 1: return [2 /*return*/, _a.sent()];
                                                                 }
                                                             });
                                                         }); },
@@ -24014,6 +24012,32 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 });
             }); };
+            Render.newSublistPopup = function (pass, onNew) {
+                if (onNew === void 0) { onNew = function (tag) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, tag: tag, })];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                }); }); }; }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var sublist, tag;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, Render.prompt(locale_2.locale.map("Input a sublist's name."), "")];
+                            case 1:
+                                sublist = _a.sent();
+                                if (!(null !== sublist)) return [3 /*break*/, 3];
+                                tag = Model.encodeSublist(sublist.trim());
+                                OldStorage.Tag.add(pass, tag);
+                                return [4 /*yield*/, onNew(tag)];
+                            case 2:
+                                _a.sent();
+                                _a.label = 3;
+                            case 3: return [2 /*return*/];
+                        }
+                    });
+                });
+            };
             Render.systemSettingsPopup = function () { return __awaiter(_this, void 0, void 0, function () {
                 var _this = this;
                 return __generator(this, function (_a) {
@@ -26472,24 +26496,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 _e.apply(void 0, [[
                                         _h.sent(),
                                         Render.label("@new-sublist")
-                                    ], function () { return __awaiter(_this, void 0, void 0, function () {
-                                        var sublist, tag;
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, Render.prompt(locale_2.locale.map("Input a sublist's name."), "")];
-                                                case 1:
-                                                    sublist = _a.sent();
-                                                    if (!(null !== sublist)) return [3 /*break*/, 3];
-                                                    tag = Model.encodeSublist(sublist.trim());
-                                                    OldStorage.Tag.add(pass, tag);
-                                                    return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, tag: tag, })];
-                                                case 2:
-                                                    _a.sent();
-                                                    _a.label = 3;
-                                                case 3: return [2 /*return*/];
-                                            }
-                                        });
-                                    }); }])
+                                    ], function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, Render.newSublistPopup(pass)];
+                                            case 1: return [2 /*return*/, _a.sent()];
+                                        }
+                                    }); }); }])
                             ]);
                             _f = Render.menuLinkItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("recycle-bin-icon")];
@@ -27142,42 +27154,101 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 });
             }); };
             Render.listScreenFooter = function (entry, _list) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d;
+                var _a, _b, _c, _d, _e, _f;
                 var _this = this;
-                return __generator(this, function (_e) {
-                    switch (_e.label) {
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             _a = Render.$div("signboard");
-                            return [4 /*yield*/, Render.poem({
-                                    title: "新しい ToDo",
-                                    subtitle: "繰り返す ToDo を登録しましょう！",
-                                    description: "実行されないままの ToDo が増えていく事を避ける為、なにか繰り返す ToDo を実行してから、登録することを推奨します。実行周期が短い割には時間のかかる ToDo に関しては、例外的に、開始タイミングを把握しやすくする為に着手するタイミングで完了扱いにする事をオススメします。",
-                                    image: "✨",
-                                }, "poem primary-poem")];
+                            if (!("@:@root" === entry.tag)) return [3 /*break*/, 2];
+                            return [4 /*yield*/, Render.poem("sublist", "poem primary-poem")];
                         case 1:
                             _b = [
-                                _a.apply(void 0, [[
-                                        _e.sent(),
-                                        Render.$div("button-list")([
-                                            {
-                                                tag: "button",
-                                                className: "default-button main-button long-button",
-                                                children: Render.label("New ToDo"),
-                                                onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                    return [2 /*return*/, Render.newTaskPopup(entry, Render.getFilterText())];
-                                                }); }); },
-                                            },
-                                            Render.$div("button-list")([
-                                                Render.textButton("History", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                    return [2 /*return*/, CyclicToDo.showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })];
-                                                }); }); }),
-                                                Render.$span("separator")("・"),
-                                                Render.textButton("@deleted", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                                    return [2 /*return*/, CyclicToDo.showUrl({ pass: entry.pass, hash: "removed", })];
-                                                }); }); }),
-                                            ])
-                                        ])
-                                    ]])
+                                _g.sent(),
+                                Render.$div("button-list")([
+                                    {
+                                        tag: "button",
+                                        className: "default-button main-button long-button",
+                                        children: Render.label("@new-sublist"),
+                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            return [2 /*return*/, Render.newSublistPopup(entry.pass)];
+                                        }); }); },
+                                    },
+                                    Render.$div("button-list")([
+                                        Render.textButton("History", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            return [2 /*return*/, CyclicToDo.showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })];
+                                        }); }); }),
+                                        Render.$span("separator")("・"),
+                                        Render.textButton("@deleted", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            return [2 /*return*/, CyclicToDo.showUrl({ pass: entry.pass, hash: "removed", })];
+                                        }); }); }),
+                                    ])
+                                ])
+                            ];
+                            return [3 /*break*/, 7];
+                        case 2:
+                            if (!("@untagged" === entry.tag)) return [3 /*break*/, 4];
+                            return [4 /*yield*/, Render.poem("tag", "poem primary-poem")];
+                        case 3:
+                            _c = [
+                                _g.sent(),
+                                Render.$div("button-list")([
+                                    {
+                                        tag: "button",
+                                        className: "default-button main-button long-button",
+                                        children: Render.label("New ToDo"),
+                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            return [2 /*return*/, Render.newTaskPopup(entry, Render.getFilterText())];
+                                        }); }); },
+                                    },
+                                    Render.$div("button-list")([
+                                        Render.textButton("History", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            return [2 /*return*/, CyclicToDo.showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })];
+                                        }); }); }),
+                                        Render.$span("separator")("・"),
+                                        Render.textButton("@deleted", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            return [2 /*return*/, CyclicToDo.showUrl({ pass: entry.pass, hash: "removed", })];
+                                        }); }); }),
+                                    ])
+                                ])
+                            ];
+                            return [3 /*break*/, 6];
+                        case 4: return [4 /*yield*/, Render.poem({
+                                title: "新しい ToDo",
+                                subtitle: "繰り返す ToDo を登録しましょう！",
+                                description: "実行されないままの ToDo が増えていく事を避ける為、なにか繰り返す ToDo を実行してから、登録することを推奨します。実行周期が短い割には時間のかかる ToDo に関しては、例外的に、開始タイミングを把握しやすくする為に着手するタイミングで完了扱いにする事をオススメします。",
+                                image: "✨",
+                            }, "poem primary-poem")];
+                        case 5:
+                            _c = [
+                                _g.sent(),
+                                Render.$div("button-list")([
+                                    {
+                                        tag: "button",
+                                        className: "default-button main-button long-button",
+                                        children: Render.label("New ToDo"),
+                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            return [2 /*return*/, Render.newTaskPopup(entry, Render.getFilterText())];
+                                        }); }); },
+                                    },
+                                    Render.$div("button-list")([
+                                        Render.textButton("History", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            return [2 /*return*/, CyclicToDo.showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })];
+                                        }); }); }),
+                                        Render.$span("separator")("・"),
+                                        Render.textButton("@deleted", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                            return [2 /*return*/, CyclicToDo.showUrl({ pass: entry.pass, hash: "removed", })];
+                                        }); }); }),
+                                    ])
+                                ])
+                            ];
+                            _g.label = 6;
+                        case 6:
+                            _b = _c;
+                            _g.label = 7;
+                        case 7:
+                            _d = [
+                                _a.apply(void 0, [_b])
                             ];
                             // $div("button-list")
                             // ([
@@ -27193,14 +27264,14 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             //         children: $tag("button")("main-button long-button")(label("History")),
                             //     }),
                             // ]),
-                            _c = Render.$div("poem-list");
+                            _e = Render.$div("poem-list");
                             return [4 /*yield*/, Render.poem("header")];
-                        case 2:
-                            _d = [
-                                _e.sent()
+                        case 8:
+                            _f = [
+                                _g.sent()
                             ];
                             return [4 /*yield*/, Render.poem("bottomtabs")];
-                        case 3: return [2 /*return*/, _b.concat([
+                        case 9: return [2 /*return*/, _d.concat([
                                 // $div("button-list")
                                 // ([
                                 //     {
@@ -27215,8 +27286,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 //         children: $tag("button")("main-button long-button")(label("History")),
                                 //     }),
                                 // ]),
-                                _c.apply(void 0, [_d.concat([
-                                        _e.sent()
+                                _e.apply(void 0, [_f.concat([
+                                        _g.sent()
                                     ])])
                             ])];
                     }
@@ -29964,7 +30035,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Oct 28 2023 13:56:07 GMT+0900 (日本標準時)', buildTimestampTick: 1698468967627, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Oct 28 2023 23:45:31 GMT+0900 (日本標準時)', buildTimestampTick: 1698504331470, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -30176,7 +30247,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Sat Oct 28 2023 13:56:07 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Sat Oct 28 2023 23:45:31 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
