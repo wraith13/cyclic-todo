@@ -3025,11 +3025,15 @@ export module CyclicToDo
                                             await Resource.loadSvgOrCache("check-icon"),
                                             $span("")(Domain.tagMap(sublist)),
                                         ],
-                                        onclick: () =>
+                                        onclick: async () =>
                                         {
-                                            OldStorage.TagMember.add(pass, sublist, item.task);
+                                            const todo = OldStorage.TagMember.add(pass, sublist, item.task);
                                             result = true;
                                             ui.close();
+                                            if (todo !== item.task && getUrlParams()["todo"])
+                                            {
+                                                await showUrl({ pass, todo, });
+                                            }
                                         }
                                     }),
                                 )
@@ -3047,9 +3051,13 @@ export module CyclicToDo
                                     pass,
                                     async (tag) =>
                                     {
-                                        OldStorage.TagMember.add(pass, tag, item.task);
+                                        const todo = OldStorage.TagMember.add(pass, tag, item.task);
                                         result = true;
                                         ui.close();
+                                        if (todo !== item.task && getUrlParams()["todo"])
+                                        {
+                                            await showUrl({ pass, todo, });
+                                        }
                                     }
                                 ),
                             },
@@ -6076,8 +6084,15 @@ export module CyclicToDo
                         {
                             tag: "button",
                             className: "default-button main-button long-button",
-                            children: label("New ToDo"),
-                            onclick: async () => newTaskPopup(entry, getFilterText()),
+                            children: label("@new"),
+                            onclick: async () =>
+                            {
+                                const tag = await newTagPrompt(entry.pass);
+                                if (null !== tag)
+                                {
+                                    await showUrl({ pass: entry.pass, tag, });
+                                }
+                            },
                         },
                         $div("button-list")
                         ([
