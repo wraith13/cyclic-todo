@@ -6045,11 +6045,24 @@ export module CyclicToDo
             await autoTab(entry),
             await termTab(entry),
         ]);
-        export const listScreenFooter = async (entry: ToDoTagEntryOld, _list: ToDoEntry[]) =>
-        [
-            $div("signboard")
+        export const listScreenFooterSignboard = async (entry: ToDoTagEntryOld) =>
+        {
+            var result: minamo.dom.Source;
+            const hisotry = textButton
             (
-                "@:@root" === entry.tag ?
+                "History",
+                async () => showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })
+            );
+            const removed = textButton
+            (
+                "@deleted",
+                async () => showUrl({ pass: entry.pass, hash: "removed", })
+            );
+            const separator = $span("separator")("・");
+            switch(entry.tag)
+            {
+            case "@:@root":
+                result =
                 [
                     await poem("sublist", "poem primary-poem"),
                     $div("button-list")
@@ -6060,23 +6073,12 @@ export module CyclicToDo
                             children: label("@new-sublist"),
                             onclick: async () => newSublistPopup(entry.pass),
                         },
-                        $div("button-list")
-                        ([
-                            textButton
-                            (
-                                "History",
-                                async () => showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })
-                            ),
-                            $span("separator")("・"),
-                            textButton
-                            (
-                                "@deleted",
-                                async () => showUrl({ pass: entry.pass, hash: "removed", })
-                            ),
-                        ])
+                        $div("button-list")([hisotry, separator, removed,]),
                     ]),
-                ]:
-                "@untagged" === entry.tag ?
+                ];
+                break;
+            case "@untagged":
+                result =
                 [
                     await poem("tag", "poem primary-poem"),
                     $div("button-list")
@@ -6094,22 +6096,12 @@ export module CyclicToDo
                                 }
                             },
                         },
-                        $div("button-list")
-                        ([
-                            textButton
-                            (
-                                "History",
-                                async () => showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })
-                            ),
-                            $span("separator")("・"),
-                            textButton
-                            (
-                                "@deleted",
-                                async () => showUrl({ pass: entry.pass, hash: "removed", })
-                            ),
-                        ])
+                        $div("button-list")([hisotry, separator, removed,]),
                     ]),
-                ]:
+                ];
+                break;
+            default:
+                result =
                 [
                     await poem
                     (
@@ -6129,23 +6121,16 @@ export module CyclicToDo
                             children: label("New ToDo"),
                             onclick: async () => newTaskPopup(entry, getFilterText()),
                         },
-                        $div("button-list")
-                        ([
-                            textButton
-                            (
-                                "History",
-                                async () => showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })
-                            ),
-                            $span("separator")("・"),
-                            textButton
-                            (
-                                "@deleted",
-                                async () => showUrl({ pass: entry.pass, hash: "removed", })
-                            ),
-                        ])
+                        $div("button-list")([hisotry, separator, removed,]),
                     ]),
-                ]
-            ),
+                ];
+                break;
+            }
+            return $div("signboard")(result);
+        };
+        export const listScreenFooter = async (entry: ToDoTagEntryOld, _list: ToDoEntry[]) =>
+        [
+            await listScreenFooterSignboard(entry),
             // $div("button-list")
             // ([
             //     {
