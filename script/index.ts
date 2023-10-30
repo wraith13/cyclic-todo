@@ -6103,16 +6103,7 @@ export module CyclicToDo
             default:
                 result =
                 [
-                    await poem
-                    (
-                        {
-                            title: "新しい ToDo",
-                            subtitle: "繰り返す ToDo を登録しましょう！",
-                            description: "実行されないままの ToDo が増えていく事を避ける為、なにか繰り返す ToDo を実行してから、登録することを推奨します。実行周期が短い割には時間のかかる ToDo に関しては、例外的に、開始タイミングを把握しやすくする為に着手するタイミングで完了扱いにする事をオススメします。",
-                            image: "✨",
-                        },
-                        "poem primary-poem"
-                    ),
+                    await poem("new-todo", "poem primary-poem"),
                     $div("button-list")
                     ([
                         {
