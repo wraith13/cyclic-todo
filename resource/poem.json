@@ -60,6 +60,7 @@
         "header": "⬆️",
         "bottomtabs": "📑",
         "new-todo": "✨",
-        "restrict": "🚫"
+        "restrict": "🚫",
+        "term": "📅"
     }
 }

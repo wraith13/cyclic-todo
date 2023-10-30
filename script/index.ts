@@ -6100,6 +6100,28 @@ export module CyclicToDo
                     ]),
                 ];
                 break;
+            case "@short-term":
+            case "@medium-term":
+            case "@long-term":
+            case "@irregular-term":
+                result =
+                [
+                    await poem
+                    (
+                        {
+                            title: "期間タグ",
+                            subtitle: "実行周期に応じたタグです",
+                            description: "実行周期に応じて短期、中期、長期のタグが付与されます。また、それまでの周期から著しく長い期間実行されなかった場合や、まだ周期が特定されてない実行回数が２回未満の場合には不定期のタグが付与されます。",
+                            image: "📅"
+                        },
+                        "poem primary-poem"
+                    ),
+                    $div("button-list")
+                    ([
+                        $div("button-list")([hisotry, separator, removed,]),
+                    ]),
+                ];
+                break;
             default:
                 result =
                 [
