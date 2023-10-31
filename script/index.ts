@@ -6100,10 +6100,28 @@ export module CyclicToDo
                     ]),
                 ];
                 break;
+            case "@flash":
+                result =
+                [
+                    await poem
+                    (
+                        {
+                            title: "自動タグ",
+                            subtitle: "フラッシュ",
+                            description: "「いますぐ実行するべき」そういうタイミングになったらこのタグが付与される様に ToDo の自動タグ設定を行いましょう。このタグが付与される ToDo が多くなるタイミングでも全体の 10% 以下になる様に、あるいは、その日にうちに全部完了できる程度に留まる様に、設定を調整しましょう。どうにもやる気が出ない、あるいは、忙しくて、フラッシュ状態の ToDo が溜まってしまった場合は無理せず、睡眠や体調回復を優先してください。睡眠不足や体調不良は悪循環の元でしかないので最優先で断ちましょう。",
+                            image: "☀️"
+                        },
+                        "poem primary-poem"
+                    ),
+                    $div("button-list")
+                    ([
+                        $div("button-list")([hisotry, separator, removed,]),
+                    ]),
+                ];
+                break;
             case "@short-term":
             case "@medium-term":
             case "@long-term":
-            case "@irregular-term":
                 result =
                 [
                     await poem
@@ -6111,8 +6129,27 @@ export module CyclicToDo
                         {
                             title: "期間タグ",
                             subtitle: "実行周期に応じたタグです",
-                            description: "実行周期に応じて短期、中期、長期のタグが付与されます。また、それまでの周期から著しく長い期間実行されなかった場合や、まだ周期が特定されてない実行回数が２回未満の場合には不定期のタグが付与されます。",
+                            description: "実行周期に応じて短期、中期、長期のタグが付与されます。",
                             image: "📅"
+                        },
+                        "poem primary-poem"
+                    ),
+                    $div("button-list")
+                    ([
+                        $div("button-list")([hisotry, separator, removed,]),
+                    ]),
+                ];
+                break;
+            case "@irregular-term":
+                result =
+                [
+                    await poem
+                    (
+                        {
+                            title: "期間タグ",
+                            subtitle: "不定期",
+                            description: "それまでの周期から著しく長い期間実行されず休止期間と判断された ToDo や、まだ周期が特定されてない実行回数が２回未満の ToDo には不定期のタグが付与されます。「花粉症の薬」の様な季節に依存する ToDo は実際にこなした通りに完了操作を行なっていれば、シーズン後には自然に休止期間判定され、また次に完了操作を行なった際に休止期間判定は解かれます。",
+                            image: "🌙"
                         },
                         "poem primary-poem"
                     ),
