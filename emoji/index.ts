@@ -49,21 +49,31 @@ const regulateSvg = (filename:string, svg: string): string =>
     );
     return result;
 };
-const resource: { [key:string]: string; } = { };
 const step = async (key: string) =>
 {
-    const filename = `u${key.codePointAt(0)?.toString(16).toLowerCase()}`;
+    const codePoint = key.codePointAt(0) as Number;
+    const filename = `u${codePoint.toString(16).toLowerCase()}`;
     const path = makePath(filename);
     fs.writeFileSync
     (
         path,
         regulateSvg(filename, await download(makeUrl(filename)))
     );
-    resource[filename] = path;
+    const result =
+    {
+        codePoint,
+        filename,
+        path,
+    };
+    return result;
+    
 };
 const main = async () =>
 {
-    await Promise.all(Object.values(pomeJson.image).map(key => step(key)));
+    const resource: { [key:string]: string; } = { };
+    (await Promise.all(Object.values(pomeJson.image).map(key => step(key))))
+        .sort((a, b) => a.codePoint < b.codePoint ? -1: a.codePoint === b.codePoint ? 0: 1)
+        .forEach(i => resource[i.filename] = i.path);
     fs.writeFileSync(`./emoji/noto-emoji/index.json`, JSON.stringify(resource, null, 4));
 };
 main();
