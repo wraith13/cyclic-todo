@@ -6119,6 +6119,25 @@ export module CyclicToDo
                     ]),
                 ];
                 break;
+            case "@pickup":
+                result =
+                [
+                    await poem
+                    (
+                        {
+                            title: "自動タグ",
+                            subtitle: "ピックアップ",
+                            description: "「そろそろ実行するべき」そういうタイミングになった時に他の ToDo に埋もれてしまわない様に目立たせたい場合に、このタグが付与される様に ToDo の自動タグ設定を行いましょう。",
+                            image: "⭐️"
+                        },
+                        "poem primary-poem"
+                    ),
+                    $div("button-list")
+                    ([
+                        $div("button-list")([hisotry, separator, removed,]),
+                    ]),
+                ];
+                break;
             case "@short-term":
             case "@medium-term":
             case "@long-term":
