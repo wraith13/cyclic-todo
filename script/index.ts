@@ -6108,13 +6108,19 @@ export module CyclicToDo
                         {
                             title: "自動タグ",
                             subtitle: "フラッシュ",
-                            description: "「いますぐ実行するべき」そういうタイミングになったらこのタグが付与される様に ToDo の自動タグ設定を行いましょう。このタグが付与される ToDo が多くなるタイミングでも全体の 10% 以下になる様に、あるいは、その日にうちに全部完了できる程度に留まる様に、設定を調整しましょう。どうにもやる気が出ない、あるいは、忙しくて、フラッシュ状態の ToDo が溜まってしまった場合は無理せず、睡眠や体調回復を優先してください。睡眠不足や体調不良は悪循環の元でしかないので最優先で断ちましょう。",
+                            description: "「いますぐ実行するべき」タイミングになったらこのタグが付与される様に自動タグ設定を行いましょう。このタグが付与される ToDo が多くなる状況でも全体の 10% 以下になる様に、あるいは、その日にうちに全部完了できる程度に留まる様に、設定を調整しましょう。どうにもやる気が出ない、あるいは、忙しくて、フラッシュ状態の ToDo が溜まってしまった場合は無理せず、睡眠や体調回復を優先してください。睡眠不足や体調不良は悪循環の元でしかないので最優先で断ちましょう。",
                             image: "☀️"
                         },
                         "poem primary-poem"
                     ),
                     $div("button-list")
                     ([
+                        messageList
+                        ([
+                            messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
+                            messagePanel("ピックアップタグよりフラッシュタグが優先されます。"),
+                            messagePanel("フラッシュタグより制限タグが優先されます。"),
+                        ]),
                         $div("button-list")([hisotry, separator, removed,]),
                     ]),
                 ];
@@ -6125,6 +6131,11 @@ export module CyclicToDo
                     await poem("pickup", "poem primary-poem"),
                     $div("button-list")
                     ([
+                        messageList
+                        ([
+                            messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
+                            messagePanel("ピックアップタグよりフラッシュタグおよび制限タグが優先されます。"),
+                        ]),
                         $div("button-list")([hisotry, separator, removed,]),
                     ]),
                 ];
