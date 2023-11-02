@@ -6122,16 +6122,7 @@ export module CyclicToDo
             case "@pickup":
                 result =
                 [
-                    await poem
-                    (
-                        {
-                            title: "自動タグ",
-                            subtitle: "ピックアップ",
-                            description: "「そろそろ実行するべき」そういうタイミングになった時に他の ToDo に埋もれてしまわない様に目立たせたい場合に、このタグが付与される様に ToDo の自動タグ設定を行いましょう。",
-                            image: "⭐️"
-                        },
-                        "poem primary-poem"
-                    ),
+                    await poem("pickup", "poem primary-poem"),
                     $div("button-list")
                     ([
                         $div("button-list")([hisotry, separator, removed,]),
