@@ -1,6 +1,18 @@
 import pomeJson from "../resource/poem.json";
 const fs = require("fs");
 const https = require("https");
+const requireOrDefault = <T>(path: string, defaultValue: T) =>
+{
+    try
+    {
+        return require(path);
+    }
+    catch
+    {
+        return defaultValue;
+    }
+};
+const previousResource: { [key:string]: string; } = requireOrDefault("../emoji/noto-emoji/index.json", { });
 const makePath = (key: string) => `./emoji/noto-emoji/${key}.svg`;
 const makeUrl = (key: string) => `https://raw.githubusercontent.com/googlefonts/noto-emoji/main/svg/emoji_${key}.svg`;
 const download = (url: string) => new Promise<string>
@@ -54,11 +66,27 @@ const step = async (key: string) =>
     const codePoint = key.codePointAt(0) as Number;
     const filename = `u${codePoint.toString(16).toLowerCase()}`;
     const path = makePath(filename);
-    fs.writeFileSync
-    (
-        path,
-        regulateSvg(filename, await download(makeUrl(filename)))
-    );
+    if (previousResource[filename])
+    {
+        console.log(`➡️ ${key}:${filename} has already been downloaded.`);
+    }
+    else
+    {
+        try
+        {
+            fs.writeFileSync
+            (
+                path,
+                regulateSvg(filename, await download(makeUrl(filename)))
+            );
+            console.log(`✅ Successful download of ${key}:${filename}.`);
+        }
+        catch(error)
+        {
+            console.log(`🚫 ${key}:${filename} download failed.`);
+            throw error;
+        }
+    }
     const result =
     {
         codePoint,
