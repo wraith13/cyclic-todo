@@ -6140,6 +6140,29 @@ export module CyclicToDo
                     ]),
                 ];
                 break;
+            case "@regular":
+                result =
+                [
+                    await poem
+                    (
+                        {
+                            title: "自動タグ",
+                            subtitle: "レギュラー",
+                            description: "フラッシュ、ピックアップ、制限のいずれの自動タグも付与されてない ToDo にレギュラータグが付与されます。",
+                            image: "🏳️"
+                        },
+                        "poem primary-poem"
+                    ),
+                    $div("button-list")
+                    ([
+                        messageList
+                        ([
+                            messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
+                        ]),
+                        $div("button-list")([hisotry, separator, removed,]),
+                    ]),
+                ];
+                break;
             case "@short-term":
             case "@medium-term":
             case "@long-term":

@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Fri Nov 03 2023 00:12:17 GMT+0900 (日本標準時)
+    build at: Fri Nov 03 2023 18:56:54 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -20042,7 +20042,8 @@ define("resource/poem", [], {
         "restrict": "🚫",
         "term": "📅",
         "flash": "☀️",
-        "pickup": "⭐️"
+        "pickup": "⭐️",
+        "regular": "🏳️"
     }
 });
 define("resource/style", [], {
@@ -27331,12 +27332,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 case "@untagged": return [3 /*break*/, 3];
                                 case "@flash": return [3 /*break*/, 5];
                                 case "@pickup": return [3 /*break*/, 7];
-                                case "@short-term": return [3 /*break*/, 9];
-                                case "@medium-term": return [3 /*break*/, 9];
-                                case "@long-term": return [3 /*break*/, 9];
-                                case "@irregular-term": return [3 /*break*/, 11];
+                                case "@regular": return [3 /*break*/, 9];
+                                case "@short-term": return [3 /*break*/, 11];
+                                case "@medium-term": return [3 /*break*/, 11];
+                                case "@long-term": return [3 /*break*/, 11];
+                                case "@irregular-term": return [3 /*break*/, 13];
                             }
-                            return [3 /*break*/, 13];
+                            return [3 /*break*/, 15];
                         case 1: return [4 /*yield*/, Render.poem("sublist", "poem primary-poem")];
                         case 2:
                             result = [
@@ -27353,7 +27355,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.$div("button-list")([hisotry, separator, removed,]),
                                 ])
                             ];
-                            return [3 /*break*/, 15];
+                            return [3 /*break*/, 17];
                         case 3: return [4 /*yield*/, Render.poem("tag", "poem primary-poem")];
                         case 4:
                             result = [
@@ -27383,7 +27385,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.$div("button-list")([hisotry, separator, removed,]),
                                 ])
                             ];
-                            return [3 /*break*/, 15];
+                            return [3 /*break*/, 17];
                         case 5: return [4 /*yield*/, Render.poem({
                                 title: "自動タグ",
                                 subtitle: "フラッシュ",
@@ -27402,7 +27404,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.$div("button-list")([hisotry, separator, removed,]),
                                 ])
                             ];
-                            return [3 /*break*/, 15];
+                            return [3 /*break*/, 17];
                         case 7: return [4 /*yield*/, Render.poem("pickup", "poem primary-poem")];
                         case 8:
                             result = [
@@ -27415,26 +27417,29 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.$div("button-list")([hisotry, separator, removed,]),
                                 ])
                             ];
-                            return [3 /*break*/, 15];
+                            return [3 /*break*/, 17];
                         case 9: return [4 /*yield*/, Render.poem({
-                                title: "期間タグ",
-                                subtitle: "実行周期に応じたタグです",
-                                description: "実行周期に応じて短期、中期、長期のタグが付与されます。",
-                                image: "📅"
+                                title: "自動タグ",
+                                subtitle: "レギュラー",
+                                description: "フラッシュ、ピックアップ、制限のいずれの自動タグも付与されてない ToDo にレギュラータグが付与されます。",
+                                image: "🏳️"
                             }, "poem primary-poem")];
                         case 10:
                             result = [
                                 _b.sent(),
                                 Render.$div("button-list")([
+                                    Render.messageList([
+                                        Render.messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
+                                    ]),
                                     Render.$div("button-list")([hisotry, separator, removed,]),
                                 ])
                             ];
-                            return [3 /*break*/, 15];
+                            return [3 /*break*/, 17];
                         case 11: return [4 /*yield*/, Render.poem({
                                 title: "期間タグ",
-                                subtitle: "不定期",
-                                description: "それまでの周期から著しく長い期間実行されず休止期間と判断された ToDo や、まだ周期が特定されてない実行回数が２回未満の ToDo には不定期のタグが付与されます。「花粉症の薬」の様な季節に依存する ToDo は実際にこなした通りに完了操作を行なっていれば、シーズン後には自然に休止期間判定され、また次に完了操作を行なった際に休止期間判定は解かれます。",
-                                image: "🌙"
+                                subtitle: "実行周期に応じたタグです",
+                                description: "実行周期に応じて短期、中期、長期のタグが付与されます。",
+                                image: "📅"
                             }, "poem primary-poem")];
                         case 12:
                             result = [
@@ -27443,9 +27448,23 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.$div("button-list")([hisotry, separator, removed,]),
                                 ])
                             ];
-                            return [3 /*break*/, 15];
-                        case 13: return [4 /*yield*/, Render.poem("new-todo", "poem primary-poem")];
+                            return [3 /*break*/, 17];
+                        case 13: return [4 /*yield*/, Render.poem({
+                                title: "期間タグ",
+                                subtitle: "不定期",
+                                description: "それまでの周期から著しく長い期間実行されず休止期間と判断された ToDo や、まだ周期が特定されてない実行回数が２回未満の ToDo には不定期のタグが付与されます。「花粉症の薬」の様な季節に依存する ToDo は実際にこなした通りに完了操作を行なっていれば、シーズン後には自然に休止期間判定され、また次に完了操作を行なった際に休止期間判定は解かれます。",
+                                image: "🌙"
+                            }, "poem primary-poem")];
                         case 14:
+                            result = [
+                                _b.sent(),
+                                Render.$div("button-list")([
+                                    Render.$div("button-list")([hisotry, separator, removed,]),
+                                ])
+                            ];
+                            return [3 /*break*/, 17];
+                        case 15: return [4 /*yield*/, Render.poem("new-todo", "poem primary-poem")];
+                        case 16:
                             result = [
                                 _b.sent(),
                                 Render.$div("button-list")([
@@ -27460,8 +27479,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.$div("button-list")([hisotry, separator, removed,]),
                                 ])
                             ];
-                            return [3 /*break*/, 15];
-                        case 15: return [2 /*return*/, Render.$div("signboard")(result)];
+                            return [3 /*break*/, 17];
+                        case 17: return [2 /*return*/, Render.$div("signboard")(result)];
                     }
                 });
             }); };
@@ -30259,7 +30278,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Nov 03 2023 00:12:17 GMT+0900 (日本標準時)', buildTimestampTick: 1698937937966, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Nov 03 2023 18:56:54 GMT+0900 (日本標準時)', buildTimestampTick: 1699005414586, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -30471,7 +30490,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Fri Nov 03 2023 00:12:17 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Fri Nov 03 2023 18:56:54 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
@@ -30977,6 +30996,30 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <path style="fill:#FCC219;" d="M55.59,105.93c-1.13-0.05-2.43,0.18-2.48,1.58s-0.05,5.45-0.05,6.22c0,0.77,0.63,1.44,2.21,1.49
 	c1.58,0.05,16.41,0,17.45,0c1.04,0,1.58-0.9,1.62-1.8c0.05-0.9-0.05-4.69-0.05-5.72c0-1.71-1.53-1.71-2.57-1.71
 	C70.6,105.97,55.59,105.93,55.59,105.93z"/>
+</svg>
+</div><div id="u1f3f3"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 128 128" style="enable-background:new 0 0 128 128;" xml:space="preserve">
+<path style="fill:#B0B0B0;" d="M17.99,18.27c-0.18-1.27-0.39-6.82-5.23-6.33c-4.04,0.41-3.82,4.76-3.43,6.79
+	c0.22,1.15,13,102.42,13.17,103.52c0.23,1.47,2.28,3,4.62,2.76c2.34-0.23,3.71-2.05,3.66-3.78C30.74,119.91,18.23,20,17.99,18.27z"
+	/>
+<g>
+	<path style="fill:#C8C8C8;" d="M25.84,118.75c-0.62,0-1.16-0.46-1.24-1.09L11.5,16.54c-0.09-0.68,0.39-1.31,1.08-1.4
+		c0.69-0.09,1.31,0.4,1.4,1.08l13.1,101.12c0.09,0.68-0.39,1.31-1.08,1.4C25.95,118.75,25.9,118.75,25.84,118.75z"/>
+</g>
+<path style="fill:#9A9A9A;" d="M18.08,19.17l8.1,65.02c0,0,2.69-3.5,10.2-3.35c5.22,0.11,13.2,1.22,23.61-2.27
+	c13.82-4.63,21.48-12.51,36.58-15.15c11.39-1.99,21.78,0.14,22.04-0.49c0.21-0.49-0.32-3.87-0.37-3.86
+	c-1,0.16-32.31-18.43-32.31-18.43L21.39,17.26c0,0-0.65,0.44-1.85,1.04C18.62,18.75,18.08,19.17,18.08,19.17z"/>
+<path style="fill:#D7CDC7;" d="M21.36,17.23c0,0,2.56-2.03,8.82-2.46c10.97-0.76,15.94,2.46,25.84,0.29
+	c10.91-2.4,18.23-9.99,29.66-11.47c13.03-1.69,21.33,2.35,21.33,2.35s3.77,12.03,6.2,25.53c2.25,12.53,5.03,27.61,5.03,27.61
+	l-3.45-0.51l-92.8-36.38L21.36,17.23z"/>
+<path style="fill:#F1EDEC;" d="M104.53,8.47c-1.11-0.87-12.38-4.09-22.66-1.24s-15.23,8.91-25.26,11.27s-17.83-0.8-23.4-0.35
+	c-9.29,0.74-11.31,3.46-11.31,3.46l6.73,55.82c0,0,3.25-0.96,8.05-0.89c7.22,0.1,12.45,0.65,21-1.82s20.66-10.45,32.26-14.04
+	c14.11-4.37,25.59-1.61,25.48-2.06c-0.11-0.46-2.97-15.48-5.7-29.71C107.01,14.66,104.53,8.47,104.53,8.47z"/>
+<path style="fill:#FEFEFE;" d="M67.4,19.85c-0.4,2.42,1.36,21.45-0.89,30.04s-6.93,15.13-9.96,18.06s-4.59,4.59-4.1,5.17
+	s7.71-2.05,15.32-6.54s10.74-7.03,11.52-8.2s3.22-9.56,4.29-18.54s2.06-21.06,2.54-24.3c0.39-2.64,1.37-5.37,0.78-5.56
+	c-0.59-0.2-6.1,0.46-10.64,2.73C71.59,15.05,67.74,17.76,67.4,19.85z"/>
+<path style="fill:#FEFEFE;" d="M26.69,23.25C26.4,25,27.96,41.01,28.84,49.21c0.88,8.2,2.85,22.63,4.32,22.48
+	c2.7-0.27,4.46-25.95,9.64-36.34c3.93-7.89,7.81-11.22,7.71-11.91s-13.29-3.87-18.25-2.93C26.59,21.59,26.69,23.25,26.69,23.25z"/>
 </svg>
 </div><div id="u1f3f7"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 128 128" style="enable-background:new 0 0 128 128;" xml:space="preserve">
