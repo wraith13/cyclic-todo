@@ -37,6 +37,43 @@ Cyclic ToDo do not support cloud sync, single-shot tasks, trees, due dates, noti
 
 ## Build commands
 
+```mermaid
+graph TB;
+    subgraph ./resource
+        direction TB;
+        ./resource/style.json;
+        ./resource/lang.*.json;
+        ./resource/poem.json;
+    end
+    subgraph ./image/*.*
+        direction TB;
+    end
+    ./resource/lang.*.json-->bph([build poem.html]);
+    ./resource/lang.*.json-->bwm([build web.manifest])
+    ./resource/style.json-->bpl([build params.less]);
+    ./resource/style.json-->bwm([build web.manifest])
+    ./resource/poem.json-->bph([build poem.html]);
+    ./resource-->bs([build script]);
+    ./resource-->bh([build html]);
+    ./emoji/index.ts-->bes([build emoji script])-->./emoji/index.js;
+    ./emoji/index.js-->de([download emoji])-->./emoji/note-emoji/*;
+    ner(Note Emoji Repository)-->de([download emoji]);
+    ./style/params.template.less-->bpl([build params.less])-->./style/params.less;
+    **/*.less-->bst([build * style])-->./style/*.css;
+    ./style/params.less-->bst([build * style])
+    ./build/index.ts-->bbs([build build script])-->./build/index.js;
+    ./build/index.js-->bph([build poem.html])-->./poem.html;
+    ./script/index.ts-->bs([build script])-->./script/index.js;
+    ./index.template.html-->bh([build html])-->./index.html;
+    ./poem.html-->bh([build html]);
+    ./emoji/note-emoji/*-->bh([build html]);
+    ./style/*.css-->bh([build html]);
+    ./script/index.js-->bh([build html]);
+    ./image/*.*-->bh([build html]);
+    bh([build html])-->./build.timestamp.json;
+    ./web.manifest.template.json-->bwm([build web.manifest])-->./web.manifest.*.json;
+```
+
 - `npm run-script "build all"`
 - `npm run-script "build html"`
 - `npm run-script "build style"`
@@ -44,6 +81,10 @@ Cyclic ToDo do not support cloud sync, single-shot tasks, trees, due dates, noti
 - `npm run-script "debug build all"`
 - `npm run-script "debug build style"`
 - `npm run-script "debug build script"`
+- `npm run-script "build emoji script"`: for "download emoji"
+- `npm run-script "download emoji"`
+- `npm run-script "build build script"`: for "build poem.html"
+- `npm run-script "build poem.html"`
 - `npm run-script "watch script"`
 
 Debug builds embed map files.

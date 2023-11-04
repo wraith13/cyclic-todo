@@ -78,6 +78,20 @@
             "template": "__BUILD_TIMESTAMP_TICK__",
             "output": { "path": "./build.timestamp.json" }
         },
+        "emoji.script":
+        {
+            "processes":
+            [
+                "npm run-script \"build emoji script\""
+            ]
+        },
+        "download.emoji":
+        {
+            "processes":
+            [
+                "npm run-script \"download emoji\""
+            ]
+        },
         "build.script":
         {
             "processes":
@@ -133,6 +147,8 @@
                 { "references": "release.style" },
                 { "references": "release.script" },
                 { "references": "web.manifest" },
+                { "references": "emoji.script" },
+                { "references": "download.emoji" },
                 { "references": "build.script" },
                 { "references": "poem.html" },
                 { "references": "index.html" },
@@ -147,6 +163,8 @@
                 { "references": "debug.style" },
                 { "references": "debug.script" },
                 { "references": "web.manifest" },
+                { "references": "emoji.script" },
+                { "references": "download.emoji" },
                 { "references": "build.script" },
                 { "references": "poem.html" },
                 { "references": "index.html" },
