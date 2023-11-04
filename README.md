@@ -45,9 +45,6 @@ graph TB;
         ./resource/lang.*.json;
         ./resource/poem.json;
     end
-    subgraph ./image/*.*
-        direction TB;
-    end
     ./resource/lang.*.json-->bph([build poem.html]);
     ./resource/lang.*.json-->bwm([build web.manifest])
     ./resource/style.json-->bpl([build params.less]);
