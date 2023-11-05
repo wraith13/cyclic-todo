@@ -2093,7 +2093,7 @@ button
         top: 0px;
         left: 0px;
         right: 0px;
-        transition: margin-top 500ms;
+        transition: opacity 500ms, margin-top 500ms;
     }
     & > #screen-footer
     {
@@ -2101,21 +2101,34 @@ button
         bottom: 0px;
         left: 0px;
         right: 0px;
-        transition: margin-bottom 500ms;
+        transition: opacity 500ms, margin-bottom 500ms;
     }
 }
 .screen.immersive
 {
-    & > #screen-header
+    &.ui-style-slide
     {
-        margin-top: -40px;
-    }
-    & > #screen-footer
-    {
-        margin-bottom: -58px;
-        @media (max-width:780px)
+        & > #screen-header
         {
-            margin-bottom: -82px;
+            margin-top: -40px;
+        }
+        & > #screen-footer
+        {
+            margin-bottom: -58px;
+            @media (max-width:780px)
+            {
+                margin-bottom: -82px;
+            }
+        }
+    }
+    &.ui-style-fade
+    {
+        & > #screen-header,
+        & > #screen-footer
+        {
+            opacity: 0.0;
+            user-select: none;
+            pointer-events: none;
         }
     }
 }

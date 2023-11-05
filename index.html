@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sat Nov 04 2023 19:51:24 GMT+0900 (日本標準時)
+    build at: Sun Nov 05 2023 13:55:13 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2734,25 +2734,31 @@ h2 {
   top: 0px;
   left: 0px;
   right: 0px;
-  transition: margin-top 500ms;
+  transition: opacity 500ms, margin-top 500ms;
 }
 .light-theme-trait .screen > #screen-footer {
   position: absolute;
   bottom: 0px;
   left: 0px;
   right: 0px;
-  transition: margin-bottom 500ms;
+  transition: opacity 500ms, margin-bottom 500ms;
 }
-.light-theme-trait .screen.immersive > #screen-header {
+.light-theme-trait .screen.immersive.ui-style-slide > #screen-header {
   margin-top: -40px;
 }
-.light-theme-trait .screen.immersive > #screen-footer {
+.light-theme-trait .screen.immersive.ui-style-slide > #screen-footer {
   margin-bottom: -58px;
 }
 @media (max-width: 780px) {
-  .light-theme-trait .screen.immersive > #screen-footer {
+  .light-theme-trait .screen.immersive.ui-style-slide > #screen-footer {
     margin-bottom: -82px;
   }
+}
+.light-theme-trait .screen.immersive.ui-style-fade > #screen-header,
+.light-theme-trait .screen.immersive.ui-style-fade > #screen-footer {
+  opacity: 0;
+  user-select: none;
+  pointer-events: none;
 }
 .light-theme-trait .todo-screen .task-item {
   padding-top: 0px;
@@ -5646,25 +5652,31 @@ body.light .screen > #screen-header {
   top: 0px;
   left: 0px;
   right: 0px;
-  transition: margin-top 500ms;
+  transition: opacity 500ms, margin-top 500ms;
 }
 body.light .screen > #screen-footer {
   position: absolute;
   bottom: 0px;
   left: 0px;
   right: 0px;
-  transition: margin-bottom 500ms;
+  transition: opacity 500ms, margin-bottom 500ms;
 }
-body.light .screen.immersive > #screen-header {
+body.light .screen.immersive.ui-style-slide > #screen-header {
   margin-top: -40px;
 }
-body.light .screen.immersive > #screen-footer {
+body.light .screen.immersive.ui-style-slide > #screen-footer {
   margin-bottom: -58px;
 }
 @media (max-width: 780px) {
-  body.light .screen.immersive > #screen-footer {
+  body.light .screen.immersive.ui-style-slide > #screen-footer {
     margin-bottom: -82px;
   }
+}
+body.light .screen.immersive.ui-style-fade > #screen-header,
+body.light .screen.immersive.ui-style-fade > #screen-footer {
+  opacity: 0;
+  user-select: none;
+  pointer-events: none;
 }
 body.light .todo-screen .task-item {
   padding-top: 0px;
@@ -8043,20 +8055,26 @@ body.light .keyboard-shortcuts li .key:first-child {
     top: 0px;
     left: 0px;
     right: 0px;
-    transition: margin-top 500ms;
+    transition: opacity 500ms, margin-top 500ms;
   }
   body.auto .screen > #screen-footer {
     position: absolute;
     bottom: 0px;
     left: 0px;
     right: 0px;
-    transition: margin-bottom 500ms;
+    transition: opacity 500ms, margin-bottom 500ms;
   }
-  body.auto .screen.immersive > #screen-header {
+  body.auto .screen.immersive.ui-style-slide > #screen-header {
     margin-top: -40px;
   }
-  body.auto .screen.immersive > #screen-footer {
+  body.auto .screen.immersive.ui-style-slide > #screen-footer {
     margin-bottom: -58px;
+  }
+  body.auto .screen.immersive.ui-style-fade > #screen-header,
+  body.auto .screen.immersive.ui-style-fade > #screen-footer {
+    opacity: 0;
+    user-select: none;
+    pointer-events: none;
   }
   body.auto .todo-screen .task-item {
     padding-top: 0px;
@@ -8945,7 +8963,7 @@ body.light .keyboard-shortcuts li .key:first-child {
   }
 }
 @media (prefers-color-scheme: light) and (max-width: 780px) {
-  body.auto .screen.immersive > #screen-footer {
+  body.auto .screen.immersive.ui-style-slide > #screen-footer {
     margin-bottom: -82px;
   }
 }
@@ -11726,25 +11744,31 @@ body.light .keyboard-shortcuts li .key:first-child {
   top: 0px;
   left: 0px;
   right: 0px;
-  transition: margin-top 500ms;
+  transition: opacity 500ms, margin-top 500ms;
 }
 .dark-theme-trait .screen > #screen-footer {
   position: absolute;
   bottom: 0px;
   left: 0px;
   right: 0px;
-  transition: margin-bottom 500ms;
+  transition: opacity 500ms, margin-bottom 500ms;
 }
-.dark-theme-trait .screen.immersive > #screen-header {
+.dark-theme-trait .screen.immersive.ui-style-slide > #screen-header {
   margin-top: -40px;
 }
-.dark-theme-trait .screen.immersive > #screen-footer {
+.dark-theme-trait .screen.immersive.ui-style-slide > #screen-footer {
   margin-bottom: -58px;
 }
 @media (max-width: 780px) {
-  .dark-theme-trait .screen.immersive > #screen-footer {
+  .dark-theme-trait .screen.immersive.ui-style-slide > #screen-footer {
     margin-bottom: -82px;
   }
+}
+.dark-theme-trait .screen.immersive.ui-style-fade > #screen-header,
+.dark-theme-trait .screen.immersive.ui-style-fade > #screen-footer {
+  opacity: 0;
+  user-select: none;
+  pointer-events: none;
 }
 .dark-theme-trait .todo-screen .task-item {
   padding-top: 0px;
@@ -14641,25 +14665,31 @@ body.dark .screen > #screen-header {
   top: 0px;
   left: 0px;
   right: 0px;
-  transition: margin-top 500ms;
+  transition: opacity 500ms, margin-top 500ms;
 }
 body.dark .screen > #screen-footer {
   position: absolute;
   bottom: 0px;
   left: 0px;
   right: 0px;
-  transition: margin-bottom 500ms;
+  transition: opacity 500ms, margin-bottom 500ms;
 }
-body.dark .screen.immersive > #screen-header {
+body.dark .screen.immersive.ui-style-slide > #screen-header {
   margin-top: -40px;
 }
-body.dark .screen.immersive > #screen-footer {
+body.dark .screen.immersive.ui-style-slide > #screen-footer {
   margin-bottom: -58px;
 }
 @media (max-width: 780px) {
-  body.dark .screen.immersive > #screen-footer {
+  body.dark .screen.immersive.ui-style-slide > #screen-footer {
     margin-bottom: -82px;
   }
+}
+body.dark .screen.immersive.ui-style-fade > #screen-header,
+body.dark .screen.immersive.ui-style-fade > #screen-footer {
+  opacity: 0;
+  user-select: none;
+  pointer-events: none;
 }
 body.dark .todo-screen .task-item {
   padding-top: 0px;
@@ -17041,20 +17071,26 @@ body.dark .keyboard-shortcuts li .key:first-child {
     top: 0px;
     left: 0px;
     right: 0px;
-    transition: margin-top 500ms;
+    transition: opacity 500ms, margin-top 500ms;
   }
   body.auto .screen > #screen-footer {
     position: absolute;
     bottom: 0px;
     left: 0px;
     right: 0px;
-    transition: margin-bottom 500ms;
+    transition: opacity 500ms, margin-bottom 500ms;
   }
-  body.auto .screen.immersive > #screen-header {
+  body.auto .screen.immersive.ui-style-slide > #screen-header {
     margin-top: -40px;
   }
-  body.auto .screen.immersive > #screen-footer {
+  body.auto .screen.immersive.ui-style-slide > #screen-footer {
     margin-bottom: -58px;
+  }
+  body.auto .screen.immersive.ui-style-fade > #screen-header,
+  body.auto .screen.immersive.ui-style-fade > #screen-footer {
+    opacity: 0;
+    user-select: none;
+    pointer-events: none;
   }
   body.auto .todo-screen .task-item {
     padding-top: 0px;
@@ -17943,7 +17979,7 @@ body.dark .keyboard-shortcuts li .key:first-child {
   }
 }
 @media (prefers-color-scheme: dark) and (max-width: 780px) {
-  body.auto .screen.immersive > #screen-footer {
+  body.auto .screen.immersive.ui-style-slide > #screen-footer {
     margin-bottom: -82px;
   }
 }
@@ -20209,8 +20245,9 @@ define("resource/lang.en", [], {
     "theme.dark": "Dark",
     "theme.description": "Set light mode / dark mode for screen coloring.",
     "UI style setting": "UI style setting",
-    "uiStyle.smart": "Automatic display",
-    "uiStyle.fixed": "Fixed display",
+    "uiStyle.slide": "Slide",
+    "uiStyle.fade": "Fade",
+    "uiStyle.fixed": "Fixed",
     "uiStyle.description": "Set automatic display / fixed display of the UI at the top and bottom of the screen.",
     "Flash style setting": "Flash style setting",
     "flashStyle.gradation": "Gradation",
@@ -20458,7 +20495,8 @@ define("resource/lang.ja", [], {
     "theme.dark": "ダーク",
     "theme.description": "画面カラーリングの ライトモード / ダークモード を設定します。",
     "UI style setting": "UIスタイル設定",
-    "uiStyle.smart": "自動表示",
+    "uiStyle.slide": "スライド",
+    "uiStyle.fade": "フェード",
     "uiStyle.fixed": "固定表示",
     "uiStyle.description": "画面上下の UI の 自動表示 / 固定表示 を設定します。",
     "Flash style setting": "フラッシュスタイル設定",
@@ -23674,7 +23712,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return __generator(this, function (_b) {
                         switch (_b.label) {
                             case 0:
-                                defaultValue = "smart";
+                                defaultValue = "slide";
                                 init = (_a = settings.uiStyle) !== null && _a !== void 0 ? _a : defaultValue;
                                 return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
                                         var result, checkButtonList, checkButtonListUpdate, ui;
@@ -23692,7 +23730,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 case 0:
                                                                     _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                                                     _c = [checkButtonList];
-                                                                    return [4 /*yield*/, Promise.all(["smart", "fixed",].map(function (key) { return __awaiter(_this, void 0, void 0, function () {
+                                                                    return [4 /*yield*/, Promise.all(["slide", "fade", "fixed",].map(function (key) { return __awaiter(_this, void 0, void 0, function () {
                                                                             var _a;
                                                                             var _this = this;
                                                                             var _b;
@@ -24234,7 +24272,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 }
                                                             });
                                                         }); }),
-                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("UI style setting"), Render.label(CyclicToDo.getUiStyleLocale((_b = settings.uiStyle) !== null && _b !== void 0 ? _b : "smart"))), "uiStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("UI style setting"), Render.label(CyclicToDo.getUiStyleLocale((_b = settings.uiStyle) !== null && _b !== void 0 ? _b : "slide"))), "uiStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
                                                                     case 0: return [4 /*yield*/, Render.uiStyleSettingsPopup()];
@@ -26727,6 +26765,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 });
             }); };
+            Render.getScreen = function () { return minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen")); };
             Render.getScreenBody = function () { return minamo_js_1.minamo.core.existsOrThrow(document.getElementsByClassName("screen-body")[0]); };
             Render.replaceScreenBody = function (body) { return minamo_js_1.minamo.dom.replaceChildren(Render.getScreenBody(), body); };
             Render.listRenameMenu = function (pass, onRename) {
@@ -29317,16 +29356,16 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     if (scrollTop <= 0) {
                                         (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render, "scroll");
                                     }
-                                    var uiStyle = (_b = Storage.SystemSettings.get().uiStyle) !== null && _b !== void 0 ? _b : "smart";
+                                    var uiStyle = (_b = Storage.SystemSettings.get().uiStyle) !== null && _b !== void 0 ? _b : "slide";
                                     var isImmersive = false;
-                                    if ("smart" === uiStyle) {
+                                    if ("fixed" !== uiStyle) {
                                         var isNearTop = scrollTop < 40;
                                         var isNearBottom = (scrollMax - 58) < scrollTop;
                                         var isNearTopOrBottom = isNearTop || isNearBottom;
                                         var isToDownScroll = previousScrollTop < scrollTop;
                                         isImmersive = !isNearTopOrBottom && isToDownScroll;
                                     }
-                                    minamo_js_1.minamo.dom.toggleCSSClass(minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen")), "immersive", isImmersive);
+                                    minamo_js_1.minamo.dom.toggleCSSClass(Render.getScreen(), "immersive", isImmersive);
                                     previousScrollTop = scrollTop;
                                     var logo = (_d = (_c = document.getElementById("foundation")) === null || _c === void 0 ? void 0 : _c.getElementsByTagName("svg")) === null || _d === void 0 ? void 0 : _d[0];
                                     if (logo) {
@@ -29348,7 +29387,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             if (undefined === updateHighResolutionTimer) {
                                 updateHighResolutionTimer = setInterval(function () { var _a; return (_a = Render.updateWindow) === null || _a === void 0 ? void 0 : _a.call(Render, "high-resolution-timer"); }, 100);
                             }
-                            minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen")).className = screen.className + " screen";
+                            Render.getScreen().className = screen.className + " screen";
+                            CyclicToDo.updateUiStyle();
                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                             _c = [Render.getHeaderElement()];
                             return [4 /*yield*/, Render.screenSegmentedHeader(screen.header)];
@@ -29986,10 +30026,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
         };
         CyclicToDo.updateUiStyle = function () {
             var _a;
-            var uiStyle = (_a = Storage.SystemSettings.get().uiStyle) !== null && _a !== void 0 ? _a : "smart";
+            var uiStyle = (_a = Storage.SystemSettings.get().uiStyle) !== null && _a !== void 0 ? _a : "slide";
             if ("fixed" === uiStyle) {
-                minamo_js_1.minamo.dom.toggleCSSClass(minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen")), "immersive", false);
+                minamo_js_1.minamo.dom.toggleCSSClass(Render.getScreen(), "immersive", false);
             }
+            minamo_js_1.minamo.dom.toggleCSSClass(Render.getScreen(), "ui-style-slide", "slide" === uiStyle);
+            minamo_js_1.minamo.dom.toggleCSSClass(Render.getScreen(), "ui-style-fade", "fade" === uiStyle);
         };
         CyclicToDo.updateFlashStyle = function () {
             var _a;
@@ -30278,7 +30320,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Nov 04 2023 19:51:24 GMT+0900 (日本標準時)', buildTimestampTick: 1699095084842, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Nov 05 2023 13:55:13 GMT+0900 (日本標準時)', buildTimestampTick: 1699160113439, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -30490,7 +30532,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Sat Nov 04 2023 19:51:24 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Sun Nov 05 2023 13:55:13 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

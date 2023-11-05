@@ -107,7 +107,7 @@ export module CyclicToDo
     export type FlashStyleType = "gradation" | "breath" | "solid" | "none";
     export type FlashStyleTypeLocale = `flashStyle.${FlashStyleType}`
     export const getFlashStyleLocale = (key: FlashStyleType) => <FlashStyleTypeLocale>`flashStyle.${key}`;
-    export type UiStyleType = "smart" | "fixed";
+    export type UiStyleType = "slide" | "fade" | "fixed";
     export type UiStyleTypeLocale = `uiStyle.${UiStyleType}`
     export const getUiStyleLocale = (key: UiStyleType) => <UiStyleTypeLocale>`uiStyle.${key}`;
     export type EmojiType = "auto" | "system" | "noto-emoji";
@@ -3154,7 +3154,7 @@ export module CyclicToDo
         };
         export const uiStyleSettingsPopup = async (settings: SystemSettings = Storage.SystemSettings.get()): Promise<boolean> =>
         {
-            const defaultValue = "smart";
+            const defaultValue = "slide";
             const init = settings.uiStyle ?? defaultValue;
             return await new Promise
             (
@@ -3168,7 +3168,7 @@ export module CyclicToDo
                         [
                             await Promise.all
                             (
-                                (<UiStyleType[]>[ "smart", "fixed", ]).map
+                                (<UiStyleType[]>[ "slide", "fade", "fixed", ]).map
                                 (
                                     async (key: UiStyleType) =>
                                     ({
@@ -3554,7 +3554,7 @@ export module CyclicToDo
                                 (
                                     "auto-tag-flash",
                                     label("UI style setting"),
-                                    label(getUiStyleLocale(settings.uiStyle ?? "smart"))
+                                    label(getUiStyleLocale(settings.uiStyle ?? "slide"))
                                 ),
                                 "uiStyle.description",
                                 async () =>
@@ -5558,6 +5558,7 @@ export module CyclicToDo
                     ),
                 ])
         });
+        export const getScreen = () => minamo.core.existsOrThrow(document.getElementById("screen"));
         export const getScreenBody = () => minamo.core.existsOrThrow(document.getElementsByClassName("screen-body")[0]);
         export const replaceScreenBody = (body: minamo.dom.Source) => minamo.dom.replaceChildren
         (
@@ -7549,9 +7550,9 @@ export module CyclicToDo
                         {
                             Render.updateWindow?.("scroll");
                         }
-                        const uiStyle = Storage.SystemSettings.get().uiStyle ?? "smart";
+                        const uiStyle = Storage.SystemSettings.get().uiStyle ?? "slide";
                         let isImmersive = false;
-                        if ("smart" === uiStyle)
+                        if ("fixed" !== uiStyle)
                         {
                             const isNearTop = scrollTop < 40;
                             const isNearBottom = (scrollMax - 58) < scrollTop;
@@ -7559,7 +7560,7 @@ export module CyclicToDo
                             const isToDownScroll = previousScrollTop < scrollTop;
                             isImmersive = ! isNearTopOrBottom && isToDownScroll;
                         }
-                        minamo.dom.toggleCSSClass(minamo.core.existsOrThrow(document.getElementById("screen")), "immersive", isImmersive);
+                        minamo.dom.toggleCSSClass(Render.getScreen(), "immersive", isImmersive);
                         previousScrollTop = scrollTop;
                         const logo = document.getElementById("foundation")?.getElementsByTagName("svg")?.[0];
                         if (logo)
@@ -7589,7 +7590,8 @@ export module CyclicToDo
                     100
                 );
             }
-            minamo.core.existsOrThrow(document.getElementById("screen")).className = `${screen.className} screen`;
+            Render.getScreen().className = `${screen.className} screen`;
+            updateUiStyle();
             minamo.dom.replaceChildren
             (
                 getHeaderElement(),
@@ -8300,11 +8302,13 @@ export module CyclicToDo
     };
     export const updateUiStyle = () =>
     {
-        const uiStyle = Storage.SystemSettings.get().uiStyle ?? "smart";
+        const uiStyle = Storage.SystemSettings.get().uiStyle ?? "slide";
         if ("fixed" === uiStyle)
         {
-            minamo.dom.toggleCSSClass(minamo.core.existsOrThrow(document.getElementById("screen")), "immersive", false);
+            minamo.dom.toggleCSSClass(Render.getScreen(), "immersive", false);
         }
+        minamo.dom.toggleCSSClass(Render.getScreen(), "ui-style-slide", "slide" === uiStyle);
+        minamo.dom.toggleCSSClass(Render.getScreen(), "ui-style-fade", "fade" === uiStyle);
     };
     export const updateFlashStyle = () =>
     {

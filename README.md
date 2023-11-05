@@ -39,6 +39,12 @@ Cyclic ToDo do not support cloud sync, single-shot tasks, trees, due dates, noti
 
 ```mermaid
 graph TB;
+    subgraph category
+        direction TB;
+        bc([build commands]);
+        r(repository);
+        files;
+    end
     subgraph ./resource
         direction TB;
         ./resource/style.json;
@@ -70,6 +76,7 @@ graph TB;
     bh([build html])-->./build.timestamp.json;
     ./web.manifest.template.json-->bwm([build web.manifest])-->./web.manifest.*.json;
 ```
+( You can see this diagram in VS code with [Markdown Preview Mermaid Support extension](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid). )
 
 - `npm run-script "build all"`
 - `npm run-script "build html"`
