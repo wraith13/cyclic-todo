@@ -2126,9 +2126,16 @@ button
         & > #screen-header,
         & > #screen-footer
         {
-            opacity: 0.0;
-            user-select: none;
-            pointer-events: none;
+            opacity: 0.618;
+            // user-select: none;
+            // pointer-events: none;
+            @media (hover: hover)
+            {
+                &:hover
+                {
+                    opacity: 1.0;
+                }
+            }
         }
     }
 }

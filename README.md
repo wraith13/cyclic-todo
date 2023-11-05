@@ -42,8 +42,9 @@ graph TB;
     subgraph category
         direction TB;
         bc([build commands]);
-        r(repository);
-        files;
+        r{{repository}};
+        sf[source files];
+        gf[[generated files]];
     end
     subgraph ./resource
         direction TB;
@@ -52,29 +53,28 @@ graph TB;
         ./resource/poem.json;
     end
     ./resource/lang.*.json-->bph([build poem.html]);
-    ./resource/lang.*.json-->bwm([build web.manifest])
     ./resource/style.json-->bpl([build params.less]);
-    ./resource/style.json-->bwm([build web.manifest])
     ./resource/poem.json-->bph([build poem.html]);
     ./resource-->bs([build script]);
     ./resource-->bh([build html]);
-    ./emoji/index.ts-->bes([build emoji script])-->./emoji/index.js;
-    ./emoji/index.js-->de([download emoji])-->./emoji/note-emoji/*;
-    ner(Note Emoji Repository)-->de([download emoji]);
-    ./style/params.template.less-->bpl([build params.less])-->./style/params.less;
-    **/*.less-->bst([build * style])-->./style/*.css;
-    ./style/params.less-->bst([build * style])
-    ./build/index.ts-->bbs([build build script])-->./build/index.js;
-    ./build/index.js-->bph([build poem.html])-->./poem.html;
-    ./script/index.ts-->bs([build script])-->./script/index.js;
-    ./index.template.html-->bh([build html])-->./index.html;
-    ./poem.html-->bh([build html]);
-    ./emoji/note-emoji/*-->bh([build html]);
-    ./style/*.css-->bh([build html]);
-    ./script/index.js-->bh([build html]);
+    ./resource-->bwm([build web.manifest])
+    ./emoji/index.ts-->bes([build emoji script])-->ej[[./emoji/index.js]];
+    ej[[./emoji/index.js]]-->de([download emoji])-->ene[[./emoji/note-emoji/*]];
+    ner{{Note Emoji Repository}}-->de([download emoji]);
+    ./style/params.template.less-->bpl([build params.less])-->spl[[./style/params.less]];
+    **/*.less-->bst([build * style])-->sc[[./style/*.css]];
+    spl[[./style/params.less]]-->bst([build * style])
+    ./build/index.ts-->bbs([build build script])-->bj[[./build/index.js]];
+    bj[[./build/index.js]]-->bph([build poem.html])-->ph[[./poem.html]];
+    ./script/index.ts-->bs([build script])-->sj[[./script/index.js]];
+    ./index.template.html-->bh([build html])-->ih[[./index.html]];
+    ph[[./poem.html]]-->bh([build html]);
+    ene[[./emoji/note-emoji/*]]-->bh([build html]);
+    sc[[./style/*.css]]-->bh([build html]);
+    sj[[./script/index.js]]-->bh([build html]);
     ./image/*.*-->bh([build html]);
-    bh([build html])-->./build.timestamp.json;
-    ./web.manifest.template.json-->bwm([build web.manifest])-->./web.manifest.*.json;
+    bh([build html])-->btj[[./build.timestamp.json]];
+    ./web.manifest.template.json-->bwm([build web.manifest])-->wmj[[./web.manifest.*.json]];
 ```
 ( You can see this diagram in VS code with [Markdown Preview Mermaid Support extension](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid). )
 

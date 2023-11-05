@@ -7507,6 +7507,42 @@ export module CyclicToDo
         let updateHighResolutionTimer: NodeJS.Timeout;
         let previousScrollTop: number = 0;
         export const getHeaderElement = () => document.getElementById("screen-header") as HTMLDivElement;
+        export const updateTopAndBottomUIState = (scrollTop: number, scrollMax: number) =>
+        {
+            const uiStyle = Storage.SystemSettings.get().uiStyle ?? "slide";
+            let isImmersive = false;
+            if ("fixed" !== uiStyle)
+            {
+                const isNearTop = scrollTop < 40;
+                const isNearBottom = (scrollMax - 58) < scrollTop;
+                const isNearTopOrBottom = isNearTop || isNearBottom;
+                const isToDownScroll = previousScrollTop < scrollTop;
+                isImmersive = ! isNearTopOrBottom && isToDownScroll;
+            }
+            minamo.dom.toggleCSSClass(Render.getScreen(), "immersive", isImmersive);
+            previousScrollTop = scrollTop;
+        }
+        export const scrollBackgroundLogo = (scrollTop: number) =>
+        {
+            const logo = document.getElementById("foundation")?.getElementsByTagName("svg")?.[0];
+            if (logo)
+            {
+                const screenBody = getScreenBody();
+                const frame = screenBody.clientHeight +logo.clientHeight;
+                let y = (scrollTop /50) %frame;
+                if (frame /2 < y)
+                {
+                    y -= frame;
+                }
+                logo.style.transform = `translateY(${-y}px)`;
+            }
+            // if (logo)
+            // {
+            //     const frame = screenBody.clientHeight +logo.clientHeight;
+            //     const rate = (scrollTop /10) /frame;
+            //     logo.style.transform = `scale(${1 +rate},${1 +rate})`;
+            // }
+};
         export const showWindow = async (screen: ScreenSource, updateWindow?: (event: UpdateWindowEventEype) => unknown) =>
         {
             removeProgressStyle();
@@ -7544,41 +7580,15 @@ export module CyclicToDo
                     "scroll",
                     () =>
                     {
+                        const screenBody = getScreenBody();
                         const scrollMax = screenBody.scrollHeight -screenBody.clientHeight;
                         const scrollTop = Math.min(Math.max(screenBody.scrollTop, 0), scrollMax);
                         if (scrollTop <= 0)
                         {
                             Render.updateWindow?.("scroll");
                         }
-                        const uiStyle = Storage.SystemSettings.get().uiStyle ?? "slide";
-                        let isImmersive = false;
-                        if ("fixed" !== uiStyle)
-                        {
-                            const isNearTop = scrollTop < 40;
-                            const isNearBottom = (scrollMax - 58) < scrollTop;
-                            const isNearTopOrBottom = isNearTop || isNearBottom;
-                            const isToDownScroll = previousScrollTop < scrollTop;
-                            isImmersive = ! isNearTopOrBottom && isToDownScroll;
-                        }
-                        minamo.dom.toggleCSSClass(Render.getScreen(), "immersive", isImmersive);
-                        previousScrollTop = scrollTop;
-                        const logo = document.getElementById("foundation")?.getElementsByTagName("svg")?.[0];
-                        if (logo)
-                        {
-                            const frame = screenBody.clientHeight +logo.clientHeight;
-                            let y = (scrollTop /50) %frame;
-                            if (frame /2 < y)
-                            {
-                                y -= frame;
-                            }
-                            logo.style.transform = `translateY(${-y}px)`;
-                        }
-                        // if (logo)
-                        // {
-                        //     const frame = screenBody.clientHeight +logo.clientHeight;
-                        //     const rate = (scrollTop /10) /frame;
-                        //     logo.style.transform = `scale(${1 +rate},${1 +rate})`;
-                        // }
+                        updateTopAndBottomUIState(scrollTop, scrollMax);
+                        scrollBackgroundLogo(scrollTop);
                     }
                 );
             }
