@@ -6789,25 +6789,25 @@ export module CyclicToDo
         };
         export const todoScreenBody = async (pass: string, item: ToDoEntry, ticks: number[], _tag: string, max: number | null = getIntervalsMax(Calculate.intervals(ticks))) =>
         ([
-            OldStorage.isSessionPass(pass) ?
-                []:
-                $div("button-list")
-                ({
-                    tag: "button",
-                    className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
-                    children: label("Done"),
-                    onclick: async () =>
-                    {
-                        await Operate.done
-                        (
-                            pass,
-                            item.task,
-                            MigrateBridge.getDoneTicks(pass),
-                            () => updateWindow("operate")
-                        );
-                        updateWindow("operate");
-                    }
-                }),
+            // OldStorage.isSessionPass(pass) ?
+            //     []:
+            //     $div("button-list")
+            //     ({
+            //         tag: "button",
+            //         className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
+            //         children: label("Done"),
+            //         onclick: async () =>
+            //         {
+            //             await Operate.done
+            //             (
+            //                 pass,
+            //                 item.task,
+            //                 MigrateBridge.getDoneTicks(pass),
+            //                 () => updateWindow("operate")
+            //             );
+            //             updateWindow("operate");
+            //         }
+            //     }),
             $div("row-flex-list todo-list")
             ([
                 $div("task-item flex-item")
@@ -6837,9 +6837,62 @@ export module CyclicToDo
                     )
                 )
             ),
-            messageList
+            $div("signboard")
             ([
-                messagePanel(labelSpan(locale.map("Maximum number of histories saved") + `: ${config.maxHistories}`)),
+                await poem
+                (
+                    {
+                        title: "ToDo",
+                        subtitle: "あなたの実績",
+                        description: "継続は力なりと言います。もちろん、１回あたりの分量がごく少量であれば、いくら続けてもなかなか効果は現れないでしょう。しかし、まずは継続してこそです。辛くても怠くても本来の予定の１／１０分でもこなしたら完了として構いません。最初に頑張るべきは継続する事自体です。頑張らなくても継続できる様になってから質や量を頑張りましょう！",
+                        image: "✅"
+                    },
+                    "poem primary-poem"
+                ),
+                $div("button-list")
+                ([
+                    {
+                        tag: "button",
+                        className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
+                        children: label("Done"),
+                        onclick: async () =>
+                        {
+                            await Operate.done
+                            (
+                                pass,
+                                item.task,
+                                MigrateBridge.getDoneTicks(pass),
+                                () => updateWindow("operate")
+                            );
+                            updateWindow("operate");
+                        }
+                    },
+                    $div("button-list")
+                    ([
+                        // hisotry,
+                        // $span("separator")("・"),
+                        textButton
+                        (
+                            "Auto tag setting",
+                            async () =>
+                            {
+                                if (await autoTagSettingsPopup(pass, item))
+                                {
+                                    updateWindow("operate");
+                                }
+                            }
+                        ),
+                    ]),
+                    messageList
+                    ([
+                        messagePanel(labelSpan(locale.map("Maximum number of histories saved") + `: ${config.maxHistories}`)),
+                    ]),
+                ]),
+            ]),
+            $div("poem-list")
+            ([
+                await poem("header"),
+                await poem("bottomtabs"),
             ]),
         ]);
         export const todoScreen = async (pass: string, item: ToDoEntry, ticks: number[], tag: string) =>
