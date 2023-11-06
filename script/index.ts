@@ -3624,6 +3624,18 @@ export module CyclicToDo
                                     }
                                 }
                             ),
+                            descriptionButton
+                            (
+                                "",
+                                monospace
+                                (
+                                    "auto-tag-flash",
+                                    labelSpan(locale.immutable("build timestamp")),
+                                    labelSpan(getVersionTimestampText()),
+                                ),
+                                "Reload screen",
+                                reloadScreen
+                            ),
                         ]
                     );
                 };
@@ -7270,11 +7282,11 @@ export module CyclicToDo
         };
         export const welcomeScreenMenu = async () =>
         [
-            menuItem
-            (
-                label("Reload screen"),
-                reloadScreen
-            ),
+            // menuItem
+            // (
+            //     label("Reload screen"),
+            //     reloadScreen
+            // ),
             await fullscreenMenuItem(),
             systemSettingsMenuItem(),
             menuItem
@@ -7286,7 +7298,9 @@ export module CyclicToDo
             removedListMenuItem(),
             repositoryMenuItem(),
         ];
-        export const getVersionInfromationText = () => `${locale.immutable("build timestamp")}: ${Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy)} ( ${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} ${locale.map("ago")} )`;
+        export const getVersionTimestampText = () => Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy);
+        export const getVersionPasttimeText = () => `${Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) /Domain.timeAccuracy)} ${locale.map("ago")}`;
+        export const getVersionInfromationText = () => `${locale.immutable("build timestamp")}: ${getVersionTimestampText()} ( ${getVersionPasttimeText()} )`;
         export const matchKeyboardShortcutsContext = (urlParams: PageParams, context: KeyboardShortcutsContext) =>
         {
             switch(context)
