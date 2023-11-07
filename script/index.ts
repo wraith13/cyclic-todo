@@ -6061,6 +6061,17 @@ export module CyclicToDo
         export const listScreenFooterSignboard = async (entry: ToDoTagEntryOld) =>
         {
             var result: minamo.dom.Source;
+            const setting = textButton
+            (
+                getTagSettingTitle(entry.tag),
+                async () =>
+                {
+                    if (await tagSettingsPopup(entry.pass, entry.tag))
+                    {
+                        await reload();
+                    }
+                }
+            );
             const hisotry = textButton
             (
                 "History",
@@ -6086,7 +6097,7 @@ export module CyclicToDo
                             children: label("@new-sublist"),
                             onclick: async () => newSublistPopup(entry.pass),
                         },
-                        $div("button-list")([hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6109,7 +6120,7 @@ export module CyclicToDo
                                 }
                             },
                         },
-                        $div("button-list")([hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6134,7 +6145,7 @@ export module CyclicToDo
                             messagePanel("ピックアップタグよりフラッシュタグが優先されます。"),
                             messagePanel("フラッシュタグより制限タグが優先されます。"),
                         ]),
-                        $div("button-list")([hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6149,7 +6160,7 @@ export module CyclicToDo
                             messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
                             messagePanel("ピックアップタグよりフラッシュタグおよび制限タグが優先されます。"),
                         ]),
-                        $div("button-list")([hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6172,7 +6183,7 @@ export module CyclicToDo
                         ([
                             messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
                         ]),
-                        $div("button-list")([hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6193,7 +6204,7 @@ export module CyclicToDo
                     ),
                     $div("button-list")
                     ([
-                        $div("button-list")([hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6212,7 +6223,7 @@ export module CyclicToDo
                     ),
                     $div("button-list")
                     ([
-                        $div("button-list")([hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6228,7 +6239,7 @@ export module CyclicToDo
                             children: label("New ToDo"),
                             onclick: async () => newTaskPopup(entry, getFilterText()),
                         },
-                        $div("button-list")([hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6844,7 +6855,7 @@ export module CyclicToDo
                     {
                         title: "ToDo",
                         subtitle: "あなたの実績",
-                        description: "継続は力なりと言います。もちろん、１回あたりの分量がごく少量であれば、いくら続けてもなかなか効果は現れないでしょう。しかし、まずは継続してこそです。辛くても怠くても本来の予定の１／１０分でもこなしたら完了として構いません。最初に頑張るべきは継続する事自体です。頑張らなくても継続できる様になってから質や量を頑張りましょう！",
+                        description: "継続は力なりと言います。もちろん、１回あたりの分量がごく少量であれば、いくら続けてもなかなか効果は現れないでしょう。しかし、まずは継続してこそです。辛くても怠くても本来の予定の１／１０分でもこなしたら完了として構いません。最初に頑張るべきは継続する事自体です。頑張らなくても継続できる様に習慣化できてから質や量を頑張りましょう！",
                         image: "✅"
                     },
                     "poem primary-poem"

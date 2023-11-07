@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Nov 06 2023 21:07:39 GMT+0900 (日本標準時)
+    build at: Tue Nov 07 2023 15:51:31 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -27379,11 +27379,25 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 });
             }); };
             Render.listScreenFooterSignboard = function (entry) { return __awaiter(_this, void 0, void 0, function () {
-                var result, hisotry, removed, separator, _a;
+                var result, setting, hisotry, removed, separator, _a;
                 var _this = this;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
+                            setting = Render.textButton(Render.getTagSettingTitle(entry.tag), function () { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, Render.tagSettingsPopup(entry.pass, entry.tag)];
+                                        case 1:
+                                            if (!_a.sent()) return [3 /*break*/, 3];
+                                            return [4 /*yield*/, CyclicToDo.reload()];
+                                        case 2:
+                                            _a.sent();
+                                            _a.label = 3;
+                                        case 3: return [2 /*return*/];
+                                    }
+                                });
+                            }); });
                             hisotry = Render.textButton("History", function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                 return [2 /*return*/, CyclicToDo.showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })];
                             }); }); });
@@ -27417,7 +27431,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             return [2 /*return*/, Render.newSublistPopup(entry.pass)];
                                         }); }); },
                                     },
-                                    Render.$div("button-list")([hisotry, separator, removed,]),
+                                    Render.$div("button-list")([setting, separator, hisotry, separator, removed,]),
                                 ])
                             ];
                             return [3 /*break*/, 17];
@@ -27447,7 +27461,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             });
                                         }); },
                                     },
-                                    Render.$div("button-list")([hisotry, separator, removed,]),
+                                    Render.$div("button-list")([setting, separator, hisotry, separator, removed,]),
                                 ])
                             ];
                             return [3 /*break*/, 17];
@@ -27466,7 +27480,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         Render.messagePanel("ピックアップタグよりフラッシュタグが優先されます。"),
                                         Render.messagePanel("フラッシュタグより制限タグが優先されます。"),
                                     ]),
-                                    Render.$div("button-list")([hisotry, separator, removed,]),
+                                    Render.$div("button-list")([setting, separator, hisotry, separator, removed,]),
                                 ])
                             ];
                             return [3 /*break*/, 17];
@@ -27479,7 +27493,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         Render.messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
                                         Render.messagePanel("ピックアップタグよりフラッシュタグおよび制限タグが優先されます。"),
                                     ]),
-                                    Render.$div("button-list")([hisotry, separator, removed,]),
+                                    Render.$div("button-list")([setting, separator, hisotry, separator, removed,]),
                                 ])
                             ];
                             return [3 /*break*/, 17];
@@ -27496,7 +27510,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.messageList([
                                         Render.messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
                                     ]),
-                                    Render.$div("button-list")([hisotry, separator, removed,]),
+                                    Render.$div("button-list")([setting, separator, hisotry, separator, removed,]),
                                 ])
                             ];
                             return [3 /*break*/, 17];
@@ -27510,7 +27524,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             result = [
                                 _b.sent(),
                                 Render.$div("button-list")([
-                                    Render.$div("button-list")([hisotry, separator, removed,]),
+                                    Render.$div("button-list")([setting, separator, hisotry, separator, removed,]),
                                 ])
                             ];
                             return [3 /*break*/, 17];
@@ -27524,7 +27538,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             result = [
                                 _b.sent(),
                                 Render.$div("button-list")([
-                                    Render.$div("button-list")([hisotry, separator, removed,]),
+                                    Render.$div("button-list")([setting, separator, hisotry, separator, removed,]),
                                 ])
                             ];
                             return [3 /*break*/, 17];
@@ -27541,7 +27555,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             return [2 /*return*/, Render.newTaskPopup(entry, Render.getFilterText())];
                                         }); }); },
                                     },
-                                    Render.$div("button-list")([hisotry, separator, removed,]),
+                                    Render.$div("button-list")([setting, separator, hisotry, separator, removed,]),
                                 ])
                             ];
                             return [3 /*break*/, 17];
@@ -28428,7 +28442,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 return [4 /*yield*/, Render.poem({
                                         title: "ToDo",
                                         subtitle: "あなたの実績",
-                                        description: "継続は力なりと言います。もちろん、１回あたりの分量がごく少量であれば、いくら続けてもなかなか効果は現れないでしょう。しかし、まずは継続してこそです。辛くても怠くても本来の予定の１／１０分でもこなしたら完了として構いません。最初に頑張るべきは継続する事自体です。頑張らなくても継続できる様になってから質や量を頑張りましょう！",
+                                        description: "継続は力なりと言います。もちろん、１回あたりの分量がごく少量であれば、いくら続けてもなかなか効果は現れないでしょう。しかし、まずは継続してこそです。辛くても怠くても本来の予定の１／１０分でもこなしたら完了として構いません。最初に頑張るべきは継続する事自体です。頑張らなくても継続できる様に習慣化できてから質や量を頑張りましょう！",
                                         image: "✅"
                                     }, "poem primary-poem")];
                             case 4:
@@ -30446,7 +30460,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Nov 06 2023 21:07:39 GMT+0900 (日本標準時)', buildTimestampTick: 1699272459982, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Nov 07 2023 15:51:31 GMT+0900 (日本標準時)', buildTimestampTick: 1699339891255, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -30658,7 +30672,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Mon Nov 06 2023 21:07:39 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Tue Nov 07 2023 15:51:31 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
