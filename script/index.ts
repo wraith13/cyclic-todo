@@ -1207,7 +1207,7 @@ export module CyclicToDo
     {
         export const isHomeOld = (tag: string) => "@overall" === tag;
         export const isSystemTagOld = (tag: string) => tag.startsWith("@") && ! tag.startsWith("@=") && ! isSublistOld(tag);
-        export const isSublistOld = (tag: string) => tag.endsWith("@:");
+        export const isSublistOld = (tag: string) => "@:@root" === tag || tag.endsWith("@:");
         export type TagCategory = "home" | "tag" | "sublist";
         export const getTagCategory = (tag: string): TagCategory =>
             isHomeOld(tag) ? "home":
@@ -6848,6 +6848,11 @@ export module CyclicToDo
                     )
                 )
             ),
+            messageList
+            ([
+                messagePanel(labelSpan(locale.map("Maximum number of histories saved") + `: ${config.maxHistories}`)),
+                messagePanel(labelSpan("最大件数を超えても、回数や初回日時は記憶されます。")),
+            ]),
             $div("signboard")
             ([
                 await poem
@@ -6893,10 +6898,6 @@ export module CyclicToDo
                                 }
                             }
                         ),
-                    ]),
-                    messageList
-                    ([
-                        messagePanel(labelSpan(locale.map("Maximum number of histories saved") + `: ${config.maxHistories}`)),
                     ]),
                 ]),
             ]),
@@ -7473,6 +7474,18 @@ export module CyclicToDo
                         // ]),
                         $div("button-list")
                         ([
+                            textButton
+                            (
+                                "System settings",
+                                async () =>
+                                {
+                                    if (await systemSettingsPopup())
+                                    {
+                                        await reload();
+                                    }
+                                }
+                            ),
+                            $span("separator")("・"),
                             textButton
                             (
                                 "Import List",
