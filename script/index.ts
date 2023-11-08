@@ -2088,7 +2088,7 @@ export module CyclicToDo
                     (
                         null === longRecentlyStandardDeviation || null === longRecentlyAverage ?
                             longRecentries:
-                            // todo 毎の hisotry 画面では config.granceMinutes を使うが、ここでは予想間隔の精度の都合から使わない。 ( 整合性が無くなるが、特にそれでなんの影響も無いので気にしない。 )
+                            // todo 毎の history 画面では config.granceMinutes を使うが、ここでは予想間隔の精度の都合から使わない。 ( 整合性が無くなるが、特にそれでなんの影響も無いので気にしない。 )
                             //longRecentries.filter(i => (i -longRecentlyAverage -config.granceMinutes) / longRecentlyStandardDeviation <= config.sleepStandardDeviationRate)
                             longRecentries.filter(i => (i -longRecentlyAverage) / longRecentlyStandardDeviation <= config.sleepStandardDeviationRate)
                     )
@@ -4694,7 +4694,6 @@ export module CyclicToDo
                     }
                 }
             ),
-            systemSettingsMenuItem(),
             menuItem
             (
                 label("Add/Remove Tag"),
@@ -6072,7 +6071,7 @@ export module CyclicToDo
                     }
                 }
             );
-            const hisotry = textButton
+            const history = textButton
             (
                 "History",
                 async () => showUrl({ pass: entry.pass, tag: entry.tag, hash: "history" })
@@ -6097,7 +6096,7 @@ export module CyclicToDo
                             children: label("@new-sublist"),
                             onclick: async () => newSublistPopup(entry.pass),
                         },
-                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6120,7 +6119,7 @@ export module CyclicToDo
                                 }
                             },
                         },
-                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6145,7 +6144,7 @@ export module CyclicToDo
                             messagePanel("ピックアップタグよりフラッシュタグが優先されます。"),
                             messagePanel("フラッシュタグより制限タグが優先されます。"),
                         ]),
-                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6160,7 +6159,7 @@ export module CyclicToDo
                             messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
                             messagePanel("ピックアップタグよりフラッシュタグおよび制限タグが優先されます。"),
                         ]),
-                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6183,7 +6182,7 @@ export module CyclicToDo
                         ([
                             messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
                         ]),
-                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6204,7 +6203,7 @@ export module CyclicToDo
                     ),
                     $div("button-list")
                     ([
-                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6223,7 +6222,7 @@ export module CyclicToDo
                     ),
                     $div("button-list")
                     ([
-                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6239,7 +6238,7 @@ export module CyclicToDo
                             children: label("New ToDo"),
                             onclick: async () => newTaskPopup(entry, getFilterText()),
                         },
-                        $div("button-list")([setting, separator, hisotry, separator, removed,]),
+                        $div("button-list")([setting, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6266,6 +6265,13 @@ export module CyclicToDo
             $div("poem-list")
             ([
                 await poem("header"),
+                await poem
+                ({
+                    title: "履歴バー",
+                    subtitle: "履歴のダイジェスト",
+                    description: "画面上部のヘッダーのすぐ下の領域は直近の各 ToDo をこなしてからの経過時間が表示されます。この表示はダイジェストで、各 ToDo の最後の完了からの経過時間のみを扱います。もっと履歴を詳しく見るには履歴バーの一番左の[履歴]をクリックしてください。",
+                    image: "📔"
+                }),
                 await poem("bottomtabs"),
             ]),
         ];
@@ -6885,7 +6891,7 @@ export module CyclicToDo
                     },
                     $div("button-list")
                     ([
-                        // hisotry,
+                        // history,
                         // $span("separator")("・"),
                         textButton
                         (
