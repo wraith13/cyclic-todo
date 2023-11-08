@@ -144,6 +144,7 @@
     "progressScaleStyle.home": "Same style as Home",
     "progressScaleStyle.none": "Hide",
     "progressScaleStyle.full": "Show",
+    "progressScaleStyle.description": "Display settings for the lines that indicate the timing of Flash (blue), Pickup (yellow), recentrly interval average (green), and Restriction (red). This setting can be specified individually for each tag or sublist.",
     "Theme setting": "Theme setting",
     "theme.auto": "Auto",
     "theme.light": "Light",

@@ -3706,16 +3706,17 @@ export module CyclicToDo
                                     }
                                 }
                             },
-                            {
-                                tag: "button",
-                                className: "label-button",
-                                children: monospace
+                            descriptionButton
+                            (
+                                "",
+                                monospace
                                 (
                                     "auto-tag-flash",
                                     label("Progress scale style setting"),
                                     label(getTagProgressScaleStyleText(settings.progressScaleStyle ?? getTagProgressScaleStyleDefault(tag)))
                                 ),
-                                onclick: async () =>
+                                "progressScaleStyle.description",
+                                async () =>
                                 {
                                     if (await tagProgressScaleStyleSettingsPopup(pass, tag))
                                     {
@@ -3723,7 +3724,7 @@ export module CyclicToDo
                                         await buttonListUpdate();
                                     }
                                 }
-                            },
+                            ),
                             descriptionButton
                             (
                                 "",

@@ -144,6 +144,7 @@
     "progressScaleStyle.home": "ホームと同じスタイル",
     "progressScaleStyle.none": "非表示",
     "progressScaleStyle.full": "表示",
+    "progressScaleStyle.description": "フラッシュ(青)、ピックアップ(黄)、直近間隔平均(緑)、制限(赤)のタイミングを示すラインの表示設定です。この設定はタグやサブリストごとに個別に指定できます。",
     "Theme setting": "テーマ設定",
     "theme.auto": "自動",
     "theme.light": "ライト",
