@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Wed Nov 08 2023 21:44:39 GMT+0900 (日本標準時)
+    build at: Thu Nov 09 2023 10:09:22 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -20147,6 +20147,9 @@ define("resource/lang.en", [], {
     "poem.no-account.title": "No account required",
     "poem.no-account.subtitle": "Ready to use now",
     "poem.no-account.description": "Cyclic ToDo can be used immediately without requiring account registration or login. Click the [New ToDo List] button.",
+    "poem.todo.title": "ToDo",
+    "poem.todo.subtitle": "Your achievements",
+    "poem.todo.description": "It is said that continuity is power. Of course, if the amount you take each time is very small, you won't see any effects no matter how much you continue. However, the first step is to continue. If you keep doing it for a long time, there will be many days when you don't have time, are injured or sick, or even if you don't go that far, you feel somehow unwell or just don't feel like it. In such a case, consider it complete if you can do even 10% of what you originally planned. If you try too hard, it will be a curse that will make you feel lazy the next time you start working on a ToDo. The first thing you need to do is keep trying. Let's work hard on quality and quantity little by little after making it a habit so that you can continue without trying hard!",
     "poem.history.title": "history",
     "poem.history.subtitle": "Your life log",
     "poem.history.description": "Actually, Cyclic ToDo is like a life log app with the guise of a ToDo app. You can check the history of things like, \"When was the last time I did that?\"",
@@ -20398,6 +20401,9 @@ define("resource/lang.ja", [], {
     "poem.no-account.title": "アカウント不要",
     "poem.no-account.subtitle": "いますぐ使えます",
     "poem.no-account.description": "Cyclic ToDo はアカウント登録やログイン不要でいますぐに使えます。[新しい ToDo リスト]ボタンをクリックしてください。",
+    "poem.todo.title": "ToDo",
+    "poem.todo.subtitle": "あなたの実績",
+    "poem.todo.description": "継続は力なりと言います。もちろん、１回あたりの分量がごく少量であれば、いくら続けてもなかなか効果は現れないでしょう。しかし、まずは継続してこそです。ずっと継続し続けるとなると、時間がなかったり、怪我や病気を負っていたり、そこまでいかなくともなんとなく体調が悪い、なんとなく気分が乗らないなんて日も多々あるでしょう。そんな時は本来の予定の 10% 程度でもこなしたら完了としてしまいましょう。無理して頑張ると次回から ToDo に取り掛かる時に億劫になる呪いとして降りかかります。最初に頑張るべきは継続する事自体です。頑張らなくても継続できる様に習慣化できてから質や量を少しずつ頑張りましょう！",
     "poem.history.title": "履歴",
     "poem.history.subtitle": "あなたのライフログ",
     "poem.history.description": "実際のところ、 Cyclic ToDo は ToDo アプリのガワを被せてるライフログアプリの様なモノです。「アレやったのはいつだっけ？」なんて事を履歴から確認できます。",
@@ -28463,12 +28469,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     ])
                                 ]);
                                 _g = Render.$div("signboard");
-                                return [4 /*yield*/, Render.poem({
-                                        title: "ToDo",
-                                        subtitle: "あなたの実績",
-                                        description: "継続は力なりと言います。もちろん、１回あたりの分量がごく少量であれば、いくら続けてもなかなか効果は現れないでしょう。しかし、まずは継続してこそです。辛くても怠くても本来の予定の１／１０分でもこなしたら完了として構いません。最初に頑張るべきは継続する事自体です。頑張らなくても継続できる様に習慣化できてから質や量を頑張りましょう！",
-                                        image: "✅"
-                                    }, "poem primary-poem")];
+                                return [4 /*yield*/, Render.poem("todo", "poem primary-poem")];
                             case 4:
                                 _e = _e.concat([
                                     _g.apply(void 0, [[
@@ -30496,7 +30497,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Nov 08 2023 21:44:39 GMT+0900 (日本標準時)', buildTimestampTick: 1699447479308, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Nov 09 2023 10:09:22 GMT+0900 (日本標準時)', buildTimestampTick: 1699492162748, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -30537,9 +30538,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <span class="poem-image">🚀</span>
 </div>
 <div class="poem">
-<span class="poem-title">poem.todo.title</span>
-<span class="poem-subtitle">poem.todo.subtitle</span>
-<span class="poem-description">poem.todo.description</span>
+<span class="poem-title">ToDo</span>
+<span class="poem-subtitle">Your achievements</span>
+<span class="poem-description">It is said that continuity is power. Of course, if the amount you take each time is very small, you won't see any effects no matter how much you continue. However, the first step is to continue. If you keep doing it for a long time, there will be many days when you don't have time, are injured or sick, or even if you don't go that far, you feel somehow unwell or just don't feel like it. In such a case, consider it complete if you can do even 10% of what you originally planned. If you try too hard, it will be a curse that will make you feel lazy the next time you start working on a ToDo. The first thing you need to do is keep trying. Let's work hard on quality and quantity little by little after making it a habit so that you can continue without trying hard!</span>
 <span class="poem-image">✅</span>
 </div>
 <div class="poem">
@@ -30641,9 +30642,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <span class="poem-image">🚀</span>
 </div>
 <div class="poem">
-<span class="poem-title">poem.todo.title</span>
-<span class="poem-subtitle">poem.todo.subtitle</span>
-<span class="poem-description">poem.todo.description</span>
+<span class="poem-title">ToDo</span>
+<span class="poem-subtitle">あなたの実績</span>
+<span class="poem-description">継続は力なりと言います。もちろん、１回あたりの分量がごく少量であれば、いくら続けてもなかなか効果は現れないでしょう。しかし、まずは継続してこそです。ずっと継続し続けるとなると、時間がなかったり、怪我や病気を負っていたり、そこまでいかなくともなんとなく体調が悪い、なんとなく気分が乗らないなんて日も多々あるでしょう。そんな時は本来の予定の 10% 程度でもこなしたら完了としてしまいましょう。無理して頑張ると次回から ToDo に取り掛かる時に億劫になる呪いとして降りかかります。最初に頑張るべきは継続する事自体です。頑張らなくても継続できる様に習慣化できてから質や量を少しずつ頑張りましょう！</span>
 <span class="poem-image">✅</span>
 </div>
 <div class="poem">
@@ -30720,7 +30721,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Wed Nov 08 2023 21:44:39 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Thu Nov 09 2023 10:09:22 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

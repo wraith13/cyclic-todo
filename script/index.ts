@@ -6862,16 +6862,7 @@ export module CyclicToDo
             ]),
             $div("signboard")
             ([
-                await poem
-                (
-                    {
-                        title: "ToDo",
-                        subtitle: "あなたの実績",
-                        description: "継続は力なりと言います。もちろん、１回あたりの分量がごく少量であれば、いくら続けてもなかなか効果は現れないでしょう。しかし、まずは継続してこそです。辛くても怠くても本来の予定の１／１０分でもこなしたら完了として構いません。最初に頑張るべきは継続する事自体です。頑張らなくても継続できる様に習慣化できてから質や量を頑張りましょう！",
-                        image: "✅"
-                    },
-                    "poem primary-poem"
-                ),
+                await poem("todo", "poem primary-poem"),
                 $div("button-list")
                 ([
                     {
