@@ -3688,16 +3688,17 @@ export module CyclicToDo
                     (
                         buttonList,
                         [
-                            {
-                                tag: "button",
-                                className: "label-button",
-                                children: monospace
+                            descriptionButton
+                            (
+                                "",
+                                monospace
                                 (
                                     "auto-tag-flash",
                                     label("Display style setting"),
                                     label(getTagDisplayStyleText(settings.displayStyle ?? getTagDisplayStyleDefault(tag)))
                                 ),
-                                onclick: async () =>
+                                "displayStyle.description",
+                                async () =>
                                 {
                                     if (await tagDisplayStyleSettingsPopup(pass, tag))
                                     {
@@ -3705,7 +3706,7 @@ export module CyclicToDo
                                         await buttonListUpdate();
                                     }
                                 }
-                            },
+                            ),
                             descriptionButton
                             (
                                 "",

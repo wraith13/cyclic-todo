@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Thu Nov 09 2023 10:09:22 GMT+0900 (日本標準時)
+    build at: Thu Nov 09 2023 22:31:40 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -20257,6 +20257,14 @@ define("resource/lang.en", [], {
     "Cancel": "Cancel",
     "Edit": "Edit",
     "Move to Sublist": "Move to Sublist",
+    "displayStyle.home": "Same style as Home",
+    "displayStyle.full": "Full",
+    "displayStyle.compact": "Compact",
+    "displayStyle.description": "Display style settings for ToDo.",
+    "progressScaleStyle.home": "Same style as Home",
+    "progressScaleStyle.none": "Hide",
+    "progressScaleStyle.full": "Show",
+    "progressScaleStyle.description": "Display settings for the lines that indicate the timing of Flash (blue), Pickup (yellow), recentrly interval average (green), and Restriction (red). This setting can be specified individually for each tag or sublist.",
     "sort.home": "Same order as Home",
     "sort.smart": "Smart",
     "sort.simple": "Simple",
@@ -20275,13 +20283,6 @@ define("resource/lang.en", [], {
     "flash.description": "Set so that this tag is given to ToDoes that are recommended to be \"immediately executed\".",
     "pickup.description": "Set so that this tag is given to ToDoes that are recommended to be \"executed soon\".",
     "restriction.description": "Set so that this tag is given to ToDoes during periods that should not be executed.",
-    "displayStyle.home": "Same style as Home",
-    "displayStyle.full": "Full",
-    "displayStyle.compact": "Compact",
-    "progressScaleStyle.home": "Same style as Home",
-    "progressScaleStyle.none": "Hide",
-    "progressScaleStyle.full": "Show",
-    "progressScaleStyle.description": "Display settings for the lines that indicate the timing of Flash (blue), Pickup (yellow), recentrly interval average (green), and Restriction (red). This setting can be specified individually for each tag or sublist.",
     "Theme setting": "Theme setting",
     "theme.auto": "Auto",
     "theme.light": "Light",
@@ -20511,6 +20512,14 @@ define("resource/lang.ja", [], {
     "Cancel": "キャンセル",
     "Edit": "編集",
     "Move to Sublist": "サブリストへ移動",
+    "displayStyle.home": "ホームと同じスタイル",
+    "displayStyle.full": "フル",
+    "displayStyle.compact": "コンパクト",
+    "displayStyle.description": "ToDo の表示スタイル設定です。",
+    "progressScaleStyle.home": "ホームと同じスタイル",
+    "progressScaleStyle.none": "非表示",
+    "progressScaleStyle.full": "表示",
+    "progressScaleStyle.description": "フラッシュ(青)、ピックアップ(黄)、直近間隔平均(緑)、制限(赤)のタイミングを示すラインの表示設定です。この設定はタグやサブリストごとに個別に指定できます。",
     "sort.home": "ホームと同じ並び順",
     "sort.smart": "スマート",
     "sort.simple": "シンプル",
@@ -20529,13 +20538,6 @@ define("resource/lang.ja", [], {
     "flash.description": "「即実行する」事が推奨される ToDo にこのタグが付与される様に設定します。",
     "pickup.description": "「そろそろ実行する」事が推奨される ToDo にこのタグが付与される様に設定します。",
     "restriction.description": "実行するべきでない期間の ToDo にこのタグが付与される様に設定します。",
-    "displayStyle.home": "ホームと同じスタイル",
-    "displayStyle.full": "フル",
-    "displayStyle.compact": "コンパクト",
-    "progressScaleStyle.home": "ホームと同じスタイル",
-    "progressScaleStyle.none": "非表示",
-    "progressScaleStyle.full": "表示",
-    "progressScaleStyle.description": "フラッシュ(青)、ピックアップ(黄)、直近間隔平均(緑)、制限(赤)のタイミングを示すラインの表示設定です。この設定はタグやサブリストごとに個別に指定できます。",
     "Theme setting": "テーマ設定",
     "theme.auto": "自動",
     "theme.light": "ライト",
@@ -24445,26 +24447,21 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 return __generator(this, function (_d) {
                                                     settings = OldStorage.TagSettings.get(pass, tag);
                                                     minamo_js_1.minamo.dom.replaceChildren(buttonList, [
-                                                        {
-                                                            tag: "button",
-                                                            className: "label-button",
-                                                            children: Render.monospace("auto-tag-flash", Render.label("Display style setting"), Render.label(Render.getTagDisplayStyleText((_a = settings.displayStyle) !== null && _a !== void 0 ? _a : Render.getTagDisplayStyleDefault(tag)))),
-                                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                return __generator(this, function (_a) {
-                                                                    switch (_a.label) {
-                                                                        case 0: return [4 /*yield*/, Render.tagDisplayStyleSettingsPopup(pass, tag)];
-                                                                        case 1:
-                                                                            if (!_a.sent()) return [3 /*break*/, 3];
-                                                                            result = true;
-                                                                            return [4 /*yield*/, buttonListUpdate()];
-                                                                        case 2:
-                                                                            _a.sent();
-                                                                            _a.label = 3;
-                                                                        case 3: return [2 /*return*/];
-                                                                    }
-                                                                });
-                                                            }); }
-                                                        },
+                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("Display style setting"), Render.label(Render.getTagDisplayStyleText((_a = settings.displayStyle) !== null && _a !== void 0 ? _a : Render.getTagDisplayStyleDefault(tag)))), "displayStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            return __generator(this, function (_a) {
+                                                                switch (_a.label) {
+                                                                    case 0: return [4 /*yield*/, Render.tagDisplayStyleSettingsPopup(pass, tag)];
+                                                                    case 1:
+                                                                        if (!_a.sent()) return [3 /*break*/, 3];
+                                                                        result = true;
+                                                                        return [4 /*yield*/, buttonListUpdate()];
+                                                                    case 2:
+                                                                        _a.sent();
+                                                                        _a.label = 3;
+                                                                    case 3: return [2 /*return*/];
+                                                                }
+                                                            });
+                                                        }); }),
                                                         Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("Progress scale style setting"), Render.label(Render.getTagProgressScaleStyleText((_b = settings.progressScaleStyle) !== null && _b !== void 0 ? _b : Render.getTagProgressScaleStyleDefault(tag)))), "progressScaleStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
@@ -30497,7 +30494,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Nov 09 2023 10:09:22 GMT+0900 (日本標準時)', buildTimestampTick: 1699492162748, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Nov 09 2023 22:31:40 GMT+0900 (日本標準時)', buildTimestampTick: 1699536700052, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -30721,7 +30718,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Thu Nov 09 2023 10:09:22 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Thu Nov 09 2023 22:31:40 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
