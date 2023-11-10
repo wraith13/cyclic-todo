@@ -3688,6 +3688,28 @@ export module CyclicToDo
                     (
                         buttonList,
                         [
+                            Model.isSystemTagOld(tag) ?
+                                []:
+                                descriptionButton
+                                (
+                                    "",
+                                    monospace
+                                    (
+                                        "auto-tag-flash",
+                                        label(Model.isSublistOld(tag) ? "Sublist": "Tag"),
+                                        labelSpan(Domain.tagMap(tag)),
+                                    ),
+                                    "Rename",
+                                    async () =>
+                                    {
+                                        if (await renameTag({ pass, tag, }))
+                                        {
+                                            result = true;
+                                            tag = getUrlParams().tag ?? tag;
+                                            await buttonListUpdate();
+                                        }
+                                    },
+                                ),
                             descriptionButton
                             (
                                 "",
@@ -4481,42 +4503,47 @@ export module CyclicToDo
                 }
             }
         );
-        export const renameTagMenuItem = (entry: ToDoTagEntryOld, hash?: string) => menuItem
-        (
-            label("Rename"),
-            async () =>
+        export const renameTag = async (entry: { pass: string, tag: string, }, hash?: string) =>
+        {
+            let result = false;
+            if (Model.isSublistOld(entry.tag))
             {
-                if (Model.isSublistOld(entry.tag))
+                const newTag = minamo.core.nullable(Model.encodeSublist)(await prompt(locale.map("Input a sublist's name."), Model.decodeSublist(entry.tag)));
+                if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
                 {
-                    const newTag = minamo.core.nullable(Model.encodeSublist)(await prompt(locale.map("Input a tag's name."), Model.decodeSublist(entry.tag)));
-                    if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
+                    if (OldStorage.Tag.rename(entry.pass, entry.tag, newTag))
                     {
-                        if (OldStorage.Tag.rename(entry.pass, entry.tag, newTag))
-                        {
-                            await showUrl({ pass: entry.pass, tag: newTag, hash });
-                        }
-                        else
-                        {
-                            alert(locale.map("A sublist with that name already exists."));
-                        }
+                        await showUrl({ pass: entry.pass, tag: newTag, hash });
+                        result = true;
                     }
-                }
-                else
-                {
-                    const newTag = await prompt(locale.map("Input a tag's name."), entry.tag);
-                    if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
+                    else
                     {
-                        if (OldStorage.Tag.rename(entry.pass, entry.tag, newTag))
-                        {
-                            await showUrl({ pass: entry.pass, tag: newTag, hash });
-                        }
-                        else
-                        {
-                            alert(locale.map("A tag with that name already exists."));
-                        }
+                        alert(locale.map("A sublist with that name already exists."));
                     }
                 }
             }
+            else
+            {
+                const newTag = await prompt(locale.map("Input a tag's name."), entry.tag);
+                if (null !== newTag && 0 < newTag.length && newTag !== entry.tag)
+                {
+                    if (OldStorage.Tag.rename(entry.pass, entry.tag, newTag))
+                    {
+                        await showUrl({ pass: entry.pass, tag: newTag, hash });
+                        result = true;
+                    }
+                    else
+                    {
+                        alert(locale.map("A tag with that name already exists."));
+                    }
+                }
+            }
+            return result;
+        };
+        export const renameTagMenuItem = (entry: ToDoTagEntryOld, hash?: string) => menuItem
+        (
+            label("Rename"),
+            async () => await renameTag(entry, hash)
         );
         export const backToListMenuItem = (pass: string, tag: string = "@overall") => menuLinkItem
         (
