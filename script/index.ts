@@ -4629,32 +4629,6 @@ export module CyclicToDo
             monospace("task-count", label("count"), item.count.toLocaleString()),
             // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
         ]);
-        export const todoDoneMenu =
-        (
-            pass: string,
-            item: ToDoEntry,
-            onDone: () => Promise<unknown> = async () => await updateWindow("operate"),
-            onCanceled: () => Promise<unknown> = async () => await updateWindow("operate")
-        ) =>
-        menuItem
-        (
-            label("Done with timestamp"),
-            async () =>
-            {
-                const result = Domain.parseDate(await dateTimePrompt(item.task, Domain.getTicks()));
-                if (null !== result && Domain.getTicks(result) <= Domain.getTicks())
-                {
-                    await Operate.done
-                    (
-                        pass,
-                        item.task,
-                        Domain.getTicks(result),
-                        onCanceled
-                    );
-                    await onDone();
-                }
-            }
-        );
         export const todoRenameMenu =
         (
             pass: string,
@@ -5008,7 +4982,6 @@ export module CyclicToDo
                             },
                             await menuButton
                             ([
-                                todoDoneMenu(entry.pass, item, onDone, onUpdate),
                                 todoRenameMenu(entry.pass, item),
                                 todoTagMenu(entry.pass, item),
                                 todoDeleteMenu(entry.pass, item),
@@ -6756,7 +6729,6 @@ export module CyclicToDo
         };
         export const todoScreenMenu = async (pass: string, item: ToDoEntry) =>
         [
-            todoDoneMenu(pass, item),
             systemSettingsMenuItem(),
             todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
             todoTagMenu(pass, item),

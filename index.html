@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Thu Nov 09 2023 22:31:40 GMT+0900 (日本標準時)
+    build at: Fri Nov 10 2023 10:20:56 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -20209,7 +20209,6 @@ define("resource/lang.en", [], {
     "elapsed time": "elapsed time",
     "count": "count",
     "Done": "Done",
-    "Done with timestamp": "Done with timestamp",
     "Open": "Open",
     "days": "days",
     "@overall": "Home",
@@ -20464,7 +20463,6 @@ define("resource/lang.ja", [], {
     "elapsed time": "経過時間",
     "count": "回数",
     "Done": "完了",
-    "Done with timestamp": "日時を指定して完了",
     "Open": "開く",
     "days": "日",
     "@overall": "ホーム",
@@ -25567,41 +25565,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 Render.monospace("task-count", Render.label("count"), item.count.toLocaleString()),
                 // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
             ]); };
-            Render.todoDoneMenu = function (pass, item, onDone, onCanceled) {
-                if (onDone === void 0) { onDone = function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, Render.updateWindow("operate")];
-                        case 1: return [2 /*return*/, _a.sent()];
-                    }
-                }); }); }; }
-                if (onCanceled === void 0) { onCanceled = function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, Render.updateWindow("operate")];
-                        case 1: return [2 /*return*/, _a.sent()];
-                    }
-                }); }); }; }
-                return Render.menuItem(Render.label("Done with timestamp"), function () { return __awaiter(_this, void 0, void 0, function () {
-                    var result, _a, _b;
-                    return __generator(this, function (_c) {
-                        switch (_c.label) {
-                            case 0:
-                                _b = (_a = Domain).parseDate;
-                                return [4 /*yield*/, Render.dateTimePrompt(item.task, Domain.getTicks())];
-                            case 1:
-                                result = _b.apply(_a, [_c.sent()]);
-                                if (!(null !== result && Domain.getTicks(result) <= Domain.getTicks())) return [3 /*break*/, 4];
-                                return [4 /*yield*/, Operate.done(pass, item.task, Domain.getTicks(result), onCanceled)];
-                            case 2:
-                                _c.sent();
-                                return [4 /*yield*/, onDone()];
-                            case 3:
-                                _c.sent();
-                                _c.label = 4;
-                            case 4: return [2 /*return*/];
-                        }
-                    });
-                }); });
-            };
             Render.todoRenameMenu = function (pass, item, onRename) {
                 if (onRename === void 0) { onRename = function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                     switch (_a.label) {
@@ -26072,7 +26035,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     }); }
                                 }];
                             return [4 /*yield*/, Render.menuButton([
-                                    Render.todoDoneMenu(entry.pass, item, onDone, onUpdate),
                                     Render.todoRenameMenu(entry.pass, item),
                                     Render.todoTagMenu(entry.pass, item),
                                     Render.todoDeleteMenu(entry.pass, item),
@@ -28311,7 +28273,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 var _this = this;
                 return __generator(this, function (_a) {
                     return [2 /*return*/, [
-                            Render.todoDoneMenu(pass, item),
                             Render.systemSettingsMenuItem(),
                             Render.todoRenameMenu(pass, item, function (newTask) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                 switch (_a.label) {
@@ -30494,7 +30455,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Nov 09 2023 22:31:40 GMT+0900 (日本標準時)', buildTimestampTick: 1699536700052, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Nov 10 2023 10:20:56 GMT+0900 (日本標準時)', buildTimestampTick: 1699579256552, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -30718,7 +30679,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Thu Nov 09 2023 22:31:40 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Fri Nov 10 2023 10:20:56 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
