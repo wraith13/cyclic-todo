@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sat Nov 11 2023 13:56:52 GMT+0900 (日本標準時)
+    build at: Sat Nov 11 2023 20:26:06 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2607,6 +2607,18 @@ h2 {
 }
 .light-theme-trait .task-item .item-information .progress-bar-pad {
   background-color: rgba(128, 128, 128, 0.2);
+}
+.light-theme-trait .task-item .item-information .primary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.light-theme-trait .task-item .item-information .primary .value {
+  font-size: 2rem;
+  opacity: 0.6;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .light-theme-trait .todo-screen .task-item .item-attribute {
   flex-wrap: wrap;
@@ -5532,6 +5544,18 @@ body.light .task-item .item-information .progress-bar.progress-disabled.progress
 body.light .task-item .item-information .progress-bar-pad {
   background-color: rgba(128, 128, 128, 0.2);
 }
+body.light .task-item .item-information .primary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+body.light .task-item .item-information .primary .value {
+  font-size: 2rem;
+  opacity: 0.6;
+  overflow: hidden;
+  white-space: nowrap;
+}
 body.light .todo-screen .task-item .item-attribute {
   flex-wrap: wrap;
 }
@@ -7945,6 +7969,18 @@ body.light .keyboard-shortcuts li .key:first-child {
   }
   body.auto .task-item .item-information .progress-bar-pad {
     background-color: rgba(128, 128, 128, 0.2);
+  }
+  body.auto .task-item .item-information .primary {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  body.auto .task-item .item-information .primary .value {
+    font-size: 2rem;
+    opacity: 0.6;
+    overflow: hidden;
+    white-space: nowrap;
   }
   body.auto .todo-screen .task-item .item-attribute {
     flex-wrap: wrap;
@@ -11636,6 +11672,18 @@ body.light .keyboard-shortcuts li .key:first-child {
 .dark-theme-trait .task-item .item-information .progress-bar-pad {
   background-color: rgba(128, 128, 128, 0.2);
 }
+.dark-theme-trait .task-item .item-information .primary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.dark-theme-trait .task-item .item-information .primary .value {
+  font-size: 2rem;
+  opacity: 0.6;
+  overflow: hidden;
+  white-space: nowrap;
+}
 .dark-theme-trait .todo-screen .task-item .item-attribute {
   flex-wrap: wrap;
 }
@@ -14563,6 +14611,18 @@ body.dark .task-item .item-information .progress-bar.progress-disabled.progress-
 body.dark .task-item .item-information .progress-bar-pad {
   background-color: rgba(128, 128, 128, 0.2);
 }
+body.dark .task-item .item-information .primary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+body.dark .task-item .item-information .primary .value {
+  font-size: 2rem;
+  opacity: 0.6;
+  overflow: hidden;
+  white-space: nowrap;
+}
 body.dark .todo-screen .task-item .item-attribute {
   flex-wrap: wrap;
 }
@@ -16979,6 +17039,18 @@ body.dark .keyboard-shortcuts li .key:first-child {
   }
   body.auto .task-item .item-information .progress-bar-pad {
     background-color: rgba(128, 128, 128, 0.2);
+  }
+  body.auto .task-item .item-information .primary {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  body.auto .task-item .item-information .primary .value {
+    font-size: 2rem;
+    opacity: 0.6;
+    overflow: hidden;
+    white-space: nowrap;
   }
   body.auto .todo-screen .task-item .item-attribute {
     flex-wrap: wrap;
@@ -20258,6 +20330,8 @@ define("resource/lang.en", [], {
     "Move to Sublist": "Move to Sublist",
     "displayStyle.home": "Same style as Home",
     "displayStyle.full": "Full",
+    "displayStyle.elapsed": "Elapsed time",
+    "displayStyle.count": "Count",
     "displayStyle.compact": "Compact",
     "displayStyle.description": "Display style settings for ToDo.",
     "progressScaleStyle.home": "Same style as Home",
@@ -20512,6 +20586,8 @@ define("resource/lang.ja", [], {
     "Move to Sublist": "サブリストへ移動",
     "displayStyle.home": "ホームと同じスタイル",
     "displayStyle.full": "フル",
+    "displayStyle.elapsed": "経過時間",
+    "displayStyle.count": "回数",
     "displayStyle.compact": "コンパクト",
     "displayStyle.description": "ToDo の表示スタイル設定です。",
     "progressScaleStyle.home": "ホームと同じスタイル",
@@ -22373,6 +22449,20 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return 0 < days ?
                         days.toLocaleString() + " " + locale_2.locale.map("days") + " " + Domain.timeCoreStringFromTick(tick) :
                         Domain.timeCoreStringFromTick(tick);
+                }
+            };
+            Domain.timeSimpleStringFromTick = function (tick) {
+                if (null === tick) {
+                    return "N/A";
+                }
+                else if (tick < 0) {
+                    return "-" + Domain.timeLongStringFromTick(-tick);
+                }
+                else {
+                    var days = Math.floor(tick / (24 * 60));
+                    return days < 1 ? Domain.timeCoreStringFromTick(tick) :
+                        days < 10 ? days.toLocaleString() + "." + Domain.timeCoreStringFromTick(tick) :
+                            days.toLocaleString() + ".";
                 }
             };
             Domain.timeRangeStringFromTick = function (a, b) {
@@ -24661,6 +24751,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 var map = {
                     "@home": "displayStyle.home",
                     "full": "displayStyle.full",
+                    "elapsed": "displayStyle.elapsed",
+                    "count": "displayStyle.count",
                     "compact": "displayStyle.compact",
                 };
                 return map[displayStyle];
@@ -24689,8 +24781,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                                                 _c = [tagButtonList];
                                                                 return [4 /*yield*/, Promise.all(("@overall" === tag ?
-                                                                        ["full", "compact",] :
-                                                                        ["@home", "full", "compact",])
+                                                                        ["full", "elapsed", "count", "compact",] :
+                                                                        ["@home", "full", "elapsed", "count", "compact",])
                                                                         .map(function (i) { return __awaiter(_this, void 0, void 0, function () {
                                                                         var _a;
                                                                         var _this = this;
@@ -25556,6 +25648,20 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         }); }, "delete-button")];
                 });
             }); };
+            Render.informationElapsed = function (entry, item, progressScaleShowStyle) { return Render.$div({
+                className: "item-information",
+                attributes: { style: Render.progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
+            })([
+                Render.itemProgressBar(entry.pass, item, "with-pad"),
+                Render.monospace("primary", Domain.timeSimpleStringFromTick(item.elapsed)),
+            ]); };
+            Render.informationCount = function (entry, item, progressScaleShowStyle) { return Render.$div({
+                className: "item-information",
+                attributes: { style: Render.progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
+            })([
+                Render.itemProgressBar(entry.pass, item, "with-pad"),
+                Render.monospace("primary", item.count.toLocaleString()),
+            ]); };
             Render.informationDigest = function (entry, item, progressScaleShowStyle) { return Render.$div({
                 className: "item-information",
                 attributes: { style: Render.progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
@@ -25940,13 +26046,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _a = Render.$make(HTMLDivElement);
                             _b = Render.$div({
                                 className: "task-item flex-item",
-                                attributes: "full" === displayStyle ?
+                                attributes: "compact" !== displayStyle ?
                                     {} :
                                     { style: Render.progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
                             });
-                            _c = ["full" === displayStyle ? [] : Render.itemProgressBar(entry.pass, item)];
+                            _c = ["compact" !== displayStyle ? [] : Render.itemProgressBar(entry.pass, item)];
                             _d = Render.$div("item-header");
-                            if (!("full" === displayStyle)) return [3 /*break*/, 2];
+                            if (!("compact" !== displayStyle)) return [3 /*break*/, 2];
                             _f = Render.internalLink;
                             _t = {
                                 className: "item-title",
@@ -26095,7 +26201,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             ])])
                                     ])])
                             ]);
-                            if (!("full" === displayStyle)) return [3 /*break*/, 11];
+                            if (!("compact" !== displayStyle)) return [3 /*break*/, 11];
                             _r = Render.$div("item-attribute");
                             return [4 /*yield*/, Render.todoItemTags(entry.pass, item)];
                         case 9:
@@ -26108,7 +26214,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 _r.apply(void 0, [_s.concat([
                                         _w.sent()
                                     ])]),
-                                Render.informationDigest(entry, item, progressScaleShowStyle)
+                                "full" === displayStyle ?
+                                    Render.informationDigest(entry, item, progressScaleShowStyle) :
+                                    "elapsed" === displayStyle ?
+                                        Render.informationElapsed(entry, item, progressScaleShowStyle) :
+                                        Render.informationCount(entry, item, progressScaleShowStyle)
                             ];
                             return [3 /*break*/, 12];
                         case 11:
@@ -29924,8 +30034,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     var defaultStyle_1 = Render.getTagDisplayStyleDefault(tag_2);
                                     var current_1 = (_h = settings.displayStyle) !== null && _h !== void 0 ? _h : defaultStyle_1;
                                     var list_1 = "@overall" === tag_2 ?
-                                        ["full", "compact",] :
-                                        ["@home", "full", "compact",];
+                                        ["full", "elapsed", "count", "compact",] :
+                                        ["@home", "full", "elapsed", "count", "compact",];
                                     var next = destinationItem(list_1, current_1);
                                     settings.displayStyle = defaultStyle_1 === next ? undefined : next;
                                     OldStorage.TagSettings.set(pass_1, tag_2, settings);
@@ -30483,7 +30593,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Nov 11 2023 13:56:52 GMT+0900 (日本標準時)', buildTimestampTick: 1699678612713, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Nov 11 2023 20:26:06 GMT+0900 (日本標準時)', buildTimestampTick: 1699701966739, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -30707,7 +30817,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Sat Nov 11 2023 13:56:52 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Sat Nov 11 2023 20:26:06 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

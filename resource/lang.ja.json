@@ -124,6 +124,8 @@
     "Move to Sublist": "サブリストへ移動",
     "displayStyle.home": "ホームと同じスタイル",
     "displayStyle.full": "フル",
+    "displayStyle.elapsed": "経過時間",
+    "displayStyle.count": "回数",
     "displayStyle.compact": "コンパクト",
     "displayStyle.description": "ToDo の表示スタイル設定です。",
     "progressScaleStyle.home": "ホームと同じスタイル",
