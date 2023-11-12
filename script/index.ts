@@ -4942,7 +4942,7 @@ export module CyclicToDo
                     "compact" !== displayStyle ? []: itemProgressBar(entry.pass, item),
                     $div("item-header")
                     ([
-                        "compact" !== displayStyle ?
+                        "full" === displayStyle ?
                         internalLink
                         ({
                             className: "item-title",
@@ -5056,11 +5056,12 @@ export module CyclicToDo
                     ]),
                     "compact" !== displayStyle ?
                         [
-                            $div("item-attribute")
-                            ([
-                                await todoItemTags(entry.pass, item),
-                                await todoItemSettings(entry.pass, item),
-                            ]),
+                            "full" !== displayStyle ? []:
+                                $div("item-attribute")
+                                ([
+                                    await todoItemTags(entry.pass, item),
+                                    await todoItemSettings(entry.pass, item),
+                                ]),
                             "full" === displayStyle ?
                                 informationDigest(entry, item, progressScaleShowStyle):
                             "elapsed" === displayStyle ?
