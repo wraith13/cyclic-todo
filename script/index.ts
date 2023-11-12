@@ -39,6 +39,7 @@ export const takeFilter = (max: number) => <T>(_value: T, index: number) => inde
 export const toPercentSting = (value: number) => value.toLocaleString("en", { style: "percent", minimumFractionDigits: 2 });
 export const isNumber = (value: unknown): value is number => "number" === typeof value;
 export const isValidNumber = (value: unknown) => isNumber(value) && ! isNaN(value);
+export const currentItem = <T>(list: T[], current: T): T | undefined => 0 <= list.indexOf(current) ? current: undefined;
 export const nextItem = <T>(list: T[], current: T): T => list[(list.indexOf(current) +1) %list.length];
 export const previousItem = <T>(list: T[], current: T): T => list[(list.indexOf(current) +(list.length -1)) %list.length];
 export const groupBy = <T, G>(list: T[], getGroup: (i: T) => G): { group: G, list: T[], }[] =>
@@ -202,7 +203,7 @@ export module CyclicToDo
     export interface TagSettings extends minamo.core.JsonableObject
     {
         sort?: "smart" | "simple" | "simple-reverse";
-        displayStyle?: "@home" | "full" | "elapsed" | "count" | "compact";
+        displayStyle?: "@home" | "full" | "simple" | "compact";
         progressScaleStyle?: "@home" | "none" | "full";
     }
     export interface AutoTagSettingBase extends minamo.core.JsonableObject
@@ -728,8 +729,8 @@ export module CyclicToDo
             export const getDisplayStyle = (pass: string, tag: string): Exclude<TagSettings["displayStyle"], "@home"> =>
             {
                 const defaultResult = "full";
-                const result = get(pass, tag).displayStyle ?? defaultResult;
-                if ("@home" === result)
+                const result = currentItem<TagSettings["displayStyle"]>([ "@home", "full", "simple", "compact" ], get(pass, tag).displayStyle);
+                if (undefined === result || "@home" === result)
                 {
                     if ("@overall" === tag)
                     {
@@ -3905,8 +3906,7 @@ export module CyclicToDo
             {
                 "@home": "displayStyle.home",
                 "full": "displayStyle.full",
-                "elapsed": "displayStyle.elapsed",
-                "count": "displayStyle.count",
+                "simple": "displayStyle.simple",
                 "compact": "displayStyle.compact",
             };
             return map[displayStyle];
@@ -4620,24 +4620,28 @@ export module CyclicToDo
             },
             "delete-button"
         );
-        export const informationElapsed = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
+        export const informationSimple = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
         ({
             className: "item-information",
             attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
         })
         ([
             itemProgressBar(entry.pass, item, "with-pad"),
-            monospace("primary", Domain.timeSimpleStringFromTick(item.elapsed)),
+            $div("primary")
+            ([
+                monospace(Domain.timeSimpleStringFromTick(item.elapsed)),
+                // monospace(item.count.toLocaleString()),
+            ]),
         ]);
-        export const informationCount = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
-        ({
-            className: "item-information",
-            attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
-        })
-        ([
-            itemProgressBar(entry.pass, item, "with-pad"),
-            monospace("primary", item.count.toLocaleString()),
-        ]);
+        // export const informationCount = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
+        // ({
+        //     className: "item-information",
+        //     attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
+        // })
+        // ([
+        //     itemProgressBar(entry.pass, item, "with-pad"),
+        //     monospace("primary", item.count.toLocaleString()),
+        // ]);
         export const informationDigest = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
         ({
             className: "item-information",
@@ -5064,9 +5068,7 @@ export module CyclicToDo
                                 ]),
                             "full" === displayStyle ?
                                 informationDigest(entry, item, progressScaleShowStyle):
-                            "elapsed" === displayStyle ?
-                                informationElapsed(entry, item, progressScaleShowStyle):
-                                informationCount(entry, item, progressScaleShowStyle),
+                                informationSimple(entry, item, progressScaleShowStyle),
                         ]:
                         []
                 ])
@@ -8164,9 +8166,9 @@ export module CyclicToDo
                                 const settings = OldStorage.TagSettings.get(pass, tag);
                                 const defaultStyle = getTagDisplayStyleDefault(tag);
                                 const current = settings.displayStyle ?? defaultStyle;
-                                const list: ("@home" | "full" | "elapsed" | "count" | "compact")[] = "@overall" === tag ?
-                                    [ "full", "elapsed", "count", "compact", ]:
-                                    [ "@home", "full", "elapsed", "count", "compact", ];
+                                const list: (Exclude<TagSettings["displayStyle"], undefined>)[] = "@overall" === tag ?
+                                    [ "full", "simple", "compact", ]:
+                                    [ "@home", "full", "simple", "compact", ];
                                 const next = destinationItem(list, current);
                                 settings.displayStyle = defaultStyle === next ? undefined: <Exclude<TagSettings["displayStyle"], undefined>>next;
                                 OldStorage.TagSettings.set(pass, tag, settings);
