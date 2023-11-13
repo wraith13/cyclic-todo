@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Nov 13 2023 01:43:11 GMT+0900 (日本標準時)
+    build at: Mon Nov 13 2023 19:20:38 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2584,7 +2584,7 @@ h2 {
 .light-theme-trait .task-item .item-information * {
   line-height: 1.4em;
 }
-.light-theme-trait .task-item .item-information .label {
+.light-theme-trait .task-item .item-information:not(.simple) .label {
   font-size: 1rem;
   opacity: 0.6;
   margin-right: -50%;
@@ -2593,7 +2593,7 @@ h2 {
   white-space: nowrap;
   max-width: calc(100% - 180px);
 }
-.light-theme-trait .task-item .item-information .label::after {
+.light-theme-trait .task-item .item-information:not(.simple) .label::after {
   content: ":";
 }
 .light-theme-trait .task-item .item-information .value {
@@ -2608,17 +2608,43 @@ h2 {
 .light-theme-trait .task-item .item-information .progress-bar-pad {
   background-color: rgba(128, 128, 128, 0.2);
 }
+.light-theme-trait .task-item .item-information .foreground {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.light-theme-trait .task-item .item-information .foreground .item-information {
+  padding: 0px;
+}
+.light-theme-trait .task-item .item-information .foreground .item-operator .main-button {
+  min-width: 7rem;
+}
 .light-theme-trait .task-item .item-information .primary {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex-grow: 1;
 }
 .light-theme-trait .task-item .item-information .primary .value {
   font-size: 2rem;
   opacity: 0.6;
   overflow: hidden;
   white-space: nowrap;
+  position: absolute;
+  line-height: 1em;
+  transition: opacity 500ms, filter 500ms;
+}
+.light-theme-trait .screen-body:not(.show-second-panel) .primary .value:not(:nth-child(1)) {
+  user-select: none;
+  opacity: 0;
+  filter: blur(30px);
+}
+.light-theme-trait .screen-body.show-second-panel .primary .value:not(:nth-child(2)) {
+  user-select: none;
+  opacity: 0;
+  filter: blur(30px);
 }
 .light-theme-trait .todo-screen .task-item .item-attribute {
   flex-wrap: wrap;
@@ -5520,7 +5546,7 @@ body.light .task-item .item-information {
 body.light .task-item .item-information * {
   line-height: 1.4em;
 }
-body.light .task-item .item-information .label {
+body.light .task-item .item-information:not(.simple) .label {
   font-size: 1rem;
   opacity: 0.6;
   margin-right: -50%;
@@ -5529,7 +5555,7 @@ body.light .task-item .item-information .label {
   white-space: nowrap;
   max-width: calc(100% - 180px);
 }
-body.light .task-item .item-information .label::after {
+body.light .task-item .item-information:not(.simple) .label::after {
   content: ":";
 }
 body.light .task-item .item-information .value {
@@ -5544,17 +5570,43 @@ body.light .task-item .item-information .progress-bar.progress-disabled.progress
 body.light .task-item .item-information .progress-bar-pad {
   background-color: rgba(128, 128, 128, 0.2);
 }
+body.light .task-item .item-information .foreground {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+body.light .task-item .item-information .foreground .item-information {
+  padding: 0px;
+}
+body.light .task-item .item-information .foreground .item-operator .main-button {
+  min-width: 7rem;
+}
 body.light .task-item .item-information .primary {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex-grow: 1;
 }
 body.light .task-item .item-information .primary .value {
   font-size: 2rem;
   opacity: 0.6;
   overflow: hidden;
   white-space: nowrap;
+  position: absolute;
+  line-height: 1em;
+  transition: opacity 500ms, filter 500ms;
+}
+body.light .screen-body:not(.show-second-panel) .primary .value:not(:nth-child(1)) {
+  user-select: none;
+  opacity: 0;
+  filter: blur(30px);
+}
+body.light .screen-body.show-second-panel .primary .value:not(:nth-child(2)) {
+  user-select: none;
+  opacity: 0;
+  filter: blur(30px);
 }
 body.light .todo-screen .task-item .item-attribute {
   flex-wrap: wrap;
@@ -7946,7 +7998,7 @@ body.light .keyboard-shortcuts li .key:first-child {
   body.auto .task-item .item-information * {
     line-height: 1.4em;
   }
-  body.auto .task-item .item-information .label {
+  body.auto .task-item .item-information:not(.simple) .label {
     font-size: 1rem;
     opacity: 0.6;
     margin-right: -50%;
@@ -7955,7 +8007,7 @@ body.light .keyboard-shortcuts li .key:first-child {
     white-space: nowrap;
     max-width: calc(100% - 180px);
   }
-  body.auto .task-item .item-information .label::after {
+  body.auto .task-item .item-information:not(.simple) .label::after {
     content: ":";
   }
   body.auto .task-item .item-information .value {
@@ -7970,17 +8022,43 @@ body.light .keyboard-shortcuts li .key:first-child {
   body.auto .task-item .item-information .progress-bar-pad {
     background-color: rgba(128, 128, 128, 0.2);
   }
+  body.auto .task-item .item-information .foreground {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  body.auto .task-item .item-information .foreground .item-information {
+    padding: 0px;
+  }
+  body.auto .task-item .item-information .foreground .item-operator .main-button {
+    min-width: 7rem;
+  }
   body.auto .task-item .item-information .primary {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    flex-grow: 1;
   }
   body.auto .task-item .item-information .primary .value {
     font-size: 2rem;
     opacity: 0.6;
     overflow: hidden;
     white-space: nowrap;
+    position: absolute;
+    line-height: 1em;
+    transition: opacity 500ms, filter 500ms;
+  }
+  body.auto .screen-body:not(.show-second-panel) .primary .value:not(:nth-child(1)) {
+    user-select: none;
+    opacity: 0;
+    filter: blur(30px);
+  }
+  body.auto .screen-body.show-second-panel .primary .value:not(:nth-child(2)) {
+    user-select: none;
+    opacity: 0;
+    filter: blur(30px);
   }
   body.auto .todo-screen .task-item .item-attribute {
     flex-wrap: wrap;
@@ -11648,7 +11726,7 @@ body.light .keyboard-shortcuts li .key:first-child {
 .dark-theme-trait .task-item .item-information * {
   line-height: 1.4em;
 }
-.dark-theme-trait .task-item .item-information .label {
+.dark-theme-trait .task-item .item-information:not(.simple) .label {
   font-size: 1rem;
   opacity: 0.6;
   margin-right: -50%;
@@ -11657,7 +11735,7 @@ body.light .keyboard-shortcuts li .key:first-child {
   white-space: nowrap;
   max-width: calc(100% - 180px);
 }
-.dark-theme-trait .task-item .item-information .label::after {
+.dark-theme-trait .task-item .item-information:not(.simple) .label::after {
   content: ":";
 }
 .dark-theme-trait .task-item .item-information .value {
@@ -11672,17 +11750,43 @@ body.light .keyboard-shortcuts li .key:first-child {
 .dark-theme-trait .task-item .item-information .progress-bar-pad {
   background-color: rgba(128, 128, 128, 0.2);
 }
+.dark-theme-trait .task-item .item-information .foreground {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.dark-theme-trait .task-item .item-information .foreground .item-information {
+  padding: 0px;
+}
+.dark-theme-trait .task-item .item-information .foreground .item-operator .main-button {
+  min-width: 7rem;
+}
 .dark-theme-trait .task-item .item-information .primary {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex-grow: 1;
 }
 .dark-theme-trait .task-item .item-information .primary .value {
   font-size: 2rem;
   opacity: 0.6;
   overflow: hidden;
   white-space: nowrap;
+  position: absolute;
+  line-height: 1em;
+  transition: opacity 500ms, filter 500ms;
+}
+.dark-theme-trait .screen-body:not(.show-second-panel) .primary .value:not(:nth-child(1)) {
+  user-select: none;
+  opacity: 0;
+  filter: blur(30px);
+}
+.dark-theme-trait .screen-body.show-second-panel .primary .value:not(:nth-child(2)) {
+  user-select: none;
+  opacity: 0;
+  filter: blur(30px);
 }
 .dark-theme-trait .todo-screen .task-item .item-attribute {
   flex-wrap: wrap;
@@ -14587,7 +14691,7 @@ body.dark .task-item .item-information {
 body.dark .task-item .item-information * {
   line-height: 1.4em;
 }
-body.dark .task-item .item-information .label {
+body.dark .task-item .item-information:not(.simple) .label {
   font-size: 1rem;
   opacity: 0.6;
   margin-right: -50%;
@@ -14596,7 +14700,7 @@ body.dark .task-item .item-information .label {
   white-space: nowrap;
   max-width: calc(100% - 180px);
 }
-body.dark .task-item .item-information .label::after {
+body.dark .task-item .item-information:not(.simple) .label::after {
   content: ":";
 }
 body.dark .task-item .item-information .value {
@@ -14611,17 +14715,43 @@ body.dark .task-item .item-information .progress-bar.progress-disabled.progress-
 body.dark .task-item .item-information .progress-bar-pad {
   background-color: rgba(128, 128, 128, 0.2);
 }
+body.dark .task-item .item-information .foreground {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+body.dark .task-item .item-information .foreground .item-information {
+  padding: 0px;
+}
+body.dark .task-item .item-information .foreground .item-operator .main-button {
+  min-width: 7rem;
+}
 body.dark .task-item .item-information .primary {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex-grow: 1;
 }
 body.dark .task-item .item-information .primary .value {
   font-size: 2rem;
   opacity: 0.6;
   overflow: hidden;
   white-space: nowrap;
+  position: absolute;
+  line-height: 1em;
+  transition: opacity 500ms, filter 500ms;
+}
+body.dark .screen-body:not(.show-second-panel) .primary .value:not(:nth-child(1)) {
+  user-select: none;
+  opacity: 0;
+  filter: blur(30px);
+}
+body.dark .screen-body.show-second-panel .primary .value:not(:nth-child(2)) {
+  user-select: none;
+  opacity: 0;
+  filter: blur(30px);
 }
 body.dark .todo-screen .task-item .item-attribute {
   flex-wrap: wrap;
@@ -17016,7 +17146,7 @@ body.dark .keyboard-shortcuts li .key:first-child {
   body.auto .task-item .item-information * {
     line-height: 1.4em;
   }
-  body.auto .task-item .item-information .label {
+  body.auto .task-item .item-information:not(.simple) .label {
     font-size: 1rem;
     opacity: 0.6;
     margin-right: -50%;
@@ -17025,7 +17155,7 @@ body.dark .keyboard-shortcuts li .key:first-child {
     white-space: nowrap;
     max-width: calc(100% - 180px);
   }
-  body.auto .task-item .item-information .label::after {
+  body.auto .task-item .item-information:not(.simple) .label::after {
     content: ":";
   }
   body.auto .task-item .item-information .value {
@@ -17040,17 +17170,43 @@ body.dark .keyboard-shortcuts li .key:first-child {
   body.auto .task-item .item-information .progress-bar-pad {
     background-color: rgba(128, 128, 128, 0.2);
   }
+  body.auto .task-item .item-information .foreground {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  body.auto .task-item .item-information .foreground .item-information {
+    padding: 0px;
+  }
+  body.auto .task-item .item-information .foreground .item-operator .main-button {
+    min-width: 7rem;
+  }
   body.auto .task-item .item-information .primary {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    flex-grow: 1;
   }
   body.auto .task-item .item-information .primary .value {
     font-size: 2rem;
     opacity: 0.6;
     overflow: hidden;
     white-space: nowrap;
+    position: absolute;
+    line-height: 1em;
+    transition: opacity 500ms, filter 500ms;
+  }
+  body.auto .screen-body:not(.show-second-panel) .primary .value:not(:nth-child(1)) {
+    user-select: none;
+    opacity: 0;
+    filter: blur(30px);
+  }
+  body.auto .screen-body.show-second-panel .primary .value:not(:nth-child(2)) {
+    user-select: none;
+    opacity: 0;
+    filter: blur(30px);
   }
   body.auto .todo-screen .task-item .item-attribute {
     flex-wrap: wrap;
@@ -24779,8 +24935,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                                                 _c = [tagButtonList];
                                                                 return [4 /*yield*/, Promise.all(("@overall" === tag ?
-                                                                        ["full", "elapsed", "count", "compact",] :
-                                                                        ["@home", "full", "elapsed", "count", "compact",])
+                                                                        ["full", "simple", "compact",] :
+                                                                        ["@home", "full", "simple", "compact",])
                                                                         .map(function (i) { return __awaiter(_this, void 0, void 0, function () {
                                                                         var _a;
                                                                         var _this = this;
@@ -25646,14 +25802,18 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         }); }, "delete-button")];
                 });
             }); };
-            Render.informationSimple = function (entry, item, progressScaleShowStyle) { return Render.$div({
-                className: "item-information",
-                attributes: { style: Render.progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
+            Render.informationSimple = function (entry, item, progressScaleShowStyle, operator) { return Render.$div({
+                className: "item-information simple",
+                attributes: { style: Render.progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), },
+                onclick: function () { return Render.getScreenBody().classList.toggle("show-second-panel"); },
             })([
                 Render.itemProgressBar(entry.pass, item, "with-pad"),
-                Render.$div("primary")([
-                    Render.monospace(Domain.timeSimpleStringFromTick(item.elapsed)),
-                    // monospace(item.count.toLocaleString()),
+                Render.$div("foreground")([
+                    Render.$div("primary")([
+                        Render.monospace(Domain.timeSimpleStringFromTick(item.elapsed)),
+                        Render.monospace("+" + item.count.toLocaleString()),
+                    ]),
+                    operator,
                 ]),
             ]); };
             // export const informationCount = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
@@ -26018,11 +26178,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 });
             }); };
             Render.todoItem = function (entry, item, displayStyle, progressScaleShowStyle) { return __awaiter(_this, void 0, void 0, function () {
-                var isFirst, onUpdate, onDone, sublist, itemDom, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t;
-                var _u, _v, _w;
+                var isFirst, itemDom, onUpdate, onDone, sublist, title, _a, _b, _c, _d, _e, _f, _g, operator, _h, _j, header, _k, _l, _m, _o, _p, _q;
+                var _r, _s, _t;
                 var _this = this;
-                return __generator(this, function (_x) {
-                    switch (_x.label) {
+                return __generator(this, function (_u) {
+                    switch (_u.label) {
                         case 0:
                             isFirst = true;
                             onUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -26046,99 +26206,71 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 });
                             }); };
                             sublist = OldStorage.Task.getSublist(item.task);
-                            _a = Render.$make(HTMLDivElement);
-                            _b = Render.$div({
-                                className: "task-item flex-item",
-                                attributes: "compact" !== displayStyle ?
-                                    {} :
-                                    { style: Render.progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
-                            });
-                            _c = ["compact" !== displayStyle ? [] : Render.itemProgressBar(entry.pass, item)];
-                            _d = Render.$div("item-header");
                             if (!("full" === displayStyle)) return [3 /*break*/, 2];
-                            _f = Render.internalLink;
-                            _u = {
+                            _b = Render.internalLink;
+                            _r = {
                                 className: "item-title",
                                 href: { pass: entry.pass, todo: item.task, }
                             };
                             return [4 /*yield*/, Resource.loadSvgOrCache(Render.getTodoIcon(entry, item))];
                         case 1:
-                            _e = _f.apply(void 0, [(_u.children = [
-                                    _x.sent(),
+                            _a = _b.apply(void 0, [(_r.children = [
+                                    _u.sent(),
                                     Model.isSublistOld(entry.tag) ?
                                         Model.decode(OldStorage.Task.getBody(item.task)) :
                                         Model.decode(item.task)
                                 ],
-                                    _u)]);
+                                    _r)]);
                             return [3 /*break*/, 7];
                         case 2:
-                            _g = Render.$span("item-title-frame");
+                            _c = Render.$span("item-title-frame");
                             if (!(Model.isSublistOld(entry.tag) || null === sublist)) return [3 /*break*/, 3];
-                            _h = [];
+                            _d = [];
                             return [3 /*break*/, 5];
                         case 3:
-                            _j = Render.internalLink;
-                            _v = {
+                            _e = Render.internalLink;
+                            _s = {
                                 className: "item-title-sublist",
                                 href: { pass: entry.pass, tag: sublist, }
                             };
                             return [4 /*yield*/, Resource.loadSvgOrCache("folder-icon")];
                         case 4:
-                            _h = [
-                                _j.apply(void 0, [(_v.children = [
-                                        _x.sent(),
+                            _d = [
+                                _e.apply(void 0, [(_s.children = [
+                                        _u.sent(),
                                         Model.decode(sublist)
                                     ],
-                                        _v)])
+                                        _s)])
                             ];
-                            _x.label = 5;
+                            _u.label = 5;
                         case 5:
-                            _k = [
-                                _h
+                            _f = [
+                                _d
                             ];
-                            _l = Render.internalLink;
-                            _w = {
+                            _g = Render.internalLink;
+                            _t = {
                                 className: "item-title-body",
                                 href: { pass: entry.pass, todo: item.task, }
                             };
                             return [4 /*yield*/, Resource.loadSvgOrCache(Render.getTodoIcon(entry, item))];
                         case 6:
-                            _e = _g.apply(void 0, [_k.concat([
-                                    _l.apply(void 0, [(_w.children = [
-                                            _x.sent(),
+                            _a = _c.apply(void 0, [_f.concat([
+                                    _g.apply(void 0, [(_t.children = [
+                                            _u.sent(),
                                             Model.isSublistOld(entry.tag) || null !== sublist ?
                                                 Model.decode(OldStorage.Task.getBody(item.task)) :
                                                 Model.decode(item.task)
                                         ],
-                                            _w)])
+                                            _t)])
                                 ])]);
-                            _x.label = 7;
+                            _u.label = 7;
                         case 7:
-                            _m = [
-                                _e
-                            ];
-                            // internalLink
-                            // ({
-                            //     className: "item-title",
-                            //     href: { pass: entry.pass, todo: item.task, },
-                            //     children:
-                            //     [
-                            //         await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
-                            //         Model.isSublistOld(entry.tag) ? Model.decode(OldStorage.Task.getBody(item.task)):
-                            //         null === sublist ? Model.decode(item.task):
-                            //         [
-                            //             internalLink
-                            //             ({
-                            //                 className: "item-sublist",
-                            //                 href: { pass: entry.pass, tag: sublist, },
-                            //                 children: Model.decode(sublist),
-                            //             }),
-                            //             Model.decode(OldStorage.Task.getBody(item.task))
-                            //         ],
-                            //     ]
-                            // }),
-                            _o = Render.$div("item-operator");
-                            _p = [{
+                            title = _a;
+                            _h = Render.$div({
+                                className: "item-operator",
+                                onclick: function (event) { return event.stopPropagation(); },
+                            });
+                            _j = [{
                                     tag: "button",
                                     className: item.isDefault ? "default-button main-button" : "main-button",
                                     attributes: {
@@ -26177,66 +26309,53 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     Render.todoDeleteMenu(entry.pass, item),
                                 ])];
                         case 8:
-                            _c = _c.concat([
-                                _d.apply(void 0, [_m.concat([
-                                        // internalLink
-                                        // ({
-                                        //     className: "item-title",
-                                        //     href: { pass: entry.pass, todo: item.task, },
-                                        //     children:
-                                        //     [
-                                        //         await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
-                                        //         Model.isSublistOld(entry.tag) ? Model.decode(OldStorage.Task.getBody(item.task)):
-                                        //         null === sublist ? Model.decode(item.task):
-                                        //         [
-                                        //             internalLink
-                                        //             ({
-                                        //                 className: "item-sublist",
-                                        //                 href: { pass: entry.pass, tag: sublist, },
-                                        //                 children: Model.decode(sublist),
-                                        //             }),
-                                        //             Model.decode(OldStorage.Task.getBody(item.task))
-                                        //         ],
-                                        //     ]
-                                        // }),
-                                        _o.apply(void 0, [_p.concat([
-                                                _x.sent()
-                                            ])])
-                                    ])])
-                            ]);
-                            if (!("compact" !== displayStyle)) return [3 /*break*/, 13];
-                            if (!("full" !== displayStyle)) return [3 /*break*/, 9];
-                            _r = [];
-                            return [3 /*break*/, 12];
-                        case 9:
-                            _s = Render.$div("item-attribute");
-                            return [4 /*yield*/, Render.todoItemTags(entry.pass, item)];
-                        case 10:
-                            _t = [
-                                _x.sent()
-                            ];
-                            return [4 /*yield*/, Render.todoItemSettings(entry.pass, item)];
-                        case 11:
-                            _r = _s.apply(void 0, [_t.concat([
-                                    _x.sent()
+                            operator = _h.apply(void 0, [_j.concat([
+                                    _u.sent()
                                 ])]);
-                            _x.label = 12;
+                            header = Render.$div("item-header")("simple" !== displayStyle ?
+                                [title, operator,] :
+                                title);
+                            _k = displayStyle;
+                            switch (_k) {
+                                case "compact": return [3 /*break*/, 9];
+                                case "simple": return [3 /*break*/, 10];
+                            }
+                            return [3 /*break*/, 11];
+                        case 9:
+                            itemDom = Render.$make(HTMLDivElement)(Render.$div({
+                                className: "task-item flex-item",
+                                attributes: { style: Render.progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
+                            })([
+                                Render.itemProgressBar(entry.pass, item),
+                                header,
+                            ]));
+                            return [3 /*break*/, 14];
+                        case 10:
+                            itemDom = Render.$make(HTMLDivElement)(Render.$div("task-item flex-item")([
+                                header,
+                                Render.informationSimple(entry, item, progressScaleShowStyle, operator),
+                            ]));
+                            return [3 /*break*/, 14];
+                        case 11:
+                            _l = Render.$make(HTMLDivElement);
+                            _m = Render.$div("task-item flex-item");
+                            _o = [header];
+                            _p = Render.$div("item-attribute");
+                            return [4 /*yield*/, Render.todoItemTags(entry.pass, item)];
                         case 12:
                             _q = [
-                                _r,
-                                "full" === displayStyle ?
-                                    Render.informationDigest(entry, item, progressScaleShowStyle) :
-                                    Render.informationSimple(entry, item, progressScaleShowStyle)
+                                _u.sent()
                             ];
-                            return [3 /*break*/, 14];
+                            return [4 /*yield*/, Render.todoItemSettings(entry.pass, item)];
                         case 13:
-                            _q = [];
-                            _x.label = 14;
-                        case 14:
-                            itemDom = _a.apply(void 0, [_b.apply(void 0, [_c.concat([
-                                        _q
+                            itemDom = _l.apply(void 0, [_m.apply(void 0, [_o.concat([
+                                        _p.apply(void 0, [_q.concat([
+                                                _u.sent()
+                                            ])]),
+                                        Render.informationDigest(entry, item, progressScaleShowStyle)
                                     ])])]);
-                            return [2 /*return*/, itemDom];
+                            return [3 /*break*/, 14];
+                        case 14: return [2 /*return*/, itemDom];
                     }
                 });
             }); };
@@ -27865,7 +27984,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             return [4 /*yield*/, Promise.all(Array.from(document
                                                     .getElementsByClassName("list-screen")[0]
                                                     .getElementsByClassName("todo-list")[0].childNodes).map(function (dom, index) { return __awaiter(_this, void 0, void 0, function () {
-                                                    var item, button, information, svg, icon;
+                                                    var item, button, information, information, svg, icon;
                                                     var _a, _b, _c;
                                                     return __generator(this, function (_d) {
                                                         switch (_d.label) {
@@ -27876,6 +27995,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 if ("full" === displayStyle) {
                                                                     information = dom.getElementsByClassName("item-information")[0];
                                                                     information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0].innerText = Domain.timeLongStringFromTick(item.elapsed);
+                                                                }
+                                                                if ("simple" === displayStyle) {
+                                                                    information = dom.getElementsByClassName("item-information")[0];
+                                                                    information.getElementsByClassName("primary")[0].getElementsByClassName("value")[0].innerText = Domain.timeSimpleStringFromTick(item.elapsed);
                                                                 }
                                                                 svg = (_c = (_b = (_a = dom.getElementsByClassName("item-title")) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.getElementsByTagName("svg")) === null || _c === void 0 ? void 0 : _c[0];
                                                                 if (!svg) return [3 /*break*/, 2];
@@ -30601,7 +30724,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Nov 13 2023 01:43:11 GMT+0900 (日本標準時)', buildTimestampTick: 1699807391051, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Nov 13 2023 19:20:38 GMT+0900 (日本標準時)', buildTimestampTick: 1699870838813, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -30825,7 +30948,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Mon Nov 13 2023 01:43:11 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Mon Nov 13 2023 19:20:38 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

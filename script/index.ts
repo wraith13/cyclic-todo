@@ -3925,8 +3925,8 @@ export module CyclicToDo
                     (
                         (
                             "@overall" === tag ?
-                            [ "full", "elapsed", "count", "compact", ]:
-                            [ "@home", "full", "elapsed", "count", "compact", ]
+                            [ "full", "simple", "compact", ]:
+                            [ "@home", "full", "simple", "compact", ]
                         )
                         .map
                         (
@@ -4620,17 +4620,22 @@ export module CyclicToDo
             },
             "delete-button"
         );
-        export const informationSimple = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
+        export const informationSimple = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full", operator: minamo.dom.Source) => $div
         ({
-            className: "item-information",
-            attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
+            className: "item-information simple",
+            attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), },
+            onclick: () => getScreenBody().classList.toggle("show-second-panel"),
         })
         ([
             itemProgressBar(entry.pass, item, "with-pad"),
-            $div("primary")
+            $div("foreground")
             ([
-                monospace(Domain.timeSimpleStringFromTick(item.elapsed)),
-                // monospace(item.count.toLocaleString()),
+                $div("primary")
+                ([
+                    monospace(Domain.timeSimpleStringFromTick(item.elapsed)),
+                    monospace(`+${item.count.toLocaleString()}`),
+                ]),
+                operator,
             ]),
         ]);
         // export const informationCount = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
@@ -4921,6 +4926,7 @@ export module CyclicToDo
         export const todoItem = async (entry: ToDoTagEntryOld, item: ToDoEntry, displayStyle: TagSettings["displayStyle"], progressScaleShowStyle: "none" | "full") =>
         {
             let isFirst = true;
+            let itemDom: HTMLDivElement;
             const onUpdate = async () =>
             {
                 Object.assign(item, Domain.getToDoEntryOld(entry.pass, item.task));
@@ -4933,147 +4939,150 @@ export module CyclicToDo
                 onUpdate();
             };
             const sublist = OldStorage.Task.getSublist(item.task);
-            const itemDom = $make(HTMLDivElement)
-            (
-                $div
+            const title = "full" === displayStyle ?
+                internalLink
                 ({
-                    className: "task-item flex-item",
-                    attributes:"compact" !== displayStyle ?
-                        { }:
-                        { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
-                })
+                    className: "item-title",
+                    href: { pass: entry.pass, todo: item.task, },
+                    children:
+                    [
+                        await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
+                        Model.isSublistOld(entry.tag) ?
+                            Model.decode(OldStorage.Task.getBody(item.task)):
+                            Model.decode(item.task)
+                    ]
+                }):
+                $span("item-title-frame")
                 ([
-                    "compact" !== displayStyle ? []: itemProgressBar(entry.pass, item),
-                    $div("item-header")
-                    ([
-                        "full" === displayStyle ?
+                    Model.isSublistOld(entry.tag) || null === sublist ? []:
+                    [
                         internalLink
                         ({
-                            className: "item-title",
-                            href: { pass: entry.pass, todo: item.task, },
+                            className: "item-title-sublist",
+                            href: { pass: entry.pass, tag: sublist, },
                             children:
                             [
-                                await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
-                                Model.isSublistOld(entry.tag) ?
-                                    Model.decode(OldStorage.Task.getBody(item.task)):
-                                    Model.decode(item.task)
-                            ]
-                        }):
-                        $span("item-title-frame")
-                        ([
-                            Model.isSublistOld(entry.tag) || null === sublist ? []:
-                            [
-                                internalLink
-                                ({
-                                    className: "item-title-sublist",
-                                    href: { pass: entry.pass, tag: sublist, },
-                                    children:
-                                    [
-                                        await Resource.loadSvgOrCache("folder-icon"),
-                                        Model.decode(sublist),
-                                    ],
-                                }),
+                                await Resource.loadSvgOrCache("folder-icon"),
+                                Model.decode(sublist),
                             ],
-                            internalLink
-                            ({
-                                className: "item-title-body",
-                                href: { pass: entry.pass, todo: item.task, },
-                                children:
-                                [
-                                    await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
-                                    Model.isSublistOld(entry.tag) || null !== sublist ?
-                                        Model.decode(OldStorage.Task.getBody(item.task)):
-                                        Model.decode(item.task)
-                                ]
-                            }),
-                        ]),
-                        // internalLink
-                        // ({
-                        //     className: "item-title",
-                        //     href: { pass: entry.pass, todo: item.task, },
-                        //     children:
-                        //     [
-                        //         await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
-                        //         Model.isSublistOld(entry.tag) ? Model.decode(OldStorage.Task.getBody(item.task)):
-                        //         null === sublist ? Model.decode(item.task):
-                        //         [
-                        //             internalLink
-                        //             ({
-                        //                 className: "item-sublist",
-                        //                 href: { pass: entry.pass, tag: sublist, },
-                        //                 children: Model.decode(sublist),
-                        //             }),
-                        //             Model.decode(OldStorage.Task.getBody(item.task))
-                        //         ],
-                        //     ]
-                        // }),
-                        $div("item-operator")
-                        ([
-                            {
-                                tag: "button",
-                                className: item.isDefault ? "default-button main-button": "main-button",
-                                attributes:
-                                {
-                                    tabindex: "0",
-                                },
-                                children: label("Done"),
-                                onclick: async () =>
-                                {
-                                    //if (isSessionPass(pass))
-                                    const fxxkingTypeScriptCompiler = OldStorage.isSessionPass(entry.pass);
-                                    if (fxxkingTypeScriptCompiler)
-                                    {
-                                        alert
-                                        (
-                                            locale.string
-                                            (
-                                                "This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
-                                                +"\n"
-                                                +"これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。"
-                                            )
-                                        );
-                                    }
-                                    else
-                                    {
-                                        if (isFirst) // チャタリング防止
-                                        {
-                                            isFirst = false;
-                                            await Operate.done
-                                            (
-                                                entry.pass,
-                                                item.task,
-                                                MigrateBridge.getDoneTicks(entry.pass),
-                                                onUpdate
-                                            );
-                                            await onDone();
-                                        }
-                                    }
-                                }
-                            },
-                            await menuButton
-                            ([
-                                todoRenameMenu(entry.pass, item),
-                                todoTagMenu(entry.pass, item),
-                                todoDeleteMenu(entry.pass, item),
-                            ]),
-                        ]),
-                    ]),
-                    "compact" !== displayStyle ?
+                        }),
+                    ],
+                    internalLink
+                    ({
+                        className: "item-title-body",
+                        href: { pass: entry.pass, todo: item.task, },
+                        children:
                         [
-                            "full" !== displayStyle ? []:
-                                $div("item-attribute")
-                                ([
-                                    await todoItemTags(entry.pass, item),
-                                    await todoItemSettings(entry.pass, item),
-                                ]),
-                            "full" === displayStyle ?
-                                informationDigest(entry, item, progressScaleShowStyle):
-                                informationSimple(entry, item, progressScaleShowStyle),
-                        ]:
-                        []
-                ])
+                            await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
+                            Model.isSublistOld(entry.tag) || null !== sublist ?
+                                Model.decode(OldStorage.Task.getBody(item.task)):
+                                Model.decode(item.task)
+                        ]
+                    }),
+                ]);
+            const operator = $div
+            ({
+                className: "item-operator",
+                onclick: (event: MouseEvent) => event.stopPropagation(),
+            })
+            ([
+                {
+                    tag: "button",
+                    className: item.isDefault ? "default-button main-button": "main-button",
+                    attributes:
+                    {
+                        tabindex: "0",
+                    },
+                    children: label("Done"),
+                    onclick: async () =>
+                    {
+                        //if (isSessionPass(pass))
+                        const fxxkingTypeScriptCompiler = OldStorage.isSessionPass(entry.pass);
+                        if (fxxkingTypeScriptCompiler)
+                        {
+                            alert
+                            (
+                                locale.string
+                                (
+                                    "This is view mode. If this is your to-do list, open the original URL instead of the sharing URL. If this is not your to-do list, you can copy this to-do list from edit mode.\n"
+                                    +"\n"
+                                    +"これは表示モードです。これが貴方が作成したToDoリストならば、共有用のURLではなくオリジナルのURLを開いてください。これが貴方が作成したToDoリストでない場合、編集モードからこのToDoリストをコピーできます。"
+                                )
+                            );
+                        }
+                        else
+                        {
+                            if (isFirst) // チャタリング防止
+                            {
+                                isFirst = false;
+                                await Operate.done
+                                (
+                                    entry.pass,
+                                    item.task,
+                                    MigrateBridge.getDoneTicks(entry.pass),
+                                    onUpdate
+                                );
+                                await onDone();
+                            }
+                        }
+                    }
+                },
+                await menuButton
+                ([
+                    todoRenameMenu(entry.pass, item),
+                    todoTagMenu(entry.pass, item),
+                    todoDeleteMenu(entry.pass, item),
+                ]),
+            ]);
+            const header = $div("item-header")
+            (
+                "simple" !== displayStyle ?
+                    [ title, operator, ]:
+                    title
             );
-            return itemDom;
+            switch(displayStyle)
+            {
+            case "compact":
+                itemDom = $make(HTMLDivElement)
+                (
+                    $div
+                    ({
+                        className: "task-item flex-item",
+                        attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
+                    })
+                    ([
+                        itemProgressBar(entry.pass, item),
+                        header,
+                    ])
+                );
+                break;
+            case "simple":
+                itemDom = $make(HTMLDivElement)
+                (
+                    $div("task-item flex-item")
+                    ([
+                        header,
+                        informationSimple(entry, item, progressScaleShowStyle, operator),
+                    ])
+                );
+                break;
+            default: // "full"
+                itemDom = $make(HTMLDivElement)
+                (
+                    $div("task-item flex-item")
+                    ([
+                        header,
+                        $div("item-attribute")
+                        ([
+                            await todoItemTags(entry.pass, item),
+                            await todoItemSettings(entry.pass, item),
+                        ]),
+                        informationDigest(entry, item, progressScaleShowStyle),
+                    ])
+                );
+                break;
+            }
+            return itemDom
         };
         export const historyItem = async (entry: ToDoTagEntryOld, item: { task: string, tick: number | null }) => $div("history-item flex-item ")
         ([
@@ -6426,6 +6435,11 @@ export module CyclicToDo
                                         {
                                             const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
                                             (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
+                                        }
+                                        if ("simple" === displayStyle)
+                                        {
+                                            const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
+                                            (information.getElementsByClassName("primary")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeSimpleStringFromTick(item.elapsed);
                                         }
                                         const svg = dom.getElementsByClassName("item-title")?.[0]?.getElementsByTagName("svg")?.[0];
                                         if (svg)

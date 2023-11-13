@@ -1870,18 +1870,21 @@ button
         {
             line-height: 1.4em;
         }
-        .label
+        &:not(.simple)
         {
-            font-size: 1.0rem;
-            opacity: 0.6;
-            margin-right: -50%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: calc(100% - 180px);
-            &::after
+            .label
             {
-                content: ":";
+                font-size: 1.0rem;
+                opacity: 0.6;
+                margin-right: -50%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: calc(100% - 180px);
+                &::after
+                {
+                    content: ":";
+                }
             }
         }
         .value
@@ -1905,18 +1908,73 @@ button
         {
             background-color: rgba(@disabled-color, 0.2);
         }
+        .foreground
+        {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            .item-information
+            {
+                padding: 0px;
+            }
+            .item-operator
+            {
+                .main-button
+                {
+                    min-width: 7rem;
+                }
+            }
+        }
         .primary
         {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            flex-grow: 1;
             .value
             {
                 font-size: 2.0rem;
                 opacity: 0.6;
                 overflow: hidden;
                 white-space: nowrap;
+                position: absolute;
+                line-height: 1em;
+                transition: opacity 500ms, filter 500ms;
+            }
+        }
+    }
+}
+.screen-body
+{
+    &:not(.show-second-panel)
+    {
+        .primary
+        {
+            .value
+            {
+                &:not(:nth-child(1))
+                {
+                    user-select: none;
+                    opacity: 0;
+                    filter: blur(30px);
+                }
+            }
+        }
+    }
+    &.show-second-panel
+    {
+        .primary
+        {
+            .value
+            {
+                &:not(:nth-child(2))
+                {
+                    user-select: none;
+                    opacity: 0;
+                    filter: blur(30px);
+                }
             }
         }
     }
