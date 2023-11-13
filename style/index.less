@@ -1908,6 +1908,12 @@ button
         {
             background-color: rgba(@disabled-color, 0.2);
         }
+        .item-params
+        {
+            max-width: 420px;
+            margin-left: auto;
+            margin-right: auto;
+        }
         .foreground
         {
             display: flex;
@@ -1937,7 +1943,7 @@ button
             {
                 font-size: 2.0rem;
                 opacity: 0.6;
-                overflow: hidden;
+                // overflow: hidden;
                 white-space: nowrap;
                 position: absolute;
                 line-height: 1em;
@@ -1957,8 +1963,8 @@ button
                 &:not(:nth-child(1))
                 {
                     user-select: none;
-                    opacity: 0;
-                    filter: blur(30px);
+                    // opacity: 0;
+                    filter: blur(1.0em);
                 }
             }
         }
@@ -1972,8 +1978,8 @@ button
                 &:not(:nth-child(2))
                 {
                     user-select: none;
-                    opacity: 0;
-                    filter: blur(30px);
+                    // opacity: 0;
+                    filter: blur(1.0em);
                 }
             }
         }
