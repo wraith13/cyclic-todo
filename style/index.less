@@ -1297,7 +1297,7 @@ button
     justify-content: space-around;
     align-items: center;
     transition: background-color 1s;
-    background-color: fade(@main-color, 61.8%);
+    //background-color: fade(@main-color, 61.8%);
     z-index: 88888;
     &.fade-in
     {
@@ -2147,6 +2147,11 @@ button
     left: 0px;
     max-width: 100vw;
     max-height: 100vh;
+    transition: filter 500ms;
+    &.covered
+    {
+        filter: blur(0.125rem) grayscale(0.618);
+    }
     & > :not(.screen-body)
     {
         flex-shrink: 0;
@@ -2157,7 +2162,7 @@ button
         overflow-y: auto;
         flex-grow: 1;
         padding-top: 40px;
-        transition: opacity 750ms;
+        transition: filter 500ms;
         &.updating
         {
             filter: blur(1.0em) grayscale(0.618);

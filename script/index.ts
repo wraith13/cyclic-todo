@@ -4382,16 +4382,21 @@ export module CyclicToDo
             });
             const close = async () =>
             {
-                dom.classList.remove("fade-in");
-                dom.classList.add("fade-out");
-                await minamo.core.timeout(500);
+                // dom.classList.remove("fade-in");
+                // dom.classList.add("fade-out");
+                // await minamo.core.timeout(500);
                 minamo.dom.remove(dom);
+                if ( ! hasScreenCover())
+                {
+                    minamo.dom.toggleCSSClass(Render.getScreen(), "covered", false);
+                }
             };
             const result =
             {
                 dom,
                 close,
             };
+            minamo.dom.toggleCSSClass(Render.getScreen(), "covered", true);
             return result;
         };
         export const getScreenCoverList = () => Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[];
