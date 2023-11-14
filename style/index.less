@@ -1887,6 +1887,10 @@ button
                 }
             }
         }
+        &.simple
+        {
+            padding: 0.25rem;
+        }
         .value
         {
             font-size: 1.0rem;
@@ -1941,7 +1945,7 @@ button
             flex-grow: 1;
             .value
             {
-                font-size: 2.0rem;
+                font-size: 1.5rem;
                 opacity: 0.6;
                 // overflow: hidden;
                 white-space: nowrap;
@@ -2156,7 +2160,9 @@ button
         transition: opacity 750ms;
         &.updating
         {
-            filter: blur(1.0em) grayscale(1.0);
+            filter: blur(1.0em) grayscale(0.618);
+            user-select: none;
+            pointer-events: none;
         }
     }
     &.has-bottom-tabs

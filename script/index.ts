@@ -1872,11 +1872,21 @@ export module CyclicToDo
             }
             else
             {
-                const daysSymbol = (1.1).toLocaleString().replace(/\d/g, "");
                 const days = Math.floor(tick / (24 *60));
-                return days < 1 ? timeCoreStringFromTick(tick):
-                    days < 10 ?  `${days.toLocaleString()}${daysSymbol}${timeCoreStringFromTick(tick)}`:
-                        `${days.toLocaleString()}${daysSymbol}`;
+                if (days < 1)
+                {
+                    return timeCoreStringFromTick(tick);
+                }
+                else
+                if (days < 10)
+                {
+                    const daysSymbol = (1.1).toLocaleString().replace(/\d/g, "");
+                    return `${days.toLocaleString()}${daysSymbol}${timeCoreStringFromTick(tick)}`;
+                }
+                else
+                {
+                    return `${days.toLocaleString()} ${locale.map("days")}`;
+                }
             }
         };
         export const timeRangeStringFromTick = (a: null | number, b: null | number): string =>
@@ -7621,7 +7631,7 @@ export module CyclicToDo
             // await minamo.core.timeout(30);
             getScreenBody().classList.toggle("updating", true);
             updatingAt = new Date().getTime();
-            await minamo.core.timeout(50);
+            await minamo.core.timeout(125);
         };
         export const updatedScreenBody = async () =>
         {
