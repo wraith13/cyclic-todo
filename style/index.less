@@ -2153,6 +2153,11 @@ button
         overflow-y: auto;
         flex-grow: 1;
         padding-top: 40px;
+        transition: opacity 750ms;
+        &.updating
+        {
+            filter: blur(1.0em) grayscale(1.0);
+        }
     }
     &.has-bottom-tabs
     {

@@ -6389,6 +6389,7 @@ export module CyclicToDo
                             isUpdating = true;
                             await updatingScreenBody();
                             await Render.updateWindow("operate");
+                            await updatedScreenBody();
                         }
                         break;
                     case "timer":
@@ -6535,6 +6536,7 @@ export module CyclicToDo
                                 await updatingScreenBody();
                             }
                             await Render.updateWindow("operate");
+                            await updatedScreenBody();
                         }
                         break;
                 }
@@ -7607,15 +7609,30 @@ export module CyclicToDo
             ),
             repositoryMenuItem(),
         ];
+        let updatingAt = 0;
         export const updatingScreenBody = async () =>
         {
             removeProgressStyle();
-            minamo.dom.appendChildren
-            (
-                getScreenBody(),
-                await applicationIcon()
-            );
-            await minamo.core.timeout(30);
+            // minamo.dom.appendChildren
+            // (
+            //     getScreenBody(),
+            //     await applicationIcon()
+            // );
+            // await minamo.core.timeout(30);
+            getScreenBody().classList.toggle("updating", true);
+            updatingAt = new Date().getTime();
+            await minamo.core.timeout(50);
+        };
+        export const updatedScreenBody = async () =>
+        {
+            const now = new Date().getTime();
+            const transitionSpanMin = 250;
+            const wait = Math.min(updatingAt +transitionSpanMin -now, transitionSpanMin);
+            if (0 < wait)
+            {
+                await minamo.core.timeout(wait);
+            }
+            getScreenBody().classList.toggle("updating", false);
         };
         export const updatingScreen = async (_url: string = location.href): Promise<ScreenSource> =>
         ({
@@ -8690,6 +8707,7 @@ export module CyclicToDo
                 break;
             }
         }
+        await Render.updatedScreenBody();
     };
     export const showUrl = async (data: { pass?:string, tag?:string, todo?: string, hash?: string}) =>
     {
