@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Wed Nov 15 2023 06:40:21 GMT+0900 (日本標準時)
+    build at: Wed Nov 15 2023 23:03:02 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2003,6 +2003,7 @@ h2 {
   overflow: auto;
   min-width: 240px;
   max-width: calc(100vw - 16px);
+  transition: filter 500ms;
 }
 .light-theme-trait .popup input {
   width: calc(100% - 8px);
@@ -2020,6 +2021,9 @@ h2 {
 .light-theme-trait .popup .popup-operator .default-button {
   float: right;
   min-width: 120px;
+}
+.light-theme-trait .popup.covered {
+  filter: blur(0.125rem) grayscale(0.618);
 }
 .light-theme-trait .screen-cover {
   position: fixed;
@@ -2633,6 +2637,7 @@ h2 {
   justify-content: center;
   align-items: center;
   flex-grow: 1;
+  cursor: pointer;
 }
 .light-theme-trait .task-item .item-information .primary .value {
   font-size: 1.5rem;
@@ -4979,6 +4984,7 @@ body.light .popup {
   overflow: auto;
   min-width: 240px;
   max-width: calc(100vw - 16px);
+  transition: filter 500ms;
 }
 body.light .popup input {
   width: calc(100% - 8px);
@@ -4996,6 +5002,9 @@ body.light .popup .popup-operator .cancel-button {
 body.light .popup .popup-operator .default-button {
   float: right;
   min-width: 120px;
+}
+body.light .popup.covered {
+  filter: blur(0.125rem) grayscale(0.618);
 }
 body.light .screen-cover {
   position: fixed;
@@ -5609,6 +5618,7 @@ body.light .task-item .item-information .primary {
   justify-content: center;
   align-items: center;
   flex-grow: 1;
+  cursor: pointer;
 }
 body.light .task-item .item-information .primary .value {
   font-size: 1.5rem;
@@ -7595,6 +7605,7 @@ body.light .keyboard-shortcuts li .key:first-child {
     overflow: auto;
     min-width: 240px;
     max-width: calc(100vw - 16px);
+    transition: filter 500ms;
   }
   body.auto .popup input {
     width: calc(100% - 8px);
@@ -7612,6 +7623,9 @@ body.light .keyboard-shortcuts li .key:first-child {
   body.auto .popup .popup-operator .default-button {
     float: right;
     min-width: 120px;
+  }
+  body.auto .popup.covered {
+    filter: blur(0.125rem) grayscale(0.618);
   }
   body.auto .screen-cover {
     position: fixed;
@@ -8075,6 +8089,7 @@ body.light .keyboard-shortcuts li .key:first-child {
     justify-content: center;
     align-items: center;
     flex-grow: 1;
+    cursor: pointer;
   }
   body.auto .task-item .item-information .primary .value {
     font-size: 1.5rem;
@@ -11187,6 +11202,7 @@ body.light .keyboard-shortcuts li .key:first-child {
   overflow: auto;
   min-width: 240px;
   max-width: calc(100vw - 16px);
+  transition: filter 500ms;
 }
 .dark-theme-trait .popup input {
   width: calc(100% - 8px);
@@ -11204,6 +11220,9 @@ body.light .keyboard-shortcuts li .key:first-child {
 .dark-theme-trait .popup .popup-operator .default-button {
   float: right;
   min-width: 120px;
+}
+.dark-theme-trait .popup.covered {
+  filter: blur(0.125rem) grayscale(0.618);
 }
 .dark-theme-trait .screen-cover {
   position: fixed;
@@ -11817,6 +11836,7 @@ body.light .keyboard-shortcuts li .key:first-child {
   justify-content: center;
   align-items: center;
   flex-grow: 1;
+  cursor: pointer;
 }
 .dark-theme-trait .task-item .item-information .primary .value {
   font-size: 1.5rem;
@@ -14166,6 +14186,7 @@ body.dark .popup {
   overflow: auto;
   min-width: 240px;
   max-width: calc(100vw - 16px);
+  transition: filter 500ms;
 }
 body.dark .popup input {
   width: calc(100% - 8px);
@@ -14183,6 +14204,9 @@ body.dark .popup .popup-operator .cancel-button {
 body.dark .popup .popup-operator .default-button {
   float: right;
   min-width: 120px;
+}
+body.dark .popup.covered {
+  filter: blur(0.125rem) grayscale(0.618);
 }
 body.dark .screen-cover {
   position: fixed;
@@ -14796,6 +14820,7 @@ body.dark .task-item .item-information .primary {
   justify-content: center;
   align-items: center;
   flex-grow: 1;
+  cursor: pointer;
 }
 body.dark .task-item .item-information .primary .value {
   font-size: 1.5rem;
@@ -16785,6 +16810,7 @@ body.dark .keyboard-shortcuts li .key:first-child {
     overflow: auto;
     min-width: 240px;
     max-width: calc(100vw - 16px);
+    transition: filter 500ms;
   }
   body.auto .popup input {
     width: calc(100% - 8px);
@@ -16802,6 +16828,9 @@ body.dark .keyboard-shortcuts li .key:first-child {
   body.auto .popup .popup-operator .default-button {
     float: right;
     min-width: 120px;
+  }
+  body.auto .popup.covered {
+    filter: blur(0.125rem) grayscale(0.618);
   }
   body.auto .screen-cover {
     position: fixed;
@@ -17265,6 +17294,7 @@ body.dark .keyboard-shortcuts li .key:first-child {
     justify-content: center;
     align-items: center;
     flex-grow: 1;
+    cursor: pointer;
   }
   body.auto .task-item .item-information .primary .value {
     font-size: 1.5rem;
@@ -23810,7 +23840,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                             var tag;
                                                                             return __generator(this, function (_a) {
                                                                                 switch (_a.label) {
-                                                                                    case 0: return [4 /*yield*/, Render.newTagPrompt(pass)];
+                                                                                    case 0: return [4 /*yield*/, Render.waitPopup(ui.dom, function () { return Render.newTagPrompt(pass); })];
                                                                                     case 1:
                                                                                         tag = _a.sent();
                                                                                         if (!(null !== tag)) return [3 /*break*/, 4];
@@ -25637,6 +25667,21 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.getScreenCoverList = function () { return Array.from(document.getElementsByClassName("screen-cover")); };
             Render.getScreenCover = function () { return Render.getScreenCoverList().filter(function (_i, ix, list) { return (ix + 1) === list.length; })[0]; };
             Render.hasScreenCover = function () { return 0 < Render.getScreenCoverList().length; };
+            Render.waitPopup = function (current, next) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            _a.trys.push([0, , 2, 3]);
+                            minamo_js_1.minamo.dom.toggleCSSClass(current, "covered", true);
+                            return [4 /*yield*/, next()];
+                        case 1: return [2 /*return*/, _a.sent()];
+                        case 2:
+                            minamo_js_1.minamo.dom.toggleCSSClass(current, "covered", false);
+                            return [7 /*endfinally*/];
+                        case 3: return [2 /*return*/];
+                    }
+                });
+            }); };
             Render.popup = function (data) {
                 var _a;
                 var dom = Render.$make(HTMLDivElement)({
@@ -25895,11 +25940,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.informationSimple = function (entry, item, progressScaleShowStyle, operator) { return Render.$div({
                 className: "item-information simple",
                 attributes: { style: Render.progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), },
-                onclick: function () { return Render.getScreenBody().classList.toggle("show-second-panel"); },
             })([
                 Render.itemProgressBar(entry.pass, item, "with-pad"),
                 Render.$div("foreground")([
-                    Render.$div("primary")([
+                    Render.$div({
+                        className: "primary",
+                        onclick: function () { return Render.getScreenBody().classList.toggle("show-second-panel"); },
+                    })([
                         Render.monospace(Domain.timeSimpleStringFromTick(item.elapsed)),
                         Render.monospace("+" + item.count.toLocaleString()),
                     ]),
@@ -30849,7 +30896,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Nov 15 2023 06:40:21 GMT+0900 (日本標準時)', buildTimestampTick: 1699998021809, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Nov 15 2023 23:03:02 GMT+0900 (日本標準時)', buildTimestampTick: 1700056982141, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -31073,7 +31120,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Wed Nov 15 2023 06:40:21 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Wed Nov 15 2023 23:03:02 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

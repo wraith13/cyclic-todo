@@ -1283,6 +1283,11 @@ button
             min-width: 120px;
         }
     }
+    transition: filter 500ms;
+    &.covered
+    {
+        filter: blur(0.125rem) grayscale(0.618);
+    }
 }
 .screen-cover
 {
@@ -1943,6 +1948,7 @@ button
             justify-content: center;
             align-items: center;
             flex-grow: 1;
+            cursor: pointer;
             .value
             {
                 font-size: 1.5rem;

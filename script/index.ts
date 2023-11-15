@@ -2990,7 +2990,7 @@ export module CyclicToDo
                                 ],
                                 onclick: async () =>
                                 {
-                                    const tag = await newTagPrompt(pass);
+                                    const tag = await waitPopup(ui.dom, () => newTagPrompt(pass));
                                     if (null !== tag)
                                     {
                                         result.push(tag);
@@ -4402,6 +4402,18 @@ export module CyclicToDo
         export const getScreenCoverList = () => Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[];
         export const getScreenCover = () => getScreenCoverList().filter((_i, ix, list) => (ix +1) === list.length)[0];
         export const hasScreenCover = () => 0 < getScreenCoverList().length;
+        export const waitPopup = async <T>(current: HTMLElement, next: () => Promise<T>) =>
+        {
+            try
+            {
+                minamo.dom.toggleCSSClass(current, "covered", true);
+                return await next();
+            }
+            finally
+            {
+                minamo.dom.toggleCSSClass(current, "covered", false);
+            }
+        };
         export const popup =
         (
             data:
@@ -4640,13 +4652,16 @@ export module CyclicToDo
         ({
             className: "item-information simple",
             attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), },
-            onclick: () => getScreenBody().classList.toggle("show-second-panel"),
         })
         ([
             itemProgressBar(entry.pass, item, "with-pad"),
             $div("foreground")
             ([
-                $div("primary")
+                $div
+                ({
+                    className: "primary",
+                    onclick: () => getScreenBody().classList.toggle("show-second-panel"),
+                })
                 ([
                     monospace(Domain.timeSimpleStringFromTick(item.elapsed)),
                     monospace(`+${item.count.toLocaleString()}`),
