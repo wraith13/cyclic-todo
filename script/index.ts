@@ -2371,6 +2371,10 @@ export module CyclicToDo
                     OldStorage.TagMember.remove(pass, "@pickup", task);
                 }
                 MigrateBridge.updateTermCategory(pass, MigrateBridge.getToDoEntry(pass, task));
+                if (window.navigator.vibrate)
+                {
+                    window.navigator.vibrate(50);
+                }
                 const toast = makeToast
                 ({
                     forwardOperator: textButton
@@ -4966,14 +4970,16 @@ export module CyclicToDo
             let itemDom: HTMLDivElement;
             const onUpdate = async () =>
             {
+                await updatingScreenBody();
                 Object.assign(item, Domain.getToDoEntryOld(entry.pass, item.task));
-                updateWindow("operate");
+                await updateWindow("operate");
+                await updatedScreenBody();
             };
             const onDone = async () =>
             {
                 itemDom.classList.add("fade-and-slide-out");
-                await minamo.core.timeout(500);
-                onUpdate();
+                // await minamo.core.timeout(500);
+                await onUpdate();
             };
             const sublist = OldStorage.Task.getSublist(item.task);
             const title = "full" === displayStyle ?
