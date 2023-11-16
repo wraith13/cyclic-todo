@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Thu Nov 16 2023 09:34:16 GMT+0900 (日本標準時)
+    build at: Thu Nov 16 2023 22:56:35 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -23970,20 +23970,30 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             var _this = this;
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
-                                                                    case 0: return [4 /*yield*/, Render.newSublistPopup(pass, function (tag) { return __awaiter(_this, void 0, void 0, function () {
-                                                                            var todo;
+                                                                    case 0: return [4 /*yield*/, Render.waitPopup(ui.dom, function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            var _this = this;
                                                                             return __generator(this, function (_a) {
                                                                                 switch (_a.label) {
-                                                                                    case 0:
-                                                                                        todo = OldStorage.TagMember.add(pass, tag, item.task);
-                                                                                        result = true;
-                                                                                        ui.close();
-                                                                                        if (!(todo !== item.task && CyclicToDo.getUrlParams()["todo"])) return [3 /*break*/, 2];
-                                                                                        return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: todo, })];
-                                                                                    case 1:
-                                                                                        _a.sent();
-                                                                                        _a.label = 2;
-                                                                                    case 2: return [2 /*return*/];
+                                                                                    case 0: return [4 /*yield*/, Render.newSublistPopup(pass, function (tag) { return __awaiter(_this, void 0, void 0, function () {
+                                                                                            var todo;
+                                                                                            return __generator(this, function (_a) {
+                                                                                                switch (_a.label) {
+                                                                                                    case 0:
+                                                                                                        todo = OldStorage.TagMember.add(pass, tag, item.task);
+                                                                                                        result = true;
+                                                                                                        return [4 /*yield*/, ui.close()];
+                                                                                                    case 1:
+                                                                                                        _a.sent();
+                                                                                                        if (!(todo !== item.task && CyclicToDo.getUrlParams()["todo"])) return [3 /*break*/, 3];
+                                                                                                        return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: todo, })];
+                                                                                                    case 2:
+                                                                                                        _a.sent();
+                                                                                                        _a.label = 3;
+                                                                                                    case 3: return [2 /*return*/];
+                                                                                                }
+                                                                                            });
+                                                                                        }); })];
+                                                                                    case 1: return [2 /*return*/, _a.sent()];
                                                                                 }
                                                                             });
                                                                         }); })];
@@ -26351,10 +26361,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     switch (_a.label) {
                                         case 0:
                                             itemDom.classList.add("fade-and-slide-out");
-                                            // await minamo.core.timeout(500);
-                                            return [4 /*yield*/, onUpdate()];
+                                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(500)];
                                         case 1:
-                                            // await minamo.core.timeout(500);
+                                            _a.sent();
+                                            return [4 /*yield*/, onUpdate()];
+                                        case 2:
                                             _a.sent();
                                             return [2 /*return*/];
                                     }
@@ -27861,9 +27872,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             ];
                             return [3 /*break*/, 17];
                         case 5: return [4 /*yield*/, Render.poem({
-                                title: "自動タグ",
-                                subtitle: "フラッシュ",
-                                description: "「いますぐ実行するべき」タイミングになったらこのタグが付与される様に自動タグ設定を行いましょう。このタグが付与される ToDo が多くなる状況でも全体の 10% 以下になる様に、あるいは、その日にうちに全部完了できる程度に留まる様に、設定を調整しましょう。どうにもやる気が出ない、あるいは、忙しくて、フラッシュ状態の ToDo が溜まってしまった場合は無理せず、睡眠や体調回復を優先してください。睡眠不足や体調不良は悪循環の元でしかないので最優先で断ちましょう。",
+                                title: locale_2.locale.string("自動タグ"),
+                                subtitle: locale_2.locale.string("フラッシュ"),
+                                description: locale_2.locale.string("「いますぐ実行するべき」タイミングになったらこのタグが付与される様に自動タグ設定を行いましょう。このタグが付与される ToDo が多くなる状況でも全体の 10% 以下になる様に、あるいは、その日にうちに全部完了できる程度に留まる様に、設定を調整しましょう。どうにもやる気が出ない、あるいは、忙しくて、フラッシュ状態の ToDo が溜まってしまった場合は無理せず、睡眠や体調回復を優先してください。睡眠不足や体調不良は悪循環の元でしかないので最優先で断ちましょう。"),
                                 image: "☀️"
                             }, "poem primary-poem")];
                         case 6:
@@ -27871,9 +27882,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 _b.sent(),
                                 Render.$div("button-list")([
                                     Render.messageList([
-                                        Render.messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
-                                        Render.messagePanel("ピックアップタグよりフラッシュタグが優先されます。"),
-                                        Render.messagePanel("フラッシュタグより制限タグが優先されます。"),
+                                        Render.messagePanel(locale_2.locale.string("ToDo のメニューの[自動タグ設定]から設定できます。")),
+                                        Render.messagePanel(locale_2.locale.string("ピックアップタグよりフラッシュタグが優先されます。")),
+                                        Render.messagePanel(locale_2.locale.string("フラッシュタグより制限タグが優先されます。")),
                                     ]),
                                     Render.$div("button-list")([setting, separator, history, separator, removed,]),
                                 ])
@@ -27885,17 +27896,17 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 _b.sent(),
                                 Render.$div("button-list")([
                                     Render.messageList([
-                                        Render.messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
-                                        Render.messagePanel("ピックアップタグよりフラッシュタグおよび制限タグが優先されます。"),
+                                        Render.messagePanel(locale_2.locale.string("ToDo のメニューの[自動タグ設定]から設定できます。")),
+                                        Render.messagePanel(locale_2.locale.string("ピックアップタグよりフラッシュタグおよび制限タグが優先されます。")),
                                     ]),
                                     Render.$div("button-list")([setting, separator, history, separator, removed,]),
                                 ])
                             ];
                             return [3 /*break*/, 17];
                         case 9: return [4 /*yield*/, Render.poem({
-                                title: "自動タグ",
-                                subtitle: "レギュラー",
-                                description: "フラッシュ、ピックアップ、制限のいずれの自動タグも付与されてない ToDo にレギュラータグが付与されます。",
+                                title: locale_2.locale.string("自動タグ"),
+                                subtitle: locale_2.locale.string("レギュラー"),
+                                description: locale_2.locale.string("フラッシュ、ピックアップ、制限のいずれの自動タグも付与されてない ToDo にレギュラータグが付与されます。"),
                                 image: "🏳️"
                             }, "poem primary-poem")];
                         case 10:
@@ -27903,16 +27914,16 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 _b.sent(),
                                 Render.$div("button-list")([
                                     Render.messageList([
-                                        Render.messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
+                                        Render.messagePanel(locale_2.locale.string("ToDo のメニューの[自動タグ設定]から設定できます。")),
                                     ]),
                                     Render.$div("button-list")([setting, separator, history, separator, removed,]),
                                 ])
                             ];
                             return [3 /*break*/, 17];
                         case 11: return [4 /*yield*/, Render.poem({
-                                title: "期間タグ",
-                                subtitle: "実行周期に応じたタグです",
-                                description: "実行周期に応じて短期、中期、長期のタグが付与されます。",
+                                title: locale_2.locale.string("期間タグ"),
+                                subtitle: locale_2.locale.string("実行周期に応じたタグです"),
+                                description: locale_2.locale.string("実行周期に応じて短期、中期、長期のタグが付与されます。"),
                                 image: "📅"
                             }, "poem primary-poem")];
                         case 12:
@@ -27924,9 +27935,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             ];
                             return [3 /*break*/, 17];
                         case 13: return [4 /*yield*/, Render.poem({
-                                title: "期間タグ",
-                                subtitle: "不定期",
-                                description: "それまでの周期から著しく長い期間実行されず休止期間と判断された ToDo や、まだ周期が特定されてない実行回数が２回未満の ToDo には不定期のタグが付与されます。「花粉症の薬」の様な季節に依存する ToDo は実際にこなした通りに完了操作を行なっていれば、シーズン後には自然に休止期間判定され、また次に完了操作を行なった際に休止期間判定は解かれます。",
+                                title: locale_2.locale.string("期間タグ"),
+                                subtitle: locale_2.locale.string("不定期"),
+                                description: locale_2.locale.string("それまでの周期から著しく長い期間実行されず休止期間と判断された ToDo や、まだ周期が特定されてない実行回数が２回未満の ToDo には不定期のタグが付与されます。「花粉症の薬」の様な季節に依存する ToDo は実際にこなした通りに完了操作を行なっていれば、シーズン後には自然に休止期間判定され、また次に完了操作を行なった際に休止期間判定は解かれます。"),
                                 image: "🌙"
                             }, "poem primary-poem")];
                         case 14:
@@ -27987,18 +27998,15 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _c = [
                                 _d.sent()
                             ];
-                            return [4 /*yield*/, Render.poem({
-                                    title: "履歴バー",
-                                    subtitle: "履歴のダイジェスト",
-                                    description: "画面上部のヘッダーのすぐ下の領域は直近の各 ToDo をこなしてからの経過時間が表示されます。この表示はダイジェストで、各 ToDo の最後の完了からの経過時間のみを扱います。もっと履歴を詳しく見るには履歴バーの一番左の[履歴]をクリックしてください。",
-                                    image: "📔"
-                                })];
-                        case 3:
-                            _c = _c.concat([
-                                _d.sent()
-                            ]);
+                            // await poem
+                            // ({
+                            //     title: locale.string("履歴バー"),
+                            //     subtitle: locale.string("履歴のダイジェスト"),
+                            //     description: locale.string("画面上部のヘッダーのすぐ下の領域は直近の各 ToDo をこなしてからの経過時間が表示されます。この表示はダイジェストで、各 ToDo の最後の完了からの経過時間のみを扱います。もっと履歴を詳しく見るには履歴バーの一番左の[履歴]をクリックしてください。"),
+                            //     image: "📔"
+                            // }),
                             return [4 /*yield*/, Render.poem("bottomtabs")];
-                        case 4: return [2 /*return*/, _a.concat([
+                        case 3: return [2 /*return*/, _a.concat([
                                 // $div("button-list")
                                 // ([
                                 //     {
@@ -28014,6 +28022,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 //     }),
                                 // ]),
                                 _b.apply(void 0, [_c.concat([
+                                        // await poem
+                                        // ({
+                                        //     title: locale.string("履歴バー"),
+                                        //     subtitle: locale.string("履歴のダイジェスト"),
+                                        //     description: locale.string("画面上部のヘッダーのすぐ下の領域は直近の各 ToDo をこなしてからの経過時間が表示されます。この表示はダイジェストで、各 ToDo の最後の完了からの経過時間のみを扱います。もっと履歴を詳しく見るには履歴バーの一番左の[履歴]をクリックしてください。"),
+                                        //     image: "📔"
+                                        // }),
                                         _d.sent()
                                     ])])
                             ])];
@@ -28027,19 +28042,17 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     var _a, _b;
                     return __generator(this, function (_c) {
                         switch (_c.label) {
-                            case 0: return [4 /*yield*/, Render.historyBar(entry, list)];
-                            case 1:
-                                _a = [
-                                    _c.sent()
-                                ];
-                                _b = Render.$div("column-flex-list todo-list");
+                            case 0:
+                                //await historyBar(entry, list),
+                                _a = Render.$div("column-flex-list todo-list");
                                 return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.todoItem(entry, item, displayStyle, progressScaleShowStyle); }))];
-                            case 2:
-                                _a = _a.concat([
-                                    _b.apply(void 0, [_c.sent()])
-                                ]);
+                            case 1:
+                                _b = [
+                                    //await historyBar(entry, list),
+                                    _a.apply(void 0, [_c.sent()])
+                                ];
                                 return [4 /*yield*/, Render.listScreenFooter(entry, list)];
-                            case 3: return [2 /*return*/, (_a.concat([
+                            case 2: return [2 /*return*/, (_b.concat([
                                     _c.sent()
                                 ]))];
                         }
@@ -30910,7 +30923,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Nov 16 2023 09:34:16 GMT+0900 (日本標準時)', buildTimestampTick: 1700094856456, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Nov 16 2023 22:56:35 GMT+0900 (日本標準時)', buildTimestampTick: 1700142995723, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -31134,7 +31147,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Thu Nov 16 2023 09:34:16 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Thu Nov 16 2023 22:56:35 GMT+0900 (日本標準時)</div>
 </div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

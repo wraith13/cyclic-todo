@@ -3081,19 +3081,23 @@ export module CyclicToDo
                                     await Resource.loadSvgOrCache("check-icon"),
                                     $span("")(Domain.tagMap("@new-sublist")),
                                 ],
-                                onclick: async () => await newSublistPopup
+                                onclick: async () => await waitPopup
                                 (
-                                    pass,
-                                    async (tag) =>
-                                    {
-                                        const todo = OldStorage.TagMember.add(pass, tag, item.task);
-                                        result = true;
-                                        ui.close();
-                                        if (todo !== item.task && getUrlParams()["todo"])
+                                    ui.dom,
+                                    async () => await newSublistPopup
+                                    (
+                                        pass,
+                                        async (tag) =>
                                         {
-                                            await showUrl({ pass, todo, });
+                                            const todo = OldStorage.TagMember.add(pass, tag, item.task);
+                                            result = true;
+                                            await ui.close();
+                                            if (todo !== item.task && getUrlParams()["todo"])
+                                            {
+                                                await showUrl({ pass, todo, });
+                                            }
                                         }
-                                    }
+                                    )
                                 ),
                             },
                         ]
@@ -4978,7 +4982,7 @@ export module CyclicToDo
             const onDone = async () =>
             {
                 itemDom.classList.add("fade-and-slide-out");
-                // await minamo.core.timeout(500);
+                await minamo.core.timeout(500);
                 await onUpdate();
             };
             const sublist = OldStorage.Task.getSublist(item.task);
@@ -6229,9 +6233,9 @@ export module CyclicToDo
                     await poem
                     (
                         {
-                            title: "自動タグ",
-                            subtitle: "フラッシュ",
-                            description: "「いますぐ実行するべき」タイミングになったらこのタグが付与される様に自動タグ設定を行いましょう。このタグが付与される ToDo が多くなる状況でも全体の 10% 以下になる様に、あるいは、その日にうちに全部完了できる程度に留まる様に、設定を調整しましょう。どうにもやる気が出ない、あるいは、忙しくて、フラッシュ状態の ToDo が溜まってしまった場合は無理せず、睡眠や体調回復を優先してください。睡眠不足や体調不良は悪循環の元でしかないので最優先で断ちましょう。",
+                            title: locale.string("自動タグ"),
+                            subtitle: locale.string("フラッシュ"),
+                            description: locale.string("「いますぐ実行するべき」タイミングになったらこのタグが付与される様に自動タグ設定を行いましょう。このタグが付与される ToDo が多くなる状況でも全体の 10% 以下になる様に、あるいは、その日にうちに全部完了できる程度に留まる様に、設定を調整しましょう。どうにもやる気が出ない、あるいは、忙しくて、フラッシュ状態の ToDo が溜まってしまった場合は無理せず、睡眠や体調回復を優先してください。睡眠不足や体調不良は悪循環の元でしかないので最優先で断ちましょう。"),
                             image: "☀️"
                         },
                         "poem primary-poem"
@@ -6240,9 +6244,9 @@ export module CyclicToDo
                     ([
                         messageList
                         ([
-                            messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
-                            messagePanel("ピックアップタグよりフラッシュタグが優先されます。"),
-                            messagePanel("フラッシュタグより制限タグが優先されます。"),
+                            messagePanel(locale.string("ToDo のメニューの[自動タグ設定]から設定できます。")),
+                            messagePanel(locale.string("ピックアップタグよりフラッシュタグが優先されます。")),
+                            messagePanel(locale.string("フラッシュタグより制限タグが優先されます。")),
                         ]),
                         $div("button-list")([setting, separator, history, separator, removed,]),
                     ]),
@@ -6256,8 +6260,8 @@ export module CyclicToDo
                     ([
                         messageList
                         ([
-                            messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
-                            messagePanel("ピックアップタグよりフラッシュタグおよび制限タグが優先されます。"),
+                            messagePanel(locale.string("ToDo のメニューの[自動タグ設定]から設定できます。")),
+                            messagePanel(locale.string("ピックアップタグよりフラッシュタグおよび制限タグが優先されます。")),
                         ]),
                         $div("button-list")([setting, separator, history, separator, removed,]),
                     ]),
@@ -6269,9 +6273,9 @@ export module CyclicToDo
                     await poem
                     (
                         {
-                            title: "自動タグ",
-                            subtitle: "レギュラー",
-                            description: "フラッシュ、ピックアップ、制限のいずれの自動タグも付与されてない ToDo にレギュラータグが付与されます。",
+                            title: locale.string("自動タグ"),
+                            subtitle: locale.string("レギュラー"),
+                            description: locale.string("フラッシュ、ピックアップ、制限のいずれの自動タグも付与されてない ToDo にレギュラータグが付与されます。"),
                             image: "🏳️"
                         },
                         "poem primary-poem"
@@ -6280,7 +6284,7 @@ export module CyclicToDo
                     ([
                         messageList
                         ([
-                            messagePanel("ToDo のメニューの[自動タグ設定]から設定できます。"),
+                            messagePanel(locale.string("ToDo のメニューの[自動タグ設定]から設定できます。")),
                         ]),
                         $div("button-list")([setting, separator, history, separator, removed,]),
                     ]),
@@ -6294,9 +6298,9 @@ export module CyclicToDo
                     await poem
                     (
                         {
-                            title: "期間タグ",
-                            subtitle: "実行周期に応じたタグです",
-                            description: "実行周期に応じて短期、中期、長期のタグが付与されます。",
+                            title: locale.string("期間タグ"),
+                            subtitle: locale.string("実行周期に応じたタグです"),
+                            description: locale.string("実行周期に応じて短期、中期、長期のタグが付与されます。"),
                             image: "📅"
                         },
                         "poem primary-poem"
@@ -6313,9 +6317,9 @@ export module CyclicToDo
                     await poem
                     (
                         {
-                            title: "期間タグ",
-                            subtitle: "不定期",
-                            description: "それまでの周期から著しく長い期間実行されず休止期間と判断された ToDo や、まだ周期が特定されてない実行回数が２回未満の ToDo には不定期のタグが付与されます。「花粉症の薬」の様な季節に依存する ToDo は実際にこなした通りに完了操作を行なっていれば、シーズン後には自然に休止期間判定され、また次に完了操作を行なった際に休止期間判定は解かれます。",
+                            title: locale.string("期間タグ"),
+                            subtitle: locale.string("不定期"),
+                            description: locale.string("それまでの周期から著しく長い期間実行されず休止期間と判断された ToDo や、まだ周期が特定されてない実行回数が２回未満の ToDo には不定期のタグが付与されます。「花粉症の薬」の様な季節に依存する ToDo は実際にこなした通りに完了操作を行なっていれば、シーズン後には自然に休止期間判定され、また次に完了操作を行なった際に休止期間判定は解かれます。"),
                             image: "🌙"
                         },
                         "poem primary-poem"
@@ -6365,19 +6369,19 @@ export module CyclicToDo
             $div("poem-list")
             ([
                 await poem("header"),
-                await poem
-                ({
-                    title: "履歴バー",
-                    subtitle: "履歴のダイジェスト",
-                    description: "画面上部のヘッダーのすぐ下の領域は直近の各 ToDo をこなしてからの経過時間が表示されます。この表示はダイジェストで、各 ToDo の最後の完了からの経過時間のみを扱います。もっと履歴を詳しく見るには履歴バーの一番左の[履歴]をクリックしてください。",
-                    image: "📔"
-                }),
+                // await poem
+                // ({
+                //     title: locale.string("履歴バー"),
+                //     subtitle: locale.string("履歴のダイジェスト"),
+                //     description: locale.string("画面上部のヘッダーのすぐ下の領域は直近の各 ToDo をこなしてからの経過時間が表示されます。この表示はダイジェストで、各 ToDo の最後の完了からの経過時間のみを扱います。もっと履歴を詳しく見るには履歴バーの一番左の[履歴]をクリックしてください。"),
+                //     image: "📔"
+                // }),
                 await poem("bottomtabs"),
             ]),
         ];
         export const listScreenBody = async (entry: ToDoTagEntryOld, list: ToDoEntry[], displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag), progressScaleShowStyle = OldStorage.TagSettings.getProgressScaleStyle(entry.pass, entry.tag)) =>
         ([
-            await historyBar(entry, list),
+            //await historyBar(entry, list),
             $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item, displayStyle, progressScaleShowStyle)))),
             await listScreenFooter(entry, list),
         ]);
