@@ -4442,6 +4442,11 @@ export module CyclicToDo
                 minamo.dom.toggleCSSClass(current, "covered", false);
             }
         };
+        export interface Popup
+        {
+            dom: HTMLDivElement;
+            close: () => Promise<unknown>;
+        };
         export const popup =
         (
             data:
@@ -4450,7 +4455,7 @@ export module CyclicToDo
                 children: minamo.dom.Source,
                 onClose?: () => Promise<unknown>
             }
-        ) =>
+        ): Popup =>
         {
             const dom = $make(HTMLDivElement)
             ({
