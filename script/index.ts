@@ -3577,14 +3577,18 @@ export module CyclicToDo
                                     label(getThemeLocale(settings.theme ?? "auto"))
                                 ),
                                 "theme.description",
-                                async () =>
-                                {
-                                    if (await themeSettingsPopup())
+                                async () => await waitPopup
+                                (
+                                    ui.dom,
+                                    async () =>
                                     {
-                                        result = true;
-                                        await update();
+                                        if (await themeSettingsPopup())
+                                        {
+                                            result = true;
+                                            await update();
+                                        }
                                     }
-                                }
+                                )
                             ),
                             descriptionButton
                             (
@@ -3596,14 +3600,18 @@ export module CyclicToDo
                                     label(getUiStyleLocale(settings.uiStyle ?? "slide"))
                                 ),
                                 "uiStyle.description",
-                                async () =>
-                                {
-                                    if (await uiStyleSettingsPopup())
+                                async () => await waitPopup
+                                (
+                                    ui.dom,
+                                    async () =>
                                     {
-                                        result = true;
-                                        await update();
+                                        if (await uiStyleSettingsPopup())
+                                        {
+                                            result = true;
+                                            await update();
+                                        }
                                     }
-                                }
+                                )
                             ),
                             descriptionButton
                             (
@@ -3615,14 +3623,18 @@ export module CyclicToDo
                                     label(getFlashStyleLocale(settings.flashStyle ?? "breath"))
                                 ),
                                 "flashStyle.description",
-                                async () =>
-                                {
-                                    if (await flashStyleSettingsPopup())
+                                async () => await waitPopup
+                                (
+                                    ui.dom,
+                                    async () =>
                                     {
-                                        result = true;
-                                        await update();
+                                        if (await flashStyleSettingsPopup())
+                                        {
+                                            result = true;
+                                            await update();
+                                        }
                                     }
-                                }
+                                )
                             ),
                             descriptionButton
                             (
@@ -3634,15 +3646,19 @@ export module CyclicToDo
                                     $span("")(locale.getLocaleName(settings.locale ?? "@auto"))
                                 ),
                                 "language.description",
-                                async () =>
-                                {
-                                    if (await localeSettingsPopup())
+                                async () => await waitPopup
+                                (
+                                    ui.dom,
+                                    async () =>
                                     {
-                                        setLocale(Storage.SystemSettings.get().locale ?? null);
-                                        result = true;
-                                        await update();
+                                        if (await localeSettingsPopup())
+                                        {
+                                            setLocale(Storage.SystemSettings.get().locale ?? null);
+                                            result = true;
+                                            await update();
+                                        }
                                     }
-                                }
+                                )
                             ),
                             descriptionButton
                             (
@@ -3654,14 +3670,18 @@ export module CyclicToDo
                                     label(getEmojiTypeLocale(settings.emoji ?? "auto"))
                                 ),
                                 "emoji.description",
-                                async () =>
-                                {
-                                    if (await emojiSettingsPopup())
+                                async () => await waitPopup
+                                (
+                                    ui.dom,
+                                    async () =>
                                     {
-                                        result = true;
-                                        await update();
+                                        if (await emojiSettingsPopup())
+                                        {
+                                            result = true;
+                                            await update();
+                                        }
                                     }
-                                }
+                                )
                             ),
                             descriptionButton
                             (
@@ -6369,19 +6389,19 @@ export module CyclicToDo
             $div("poem-list")
             ([
                 await poem("header"),
-                // await poem
-                // ({
-                //     title: locale.string("履歴バー"),
-                //     subtitle: locale.string("履歴のダイジェスト"),
-                //     description: locale.string("画面上部のヘッダーのすぐ下の領域は直近の各 ToDo をこなしてからの経過時間が表示されます。この表示はダイジェストで、各 ToDo の最後の完了からの経過時間のみを扱います。もっと履歴を詳しく見るには履歴バーの一番左の[履歴]をクリックしてください。"),
-                //     image: "📔"
-                // }),
+                await poem
+                ({
+                    title: locale.string("履歴バー"),
+                    subtitle: locale.string("履歴のダイジェスト"),
+                    description: locale.string("画面上部のヘッダーのすぐ下の領域は直近の各 ToDo をこなしてからの経過時間が表示されます。この表示はダイジェストで、各 ToDo の最後の完了からの経過時間のみを扱います。もっと履歴を詳しく見るには履歴バーの一番左の[履歴]をクリックしてください。"),
+                    image: "📔"
+                }),
                 await poem("bottomtabs"),
             ]),
         ];
         export const listScreenBody = async (entry: ToDoTagEntryOld, list: ToDoEntry[], displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag), progressScaleShowStyle = OldStorage.TagSettings.getProgressScaleStyle(entry.pass, entry.tag)) =>
         ([
-            //await historyBar(entry, list),
+            await historyBar(entry, list),
             $div("column-flex-list todo-list")(await Promise.all(list.map(item => todoItem(entry, item, displayStyle, progressScaleShowStyle)))),
             await listScreenFooter(entry, list),
         ]);
