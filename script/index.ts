@@ -2670,10 +2670,17 @@ export module CyclicToDo
                 ]);
         export const messagePanel = (text: minamo.dom.Source) => $div("message-panel")(text);
         export const messageList = (source: minamo.dom.Source) => $div("message-list")(source);
-        export const systemPrompt = async (message?: string, _default?: string): Promise<string | null> =>
+        export const systemPrompt = async (message?: string, _default?: string, parent?: Popup): Promise<string | null> =>
         {
-            await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが window.prompt が表示されてる間、ずっと表示される事になる。
-            return await new Promise(resolve => resolve(window.prompt(message, _default)?.trim() ?? null));
+            if (parent)
+            {
+                return await waitPopup(parent, async () => await systemPrompt(message, _default));
+            }
+            else
+            {
+                await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが window.prompt が表示されてる間、ずっと表示される事になる。
+                return await new Promise(resolve => resolve(window.prompt(message, _default)?.trim() ?? null));
+            }
         };
         export const customPrompt = async (message?: string, _default?: string): Promise<string | null> =>
         {
@@ -2994,7 +3001,7 @@ export module CyclicToDo
                                 ],
                                 onclick: async () =>
                                 {
-                                    const tag = await waitPopup(ui.dom, () => newTagPrompt(pass));
+                                    const tag = await waitPopup(ui, () => newTagPrompt(pass));
                                     if (null !== tag)
                                     {
                                         result.push(tag);
@@ -3083,7 +3090,7 @@ export module CyclicToDo
                                 ],
                                 onclick: async () => await waitPopup
                                 (
-                                    ui.dom,
+                                    ui,
                                     async () => await newSublistPopup
                                     (
                                         pass,
@@ -3579,7 +3586,7 @@ export module CyclicToDo
                                 "theme.description",
                                 async () => await waitPopup
                                 (
-                                    ui.dom,
+                                    ui,
                                     async () =>
                                     {
                                         if (await themeSettingsPopup())
@@ -3602,7 +3609,7 @@ export module CyclicToDo
                                 "uiStyle.description",
                                 async () => await waitPopup
                                 (
-                                    ui.dom,
+                                    ui,
                                     async () =>
                                     {
                                         if (await uiStyleSettingsPopup())
@@ -3625,7 +3632,7 @@ export module CyclicToDo
                                 "flashStyle.description",
                                 async () => await waitPopup
                                 (
-                                    ui.dom,
+                                    ui,
                                     async () =>
                                     {
                                         if (await flashStyleSettingsPopup())
@@ -3648,7 +3655,7 @@ export module CyclicToDo
                                 "language.description",
                                 async () => await waitPopup
                                 (
-                                    ui.dom,
+                                    ui,
                                     async () =>
                                     {
                                         if (await localeSettingsPopup())
@@ -3672,7 +3679,7 @@ export module CyclicToDo
                                 "emoji.description",
                                 async () => await waitPopup
                                 (
-                                    ui.dom,
+                                    ui,
                                     async () =>
                                     {
                                         if (await emojiSettingsPopup())
@@ -4430,33 +4437,44 @@ export module CyclicToDo
         export const getScreenCoverList = () => Array.from(document.getElementsByClassName("screen-cover")) as HTMLDivElement[];
         export const getScreenCover = () => getScreenCoverList().filter((_i, ix, list) => (ix +1) === list.length)[0];
         export const hasScreenCover = () => 0 < getScreenCoverList().length;
-        export const waitPopup = async <T>(current: HTMLElement, next: () => Promise<T>) =>
-        {
-            try
-            {
-                minamo.dom.toggleCSSClass(current, "covered", true);
-                return await next();
-            }
-            finally
-            {
-                minamo.dom.toggleCSSClass(current, "covered", false);
-            }
-        };
         export interface Popup
         {
             dom: HTMLDivElement;
             close: () => Promise<unknown>;
         };
+        export const toggleCoverPopup = (current: Popup | undefined, cover: boolean) =>
+        {
+            if (current)
+            {
+                minamo.dom.toggleCSSClass(current.dom, "covered", cover);
+            }
+        };
+        export const coverPopup = (current: Popup | undefined) => toggleCoverPopup(current, true);
+        export const uncoverPopup = (current: Popup | undefined) => toggleCoverPopup(current, false);
+        export const waitPopup = async <T>(current: Popup, next: () => Promise<T>) =>
+        {
+            try
+            {
+                coverPopup(current);
+                return await next();
+            }
+            finally
+            {
+                uncoverPopup(current);
+            }
+        };
         export const popup =
         (
             data:
             {
+                parent?: Popup,
                 className?: string,
                 children: minamo.dom.Source,
                 onClose?: () => Promise<unknown>
             }
         ): Popup =>
         {
+            coverPopup(data.parent);
             const dom = $make(HTMLDivElement)
             ({
                 tag: "div",
@@ -4471,6 +4489,7 @@ export module CyclicToDo
             const close = async () =>
             {
                 await data?.onClose?.();
+                uncoverPopup(data.parent);
                 cover.close();
             };
             // minamo.dom.appendChildren(document.body, dom);
@@ -4484,6 +4503,7 @@ export module CyclicToDo
                 onclick: async () =>
                 {
                     await data?.onClose?.();
+                    uncoverPopup(data.parent);
                     //minamo.dom.remove(dom);
                 },
             });
