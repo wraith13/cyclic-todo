@@ -5817,9 +5817,9 @@ export module CyclicToDo
                 const value = softRegulateFilterText(input.value);
                 if (value !== context.value)
                 {
+                    const timestamp = lastFilterUpdateAt = new Date().getTime();
                     if ("" !== value)
                     {
-                        const timestamp = lastFilterUpdateAt = new Date().getTime();
                         setTimeout
                         (
                             () =>
@@ -5832,8 +5832,18 @@ export module CyclicToDo
                             3000,
                         );
                     }
+                    setTimeout
+                    (
+                        () =>
+                        {
+                            if (timestamp === lastFilterUpdateAt)
+                            {
+                                onUpdate(value);
+                            }
+                        },
+                        1000,
+                    );
                     context.value = value;
-                    onUpdate(value);
                 }
             };
             const onfocus = () =>
@@ -5886,7 +5896,7 @@ export module CyclicToDo
             input.addEventListener('change', onchange);
             input.addEventListener('cut', () => setTimeout(onchange, 0));
             input.addEventListener('paste', () => setTimeout(onchange, 0));
-            input.addEventListener('compositionupdate', onchange);
+            //input.addEventListener('compositionupdate', onchange);
             input.addEventListener('compositionend', onchange);
             const dropdownlist = $make(HTMLDivElement)($div("dropdownlist")([]));
             const updateDropdownlist = () =>
