@@ -2670,17 +2670,10 @@ export module CyclicToDo
                 ]);
         export const messagePanel = (text: minamo.dom.Source) => $div("message-panel")(text);
         export const messageList = (source: minamo.dom.Source) => $div("message-list")(source);
-        export const systemPrompt = async (message?: string, _default?: string, parent?: Popup): Promise<string | null> =>
+        export const systemPrompt = async (message?: string, _default?: string): Promise<string | null> =>
         {
-            if (parent)
-            {
-                return await waitPopup(parent, async () => await systemPrompt(message, _default));
-            }
-            else
-            {
-                await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが window.prompt が表示されてる間、ずっと表示される事になる。
-                return await new Promise(resolve => resolve(window.prompt(message, _default)?.trim() ?? null));
-            }
+            await minamo.core.timeout(100); // この wait をかましてないと呼び出し元のポップアップメニューが window.prompt が表示されてる間、ずっと表示される事になる。
+            return await waitPopup(async () => await new Promise(resolve => resolve(window.prompt(message, _default)?.trim() ?? null)));
         };
         export const customPrompt = async (message?: string, _default?: string): Promise<string | null> =>
         {
@@ -2736,7 +2729,6 @@ export module CyclicToDo
         export const prompt = customPrompt;
         // export const alert = (message: string) => window.alert(message);
         export const alert = (message: string) => makeToast({ content: message, });
-
         export const systemConfirm = (message: string) => window.confirm(message);
         export const confirm = systemConfirm;
         export const numberPrompt = async (message: string, _default: number, options?: { min?:number, max?:number, step?:number,  }): Promise<number | null> =>
@@ -3001,7 +2993,7 @@ export module CyclicToDo
                                 ],
                                 onclick: async () =>
                                 {
-                                    const tag = await waitPopup(ui, () => newTagPrompt(pass));
+                                    const tag = await newTagPrompt(pass);
                                     if (null !== tag)
                                     {
                                         result.push(tag);
@@ -3088,23 +3080,19 @@ export module CyclicToDo
                                     await Resource.loadSvgOrCache("check-icon"),
                                     $span("")(Domain.tagMap("@new-sublist")),
                                 ],
-                                onclick: async () => await waitPopup
+                                onclick: async () => await newSublistPopup
                                 (
-                                    ui,
-                                    async () => await newSublistPopup
-                                    (
-                                        pass,
-                                        async (tag) =>
+                                    pass,
+                                    async (tag) =>
+                                    {
+                                        const todo = OldStorage.TagMember.add(pass, tag, item.task);
+                                        result = true;
+                                        await ui.close();
+                                        if (todo !== item.task && getUrlParams()["todo"])
                                         {
-                                            const todo = OldStorage.TagMember.add(pass, tag, item.task);
-                                            result = true;
-                                            await ui.close();
-                                            if (todo !== item.task && getUrlParams()["todo"])
-                                            {
-                                                await showUrl({ pass, todo, });
-                                            }
+                                            await showUrl({ pass, todo, });
                                         }
-                                    )
+                                    }
                                 ),
                             },
                         ]
@@ -3584,18 +3572,14 @@ export module CyclicToDo
                                     label(getThemeLocale(settings.theme ?? "auto"))
                                 ),
                                 "theme.description",
-                                async () => await waitPopup
-                                (
-                                    ui,
-                                    async () =>
+                                async () =>
+                                {
+                                    if (await themeSettingsPopup())
                                     {
-                                        if (await themeSettingsPopup())
-                                        {
-                                            result = true;
-                                            await update();
-                                        }
+                                        result = true;
+                                        await update();
                                     }
-                                )
+                                }
                             ),
                             descriptionButton
                             (
@@ -3607,18 +3591,14 @@ export module CyclicToDo
                                     label(getUiStyleLocale(settings.uiStyle ?? "slide"))
                                 ),
                                 "uiStyle.description",
-                                async () => await waitPopup
-                                (
-                                    ui,
-                                    async () =>
+                                async () =>
+                                {
+                                    if (await uiStyleSettingsPopup())
                                     {
-                                        if (await uiStyleSettingsPopup())
-                                        {
-                                            result = true;
-                                            await update();
-                                        }
+                                        result = true;
+                                        await update();
                                     }
-                                )
+                                }
                             ),
                             descriptionButton
                             (
@@ -3630,18 +3610,14 @@ export module CyclicToDo
                                     label(getFlashStyleLocale(settings.flashStyle ?? "breath"))
                                 ),
                                 "flashStyle.description",
-                                async () => await waitPopup
-                                (
-                                    ui,
-                                    async () =>
+                                async () =>
+                                {
+                                    if (await flashStyleSettingsPopup())
                                     {
-                                        if (await flashStyleSettingsPopup())
-                                        {
-                                            result = true;
-                                            await update();
-                                        }
+                                        result = true;
+                                        await update();
                                     }
-                                )
+                                }
                             ),
                             descriptionButton
                             (
@@ -3653,19 +3629,15 @@ export module CyclicToDo
                                     $span("")(locale.getLocaleName(settings.locale ?? "@auto"))
                                 ),
                                 "language.description",
-                                async () => await waitPopup
-                                (
-                                    ui,
-                                    async () =>
+                                async () =>
+                                {
+                                    if (await localeSettingsPopup())
                                     {
-                                        if (await localeSettingsPopup())
-                                        {
-                                            setLocale(Storage.SystemSettings.get().locale ?? null);
-                                            result = true;
-                                            await update();
-                                        }
+                                        setLocale(Storage.SystemSettings.get().locale ?? null);
+                                        result = true;
+                                        await update();
                                     }
-                                )
+                                }
                             ),
                             descriptionButton
                             (
@@ -3677,18 +3649,14 @@ export module CyclicToDo
                                     label(getEmojiTypeLocale(settings.emoji ?? "auto"))
                                 ),
                                 "emoji.description",
-                                async () => await waitPopup
-                                (
-                                    ui,
-                                    async () =>
+                                async () =>
+                                {
+                                    if (await emojiSettingsPopup())
                                     {
-                                        if (await emojiSettingsPopup())
-                                        {
-                                            result = true;
-                                            await update();
-                                        }
+                                        result = true;
+                                        await update();
                                     }
-                                )
+                                }
                             ),
                             descriptionButton
                             (
@@ -4451,8 +4419,9 @@ export module CyclicToDo
         };
         export const coverPopup = (current: Popup | undefined) => toggleCoverPopup(current, true);
         export const uncoverPopup = (current: Popup | undefined) => toggleCoverPopup(current, false);
-        export const waitPopup = async <T>(current: Popup, next: () => Promise<T>) =>
+        export const waitPopup = async <T>(next: () => Promise<T>) =>
         {
+            const current = getCurrentPopup();
             try
             {
                 coverPopup(current);
@@ -4463,18 +4432,28 @@ export module CyclicToDo
                 uncoverPopup(current);
             }
         };
+        export const popupStack: Popup[] = [];
+        export const getCurrentPopup = () => popupStack[popupStack.length -1];
+        export const pushPopup = (current: Popup) => popupStack.push(current);
+        export const popPopup = (current: Popup) => popupStack.splice(popupStack.findIndex(i => current === i), 1);
         export const popup =
         (
             data:
             {
-                parent?: Popup,
                 className?: string,
                 children: minamo.dom.Source,
                 onClose?: () => Promise<unknown>
             }
         ): Popup =>
         {
-            coverPopup(data.parent);
+            const parent = getCurrentPopup();
+            coverPopup(parent);
+            const dispose = async () =>
+            {
+                await data?.onClose?.();
+                popPopup(result);
+                uncoverPopup(parent);
+            };
             const dom = $make(HTMLDivElement)
             ({
                 tag: "div",
@@ -4488,8 +4467,7 @@ export module CyclicToDo
             });
             const close = async () =>
             {
-                await data?.onClose?.();
-                uncoverPopup(data.parent);
+                await dispose();
                 cover.close();
             };
             // minamo.dom.appendChildren(document.body, dom);
@@ -4502,8 +4480,7 @@ export module CyclicToDo
                 ],
                 onclick: async () =>
                 {
-                    await data?.onClose?.();
-                    uncoverPopup(data.parent);
+                    await dispose();
                     //minamo.dom.remove(dom);
                 },
             });
@@ -4512,6 +4489,7 @@ export module CyclicToDo
                 dom,
                 close,
             };
+            pushPopup(result);
             return result;
         };
         export const menuButton = async (menu: minamo.dom.Source | (() => Promise<minamo.dom.Source>)) =>

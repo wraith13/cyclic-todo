@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Fri Nov 17 2023 09:27:53 GMT+0900 (日本標準時)
+    build at: Sun Nov 19 2023 15:02:10 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -23494,12 +23494,18 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.messagePanel = function (text) { return Render.$div("message-panel")(text); };
             Render.messageList = function (source) { return Render.$div("message-list")(source); };
             Render.systemPrompt = function (message, _default) { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4 /*yield*/, minamo_js_1.minamo.core.timeout(100)];
                         case 1:
                             _a.sent(); // この wait をかましてないと呼び出し元のポップアップメニューが window.prompt が表示されてる間、ずっと表示される事になる。
-                            return [4 /*yield*/, new Promise(function (resolve) { var _a, _b; return resolve((_b = (_a = window.prompt(message, _default)) === null || _a === void 0 ? void 0 : _a.trim()) !== null && _b !== void 0 ? _b : null); })];
+                            return [4 /*yield*/, Render.waitPopup(function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, new Promise(function (resolve) { var _a, _b; return resolve((_b = (_a = window.prompt(message, _default)) === null || _a === void 0 ? void 0 : _a.trim()) !== null && _b !== void 0 ? _b : null); })];
+                                        case 1: return [2 /*return*/, _a.sent()];
+                                    }
+                                }); }); })];
                         case 2: // この wait をかましてないと呼び出し元のポップアップメニューが window.prompt が表示されてる間、ずっと表示される事になる。
                         return [2 /*return*/, _a.sent()];
                     }
@@ -23843,7 +23849,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                             var tag;
                                                                             return __generator(this, function (_a) {
                                                                                 switch (_a.label) {
-                                                                                    case 0: return [4 /*yield*/, Render.waitPopup(ui.dom, function () { return Render.newTagPrompt(pass); })];
+                                                                                    case 0: return [4 /*yield*/, Render.newTagPrompt(pass)];
                                                                                     case 1:
                                                                                         tag = _a.sent();
                                                                                         if (!(null !== tag)) return [3 /*break*/, 4];
@@ -23970,30 +23976,22 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             var _this = this;
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
-                                                                    case 0: return [4 /*yield*/, Render.waitPopup(ui.dom, function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                            var _this = this;
+                                                                    case 0: return [4 /*yield*/, Render.newSublistPopup(pass, function (tag) { return __awaiter(_this, void 0, void 0, function () {
+                                                                            var todo;
                                                                             return __generator(this, function (_a) {
                                                                                 switch (_a.label) {
-                                                                                    case 0: return [4 /*yield*/, Render.newSublistPopup(pass, function (tag) { return __awaiter(_this, void 0, void 0, function () {
-                                                                                            var todo;
-                                                                                            return __generator(this, function (_a) {
-                                                                                                switch (_a.label) {
-                                                                                                    case 0:
-                                                                                                        todo = OldStorage.TagMember.add(pass, tag, item.task);
-                                                                                                        result = true;
-                                                                                                        return [4 /*yield*/, ui.close()];
-                                                                                                    case 1:
-                                                                                                        _a.sent();
-                                                                                                        if (!(todo !== item.task && CyclicToDo.getUrlParams()["todo"])) return [3 /*break*/, 3];
-                                                                                                        return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: todo, })];
-                                                                                                    case 2:
-                                                                                                        _a.sent();
-                                                                                                        _a.label = 3;
-                                                                                                    case 3: return [2 /*return*/];
-                                                                                                }
-                                                                                            });
-                                                                                        }); })];
-                                                                                    case 1: return [2 /*return*/, _a.sent()];
+                                                                                    case 0:
+                                                                                        todo = OldStorage.TagMember.add(pass, tag, item.task);
+                                                                                        result = true;
+                                                                                        return [4 /*yield*/, ui.close()];
+                                                                                    case 1:
+                                                                                        _a.sent();
+                                                                                        if (!(todo !== item.task && CyclicToDo.getUrlParams()["todo"])) return [3 /*break*/, 3];
+                                                                                        return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: todo, })];
+                                                                                    case 2:
+                                                                                        _a.sent();
+                                                                                        _a.label = 3;
+                                                                                    case 3: return [2 /*return*/];
                                                                                 }
                                                                             });
                                                                         }); })];
@@ -24684,119 +24682,79 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                     settings = Storage.SystemSettings.get();
                                                     minamo_js_1.minamo.dom.replaceChildren(buttonList, [
                                                         Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("Theme setting"), Render.label(CyclicToDo.getThemeLocale((_a = settings.theme) !== null && _a !== void 0 ? _a : "auto"))), "theme.description", function () { return __awaiter(_this, void 0, void 0, function () {
-                                                            var _this = this;
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
-                                                                    case 0: return [4 /*yield*/, Render.waitPopup(ui.dom, function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                            return __generator(this, function (_a) {
-                                                                                switch (_a.label) {
-                                                                                    case 0: return [4 /*yield*/, Render.themeSettingsPopup()];
-                                                                                    case 1:
-                                                                                        if (!_a.sent()) return [3 /*break*/, 3];
-                                                                                        result = true;
-                                                                                        return [4 /*yield*/, update()];
-                                                                                    case 2:
-                                                                                        _a.sent();
-                                                                                        _a.label = 3;
-                                                                                    case 3: return [2 /*return*/];
-                                                                                }
-                                                                            });
-                                                                        }); })];
-                                                                    case 1: return [2 /*return*/, _a.sent()];
+                                                                    case 0: return [4 /*yield*/, Render.themeSettingsPopup()];
+                                                                    case 1:
+                                                                        if (!_a.sent()) return [3 /*break*/, 3];
+                                                                        result = true;
+                                                                        return [4 /*yield*/, update()];
+                                                                    case 2:
+                                                                        _a.sent();
+                                                                        _a.label = 3;
+                                                                    case 3: return [2 /*return*/];
                                                                 }
                                                             });
                                                         }); }),
                                                         Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("UI style setting"), Render.label(CyclicToDo.getUiStyleLocale((_b = settings.uiStyle) !== null && _b !== void 0 ? _b : "slide"))), "uiStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
-                                                            var _this = this;
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
-                                                                    case 0: return [4 /*yield*/, Render.waitPopup(ui.dom, function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                            return __generator(this, function (_a) {
-                                                                                switch (_a.label) {
-                                                                                    case 0: return [4 /*yield*/, Render.uiStyleSettingsPopup()];
-                                                                                    case 1:
-                                                                                        if (!_a.sent()) return [3 /*break*/, 3];
-                                                                                        result = true;
-                                                                                        return [4 /*yield*/, update()];
-                                                                                    case 2:
-                                                                                        _a.sent();
-                                                                                        _a.label = 3;
-                                                                                    case 3: return [2 /*return*/];
-                                                                                }
-                                                                            });
-                                                                        }); })];
-                                                                    case 1: return [2 /*return*/, _a.sent()];
+                                                                    case 0: return [4 /*yield*/, Render.uiStyleSettingsPopup()];
+                                                                    case 1:
+                                                                        if (!_a.sent()) return [3 /*break*/, 3];
+                                                                        result = true;
+                                                                        return [4 /*yield*/, update()];
+                                                                    case 2:
+                                                                        _a.sent();
+                                                                        _a.label = 3;
+                                                                    case 3: return [2 /*return*/];
                                                                 }
                                                             });
                                                         }); }),
                                                         Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("Flash style setting"), Render.label(CyclicToDo.getFlashStyleLocale((_c = settings.flashStyle) !== null && _c !== void 0 ? _c : "breath"))), "flashStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
-                                                            var _this = this;
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
-                                                                    case 0: return [4 /*yield*/, Render.waitPopup(ui.dom, function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                            return __generator(this, function (_a) {
-                                                                                switch (_a.label) {
-                                                                                    case 0: return [4 /*yield*/, Render.flashStyleSettingsPopup()];
-                                                                                    case 1:
-                                                                                        if (!_a.sent()) return [3 /*break*/, 3];
-                                                                                        result = true;
-                                                                                        return [4 /*yield*/, update()];
-                                                                                    case 2:
-                                                                                        _a.sent();
-                                                                                        _a.label = 3;
-                                                                                    case 3: return [2 /*return*/];
-                                                                                }
-                                                                            });
-                                                                        }); })];
-                                                                    case 1: return [2 /*return*/, _a.sent()];
+                                                                    case 0: return [4 /*yield*/, Render.flashStyleSettingsPopup()];
+                                                                    case 1:
+                                                                        if (!_a.sent()) return [3 /*break*/, 3];
+                                                                        result = true;
+                                                                        return [4 /*yield*/, update()];
+                                                                    case 2:
+                                                                        _a.sent();
+                                                                        _a.label = 3;
+                                                                    case 3: return [2 /*return*/];
                                                                 }
                                                             });
                                                         }); }),
                                                         Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("Language setting"), Render.$span("")(locale_2.locale.getLocaleName((_d = settings.locale) !== null && _d !== void 0 ? _d : "@auto"))), "language.description", function () { return __awaiter(_this, void 0, void 0, function () {
-                                                            var _this = this;
-                                                            return __generator(this, function (_a) {
-                                                                switch (_a.label) {
-                                                                    case 0: return [4 /*yield*/, Render.waitPopup(ui.dom, function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                            var _a;
-                                                                            return __generator(this, function (_b) {
-                                                                                switch (_b.label) {
-                                                                                    case 0: return [4 /*yield*/, Render.localeSettingsPopup()];
-                                                                                    case 1:
-                                                                                        if (!_b.sent()) return [3 /*break*/, 3];
-                                                                                        exports.setLocale((_a = Storage.SystemSettings.get().locale) !== null && _a !== void 0 ? _a : null);
-                                                                                        result = true;
-                                                                                        return [4 /*yield*/, update()];
-                                                                                    case 2:
-                                                                                        _b.sent();
-                                                                                        _b.label = 3;
-                                                                                    case 3: return [2 /*return*/];
-                                                                                }
-                                                                            });
-                                                                        }); })];
-                                                                    case 1: return [2 /*return*/, _a.sent()];
+                                                            var _a;
+                                                            return __generator(this, function (_b) {
+                                                                switch (_b.label) {
+                                                                    case 0: return [4 /*yield*/, Render.localeSettingsPopup()];
+                                                                    case 1:
+                                                                        if (!_b.sent()) return [3 /*break*/, 3];
+                                                                        exports.setLocale((_a = Storage.SystemSettings.get().locale) !== null && _a !== void 0 ? _a : null);
+                                                                        result = true;
+                                                                        return [4 /*yield*/, update()];
+                                                                    case 2:
+                                                                        _b.sent();
+                                                                        _b.label = 3;
+                                                                    case 3: return [2 /*return*/];
                                                                 }
                                                             });
                                                         }); }),
                                                         Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("Emoji setting"), Render.label(CyclicToDo.getEmojiTypeLocale((_e = settings.emoji) !== null && _e !== void 0 ? _e : "auto"))), "emoji.description", function () { return __awaiter(_this, void 0, void 0, function () {
-                                                            var _this = this;
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
-                                                                    case 0: return [4 /*yield*/, Render.waitPopup(ui.dom, function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                            return __generator(this, function (_a) {
-                                                                                switch (_a.label) {
-                                                                                    case 0: return [4 /*yield*/, Render.emojiSettingsPopup()];
-                                                                                    case 1:
-                                                                                        if (!_a.sent()) return [3 /*break*/, 3];
-                                                                                        result = true;
-                                                                                        return [4 /*yield*/, update()];
-                                                                                    case 2:
-                                                                                        _a.sent();
-                                                                                        _a.label = 3;
-                                                                                    case 3: return [2 /*return*/];
-                                                                                }
-                                                                            });
-                                                                        }); })];
-                                                                    case 1: return [2 /*return*/, _a.sent()];
+                                                                    case 0: return [4 /*yield*/, Render.emojiSettingsPopup()];
+                                                                    case 1:
+                                                                        if (!_a.sent()) return [3 /*break*/, 3];
+                                                                        result = true;
+                                                                        return [4 /*yield*/, update()];
+                                                                    case 2:
+                                                                        _a.sent();
+                                                                        _a.label = 3;
+                                                                    case 3: return [2 /*return*/];
                                                                 }
                                                             });
                                                         }); }),
@@ -25720,23 +25678,54 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.getScreenCoverList = function () { return Array.from(document.getElementsByClassName("screen-cover")); };
             Render.getScreenCover = function () { return Render.getScreenCoverList().filter(function (_i, ix, list) { return (ix + 1) === list.length; })[0]; };
             Render.hasScreenCover = function () { return 0 < Render.getScreenCoverList().length; };
-            Render.waitPopup = function (current, next) { return __awaiter(_this, void 0, void 0, function () {
+            ;
+            Render.toggleCoverPopup = function (current, cover) {
+                if (current) {
+                    minamo_js_1.minamo.dom.toggleCSSClass(current.dom, "covered", cover);
+                }
+            };
+            Render.coverPopup = function (current) { return Render.toggleCoverPopup(current, true); };
+            Render.uncoverPopup = function (current) { return Render.toggleCoverPopup(current, false); };
+            Render.waitPopup = function (next) { return __awaiter(_this, void 0, void 0, function () {
+                var current;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            _a.trys.push([0, , 2, 3]);
-                            minamo_js_1.minamo.dom.toggleCSSClass(current, "covered", true);
+                            current = Render.getCurrentPopup();
+                            _a.label = 1;
+                        case 1:
+                            _a.trys.push([1, , 3, 4]);
+                            Render.coverPopup(current);
                             return [4 /*yield*/, next()];
-                        case 1: return [2 /*return*/, _a.sent()];
-                        case 2:
-                            minamo_js_1.minamo.dom.toggleCSSClass(current, "covered", false);
+                        case 2: return [2 /*return*/, _a.sent()];
+                        case 3:
+                            Render.uncoverPopup(current);
                             return [7 /*endfinally*/];
-                        case 3: return [2 /*return*/];
+                        case 4: return [2 /*return*/];
                     }
                 });
             }); };
+            Render.popupStack = [];
+            Render.getCurrentPopup = function () { return Render.popupStack[Render.popupStack.length - 1]; };
+            Render.pushPopup = function (current) { return Render.popupStack.push(current); };
+            Render.popPopup = function (current) { return Render.popupStack.splice(Render.popupStack.findIndex(function (i) { return current === i; }), 1); };
             Render.popup = function (data) {
                 var _a;
+                var parent = Render.getCurrentPopup();
+                Render.coverPopup(parent);
+                var dispose = function () { return __awaiter(_this, void 0, void 0, function () {
+                    var _a;
+                    return __generator(this, function (_b) {
+                        switch (_b.label) {
+                            case 0: return [4 /*yield*/, ((_a = data === null || data === void 0 ? void 0 : data.onClose) === null || _a === void 0 ? void 0 : _a.call(data))];
+                            case 1:
+                                _b.sent();
+                                Render.popPopup(result);
+                                Render.uncoverPopup(parent);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); };
                 var dom = Render.$make(HTMLDivElement)({
                     tag: "div",
                     className: "popup " + ((_a = data.className) !== null && _a !== void 0 ? _a : ""),
@@ -25749,12 +25738,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }); },
                 });
                 var close = function () { return __awaiter(_this, void 0, void 0, function () {
-                    var _a;
-                    return __generator(this, function (_b) {
-                        switch (_b.label) {
-                            case 0: return [4 /*yield*/, ((_a = data === null || data === void 0 ? void 0 : data.onClose) === null || _a === void 0 ? void 0 : _a.call(data))];
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, dispose()];
                             case 1:
-                                _b.sent();
+                                _a.sent();
                                 cover.close();
                                 return [2 /*return*/];
                         }
@@ -25767,12 +25755,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         { tag: "div", }, // レイアウト調整用のダミー要素 ( この調整がないとポップアップが小さく且つ入力要素がある場合に iPad でキーボードの下に dom が隠れてしまう。 )
                     ],
                     onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                        var _a;
-                        return __generator(this, function (_b) {
-                            switch (_b.label) {
-                                case 0: return [4 /*yield*/, ((_a = data === null || data === void 0 ? void 0 : data.onClose) === null || _a === void 0 ? void 0 : _a.call(data))];
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, dispose()];
                                 case 1:
-                                    _b.sent();
+                                    _a.sent();
                                     return [2 /*return*/];
                             }
                         });
@@ -25782,6 +25769,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     dom: dom,
                     close: close,
                 };
+                Render.pushPopup(result);
                 return result;
             };
             Render.menuButton = function (menu) { return __awaiter(_this, void 0, void 0, function () {
@@ -30961,7 +30949,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Nov 17 2023 09:27:53 GMT+0900 (日本標準時)', buildTimestampTick: 1700180873102, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Nov 19 2023 15:02:10 GMT+0900 (日本標準時)', buildTimestampTick: 1700373730901, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -31185,8 +31173,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Fri Nov 17 2023 09:27:53 GMT+0900 (日本標準時)</div>
-</div><div id="screen-toast"></div><div id="screen-footer" class="screen-footer"></div></div></div>
+<div class="bottom-line version-information">build timestamp: Sun Nov 19 2023 15:02:10 GMT+0900 (日本標準時)</div>
+</div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
 </svg>
