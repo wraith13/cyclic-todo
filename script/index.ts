@@ -3188,7 +3188,7 @@ export module CyclicToDo
         };
         export const uiStyleSettingsPopup = async (settings: SystemSettings = Storage.SystemSettings.get()): Promise<boolean> =>
         {
-            const defaultValue = "slide";
+            const defaultValue = "fixed";
             const init = settings.uiStyle ?? defaultValue;
             return await new Promise
             (
@@ -3588,7 +3588,7 @@ export module CyclicToDo
                                 (
                                     "auto-tag-flash",
                                     label("UI style setting"),
-                                    label(getUiStyleLocale(settings.uiStyle ?? "slide"))
+                                    label(getUiStyleLocale(settings.uiStyle ?? "fixed"))
                                 ),
                                 "uiStyle.description",
                                 async () =>
@@ -7707,38 +7707,56 @@ export module CyclicToDo
             }
             getScreenBody().classList.toggle("updating", false);
         };
-        export const updatingScreen = async (_url: string = location.href): Promise<ScreenSource> =>
-        ({
-            className: "updating-screen",
-            header:
+        export const updatingScreen = async () =>
+        {
+            removeProgressStyle();
+            getScreen().classList.toggle("updating", true);
+            updatingAt = new Date().getTime();
+            await minamo.core.timeout(125);
+        };
+        export const updatedScreen = async () =>
+        {
+            const now = new Date().getTime();
+            const transitionSpanMin = 250;
+            const wait = Math.min(updatingAt +transitionSpanMin -now, transitionSpanMin);
+            if (0 < wait)
             {
-                items:
-                [
-                    await screenHeaderHomeSegment(),
-                    {
-                        icon: "list-icon",
-                        title: "loading...",
-                    },
-                ],
-                menu: await updatingScreenMenu(),
-                parent: { },
-            },
-            body:
-            [
-                //await applicationColorIcon(),
-                await applicationIcon(),
-                // $div("message")(label("Updating...")),
-                // $div("button-list")
-                // ({
-                //     tag: "button",
-                //     className: "default-button main-button long-button",
-                //     children: label("Reload"),
-                //     onclick: async () => await showPage(url),
-                // }),
-            ]
-        });
-        export const showUpdatingScreen = async (url: string = location.href) =>
-            await showWindow(await updatingScreen(url));
+                await minamo.core.timeout(wait);
+            }
+            getScreen().classList.toggle("updating", false);
+        };
+        // export const updatingScreen = async (_url: string = location.href): Promise<ScreenSource> =>
+        // ({
+        //     className: "updating-screen",
+        //     header:
+        //     {
+        //         items:
+        //         [
+        //             await screenHeaderHomeSegment(),
+        //             {
+        //                 icon: "list-icon",
+        //                 title: "loading...",
+        //             },
+        //         ],
+        //         menu: await updatingScreenMenu(),
+        //         parent: { },
+        //     },
+        //     body:
+        //     [
+        //         //await applicationColorIcon(),
+        //         await applicationIcon(),
+        //         // $div("message")(label("Updating...")),
+        //         // $div("button-list")
+        //         // ({
+        //         //     tag: "button",
+        //         //     className: "default-button main-button long-button",
+        //         //     children: label("Reload"),
+        //         //     onclick: async () => await showPage(url),
+        //         // }),
+        //     ]
+        // });
+        // export const showUpdatingScreen = async (url: string = location.href) =>
+        //     await showWindow(await updatingScreen(url));
         export const updateTitle = () =>
         {
             document.title = Array.from(getHeaderElement().getElementsByClassName("segment-title"))
@@ -7755,7 +7773,7 @@ export module CyclicToDo
         export const getHeaderElement = () => document.getElementById("screen-header") as HTMLDivElement;
         export const updateTopAndBottomUIState = (scrollTop: number, scrollMax: number) =>
         {
-            const uiStyle = Storage.SystemSettings.get().uiStyle ?? "slide";
+            const uiStyle = Storage.SystemSettings.get().uiStyle ?? "fixed";
             let isImmersive = false;
             if ("fixed" !== uiStyle)
             {
@@ -8558,7 +8576,7 @@ export module CyclicToDo
     };
     export const updateUiStyle = () =>
     {
-        const uiStyle = Storage.SystemSettings.get().uiStyle ?? "slide";
+        const uiStyle = Storage.SystemSettings.get().uiStyle ?? "fixed";
         if ("fixed" === uiStyle)
         {
             minamo.dom.toggleCSSClass(Render.getScreen(), "immersive", false);
@@ -8707,7 +8725,8 @@ export module CyclicToDo
         window.scrollTo(0,0);
         const body = Render.getScreenBody();
         body.scrollTo(0,0);
-        await Render.updatingScreenBody();
+        // await Render.updatingScreenBody();
+        await Render.updatingScreen();
         //await Render.showUpdatingScreen(url);
         //await minamo.core.timeout(wait);
         const urlParams = getUrlParams(url);
@@ -8732,9 +8751,9 @@ export module CyclicToDo
             case "removed":
                 Render.showRemovedListScreen();
                 break;
-            case "loading": // for debug only
-                await Render.showUpdatingScreen(url);
-                break;
+            // case "loading": // for debug only
+            //     await Render.showUpdatingScreen(url);
+            //     break;
             default:
                 await Render.showWelcomeScreen();
                 break;
@@ -8780,7 +8799,8 @@ export module CyclicToDo
                 break;
             }
         }
-        await Render.updatedScreenBody();
+        // await Render.updatedScreenBody();
+        await Render.updatedScreen();
     };
     export const showUrl = async (data: { pass?:string, tag?:string, todo?: string, hash?: string}) =>
     {

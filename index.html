@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Nov 20 2023 07:15:35 GMT+0900 (日本標準時)
+    build at: Tue Nov 21 2023 17:27:40 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2762,6 +2762,18 @@ h2 {
 }
 .light-theme-trait .screen.covered {
   filter: blur(0.125rem) grayscale(0.618);
+}
+.light-theme-trait .screen.updating #screen-header > .segment,
+.light-theme-trait .screen.updating #screen-header > .header-operator {
+  filter: blur(0.25em);
+  user-select: none;
+  pointer-events: none;
+}
+.light-theme-trait .screen.updating #screen-body,
+.light-theme-trait .screen.updating #screen-footer {
+  filter: blur(1em) grayscale(0.618);
+  user-select: none;
+  pointer-events: none;
 }
 .light-theme-trait .screen > :not(.screen-body) {
   flex-shrink: 0;
@@ -5744,6 +5756,18 @@ body.light .screen {
 body.light .screen.covered {
   filter: blur(0.125rem) grayscale(0.618);
 }
+body.light .screen.updating #screen-header > .segment,
+body.light .screen.updating #screen-header > .header-operator {
+  filter: blur(0.25em);
+  user-select: none;
+  pointer-events: none;
+}
+body.light .screen.updating #screen-body,
+body.light .screen.updating #screen-footer {
+  filter: blur(1em) grayscale(0.618);
+  user-select: none;
+  pointer-events: none;
+}
 body.light .screen > :not(.screen-body) {
   flex-shrink: 0;
 }
@@ -8214,6 +8238,18 @@ body.light .keyboard-shortcuts li .key:first-child {
   }
   body.auto .screen.covered {
     filter: blur(0.125rem) grayscale(0.618);
+  }
+  body.auto .screen.updating #screen-header > .segment,
+  body.auto .screen.updating #screen-header > .header-operator {
+    filter: blur(0.25em);
+    user-select: none;
+    pointer-events: none;
+  }
+  body.auto .screen.updating #screen-body,
+  body.auto .screen.updating #screen-footer {
+    filter: blur(1em) grayscale(0.618);
+    user-select: none;
+    pointer-events: none;
   }
   body.auto .screen > :not(.screen-body) {
     flex-shrink: 0;
@@ -11962,6 +11998,18 @@ body.light .keyboard-shortcuts li .key:first-child {
 .dark-theme-trait .screen.covered {
   filter: blur(0.125rem) grayscale(0.618);
 }
+.dark-theme-trait .screen.updating #screen-header > .segment,
+.dark-theme-trait .screen.updating #screen-header > .header-operator {
+  filter: blur(0.25em);
+  user-select: none;
+  pointer-events: none;
+}
+.dark-theme-trait .screen.updating #screen-body,
+.dark-theme-trait .screen.updating #screen-footer {
+  filter: blur(1em) grayscale(0.618);
+  user-select: none;
+  pointer-events: none;
+}
 .dark-theme-trait .screen > :not(.screen-body) {
   flex-shrink: 0;
 }
@@ -14946,6 +14994,18 @@ body.dark .screen {
 body.dark .screen.covered {
   filter: blur(0.125rem) grayscale(0.618);
 }
+body.dark .screen.updating #screen-header > .segment,
+body.dark .screen.updating #screen-header > .header-operator {
+  filter: blur(0.25em);
+  user-select: none;
+  pointer-events: none;
+}
+body.dark .screen.updating #screen-body,
+body.dark .screen.updating #screen-footer {
+  filter: blur(1em) grayscale(0.618);
+  user-select: none;
+  pointer-events: none;
+}
 body.dark .screen > :not(.screen-body) {
   flex-shrink: 0;
 }
@@ -17419,6 +17479,18 @@ body.dark .keyboard-shortcuts li .key:first-child {
   }
   body.auto .screen.covered {
     filter: blur(0.125rem) grayscale(0.618);
+  }
+  body.auto .screen.updating #screen-header > .segment,
+  body.auto .screen.updating #screen-header > .header-operator {
+    filter: blur(0.25em);
+    user-select: none;
+    pointer-events: none;
+  }
+  body.auto .screen.updating #screen-body,
+  body.auto .screen.updating #screen-footer {
+    filter: blur(1em) grayscale(0.618);
+    user-select: none;
+    pointer-events: none;
   }
   body.auto .screen > :not(.screen-body) {
     flex-shrink: 0;
@@ -24136,7 +24208,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return __generator(this, function (_b) {
                         switch (_b.label) {
                             case 0:
-                                defaultValue = "slide";
+                                defaultValue = "fixed";
                                 init = (_a = settings.uiStyle) !== null && _a !== void 0 ? _a : defaultValue;
                                 return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
                                         var result, checkButtonList, checkButtonListUpdate, ui;
@@ -24696,7 +24768,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 }
                                                             });
                                                         }); }),
-                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("UI style setting"), Render.label(CyclicToDo.getUiStyleLocale((_b = settings.uiStyle) !== null && _b !== void 0 ? _b : "slide"))), "uiStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("UI style setting"), Render.label(CyclicToDo.getUiStyleLocale((_b = settings.uiStyle) !== null && _b !== void 0 ? _b : "fixed"))), "uiStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
                                                                     case 0: return [4 /*yield*/, Render.uiStyleSettingsPopup()];
@@ -29873,54 +29945,71 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 });
             }); };
-            Render.updatingScreen = function (_url) {
-                if (_url === void 0) { _url = location.href; }
-                return __awaiter(_this, void 0, void 0, function () {
-                    var _a, _b;
-                    return __generator(this, function (_c) {
-                        switch (_c.label) {
-                            case 0:
-                                _a = {
-                                    className: "updating-screen"
-                                };
-                                _b = {};
-                                return [4 /*yield*/, Render.screenHeaderHomeSegment()];
-                            case 1:
-                                _b.items = [
-                                    _c.sent(),
-                                    {
-                                        icon: "list-icon",
-                                        title: "loading...",
-                                    }
-                                ];
-                                return [4 /*yield*/, Render.updatingScreenMenu()];
-                            case 2:
-                                _a.header = (_b.menu = _c.sent(),
-                                    _b.parent = {},
-                                    _b);
-                                //await applicationColorIcon(),
-                                return [4 /*yield*/, Render.applicationIcon()];
-                            case 3: return [2 /*return*/, (_a.body = [
-                                    //await applicationColorIcon(),
-                                    _c.sent()
-                                ],
-                                    _a)];
-                        }
-                    });
-                });
-            };
-            Render.showUpdatingScreen = function (url) {
-                if (url === void 0) { url = location.href; }
-                return __awaiter(_this, void 0, void 0, function () { var _a; return __generator(this, function (_b) {
-                    switch (_b.label) {
+            Render.updatingScreen = function () { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
                         case 0:
-                            _a = Render.showWindow;
-                            return [4 /*yield*/, Render.updatingScreen(url)];
-                        case 1: return [4 /*yield*/, _a.apply(void 0, [_b.sent()])];
-                        case 2: return [2 /*return*/, _b.sent()];
+                            Render.removeProgressStyle();
+                            Render.getScreen().classList.toggle("updating", true);
+                            updatingAt = new Date().getTime();
+                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(125)];
+                        case 1:
+                            _a.sent();
+                            return [2 /*return*/];
                     }
-                }); });
-            };
+                });
+            }); };
+            Render.updatedScreen = function () { return __awaiter(_this, void 0, void 0, function () {
+                var now, transitionSpanMin, wait;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            now = new Date().getTime();
+                            transitionSpanMin = 250;
+                            wait = Math.min(updatingAt + transitionSpanMin - now, transitionSpanMin);
+                            if (!(0 < wait)) return [3 /*break*/, 2];
+                            return [4 /*yield*/, minamo_js_1.minamo.core.timeout(wait)];
+                        case 1:
+                            _a.sent();
+                            _a.label = 2;
+                        case 2:
+                            Render.getScreen().classList.toggle("updating", false);
+                            return [2 /*return*/];
+                    }
+                });
+            }); };
+            // export const updatingScreen = async (_url: string = location.href): Promise<ScreenSource> =>
+            // ({
+            //     className: "updating-screen",
+            //     header:
+            //     {
+            //         items:
+            //         [
+            //             await screenHeaderHomeSegment(),
+            //             {
+            //                 icon: "list-icon",
+            //                 title: "loading...",
+            //             },
+            //         ],
+            //         menu: await updatingScreenMenu(),
+            //         parent: { },
+            //     },
+            //     body:
+            //     [
+            //         //await applicationColorIcon(),
+            //         await applicationIcon(),
+            //         // $div("message")(label("Updating...")),
+            //         // $div("button-list")
+            //         // ({
+            //         //     tag: "button",
+            //         //     className: "default-button main-button long-button",
+            //         //     children: label("Reload"),
+            //         //     onclick: async () => await showPage(url),
+            //         // }),
+            //     ]
+            // });
+            // export const showUpdatingScreen = async (url: string = location.href) =>
+            //     await showWindow(await updatingScreen(url));
             Render.updateTitle = function () {
                 var _a, _b, _c;
                 document.title = (_c = (_b = (_a = Array.from(Render.getHeaderElement().getElementsByClassName("segment-title"))) === null || _a === void 0 ? void 0 : _a.map(function (div) { return div.innerText; })) === null || _b === void 0 ? void 0 : _b.join(" / ")) !== null && _c !== void 0 ? _c : CyclicToDo.applicationTitle;
@@ -29931,7 +30020,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.getHeaderElement = function () { return document.getElementById("screen-header"); };
             Render.updateTopAndBottomUIState = function (scrollTop, scrollMax) {
                 var _a;
-                var uiStyle = (_a = Storage.SystemSettings.get().uiStyle) !== null && _a !== void 0 ? _a : "slide";
+                var uiStyle = (_a = Storage.SystemSettings.get().uiStyle) !== null && _a !== void 0 ? _a : "fixed";
                 var isImmersive = false;
                 if ("fixed" !== uiStyle) {
                     var isNearTop = scrollTop < 40;
@@ -30656,7 +30745,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
         };
         CyclicToDo.updateUiStyle = function () {
             var _a;
-            var uiStyle = (_a = Storage.SystemSettings.get().uiStyle) !== null && _a !== void 0 ? _a : "slide";
+            var uiStyle = (_a = Storage.SystemSettings.get().uiStyle) !== null && _a !== void 0 ? _a : "fixed";
             if ("fixed" === uiStyle) {
                 minamo_js_1.minamo.dom.toggleCSSClass(Render.getScreen(), "immersive", false);
             }
@@ -30828,8 +30917,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             window.scrollTo(0, 0);
                             body = Render.getScreenBody();
                             body.scrollTo(0, 0);
-                            return [4 /*yield*/, Render.updatingScreenBody()];
+                            // await Render.updatingScreenBody();
+                            return [4 /*yield*/, Render.updatingScreen()];
                         case 1:
+                            // await Render.updatingScreenBody();
                             _e.sent();
                             urlParams = CyclicToDo.getUrlParams(url);
                             hash = CyclicToDo.getUrlHash(url);
@@ -30840,74 +30931,71 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             return [4 /*yield*/, Render.showTodoScreen(pass, todo)];
                         case 2:
                             _e.sent();
-                            return [3 /*break*/, 25];
+                            return [3 /*break*/, 23];
                         case 3:
-                            if (!(OldStorage.isSessionPass(pass) && !tag)) return [3 /*break*/, 11];
+                            if (!(OldStorage.isSessionPass(pass) && !tag)) return [3 /*break*/, 9];
                             _a = hash;
                             switch (_a) {
                                 case "import": return [3 /*break*/, 4];
                                 case "removed": return [3 /*break*/, 5];
-                                case "loading": return [3 /*break*/, 6];
                             }
-                            return [3 /*break*/, 8];
+                            return [3 /*break*/, 6];
                         case 4:
                             Render.showImportScreen();
-                            return [3 /*break*/, 10];
+                            return [3 /*break*/, 8];
                         case 5:
                             Render.showRemovedListScreen();
-                            return [3 /*break*/, 10];
-                        case 6: // for debug only
-                        return [4 /*yield*/, Render.showUpdatingScreen(url)];
+                            return [3 /*break*/, 8];
+                        case 6: return [4 /*yield*/, Render.showWelcomeScreen()];
                         case 7:
                             _e.sent();
-                            return [3 /*break*/, 10];
-                        case 8: return [4 /*yield*/, Render.showWelcomeScreen()];
+                            return [3 /*break*/, 8];
+                        case 8: return [3 /*break*/, 23];
                         case 9:
-                            _e.sent();
-                            return [3 /*break*/, 10];
-                        case 10: return [3 /*break*/, 25];
-                        case 11:
                             _b = hash;
                             switch (_b) {
-                                case "history": return [3 /*break*/, 12];
-                                case "removed": return [3 /*break*/, 14];
-                                case "import": return [3 /*break*/, 16];
-                                case "export": return [3 /*break*/, 18];
+                                case "history": return [3 /*break*/, 10];
+                                case "removed": return [3 /*break*/, 12];
+                                case "import": return [3 /*break*/, 14];
+                                case "export": return [3 /*break*/, 16];
                             }
-                            return [3 /*break*/, 20];
-                        case 12: return [4 /*yield*/, Render.showHistoryScreen(urlParams, {
+                            return [3 /*break*/, 18];
+                        case 10: return [4 /*yield*/, Render.showHistoryScreen(urlParams, {
                                 tag: tag,
                                 pass: pass,
                                 todo: OldStorage.TagMember.get(pass, "@pickup" === tag ? "@pickup-all" : tag),
                             })];
+                        case 11:
+                            _e.sent();
+                            return [3 /*break*/, 23];
+                        case 12: return [4 /*yield*/, Render.showRemovedScreen(pass)];
                         case 13:
                             _e.sent();
-                            return [3 /*break*/, 25];
-                        case 14: return [4 /*yield*/, Render.showRemovedScreen(pass)];
+                            return [3 /*break*/, 23];
+                        case 14: return [4 /*yield*/, Render.showImportScreen()];
                         case 15:
                             _e.sent();
-                            return [3 /*break*/, 25];
-                        case 16: return [4 /*yield*/, Render.showImportScreen()];
+                            return [3 /*break*/, 23];
+                        case 16: return [4 /*yield*/, Render.showExportScreen(pass)];
                         case 17:
                             _e.sent();
-                            return [3 /*break*/, 25];
-                        case 18: return [4 /*yield*/, Render.showExportScreen(pass)];
+                            return [3 /*break*/, 23];
+                        case 18:
+                            if (!(0 <= OldStorage.Pass.get().indexOf(pass))) return [3 /*break*/, 20];
+                            return [4 /*yield*/, Render.showListScreen(pass, tag, urlParams)];
                         case 19:
                             _e.sent();
-                            return [3 /*break*/, 25];
-                        case 20:
-                            if (!(0 <= OldStorage.Pass.get().indexOf(pass))) return [3 /*break*/, 22];
-                            return [4 /*yield*/, Render.showListScreen(pass, tag, urlParams)];
+                            return [3 /*break*/, 22];
+                        case 20: return [4 /*yield*/, CyclicToDo.showUrl({})];
                         case 21:
                             _e.sent();
-                            return [3 /*break*/, 24];
-                        case 22: return [4 /*yield*/, CyclicToDo.showUrl({})];
-                        case 23:
-                            _e.sent();
-                            _e.label = 24;
-                        case 24: return [3 /*break*/, 25];
-                        case 25: return [4 /*yield*/, Render.updatedScreenBody()];
-                        case 26:
+                            _e.label = 22;
+                        case 22: return [3 /*break*/, 23];
+                        case 23: 
+                        // await Render.updatedScreenBody();
+                        return [4 /*yield*/, Render.updatedScreen()];
+                        case 24:
+                            // await Render.updatedScreenBody();
                             _e.sent();
                             return [2 /*return*/];
                     }
@@ -30953,7 +31041,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Nov 20 2023 07:15:35 GMT+0900 (日本標準時)', buildTimestampTick: 1700432135585, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Nov 21 2023 17:27:40 GMT+0900 (日本標準時)', buildTimestampTick: 1700555260288, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -31177,7 +31265,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Mon Nov 20 2023 07:15:35 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Tue Nov 21 2023 17:27:40 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

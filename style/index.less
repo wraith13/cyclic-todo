@@ -2158,6 +2158,26 @@ button
     {
         filter: blur(0.125rem) grayscale(0.618);
     }
+    &.updating
+    {
+        #screen-header
+        {
+            & > .segment,
+            & > .header-operator
+            {
+                filter: blur(0.25em);
+                user-select: none;
+                pointer-events: none;
+            }
+        }
+        #screen-body,
+        #screen-footer
+        {
+            filter: blur(1.0em) grayscale(0.618);
+            user-select: none;
+            pointer-events: none;
+        }
+    }
     & > :not(.screen-body)
     {
         flex-shrink: 0;
