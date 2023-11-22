@@ -6409,13 +6409,7 @@ export module CyclicToDo
                     description: locale.string("画面上部のヘッダーのすぐ下の領域は直近の各 ToDo をこなしてからの経過時間が表示されます。この表示はダイジェストで、各 ToDo の最後の完了からの経過時間のみを扱います。もっと履歴を詳しく見るには履歴バーの一番左の[履歴]をクリックしてください。"),
                     image: "📔"
                 }),
-                await poem
-                ({
-                    title: locale.string("時間精度"),
-                    subtitle: locale.string("分単位です"),
-                    description: locale.string("Cyclic ToDo では分単位での記録となり、秒以下の情報は保存されないのでご注意下さい。"),
-                    image: "⌚️"
-                }),
+                await poem("accuracy"),
                 await poem("bottomtabs"),
             ]),
         ];
@@ -6730,6 +6724,7 @@ export module CyclicToDo
                     image: "🚫",
                 }),
                 await poem("header"),
+                await poem("accuracy"),
                 await poem("bottomtabs"),
             ]),
             // messageList
@@ -7051,6 +7046,7 @@ export module CyclicToDo
             $div("poem-list")
             ([
                 await poem("header"),
+                await poem("accuracy"),
                 await poem("bottomtabs"),
             ]),
         ]);
