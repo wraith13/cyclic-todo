@@ -84,10 +84,11 @@ const step = async (key: string) =>
     return result;
     
 };
+const uniqueFilter = <T>(i: T, ix: number, list: T[]) => ix === list.indexOf(i);
 const main = async () =>
 {
     const resource: { [key:string]: string; } = { };
-    (await Promise.all(Object.values(pomeJson.image).map(key => step(key))))
+    (await Promise.all(Object.values(pomeJson.image).filter(uniqueFilter).map(key => step(key))))
         .sort((a, b) => a.codePoint < b.codePoint ? -1: a.codePoint === b.codePoint ? 0: 1)
         .forEach(i => resource[i.filename] = i.path);
     fs.writeFileSync(`./emoji/noto-emoji/index.json`, JSON.stringify(resource, null, 4));
