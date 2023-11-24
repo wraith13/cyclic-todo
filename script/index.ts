@@ -3925,6 +3925,8 @@ export module CyclicToDo
             };
             return map[displayStyle];
         }
+        export const getTagDisplayStyleDescription = (displayStyle: Exclude<TagSettings["displayStyle"], undefined>) =>
+            `${getTagDisplayStyleText(displayStyle)}.description` as locale.LocaleKeyType;
         export const tagDisplayStyleSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
         (
             async resolve =>
@@ -3944,16 +3946,15 @@ export module CyclicToDo
                         )
                         .map
                         (
-                            async (i: Exclude<TagSettings["displayStyle"], undefined>) =>
-                            ({
-                                tag: "button",
-                                className: `check-button ${i === (settings.displayStyle ?? defaultStyle) ? "checked": ""}`,
-                                children:
+                            async (i: Exclude<TagSettings["displayStyle"], undefined>) => descriptionButton
+                            (
+                                `check-button ${i === (settings.displayStyle ?? defaultStyle) ? "checked": ""}`,
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
                                     $span("")(label(getTagDisplayStyleText(i))),
                                 ],
-                                onclick: async () =>
+                                getTagDisplayStyleDescription(i),
+                                async () =>
                                 {
                                     settings.displayStyle = i;
                                     OldStorage.TagSettings.set(pass, tag, settings);
@@ -3961,7 +3962,24 @@ export module CyclicToDo
                                     result = true;
                                     await tagButtonListUpdate();
                                 }
-                            })
+                            )
+                            // ({
+                            //     tag: "button",
+                            //     className: `check-button ${i === (settings.displayStyle ?? defaultStyle) ? "checked": ""}`,
+                            //     children:
+                            //     [
+                            //         await Resource.loadSvgOrCache("check-icon"),
+                            //         $span("")(label(getTagDisplayStyleText(i))),
+                            //     ],
+                            //     onclick: async () =>
+                            //     {
+                            //         settings.displayStyle = i;
+                            //         OldStorage.TagSettings.set(pass, tag, settings);
+                            //         await updateWindow("operate");
+                            //         result = true;
+                            //         await tagButtonListUpdate();
+                            //     }
+                            // })
                         )
                     )
                 );
