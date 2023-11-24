@@ -57,6 +57,7 @@
         "keyboard": "⌨️",
         "undo":"⌛️",
         "recyclebin": "🗑️",
+        "@deleted": "🗑️",
         "localstorage": "🔥",
         "eviltimerjs": "👿",
         "header": "⬆️",

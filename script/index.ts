@@ -6824,16 +6824,17 @@ export module CyclicToDo
                 messageList([messagePanel(label("Recycle Bin is empty."))]),
                 $div("signboard")
                 ([
-                    await poem
-                    (
-                        {
-                            title: locale.map("@deleted"),
-                            subtitle: "30日間保存されます",
-                            description: locale.string("Items after 30 days are automatically deleted completely."),
-                            image: "🗑️",
-                        },
-                        "poem primary-poem"
-                    ),
+                    await poem("@deleted", "poem primary-poem"),
+                    // await poem
+                    // (
+                    //     {
+                    //         title: locale.map("@deleted"),
+                    //         subtitle: "30日間保存されます",
+                    //         description: locale.string("Items after 30 days are automatically deleted completely."),
+                    //         image: "🗑️",
+                    //     },
+                    //     "poem primary-poem"
+                    // ),
                     $div("button-list")
                     ([
                         0 < list.length ?
