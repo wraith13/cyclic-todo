@@ -3801,6 +3801,24 @@ export module CyclicToDo
                                     }
                                 }
                             ),
+                            Model.isSystemTagOld(tag) ?
+                                []:
+                                descriptionButton
+                                (
+                                    "delete-button",
+                                    monospace
+                                    (
+                                        "auto-tag-flash",
+                                        label("Delete")
+                                    ),
+                                    "poem.recyclebin.description",
+                                    async () =>
+                                    {
+                                        ui.close();
+                                        OldStorage.Tag.remove(pass, tag);
+                                        await showUrl({ pass, tag: "@overall" });
+                                    },
+                                ),
                         ]
                     );
                 };
@@ -3963,23 +3981,6 @@ export module CyclicToDo
                                     await tagButtonListUpdate();
                                 }
                             )
-                            // ({
-                            //     tag: "button",
-                            //     className: `check-button ${i === (settings.displayStyle ?? defaultStyle) ? "checked": ""}`,
-                            //     children:
-                            //     [
-                            //         await Resource.loadSvgOrCache("check-icon"),
-                            //         $span("")(label(getTagDisplayStyleText(i))),
-                            //     ],
-                            //     onclick: async () =>
-                            //     {
-                            //         settings.displayStyle = i;
-                            //         OldStorage.TagSettings.set(pass, tag, settings);
-                            //         await updateWindow("operate");
-                            //         result = true;
-                            //         await tagButtonListUpdate();
-                            //     }
-                            // })
                         )
                     )
                 );
