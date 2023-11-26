@@ -3814,9 +3814,32 @@ export module CyclicToDo
                                     "poem.recyclebin.description",
                                     async () =>
                                     {
+                                        const href = location.href;
                                         ui.close();
                                         OldStorage.Tag.remove(pass, tag);
-                                        await showUrl({ pass, tag: "@overall" });
+                                        if (tag === getUrlParams(href).tag)
+                                        {
+                                            await showUrl({ pass, tag: "@overall" });
+                                        }
+                                        const toast = makeToast
+                                        ({
+                                            content: $span("")(`${locale.map(Model.isSublistOld(tag) ? "Sublist has been deleted!": "Tag has been deleted!")}: ${Model.decode(Model.decodeSublist(tag))}`),
+                                            backwardOperator: cancelTextButton
+                                            (
+                                                async () =>
+                                                {
+                                                    const removedItem = Model.isSublistOld(tag) ?
+                                                        OldStorage.Removed.get(pass).filter(i => isRemovedSublist(i) && tag === i.name)[0]:
+                                                        OldStorage.Removed.get(pass).filter(i => isRemovedTag(i) && tag === i.name)[0];
+                                                    OldStorage.Removed.restore(pass, removedItem);
+                                                    toast.hide(); // nowait
+                                                    if (href !== location.href)
+                                                    {
+                                                        await showUrl(getUrlParams(href));
+                                                    }
+                                                }
+                                            ),
+                                        });
                                     },
                                 ),
                         ]
@@ -4873,7 +4896,7 @@ export module CyclicToDo
                 await onDelete();
                 const toast = makeToast
                 ({
-                    content: $span("")(`${locale.map("ToDo has been deleted!")}: ${item.task}`),
+                    content: $span("")(`${locale.map("ToDo has been deleted!")}: ${Model.decode(item.task)}`),
                     backwardOperator: cancelTextButton
                     (
                         async () =>
@@ -5789,17 +5812,6 @@ export module CyclicToDo
             //     children: "🚫 リストをシェア",
             // },
             exportListMenuItem(entry.pass),
-            Model.isSystemTagOld(entry.tag) ? []:
-                menuItem
-                (
-                    label("Delete"),
-                    async () =>
-                    {
-                        OldStorage.Tag.remove(entry.pass, entry.tag);
-                        await showUrl({ pass: entry.pass, tag: "@overall" });
-                    },
-                    "delete-button"
-                ),
             "@overall" === entry.tag ?
                 menuItem
                 (

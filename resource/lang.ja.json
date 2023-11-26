@@ -222,6 +222,8 @@
     "Items after 30 days are automatically deleted completely.": "３０日経過したアイテムは自動的に完全消去されます。",
     "ToDo has been created!": "ToDo を作成しました！",
     "ToDo has been deleted!": "ToDo を削除しました！",
+    "Tag has been deleted!": "タグを削除しました！",
+    "Sublist has been deleted!": "サブリストを削除しました！",
     "ToDo list has been deleted!": "ToDo リストを削除しました！",
     "Respecify": "指定し直す",
     "Retry": "リトライ",
