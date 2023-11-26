@@ -3699,6 +3699,84 @@ export module CyclicToDo
                 });
             }
         );
+        export const listSettingsPopup = async (pass: string): Promise<boolean> => await new Promise
+        (
+            async resolve =>
+            {
+                let result = false;
+                const buttonList = $make(HTMLDivElement)({ className: "label-button-list" });
+                const buttonListUpdate = async () =>
+                {
+                    minamo.dom.replaceChildren
+                    (
+                        buttonList,
+                        [
+                            descriptionButton
+                            (
+                                "",
+                                monospace
+                                (
+                                    "auto-tag-flash",
+                                    label("ToDo List"),
+                                    labelSpan(OldStorage.Title.get(pass)),
+                                ),
+                                "Rename",
+                                async () =>
+                                {
+                                    const oldTitle = OldStorage.Title.get(pass);
+                                    const newTitle = await prompt(locale.map("Input a ToDo list's name."), oldTitle);
+                                    if (null !== newTitle && 0 < newTitle.length && newTitle !== oldTitle)
+                                    {
+                                        Operate.renameList(pass, newTitle, async () => await reload());
+                                        await buttonListUpdate();
+                                    }
+                                },
+                            ),
+                            descriptionButton
+                            (
+                                "delete-button",
+                                monospace
+                                (
+                                    "auto-tag-flash",
+                                    label("Delete this List")
+                                ),
+                                "poem.recyclebin.description",
+                                async () =>
+                                {
+                                    const backup = location.href;
+                                    Operate.removeList(pass, () => showPage(backup));
+                                    await showUrl({ });
+                                },
+                            ),
+                        ]
+                    );
+                };
+                await buttonListUpdate();
+                const ui = popup
+                ({
+                    // className: "add-remove-tags-popup",
+                    children:
+                    [
+                        $tag("h2")("")(locale.map("List setting")),
+                        buttonList,
+                        $div("popup-operator")
+                        ([{
+                            tag: "button",
+                            className: "default-button",
+                            children: label("Close"),
+                            onclick: () =>
+                            {
+                                ui.close();
+                            },
+                        }]),
+                    ],
+                    onClose: async () =>
+                    {
+                        resolve(result);
+                    },
+                });
+            }
+        );
         export const getTagSettingTitle = (tag: string): locale.LocaleKeyType =>
         {
             const map: { [key: string]: locale.LocaleKeyType; } =
