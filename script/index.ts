@@ -3734,6 +3734,21 @@ export module CyclicToDo
                             ),
                             descriptionButton
                             (
+                                "",
+                                monospace
+                                (
+                                    "auto-tag-flash",
+                                    label("Export")
+                                ),
+                                "export.description",
+                                async () =>
+                                {
+                                    ui.close();
+                                    await showUrl({ pass, hash: "export", });
+                                },
+                            ),
+                            descriptionButton
+                            (
                                 "delete-button",
                                 monospace
                                 (
@@ -3743,6 +3758,7 @@ export module CyclicToDo
                                 "poem.recyclebin.description",
                                 async () =>
                                 {
+                                    ui.close();
                                     const backup = location.href;
                                     Operate.removeList(pass, () => showPage(backup));
                                     await showUrl({ });
@@ -4700,6 +4716,17 @@ export module CyclicToDo
                 if (await systemSettingsPopup())
                 {
                     await reload();
+                }
+            }
+        );
+        export const listSettingsMenuItem = (pass: string) => menuItem
+        (
+            label("List setting"),
+            async () =>
+            {
+                if (await listSettingsPopup(pass))
+                {
+                    //await reload();
                 }
             }
         );
@@ -5876,10 +5903,11 @@ export module CyclicToDo
                     }
                 }
             ),
+            listSettingsMenuItem(entry.pass),
             systemSettingsMenuItem(),
-            "@overall" === entry.tag ? listRenameMenu(entry.pass): [],
-            Model.isSystemTagOld(entry.tag) ? []: renameTagMenuItem(entry),
-            menuLinkItem
+            "@overall" === entry.tag ? listRenameMenu(entry.pass): [], // DELETE_ME
+            Model.isSystemTagOld(entry.tag) ? []: renameTagMenuItem(entry), // DELETE_ME
+            menuLinkItem // DELETE_ME
             (
                 label("@deleted"),
                 { pass: entry.pass, hash: "removed" }

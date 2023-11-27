@@ -111,6 +111,7 @@
     "Back to List": "Back to List",
     "Add/Remove Tag": "Add/Remove Tag",
     "Export": "Export",
+    "export.description": "Copy the JSON to clipboard to export this list to other environments.",
     "Import": "Import",
     "Recycle Bin is empty.": "Recycle Bin is empty.",
     "Back to Top": "Back to Top screen",
