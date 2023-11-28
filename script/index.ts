@@ -3727,6 +3727,7 @@ export module CyclicToDo
                                     const newTitle = await prompt(locale.map("Input a ToDo list's name."), oldTitle);
                                     if (null !== newTitle && 0 < newTitle.length && newTitle !== oldTitle)
                                     {
+                                        result = true;
                                         Operate.renameList(pass, newTitle, async () => await reload());
                                         await buttonListUpdate();
                                     }
@@ -5905,34 +5906,12 @@ export module CyclicToDo
             ),
             listSettingsMenuItem(entry.pass),
             systemSettingsMenuItem(),
-            "@overall" === entry.tag ? listRenameMenu(entry.pass): [], // DELETE_ME
-            Model.isSystemTagOld(entry.tag) ? []: renameTagMenuItem(entry), // DELETE_ME
-            menuLinkItem // DELETE_ME
+            menuLinkItem
             (
                 label("@deleted"),
                 { pass: entry.pass, hash: "removed" }
             ),
             newTaskMenuItem(entry),
-            // {
-            //     tag: "button",
-            //     children: "🚫 リストをシェア",
-            // },
-            exportListMenuItem(entry.pass),
-            "@overall" === entry.tag ?
-                menuItem
-                (
-                    label("Delete this List"),
-                    async () =>
-                    {
-                        // Storage.Pass.remove(entry.pass);
-                        // await showUrl({ });
-                        const backup = location.href;
-                        Operate.removeList(entry.pass, () => showPage(backup));
-                        await showUrl({ });
-                    },
-                    "delete-button"
-                ):
-                [],
         ];
         export const softRegulateFilterText = (filter: string) => filter
             .trim()
@@ -6762,35 +6741,10 @@ export module CyclicToDo
         export const historyScreenMenu = async (entry: ToDoTagEntryOld) =>
         [
             backToListMenuItem(entry.pass, entry.tag),
+            listSettingsMenuItem(entry.pass),
             systemSettingsMenuItem(),
             Model.isSystemTagOld(entry.tag) ? []: renameTagMenuItem(entry, "history"),
             newTaskMenuItem(entry),
-            // {
-            //     tag: "button",
-            //     children: "🚫 リストをシェア",
-            // },
-            exportListMenuItem(entry.pass),
-            // Storage.Tag.isSystemTag(entry.tag) ? []:
-            //     menuItem
-            //     (
-            //         label("Delete"),
-            //         async () =>
-            //         {
-            //         },
-            //         "delete-button"
-            //     ),
-            // "@overall" === entry.tag ?
-            //     menuItem
-            //     (
-            //         label("Delete"),
-            //         async () =>
-            //         {
-            //             Storage.Pass.remove(entry.pass);
-            //             await showUrl({ });
-            //         },
-            //         "delete-button"
-            //     ):
-            //     [],
         ];
         export const isMatchHistoryItem = (filter: string, _entry: ToDoTagEntryOld, item: { task: string, tick: number | null }) =>
             isMatchTest(filter, regulateFilterText(item.task)) ||
@@ -7038,6 +6992,7 @@ export module CyclicToDo
         };
         export const todoScreenMenu = async (pass: string, item: ToDoEntry) =>
         [
+            listSettingsMenuItem(pass),
             systemSettingsMenuItem(),
             todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
             todoTagMenu(pass, item),
@@ -7048,11 +7003,6 @@ export module CyclicToDo
                 async () => await showUrl({ pass, tag: "@overall", }),
                 async () => await showUrl({ pass, todo: item.task, })
             ),
-            // {
-            //     tag: "button",
-            //     children: "🚫 ToDo をシェア",
-            // },
-            exportListMenuItem(pass),
         ];
         export const todoScreenHeader = async (pass: string, item: ToDoEntry, _ticks: number[], tag: string) =>
         ({
@@ -7548,28 +7498,40 @@ export module CyclicToDo
                             children: label("Open"),
                         },
                     }),
-                    await menuButton
-                    ([
-                        listRenameMenu(list.pass),
-                        internalLink
-                        ({
-                            href: { pass: list.pass, tag: "@overall", hash: "history" },
-                            children: menuItem(label("History")),
-                        }),
-                        exportListMenuItem(list.pass),
-                        menuItem
-                        (
-                            label("Delete"),
-                            async () =>
+                    await button
+                    (
+                        "icon-button",
+                        await Resource.loadSvgOrCache("setting-icon"),
+                        async () =>
+                        {
+                            if (await listSettingsPopup(list.pass))
                             {
-                                // Storage.Pass.remove(list.pass);
-                                // await reload();
-                                Operate.removeList(list.pass);
-                                updateWindow("operate");
-                            },
-                            "delete-button"
-                        )
-                    ]),
+                                await reload();
+                            }
+                        }
+                    ),
+                    // await menuButton
+                    // ([
+                    //     listRenameMenu(list.pass),
+                    //     internalLink
+                    //     ({
+                    //         href: { pass: list.pass, tag: "@overall", hash: "history" },
+                    //         children: menuItem(label("History")),
+                    //     }),
+                    //     exportListMenuItem(list.pass),
+                    //     menuItem
+                    //     (
+                    //         label("Delete"),
+                    //         async () =>
+                    //         {
+                    //             // Storage.Pass.remove(list.pass);
+                    //             // await reload();
+                    //             Operate.removeList(list.pass);
+                    //             updateWindow("operate");
+                    //         },
+                    //         "delete-button"
+                    //     )
+                    // ]),
                 ]),
             ]),
         ]);
