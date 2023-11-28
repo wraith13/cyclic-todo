@@ -31,5 +31,5 @@
     "forbidden-icon": "./image/forbidden.1024.svg",
     "import-icon": "./image/import.1024.svg",
     "export-icon": "./image/export.1024.svg",
-    "setting-icon": "./image/cog.1024.svg"
+    "settings-icon": "./image/cog.1024.svg"
 }

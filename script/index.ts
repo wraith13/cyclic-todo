@@ -3774,7 +3774,7 @@ export module CyclicToDo
                     // className: "add-remove-tags-popup",
                     children:
                     [
-                        $tag("h2")("")(locale.map("List setting")),
+                        $tag("h2")("")(locale.map("List settings")),
                         buttonList,
                         $div("popup-operator")
                         ([{
@@ -3794,13 +3794,13 @@ export module CyclicToDo
                 });
             }
         );
-        export const getTagSettingTitle = (tag: string): locale.LocaleKeyType =>
+        export const getTagSettingsTitle = (tag: string): locale.LocaleKeyType =>
         {
             const map: { [key: string]: locale.LocaleKeyType; } =
             {
-                "home": "Home setting",
-                "tag": "Tag setting",
-                "sublist": "Sublist setting",
+                "home": "Home settings",
+                "tag": "Tag settings",
+                "sublist": "Sublist settings",
             };
             return map[<string>Model.getTagCategory(tag)];
         };
@@ -3949,8 +3949,8 @@ export module CyclicToDo
                         $tag("h2")("")
                         (
                             Model.isHomeOld(tag) ?
-                                locale.map(getTagSettingTitle(tag)):
-                                `${locale.map(getTagSettingTitle(tag))}: ${Domain.tagMap(tag)}`
+                                locale.map(getTagSettingsTitle(tag)):
+                                `${locale.map(getTagSettingsTitle(tag))}: ${Domain.tagMap(tag)}`
                         ),
                         buttonList,
                         $div("popup-operator")
@@ -4199,7 +4199,7 @@ export module CyclicToDo
                 });
             }
         );
-        export const getTodoPickupSettingsElapsedTimePreset = (_entry: ToDoEntry, current: AutoTagSetting | undefined) =>
+        export const getTodoPickupSettingElapsedTimePreset = (_entry: ToDoEntry, current: AutoTagSetting | undefined) =>
         {
             let list: number[] = [];
             if ("elapsed-time" === current?.type)
@@ -4210,7 +4210,7 @@ export module CyclicToDo
             list.push(...config.timespanPreset.map(i => minamo.core.parseTimespan(i)).filter(isNumber).map(i => i / Domain.timeAccuracy));
             return list.filter(uniqueFilter).filter(takeFilter(config.timespanPresetMaxCount)).sort(minamo.core.comparer.basic);
         };
-        export const getTodoPickupSettingsElapsedTimeStandardScorePreset = (_entry: ToDoEntry, current: AutoTagSetting | undefined) =>
+        export const getTodoPickupSettingElapsedTimeStandardScorePreset = (_entry: ToDoEntry, current: AutoTagSetting | undefined) =>
         {
             let list: number[] = [];
             if ("elapsed-time-standard-score" === current?.type)
@@ -4271,7 +4271,7 @@ export module CyclicToDo
                 return label("pickup.expired");
             }
         };
-        export const todoSpanSettingsPopup = async (entry: ToDoEntry, title: locale.LocaleKeyType, setter: (value: AutoTagSetting | undefined) => unknown, getter: () => (AutoTagSetting | undefined)): Promise<boolean> => await new Promise
+        export const todoSpanSettingPopup = async (entry: ToDoEntry, title: locale.LocaleKeyType, setter: (value: AutoTagSetting | undefined) => unknown, getter: () => (AutoTagSetting | undefined)): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
@@ -4287,10 +4287,10 @@ export module CyclicToDo
                             [
                                 undefined,
                                 { type: "always" },
-                                ...getTodoPickupSettingsElapsedTimePreset(entry, getter())
+                                ...getTodoPickupSettingElapsedTimePreset(entry, getter())
                                     .map(elapsedTime => ({ type: "elapsed-time", elapsedTime, })),
                                 { type: "elapsed-time", NaN, },
-                                ...getTodoPickupSettingsElapsedTimeStandardScorePreset(entry, getter())
+                                ...getTodoPickupSettingElapsedTimeStandardScorePreset(entry, getter())
                                     .map(elapsedTimeStandardScore => ({ type: "elapsed-time-standard-score", elapsedTimeStandardScore, })),
                                 { type: "elapsed-time-standard-score", NaN, },
                                 { type: "expired" },
@@ -4377,8 +4377,8 @@ export module CyclicToDo
                 });
             }
         );
-        export const todoFlashSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
-            await todoSpanSettingsPopup
+        export const todoFlashSettingPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
+            await todoSpanSettingPopup
             (
                 entry,
                 "Flash setting",
@@ -4390,8 +4390,8 @@ export module CyclicToDo
                 },
                 () => settings.flash
             );
-        export const todoPickupSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
-            await todoSpanSettingsPopup
+        export const todoPickupSettingPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
+            await todoSpanSettingPopup
             (
                 entry,
                 "Pickup setting",
@@ -4403,8 +4403,8 @@ export module CyclicToDo
                 },
                 () => settings.pickup
             );
-        export const todoRestrictionSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
-            await todoSpanSettingsPopup
+        export const todoRestrictionSettingPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
+            await todoSpanSettingPopup
             (
                 entry,
                 "Restriction setting",
@@ -4436,7 +4436,7 @@ export module CyclicToDo
                             "flash.description",
                             async () =>
                             {
-                                if (await todoFlashSettingsPopup(pass, entry, settings))
+                                if (await todoFlashSettingPopup(pass, entry, settings))
                                 {
                                     result = true;
                                     await buttonListUpdate();
@@ -4453,7 +4453,7 @@ export module CyclicToDo
                             "pickup.description",
                             async () =>
                             {
-                                if (await todoPickupSettingsPopup(pass, entry, settings))
+                                if (await todoPickupSettingPopup(pass, entry, settings))
                                 {
                                     result = true;
                                     await buttonListUpdate();
@@ -4470,7 +4470,7 @@ export module CyclicToDo
                             "restriction.description",
                             async () =>
                             {
-                                if (await todoRestrictionSettingsPopup(pass, entry, settings))
+                                if (await todoRestrictionSettingPopup(pass, entry, settings))
                                 {
                                     result = true;
                                     await buttonListUpdate();
@@ -4485,7 +4485,7 @@ export module CyclicToDo
                     // className: "add-remove-tags-popup",
                     children:
                     [
-                        $tag("h2")("")(`${locale.map("Auto tag setting")}: ${Model.decode(entry.task)}`),
+                        $tag("h2")("")(`${locale.map("Auto tag settings")}: ${Model.decode(entry.task)}`),
                         buttonList,
                         $div("popup-operator")
                         ([{
@@ -4722,7 +4722,7 @@ export module CyclicToDo
         );
         export const listSettingsMenuItem = (pass: string) => menuItem
         (
-            label("List setting"),
+            label("List settings"),
             async () =>
             {
                 if (await listSettingsPopup(pass))
@@ -4952,7 +4952,7 @@ export module CyclicToDo
         [
             menuItem
             (
-                label("Auto tag setting"),
+                label("Auto tag settings"),
                 async () =>
                 {
                     if (await autoTagSettingsPopup(pass, item))
@@ -5127,7 +5127,7 @@ export module CyclicToDo
                 linkButton
                 ({
                     className: "tag",
-                    children: await Resource.loadSvgOrCache("setting-icon"),
+                    children: await Resource.loadSvgOrCache("settings-icon"),
                     onclick: async (event: MouseEvent) =>
                     {
                         event.preventDefault();
@@ -5895,7 +5895,7 @@ export module CyclicToDo
             ),
             menuItem
             (
-                label(getTagSettingTitle(entry.tag)),
+                label(getTagSettingsTitle(entry.tag)),
                 async () =>
                 {
                     if (await tagSettingsPopup(entry.pass, entry.tag))
@@ -6313,9 +6313,9 @@ export module CyclicToDo
         export const listScreenFooterSignboard = async (entry: ToDoTagEntryOld) =>
         {
             var result: minamo.dom.Source;
-            const setting = textButton
+            const settings = textButton
             (
-                getTagSettingTitle(entry.tag),
+                getTagSettingsTitle(entry.tag),
                 async () =>
                 {
                     if (await tagSettingsPopup(entry.pass, entry.tag))
@@ -6349,7 +6349,7 @@ export module CyclicToDo
                             children: label("@new-sublist"),
                             onclick: async () => newSublistPopup(entry.pass),
                         },
-                        $div("button-list")([setting, separator, history, separator, removed,]),
+                        $div("button-list")([settings, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6372,7 +6372,7 @@ export module CyclicToDo
                                 }
                             },
                         },
-                        $div("button-list")([setting, separator, history, separator, removed,]),
+                        $div("button-list")([settings, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6397,7 +6397,7 @@ export module CyclicToDo
                             messagePanel(locale.string("ピックアップタグよりフラッシュタグが優先されます。")),
                             messagePanel(locale.string("フラッシュタグより制限タグが優先されます。")),
                         ]),
-                        $div("button-list")([setting, separator, history, separator, removed,]),
+                        $div("button-list")([settings, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6412,7 +6412,7 @@ export module CyclicToDo
                             messagePanel(locale.string("ToDo のメニューの[自動タグ設定]から設定できます。")),
                             messagePanel(locale.string("ピックアップタグよりフラッシュタグおよび制限タグが優先されます。")),
                         ]),
-                        $div("button-list")([setting, separator, history, separator, removed,]),
+                        $div("button-list")([settings, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6435,7 +6435,7 @@ export module CyclicToDo
                         ([
                             messagePanel(locale.string("ToDo のメニューの[自動タグ設定]から設定できます。")),
                         ]),
-                        $div("button-list")([setting, separator, history, separator, removed,]),
+                        $div("button-list")([settings, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6456,7 +6456,7 @@ export module CyclicToDo
                     ),
                     $div("button-list")
                     ([
-                        $div("button-list")([setting, separator, history, separator, removed,]),
+                        $div("button-list")([settings, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6475,7 +6475,7 @@ export module CyclicToDo
                     ),
                     $div("button-list")
                     ([
-                        $div("button-list")([setting, separator, history, separator, removed,]),
+                        $div("button-list")([settings, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -6491,7 +6491,7 @@ export module CyclicToDo
                             children: label("New ToDo"),
                             onclick: async () => newTaskPopup(entry, getFilterText()),
                         },
-                        $div("button-list")([setting, separator, history, separator, removed,]),
+                        $div("button-list")([settings, separator, history, separator, removed,]),
                     ]),
                 ];
                 break;
@@ -7119,7 +7119,7 @@ export module CyclicToDo
                         // $span("separator")("・"),
                         textButton
                         (
-                            "Auto tag setting",
+                            "Auto tag settings",
                             async () =>
                             {
                                 if (await autoTagSettingsPopup(pass, item))
@@ -7501,7 +7501,7 @@ export module CyclicToDo
                     await button
                     (
                         "icon-button",
-                        await Resource.loadSvgOrCache("setting-icon"),
+                        await Resource.loadSvgOrCache("settings-icon"),
                         async () =>
                         {
                             if (await listSettingsPopup(list.pass))
