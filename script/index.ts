@@ -3959,6 +3959,117 @@ export module CyclicToDo
                 });
             }
         );
+        export const todoSettingsPopup = async (pass: string, todo: string): Promise<boolean> => await new Promise
+        (
+            async resolve =>
+            {
+                let result = false;
+                const buttonList = $make(HTMLDivElement)({ className: "label-button-list" });
+                const buttonListUpdate = async () =>
+                {
+                    minamo.dom.replaceChildren
+                    (
+                        buttonList,
+                        [
+                            descriptionButton
+                            (
+                                "",
+                                monospace
+                                (
+                                    "",
+                                    labelSpan(locale.immutable("ToDo")),
+                                    labelSpan(Model.decode(todo)),
+                                ),
+                                "Rename",
+                                async () =>
+                                {
+                                    const sublist = OldStorage.Task.getSublist(todo) ?? "";
+                                    const oldTask = OldStorage.Task.decode(OldStorage.Task.getBody(todo));
+                                    const newTask = await prompt(locale.map("Input a ToDo's name."), oldTask);
+                                    if (null !== newTask && 0 < newTask.length && newTask !== oldTask)
+                                    {
+                                        const newTaskFullname = `${sublist}${OldStorage.Task.encode(newTask)}`;
+                                        if (OldStorage.Task.rename(pass, todo, newTaskFullname))
+                                        {
+                                            result = true;
+                                            todo = newTaskFullname;
+                                            //await onRename(OldStorage.Task.decode(newTaskFullname));
+                                            await buttonListUpdate();
+                                        }
+                                        else
+                                        {
+                                            alert(locale.map("A ToDo with that name already exists."));
+                                        }
+                                    }
+                                },
+                            ),
+                            //  🚧 auto tag
+                            //  🚧 tags
+                            //  🚧 sublist
+                            descriptionButton
+                            (
+                                "delete-button",
+                                monospace("", label("Delete")),
+                                "poem.recyclebin.description",
+                                async () =>
+                                {
+                                    const href = location.href;
+                                    ui.close();
+
+                                    OldStorage.Task.remove(pass, todo);
+                                    //Storage.TagMember.add(pass, "@deleted", item.task);
+                                    if (todo === getUrlParams(href).todo)
+                                    {
+                                        await showUrl({ pass, tag: "@overall" });
+                                    }
+                                    const toast = makeToast
+                                    ({
+                                        content: $span("")(`${locale.map("ToDo has been deleted!")}: ${Model.decode(todo)}`),
+                                        backwardOperator: cancelTextButton
+                                        (
+                                            async () =>
+                                            {
+                                                const removedItem = OldStorage.Removed.get(pass).filter(i => isRemovedTask(i) && todo === i.name)[0];
+                                                OldStorage.Removed.restore(pass, removedItem);
+                                                toast.hide(); // nowait
+                                                if (href !== location.href)
+                                                {
+                                                    await showUrl(getUrlParams(href));
+                                                }
+                                            }
+                                        ),
+                                    });
+                                },
+                            ),
+                        ]
+                    );
+                };
+                await buttonListUpdate();
+                const ui = popup
+                ({
+                    // className: "add-remove-tags-popup",
+                    children:
+                    [
+                        $tag("h2")("")(locale.map("ToDo settings")),
+                        buttonList,
+                        $div("popup-operator")
+                        ([{
+                            tag: "button",
+                            className: "default-button",
+                            children: label("Close"),
+                            onclick: () =>
+                            {
+                                ui.close();
+                            },
+                        }]),
+                    ],
+                    onClose: async () =>
+                    {
+                        resolve(result);
+                    },
+                });
+            }
+        );
         export const makeTagDefaultGetter = <T extends string>(defaultValue: T) =>
             (tag: string): "@home" | T => "@overall" === tag ? defaultValue: "@home";
         export const getTagSortSettingsDefault = makeTagDefaultGetter("smart");
