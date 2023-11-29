@@ -3567,7 +3567,7 @@ export module CyclicToDo
                                 "",
                                 monospace
                                 (
-                                    "auto-tag-flash",
+                                    "",
                                     label("Theme setting"),
                                     label(getThemeLocale(settings.theme ?? "auto"))
                                 ),
@@ -3586,7 +3586,7 @@ export module CyclicToDo
                                 "",
                                 monospace
                                 (
-                                    "auto-tag-flash",
+                                    "",
                                     label("UI style setting"),
                                     label(getUiStyleLocale(settings.uiStyle ?? "fixed"))
                                 ),
@@ -3605,7 +3605,7 @@ export module CyclicToDo
                                 "",
                                 monospace
                                 (
-                                    "auto-tag-flash",
+                                    "",
                                     label("Flash style setting"),
                                     label(getFlashStyleLocale(settings.flashStyle ?? "breath"))
                                 ),
@@ -3624,7 +3624,7 @@ export module CyclicToDo
                                 "",
                                 monospace
                                 (
-                                    "auto-tag-flash",
+                                    "",
                                     label("Language setting"),
                                     $span("")(locale.getLocaleName(settings.locale ?? "@auto"))
                                 ),
@@ -3644,7 +3644,7 @@ export module CyclicToDo
                                 "",
                                 monospace
                                 (
-                                    "auto-tag-flash",
+                                    "",
                                     label("Emoji setting"),
                                     label(getEmojiTypeLocale(settings.emoji ?? "auto"))
                                 ),
@@ -3663,7 +3663,7 @@ export module CyclicToDo
                                 "",
                                 monospace
                                 (
-                                    "auto-tag-flash",
+                                    "",
                                     labelSpan(locale.immutable("build timestamp")),
                                     labelSpan(getVersionTimestampText()),
                                 ),
@@ -3716,7 +3716,7 @@ export module CyclicToDo
                                 "",
                                 monospace
                                 (
-                                    "auto-tag-flash",
+                                    "",
                                     label("ToDo List"),
                                     labelSpan(OldStorage.Title.get(pass)),
                                 ),
@@ -3736,11 +3736,7 @@ export module CyclicToDo
                             descriptionButton
                             (
                                 "",
-                                monospace
-                                (
-                                    "auto-tag-flash",
-                                    label("Export")
-                                ),
+                                monospace("", label("Export")),
                                 "export.description",
                                 async () =>
                                 {
@@ -3751,11 +3747,7 @@ export module CyclicToDo
                             descriptionButton
                             (
                                 "delete-button",
-                                monospace
-                                (
-                                    "auto-tag-flash",
-                                    label("Delete this List")
-                                ),
+                                monospace("", label("Delete this List")),
                                 "poem.recyclebin.description",
                                 async () =>
                                 {
@@ -3824,7 +3816,7 @@ export module CyclicToDo
                                     "",
                                     monospace
                                     (
-                                        "auto-tag-flash",
+                                        "",
                                         label(Model.isSublistOld(tag) ? "Sublist": "Tag"),
                                         labelSpan(Domain.tagMap(tag)),
                                     ),
@@ -3844,7 +3836,7 @@ export module CyclicToDo
                                 "",
                                 monospace
                                 (
-                                    "auto-tag-flash",
+                                    "",
                                     label("Display style setting"),
                                     label(getTagDisplayStyleText(settings.displayStyle ?? getTagDisplayStyleDefault(tag)))
                                 ),
@@ -3863,7 +3855,7 @@ export module CyclicToDo
                                 "",
                                 monospace
                                 (
-                                    "auto-tag-flash",
+                                    "",
                                     label("Progress scale style setting"),
                                     label(getTagProgressScaleStyleText(settings.progressScaleStyle ?? getTagProgressScaleStyleDefault(tag)))
                                 ),
@@ -3882,7 +3874,7 @@ export module CyclicToDo
                                 "",
                                 monospace
                                 (
-                                    "auto-tag-flash",
+                                    "",
                                     label("Sort order setting"),
                                     label(getTagSortSettingsText(settings.sort ?? getTagSortSettingsDefault(tag)))
                                 ),
@@ -3901,11 +3893,7 @@ export module CyclicToDo
                                 descriptionButton
                                 (
                                     "delete-button",
-                                    monospace
-                                    (
-                                        "auto-tag-flash",
-                                        label("Delete")
-                                    ),
+                                    monospace("", label("Delete")),
                                     "poem.recyclebin.description",
                                     async () =>
                                     {
@@ -4431,7 +4419,7 @@ export module CyclicToDo
                             "",
                             [
                                 await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
-                                monospace("auto-tag-flash", label("@flash"), getAutoTagSettingText(settings.flash, "compact"))
+                                monospace("", label("@flash"), getAutoTagSettingText(settings.flash, "compact"))
                             ],
                             "flash.description",
                             async () =>
@@ -4448,7 +4436,7 @@ export module CyclicToDo
                             "",
                             [
                                 await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
-                                monospace("auto-tag-flash", label("@pickup"), getAutoTagSettingText(settings.pickup, "compact")),
+                                monospace("", label("@pickup"), getAutoTagSettingText(settings.pickup, "compact")),
                             ],
                             "pickup.description",
                             async () =>
@@ -4465,7 +4453,7 @@ export module CyclicToDo
                             "",
                             [
                                 await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
-                                monospace("auto-tag-flash", label("@restriction"), getAutoTagSettingText(settings.restriction, "compact")),
+                                monospace("", label("@restriction"), getAutoTagSettingText(settings.restriction, "compact")),
                             ],
                             "restriction.description",
                             async () =>

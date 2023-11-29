@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Tue Nov 28 2023 23:01:32 GMT+0900 (日本標準時)
+    build at: Wed Nov 29 2023 10:55:22 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -24785,7 +24785,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                     minamo_js_1.minamo.dom.replaceChildren(header, Render.label("System settings"));
                                                     settings = Storage.SystemSettings.get();
                                                     minamo_js_1.minamo.dom.replaceChildren(buttonList, [
-                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("Theme setting"), Render.label(CyclicToDo.getThemeLocale((_a = settings.theme) !== null && _a !== void 0 ? _a : "auto"))), "theme.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        Render.descriptionButton("", Render.monospace("", Render.label("Theme setting"), Render.label(CyclicToDo.getThemeLocale((_a = settings.theme) !== null && _a !== void 0 ? _a : "auto"))), "theme.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
                                                                     case 0: return [4 /*yield*/, Render.themeSettingsPopup()];
@@ -24800,7 +24800,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 }
                                                             });
                                                         }); }),
-                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("UI style setting"), Render.label(CyclicToDo.getUiStyleLocale((_b = settings.uiStyle) !== null && _b !== void 0 ? _b : "fixed"))), "uiStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        Render.descriptionButton("", Render.monospace("", Render.label("UI style setting"), Render.label(CyclicToDo.getUiStyleLocale((_b = settings.uiStyle) !== null && _b !== void 0 ? _b : "fixed"))), "uiStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
                                                                     case 0: return [4 /*yield*/, Render.uiStyleSettingsPopup()];
@@ -24815,7 +24815,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 }
                                                             });
                                                         }); }),
-                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("Flash style setting"), Render.label(CyclicToDo.getFlashStyleLocale((_c = settings.flashStyle) !== null && _c !== void 0 ? _c : "breath"))), "flashStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        Render.descriptionButton("", Render.monospace("", Render.label("Flash style setting"), Render.label(CyclicToDo.getFlashStyleLocale((_c = settings.flashStyle) !== null && _c !== void 0 ? _c : "breath"))), "flashStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
                                                                     case 0: return [4 /*yield*/, Render.flashStyleSettingsPopup()];
@@ -24830,7 +24830,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 }
                                                             });
                                                         }); }),
-                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("Language setting"), Render.$span("")(locale_2.locale.getLocaleName((_d = settings.locale) !== null && _d !== void 0 ? _d : "@auto"))), "language.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        Render.descriptionButton("", Render.monospace("", Render.label("Language setting"), Render.$span("")(locale_2.locale.getLocaleName((_d = settings.locale) !== null && _d !== void 0 ? _d : "@auto"))), "language.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                             var _a;
                                                             return __generator(this, function (_b) {
                                                                 switch (_b.label) {
@@ -24847,7 +24847,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 }
                                                             });
                                                         }); }),
-                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("Emoji setting"), Render.label(CyclicToDo.getEmojiTypeLocale((_e = settings.emoji) !== null && _e !== void 0 ? _e : "auto"))), "emoji.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        Render.descriptionButton("", Render.monospace("", Render.label("Emoji setting"), Render.label(CyclicToDo.getEmojiTypeLocale((_e = settings.emoji) !== null && _e !== void 0 ? _e : "auto"))), "emoji.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
                                                                     case 0: return [4 /*yield*/, Render.emojiSettingsPopup()];
@@ -24862,7 +24862,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 }
                                                             });
                                                         }); }),
-                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.labelSpan(locale_2.locale.immutable("build timestamp")), Render.labelSpan(Render.getVersionTimestampText())), "Reload screen", Render.reloadScreen),
+                                                        Render.descriptionButton("", Render.monospace("", Render.labelSpan(locale_2.locale.immutable("build timestamp")), Render.labelSpan(Render.getVersionTimestampText())), "Reload screen", Render.reloadScreen),
                                                     ]);
                                                     return [2 /*return*/];
                                                 });
@@ -24915,7 +24915,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 var _this = this;
                                                 return __generator(this, function (_a) {
                                                     minamo_js_1.minamo.dom.replaceChildren(buttonList, [
-                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("ToDo List"), Render.labelSpan(OldStorage.Title.get(pass))), "Rename", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        Render.descriptionButton("", Render.monospace("", Render.label("ToDo List"), Render.labelSpan(OldStorage.Title.get(pass))), "Rename", function () { return __awaiter(_this, void 0, void 0, function () {
                                                             var oldTitle, newTitle;
                                                             var _this = this;
                                                             return __generator(this, function (_a) {
@@ -24941,7 +24941,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 }
                                                             });
                                                         }); }),
-                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("Export")), "export.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        Render.descriptionButton("", Render.monospace("", Render.label("Export")), "export.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
                                                                     case 0:
@@ -24953,7 +24953,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 }
                                                             });
                                                         }); }),
-                                                        Render.descriptionButton("delete-button", Render.monospace("auto-tag-flash", Render.label("Delete this List")), "poem.recyclebin.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        Render.descriptionButton("delete-button", Render.monospace("", Render.label("Delete this List")), "poem.recyclebin.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                             var backup;
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
@@ -25033,7 +25033,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                     minamo_js_1.minamo.dom.replaceChildren(buttonList, [
                                                         Model.isSystemTagOld(tag) ?
                                                             [] :
-                                                            Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label(Model.isSublistOld(tag) ? "Sublist" : "Tag"), Render.labelSpan(Domain.tagMap(tag))), "Rename", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            Render.descriptionButton("", Render.monospace("", Render.label(Model.isSublistOld(tag) ? "Sublist" : "Tag"), Render.labelSpan(Domain.tagMap(tag))), "Rename", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                 var _a;
                                                                 return __generator(this, function (_b) {
                                                                     switch (_b.label) {
@@ -25050,7 +25050,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                     }
                                                                 });
                                                             }); }),
-                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("Display style setting"), Render.label(Render.getTagDisplayStyleText((_a = settings.displayStyle) !== null && _a !== void 0 ? _a : Render.getTagDisplayStyleDefault(tag)))), "displayStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        Render.descriptionButton("", Render.monospace("", Render.label("Display style setting"), Render.label(Render.getTagDisplayStyleText((_a = settings.displayStyle) !== null && _a !== void 0 ? _a : Render.getTagDisplayStyleDefault(tag)))), "displayStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
                                                                     case 0: return [4 /*yield*/, Render.tagDisplayStyleSettingsPopup(pass, tag)];
@@ -25065,7 +25065,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 }
                                                             });
                                                         }); }),
-                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("Progress scale style setting"), Render.label(Render.getTagProgressScaleStyleText((_b = settings.progressScaleStyle) !== null && _b !== void 0 ? _b : Render.getTagProgressScaleStyleDefault(tag)))), "progressScaleStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        Render.descriptionButton("", Render.monospace("", Render.label("Progress scale style setting"), Render.label(Render.getTagProgressScaleStyleText((_b = settings.progressScaleStyle) !== null && _b !== void 0 ? _b : Render.getTagProgressScaleStyleDefault(tag)))), "progressScaleStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
                                                                     case 0: return [4 /*yield*/, Render.tagProgressScaleStyleSettingsPopup(pass, tag)];
@@ -25080,7 +25080,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 }
                                                             });
                                                         }); }),
-                                                        Render.descriptionButton("", Render.monospace("auto-tag-flash", Render.label("Sort order setting"), Render.label(Render.getTagSortSettingsText((_c = settings.sort) !== null && _c !== void 0 ? _c : Render.getTagSortSettingsDefault(tag)))), "sort.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        Render.descriptionButton("", Render.monospace("", Render.label("Sort order setting"), Render.label(Render.getTagSortSettingsText((_c = settings.sort) !== null && _c !== void 0 ? _c : Render.getTagSortSettingsDefault(tag)))), "sort.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
                                                                     case 0: return [4 /*yield*/, Render.tagSortSettingsPopup(pass, tag)];
@@ -25097,7 +25097,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                         }); }),
                                                         Model.isSystemTagOld(tag) ?
                                                             [] :
-                                                            Render.descriptionButton("delete-button", Render.monospace("auto-tag-flash", Render.label("Delete")), "poem.recyclebin.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            Render.descriptionButton("delete-button", Render.monospace("", Render.label("Delete")), "poem.recyclebin.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                 var href, toast;
                                                                 var _this = this;
                                                                 return __generator(this, function (_a) {
@@ -25791,7 +25791,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 _f = [
                                                                     _d.apply(void 0, _e.concat([[
                                                                             _l.sent(),
-                                                                            Render.monospace("auto-tag-flash", Render.label("@flash"), Render.getAutoTagSettingText(settings.flash, "compact"))
+                                                                            Render.monospace("", Render.label("@flash"), Render.getAutoTagSettingText(settings.flash, "compact"))
                                                                         ], "flash.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                             return __generator(this, function (_a) {
                                                                                 switch (_a.label) {
@@ -25815,7 +25815,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 _f = _f.concat([
                                                                     _g.apply(void 0, _h.concat([[
                                                                             _l.sent(),
-                                                                            Render.monospace("auto-tag-flash", Render.label("@pickup"), Render.getAutoTagSettingText(settings.pickup, "compact"))
+                                                                            Render.monospace("", Render.label("@pickup"), Render.getAutoTagSettingText(settings.pickup, "compact"))
                                                                         ], "pickup.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                             return __generator(this, function (_a) {
                                                                                 switch (_a.label) {
@@ -25838,7 +25838,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             case 3: return [2 /*return*/, _b.apply(_a, _c.concat([_f.concat([
                                                                         _j.apply(void 0, _k.concat([[
                                                                                 _l.sent(),
-                                                                                Render.monospace("auto-tag-flash", Render.label("@restriction"), Render.getAutoTagSettingText(settings.restriction, "compact"))
+                                                                                Render.monospace("", Render.label("@restriction"), Render.getAutoTagSettingText(settings.restriction, "compact"))
                                                                             ], "restriction.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                                 return __generator(this, function (_a) {
                                                                                     switch (_a.label) {
@@ -31189,7 +31189,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Nov 28 2023 23:01:32 GMT+0900 (日本標準時)', buildTimestampTick: 1701180092292, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Nov 29 2023 10:55:22 GMT+0900 (日本標準時)', buildTimestampTick: 1701222922546, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -31413,7 +31413,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Tue Nov 28 2023 23:01:32 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Wed Nov 29 2023 10:55:22 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
