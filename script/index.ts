@@ -4036,6 +4036,26 @@ export module CyclicToDo
                                 },
                             ),
                             //  🚧 tags
+                            descriptionButton
+                            (
+                                "",
+                                monospace
+                                (
+                                    "",
+                                    label("Tag"),
+                                    `${OldStorage.Tag.getByTodo(pass, item.task).filter(i => ! Model.isSublistOld(i) && ! Model.isSystemTagOld(i)).length}`
+                                ),
+                                "Add/Remove Tag",
+                                async () =>
+                                {
+                                    if (await addRemoveTagsPopup(pass, item, OldStorage.Tag.getByTodo(pass, item.task)))
+                                    {
+                                        result = true;
+                                        updateWindow("operate");
+                                        await buttonListUpdate();
+                                    }
+                                },
+                            ),
                             //  🚧 sublist
                             descriptionButton
                             (
