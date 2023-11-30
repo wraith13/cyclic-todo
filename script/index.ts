@@ -3959,7 +3959,7 @@ export module CyclicToDo
                 });
             }
         );
-        export const todoSettingsPopup = async (pass: string, todo: string): Promise<boolean> => await new Promise
+        export const todoSettingsPopup = async (pass: string, item: ToDoEntry): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
@@ -3978,21 +3978,26 @@ export module CyclicToDo
                                 (
                                     "",
                                     labelSpan(locale.immutable("ToDo")),
-                                    labelSpan(Model.decode(todo)),
+                                    labelSpan(Model.decode(item.task)),
                                 ),
                                 "Rename",
                                 async () =>
                                 {
-                                    const sublist = OldStorage.Task.getSublist(todo) ?? "";
-                                    const oldTask = OldStorage.Task.decode(OldStorage.Task.getBody(todo));
+                                    const sublist = OldStorage.Task.getSublist(item.task) ?? "";
+                                    const oldTask = OldStorage.Task.decode(OldStorage.Task.getBody(item.task));
                                     const newTask = await prompt(locale.map("Input a ToDo's name."), oldTask);
                                     if (null !== newTask && 0 < newTask.length && newTask !== oldTask)
                                     {
                                         const newTaskFullname = `${sublist}${OldStorage.Task.encode(newTask)}`;
-                                        if (OldStorage.Task.rename(pass, todo, newTaskFullname))
+                                        if (OldStorage.Task.rename(pass, item.task, newTaskFullname))
                                         {
                                             result = true;
-                                            todo = newTaskFullname;
+                                            const href = location.href;
+                                            if (item.task === getUrlParams(href).todo)
+                                            {
+                                                await showUrl({ pass, todo: newTaskFullname, });
+                                            }
+                                            item.task = newTaskFullname;
                                             //await onRename(OldStorage.Task.decode(newTaskFullname));
                                             await buttonListUpdate();
                                         }
@@ -4003,7 +4008,33 @@ export module CyclicToDo
                                     }
                                 },
                             ),
-                            //  🚧 auto tag
+                            descriptionButton
+                            (
+                                "",
+                                monospace
+                                (
+                                    "",
+                                    label("Auto tag settings"),
+                                    [
+                                        null !== (OldStorage.TodoSettings.get(pass, item.task).flash ?? null) ?
+                                            await Resource.loadTagSvgOrCache("@flash"): [],
+                                        null !== (OldStorage.TodoSettings.get(pass, item.task).pickup ?? null) ?
+                                            await Resource.loadTagSvgOrCache("@pickup"): [],
+                                        null !== (OldStorage.TodoSettings.get(pass, item.task).restriction ?? null) ?
+                                            await Resource.loadTagSvgOrCache("@restriction"): [],
+                                    ],
+                                ),
+                                "Rename",
+                                async () =>
+                                {
+                                    if (await autoTagSettingsPopup(pass, item))
+                                    {
+                                        result = true;
+                                        updateWindow("operate");
+                                        await buttonListUpdate();
+                                    }
+                                },
+                            ),
                             //  🚧 tags
                             //  🚧 sublist
                             descriptionButton
@@ -4015,21 +4046,20 @@ export module CyclicToDo
                                 {
                                     const href = location.href;
                                     ui.close();
-
-                                    OldStorage.Task.remove(pass, todo);
+                                    OldStorage.Task.remove(pass, item.task);
                                     //Storage.TagMember.add(pass, "@deleted", item.task);
-                                    if (todo === getUrlParams(href).todo)
+                                    if (item.task === getUrlParams(href).todo)
                                     {
                                         await showUrl({ pass, tag: "@overall" });
                                     }
                                     const toast = makeToast
                                     ({
-                                        content: $span("")(`${locale.map("ToDo has been deleted!")}: ${Model.decode(todo)}`),
+                                        content: $span("")(`${locale.map("ToDo has been deleted!")}: ${Model.decode(item.task)}`),
                                         backwardOperator: cancelTextButton
                                         (
                                             async () =>
                                             {
-                                                const removedItem = OldStorage.Removed.get(pass).filter(i => isRemovedTask(i) && todo === i.name)[0];
+                                                const removedItem = OldStorage.Removed.get(pass).filter(i => isRemovedTask(i) && item.task === i.name)[0];
                                                 OldStorage.Removed.restore(pass, removedItem);
                                                 toast.hide(); // nowait
                                                 if (href !== location.href)
