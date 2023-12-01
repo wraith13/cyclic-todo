@@ -4035,7 +4035,6 @@ export module CyclicToDo
                                     }
                                 },
                             ),
-                            //  🚧 tags
                             descriptionButton
                             (
                                 "",
@@ -4056,7 +4055,26 @@ export module CyclicToDo
                                     }
                                 },
                             ),
-                            //  🚧 sublist
+                            descriptionButton
+                            (
+                                "",
+                                monospace
+                                (
+                                    "",
+                                    label("Sublist"),
+                                    Domain.tagMap(OldStorage.Task.getSublist(item.task) ?? "@:@root")
+                                ),
+                                "Move to Sublist",
+                                async () =>
+                                {
+                                    if (await moveToSublistPopup(pass, item))
+                                    {
+                                        result = true;
+                                        updateWindow("operate");
+                                        await buttonListUpdate();
+                                    }
+                                },
+                            ),
                             descriptionButton
                             (
                                 "delete-button",
