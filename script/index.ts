@@ -5412,12 +5412,24 @@ export module CyclicToDo
                         }
                     }
                 },
-                await menuButton
-                ([
-                    todoRenameMenu(entry.pass, item),
-                    todoTagMenu(entry.pass, item),
-                    todoDeleteMenu(entry.pass, item),
-                ]),
+                await button
+                (
+                    "icon-button",
+                    await Resource.loadSvgOrCache("settings-icon"),
+                    async () =>
+                    {
+                        if (await todoSettingsPopup(entry.pass, item))
+                        {
+                            await reload();
+                        }
+                    }
+                ),
+                // await menuButton
+                // ([
+                //     todoRenameMenu(entry.pass, item),
+                //     todoTagMenu(entry.pass, item),
+                //     todoDeleteMenu(entry.pass, item),
+                // ]),
             ]);
             const header = $div("item-header")
             (
