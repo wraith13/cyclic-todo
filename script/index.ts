@@ -3959,6 +3959,11 @@ export module CyclicToDo
                 });
             }
         );
+        export const todoTagList = (pass: string, item: ToDoEntry) =>
+        {
+            const list = OldStorage.Tag.getByTodo(pass, item.task).filter(i => ! Model.isSublistOld(i) && ! Model.isSystemTagOld(i));
+            return 0 < list.length ? list: [ "@untagged", ];
+        };
         export const todoSettingsPopup = async (pass: string, item: ToDoEntry): Promise<boolean> => await new Promise
         (
             async resolve =>
@@ -4063,7 +4068,7 @@ export module CyclicToDo
                                 (
                                     "",
                                     label("Tag"),
-                                    `${OldStorage.Tag.getByTodo(pass, item.task).filter(i => ! Model.isSublistOld(i) && ! Model.isSystemTagOld(i)).length}`
+                                    todoTagList(pass, item).map(i => Domain.tagMap(i)).join(", "),
                                 ),
                                 "Add/Remove Tag",
                                 async () =>
