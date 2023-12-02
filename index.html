@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Fri Dec 01 2023 23:09:04 GMT+0900 (日本標準時)
+    build at: Sat Dec 02 2023 11:12:41 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -25197,7 +25197,24 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                         case 0:
                                                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                                             _c = [buttonList];
-                                                            _d = [Render.descriptionButton("", Render.monospace("", Render.labelSpan(locale_2.locale.immutable("ToDo")), Render.labelSpan(Model.decode(item.task))), "Rename", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            _d = [Render.descriptionButton("", Render.monospace("", Render.label("Sublist"), Domain.tagMap((_o = OldStorage.Task.getSublist(item.task)) !== null && _o !== void 0 ? _o : "@:@root")), "Move to Sublist", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                    return __generator(this, function (_a) {
+                                                                        switch (_a.label) {
+                                                                            case 0: return [4 /*yield*/, Render.moveToSublistPopup(pass, item)];
+                                                                            case 1:
+                                                                                if (!_a.sent()) return [3 /*break*/, 3];
+                                                                                // item.task = newTaskFullname; 🚧
+                                                                                result = true;
+                                                                                Render.updateWindow("operate");
+                                                                                return [4 /*yield*/, buttonListUpdate()];
+                                                                            case 2:
+                                                                                _a.sent();
+                                                                                _a.label = 3;
+                                                                            case 3: return [2 /*return*/];
+                                                                        }
+                                                                    });
+                                                                }); }),
+                                                                Render.descriptionButton("", Render.monospace("", Render.labelSpan(locale_2.locale.immutable("ToDo")), Render.labelSpan(OldStorage.Task.decode(OldStorage.Task.getBody(item.task)))), "Rename", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                     var sublist, oldTask, newTask, newTaskFullname, href;
                                                                     var _a;
                                                                     return __generator(this, function (_b) {
@@ -25238,7 +25255,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             _g = Render.monospace;
                                                             _h = ["",
                                                                 Render.label("Auto tag settings")];
-                                                            if (!(null !== ((_o = OldStorage.TodoSettings.get(pass, item.task).flash) !== null && _o !== void 0 ? _o : null))) return [3 /*break*/, 2];
+                                                            if (!(null !== ((_p = OldStorage.TodoSettings.get(pass, item.task).flash) !== null && _p !== void 0 ? _p : null))) return [3 /*break*/, 2];
                                                             return [4 /*yield*/, Resource.loadTagSvgOrCache("@flash")];
                                                         case 1:
                                                             _j = _s.sent();
@@ -25250,7 +25267,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             _k = [
                                                                 _j
                                                             ];
-                                                            if (!(null !== ((_p = OldStorage.TodoSettings.get(pass, item.task).pickup) !== null && _p !== void 0 ? _p : null))) return [3 /*break*/, 5];
+                                                            if (!(null !== ((_q = OldStorage.TodoSettings.get(pass, item.task).pickup) !== null && _q !== void 0 ? _q : null))) return [3 /*break*/, 5];
                                                             return [4 /*yield*/, Resource.loadTagSvgOrCache("@pickup")];
                                                         case 4:
                                                             _l = _s.sent();
@@ -25262,7 +25279,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             _k = _k.concat([
                                                                 _l
                                                             ]);
-                                                            if (!(null !== ((_q = OldStorage.TodoSettings.get(pass, item.task).restriction) !== null && _q !== void 0 ? _q : null))) return [3 /*break*/, 8];
+                                                            if (!(null !== ((_r = OldStorage.TodoSettings.get(pass, item.task).restriction) !== null && _r !== void 0 ? _r : null))) return [3 /*break*/, 8];
                                                             return [4 /*yield*/, Resource.loadTagSvgOrCache("@restriction")];
                                                         case 7:
                                                             _m = _s.sent();
@@ -25274,7 +25291,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             _b.apply(_a, _c.concat([_d.concat([
                                                                     _e.apply(void 0, _f.concat([_g.apply(void 0, _h.concat([_k.concat([
                                                                                 _m
-                                                                            ])])), "Rename", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            ])])), "Auto tag settings", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                             return __generator(this, function (_a) {
                                                                                 switch (_a.label) {
                                                                                     case 0: return [4 /*yield*/, Render.autoTagSettingsPopup(pass, item)];
@@ -25294,22 +25311,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                         return __generator(this, function (_a) {
                                                                             switch (_a.label) {
                                                                                 case 0: return [4 /*yield*/, Render.addRemoveTagsPopup(pass, item, OldStorage.Tag.getByTodo(pass, item.task))];
-                                                                                case 1:
-                                                                                    if (!_a.sent()) return [3 /*break*/, 3];
-                                                                                    result = true;
-                                                                                    Render.updateWindow("operate");
-                                                                                    return [4 /*yield*/, buttonListUpdate()];
-                                                                                case 2:
-                                                                                    _a.sent();
-                                                                                    _a.label = 3;
-                                                                                case 3: return [2 /*return*/];
-                                                                            }
-                                                                        });
-                                                                    }); }),
-                                                                    Render.descriptionButton("", Render.monospace("", Render.label("Sublist"), Domain.tagMap((_r = OldStorage.Task.getSublist(item.task)) !== null && _r !== void 0 ? _r : "@:@root")), "Move to Sublist", function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                        return __generator(this, function (_a) {
-                                                                            switch (_a.label) {
-                                                                                case 0: return [4 /*yield*/, Render.moveToSublistPopup(pass, item)];
                                                                                 case 1:
                                                                                     if (!_a.sent()) return [3 /*break*/, 3];
                                                                                     result = true;
@@ -26601,7 +26602,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     return [2 /*return*/];
                             }
                         });
-                    }); })
+                    }); }),
                 ];
             };
             Render.todoDeleteMenu = function (pass, item, onDelete, onCanceled) {
@@ -29199,26 +29200,29 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 var _this = this;
                 return __generator(this, function (_a) {
                     return [2 /*return*/, [
+                            Render.menuItem(Render.label("ToDo settings"), function () { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, Render.todoSettingsPopup(pass, item)];
+                                        case 1:
+                                            if (_a.sent()) {
+                                                Render.updateWindow("operate");
+                                            }
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }),
                             Render.listSettingsMenuItem(pass),
                             Render.systemSettingsMenuItem(),
-                            Render.todoRenameMenu(pass, item, function (newTask) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: newTask, })];
-                                    case 1: return [2 /*return*/, _a.sent()];
-                                }
-                            }); }); }),
-                            Render.todoTagMenu(pass, item),
-                            Render.todoDeleteMenu(pass, item, function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, tag: "@overall", })];
-                                    case 1: return [2 /*return*/, _a.sent()];
-                                }
-                            }); }); }, function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, todo: item.task, })];
-                                    case 1: return [2 /*return*/, _a.sent()];
-                                }
-                            }); }); }),
+                            // todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
+                            // todoTagMenu(pass, item),
+                            // todoDeleteMenu
+                            // (
+                            //     pass,
+                            //     item,
+                            //     async () => await showUrl({ pass, tag: "@overall", }),
+                            //     async () => await showUrl({ pass, todo: item.task, })
+                            // ),
                         ]];
                 });
             }); };
@@ -29374,10 +29378,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 Render.$div("button-list")([
                                                     // history,
                                                     // $span("separator")("・"),
-                                                    Render.textButton("Auto tag settings", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    Render.textButton("ToDo settings", function () { return __awaiter(_this, void 0, void 0, function () {
                                                         return __generator(this, function (_a) {
                                                             switch (_a.label) {
-                                                                case 0: return [4 /*yield*/, Render.autoTagSettingsPopup(pass, item)];
+                                                                case 0: return [4 /*yield*/, Render.todoSettingsPopup(pass, item)];
                                                                 case 1:
                                                                     if (_a.sent()) {
                                                                         Render.updateWindow("operate");
@@ -31424,7 +31428,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Dec 01 2023 23:09:04 GMT+0900 (日本標準時)', buildTimestampTick: 1701439744811, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Dec 02 2023 11:12:41 GMT+0900 (日本標準時)', buildTimestampTick: 1701483161959, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -31648,7 +31652,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Fri Dec 01 2023 23:09:04 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Sat Dec 02 2023 11:12:41 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

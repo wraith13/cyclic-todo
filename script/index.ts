@@ -3977,8 +3977,29 @@ export module CyclicToDo
                                 monospace
                                 (
                                     "",
+                                    label("Sublist"),
+                                    Domain.tagMap(OldStorage.Task.getSublist(item.task) ?? "@:@root")
+                                ),
+                                "Move to Sublist",
+                                async () =>
+                                {
+                                    if (await moveToSublistPopup(pass, item))
+                                    {
+                                        // item.task = newTaskFullname; 🚧
+                                        result = true;
+                                        updateWindow("operate");
+                                        await buttonListUpdate();
+                                    }
+                                },
+                            ),
+                            descriptionButton
+                            (
+                                "",
+                                monospace
+                                (
+                                    "",
                                     labelSpan(locale.immutable("ToDo")),
-                                    labelSpan(Model.decode(item.task)),
+                                    labelSpan(OldStorage.Task.decode(OldStorage.Task.getBody(item.task))),
                                 ),
                                 "Rename",
                                 async () =>
@@ -4024,7 +4045,7 @@ export module CyclicToDo
                                             await Resource.loadTagSvgOrCache("@restriction"): [],
                                     ],
                                 ),
-                                "Rename",
+                                "Auto tag settings",
                                 async () =>
                                 {
                                     if (await autoTagSettingsPopup(pass, item))
@@ -4048,26 +4069,6 @@ export module CyclicToDo
                                 async () =>
                                 {
                                     if (await addRemoveTagsPopup(pass, item, OldStorage.Tag.getByTodo(pass, item.task)))
-                                    {
-                                        result = true;
-                                        updateWindow("operate");
-                                        await buttonListUpdate();
-                                    }
-                                },
-                            ),
-                            descriptionButton
-                            (
-                                "",
-                                monospace
-                                (
-                                    "",
-                                    label("Sublist"),
-                                    Domain.tagMap(OldStorage.Task.getSublist(item.task) ?? "@:@root")
-                                ),
-                                "Move to Sublist",
-                                async () =>
-                                {
-                                    if (await moveToSublistPopup(pass, item))
                                     {
                                         result = true;
                                         updateWindow("operate");
@@ -5151,7 +5152,7 @@ export module CyclicToDo
                         updateWindow("operate");
                     }
                 }
-            )
+            ),
         ];
         export const todoDeleteMenu =
         (
@@ -7171,17 +7172,28 @@ export module CyclicToDo
         };
         export const todoScreenMenu = async (pass: string, item: ToDoEntry) =>
         [
+            menuItem
+            (
+                label("ToDo settings"),
+                async () =>
+                {
+                    if (await todoSettingsPopup(pass, item))
+                    {
+                        updateWindow("operate");
+                    }
+                }
+            ),
             listSettingsMenuItem(pass),
             systemSettingsMenuItem(),
-            todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
-            todoTagMenu(pass, item),
-            todoDeleteMenu
-            (
-                pass,
-                item,
-                async () => await showUrl({ pass, tag: "@overall", }),
-                async () => await showUrl({ pass, todo: item.task, })
-            ),
+            // todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
+            // todoTagMenu(pass, item),
+            // todoDeleteMenu
+            // (
+            //     pass,
+            //     item,
+            //     async () => await showUrl({ pass, tag: "@overall", }),
+            //     async () => await showUrl({ pass, todo: item.task, })
+            // ),
         ];
         export const todoScreenHeader = async (pass: string, item: ToDoEntry, _ticks: number[], tag: string) =>
         ({
@@ -7298,10 +7310,10 @@ export module CyclicToDo
                         // $span("separator")("・"),
                         textButton
                         (
-                            "Auto tag settings",
+                            "ToDo settings",
                             async () =>
                             {
-                                if (await autoTagSettingsPopup(pass, item))
+                                if (await todoSettingsPopup(pass, item))
                                 {
                                     updateWindow("operate");
                                 }
