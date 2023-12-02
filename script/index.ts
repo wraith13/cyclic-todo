@@ -2503,6 +2503,34 @@ export module CyclicToDo
                 });
             }
         );
+        export const buttonSafety = (button: minamo.dom.Source) =>
+        {
+            const buttonCover = $make(HTMLDivElement)
+            ({
+                tag: "div",
+                className: "button-cover",
+                children:
+                {
+                    tag: "button",
+                    className: "unlock-button",
+                    onclick: () =>
+                    {
+                        buttonCover.classList.toggle("unlocked", true);
+                    }
+                }
+            });
+            const result = $make(HTMLDivElement)
+            ({
+                tag: "div",
+                className: "button-safety",
+                children:
+                [
+                    button,
+                    buttonCover,
+                ]
+            });
+            return result;
+        };
         export interface PageParamsRaw
         {
             pass?:string;
@@ -6073,11 +6101,6 @@ export module CyclicToDo
         export const listScreenMenu = async (entry: ToDoTagEntryOld) =>
         [
             await fullscreenMenuItem(),
-            menuLinkItem
-            (
-                label("History"),
-                { pass: entry.pass, tag: entry.tag, hash: "history" }
-            ),
             menuItem
             (
                 label(getTagSettingsTitle(entry.tag)),
@@ -6091,6 +6114,11 @@ export module CyclicToDo
             ),
             listSettingsMenuItem(entry.pass),
             systemSettingsMenuItem(),
+            menuLinkItem
+            (
+                label("History"),
+                { pass: entry.pass, tag: entry.tag, hash: "history" }
+            ),
             menuLinkItem
             (
                 label("@deleted"),
