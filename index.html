@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sat Dec 02 2023 22:27:37 GMT+0900 (日本標準時)
+    build at: Sun Dec 03 2023 20:29:48 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -1843,6 +1843,55 @@ h2 {
   width: calc(100% - (2rem + 2px));
   max-width: 640px;
   float: center;
+}
+.light-theme-trait .button-safety {
+  position: relative;
+}
+.light-theme-trait .button-safety > .button-cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 34, 0.25);
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  overflow: hidden;
+  transition: opacity 500ms, filter 500ms;
+}
+.light-theme-trait .button-safety > .button-cover .unlock-button {
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.6);
+  font-size: 2rem;
+  padding: 0.5rem;
+}
+.light-theme-trait .button-safety > .button-cover .unlock-button svg {
+  height: 2rem;
+  width: 2rem;
+  color: #228844;
+  fill: #228844;
+}
+@media (hover: hover) {
+  .light-theme-trait .button-safety > .button-cover .unlock-button:hover {
+    background-color: rgba(111, 127, 0, 0.6);
+  }
+  .light-theme-trait .button-safety > .button-cover .unlock-button:hover svg {
+    color: #FFFFFF;
+    fill: #FFFFFF;
+  }
+}
+.light-theme-trait .button-safety > :not(.button-cover) {
+  transition: filter 500ms;
+}
+.light-theme-trait .button-safety:not(.unlocked) > :not(.button-cover) {
+  filter: blur(0.125rem) grayscale(0.618);
+}
+.light-theme-trait .button-safety.unlocked > .button-cover {
+  filter: blur(2rem);
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
 }
 .light-theme-trait .menu-popup {
   position: absolute;
@@ -4837,6 +4886,55 @@ body.light .long-button {
   max-width: 640px;
   float: center;
 }
+body.light .button-safety {
+  position: relative;
+}
+body.light .button-safety > .button-cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 34, 0.25);
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  overflow: hidden;
+  transition: opacity 500ms, filter 500ms;
+}
+body.light .button-safety > .button-cover .unlock-button {
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.6);
+  font-size: 2rem;
+  padding: 0.5rem;
+}
+body.light .button-safety > .button-cover .unlock-button svg {
+  height: 2rem;
+  width: 2rem;
+  color: #228844;
+  fill: #228844;
+}
+@media (hover: hover) {
+  body.light .button-safety > .button-cover .unlock-button:hover {
+    background-color: rgba(111, 127, 0, 0.6);
+  }
+  body.light .button-safety > .button-cover .unlock-button:hover svg {
+    color: #FFFFFF;
+    fill: #FFFFFF;
+  }
+}
+body.light .button-safety > :not(.button-cover) {
+  transition: filter 500ms;
+}
+body.light .button-safety:not(.unlocked) > :not(.button-cover) {
+  filter: blur(0.125rem) grayscale(0.618);
+}
+body.light .button-safety.unlocked > .button-cover {
+  filter: blur(2rem);
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+}
 body.light .menu-popup {
   position: absolute;
   z-index: 99999;
@@ -7490,6 +7588,46 @@ body.light .keyboard-shortcuts li .key:first-child {
     max-width: 640px;
     float: center;
   }
+  body.auto .button-safety {
+    position: relative;
+  }
+  body.auto .button-safety > .button-cover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 34, 0.25);
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    overflow: hidden;
+    transition: opacity 500ms, filter 500ms;
+  }
+  body.auto .button-safety > .button-cover .unlock-button {
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    font-size: 2rem;
+    padding: 0.5rem;
+  }
+  body.auto .button-safety > .button-cover .unlock-button svg {
+    height: 2rem;
+    width: 2rem;
+    color: #228844;
+    fill: #228844;
+  }
+  body.auto .button-safety > :not(.button-cover) {
+    transition: filter 500ms;
+  }
+  body.auto .button-safety:not(.unlocked) > :not(.button-cover) {
+    filter: blur(0.125rem) grayscale(0.618);
+  }
+  body.auto .button-safety.unlocked > .button-cover {
+    filter: blur(2rem);
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
+  }
   body.auto .menu-popup {
     position: absolute;
     z-index: 99999;
@@ -9004,6 +9142,15 @@ body.light .keyboard-shortcuts li .key:first-child {
     fill: #831B50;
     border-color: #831B50;
     background-color: #FFFFFF;
+  }
+}
+@media (prefers-color-scheme: light) and (hover: hover) {
+  body.auto .button-safety > .button-cover .unlock-button:hover {
+    background-color: rgba(111, 127, 0, 0.6);
+  }
+  body.auto .button-safety > .button-cover .unlock-button:hover svg {
+    color: #FFFFFF;
+    fill: #FFFFFF;
   }
 }
 @media (prefers-color-scheme: light) and (hover: hover) {
@@ -11078,6 +11225,55 @@ body.light .keyboard-shortcuts li .key:first-child {
   width: calc(100% - (2rem + 2px));
   max-width: 640px;
   float: center;
+}
+.dark-theme-trait .button-safety {
+  position: relative;
+}
+.dark-theme-trait .button-safety > .button-cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.25);
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  overflow: hidden;
+  transition: opacity 500ms, filter 500ms;
+}
+.dark-theme-trait .button-safety > .button-cover .unlock-button {
+  border-radius: 50%;
+  background-color: rgba(0, 0, 34, 0.6);
+  font-size: 2rem;
+  padding: 0.5rem;
+}
+.dark-theme-trait .button-safety > .button-cover .unlock-button svg {
+  height: 2rem;
+  width: 2rem;
+  color: #228844;
+  fill: #228844;
+}
+@media (hover: hover) {
+  .dark-theme-trait .button-safety > .button-cover .unlock-button:hover {
+    background-color: rgba(111, 127, 0, 0.6);
+  }
+  .dark-theme-trait .button-safety > .button-cover .unlock-button:hover svg {
+    color: #000022;
+    fill: #000022;
+  }
+}
+.dark-theme-trait .button-safety > :not(.button-cover) {
+  transition: filter 500ms;
+}
+.dark-theme-trait .button-safety:not(.unlocked) > :not(.button-cover) {
+  filter: blur(0.125rem) grayscale(0.618);
+}
+.dark-theme-trait .button-safety.unlocked > .button-cover {
+  filter: blur(2rem);
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
 }
 .dark-theme-trait .menu-popup {
   position: absolute;
@@ -14075,6 +14271,55 @@ body.dark .long-button {
   max-width: 640px;
   float: center;
 }
+body.dark .button-safety {
+  position: relative;
+}
+body.dark .button-safety > .button-cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.25);
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  overflow: hidden;
+  transition: opacity 500ms, filter 500ms;
+}
+body.dark .button-safety > .button-cover .unlock-button {
+  border-radius: 50%;
+  background-color: rgba(0, 0, 34, 0.6);
+  font-size: 2rem;
+  padding: 0.5rem;
+}
+body.dark .button-safety > .button-cover .unlock-button svg {
+  height: 2rem;
+  width: 2rem;
+  color: #228844;
+  fill: #228844;
+}
+@media (hover: hover) {
+  body.dark .button-safety > .button-cover .unlock-button:hover {
+    background-color: rgba(111, 127, 0, 0.6);
+  }
+  body.dark .button-safety > .button-cover .unlock-button:hover svg {
+    color: #000022;
+    fill: #000022;
+  }
+}
+body.dark .button-safety > :not(.button-cover) {
+  transition: filter 500ms;
+}
+body.dark .button-safety:not(.unlocked) > :not(.button-cover) {
+  filter: blur(0.125rem) grayscale(0.618);
+}
+body.dark .button-safety.unlocked > .button-cover {
+  filter: blur(2rem);
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+}
 body.dark .menu-popup {
   position: absolute;
   z-index: 99999;
@@ -16731,6 +16976,46 @@ body.dark .keyboard-shortcuts li .key:first-child {
     max-width: 640px;
     float: center;
   }
+  body.auto .button-safety {
+    position: relative;
+  }
+  body.auto .button-safety > .button-cover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.25);
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    overflow: hidden;
+    transition: opacity 500ms, filter 500ms;
+  }
+  body.auto .button-safety > .button-cover .unlock-button {
+    border-radius: 50%;
+    background-color: rgba(0, 0, 34, 0.6);
+    font-size: 2rem;
+    padding: 0.5rem;
+  }
+  body.auto .button-safety > .button-cover .unlock-button svg {
+    height: 2rem;
+    width: 2rem;
+    color: #228844;
+    fill: #228844;
+  }
+  body.auto .button-safety > :not(.button-cover) {
+    transition: filter 500ms;
+  }
+  body.auto .button-safety:not(.unlocked) > :not(.button-cover) {
+    filter: blur(0.125rem) grayscale(0.618);
+  }
+  body.auto .button-safety.unlocked > .button-cover {
+    filter: blur(2rem);
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
+  }
   body.auto .menu-popup {
     position: absolute;
     z-index: 99999;
@@ -18245,6 +18530,15 @@ body.dark .keyboard-shortcuts li .key:first-child {
     fill: #831B50;
     border-color: #831B50;
     background-color: #000022;
+  }
+}
+@media (prefers-color-scheme: dark) and (hover: hover) {
+  body.auto .button-safety > .button-cover .unlock-button:hover {
+    background-color: rgba(111, 127, 0, 0.6);
+  }
+  body.auto .button-safety > .button-cover .unlock-button:hover svg {
+    color: #000022;
+    fill: #000022;
   }
 }
 @media (prefers-color-scheme: dark) and (hover: hover) {
@@ -21148,7 +21442,8 @@ define("resource/images", [], {
     "forbidden-icon": "./image/forbidden.1024.svg",
     "import-icon": "./image/import.1024.svg",
     "export-icon": "./image/export.1024.svg",
-    "settings-icon": "./image/cog.1024.svg"
+    "settings-icon": "./image/cog.1024.svg",
+    "locked-icon": "./image/locked.1024.svg"
 });
 define("resource/keyboard.shortcuts", [], [
     {
@@ -23451,6 +23746,42 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return [2 /*return*/];
                 });
             }); }); };
+            Render.buttonSafety = function (button) { return __awaiter(_this, void 0, void 0, function () {
+                var result, _a, _b;
+                var _c, _d, _e;
+                return __generator(this, function (_f) {
+                    switch (_f.label) {
+                        case 0:
+                            _a = Render.$make(HTMLDivElement);
+                            _c = {
+                                tag: "div",
+                                className: "button-safety"
+                            };
+                            _b = [button];
+                            _d = {
+                                tag: "div",
+                                className: "button-cover"
+                            };
+                            _e = {
+                                tag: "button",
+                                className: "unlock-button"
+                            };
+                            return [4 /*yield*/, Resource.loadSvgOrCache("locked-icon")];
+                        case 1:
+                            result = _a.apply(void 0, [(_c.children = _b.concat([
+                                    (_d.children = (_e.children = _f.sent(),
+                                        _e.onclick = function () {
+                                            result.classList.toggle("unlocked", true);
+                                            setTimeout(function () { return result.classList.toggle("unlocked", false); }, 10000);
+                                        },
+                                        _e),
+                                        _d)
+                                ]),
+                                    _c)]);
+                            return [2 /*return*/, result];
+                    }
+                });
+            }); };
             Render.internalLink = function (data) {
                 return ({
                     tag: "a",
@@ -25292,29 +25623,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             _m = [];
                                                             _s.label = 9;
                                                         case 9:
-                                                            _b.apply(_a, _c.concat([_d.concat([
-                                                                    _e.apply(void 0, _f.concat([_g.apply(void 0, _h.concat([_k.concat([
-                                                                                _m
-                                                                            ])])), "Auto tag settings", function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                            return __generator(this, function (_a) {
-                                                                                switch (_a.label) {
-                                                                                    case 0: return [4 /*yield*/, Render.autoTagSettingsPopup(pass, item)];
-                                                                                    case 1:
-                                                                                        if (!_a.sent()) return [3 /*break*/, 3];
-                                                                                        result = true;
-                                                                                        Render.updateWindow("operate");
-                                                                                        return [4 /*yield*/, buttonListUpdate()];
-                                                                                    case 2:
-                                                                                        _a.sent();
-                                                                                        _a.label = 3;
-                                                                                    case 3: return [2 /*return*/];
-                                                                                }
-                                                                            });
-                                                                        }); }])),
-                                                                    Render.descriptionButton("", Render.monospace("", Render.label("Tag"), Render.todoTagList(pass, item).map(function (i) { return Domain.tagMap(i); }).join(", ")), "Add/Remove Tag", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            _d = _d.concat([
+                                                                _e.apply(void 0, _f.concat([_g.apply(void 0, _h.concat([_k.concat([
+                                                                            _m
+                                                                        ])])), "Auto tag settings", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                         return __generator(this, function (_a) {
                                                                             switch (_a.label) {
-                                                                                case 0: return [4 /*yield*/, Render.addRemoveTagsPopup(pass, item, OldStorage.Tag.getByTodo(pass, item.task))];
+                                                                                case 0: return [4 /*yield*/, Render.autoTagSettingsPopup(pass, item)];
                                                                                 case 1:
                                                                                     if (!_a.sent()) return [3 /*break*/, 3];
                                                                                     result = true;
@@ -25326,46 +25641,66 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                 case 3: return [2 /*return*/];
                                                                             }
                                                                         });
-                                                                    }); }),
-                                                                    Render.descriptionButton("delete-button", Render.monospace("", Render.label("Delete")), "poem.recyclebin.description", function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                        var href, toast;
-                                                                        var _this = this;
-                                                                        return __generator(this, function (_a) {
-                                                                            switch (_a.label) {
-                                                                                case 0:
-                                                                                    href = location.href;
-                                                                                    ui.close();
-                                                                                    OldStorage.Task.remove(pass, item.task);
-                                                                                    if (!(item.task === CyclicToDo.getUrlParams(href).todo)) return [3 /*break*/, 2];
-                                                                                    return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, tag: "@overall" })];
-                                                                                case 1:
-                                                                                    _a.sent();
-                                                                                    _a.label = 2;
-                                                                                case 2:
-                                                                                    toast = Render.makeToast({
-                                                                                        content: Render.$span("")(locale_2.locale.map("ToDo has been deleted!") + ": " + Model.decode(item.task)),
-                                                                                        backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                                            var removedItem;
-                                                                                            return __generator(this, function (_a) {
-                                                                                                switch (_a.label) {
-                                                                                                    case 0:
-                                                                                                        removedItem = OldStorage.Removed.get(pass).filter(function (i) { return CyclicToDo.isRemovedTask(i) && item.task === i.name; })[0];
-                                                                                                        OldStorage.Removed.restore(pass, removedItem);
-                                                                                                        toast.hide(); // nowait
-                                                                                                        if (!(href !== location.href)) return [3 /*break*/, 2];
-                                                                                                        return [4 /*yield*/, CyclicToDo.showUrl(CyclicToDo.getUrlParams(href))];
-                                                                                                    case 1:
-                                                                                                        _a.sent();
-                                                                                                        _a.label = 2;
-                                                                                                    case 2: return [2 /*return*/];
-                                                                                                }
-                                                                                            });
-                                                                                        }); }),
-                                                                                    });
-                                                                                    return [2 /*return*/];
-                                                                            }
-                                                                        });
-                                                                    }); })
+                                                                    }); }])),
+                                                                Render.descriptionButton("", Render.monospace("", Render.label("Tag"), Render.todoTagList(pass, item).map(function (i) { return Domain.tagMap(i); }).join(", ")), "Add/Remove Tag", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                    return __generator(this, function (_a) {
+                                                                        switch (_a.label) {
+                                                                            case 0: return [4 /*yield*/, Render.addRemoveTagsPopup(pass, item, OldStorage.Tag.getByTodo(pass, item.task))];
+                                                                            case 1:
+                                                                                if (!_a.sent()) return [3 /*break*/, 3];
+                                                                                result = true;
+                                                                                Render.updateWindow("operate");
+                                                                                return [4 /*yield*/, buttonListUpdate()];
+                                                                            case 2:
+                                                                                _a.sent();
+                                                                                _a.label = 3;
+                                                                            case 3: return [2 /*return*/];
+                                                                        }
+                                                                    });
+                                                                }); })
+                                                            ]);
+                                                            return [4 /*yield*/, Render.buttonSafety(Render.descriptionButton("delete-button", Render.monospace("", Render.label("Delete")), "poem.recyclebin.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                    var href, toast;
+                                                                    var _this = this;
+                                                                    return __generator(this, function (_a) {
+                                                                        switch (_a.label) {
+                                                                            case 0:
+                                                                                href = location.href;
+                                                                                ui.close();
+                                                                                OldStorage.Task.remove(pass, item.task);
+                                                                                if (!(item.task === CyclicToDo.getUrlParams(href).todo)) return [3 /*break*/, 2];
+                                                                                return [4 /*yield*/, CyclicToDo.showUrl({ pass: pass, tag: "@overall" })];
+                                                                            case 1:
+                                                                                _a.sent();
+                                                                                _a.label = 2;
+                                                                            case 2:
+                                                                                toast = Render.makeToast({
+                                                                                    content: Render.$span("")(locale_2.locale.map("ToDo has been deleted!") + ": " + Model.decode(item.task)),
+                                                                                    backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                        var removedItem;
+                                                                                        return __generator(this, function (_a) {
+                                                                                            switch (_a.label) {
+                                                                                                case 0:
+                                                                                                    removedItem = OldStorage.Removed.get(pass).filter(function (i) { return CyclicToDo.isRemovedTask(i) && item.task === i.name; })[0];
+                                                                                                    OldStorage.Removed.restore(pass, removedItem);
+                                                                                                    toast.hide(); // nowait
+                                                                                                    if (!(href !== location.href)) return [3 /*break*/, 2];
+                                                                                                    return [4 /*yield*/, CyclicToDo.showUrl(CyclicToDo.getUrlParams(href))];
+                                                                                                case 1:
+                                                                                                    _a.sent();
+                                                                                                    _a.label = 2;
+                                                                                                case 2: return [2 /*return*/];
+                                                                                            }
+                                                                                        });
+                                                                                    }); }),
+                                                                                });
+                                                                                return [2 /*return*/];
+                                                                        }
+                                                                    });
+                                                                }); }))];
+                                                        case 10:
+                                                            _b.apply(_a, _c.concat([_d.concat([
+                                                                    _s.sent()
                                                                 ])]));
                                                             return [2 /*return*/];
                                                     }
@@ -27791,7 +28126,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         case 0: return [4 /*yield*/, Render.fullscreenMenuItem()];
                         case 1: return [2 /*return*/, [
                                 _a.sent(),
-                                Render.menuLinkItem(Render.label("History"), { pass: entry.pass, tag: entry.tag, hash: "history" }),
                                 Render.menuItem(Render.label(Render.getTagSettingsTitle(entry.tag)), function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
@@ -27808,6 +28142,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 }); }),
                                 Render.listSettingsMenuItem(entry.pass),
                                 Render.systemSettingsMenuItem(),
+                                Render.menuLinkItem(Render.label("History"), { pass: entry.pass, tag: entry.tag, hash: "history" }),
                                 Render.menuLinkItem(Render.label("@deleted"), { pass: entry.pass, hash: "removed" }),
                                 Render.newTaskMenuItem(entry)
                             ]];
@@ -31432,7 +31767,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Dec 02 2023 22:27:37 GMT+0900 (日本標準時)', buildTimestampTick: 1701523657944, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Dec 03 2023 20:29:48 GMT+0900 (日本標準時)', buildTimestampTick: 1701602988957, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -31656,7 +31991,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Sat Dec 02 2023 22:27:37 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Sun Dec 03 2023 20:29:48 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
@@ -31760,6 +32095,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </svg>
 </div><div id="settings-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M579.681,101.543C534.863,94.152 489.137,94.152 444.319,101.543L422.868,255.329C390.367,266.615 360.306,283.97 334.282,306.473L190.374,248.158C161.565,283.276 138.702,322.876 122.693,365.385L245.15,460.855C238.674,494.644 238.674,529.356 245.15,563.145L122.693,658.615C138.702,701.124 161.565,740.724 190.374,775.842L334.282,717.527C360.306,740.03 390.367,757.385 422.868,768.671L444.319,922.457C489.137,929.848 534.863,929.848 579.681,922.457L601.132,768.671C633.633,757.385 663.694,740.03 689.718,717.527L833.626,775.842C862.435,740.724 885.298,701.124 901.307,658.615L778.85,563.145C785.326,529.356 785.326,494.644 778.85,460.855L901.307,365.385C885.298,322.876 862.435,283.276 833.626,248.158L689.718,306.473C663.694,283.97 633.633,266.615 601.132,255.329L579.681,101.543ZM512,350.491C601.139,350.491 673.509,422.861 673.509,512C673.509,601.139 601.139,673.509 512,673.509C422.861,673.509 350.491,601.139 350.491,512C350.491,422.861 422.861,350.491 512,350.491Z"/>
+</svg>
+</div><div id="locked-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1.09091,0,0,0.875,-46.5455,140)">
+        <path d="M805.333,352L815.269,352C842.164,352 864,379.224 864,412.755L864,803.245C864,836.776 842.164,864 815.269,864L208.731,864C181.836,864 160,836.776 160,803.245L160,412.755C160,379.224 181.836,352 208.731,352L218.667,352C218.667,150.157 350.105,-13.714 512,-13.714C673.895,-13.714 805.333,150.157 805.333,352ZM306.667,352L717.333,352C717.333,210.71 625.327,96 512,96C398.673,96 306.667,210.71 306.667,352ZM482.667,671.345L482.667,717.714C482.667,737.899 495.81,754.286 512,754.286C528.19,754.286 541.333,737.899 541.333,717.714L541.333,671.345C558.863,658.69 570.667,635.05 570.667,608C570.667,567.631 544.379,534.857 512,534.857C479.621,534.857 453.333,567.631 453.333,608C453.333,635.05 465.137,658.69 482.667,671.345Z"/>
+    </g>
 </svg>
 </div></div>
 <div id="emojis" style="display: none;"><div id="u231a"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"

@@ -1099,6 +1099,71 @@ button
     max-width: 640px;
     float: center;
 }
+.button-safety
+{
+    position: relative;
+    & > .button-cover
+    {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: fade(@main-color, 25);
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        overflow: hidden;
+        .unlock-button
+        {
+            border-radius: 50%;
+            background-color: fade(@base-color, 60);
+            font-size: 2rem;
+            padding: 0.5rem;
+            svg
+            {
+                height: 2rem;
+                width: 2rem;
+                color: @accent-color;
+                fill: @accent-color;
+            }
+            @media (hover: hover)
+            {
+                &:hover
+                {
+                    background-color: fade(@active-color, 60);
+                    svg
+                    {
+                        color: @base-color;
+                        fill: @base-color;
+                    }
+                }
+            }
+        }
+        transition: opacity 500ms, filter 500ms;
+    }
+    & > :not(.button-cover)
+    {
+        transition: filter 500ms;
+    }
+    &:not(.unlocked)
+    {
+        & > :not(.button-cover)
+        {
+            filter: blur(0.125rem) grayscale(0.618);
+        }
+    }
+    &.unlocked
+    {
+        & > .button-cover
+        {
+            filter: blur(2rem);
+            opacity: 0;
+            pointer-events: none;
+            user-select: none;
+        }
+    }
+}
 .menu-popup
 {
     &:not(.show)

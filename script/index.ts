@@ -2503,22 +2503,8 @@ export module CyclicToDo
                 });
             }
         );
-        export const buttonSafety = (button: minamo.dom.Source) =>
+        export const buttonSafety = async (button: minamo.dom.Source) =>
         {
-            const buttonCover = $make(HTMLDivElement)
-            ({
-                tag: "div",
-                className: "button-cover",
-                children:
-                {
-                    tag: "button",
-                    className: "unlock-button",
-                    onclick: () =>
-                    {
-                        buttonCover.classList.toggle("unlocked", true);
-                    }
-                }
-            });
             const result = $make(HTMLDivElement)
             ({
                 tag: "div",
@@ -2526,7 +2512,21 @@ export module CyclicToDo
                 children:
                 [
                     button,
-                    buttonCover,
+                    {
+                        tag: "div",
+                        className: "button-cover",
+                        children:
+                        {
+                            tag: "button",
+                            className: "unlock-button",
+                            children: await Resource.loadSvgOrCache("locked-icon"),
+                            onclick: () =>
+                            {
+                                result.classList.toggle("unlocked", true);
+                                setTimeout(() => result.classList.toggle("unlocked", false), 10000);
+                            }
+                        }
+                    },
                 ]
             });
             return result;
@@ -4109,40 +4109,43 @@ export module CyclicToDo
                                     }
                                 },
                             ),
-                            descriptionButton
+                            await buttonSafety
                             (
-                                "delete-button",
-                                monospace("", label("Delete")),
-                                "poem.recyclebin.description",
-                                async () =>
-                                {
-                                    const href = location.href;
-                                    ui.close();
-                                    OldStorage.Task.remove(pass, item.task);
-                                    //Storage.TagMember.add(pass, "@deleted", item.task);
-                                    if (item.task === getUrlParams(href).todo)
+                                descriptionButton
+                                (
+                                    "delete-button",
+                                    monospace("", label("Delete")),
+                                    "poem.recyclebin.description",
+                                    async () =>
                                     {
-                                        await showUrl({ pass, tag: "@overall" });
-                                    }
-                                    const toast = makeToast
-                                    ({
-                                        content: $span("")(`${locale.map("ToDo has been deleted!")}: ${Model.decode(item.task)}`),
-                                        backwardOperator: cancelTextButton
-                                        (
-                                            async () =>
-                                            {
-                                                const removedItem = OldStorage.Removed.get(pass).filter(i => isRemovedTask(i) && item.task === i.name)[0];
-                                                OldStorage.Removed.restore(pass, removedItem);
-                                                toast.hide(); // nowait
-                                                if (href !== location.href)
+                                        const href = location.href;
+                                        ui.close();
+                                        OldStorage.Task.remove(pass, item.task);
+                                        //Storage.TagMember.add(pass, "@deleted", item.task);
+                                        if (item.task === getUrlParams(href).todo)
+                                        {
+                                            await showUrl({ pass, tag: "@overall" });
+                                        }
+                                        const toast = makeToast
+                                        ({
+                                            content: $span("")(`${locale.map("ToDo has been deleted!")}: ${Model.decode(item.task)}`),
+                                            backwardOperator: cancelTextButton
+                                            (
+                                                async () =>
                                                 {
-                                                    await showUrl(getUrlParams(href));
+                                                    const removedItem = OldStorage.Removed.get(pass).filter(i => isRemovedTask(i) && item.task === i.name)[0];
+                                                    OldStorage.Removed.restore(pass, removedItem);
+                                                    toast.hide(); // nowait
+                                                    if (href !== location.href)
+                                                    {
+                                                        await showUrl(getUrlParams(href));
+                                                    }
                                                 }
-                                            }
-                                        ),
-                                    });
-                                },
-                            ),
+                                            ),
+                                        });
+                                    },
+                                ),
+                            )
                         ]
                     );
                 };
