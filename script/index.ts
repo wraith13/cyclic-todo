@@ -3772,18 +3772,21 @@ export module CyclicToDo
                                     await showUrl({ pass, hash: "export", });
                                 },
                             ),
-                            descriptionButton
+                            await buttonSafety
                             (
-                                "delete-button",
-                                monospace("", label("Delete this List")),
-                                "poem.recyclebin.description",
-                                async () =>
-                                {
-                                    ui.close();
-                                    const backup = location.href;
-                                    Operate.removeList(pass, () => showPage(backup));
-                                    await showUrl({ });
-                                },
+                                descriptionButton
+                                (
+                                    "delete-button",
+                                    monospace("", label("Delete this List")),
+                                    "poem.recyclebin.description",
+                                    async () =>
+                                    {
+                                        ui.close();
+                                        const backup = location.href;
+                                        Operate.removeList(pass, () => showPage(backup));
+                                        await showUrl({ });
+                                    },
+                                )
                             ),
                         ]
                     );
@@ -3918,40 +3921,43 @@ export module CyclicToDo
                             ),
                             Model.isSystemTagOld(tag) ?
                                 []:
-                                descriptionButton
+                                await buttonSafety
                                 (
-                                    "delete-button",
-                                    monospace("", label("Delete")),
-                                    "poem.recyclebin.description",
-                                    async () =>
-                                    {
-                                        const href = location.href;
-                                        ui.close();
-                                        OldStorage.Tag.remove(pass, tag);
-                                        if (tag === getUrlParams(href).tag)
+                                    descriptionButton
+                                    (
+                                        "delete-button",
+                                        monospace("", label("Delete")),
+                                        "poem.recyclebin.description",
+                                        async () =>
                                         {
-                                            await showUrl({ pass, tag: "@overall" });
-                                        }
-                                        const toast = makeToast
-                                        ({
-                                            content: $span("")(`${locale.map(Model.isSublistOld(tag) ? "Sublist has been deleted!": "Tag has been deleted!")}: ${Model.decode(Model.decodeSublist(tag))}`),
-                                            backwardOperator: cancelTextButton
-                                            (
-                                                async () =>
-                                                {
-                                                    const removedItem = Model.isSublistOld(tag) ?
-                                                        OldStorage.Removed.get(pass).filter(i => isRemovedSublist(i) && tag === i.name)[0]:
-                                                        OldStorage.Removed.get(pass).filter(i => isRemovedTag(i) && tag === i.name)[0];
-                                                    OldStorage.Removed.restore(pass, removedItem);
-                                                    toast.hide(); // nowait
-                                                    if (href !== location.href)
+                                            const href = location.href;
+                                            ui.close();
+                                            OldStorage.Tag.remove(pass, tag);
+                                            if (tag === getUrlParams(href).tag)
+                                            {
+                                                await showUrl({ pass, tag: "@overall" });
+                                            }
+                                            const toast = makeToast
+                                            ({
+                                                content: $span("")(`${locale.map(Model.isSublistOld(tag) ? "Sublist has been deleted!": "Tag has been deleted!")}: ${Model.decode(Model.decodeSublist(tag))}`),
+                                                backwardOperator: cancelTextButton
+                                                (
+                                                    async () =>
                                                     {
-                                                        await showUrl(getUrlParams(href));
+                                                        const removedItem = Model.isSublistOld(tag) ?
+                                                            OldStorage.Removed.get(pass).filter(i => isRemovedSublist(i) && tag === i.name)[0]:
+                                                            OldStorage.Removed.get(pass).filter(i => isRemovedTag(i) && tag === i.name)[0];
+                                                        OldStorage.Removed.restore(pass, removedItem);
+                                                        toast.hide(); // nowait
+                                                        if (href !== location.href)
+                                                        {
+                                                            await showUrl(getUrlParams(href));
+                                                        }
                                                     }
-                                                }
-                                            ),
-                                        });
-                                    },
+                                                ),
+                                            });
+                                        },
+                                    )
                                 ),
                         ]
                     );
@@ -9035,6 +9041,7 @@ export module CyclicToDo
         updateStyle();
         updateFlashStyle();
         updateUiStyle();
+        document.body.classList.toggle("chrome", !!((<any>window).chrome));
         // await Render.showUpdatingScreen(location.href);
         await showPage();
         if ("number" === typeof scroll)
