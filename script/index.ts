@@ -2231,7 +2231,7 @@ export module CyclicToDo
                 {
                     OldStorage.TagMember.remove(pass, autoTagged, item.task);
                 }
-                Render.updateWindow?.("dirty");
+                Render.updateScreen?.("dirty");
             }
         };
         export const updateProgress = (pass: string | Model.Document, item: ToDoEntry, now: number = Domain.getTicks()) =>
@@ -2307,7 +2307,7 @@ export module CyclicToDo
         };
         export module Operate
         {
-            export const renameList = async (pass: string | Model.Document, newName: string, onCanceled: () => unknown = () => updateWindow("operate")) =>
+            export const renameList = async (pass: string | Model.Document, newName: string, onCanceled: () => unknown = () => updateScreen("operate")) =>
             {
                 const backup = MigrateBridge.Title.get(pass);
                 await withUpdateProgress
@@ -2337,7 +2337,7 @@ export module CyclicToDo
                     ),
                 });
             };
-            export const removeList = async (pass: string | Model.Document, onCanceled: () => unknown = () => updateWindow("operate")) =>
+            export const removeList = async (pass: string | Model.Document, onCanceled: () => unknown = () => updateScreen("operate")) =>
             {
                 const list = JSON.parse(MigrateBridge.exportJson(pass));
                 OldStorage.Pass.remove(list.pass);
@@ -3027,7 +3027,7 @@ export module CyclicToDo
                                         result.push(tag);
                                         OldStorage.TagMember.add(pass, tag, item.task);
                                         hasNewTag = true;
-                                        await updateWindow("operate");
+                                        await updateScreen("operate");
                                         await tagButtonListUpdate();
                                     }
                                 }
@@ -3507,7 +3507,7 @@ export module CyclicToDo
                 {
                     OldStorage.Task.add(entry.pass, encodedNewTask);
                     const newTask2 = OldStorage.TagMember.add(entry.pass, entry.tag, encodedNewTask);
-                    updateWindow("operate");
+                    updateScreen("operate");
                     const toast = makeToast
                     ({
                         content: $span("")(`${locale.map("ToDo has been created!")}: ${OldStorage.Task.decode(newTask2)}`),
@@ -3522,9 +3522,9 @@ export module CyclicToDo
                                     entry.pass,
                                     newTask2,
                                     MigrateBridge.getDoneTicks(entry.pass),
-                                    () => updateWindow("operate")
+                                    () => updateScreen("operate")
                                 );
-                                updateWindow("operate");
+                                updateScreen("operate");
                             }
                         ),
                         backwardOperator: cancelTextButton
@@ -4026,7 +4026,7 @@ export module CyclicToDo
                                     {
                                         // item.task = newTaskFullname; 🚧
                                         result = true;
-                                        updateWindow("operate");
+                                        updateScreen("operate");
                                         await buttonListUpdate();
                                     }
                                 },
@@ -4090,7 +4090,7 @@ export module CyclicToDo
                                     if (await autoTagSettingsPopup(pass, item))
                                     {
                                         result = true;
-                                        updateWindow("operate");
+                                        updateScreen("operate");
                                         await buttonListUpdate();
                                     }
                                 },
@@ -4110,7 +4110,7 @@ export module CyclicToDo
                                     if (await addRemoveTagsPopup(pass, item, OldStorage.Tag.getByTodo(pass, item.task)))
                                     {
                                         result = true;
-                                        updateWindow("operate");
+                                        updateScreen("operate");
                                         await buttonListUpdate();
                                     }
                                 },
@@ -4228,7 +4228,7 @@ export module CyclicToDo
                                 {
                                     settings.sort = defaultSort === i ? undefined: <"smart" | "simple" | "simple-reverse">i;
                                     OldStorage.TagSettings.set(pass, tag, settings);
-                                    await updateWindow("operate");
+                                    await updateScreen("operate");
                                     result = true;
                                     await tagButtonListUpdate();
                                 }
@@ -4304,7 +4304,7 @@ export module CyclicToDo
                                 {
                                     settings.displayStyle = i;
                                     OldStorage.TagSettings.set(pass, tag, settings);
-                                    await updateWindow("operate");
+                                    await updateScreen("operate");
                                     result = true;
                                     await tagButtonListUpdate();
                                 }
@@ -4378,7 +4378,7 @@ export module CyclicToDo
                                 {
                                     settings.progressScaleStyle = i;
                                     OldStorage.TagSettings.set(pass, tag, settings);
-                                    await updateWindow("operate");
+                                    await updateScreen("operate");
                                     result = true;
                                     await tagButtonListUpdate();
                                 }
@@ -4596,7 +4596,7 @@ export module CyclicToDo
                 {
                     settings.flash = value;
                     OldStorage.TodoSettings.set(pass, entry.task, settings);
-                    await updateWindow("operate");
+                    await updateScreen("operate");
                 },
                 () => settings.flash
             );
@@ -4609,7 +4609,7 @@ export module CyclicToDo
                 {
                     settings.pickup = value;
                     OldStorage.TodoSettings.set(pass, entry.task, settings);
-                    await updateWindow("operate");
+                    await updateScreen("operate");
                 },
                 () => settings.pickup
             );
@@ -4622,7 +4622,7 @@ export module CyclicToDo
                 {
                     settings.restriction = value;
                     OldStorage.TodoSettings.set(pass, entry.task, settings);
-                    await updateWindow("operate");
+                    await updateScreen("operate");
                 },
                 () => settings.restriction
             );
@@ -5167,7 +5167,7 @@ export module CyclicToDo
                 {
                     if (await autoTagSettingsPopup(pass, item))
                     {
-                        updateWindow("operate");
+                        updateScreen("operate");
                     }
                 }
             ),
@@ -5179,7 +5179,7 @@ export module CyclicToDo
                     if (await addRemoveTagsPopup(pass, item, OldStorage.Tag.getByTodo(pass, item.task)))
                     {
                         // await reload();
-                        updateWindow("operate");
+                        updateScreen("operate");
                     }
                 }
             ),
@@ -5191,7 +5191,7 @@ export module CyclicToDo
                     if (await moveToSublistPopup(pass, item))
                     {
                         // await reload();
-                        updateWindow("operate");
+                        updateScreen("operate");
                     }
                 }
             ),
@@ -5298,7 +5298,7 @@ export module CyclicToDo
                         event.preventDefault();
                         if (await autoTagSettingsPopup(pass, item))
                         {
-                            updateWindow("operate");
+                            updateScreen("operate");
                         }
                     }
                 }):
@@ -5313,7 +5313,7 @@ export module CyclicToDo
                         event.preventDefault();
                         if (await autoTagSettingsPopup(pass, item))
                         {
-                            updateWindow("operate");
+                            updateScreen("operate");
                         }
                     }
                 }):
@@ -5328,7 +5328,7 @@ export module CyclicToDo
                         event.preventDefault();
                         if (await autoTagSettingsPopup(pass, item))
                         {
-                            updateWindow("operate");
+                            updateScreen("operate");
                         }
                     }
                 }):
@@ -5343,7 +5343,7 @@ export module CyclicToDo
                         event.preventDefault();
                         if (await autoTagSettingsPopup(pass, item))
                         {
-                            updateWindow("operate");
+                            updateScreen("operate");
                         }
                     }
                 }):
@@ -5357,7 +5357,7 @@ export module CyclicToDo
             {
                 await updatingScreenBody();
                 Object.assign(item, Domain.getToDoEntryOld(entry.pass, item.task));
-                await updateWindow("operate");
+                await updateScreen("operate");
                 await updatedScreenBody();
             };
             const onDone = async () =>
@@ -6110,6 +6110,8 @@ export module CyclicToDo
         export const listScreenMenu = async (entry: ToDoTagEntryOld) =>
         [
             await fullscreenMenuItem(),
+            systemSettingsMenuItem(),
+            listSettingsMenuItem(entry.pass),
             menuItem
             (
                 label(getTagSettingsTitle(entry.tag)),
@@ -6121,8 +6123,6 @@ export module CyclicToDo
                     }
                 }
             ),
-            listSettingsMenuItem(entry.pass),
-            systemSettingsMenuItem(),
             menuLinkItem
             (
                 label("History"),
@@ -6312,7 +6312,7 @@ export module CyclicToDo
             {
                 filterInputElement.value = text;
                 updateUrlFilterParam(text);
-                updateWindow("operate");
+                updateScreen("operate");
             }
         };
         regulateFilterText
@@ -6380,7 +6380,7 @@ export module CyclicToDo
                 async filter =>
                 {
                     updateUrlFilterParam(filter);
-                    updateWindow("operate");
+                    updateScreen("operate");
                 }
             ),
             parent: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall", }
@@ -6790,7 +6790,7 @@ export module CyclicToDo
             };
             const obsolescenceProgressBarDuration = minamo.core.parseTimespan(style.__OBSOLESCENCE_PROGRESS_BAR_DURATION__) ?? (30 *1000);
             const displayStyle = OldStorage.TagSettings.getDisplayStyle(entry.pass, entry.tag);
-            const updateWindow = async (event: UpdateWindowEventEype) =>
+            const updateScreen = async (event: UpdateScreenEventEype) =>
             {
                 switch(event)
                 {
@@ -6800,7 +6800,7 @@ export module CyclicToDo
                         {
                             isUpdating = true;
                             await updatingScreenBody();
-                            await Render.updateWindow("operate");
+                            await Render.updateScreen("operate");
                             await updatedScreenBody();
                         }
                         break;
@@ -6827,7 +6827,7 @@ export module CyclicToDo
                         //     ! (getHeaderElement().classList.contains("header-operator-has-focus") ?? false)
                         // )
                         // {
-                        //     //await updateWindow("operate");
+                        //     //await updateScreen("operate");
                         // }
                         // else
                         // {
@@ -6896,7 +6896,7 @@ export module CyclicToDo
                     //     if (isDirty)
                     //     {
                     //         await updatingScreenBody();
-                    //         await Render.updateWindow("operate");
+                    //         await Render.updateScreen("operate");
                     //     }
                     //     break;
                     case "storage":
@@ -6921,7 +6921,7 @@ export module CyclicToDo
                             resizeFlexList();
                             if ("@pickup" === tag)
                             {
-                                await Render.updateWindow("timer");
+                                await Render.updateScreen("timer");
                             }
                             removeProgressStyle();
                             isDirtied = false;
@@ -6947,24 +6947,24 @@ export module CyclicToDo
                             {
                                 await updatingScreenBody();
                             }
-                            await Render.updateWindow("operate");
+                            await Render.updateScreen("operate");
                             await updatedScreenBody();
                         }
                         break;
                 }
             };
             const filter = regulateFilterText(urlParams.filter ?? "");
-            await showWindow(await listScreen(entry, list, filter), updateWindow);
+            await showScreen(await listScreen(entry, list, filter), updateScreen);
             if ("@pickup" === tag)
             {
-                await Render.updateWindow("timer");
+                await Render.updateScreen("timer");
             }
         };
         export const historyScreenMenu = async (entry: ToDoTagEntryOld) =>
         [
             backToListMenuItem(entry.pass, entry.tag),
-            listSettingsMenuItem(entry.pass),
             systemSettingsMenuItem(),
+            listSettingsMenuItem(entry.pass),
             Model.isSystemTagOld(entry.tag) ? []: renameTagMenuItem(entry, "history"),
             newTaskMenuItem(entry),
         ];
@@ -7059,7 +7059,7 @@ export module CyclicToDo
             list.sort(minamo.core.comparer.make(a => -(a.tick ?? 0)));
             list = list.concat(entry.todo.filter(task => histories[task].length <= 0).map(task => ({ task, tick: null })));
             const filter = regulateFilterText(urlParams.filter ?? "");
-            await showWindow(await historyScreen(entry, list, filter));
+            await showScreen(await historyScreen(entry, list, filter));
         };
         export const removedItem = async (pass: string, item: RemovedType) => $div("removed-item flex-item")
         ([
@@ -7191,7 +7191,7 @@ export module CyclicToDo
         });
         export const showRemovedScreen = async (pass: string) =>
         {
-            const updateWindow = async (event: UpdateWindowEventEype) =>
+            const updateScreen = async (event: UpdateScreenEventEype) =>
             {
                 switch(event)
                 {
@@ -7210,10 +7210,13 @@ export module CyclicToDo
                         break;
                 }
             };
-            await showWindow(await removedScreen(pass, OldStorage.Removed.get(pass)), updateWindow);
+            await showScreen(await removedScreen(pass, OldStorage.Removed.get(pass)), updateScreen);
         };
         export const todoScreenMenu = async (pass: string, item: ToDoEntry) =>
         [
+            await fullscreenMenuItem(),
+            systemSettingsMenuItem(),
+            listSettingsMenuItem(pass),
             menuItem
             (
                 label("ToDo settings"),
@@ -7221,12 +7224,10 @@ export module CyclicToDo
                 {
                     if (await todoSettingsPopup(pass, item))
                     {
-                        updateWindow("operate");
+                        updateScreen("operate");
                     }
                 }
             ),
-            listSettingsMenuItem(pass),
-            systemSettingsMenuItem(),
             // todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
             // todoTagMenu(pass, item),
             // todoDeleteMenu
@@ -7286,9 +7287,9 @@ export module CyclicToDo
             //                 pass,
             //                 item.task,
             //                 MigrateBridge.getDoneTicks(pass),
-            //                 () => updateWindow("operate")
+            //                 () => updateScreen("operate")
             //             );
-            //             updateWindow("operate");
+            //             updateScreen("operate");
             //         }
             //     }),
             $div("row-flex-list todo-list")
@@ -7341,9 +7342,9 @@ export module CyclicToDo
                                 pass,
                                 item.task,
                                 MigrateBridge.getDoneTicks(pass),
-                                () => updateWindow("operate")
+                                () => updateScreen("operate")
                             );
-                            updateWindow("operate");
+                            updateScreen("operate");
                         }
                     },
                     $div("button-list")
@@ -7357,7 +7358,7 @@ export module CyclicToDo
                             {
                                 if (await todoSettingsPopup(pass, item))
                                 {
-                                    updateWindow("operate");
+                                    updateScreen("operate");
                                 }
                             }
                         ),
@@ -7405,7 +7406,7 @@ export module CyclicToDo
             let ticks = OldStorage.History.getTicks(pass, task);
             let isDirty = false;
             Domain.updateProgress(pass, item);
-            const updateWindow = async (event: UpdateWindowEventEype) =>
+            const updateScreen = async (event: UpdateScreenEventEype) =>
             {
                 switch(event)
                 {
@@ -7426,7 +7427,7 @@ export module CyclicToDo
                     case "scroll":
                         if (isDirty)
                         {
-                            await Render.updateWindow("operate");
+                            await Render.updateScreen("operate");
                         }
                         break;
                     case "storage":
@@ -7447,7 +7448,7 @@ export module CyclicToDo
                         break;
                 }
             };
-            await showWindow(await todoScreen(pass, item, ticks, tag), updateWindow);
+            await showScreen(await todoScreen(pass, item, ticks, tag), updateScreen);
         };
         export module Resource
         {
@@ -7505,11 +7506,12 @@ export module CyclicToDo
             export const loadEmojiSvgOrCache = async (emoji: EmojiType): Promise<SVGElement> => loadSvgOrCache(`u${emoji.codePointAt(0)?.toString(16).toLowerCase()}` as KeyType);
         }
         export const showExportScreen = async (pass: string) =>
-            await showWindow(await exportScreen(pass));
+            await showScreen(await exportScreen(pass));
         export const exportScreenMenu = async (pass: string) =>
         [
-            backToListMenuItem(pass),
+            await fullscreenMenuItem(),
             systemSettingsMenuItem(),
+            backToListMenuItem(pass),
         ];
         export const exportScreen = async (pass: string): Promise<ScreenSource> =>
         ({
@@ -7534,11 +7536,12 @@ export module CyclicToDo
             ]
         });
         export const showImportScreen = async () =>
-            await showWindow(await importScreen());
+            await showScreen(await importScreen());
         export const importScreenMenu = async () =>
         [
-            menuLinkItem(label("Back to Top"), { }),
+            await fullscreenMenuItem(),
             systemSettingsMenuItem(),
+            menuLinkItem(label("Back to Top"), { }),
         ];
         export const importScreen = async () =>
         ({
@@ -7608,7 +7611,7 @@ export module CyclicToDo
         ]);
         export const showRemovedListScreen = async () =>
         {
-            const updateWindow = async (event: UpdateWindowEventEype) =>
+            const updateScreen = async (event: UpdateScreenEventEype) =>
             {
                 switch(event)
                 {
@@ -7627,12 +7630,13 @@ export module CyclicToDo
                         break;
                 }
             };
-            await showWindow(await removedListScreen(OldStorage.Backup.get().map(json => JSON.parse(json) as RemovedContent).sort(minamo.core.comparer.make(i => -i.deteledAt))), updateWindow);
+            await showScreen(await removedListScreen(OldStorage.Backup.get().map(json => JSON.parse(json) as RemovedContent).sort(minamo.core.comparer.make(i => -i.deteledAt))), updateScreen);
         };
         export const removedListScreenMenu = async () =>
         [
-            menuLinkItem(label("Back to Top"), { }),
+            await fullscreenMenuItem(),
             systemSettingsMenuItem(),
+            menuLinkItem(label("Back to Top"), { }),
         ];
         export const removedListScreen = async (list: RemovedContent[]) =>
         ({
@@ -7760,7 +7764,7 @@ export module CyclicToDo
                     //             // Storage.Pass.remove(list.pass);
                     //             // await reload();
                     //             Operate.removeList(list.pass);
-                    //             updateWindow("operate");
+                    //             updateScreen("operate");
                     //         },
                     //         "delete-button"
                     //     )
@@ -7989,7 +7993,7 @@ export module CyclicToDo
         });
         export const showWelcomeScreen = async () =>
         {
-            const updateWindow = async (event: UpdateWindowEventEype) =>
+            const updateScreen = async (event: UpdateScreenEventEype) =>
             {
                 switch(event)
                 {
@@ -8006,7 +8010,7 @@ export module CyclicToDo
                     break;
                 }
             }
-            await showWindow(await welcomeScreen(), updateWindow);
+            await showScreen(await welcomeScreen(), updateScreen);
             checkApplicationUpdate();
         };
         export const updatingScreenMenu = async () =>
@@ -8092,7 +8096,7 @@ export module CyclicToDo
         //     ]
         // });
         // export const showUpdatingScreen = async (url: string = location.href) =>
-        //     await showWindow(await updatingScreen(url));
+        //     await showScreen(await updatingScreen(url));
         export const updateTitle = () =>
         {
             document.title = Array.from(getHeaderElement().getElementsByClassName("segment-title"))
@@ -8101,9 +8105,9 @@ export module CyclicToDo
                 ?.join(" / ")
                 ?? applicationTitle;
         };
-        export type UpdateWindowEventEype = "high-resolution-timer" | "timer" | "scroll" | "storage" | "focus" | "blur" | "operate" | "dirty" | "click-header";
-        export let updateWindow: (event: UpdateWindowEventEype) => unknown;
-        let updateWindowTimer: NodeJS.Timeout;
+        export type UpdateScreenEventEype = "high-resolution-timer" | "timer" | "scroll" | "storage" | "focus" | "blur" | "operate" | "dirty" | "click-header";
+        export let updateScreen: (event: UpdateScreenEventEype) => unknown;
+        let updateScreenTimer: NodeJS.Timeout;
         let updateHighResolutionTimer: NodeJS.Timeout;
         let previousScrollTop: number = 0;
         export const getHeaderElement = () => document.getElementById("screen-header") as HTMLDivElement;
@@ -8143,16 +8147,16 @@ export module CyclicToDo
             //     logo.style.transform = `scale(${1 +rate},${1 +rate})`;
             // }
 };
-        export const showWindow = async (screen: ScreenSource, updateWindow?: (event: UpdateWindowEventEype) => unknown) =>
+        export const showScreen = async (screen: ScreenSource, updateScreen?: (event: UpdateScreenEventEype) => unknown) =>
         {
             removeProgressStyle();
-            if (undefined !== updateWindow)
+            if (undefined !== updateScreen)
             {
-                Render.updateWindow = updateWindow;
+                Render.updateScreen = updateScreen;
             }
             else
             {
-                Render.updateWindow = async (event: UpdateWindowEventEype) =>
+                Render.updateScreen = async (event: UpdateScreenEventEype) =>
                 {
                     switch(event)
                     {
@@ -8167,11 +8171,11 @@ export module CyclicToDo
                     }
                 };
             }
-            if (undefined === updateWindowTimer)
+            if (undefined === updateScreenTimer)
             {
-                updateWindowTimer = setInterval
+                updateScreenTimer = setInterval
                 (
-                    () => Render.updateWindow?.("timer"),
+                    () => Render.updateScreen?.("timer"),
                     Domain.timeAccuracy
                 );
                 const screenBody = getScreenBody();
@@ -8185,7 +8189,7 @@ export module CyclicToDo
                         const scrollTop = Math.min(Math.max(screenBody.scrollTop, 0), scrollMax);
                         if (scrollTop <= 0)
                         {
-                            Render.updateWindow?.("scroll");
+                            Render.updateScreen?.("scroll");
                         }
                         updateTopAndBottomUIState(scrollTop, scrollMax);
                         scrollBackgroundLogo(scrollTop);
@@ -8196,7 +8200,7 @@ export module CyclicToDo
             {
                 updateHighResolutionTimer = setInterval
                 (
-                    () => Render.updateWindow?.("high-resolution-timer"),
+                    () => Render.updateScreen?.("high-resolution-timer"),
                     100
                 );
             }
@@ -8273,7 +8277,7 @@ export module CyclicToDo
                     // if (minamo.core.existsOrThrow(document.getElementById("screen-toast")).getElementsByClassName("item").length <= 0)
                     // {
                     //     await minamo.core.timeout(10);
-                    //     updateWindow("operate");
+                    //     updateScreen("operate");
                     // }
                 }
             };
@@ -8465,12 +8469,12 @@ export module CyclicToDo
         };
         export const onWindowFocus = async () =>
         {
-            updateWindow?.("focus");
+            updateScreen?.("focus");
             await checkApplicationUpdate();
         };
         export const onWindowBlur = () =>
         {
-            updateWindow?.("blur");
+            updateScreen?.("blur");
         };
         let onUpdateStorageCount = 0;
         export const onUpdateStorage = () =>
@@ -8483,7 +8487,7 @@ export module CyclicToDo
                 {
                     if (lastUpdate === OldStorage.lastUpdate && onUpdateStorageCountCopy === onUpdateStorageCount)
                     {
-                        updateWindow?.("storage");
+                        updateScreen?.("storage");
                     }
                 },
                 50,
@@ -8954,7 +8958,7 @@ export module CyclicToDo
             reduce((a,b) => a || b, false);
         if (isDirty)
         {
-            Render.updateWindow?.("dirty");
+            Render.updateScreen?.("dirty");
         }
     }
     export const start = async (params:{ buildTimestamp: string, buildTimestampTick:number, }) =>
@@ -9017,7 +9021,7 @@ export module CyclicToDo
             'click',
             async () =>
             {
-                Render.updateWindow?.("click-header");
+                Render.updateScreen?.("click-header");
                 const body = Render.getScreenBody();
                 let top = body.scrollTop;
                 for(let i = 0; i < 25; ++i)
