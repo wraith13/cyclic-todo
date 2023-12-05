@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Tue Dec 05 2023 13:10:59 GMT+0900 (日本標準時)
+    build at: Wed Dec 06 2023 07:07:32 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -1937,6 +1937,12 @@ h2 {
   height: 1.5rem;
   margin-left: -0.25rem;
   margin-right: 0.5rem;
+}
+.light-theme-trait .menu-popup a.opened,
+.light-theme-trait .menu-popup button.opened {
+  color: #FFFFFF;
+  fill: #FFFFFF;
+  background-color: #6F7F00;
 }
 .light-theme-trait .menu-popup a.current-item,
 .light-theme-trait .menu-popup button.current-item {
@@ -4984,6 +4990,12 @@ body.light .menu-popup button svg {
   margin-left: -0.25rem;
   margin-right: 0.5rem;
 }
+body.light .menu-popup a.opened,
+body.light .menu-popup button.opened {
+  color: #FFFFFF;
+  fill: #FFFFFF;
+  background-color: #6F7F00;
+}
 body.light .menu-popup a.current-item,
 body.light .menu-popup button.current-item {
   cursor: pointer;
@@ -7680,6 +7692,12 @@ body.light .keyboard-shortcuts li .key:first-child {
     height: 1.5rem;
     margin-left: -0.25rem;
     margin-right: 0.5rem;
+  }
+  body.auto .menu-popup a.opened,
+  body.auto .menu-popup button.opened {
+    color: #FFFFFF;
+    fill: #FFFFFF;
+    background-color: #6F7F00;
   }
   body.auto .menu-popup a.current-item,
   body.auto .menu-popup button.current-item {
@@ -11332,6 +11350,12 @@ body.light .keyboard-shortcuts li .key:first-child {
   margin-left: -0.25rem;
   margin-right: 0.5rem;
 }
+.dark-theme-trait .menu-popup a.opened,
+.dark-theme-trait .menu-popup button.opened {
+  color: #000022;
+  fill: #000022;
+  background-color: #6F7F00;
+}
 .dark-theme-trait .menu-popup a.current-item,
 .dark-theme-trait .menu-popup button.current-item {
   cursor: pointer;
@@ -14381,6 +14405,12 @@ body.dark .menu-popup button svg {
   margin-left: -0.25rem;
   margin-right: 0.5rem;
 }
+body.dark .menu-popup a.opened,
+body.dark .menu-popup button.opened {
+  color: #000022;
+  fill: #000022;
+  background-color: #6F7F00;
+}
 body.dark .menu-popup a.current-item,
 body.dark .menu-popup button.current-item {
   cursor: pointer;
@@ -17080,6 +17110,12 @@ body.dark .keyboard-shortcuts li .key:first-child {
     height: 1.5rem;
     margin-left: -0.25rem;
     margin-right: 0.5rem;
+  }
+  body.auto .menu-popup a.opened,
+  body.auto .menu-popup button.opened {
+    color: #000022;
+    fill: #000022;
+    background-color: #6F7F00;
   }
   body.auto .menu-popup a.current-item,
   body.auto .menu-popup button.current-item {
@@ -27982,13 +28018,16 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     menu = members.map(function (i) { return i.item; });
                     cover = null;
                     close = function () {
+                        var _a;
+                        button.classList.toggle("opened", false);
                         popup.classList.remove("show");
                         cover = null;
+                        (_a = button.parentElement) === null || _a === void 0 ? void 0 : _a.click();
                     };
                     popup = Render.$make(HTMLDivElement)({
                         tag: "div",
                         className: "menu-popup",
-                        children: "function" !== typeof menu ? menu : [],
+                        children: menu,
                         onclick: function (event) { return __awaiter(_this, void 0, void 0, function () {
                             return __generator(this, function (_a) {
                                 event.stopPropagation();
@@ -28009,17 +28048,33 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             var buttonRect;
                             return __generator(this, function (_a) {
                                 event.stopPropagation();
+                                button.classList.toggle("opened", true);
                                 popup.classList.add("show");
                                 buttonRect = button.getBoundingClientRect();
-                                if (buttonRect.top < window.innerHeight * (2 / 3)) {
-                                    popup.style.top = "" + buttonRect.bottom;
-                                    popup.style.removeProperty("bottom");
+                                if (buttonRect.right < window.innerWidth * (2 / 3)) {
+                                    if (buttonRect.top < window.innerHeight * (2 / 3)) {
+                                        popup.style.top = "" + buttonRect.top;
+                                        popup.style.removeProperty("bottom");
+                                    }
+                                    else {
+                                        popup.style.removeProperty("top");
+                                        popup.style.bottom = "" + (window.innerHeight - buttonRect.bottom);
+                                    }
+                                    popup.style.removeProperty("right");
+                                    popup.style.left = "" + buttonRect.right;
                                 }
                                 else {
-                                    popup.style.removeProperty("top");
-                                    popup.style.bottom = "" + (window.innerHeight - buttonRect.top);
+                                    if (buttonRect.top < window.innerHeight * (2 / 3)) {
+                                        popup.style.top = "" + buttonRect.bottom;
+                                        popup.style.removeProperty("bottom");
+                                    }
+                                    else {
+                                        popup.style.removeProperty("top");
+                                        popup.style.bottom = "" + (window.innerHeight - buttonRect.top);
+                                    }
+                                    popup.style.removeProperty("left");
+                                    popup.style.right = "" + (window.innerWidth - buttonRect.right);
                                 }
-                                popup.style.right = "" + (window.innerWidth - buttonRect.right);
                                 cover = Render.screenCover({
                                     // parent: popup.parentElement,
                                     children: popup,
@@ -31962,7 +32017,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Dec 05 2023 13:10:59 GMT+0900 (日本標準時)', buildTimestampTick: 1701749459312, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Dec 06 2023 07:07:32 GMT+0900 (日本標準時)', buildTimestampTick: 1701814052679, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -32186,7 +32241,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Tue Dec 05 2023 13:10:59 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Wed Dec 06 2023 07:07:32 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

@@ -5965,14 +5965,16 @@ export module CyclicToDo
             let cover: { dom: HTMLDivElement, close: () => Promise<unknown> } | null = null;
             const close = () =>
             {
+                button.classList.toggle("opened", false);
                 popup.classList.remove("show");
                 cover = null;
+                button.parentElement?.click();
             };
             const popup = $make(HTMLDivElement)
             ({
                 tag: "div",
                 className: "menu-popup",
-                children: "function" !== typeof menu ? menu: [ ],
+                children: menu,
                 onclick: async (event: MouseEvent) =>
                 {
                     event.stopPropagation();
@@ -5992,19 +5994,39 @@ export module CyclicToDo
                 onclick: async (event: MouseEvent) =>
                 {
                     event.stopPropagation();
+                    button.classList.toggle("opened", true);
                     popup.classList.add("show");
                     const buttonRect = button.getBoundingClientRect();
-                    if (buttonRect.top < window.innerHeight *(2 /3))
+                    if (buttonRect.right < window.innerWidth *(2 /3))
                     {
-                        popup.style.top = `${buttonRect.bottom}`;
-                        popup.style.removeProperty("bottom");
+                        if (buttonRect.top < window.innerHeight *(2 /3))
+                        {
+                            popup.style.top = `${buttonRect.top}`;
+                            popup.style.removeProperty("bottom");
+                        }
+                        else
+                        {
+                            popup.style.removeProperty("top");
+                            popup.style.bottom = `${window.innerHeight -buttonRect.bottom}`;
+                        }
+                        popup.style.removeProperty("right");
+                        popup.style.left = `${buttonRect.right}`;
                     }
                     else
                     {
-                        popup.style.removeProperty("top");
-                        popup.style.bottom = `${window.innerHeight -buttonRect.top}`;
+                        if (buttonRect.top < window.innerHeight *(2 /3))
+                        {
+                            popup.style.top = `${buttonRect.bottom}`;
+                            popup.style.removeProperty("bottom");
+                        }
+                        else
+                        {
+                            popup.style.removeProperty("top");
+                            popup.style.bottom = `${window.innerHeight -buttonRect.top}`;
+                        }
+                        popup.style.removeProperty("left");
+                        popup.style.right = `${window.innerWidth -buttonRect.right}`;
                     }
-                    popup.style.right = `${window.innerWidth -buttonRect.right}`;
                     cover = screenCover
                     ({
                         // parent: popup.parentElement,
