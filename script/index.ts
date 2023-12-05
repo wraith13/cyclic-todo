@@ -5958,34 +5958,126 @@ export module CyclicToDo
                 return result;
             }
         };
+        export const groupMenuItem = async <KeyType>(current: KeyType, representative: minamo.dom.Source, members: { id: KeyType, item: minamo.dom.Source, }[]) =>
+        {
+            const is_current = 0 <= members.map(i => i.id).indexOf(current);
+            const menu = members.map(i => i.item);
+            let cover: { dom: HTMLDivElement, close: () => Promise<unknown> } | null = null;
+            const close = () =>
+            {
+                popup.classList.remove("show");
+                cover = null;
+            };
+            const popup = $make(HTMLDivElement)
+            ({
+                tag: "div",
+                className: "menu-popup",
+                children: "function" !== typeof menu ? menu: [ ],
+                onclick: async (event: MouseEvent) =>
+                {
+                    event.stopPropagation();
+                    cover?.close();
+                    close();
+                },
+            });
+            const button = $make(HTMLButtonElement)
+            ({
+                tag: "button",
+                className: is_current ? "current-item": undefined,
+                attributes:
+                {
+                    tabindex: "0",
+                },
+                children: representative,
+                onclick: async (event: MouseEvent) =>
+                {
+                    event.stopPropagation();
+                    popup.classList.add("show");
+                    const buttonRect = button.getBoundingClientRect();
+                    if (buttonRect.top < window.innerHeight *(2 /3))
+                    {
+                        popup.style.top = `${buttonRect.bottom}`;
+                        popup.style.removeProperty("bottom");
+                    }
+                    else
+                    {
+                        popup.style.removeProperty("top");
+                        popup.style.bottom = `${window.innerHeight -buttonRect.top}`;
+                    }
+                    popup.style.right = `${window.innerWidth -buttonRect.right}`;
+                    cover = screenCover
+                    ({
+                        // parent: popup.parentElement,
+                        children: popup,
+                        onclick: close,
+                    });
+                },
+            });
+            // return [ button, popup, ];
+            return button;
+        };
+        export const tagMenuItem = async (current: string, pass: string, tag: string): Promise<minamo.dom.Source> => menuLinkItem
+        (
+            [
+                await Resource.loadTagSvgOrCache(tag),
+                labelSpan(Domain.tagMap(tag)),
+                monospace(`${OldStorage.TagMember.get(pass, tag).length}`)
+            ],
+            { pass, tag, },
+            current === tag ? "current-item": undefined
+        );
         export const screenHeaderTagMenuSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
         ({
             icon: Resource.getTagIcon(current),
             title: Domain.tagMap(current),
             menu:
+                (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
+                .concat
                 (
+                    await groupMenuItem
                     (
-                        await Promise.all
-                        (
-                            getTagList(pass)
-                            .map
-                            (
-                                async tag => menuLinkItem
-                                (
-                                    [
-                                        await Resource.loadTagSvgOrCache(tag),
-                                        labelSpan(Domain.tagMap(tag)),
-                                        monospace(`${OldStorage.TagMember.get(pass, tag).length}`)
-                                    ],
-                                    { pass, tag, },
-                                    current === tag ? "current-item": undefined
-                                )
-                            )
-                        )
-                    ) as minamo.dom.Source[]
+                        current,
+                        [ await Resource.loadSvgOrCache("folder-icon"), label("Sublist"), monospace("》"), ],
+                        await Promise.all(getTagList({ pass, sublist: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
+                    )
+                )
+                .concat
+                (
+                    await groupMenuItem
+                    (
+                        current,
+                        [ await Resource.loadSvgOrCache("tag-icon"), label("Tag"), monospace("》"), ],
+                        await Promise.all(getTagList({ pass, tag: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
+                    )
+                )
+                .concat
+                (
+                    await groupMenuItem
+                    (
+                        current,
+                        [ await Resource.loadSvgOrCache("ghost-flag-icon"), label("@flash"), monospace("》"), ],
+                        await Promise.all(getTagList({ pass, auto: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
+                    )
+                )
+                .concat
+                (
+                    await groupMenuItem
+                    (
+                        current,
+                        [ await Resource.loadSvgOrCache("short-term-icon"), label("@short-term"), monospace("》"), ],
+                        await Promise.all(getTagList({ pass, term: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
+                    )
                 )
                 .concat
                 ([
+                    menuItem
+                    (
+                        [
+                            await Resource.loadSvgOrCache("add-folder-icon"),
+                            label("@new-sublist"),
+                        ],
+                        async () => await newSublistPopup(pass),
+                    ),
                     menuItem
                     (
                         [
@@ -6000,14 +6092,6 @@ export module CyclicToDo
                                 await showUrl({ pass, tag, });
                             }
                         }
-                    ),
-                    menuItem
-                    (
-                        [
-                            await Resource.loadSvgOrCache("add-folder-icon"),
-                            label("@new-sublist"),
-                        ],
-                        async () => await newSublistPopup(pass),
                     ),
                     menuLinkItem
                     (
