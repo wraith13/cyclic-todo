@@ -4878,6 +4878,10 @@ export module CyclicToDo
                     {
                         minamo.dom.replaceChildren(popup, await menu());
                     }
+                    else
+                    {
+                        Array.from(popup.children ?? []).forEach(i => i.classList.remove("opened"));
+                    }
                     popup.classList.add("show");
                     const buttonRect = button.getBoundingClientRect();
                     if (buttonRect.top < window.innerHeight *(2 /3))
@@ -5643,7 +5647,7 @@ export module CyclicToDo
         ([
             internalLink
             ({
-                href: { pass: entry.pass, tag: entry.tag, hash: "history" },
+                href: { pass: entry.pass, tag: entry.tag, hash: "history", },
                 children: $span("history-bar-title")
                 ([
                     await Resource.loadSvgOrCache("history-icon"),
@@ -5801,6 +5805,10 @@ export module CyclicToDo
                     if ("function" === typeof item.menu)
                     {
                         minamo.dom.replaceChildren(popup, await item.menu());
+                    }
+                    else
+                    {
+                        Array.from(popup.children ?? []).forEach(i => i.classList.remove("opened"));
                     }
                     popup.classList.add("show");
                     //popup.style.height = `${popup.offsetHeight -2}px`;
@@ -6017,7 +6025,13 @@ export module CyclicToDo
                                 popup.style.bottom = `${window.innerHeight -buttonRect.top}`;
                             }
                             popup.style.removeProperty("left");
-                            popup.style.right = `${window.innerWidth -buttonRect.right}`;
+                            popup.style.right = "4";
+                            const popupRect = popup.getBoundingClientRect();
+                            if (buttonRect.right < popupRect.left)
+                            {
+                                popup.style.removeProperty("right");
+                                popup.style.left = `${buttonRect.right}`;
+                            }
                         }
                     }
                 },
@@ -6042,12 +6056,48 @@ export module CyclicToDo
             menu:
                 (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
                 .concat
+                ([
+                    menuLinkItem
+                    (
+                        [
+                            await Resource.loadSvgOrCache("history-icon"),
+                            labelSpan(locale.map("History")),
+                        ],
+                        { pass, tag:"@overall", hash: "history", },
+                        current === "@deleted" ? "current-item": undefined
+                    ),
+                    menuLinkItem
+                    (
+                        [
+                            await Resource.loadSvgOrCache("recycle-bin-icon"),
+                            labelSpan(locale.map("@deleted")),
+                            monospace(`${OldStorage.Removed.get(pass).length}`)
+                        ],
+                        { pass, hash: "removed" },
+                        current === "@deleted" ? "current-item": undefined
+                    ),
+                ])
+                .concat
                 (
                     await groupMenuItem
                     (
                         current,
                         [ await Resource.loadSvgOrCache("folder-icon"), label("Sublist"), monospace("》"), ],
-                        await Promise.all(getTagList({ pass, sublist: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
+                        [
+                            <{ id: string, item: minamo.dom.Source, }>
+                            {
+                                id: "@new",
+                                item: menuItem
+                                (
+                                    [
+                                        await Resource.loadSvgOrCache("add-folder-icon"),
+                                        label("@new-sublist"),
+                                    ],
+                                    async () => await newSublistPopup(pass),
+                                ),
+                            }
+                        ]
+                        .concat(await Promise.all(getTagList({ pass, sublist: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
                     )
                 )
                 .concat
@@ -6056,7 +6106,28 @@ export module CyclicToDo
                     (
                         current,
                         [ await Resource.loadSvgOrCache("tag-icon"), label("Tag"), monospace("》"), ],
-                        await Promise.all(getTagList({ pass, tag: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
+                        [
+                            <{ id: string, item: minamo.dom.Source, }>
+                            {
+                                id: "@new",
+                                item: menuItem
+                                (
+                                    [
+                                        await Resource.loadSvgOrCache("add-tag-icon"),
+                                        label("@new"),
+                                    ],
+                                    async () =>
+                                    {
+                                        const tag = await newTagPrompt(pass);
+                                        if (null !== tag)
+                                        {
+                                            await showUrl({ pass, tag, });
+                                        }
+                                    }
+                                ),
+                            }
+                        ]
+                        .concat(await Promise.all(getTagList({ pass, tag: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
                     )
                 )
                 .concat
@@ -6077,42 +6148,6 @@ export module CyclicToDo
                         await Promise.all(getTagList({ pass, term: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
                     )
                 )
-                .concat
-                ([
-                    menuItem
-                    (
-                        [
-                            await Resource.loadSvgOrCache("add-folder-icon"),
-                            label("@new-sublist"),
-                        ],
-                        async () => await newSublistPopup(pass),
-                    ),
-                    menuItem
-                    (
-                        [
-                            await Resource.loadSvgOrCache("add-tag-icon"),
-                            label("@new"),
-                        ],
-                        async () =>
-                        {
-                            const tag = await newTagPrompt(pass);
-                            if (null !== tag)
-                            {
-                                await showUrl({ pass, tag, });
-                            }
-                        }
-                    ),
-                    menuLinkItem
-                    (
-                        [
-                            await Resource.loadSvgOrCache("recycle-bin-icon"),
-                            labelSpan(locale.map("@deleted")),
-                            monospace(`${OldStorage.Removed.get(pass).length}`)
-                        ],
-                        { pass, hash: "removed" },
-                        current === "@deleted" ? "current-item": undefined
-                    ),
-                ])
         });
         export const screenHeaderTaskSegment = async (pass: string, tag: string, current: string): Promise<HeaderSegmentSource> =>
         ({
