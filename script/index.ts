@@ -5962,25 +5962,11 @@ export module CyclicToDo
         {
             const is_current = 0 <= members.map(i => i.id).indexOf(current);
             const menu = members.map(i => i.item);
-            let cover: { dom: HTMLDivElement, close: () => Promise<unknown> } | null = null;
-            const close = () =>
-            {
-                button.classList.toggle("opened", false);
-                popup.classList.remove("show");
-                cover = null;
-                button.parentElement?.click();
-            };
             const popup = $make(HTMLDivElement)
             ({
                 tag: "div",
                 className: "menu-popup",
                 children: menu,
-                onclick: async (event: MouseEvent) =>
-                {
-                    event.stopPropagation();
-                    cover?.close();
-                    close();
-                },
             });
             const button = $make(HTMLButtonElement)
             ({
@@ -5994,45 +5980,46 @@ export module CyclicToDo
                 onclick: async (event: MouseEvent) =>
                 {
                     event.stopPropagation();
-                    button.classList.toggle("opened", true);
-                    popup.classList.add("show");
-                    const buttonRect = button.getBoundingClientRect();
-                    if (buttonRect.right < window.innerWidth *(2 /3))
+                    const opened = button.classList.contains("opened");
+                    Array.from(button.parentElement?.children ?? []).forEach(i => i.classList.remove("opened"));
+                    Array.from(getScreenCover().children).filter(i => i !== button.parentElement).forEach(i => i.classList.remove("show"))
+                    if ( ! opened)
                     {
-                        if (buttonRect.top < window.innerHeight *(2 /3))
+                        button.classList.add("opened");
+                        getScreenCover().appendChild(popup);
+                        popup.classList.add("show");
+                        const buttonRect = button.getBoundingClientRect();
+                        if (buttonRect.right < window.innerWidth *(2 /3))
                         {
-                            popup.style.top = `${buttonRect.top}`;
-                            popup.style.removeProperty("bottom");
+                            if (buttonRect.top < window.innerHeight *(2 /3))
+                            {
+                                popup.style.top = `${buttonRect.top}`;
+                                popup.style.removeProperty("bottom");
+                            }
+                            else
+                            {
+                                popup.style.removeProperty("top");
+                                popup.style.bottom = `${window.innerHeight -buttonRect.bottom}`;
+                            }
+                            popup.style.removeProperty("right");
+                            popup.style.left = `${buttonRect.right}`;
                         }
                         else
                         {
-                            popup.style.removeProperty("top");
-                            popup.style.bottom = `${window.innerHeight -buttonRect.bottom}`;
+                            if (buttonRect.top < window.innerHeight *(2 /3))
+                            {
+                                popup.style.top = `${buttonRect.bottom}`;
+                                popup.style.removeProperty("bottom");
+                            }
+                            else
+                            {
+                                popup.style.removeProperty("top");
+                                popup.style.bottom = `${window.innerHeight -buttonRect.top}`;
+                            }
+                            popup.style.removeProperty("left");
+                            popup.style.right = `${window.innerWidth -buttonRect.right}`;
                         }
-                        popup.style.removeProperty("right");
-                        popup.style.left = `${buttonRect.right}`;
                     }
-                    else
-                    {
-                        if (buttonRect.top < window.innerHeight *(2 /3))
-                        {
-                            popup.style.top = `${buttonRect.bottom}`;
-                            popup.style.removeProperty("bottom");
-                        }
-                        else
-                        {
-                            popup.style.removeProperty("top");
-                            popup.style.bottom = `${window.innerHeight -buttonRect.top}`;
-                        }
-                        popup.style.removeProperty("left");
-                        popup.style.right = `${window.innerWidth -buttonRect.right}`;
-                    }
-                    cover = screenCover
-                    ({
-                        // parent: popup.parentElement,
-                        children: popup,
-                        onclick: close,
-                    });
                 },
             });
             // return [ button, popup, ];
