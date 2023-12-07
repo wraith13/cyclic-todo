@@ -5821,6 +5821,7 @@ export module CyclicToDo
                         children: popup,
                         onclick: close,
                     });
+                    (Array.from(popup.children ?? []).filter(i => i.classList.contains("group-item") && i.classList.contains("current-item"))[0] as HTMLButtonElement)?.click();
                 },
             });
             // return [ segment, popup, ];
@@ -5979,7 +5980,7 @@ export module CyclicToDo
             const button = $make(HTMLButtonElement)
             ({
                 tag: "button",
-                className: is_current ? "current-item": undefined,
+                className: `group-item ${is_current ? "current-item": ""}`,
                 attributes:
                 {
                     tabindex: "0",
@@ -6001,36 +6002,36 @@ export module CyclicToDo
                         {
                             if (buttonRect.top < window.innerHeight *(2 /3))
                             {
-                                popup.style.top = `${buttonRect.top}`;
+                                popup.style.top = `${buttonRect.top}px`;
                                 popup.style.removeProperty("bottom");
                             }
                             else
                             {
                                 popup.style.removeProperty("top");
-                                popup.style.bottom = `${window.innerHeight -buttonRect.bottom}`;
+                                popup.style.bottom = `${window.innerHeight -buttonRect.bottom}px`;
                             }
                             popup.style.removeProperty("right");
-                            popup.style.left = `${buttonRect.right}`;
+                            popup.style.left = `${buttonRect.right}px`;
                         }
                         else
                         {
                             if (buttonRect.top < window.innerHeight *(2 /3))
                             {
-                                popup.style.top = `${buttonRect.bottom}`;
+                                popup.style.top = `${buttonRect.bottom}px`;
                                 popup.style.removeProperty("bottom");
                             }
                             else
                             {
                                 popup.style.removeProperty("top");
-                                popup.style.bottom = `${window.innerHeight -buttonRect.top}`;
+                                popup.style.bottom = `${window.innerHeight -buttonRect.top}px`;
                             }
                             popup.style.removeProperty("left");
-                            popup.style.right = "4";
+                            popup.style.right = "4px";
                             const popupRect = popup.getBoundingClientRect();
                             if (buttonRect.right < popupRect.left)
                             {
                                 popup.style.removeProperty("right");
-                                popup.style.left = `${buttonRect.right}`;
+                                popup.style.left = `${buttonRect.right}px`;
                             }
                         }
                     }
