@@ -34,7 +34,6 @@
                     "__WHITE_COLOR__": { "json": "./resource/style.json", "value": "__WHITE_COLOR__" },
                     "__ACCENT_COLOR__": { "json": "./resource/style.json", "value": "__ACCENT_COLOR__" }
                 }
-                    
             },
             "parameters":
             [

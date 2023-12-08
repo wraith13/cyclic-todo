@@ -2355,22 +2355,12 @@ export module CyclicToDo
                     ),
                 });
             };
-            export const done = async (pass: string, task: string, tick: number, onCanceled: () => unknown) =>
+            export const done = async (pass: string, item: ToDoEntry, tick: number, onCanceled: () => unknown) =>
             {
                 document.body.classList.add("flash");
                 setTimeout(() => document.body.classList.remove("flash"), 1500);
-                MigrateBridge.done(pass, task, tick);
-                const isFlashed = "always" !== OldStorage.TodoSettings.get(pass, task).flash?.type && OldStorage.TagMember.isFlashTask(pass, task);
-                if (isFlashed)
-                {
-                    OldStorage.TagMember.remove(pass, "@flash", task);
-                }
-                const isPickuped = "always" !== OldStorage.TodoSettings.get(pass, task).pickup?.type && OldStorage.TagMember.isPickupTask(pass, task);
-                if (isPickuped)
-                {
-                    OldStorage.TagMember.remove(pass, "@pickup", task);
-                }
-                MigrateBridge.updateTermCategory(pass, MigrateBridge.getToDoEntry(pass, task));
+                MigrateBridge.done(pass, item.task, tick);
+                Domain.updateProgress(pass, item);
                 if (window.navigator.vibrate)
                 {
                     window.navigator.vibrate(50);
@@ -2383,30 +2373,22 @@ export module CyclicToDo
                         async () =>
                         {
                             toast.hide(); // nowait
-                            const result = Domain.parseDate(await dateTimePrompt(`${locale.map("Edit")}: ${Model.decode(task)}`, tick));
+                            const result = Domain.parseDate(await dateTimePrompt(`${locale.map("Edit")}: ${Model.decode(item.task)}`, tick));
                             if (null !== result && tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())
                             {
-                                OldStorage.History.removeTickRaw(pass, task, tick);
-                                OldStorage.History.addTick(pass, task, Domain.getTicks(result));
+                                OldStorage.History.removeTickRaw(pass, item.task, tick);
+                                OldStorage.History.addTick(pass, item.task, Domain.getTicks(result));
                                 await reload();
                             }
                         }
                     ),
-                    content: $span("")(`${locale.map("Done!")}: ${Model.decode(task)}`),
+                    content: $span("")(`${locale.map("Done!")}: ${Model.decode(item.task)}`),
                     backwardOperator: cancelTextButton
                     (
                         async () =>
                         {
-                            OldStorage.History.removeTickRaw(pass, task, tick); // ごみ箱は利用せずに直に削除
-                            if (isFlashed)
-                            {
-                                OldStorage.TagMember.add(pass, "@flash", task);
-                            }
-                            if (isPickuped)
-                            {
-                                OldStorage.TagMember.add(pass, "@pickup", task);
-                            }
-                            MigrateBridge.updateTermCategory(pass, MigrateBridge.getToDoEntry(pass, task));
+                            OldStorage.History.removeTickRaw(pass, item.task, tick); // ごみ箱は利用せずに直に削除
+                            Domain.updateProgress(pass, item);
                             toast.hide(); // nowait
                             onCanceled();
                         }
@@ -3520,7 +3502,7 @@ export module CyclicToDo
                                 await Operate.done
                                 (
                                     entry.pass,
-                                    newTask2,
+                                    MigrateBridge.getToDoEntry(entry.pass, newTask2),
                                     MigrateBridge.getDoneTicks(entry.pass),
                                     () => updateScreen("operate")
                                 );
@@ -5450,7 +5432,7 @@ export module CyclicToDo
                                 await Operate.done
                                 (
                                     entry.pass,
-                                    item.task,
+                                    item,
                                     MigrateBridge.getDoneTicks(entry.pass),
                                     onUpdate
                                 );
@@ -7469,7 +7451,7 @@ export module CyclicToDo
                             await Operate.done
                             (
                                 pass,
-                                item.task,
+                                item,
                                 MigrateBridge.getDoneTicks(pass),
                                 () => updateScreen("operate")
                             );
