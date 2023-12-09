@@ -6496,7 +6496,7 @@ export module CyclicToDo
             ),
             parent: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall", }
         });
-        export const bottomTab = (current: { pass?:string, tag?:string, hash?: string, }, subTabs: { icon: SVGElement, text: string, href: { pass?:string, tag?:string, todo?: string, hash?: string, }, }[]) =>
+        export const bottomTab = async (current: { pass?:string, tag?:string, hash?: string, }, subTabs: { icon: Resource.KeyType, text: string, href: { pass?:string, tag?:string, todo?: string, hash?: string, }, }[]) =>
         {
             if (subTabs.length <= 0)
             {
@@ -6508,8 +6508,89 @@ export module CyclicToDo
                 const urlIndex = subTabs.map(i => makeUrl(i.href)).indexOf(location.href);
                 const isCurrent = 0 <= tagIndex || 0 <= urlIndex;
                 const tab = subTabs[isCurrent ? (0 <= urlIndex ? urlIndex: tagIndex): 0];
-                const result =
+                let longPressTimer: ReturnType<typeof setTimeout> | undefined;
+                const mousedown = (event: MouseEvent) =>
                 {
+                    event.preventDefault();
+                    if (undefined !== longPressTimer)
+                    {
+                        clearTimeout(longPressTimer);
+                        longPressTimer = undefined;
+                    }
+                    longPressTimer = setTimeout
+                    (
+                        async () =>
+                        {
+                            longPressTimer = undefined;
+                            let cover: { dom: HTMLDivElement, close: () => Promise<unknown> } | null = null;
+                            const close = () =>
+                            {
+                                popup.classList.remove("show");
+                                cover = null;
+                            };
+                            const popup = $make(HTMLDivElement)
+                            ({
+                                tag: "div",
+                                className: "menu-popup",
+                                children: await Promise.all
+                                (
+                                    subTabs.map
+                                    (
+                                        async i => menuLinkItem
+                                        (
+                                            [ await Resource.loadSvgOrCache(i.icon), labelSpan(i.text), ],
+                                            i.href,
+                                            isCurrent && tab.text === i.text ? " current-item": ""
+                                        )
+                                    )
+                                ),
+                                onclick: async (event: MouseEvent) =>
+                                {
+                                    event.stopPropagation();
+                                    cover?.close();
+                                    close();
+                                },
+                            });
+                            popup.classList.add("show");
+                            const buttonRect = result.getBoundingClientRect();
+                            popup.style.removeProperty("top");
+                            popup.style.bottom = `${window.innerHeight -buttonRect.top}px`;
+                            if (buttonRect.right < window.innerWidth *(2 /3))
+                            {
+                                popup.style.removeProperty("right");
+                                popup.style.left = `${buttonRect.left}px`;
+                            }
+                            else
+                            {
+                                popup.style.removeProperty("left");
+                                popup.style.right = `${window.innerWidth -buttonRect.right}px`;
+                            }
+                            cover = screenCover
+                            ({
+                                // parent: popup.parentElement,
+                                children: popup,
+                                onclick: close,
+                            });
+                        },
+                        300
+                    );
+                };
+                const mouseup = async () =>
+                {
+                    if (undefined !== longPressTimer)
+                    {
+                        clearTimeout(longPressTimer);
+                        longPressTimer = undefined;
+                        await showUrl
+                        (
+                            isCurrent && makeUrl(tab.href) === location.href ?
+                                nextItem(subTabs, tab).href:
+                                tab.href
+                        );
+                    }
+                };
+                const result = $make(HTMLButtonElement)
+                ({
                     tag: "button",
                     className: "bottom-tab" +(isCurrent ? " current-item": ""),
                     children:
@@ -6518,7 +6599,7 @@ export module CyclicToDo
                             tag: "div",
                             className: "tab-face",
                             title: tab.text,
-                            children: [ tab.icon, labelSpan(tab.text), ],
+                            children: [ await Resource.loadSvgOrCache(tab.icon), labelSpan(tab.text), ],
                         },
                         {
                             tag: "div",
@@ -6539,100 +6620,94 @@ export module CyclicToDo
                             )
                         }
                     ],
-                    onclick: async () => await showUrl
-                    (
-                        isCurrent && makeUrl(tab.href) === location.href ?
-                            nextItem(subTabs, tab).href:
-                            tab.href
-                    ),
-                };
+                    // onclick: async () => await showUrl
+                    // (
+                    //     isCurrent && makeUrl(tab.href) === location.href ?
+                    //         nextItem(subTabs, tab).href:
+                    //         tab.href
+                    // ),
+                    eventListener:
+                    {
+                        mousedown: mousedown,
+                        touchstart: mousedown,
+                        mouseup: mouseup,
+                        touchend: mouseup,
+                    }
+                });
                 return result;
             }
         };
-        export const homeTab = async (entry: ToDoTagEntryOld) => bottomTab
+        export const homeTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (
             entry,
-            await Promise.all
-            ([
+            [
                 {
-                    icon: await Resource.loadTagSvgOrCache("@overall"),
+                    icon: Resource.getTagIcon("@overall"),
                     text: locale.map("@overall"),
                     href: { pass: entry.pass, tag: "@overall", },
                 },
                 {
-                    icon: await Resource.loadSvgOrCache("history-icon"),
+                    icon: <Resource.KeyType>"history-icon",
                     text: locale.map("History"),
                     href: { pass: entry.pass, tag: "@overall", hash: "history" },
                 },
                 {
-                    icon: await Resource.loadSvgOrCache("recycle-bin-icon"),
+                    icon: <Resource.KeyType>"recycle-bin-icon",
                     text: locale.map("@deleted"),
                     href: { pass: entry.pass, hash: "removed", },
                 },
-            ])
+            ]
         );
-        export const autoTab = async (entry: ToDoTagEntryOld) => bottomTab
+        export const autoTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (
             entry,
-            await Promise.all
+            getTagList({ auto: true }).map
             (
-                getTagList({ auto: true }).map
-                (
-                    async (i: "@flash" | "@pickup" | "@restriction") =>
-                    ({
-                        icon: await Resource.loadTagSvgOrCache(i),
-                        text: locale.map(i),
-                        href: { pass: entry.pass, tag: i, },
-                    })
-                )
+                (i: "@flash" | "@pickup" | "@restriction") =>
+                ({
+                    icon: Resource.getTagIcon(i),
+                    text: locale.map(i),
+                    href: { pass: entry.pass, tag: i, },
+                })
             )
         );
-        export const termTab = async (entry: ToDoTagEntryOld) => bottomTab
+        export const termTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (
             entry,
-            await Promise.all
+            getTagList({ term: true }).map
             (
-                getTagList({ term: true }).map
-                (
-                    async (i: "@short-term" | "@medium-term" | "@irregular-term") =>
-                    ({
-                        icon: await Resource.loadTagSvgOrCache(i),
-                        text: locale.map(i),
-                        href: { pass: entry.pass, tag: i, },
-                    })
-                )
+                (i: "@short-term" | "@medium-term" | "@irregular-term") =>
+                ({
+                    icon: Resource.getTagIcon(i),
+                    text: locale.map(i),
+                    href: { pass: entry.pass, tag: i, },
+                })
             )
         );
-        export const tagTab = async (entry: ToDoTagEntryOld) => bottomTab
+        export const tagTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (
             entry,
-            await Promise.all
+            getTagList({ pass: entry.pass, tag: true, }).map
             (
-                getTagList({ pass: entry.pass, tag: true, }).map
-                (
-                    async i =>
-                    ({
-                        icon: await Resource.loadTagSvgOrCache(i),
-                        text: Domain.tagMap(i),
-                        href: { pass: entry.pass, tag: i, },
-                    })
-                )
+                i =>
+                ({
+                    icon: Resource.getTagIcon(i),
+                    text: Domain.tagMap(i),
+                    href: { pass: entry.pass, tag: i, },
+                })
             )
         );
-        export const sublistTab = async (entry: ToDoTagEntryOld) => bottomTab
+        export const sublistTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (
             entry,
-            await Promise.all
+            getTagList({ pass: entry.pass, sublist: true, }).map
             (
-                getTagList({ pass: entry.pass, sublist: true, }).map
-                (
-                    async i =>
-                    ({
-                        icon: await Resource.loadTagSvgOrCache(i),
-                        text: Domain.tagMap(i),
-                        href: { pass: entry.pass, tag: i, },
-                    })
-                )
+                i =>
+                ({
+                    icon: Resource.getTagIcon(i),
+                    text: Domain.tagMap(i),
+                    href: { pass: entry.pass, tag: i, },
+                })
             )
         );
         export const bottomTabs = async (entry: ToDoTagEntryOld) => $div("bottom-tabs")
@@ -7577,7 +7652,7 @@ export module CyclicToDo
                     throw error;
                 }
             };
-            export const getTagIcon = (tag: string): keyof typeof resource =>
+            export const getTagIcon = (tag: string): KeyType =>
             {
                 switch(tag)
                 {
