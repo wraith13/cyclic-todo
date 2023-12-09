@@ -2045,7 +2045,7 @@ export module CyclicToDo
             }
         };
         export const getTermCategoryByAverage = (item: ToDoEntry) =>
-            null !== item.progress && null !== item.smartRest && null !== item.RecentlySmartAverage ?
+            null !== item.smartRest && null !== item.RecentlySmartAverage ?
                 (
                     item.RecentlySmartAverage < Domain.maxShortTermMinutes ?
                         "@short-term":
