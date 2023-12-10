@@ -6496,7 +6496,7 @@ export module CyclicToDo
             ),
             parent: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall", }
         });
-        export const bottomTab = async (current: { pass?:string, tag?:string, hash?: string, }, subTabs: { icon: Resource.KeyType, text: string, href: { pass?:string, tag?:string, todo?: string, hash?: string, }, }[]) =>
+        export const bottomTab = async (current: { pass?:string, tag?:string, hash?: string, }, subTabs: { icon: Resource.KeyType, text: string, count?:string, href: { pass?:string, tag?:string, todo?: string, hash?: string, }, }[]) =>
         {
             if (subTabs.length <= 0)
             {
@@ -6538,7 +6538,7 @@ export module CyclicToDo
                                     (
                                         async i => menuLinkItem
                                         (
-                                            [ await Resource.loadSvgOrCache(i.icon), labelSpan(i.text), ],
+                                            [ await Resource.loadSvgOrCache(i.icon), labelSpan(i.text), monospace(i.count ?? ""), ],
                                             i.href,
                                             isCurrent && tab.text === i.text ? " current-item": ""
                                         )
@@ -6565,6 +6565,7 @@ export module CyclicToDo
                                 popup.style.removeProperty("left");
                                 popup.style.right = `${window.innerWidth -buttonRect.right}px`;
                             }
+                            popup.style.minWidth = `${buttonRect.width}px`;
                             cover = screenCover
                             ({
                                 // parent: popup.parentElement,
@@ -6644,6 +6645,7 @@ export module CyclicToDo
                 {
                     icon: Resource.getTagIcon("@overall"),
                     text: locale.map("@overall"),
+                    count: `${OldStorage.TagMember.get(entry.pass, "@overall").length}`,
                     href: { pass: entry.pass, tag: "@overall", },
                 },
                 {
@@ -6667,6 +6669,7 @@ export module CyclicToDo
                 ({
                     icon: Resource.getTagIcon(i),
                     text: locale.map(i),
+                    count: `${OldStorage.TagMember.get(entry.pass, i).length}`,
                     href: { pass: entry.pass, tag: i, },
                 })
             )
@@ -6680,6 +6683,7 @@ export module CyclicToDo
                 ({
                     icon: Resource.getTagIcon(i),
                     text: locale.map(i),
+                    count: `${OldStorage.TagMember.get(entry.pass, i).length}`,
                     href: { pass: entry.pass, tag: i, },
                 })
             )
@@ -6693,6 +6697,7 @@ export module CyclicToDo
                 ({
                     icon: Resource.getTagIcon(i),
                     text: Domain.tagMap(i),
+                    count: `${OldStorage.TagMember.get(entry.pass, i).length}`,
                     href: { pass: entry.pass, tag: i, },
                 })
             )
@@ -6706,6 +6711,7 @@ export module CyclicToDo
                 ({
                     icon: Resource.getTagIcon(i),
                     text: Domain.tagMap(i),
+                    count: `${OldStorage.TagMember.get(entry.pass, i).length}`,
                     href: { pass: entry.pass, tag: i, },
                 })
             )
