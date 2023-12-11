@@ -60,7 +60,7 @@
     "poem.header.description": "ヘッダーの余白部分をクリックすると、一番上までスクロールします。また、表示内容が古くなっている場合、表示内容の更新も行われます。",
     "poem.bottomtabs.title": "二段ボトムタブ",
     "poem.bottomtabs.subtitle": "画面下部のタブ",
-    "poem.bottomtabs.description": "画面下部のタブの上半分の広い領域をクリックするとサブタブが順繰りに表示されます。下半分の狭い領域をクリックすると直接サブタブに移動できます。",
+    "poem.bottomtabs.description": "画面下部のタブの上半分の広い領域をクリックするとサブタブが順繰りに表示され、長押しするとメニューが表示されます。下半分の狭い領域をクリックすると直接サブタブに移動できます。",
     "poem.accuracy.title": "時間精度",
     "poem.accuracy.subtitle": "分単位です",
     "poem.accuracy.description": "Cyclic ToDo では分単位での記録となり、秒以下の情報は保存されないのでご注意下さい。",

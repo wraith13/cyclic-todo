@@ -60,7 +60,7 @@
     "poem.header.description": "Click in the blank of the header to scroll to the top. Additionally, if the displayed content is outdated, the displayed content will also be updated.",
     "poem.bottomtabs.title": "Double bottom tab",
     "poem.bottomtabs.subtitle": "Tabs at the bottom of the screen",
-    "poem.bottomtabs.description": "Click the large area in the upper half of the tabs at the bottom of the screen to cycle through subtabs. You can go directly to subtabs by clicking on the small area in the bottom half.",
+    "poem.bottomtabs.description": "Click the large area in the upper half of the tabs at the bottom of the screen to cycle through subtabs, and long-pressing displays a menu. You can go directly to subtabs by clicking on the small area in the bottom half.",
     "poem.accuracy.title": "Time accuracy",
     "poem.accuracy.subtitle": "The unit is minutes.",
     "poem.accuracy.description": "Please note that Cyclic ToDo records time in minutes and does not save information in seconds.",
