@@ -5967,7 +5967,11 @@ export module CyclicToDo
                 {
                     tabindex: "0",
                 },
-                children: representative,
+                children:
+                [
+                    representative,
+                    await Resource.loadSvgOrCache("right-chevron-icon"),
+                ],
                 onclick: async (event: MouseEvent) =>
                 {
                     event.stopPropagation();
@@ -6065,7 +6069,7 @@ export module CyclicToDo
                     await groupMenuItem
                     (
                         current,
-                        [ await Resource.loadSvgOrCache("folder-icon"), label("Sublist"), monospace("》"), ],
+                        [ await Resource.loadSvgOrCache("folder-icon"), label("Sublist"), ],
                         [
                             <{ id: string, item: minamo.dom.Source, }>
                             {
@@ -6088,7 +6092,7 @@ export module CyclicToDo
                     await groupMenuItem
                     (
                         current,
-                        [ await Resource.loadSvgOrCache("tag-icon"), label("Tag"), monospace("》"), ],
+                        [ await Resource.loadSvgOrCache("tag-icon"), label("Tag"), ],
                         [
                             <{ id: string, item: minamo.dom.Source, }>
                             {
@@ -6118,7 +6122,7 @@ export module CyclicToDo
                     await groupMenuItem
                     (
                         current,
-                        [ await Resource.loadSvgOrCache("ghost-flag-icon"), label("@flash"), monospace("》"), ],
+                        [ await Resource.loadSvgOrCache("ghost-flag-icon"), label("@flash"), ],
                         await Promise.all(getTagList({ pass, auto: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
                     )
                 )
@@ -6127,7 +6131,7 @@ export module CyclicToDo
                     await groupMenuItem
                     (
                         current,
-                        [ await Resource.loadSvgOrCache("short-term-icon"), label("@short-term"), monospace("》"), ],
+                        [ await Resource.loadSvgOrCache("short-term-icon"), label("@short-term"), ],
                         await Promise.all(getTagList({ pass, term: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
                     )
                 )

@@ -32,5 +32,6 @@
     "import-icon": "./image/import.1024.svg",
     "export-icon": "./image/export.1024.svg",
     "settings-icon": "./image/cog.1024.svg",
-    "locked-icon": "./image/locked.1024.svg"
+    "locked-icon": "./image/locked.1024.svg",
+    "right-chevron-icon": "./image/right-chevron.1024.svg"
 }
