@@ -85,6 +85,7 @@
     "days": "days",
     "@overall": "Home",
     "@unoverall": "Excluded in Home",
+    "Auto tag": "Auto tag",
     "@flash": "Flash",
     "@pickup": "Pick Up",
     "@regular": "Regular",
