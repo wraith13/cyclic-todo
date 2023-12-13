@@ -6512,80 +6512,83 @@ export module CyclicToDo
                 const urlIndex = subTabs.map(i => makeUrl(i.href)).indexOf(location.href);
                 const isCurrent = 0 <= tagIndex || 0 <= urlIndex;
                 const tab = subTabs[isCurrent ? (0 <= urlIndex ? urlIndex: tagIndex): 0];
-                let longPressTimer: ReturnType<typeof setTimeout> | undefined;
+                let cover: { dom: HTMLDivElement, close: () => Promise<unknown> } | null = null;
+                const popup = $make(HTMLDivElement)
+                ({
+                    tag: "div",
+                    className: "menu-popup",
+                    children: await Promise.all
+                    (
+                        subTabs.map
+                        (
+                            async i => menuLinkItem
+                            (
+                                [ await Resource.loadSvgOrCache(i.icon), labelSpan(i.text), monospace(i.count ?? ""), ],
+                                i.href,
+                                isCurrent && tab.text === i.text ? " current-item": ""
+                            )
+                        )
+                    ),
+                    onclick: async (event: MouseEvent) =>
+                    {
+                        event.stopPropagation();
+                        cover?.close();
+                        close();
+                    },
+                });
+                const close = () =>
+                {
+                    popup.classList.remove("show");
+                    cover = null;
+                };
+                const longPressTimer = new minamo.core.Timer
+                (
+                    async () =>
+                    {
+                        popup.classList.add("show");
+                        const buttonRect = result.getBoundingClientRect();
+                        popup.style.removeProperty("top");
+                        popup.style.bottom = `${window.innerHeight -buttonRect.top}px`;
+                        if (buttonRect.right < window.innerWidth *(2 /3))
+                        {
+                            popup.style.removeProperty("right");
+                            popup.style.left = `${buttonRect.left}px`;
+                        }
+                        else
+                        {
+                            popup.style.removeProperty("left");
+                            popup.style.right = `${window.innerWidth -buttonRect.right}px`;
+                        }
+                        popup.style.minWidth = `${buttonRect.width}px`;
+                        cover = screenCover
+                        ({
+                            // parent: popup.parentElement,
+                            children: popup,
+                            onclick: close,
+                        });
+                        cancelTimer.set();
+                    },
+                    300
+                );
+                const cancelTimer = new minamo.core.Timer
+                (
+                    () =>
+                    {
+                        cover?.close();
+                        close();
+                    },
+                    1000
+                );
                 const mousedown = (event: MouseEvent) =>
                 {
                     event.preventDefault();
-                    if (undefined !== longPressTimer)
-                    {
-                        clearTimeout(longPressTimer);
-                        longPressTimer = undefined;
-                    }
-                    longPressTimer = setTimeout
-                    (
-                        async () =>
-                        {
-                            longPressTimer = undefined;
-                            let cover: { dom: HTMLDivElement, close: () => Promise<unknown> } | null = null;
-                            const close = () =>
-                            {
-                                popup.classList.remove("show");
-                                cover = null;
-                            };
-                            const popup = $make(HTMLDivElement)
-                            ({
-                                tag: "div",
-                                className: "menu-popup",
-                                children: await Promise.all
-                                (
-                                    subTabs.map
-                                    (
-                                        async i => menuLinkItem
-                                        (
-                                            [ await Resource.loadSvgOrCache(i.icon), labelSpan(i.text), monospace(i.count ?? ""), ],
-                                            i.href,
-                                            isCurrent && tab.text === i.text ? " current-item": ""
-                                        )
-                                    )
-                                ),
-                                onclick: async (event: MouseEvent) =>
-                                {
-                                    event.stopPropagation();
-                                    cover?.close();
-                                    close();
-                                },
-                            });
-                            popup.classList.add("show");
-                            const buttonRect = result.getBoundingClientRect();
-                            popup.style.removeProperty("top");
-                            popup.style.bottom = `${window.innerHeight -buttonRect.top}px`;
-                            if (buttonRect.right < window.innerWidth *(2 /3))
-                            {
-                                popup.style.removeProperty("right");
-                                popup.style.left = `${buttonRect.left}px`;
-                            }
-                            else
-                            {
-                                popup.style.removeProperty("left");
-                                popup.style.right = `${window.innerWidth -buttonRect.right}px`;
-                            }
-                            popup.style.minWidth = `${buttonRect.width}px`;
-                            cover = screenCover
-                            ({
-                                // parent: popup.parentElement,
-                                children: popup,
-                                onclick: close,
-                            });
-                        },
-                        300
-                    );
+                    longPressTimer.set();
                 };
                 const mouseup = async () =>
                 {
-                    if (undefined !== longPressTimer)
+                    if (longPressTimer.isWaiting())
                     {
-                        clearTimeout(longPressTimer);
-                        longPressTimer = undefined;
+                        longPressTimer.clear();
                         await showUrl
                         (
                             isCurrent && makeUrl(tab.href) === location.href ?
@@ -6593,6 +6596,7 @@ export module CyclicToDo
                                 tab.href
                         );
                     }
+                    cancelTimer.clear();
                 };
                 const result = $make(HTMLButtonElement)
                 ({
@@ -6605,6 +6609,13 @@ export module CyclicToDo
                             className: "tab-face",
                             title: tab.text,
                             children: [ await Resource.loadSvgOrCache(tab.icon), labelSpan(tab.text), ],
+                            eventListener:
+                            {
+                                mousedown: mousedown,
+                                touchstart: mousedown,
+                                mouseup: mouseup,
+                                touchend: mouseup,
+                            },
                         },
                         {
                             tag: "div",
@@ -6631,13 +6642,6 @@ export module CyclicToDo
                     //         nextItem(subTabs, tab).href:
                     //         tab.href
                     // ),
-                    eventListener:
-                    {
-                        mousedown: mousedown,
-                        touchstart: mousedown,
-                        mouseup: mouseup,
-                        touchend: mouseup,
-                    }
                 });
                 return result;
             }
@@ -8706,34 +8710,28 @@ export module CyclicToDo
         };
         let isPressedShift: boolean = false;
         let pausedToastList: Toast[] = [];
-        let releaseToastsTimer: NodeJS.Timeout = 0 as unknown as NodeJS.Timeout;
-        export const releaseToasts = () =>
-        {
-            if (releaseToastsTimer)
+        //let releaseToastsTimer: NodeJS.Timeout = 0 as unknown as NodeJS.Timeout;
+        const releaseToastsTimer = new minamo.core.Timer
+        (
+            async () =>
             {
-                clearTimeout(releaseToastsTimer);
-            }
-            releaseToastsTimer = setTimeout
-            (
-                async () =>
+                while( ! isPressedShift)
                 {
-                    while( ! isPressedShift)
+                    const i = pausedToastList.shift();
+                    if (i)
                     {
-                        const i = pausedToastList.shift();
-                        if (i)
-                        {
-                            await i.hide();
-                            await minamo.core.timeout(100);
-                        }
-                        else
-                        {
-                            return;
-                        }
+                        await i.hide();
+                        await minamo.core.timeout(100);
                     }
-                },
-                500
-            );
-        };
+                    else
+                    {
+                        return;
+                    }
+                }
+            },
+            500
+        );
+        export const releaseToasts = () => releaseToastsTimer.set();
         export const onKeydown = (event: KeyboardEvent) =>
         {
             if ("Shift" === event.key)
