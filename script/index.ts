@@ -4697,7 +4697,7 @@ export module CyclicToDo
                 });
             }
         );
-        export const screenCover = (data: { parent?: HTMLElement | null, children?: minamo.dom.Source, onclick: () => unknown, }) =>
+        export const screenCover = (data: { parent?: HTMLElement | null, children?: minamo.dom.Source, onclick: () => unknown, eventListener?: minamo.dom.EventListenerSource, }) =>
         {
             const dom = $make(HTMLDivElement)
             ({
@@ -4710,7 +4710,8 @@ export module CyclicToDo
                     dom.onclick = null;
                     data.onclick();
                     close();
-                }
+                },
+                eventListener: data.eventListener,
             });
             const close = async () =>
             {
@@ -5914,6 +5915,14 @@ export module CyclicToDo
                 {
                     result.push("@overall");
                 }
+                if (params.term)
+                {
+                    result.push("@short-term", "@medium-term", "@long-term", "@irregular-term");
+                }
+                if (params.auto)
+                {
+                    result.push("@flash", "@pickup", "@regular", "@restriction");
+                }
                 if ("string" === typeof params.pass)
                 {
                     const base = OldStorage.Tag.get(params.pass);
@@ -5937,14 +5946,6 @@ export module CyclicToDo
                         );
                         result.push("@untagged", "@unoverall");
                     }
-                }
-                if (params.auto)
-                {
-                    result.push("@flash", "@pickup", "@regular", "@restriction");
-                }
-                if (params.term)
-                {
-                    result.push("@short-term", "@medium-term", "@long-term", "@irregular-term");
                 }
                 return result;
             }
@@ -6069,6 +6070,24 @@ export module CyclicToDo
                     await groupMenuItem
                     (
                         current,
+                        [ await Resource.loadSvgOrCache("short-term-icon"), label("@short-term"), ],
+                        await Promise.all(getTagList({ pass, term: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
+                    )
+                )
+                .concat
+                (
+                    await groupMenuItem
+                    (
+                        current,
+                        [ await Resource.loadSvgOrCache("flag-icon"), label("Auto tag"), ],
+                        await Promise.all(getTagList({ pass, auto: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
+                    )
+                )
+                .concat
+                (
+                    await groupMenuItem
+                    (
+                        current,
                         [ await Resource.loadSvgOrCache("folder-icon"), label("Sublist"), ],
                         [
                             <{ id: string, item: minamo.dom.Source, }>
@@ -6115,24 +6134,6 @@ export module CyclicToDo
                             }
                         ]
                         .concat(await Promise.all(getTagList({ pass, tag: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
-                    )
-                )
-                .concat
-                (
-                    await groupMenuItem
-                    (
-                        current,
-                        [ await Resource.loadSvgOrCache("flag-icon"), label("Auto tag"), ],
-                        await Promise.all(getTagList({ pass, auto: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
-                    )
-                )
-                .concat
-                (
-                    await groupMenuItem
-                    (
-                        current,
-                        [ await Resource.loadSvgOrCache("short-term-icon"), label("@short-term"), ],
-                        await Promise.all(getTagList({ pass, term: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
                     )
                 )
         });
@@ -6565,6 +6566,11 @@ export module CyclicToDo
                             // parent: popup.parentElement,
                             children: popup,
                             onclick: close,
+                            eventListener:
+                            {
+                                mouseup: mouseup,
+                                touchend: mouseup,
+                            },
                         });
                         cancelTimer.set();
                     },
@@ -6668,12 +6674,12 @@ export module CyclicToDo
                 },
             ]
         );
-        export const autoTab = async (entry: ToDoTagEntryOld) => await bottomTab
+        export const termTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (
             entry,
-            getTagList({ auto: true }).map
+            getTagList({ term: true }).map
             (
-                (i: "@flash" | "@pickup" | "@restriction") =>
+                (i: "@short-term" | "@medium-term" | "@irregular-term") =>
                 ({
                     icon: Resource.getTagIcon(i),
                     text: locale.map(i),
@@ -6682,12 +6688,12 @@ export module CyclicToDo
                 })
             )
         );
-        export const termTab = async (entry: ToDoTagEntryOld) => await bottomTab
+        export const autoTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (
             entry,
-            getTagList({ term: true }).map
+            getTagList({ auto: true }).map
             (
-                (i: "@short-term" | "@medium-term" | "@irregular-term") =>
+                (i: "@flash" | "@pickup" | "@restriction") =>
                 ({
                     icon: Resource.getTagIcon(i),
                     text: locale.map(i),
@@ -6727,10 +6733,10 @@ export module CyclicToDo
         export const bottomTabs = async (entry: ToDoTagEntryOld) => $div("bottom-tabs")
         ([
             await homeTab(entry),
+            await termTab(entry),
+            await autoTab(entry),
             await sublistTab(entry),
             await tagTab(entry),
-            await autoTab(entry),
-            await termTab(entry),
         ]);
         export const listScreenFooterSignboard = async (entry: ToDoTagEntryOld) =>
         {
