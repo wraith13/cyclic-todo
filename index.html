@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Fri Dec 15 2023 02:24:23 GMT+0900 (日本標準時)
+    build at: Fri Dec 15 2023 11:22:07 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -21101,10 +21101,11 @@ define("resource/lang.en", [], {
     "@pickup": "Pick Up",
     "@regular": "Regular",
     "@restriction": "Restriction",
-    "@short-term": "Short Term",
-    "@medium-term": "Medium Term",
-    "@long-term": "Long Term",
-    "@irregular-term": "Irregular Term",
+    "Term": "Interval",
+    "@short-term": "Short Interval",
+    "@medium-term": "Medium Interval",
+    "@long-term": "Long Interval",
+    "@irregular-term": "Irregular Interval",
     "@untagged": "Uncategorized",
     "@deleted": "Recycle Bin",
     "@new": "New Tag",
@@ -21372,9 +21373,10 @@ define("resource/lang.ja", [], {
     "@pickup": "ピックアップ",
     "@regular": "レギュラー",
     "@restriction": "制限",
-    "@short-term": "短期",
-    "@medium-term": "中期",
-    "@long-term": "長期",
+    "Term": "周期",
+    "@short-term": "短周期",
+    "@medium-term": "中周期",
+    "@long-term": "長周期",
     "@irregular-term": "不定期",
     "@untagged": "未分類",
     "@deleted": "ごみ箱",
@@ -21588,6 +21590,7 @@ define("resource/images", [], {
     "tag-icon": "./image/tag.1024.svg",
     "ghost-tag-icon": "./image/ghost-tag.1024.svg",
     "pickup-icon": "./image/star.1024.svg",
+    "ghost-term-icon": "./image/ghost-term.1024.svg",
     "short-term-icon": "./image/short-term.1024.svg",
     "medium-term-icon": "./image/medium-term.1024.svg",
     "long-term-icon": "./image/long-term.1024.svg",
@@ -28253,9 +28256,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 .concat;
                             _l = Render.groupMenuItem;
                             _m = [current];
-                            return [4 /*yield*/, Resource.loadSvgOrCache("short-term-icon")];
+                            return [4 /*yield*/, Resource.loadSvgOrCache("ghost-term-icon")];
                         case 4:
-                            _m = _m.concat([[_6.sent(), Render.label("@short-term")]]);
+                            _m = _m.concat([[_6.sent(), Render.label("Term")]]);
                             return [4 /*yield*/, Promise.all(Render.getTagList({ pass: pass, term: true }).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
                                     return __generator(this, function (_b) {
@@ -32178,7 +32181,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Dec 15 2023 02:24:23 GMT+0900 (日本標準時)', buildTimestampTick: 1702574663143, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Dec 15 2023 11:22:07 GMT+0900 (日本標準時)', buildTimestampTick: 1702606927166, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -32402,7 +32405,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Fri Dec 15 2023 02:24:23 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Fri Dec 15 2023 11:22:07 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
@@ -32432,6 +32435,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
     <g transform="matrix(1.96721,0,0,1.96721,-282.754,-282.754)">
         <path d="M404,160L458.781,328.6L636.058,328.6L492.638,432.8L547.42,601.4L404,497.2L260.58,601.4L315.362,432.8L171.942,328.6L349.219,328.6L404,160Z"/>
     </g>
+</svg>
+</div><div id="ghost-term-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M96.165,252.775C97.576,238.39 108.552,226.793 122.642,224.438C124.796,224.068 126.967,223.925 129.121,224L748.065,223.774C751.128,223.773 754.091,224.205 756.896,225.011C764.931,227.081 772.157,232.259 776.613,240.014L923.476,495.617C923.938,496.392 924.366,497.184 924.759,497.992C926.957,502.48 928.005,507.27 928,512.004C928.005,516.738 926.957,521.528 924.759,526.016C924.366,526.824 923.938,527.617 923.476,528.391L776.613,783.994C770.182,795.186 757.981,801.011 745.909,799.874L718.899,799.884C717,800.056 715.079,800.058 713.162,799.886L127.947,800.099C110.84,800.105 96.852,786.624 96.048,769.713C95.721,763.759 97.055,757.647 100.244,752.095L238.203,511.99L101.05,273.287C98.594,269.461 96.932,265.076 96.298,260.367C95.949,257.834 95.909,255.284 96.165,252.775ZM335.476,495.622C335.938,496.397 336.366,497.19 336.759,497.998C338.957,502.486 340.005,507.276 340,512.01C340.005,516.744 338.957,521.533 336.759,526.022C336.366,526.83 335.938,527.622 335.476,528.397L225.334,720.089L706.743,719.914L826.203,512.004L706.698,304.015L225.483,304.19L335.476,495.622Z"/>
 </svg>
 </div><div id="short-term-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M492,224.013C503.371,223.694 514.553,229.474 520.613,240.02L667.48,495.629C667.942,496.405 668.371,497.199 668.764,498.009C670.959,502.494 672.005,507.28 672,512.01C672.005,516.74 670.959,521.526 668.765,526.011C668.371,526.82 667.942,527.614 667.48,528.39L520.613,784C514.545,794.56 503.338,800.342 491.952,800.006L385.13,800.006C379.381,800.207 373.505,798.857 368.152,795.781L368.02,795.705C352.743,786.927 347.467,767.398 356.244,752.121L494.203,512.015L356.244,271.91C347.467,256.633 352.743,237.104 368.02,228.326L368.152,228.25C373.154,225.376 378.612,224.009 384,224.006L384,224.006L492,224.006L492,224.013ZM748,224.007C759.371,223.688 770.553,229.469 776.613,240.014L923.48,495.624C923.942,496.4 924.371,497.194 924.764,498.003C926.959,502.488 928.005,507.274 928,512.004C928.005,516.734 926.959,521.52 924.765,526.005C924.371,526.814 923.942,527.609 923.48,528.385L776.613,783.994C770.545,794.555 759.338,800.337 747.952,800L641.13,800C635.381,800.201 629.505,798.851 624.152,795.775L624.02,795.699C608.743,786.921 603.467,767.392 612.244,752.115L750.203,512.01L612.244,271.905C603.467,256.628 608.743,237.098 624.02,228.32L624.152,228.244C629.154,225.37 634.612,224.003 640,224L640,224L748,224L748,224.007ZM236,223.987C247.371,223.669 258.553,229.449 264.613,239.995L411.48,495.604C411.942,496.38 412.371,497.174 412.764,497.984C414.959,502.469 416.005,507.255 416,511.985C416.005,516.715 414.959,521.5 412.765,525.985C412.371,526.795 411.942,527.589 411.48,528.365L264.613,783.974C258.545,794.535 247.338,800.317 235.952,799.98L129.13,799.98C123.381,800.182 117.505,798.831 112.152,795.756L112.02,795.68C96.743,786.902 91.467,767.372 100.244,752.095L238.203,511.99L100.244,271.885C91.467,256.608 96.743,237.079 112.02,228.301L112.152,228.225C117.154,225.351 122.612,223.984 128,223.981L128,223.98L236,223.98L236,223.987Z"/>

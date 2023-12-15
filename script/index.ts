@@ -6070,7 +6070,7 @@ export module CyclicToDo
                     await groupMenuItem
                     (
                         current,
-                        [ await Resource.loadSvgOrCache("short-term-icon"), label("@short-term"), ],
+                        [ await Resource.loadSvgOrCache("ghost-term-icon"), label("Term"), ],
                         await Promise.all(getTagList({ pass, term: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
                     )
                 )
