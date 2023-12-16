@@ -1247,7 +1247,27 @@ button
                 color: #888;
                 fill: #888;
             }
-        }
+            &.current-item,
+            &.opened
+            {
+                svg:last-child
+                {
+                    color: @base-color;
+                    fill: @base-color;
+                }
+            }
+            @media (hover: hover)
+            {
+                &:hover
+                {
+                    svg:last-child
+                    {
+                        color: @base-color;
+                        fill: @base-color;
+                    }
+                }
+            }
+    }
     }
     a button
     {
@@ -1262,6 +1282,12 @@ button
         user-select: none;
         pointer-events: none;
         background-color: @accent-color;
+        &:first-child,
+        &:last-child,
+        & + .menu-separator
+        {
+            display: none;
+        }
     }
 }
 .hide

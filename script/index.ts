@@ -2521,6 +2521,14 @@ export module CyclicToDo
             hash?: string;
             filter?: string;
         }
+        export const isPageParamsRaw = (value: any): value is PageParamsRaw =>
+            "object" === typeof value &&
+            null !== value &&
+            ( ! ("pass" in value) || ("string" === typeof value.pass || undefined === value.pass)) &&
+            ( ! ("tag" in value) || ("string" === typeof value.tag || undefined === value.tag)) &&
+            ( ! ("todo" in value) || ("string" === typeof value.todo || undefined === value.todo)) &&
+            ( ! ("hash" in value) || ("string" === typeof value.hash || undefined === value.hash)) &&
+            ( ! ("filter" in value) || ("string" === typeof value.filter || undefined === value.filter));
         export type PageParams = PageParamsRaw & {[key: string]: string};
         export const internalLink = (data: { className?: string, href: PageParams, children: minamo.dom.Source}) =>
         ({
@@ -6503,9 +6511,23 @@ export module CyclicToDo
             ),
             parent: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall", }
         });
+        export interface BottomSubTab
+        {
+            icon: Resource.KeyType;
+            text: string;
+            count?:string;
+            href: { pass?:string, tag?:string, todo?: string, hash?: string, };
+        }
+        export const isBottomSubTab = (value: any): value is BottomSubTab =>
+            "object" === typeof value &&
+            null !== value &&
+            "icon" in value && "string" === typeof value.icon &&
+            "text" in value && "string" === typeof value.text &&
+            ( ! ("count" in value) || ("string" === typeof value.count || undefined === value.count)) &&
+            "href" in value && isPageParamsRaw(value.href);
         export const bottomTab = async (
             current: { pass?:string, tag?:string, hash?: string, },
-            subTabs: { icon: Resource.KeyType, text: string, count?:string, href: { pass?:string, tag?:string, todo?: string, hash?: string, }, }[],
+            subTabs: (BottomSubTab | "separator")[],
             additionalMenu?: minamo.dom.Source
         ) =>
         {
@@ -6515,21 +6537,24 @@ export module CyclicToDo
             }
             else
             {
-                const tagIndex = subTabs.map(i => i.href.tag).indexOf(current.tag);
-                const urlIndex = subTabs.map(i => makeUrl(i.href)).indexOf(location.href);
+                const pureSubTabs = subTabs.filter(isBottomSubTab);
+                const tagIndex = pureSubTabs.map(i => i.href.tag).indexOf(current.tag);
+                const urlIndex = pureSubTabs.map(i => makeUrl(i.href)).indexOf(location.href);
                 const isCurrent = 0 <= tagIndex || 0 <= urlIndex;
-                const tab = subTabs[isCurrent ? (0 <= urlIndex ? urlIndex: tagIndex): 0];
+                const tab = pureSubTabs[isCurrent ? (0 <= urlIndex ? urlIndex: tagIndex): 0];
                 let cover: { dom: HTMLDivElement, close: () => Promise<unknown> } | null = null;
                 const subTabsMenu = await Promise.all
                 (
                     subTabs.map
                     (
-                        async i => menuLinkItem
-                        (
-                            [ await Resource.loadSvgOrCache(i.icon), labelSpan(i.text), monospace(i.count ?? ""), ],
-                            i.href,
-                            isCurrent && tab.text === i.text ? " current-item": ""
-                        )
+                        async i => isBottomSubTab(i) ?
+                            menuLinkItem
+                            (
+                                [ await Resource.loadSvgOrCache(i.icon), labelSpan(i.text), monospace(i.count ?? ""), ],
+                                i.href,
+                                isCurrent && tab.text === i.text ? " current-item": ""
+                            ):
+                            menuSeparator()
                     )
                 );
                 const menu = undefined !== additionalMenu ?
@@ -6612,7 +6637,7 @@ export module CyclicToDo
                         await showUrl
                         (
                             isCurrent && makeUrl(tab.href) === location.href ?
-                                nextItem(subTabs, tab).href:
+                                nextItem(pureSubTabs, tab).href:
                                 tab.href
                         );
                     }
@@ -6640,7 +6665,7 @@ export module CyclicToDo
                         {
                             tag: "div",
                             className: "sub-tabs",
-                            children: subTabs.map
+                            children: pureSubTabs.map
                             (
                                 i =>
                                 ({
@@ -6666,16 +6691,18 @@ export module CyclicToDo
                 return result;
             }
         };
+        export const makeBottomSubTabForTag = (pass: string, tag: string): BottomSubTab =>
+        ({
+            icon: Resource.getTagIcon(tag),
+            text: Domain.tagMap(tag),
+            count: `${OldStorage.TagMember.get(pass, tag).length}`,
+            href: { pass, tag: tag, },
+        });
         export const homeTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (
             entry,
             [
-                {
-                    icon: Resource.getTagIcon("@overall"),
-                    text: locale.map("@overall"),
-                    count: `${OldStorage.TagMember.get(entry.pass, "@overall").length}`,
-                    href: { pass: entry.pass, tag: "@overall", },
-                },
+                makeBottomSubTabForTag(entry.pass, "@overall"),
                 {
                     icon: <Resource.KeyType>"history-icon",
                     text: locale.map("History"),
@@ -6691,43 +6718,30 @@ export module CyclicToDo
         export const termTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (
             entry,
-            getTagList({ term: true }).map
-            (
-                (i: "@short-term" | "@medium-term" | "@irregular-term") =>
-                ({
-                    icon: Resource.getTagIcon(i),
-                    text: locale.map(i),
-                    count: `${OldStorage.TagMember.get(entry.pass, i).length}`,
-                    href: { pass: entry.pass, tag: i, },
-                })
-            )
+            getTagList({ term: true })
+                .map(i => makeBottomSubTabForTag(entry.pass, i))
         );
         export const autoTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (
             entry,
-            getTagList({ auto: true }).map
-            (
-                (i: "@flash" | "@pickup" | "@restriction") =>
-                ({
-                    icon: Resource.getTagIcon(i),
-                    text: locale.map(i),
-                    count: `${OldStorage.TagMember.get(entry.pass, i).length}`,
-                    href: { pass: entry.pass, tag: i, },
-                })
-            )
+            getTagList({ auto: true })
+                .map(i => makeBottomSubTabForTag(entry.pass, i))
         );
         export const tagTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (
             entry,
-            getTagList({ pass: entry.pass, tag: true, }).map
             (
-                i =>
-                ({
-                    icon: Resource.getTagIcon(i),
-                    text: Domain.tagMap(i),
-                    count: `${OldStorage.TagMember.get(entry.pass, i).length}`,
-                    href: { pass: entry.pass, tag: i, },
-                })
+                <(BottomSubTab | "separator")[]>
+                getTagList({ pass: entry.pass, tag: true, })
+                    .filter(tag => ! Model.isSystemTagOld(tag))
+                    .map(tag => makeBottomSubTabForTag(entry.pass, tag))
+            )
+            .concat([ "separator", ])
+            .concat
+            (
+                getTagList({ pass: entry.pass, tag: true, })
+                    .filter(tag => Model.isSystemTagOld(tag))
+                    .map(tag => makeBottomSubTabForTag(entry.pass, tag))
             ),
             menuItem
             (
@@ -6748,16 +6762,14 @@ export module CyclicToDo
         export const sublistTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (
             entry,
-            getTagList({ pass: entry.pass, sublist: true, }).map
             (
-                i =>
-                ({
-                    icon: Resource.getTagIcon(i),
-                    text: Domain.tagMap(i),
-                    count: `${OldStorage.TagMember.get(entry.pass, i).length}`,
-                    href: { pass: entry.pass, tag: i, },
-                })
+                <(BottomSubTab | "separator")[]>
+                getTagList({ pass: entry.pass, sublist: true, })
+                    .filter(tag => "@:@root" !== tag)
+                    .map(tag => makeBottomSubTabForTag(entry.pass, tag))
             )
+            .concat([ "separator", ])
+            .concat([ makeBottomSubTabForTag(entry.pass, "@:@root"), ]),
         );
         export const bottomTabs = async (entry: ToDoTagEntryOld) => $div("bottom-tabs")
         ([
