@@ -6501,7 +6501,11 @@ export module CyclicToDo
             ),
             parent: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall", }
         });
-        export const bottomTab = async (current: { pass?:string, tag?:string, hash?: string, }, subTabs: { icon: Resource.KeyType, text: string, count?:string, href: { pass?:string, tag?:string, todo?: string, hash?: string, }, }[]) =>
+        export const bottomTab = async (
+            current: { pass?:string, tag?:string, hash?: string, },
+            subTabs: { icon: Resource.KeyType, text: string, count?:string, href: { pass?:string, tag?:string, todo?: string, hash?: string, }, }[],
+            additionalMenu?: minamo.dom.Source
+        ) =>
         {
             if (subTabs.length <= 0)
             {
@@ -6514,22 +6518,24 @@ export module CyclicToDo
                 const isCurrent = 0 <= tagIndex || 0 <= urlIndex;
                 const tab = subTabs[isCurrent ? (0 <= urlIndex ? urlIndex: tagIndex): 0];
                 let cover: { dom: HTMLDivElement, close: () => Promise<unknown> } | null = null;
+                const subTabsMenu = await Promise.all
+                (
+                    subTabs.map
+                    (
+                        async i => menuLinkItem
+                        (
+                            [ await Resource.loadSvgOrCache(i.icon), labelSpan(i.text), monospace(i.count ?? ""), ],
+                            i.href,
+                            isCurrent && tab.text === i.text ? " current-item": ""
+                        )
+                    )
+                );
+                const menu = undefined !== additionalMenu ? [ additionalMenu, subTabsMenu, ]: subTabsMenu;
                 const popup = $make(HTMLDivElement)
                 ({
                     tag: "div",
                     className: "menu-popup",
-                    children: await Promise.all
-                    (
-                        subTabs.map
-                        (
-                            async i => menuLinkItem
-                            (
-                                [ await Resource.loadSvgOrCache(i.icon), labelSpan(i.text), monospace(i.count ?? ""), ],
-                                i.href,
-                                isCurrent && tab.text === i.text ? " current-item": ""
-                            )
-                        )
-                    ),
+                    children: menu,
                     onclick: async (event: MouseEvent) =>
                     {
                         event.stopPropagation();
