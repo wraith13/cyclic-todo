@@ -4928,6 +4928,7 @@ export module CyclicToDo
                 }
             }
         );
+        export const menuSeparator = () => ({ tag: "div", className: "menu-separator", });
         export const renameTag = async (entry: { pass: string, tag: string, }, hash?: string) =>
         {
             let result = false;
@@ -5839,6 +5840,7 @@ export module CyclicToDo
             )
             .concat
             ([
+                menuSeparator(),
                 menuItem
                 (
                     [
@@ -6530,7 +6532,13 @@ export module CyclicToDo
                         )
                     )
                 );
-                const menu = undefined !== additionalMenu ? [ additionalMenu, subTabsMenu, ]: subTabsMenu;
+                const menu = undefined !== additionalMenu ?
+                    [
+                        additionalMenu,
+                        menuSeparator(),
+                        subTabsMenu,
+                    ]:
+                    subTabsMenu;
                 const popup = $make(HTMLDivElement)
                 ({
                     tag: "div",
@@ -6720,6 +6728,21 @@ export module CyclicToDo
                     count: `${OldStorage.TagMember.get(entry.pass, i).length}`,
                     href: { pass: entry.pass, tag: i, },
                 })
+            ),
+            menuItem
+            (
+                [
+                    await Resource.loadSvgOrCache("add-tag-icon"),
+                    label("@new"),
+                ],
+                async () =>
+                {
+                    const tag = await newTagPrompt(entry.pass);
+                    if (null !== tag)
+                    {
+                        await showUrl({ pass: entry.pass, tag, });
+                    }
+                }
             )
         );
         export const sublistTab = async (entry: ToDoTagEntryOld) => await bottomTab

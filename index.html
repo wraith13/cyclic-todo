@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Fri Dec 15 2023 11:22:07 GMT+0900 (日本標準時)
+    build at: Sat Dec 16 2023 19:42:01 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -1997,6 +1997,15 @@ h2 {
 }
 .light-theme-trait .menu-popup a button {
   width: 100%;
+}
+.light-theme-trait .menu-popup .menu-separator {
+  border-style: none;
+  border-width: 0px;
+  height: 1px;
+  width: 100%;
+  user-select: none;
+  pointer-events: none;
+  background-color: #228844;
 }
 .light-theme-trait .hide {
   display: none;
@@ -5064,6 +5073,15 @@ body.light .menu-popup button.group-item svg:last-child {
 body.light .menu-popup a button {
   width: 100%;
 }
+body.light .menu-popup .menu-separator {
+  border-style: none;
+  border-width: 0px;
+  height: 1px;
+  width: 100%;
+  user-select: none;
+  pointer-events: none;
+  background-color: #228844;
+}
 body.light .hide {
   display: none;
 }
@@ -7760,6 +7778,15 @@ body.light .keyboard-shortcuts li .key:first-child {
   }
   body.auto .menu-popup a button {
     width: 100%;
+  }
+  body.auto .menu-popup .menu-separator {
+    border-style: none;
+    border-width: 0px;
+    height: 1px;
+    width: 100%;
+    user-select: none;
+    pointer-events: none;
+    background-color: #228844;
   }
   body.auto .hide {
     display: none;
@@ -11452,6 +11479,15 @@ body.light .keyboard-shortcuts li .key:first-child {
 .dark-theme-trait .menu-popup a button {
   width: 100%;
 }
+.dark-theme-trait .menu-popup .menu-separator {
+  border-style: none;
+  border-width: 0px;
+  height: 1px;
+  width: 100%;
+  user-select: none;
+  pointer-events: none;
+  background-color: #228844;
+}
 .dark-theme-trait .hide {
   display: none;
 }
@@ -14521,6 +14557,15 @@ body.dark .menu-popup button.group-item svg:last-child {
 body.dark .menu-popup a button {
   width: 100%;
 }
+body.dark .menu-popup .menu-separator {
+  border-style: none;
+  border-width: 0px;
+  height: 1px;
+  width: 100%;
+  user-select: none;
+  pointer-events: none;
+  background-color: #228844;
+}
 body.dark .hide {
   display: none;
 }
@@ -17220,6 +17265,15 @@ body.dark .keyboard-shortcuts li .key:first-child {
   }
   body.auto .menu-popup a button {
     width: 100%;
+  }
+  body.auto .menu-popup .menu-separator {
+    border-style: none;
+    border-width: 0px;
+    height: 1px;
+    width: 100%;
+    user-select: none;
+    pointer-events: none;
+    background-color: #228844;
   }
   body.auto .hide {
     display: none;
@@ -26888,6 +26942,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 });
             }); }); };
+            Render.menuSeparator = function () { return ({ tag: "div", className: "menu-separator", }); };
             Render.renameTag = function (entry, hash) { return __awaiter(_this, void 0, void 0, function () {
                 var result, newTag, _a, newTag;
                 return __generator(this, function (_b) {
@@ -28006,19 +28061,20 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         case 1:
                             _b = (_a = (_g.sent()))
                                 .concat;
-                            _c = Render.menuItem;
+                            _c = [Render.menuSeparator()];
+                            _d = Render.menuItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("add-list-icon")];
                         case 2:
-                            _d = [
-                                _c.apply(void 0, [[
+                            _c = _c.concat([
+                                _d.apply(void 0, [[
                                         _g.sent(),
                                         Render.label("New ToDo List")
                                     ], Render.newListPrompt])
-                            ];
+                            ]);
                             _e = Render.menuLinkItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("import-icon")];
                         case 3:
-                            _d = _d.concat([
+                            _c = _c.concat([
                                 _e.apply(void 0, [[
                                         _g.sent(),
                                         Render.label("Import List")
@@ -28027,7 +28083,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             ]);
                             _f = Render.menuLinkItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("recycle-bin-icon")];
-                        case 4: return [2 /*return*/, _b.apply(_a, [_d.concat([
+                        case 4: return [2 /*return*/, _b.apply(_a, [_c.concat([
                                     _f.apply(void 0, [[
                                             _g.sent(),
                                             Render.labelSpan(locale_2.locale.map("@deleted")),
@@ -28766,12 +28822,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 });
             }); };
-            Render.bottomTab = function (current, subTabs) { return __awaiter(_this, void 0, void 0, function () {
-                var tagIndex, urlIndex, isCurrent_1, tab_1, cover_1, popup_1, _a, close_1, longPressTimer_1, cancelTimer_1, mousedown, mouseup_1, result_1, _b;
-                var _c, _d, _e;
+            Render.bottomTab = function (current, subTabs, additionalMenu) { return __awaiter(_this, void 0, void 0, function () {
+                var tagIndex, urlIndex, isCurrent_1, tab_1, cover_1, subTabsMenu, menu, popup_1, close_1, longPressTimer_1, cancelTimer_1, mousedown, mouseup_1, result_1, _a;
+                var _b, _c;
                 var _this = this;
-                return __generator(this, function (_f) {
-                    switch (_f.label) {
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
                         case 0:
                             if (!(subTabs.length <= 0)) return [3 /*break*/, 1];
                             return [2 /*return*/, []];
@@ -28781,11 +28837,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             isCurrent_1 = 0 <= tagIndex || 0 <= urlIndex;
                             tab_1 = subTabs[isCurrent_1 ? (0 <= urlIndex ? urlIndex : tagIndex) : 0];
                             cover_1 = null;
-                            _a = Render.$make(HTMLDivElement);
-                            _c = {
-                                tag: "div",
-                                className: "menu-popup"
-                            };
                             return [4 /*yield*/, Promise.all(subTabs.map(function (i) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
                                     var _b;
@@ -28800,16 +28851,27 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     });
                                 }); }))];
                         case 2:
-                            popup_1 = _a.apply(void 0, [(_c.children = _f.sent(),
-                                    _c.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
-                                        return __generator(this, function (_a) {
-                                            event.stopPropagation();
-                                            cover_1 === null || cover_1 === void 0 ? void 0 : cover_1.close();
-                                            close_1();
-                                            return [2 /*return*/];
-                                        });
-                                    }); },
-                                    _c)]);
+                            subTabsMenu = _d.sent();
+                            menu = undefined !== additionalMenu ?
+                                [
+                                    additionalMenu,
+                                    Render.menuSeparator(),
+                                    subTabsMenu,
+                                ] :
+                                subTabsMenu;
+                            popup_1 = Render.$make(HTMLDivElement)({
+                                tag: "div",
+                                className: "menu-popup",
+                                children: menu,
+                                onclick: function (event) { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        event.stopPropagation();
+                                        cover_1 === null || cover_1 === void 0 ? void 0 : cover_1.close();
+                                        close_1();
+                                        return [2 /*return*/];
+                                    });
+                                }); },
+                            });
                             close_1 = function () {
                                 popup_1.classList.remove("show");
                                 cover_1 = null;
@@ -28869,27 +28931,27 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     }
                                 });
                             }); };
-                            _b = Render.$make(HTMLButtonElement);
-                            _d = {
+                            _a = Render.$make(HTMLButtonElement);
+                            _b = {
                                 tag: "button",
                                 className: "bottom-tab" + (isCurrent_1 ? " current-item" : "")
                             };
-                            _e = {
+                            _c = {
                                 tag: "div",
                                 className: "tab-face",
                                 title: tab_1.text
                             };
                             return [4 /*yield*/, Resource.loadSvgOrCache(tab_1.icon)];
                         case 3:
-                            result_1 = _b.apply(void 0, [(_d.children = [
-                                    (_e.children = [_f.sent(), Render.labelSpan(tab_1.text)],
-                                        _e.eventListener = {
+                            result_1 = _a.apply(void 0, [(_b.children = [
+                                    (_c.children = [_d.sent(), Render.labelSpan(tab_1.text)],
+                                        _c.eventListener = {
                                             mousedown: mousedown,
                                             touchstart: mousedown,
                                             mouseup: mouseup_1,
                                             touchend: mouseup_1,
                                         },
-                                        _e),
+                                        _c),
                                     {
                                         tag: "div",
                                         className: "sub-tabs",
@@ -28906,7 +28968,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         })
                                     }
                                 ],
-                                    _d)]);
+                                    _b)]);
                             return [2 /*return*/, result_1];
                     }
                 });
@@ -28967,17 +29029,42 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 });
             }); };
             Render.tagTab = function (entry) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, Render.bottomTab(entry, Render.getTagList({ pass: entry.pass, tag: true, }).map(function (i) {
-                                return ({
-                                    icon: Resource.getTagIcon(i),
-                                    text: Domain.tagMap(i),
-                                    count: "" + OldStorage.TagMember.get(entry.pass, i).length,
-                                    href: { pass: entry.pass, tag: i, },
-                                });
-                            }))];
-                        case 1: return [2 /*return*/, _a.sent()];
+                var _a, _b, _c;
+                var _this = this;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            _a = Render.bottomTab;
+                            _b = [entry, Render.getTagList({ pass: entry.pass, tag: true, }).map(function (i) {
+                                    return ({
+                                        icon: Resource.getTagIcon(i),
+                                        text: Domain.tagMap(i),
+                                        count: "" + OldStorage.TagMember.get(entry.pass, i).length,
+                                        href: { pass: entry.pass, tag: i, },
+                                    });
+                                })];
+                            _c = Render.menuItem;
+                            return [4 /*yield*/, Resource.loadSvgOrCache("add-tag-icon")];
+                        case 1: return [4 /*yield*/, _a.apply(void 0, _b.concat([_c.apply(void 0, [[
+                                        _d.sent(),
+                                        Render.label("@new")
+                                    ], function () { return __awaiter(_this, void 0, void 0, function () {
+                                        var tag;
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, Render.newTagPrompt(entry.pass)];
+                                                case 1:
+                                                    tag = _a.sent();
+                                                    if (!(null !== tag)) return [3 /*break*/, 3];
+                                                    return [4 /*yield*/, CyclicToDo.showUrl({ pass: entry.pass, tag: tag, })];
+                                                case 2:
+                                                    _a.sent();
+                                                    _a.label = 3;
+                                                case 3: return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }])]))];
+                        case 2: return [2 /*return*/, _d.sent()];
                     }
                 });
             }); };
@@ -32181,7 +32268,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Dec 15 2023 11:22:07 GMT+0900 (日本標準時)', buildTimestampTick: 1702606927166, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Dec 16 2023 19:42:01 GMT+0900 (日本標準時)', buildTimestampTick: 1702723321604, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -32405,7 +32492,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Fri Dec 15 2023 11:22:07 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Sat Dec 16 2023 19:42:01 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
