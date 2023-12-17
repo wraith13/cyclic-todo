@@ -1820,6 +1820,20 @@ button
         }
     }
 }
+.list-item,
+.task-item,
+.removed-item
+{
+    .item-header,
+    .item-information .item-params,
+    .item-information .foreground,
+    .item-information .removed-timestamp
+    {
+        max-width: 640px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
 .task-item,
 .tick-item
 {
@@ -2044,12 +2058,6 @@ button
         .progress-bar-pad
         {
             background-color: rgba(@disabled-color, 0.2);
-        }
-        .item-params
-        {
-            max-width: 420px;
-            margin-left: auto;
-            margin-right: auto;
         }
         .foreground
         {
