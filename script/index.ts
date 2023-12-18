@@ -6111,6 +6111,11 @@ export module CyclicToDo
                                     ],
                                     async () => await newSublistPopup(pass),
                                 ),
+                            },
+                            <{ id: string, item: minamo.dom.Source, }>
+                            {
+                                id: "@separator",
+                                item: menuSeparator(),
                             }
                         ]
                         .concat(await Promise.all(getTagList({ pass, sublist: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
@@ -6770,6 +6775,14 @@ export module CyclicToDo
             )
             .concat([ "separator", ])
             .concat([ makeBottomSubTabForTag(entry.pass, "@:@root"), ]),
+            menuItem
+            (
+                [
+                    await Resource.loadSvgOrCache("add-folder-icon"),
+                    label("@new-sublist"),
+                ],
+                async () => await newSublistPopup(entry.pass)
+                )
         );
         export const bottomTabs = async (entry: ToDoTagEntryOld) => $div("bottom-tabs")
         ([
