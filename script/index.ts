@@ -6113,12 +6113,15 @@ export module CyclicToDo
                                 ),
                             },
                             <{ id: string, item: minamo.dom.Source, }>
-                            {
-                                id: "@separator",
-                                item: menuSeparator(),
-                            }
+                            { id: "@separator", item: menuSeparator(), },
                         ]
-                        .concat(await Promise.all(getTagList({ pass, sublist: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
+                        .concat(await Promise.all(getTagList({ pass, sublist: true }).filter(tag => "@:@root" !== tag).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
+                        .concat
+                        ([
+                            <{ id: string, item: minamo.dom.Source, }>
+                            { id: "@separator", item: menuSeparator(), },
+                            { id: "@:@root", item: await tagMenuItem(current, pass, "@:@root")}
+                        ])
                     )
                 )
                 .concat
@@ -6146,9 +6149,17 @@ export module CyclicToDo
                                         }
                                     }
                                 ),
-                            }
+                            },
+                            <{ id: string, item: minamo.dom.Source, }>
+                            { id: "@separator", item: menuSeparator(), },
                         ]
-                        .concat(await Promise.all(getTagList({ pass, tag: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
+                        .concat(await Promise.all(getTagList({ pass, tag: true }).filter(tag => ! Model.isSystemTagOld(tag)).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
+                        .concat
+                        ([
+                            <{ id: string, item: minamo.dom.Source, }>
+                            { id: "@separator", item: menuSeparator(), },
+                        ])
+                        .concat(await Promise.all(getTagList({ pass, tag: true }).filter(tag => Model.isSystemTagOld(tag)).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
                     )
                 )
         });
