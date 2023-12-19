@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Tue Dec 19 2023 01:22:29 GMT+0900 (日本標準時)
+    build at: Tue Dec 19 2023 23:32:03 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -28460,50 +28460,49 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 });
             }); };
             Render.screenHeaderTagMenuSegment = function (pass, current) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7;
-                var _8, _9, _10, _11;
+                var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5;
+                var _6, _7, _8, _9;
                 var _this = this;
-                return __generator(this, function (_12) {
-                    switch (_12.label) {
+                return __generator(this, function (_10) {
+                    switch (_10.label) {
                         case 0:
-                            _8 = {
+                            _6 = {
                                 icon: Resource.getTagIcon(current),
                                 title: Domain.tagMap(current)
                             };
-                            return [4 /*yield*/, Promise.all(Render.getTagList({ pass: pass, overall: true }).map(function (tag) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-                                    switch (_a.label) {
-                                        case 0: return [4 /*yield*/, Render.tagMenuItem(current, pass, tag)];
-                                        case 1: return [2 /*return*/, _a.sent()];
-                                    }
-                                }); }); }))];
+                            return [4 /*yield*/, Render.tagMenuItem(current, pass, "@overall")];
                         case 1:
-                            _f = (_e = (_12.sent()))
-                                .concat;
-                            _g = Render.menuLinkItem;
+                            _e = [
+                                _10.sent()
+                            ];
+                            _f = Render.menuLinkItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("history-icon")];
                         case 2:
-                            _h = [
-                                _g.apply(void 0, [[
-                                        _12.sent(),
+                            _e = _e.concat([
+                                _f.apply(void 0, [[
+                                        _10.sent(),
                                         Render.labelSpan(locale_2.locale.map("History"))
-                                    ], { pass: pass, tag: "@overall", hash: "history", }, current === "@deleted" ? "current-item" : undefined])
-                            ];
-                            _j = Render.menuLinkItem;
+                                    ], { pass: pass, tag: "@overall", hash: "history", }])
+                            ]);
+                            _g = Render.menuLinkItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("recycle-bin-icon")];
                         case 3:
-                            _k = (_d = _f.apply(_e, [_h.concat([
-                                    _j.apply(void 0, [[
-                                            _12.sent(),
-                                            Render.labelSpan(locale_2.locale.map("@deleted")),
-                                            Render.monospace("" + OldStorage.Removed.get(pass).length)
-                                        ], { pass: pass, hash: "removed" }, current === "@deleted" ? "current-item" : undefined])
-                                ])]))
+                            // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
+                            // .concat
+                            _h = (_d = _e.concat([
+                                _g.apply(void 0, [[
+                                        _10.sent(),
+                                        Render.labelSpan(locale_2.locale.map("@deleted")),
+                                        Render.monospace("" + OldStorage.Removed.get(pass).length)
+                                    ], { pass: pass, hash: "removed" }, current === "@deleted" ? "current-item" : undefined]),
+                                Render.menuSeparator()
+                            ]))
                                 .concat;
-                            _l = Render.groupMenuItem;
-                            _m = [current];
+                            _j = Render.groupMenuItem;
+                            _k = [current];
                             return [4 /*yield*/, Resource.loadSvgOrCache("ghost-term-icon")];
                         case 4:
-                            _m = _m.concat([[_12.sent(), Render.label("Term")]]);
+                            _k = _k.concat([[_10.sent(), Render.label("Term")]]);
                             return [4 /*yield*/, Promise.all(Render.getTagList({ pass: pass, term: true }).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
                                     return __generator(this, function (_b) {
@@ -28515,15 +28514,17 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         }
                                     });
                                 }); }))];
-                        case 5: return [4 /*yield*/, _l.apply(void 0, _m.concat([_12.sent()]))];
+                        case 5: return [4 /*yield*/, _j.apply(void 0, _k.concat([_10.sent()]))];
                         case 6:
-                            _o = (_c = _k.apply(_d, [_12.sent()]))
+                            // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
+                            // .concat
+                            _l = (_c = _h.apply(_d, [_10.sent()]))
                                 .concat;
-                            _p = Render.groupMenuItem;
-                            _q = [current];
+                            _m = Render.groupMenuItem;
+                            _o = [current];
                             return [4 /*yield*/, Resource.loadSvgOrCache("flag-icon")];
                         case 7:
-                            _q = _q.concat([[_12.sent(), Render.label("Auto tag")]]);
+                            _o = _o.concat([[_10.sent(), Render.label("Auto tag")]]);
                             return [4 /*yield*/, Promise.all(Render.getTagList({ pass: pass, auto: true }).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
                                     return __generator(this, function (_b) {
@@ -28535,24 +28536,26 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         }
                                     });
                                 }); }))];
-                        case 8: return [4 /*yield*/, _p.apply(void 0, _q.concat([_12.sent()]))];
+                        case 8: return [4 /*yield*/, _m.apply(void 0, _o.concat([_10.sent()]))];
                         case 9:
-                            _r = (_b = _o.apply(_c, [_12.sent()]))
+                            // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
+                            // .concat
+                            _p = (_b = _l.apply(_c, [_10.sent()]))
                                 .concat;
-                            _s = Render.groupMenuItem;
-                            _t = [current];
+                            _q = Render.groupMenuItem;
+                            _r = [current];
                             return [4 /*yield*/, Resource.loadSvgOrCache("folder-icon")];
                         case 10:
-                            _t = _t.concat([[_12.sent(), Render.label("Sublist")]]);
-                            _9 = {
+                            _r = _r.concat([[_10.sent(), Render.label("Sublist")]]);
+                            _7 = {
                                 id: "@new"
                             };
-                            _w = Render.menuItem;
+                            _u = Render.menuItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("add-folder-icon")];
                         case 11:
-                            _x = (_v = [
-                                (_9.item = _w.apply(void 0, [[
-                                        _12.sent(),
+                            _v = (_t = [
+                                (_7.item = _u.apply(void 0, [[
+                                        _10.sent(),
                                         Render.label("@new-sublist")
                                     ], function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
@@ -28560,7 +28563,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             case 1: return [2 /*return*/, _a.sent()];
                                         }
                                     }); }); }]),
-                                    _9),
+                                    _7),
                                 { id: "@separator", item: Render.menuSeparator(), }
                             ])
                                 .concat;
@@ -28576,31 +28579,33 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     });
                                 }); }))];
                         case 12:
-                            _y = (_u = _x.apply(_v, [_12.sent()]))
+                            _w = (_s = _v.apply(_t, [_10.sent()]))
                                 .concat;
-                            _z = [{ id: "@separator", item: Render.menuSeparator(), }];
-                            _10 = { id: "@:@root" };
+                            _x = [{ id: "@separator", item: Render.menuSeparator(), }];
+                            _8 = { id: "@:@root" };
                             return [4 /*yield*/, Render.tagMenuItem(current, pass, "@:@root")];
-                        case 13: return [4 /*yield*/, _s.apply(void 0, _t.concat([_y.apply(_u, [_z.concat([
-                                        (_10.item = _12.sent(), _10)
+                        case 13: return [4 /*yield*/, _q.apply(void 0, _r.concat([_w.apply(_s, [_x.concat([
+                                        (_8.item = _10.sent(), _8)
                                     ])])]))];
                         case 14:
-                            _0 = (_a = _r.apply(_b, [_12.sent()]))
+                            // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
+                            // .concat
+                            _y = (_a = _p.apply(_b, [_10.sent()]))
                                 .concat;
-                            _1 = Render.groupMenuItem;
-                            _2 = [current];
+                            _z = Render.groupMenuItem;
+                            _0 = [current];
                             return [4 /*yield*/, Resource.loadSvgOrCache("tag-icon")];
                         case 15:
-                            _2 = _2.concat([[_12.sent(), Render.label("Tag")]]);
-                            _11 = {
+                            _0 = _0.concat([[_10.sent(), Render.label("Tag")]]);
+                            _9 = {
                                 id: "@new"
                             };
-                            _5 = Render.menuItem;
+                            _3 = Render.menuItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("add-tag-icon")];
                         case 16:
-                            _6 = (_4 = [
-                                (_11.item = _5.apply(void 0, [[
-                                        _12.sent(),
+                            _4 = (_2 = [
+                                (_9.item = _3.apply(void 0, [[
+                                        _10.sent(),
                                         Render.label("@new")
                                     ], function () { return __awaiter(_this, void 0, void 0, function () {
                                         var tag;
@@ -28618,7 +28623,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             }
                                         });
                                     }); }]),
-                                    _11),
+                                    _9),
                                 { id: "@separator", item: Render.menuSeparator(), }
                             ])
                                 .concat;
@@ -28634,7 +28639,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     });
                                 }); }))];
                         case 17:
-                            _7 = (_3 = _6.apply(_4, [_12.sent()])
+                            _5 = (_1 = _4.apply(_2, [_10.sent()])
                                 .concat([
                                 { id: "@separator", item: Render.menuSeparator(), },
                             ]))
@@ -28650,9 +28655,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         }
                                     });
                                 }); }))];
-                        case 18: return [4 /*yield*/, _1.apply(void 0, _2.concat([_7.apply(_3, [_12.sent()])]))];
-                        case 19: return [2 /*return*/, (_8.menu = _0.apply(_a, [_12.sent()]),
-                                _8)];
+                        case 18: return [4 /*yield*/, _z.apply(void 0, _0.concat([_5.apply(_1, [_10.sent()])]))];
+                        case 19: return [2 /*return*/, (_6.menu = 
+                            // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
+                            // .concat
+                            _y.apply(_a, [_10.sent()]),
+                                _6)];
                     }
                 });
             }); };
@@ -32502,7 +32510,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Dec 19 2023 01:22:29 GMT+0900 (日本標準時)', buildTimestampTick: 1702916549190, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Dec 19 2023 23:32:03 GMT+0900 (日本標準時)', buildTimestampTick: 1702996323438, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -32726,7 +32734,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Tue Dec 19 2023 01:22:29 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Tue Dec 19 2023 23:32:03 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

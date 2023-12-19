@@ -6052,9 +6052,10 @@ export module CyclicToDo
             icon: Resource.getTagIcon(current),
             title: Domain.tagMap(current),
             menu:
-                (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
-                .concat
-                ([
+                // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
+                // .concat
+                [
+                    await tagMenuItem(current, pass, "@overall"),
                     menuLinkItem
                     (
                         [
@@ -6062,7 +6063,7 @@ export module CyclicToDo
                             labelSpan(locale.map("History")),
                         ],
                         { pass, tag:"@overall", hash: "history", },
-                        current === "@deleted" ? "current-item": undefined
+                        //current === "@deleted" ? "current-item": undefined
                     ),
                     menuLinkItem
                     (
@@ -6074,7 +6075,8 @@ export module CyclicToDo
                         { pass, hash: "removed" },
                         current === "@deleted" ? "current-item": undefined
                     ),
-                ])
+                    menuSeparator(),
+                ]
                 .concat
                 (
                     await groupMenuItem
