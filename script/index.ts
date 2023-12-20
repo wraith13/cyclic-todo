@@ -538,7 +538,7 @@ export module CyclicToDo
                     ListSettings.set(pass, listSettings);
                 };
                 export const getMaxShortTermTimespan = (pass: string) =>
-                    (ListSettings.get(pass).termThreshold ?? { }).maxShortTermTimespan ?? config.maxShortTermTimespan;
+                    (ListSettings.get(pass).termThreshold ?? { }).maxShortTermTimespan ?? Domain.maxShortTermMinutes;
                 export const setMaxShortTermTimespan = (pass: string, maxShortTermTimespan: number) =>
                 {
                     const termThreshold = TermThreshold.get(pass);
@@ -546,7 +546,7 @@ export module CyclicToDo
                     TermThreshold.set(pass, termThreshold);
                 };
                 export const getMaxMediumTermTimespan = (pass: string) =>
-                    (ListSettings.get(pass).termThreshold ?? { }).maxMediumTermTimespan ?? config.maxMediumTermTimespan;
+                    (ListSettings.get(pass).termThreshold ?? { }).maxMediumTermTimespan ?? Domain.maxMediumTermMinutes;
                 export const setMaxMediumTermTimespan = (pass: string, maxMediumTermTimespan: number) =>
                 {
                     const termThreshold = TermThreshold.get(pass);
@@ -2093,13 +2093,13 @@ export module CyclicToDo
                     return todoComparerOld(entry, "smart");
             }
         };
-        export const getTermCategoryByAverage = (item: ToDoEntry) =>
+        export const getTermCategoryByAverage = (pass: string, item: ToDoEntry) =>
             null !== item.smartRest && null !== item.RecentlySmartAverage ?
                 (
-                    item.RecentlySmartAverage < Domain.maxShortTermMinutes ?
+                    item.RecentlySmartAverage < OldStorage.ListSettings.TermThreshold.getMaxShortTermTimespan(pass) ?
                         "@short-term":
                         (
-                            item.RecentlySmartAverage < Domain.maxMediumTermMinutes ?
+                            item.RecentlySmartAverage < OldStorage.ListSettings.TermThreshold.getMaxMediumTermTimespan(pass) ?
                                 "@medium-term":
                                 "@long-term"
                         )
