@@ -122,6 +122,15 @@ export module CyclicToDo
         locale?: locale.LocaleType;
         emoji?: EmojiType;
     }
+    export interface TermThreshold extends minamo.core.JsonableObject
+    {
+        maxShortTermTimespan?: number,
+        maxMediumTermTimespan?: number,
+    }
+    export interface ListSettings extends minamo.core.JsonableObject
+    {
+        termThreshold?: TermThreshold;
+    }
     export interface ToDoTagEntryOld extends minamo.core.JsonableObject
     {
         pass: string;
@@ -291,6 +300,7 @@ export module CyclicToDo
         title: string;
         timeAccuracy: number;
         pass: string;
+        settings: ListSettings;
         todos: string[];
         tags: { [tag: string]: string[] };
         tagSettings: { [tag: string]: TagSettings };
@@ -375,6 +385,7 @@ export module CyclicToDo
                     tagSettings[tag] = TagSettings.get(pass, tag);
                 }
             );
+            const settings = ListSettings.get(pass);
             const todos = TagMember.getRaw(pass, "@overall");
             const todoSettings: { [tag: string]: TodoSettings } = { };
             todos.forEach(task => todoSettings[task] = TodoSettings.get(pass, task));
@@ -391,6 +402,7 @@ export module CyclicToDo
                 title,
                 timeAccuracy,
                 pass,
+                settings,
                 todos,
                 todoSettings,
                 tags,
@@ -411,6 +423,7 @@ export module CyclicToDo
                     "string" === typeof data.title &&
                     "number" === typeof data.timeAccuracy &&
                     "string" === typeof data.pass &&
+                    "object" === typeof data.settings &&
                     Array.isArray(data.todos) &&
                     "object" === typeof data.todoSettings &&
                     data.todos.filter(i => "string" !== typeof i).length <= 0 &&
@@ -421,6 +434,7 @@ export module CyclicToDo
                 {
                     Pass.add(data.pass);
                     Title.set(data.pass, data.title);
+                    ListSettings.set(data.pass, data.settings);
                     TagMember.set(data.pass, "@overall", data.todos);
                     Tag.set(data.pass, Object.keys(data.tags));
                     Object.keys(data.tags).forEach(tag => TagMember.set(data.pass, tag, data.tags[tag]));
@@ -505,6 +519,41 @@ export module CyclicToDo
                 getStorage(pass).getOrNull<string>(makeKey(pass)) ?? locale.map("ToDo List");
             export const set = (pass: string, title: string) =>
                 getStorage(pass).set(makeKey(pass), title);
+        }
+        export module ListSettings
+        {
+            export const makeKey = (pass: string) => `pass:(${pass}).settings`;
+            export const get = (pass: string) =>
+                getStorage(pass).getOrNull<ListSettings>(makeKey(pass)) ?? { };
+            export const set = (pass: string, settings: ListSettings) =>
+                getStorage(pass).set(makeKey(pass), settings);
+            export module TermThreshold
+            {
+                export const get = (pass: string) =>
+                    ListSettings.get(pass).termThreshold ?? { };
+                export const set = (pass: string, settings: TermThreshold) =>
+                {
+                    const listSettings = ListSettings.get(pass);
+                    listSettings.termThreshold = settings;
+                    ListSettings.set(pass, listSettings);
+                };
+                export const getMaxShortTermTimespan = (pass: string) =>
+                    (ListSettings.get(pass).termThreshold ?? { }).maxShortTermTimespan ?? config.maxShortTermTimespan;
+                export const setMaxShortTermTimespan = (pass: string, maxShortTermTimespan: number) =>
+                {
+                    const termThreshold = TermThreshold.get(pass);
+                    termThreshold.maxShortTermTimespan = maxShortTermTimespan;
+                    TermThreshold.set(pass, termThreshold);
+                };
+                export const getMaxMediumTermTimespan = (pass: string) =>
+                    (ListSettings.get(pass).termThreshold ?? { }).maxMediumTermTimespan ?? config.maxMediumTermTimespan;
+                export const setMaxMediumTermTimespan = (pass: string, maxMediumTermTimespan: number) =>
+                {
+                    const termThreshold = TermThreshold.get(pass);
+                    termThreshold.maxMediumTermTimespan = maxMediumTermTimespan;
+                    TermThreshold.set(pass, termThreshold);
+                };
+            }
         }
         export module Tag
         {
