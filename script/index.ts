@@ -1369,11 +1369,25 @@ export module CyclicToDo
                 this.update();
             }
             getToDoEntry = (task: string) => this.live.tasks.filter(i => task === i.task)[0];
+
+            getTermCategory = (item: ToDoEntry) =>
+            null !== item.smartRest && null !== item.RecentlySmartAverage ?
+                (
+                    item.RecentlySmartAverage < (this.content.settings?.termThreshold?.maxShortTermTimespan ?? Domain.maxShortTermMinutes) ?
+                        "@short-term":
+                        (
+                            item.RecentlySmartAverage < (this.content.settings?.termThreshold?.maxMediumTermTimespan ?? Domain.maxMediumTermMinutes) ?
+                                "@medium-term":
+                                "@long-term"
+                        )
+                ):
+                "@irregular-term";
+
             updateTermCategory = (item: ToDoEntry) =>
             {
                 // 🔥 ここでイチイチ save するのはナンセンスだけど、 save しておかないと差分チェックの邪魔になる、、、
                 // 🤔 "@short-term", "@long-term", "@irregular-term"　のタグメンバーは this.live に持たせるかねぇ、、、
-                const term = Domain.getTermCategory(item);
+                const term = this.getTermCategory(item);
                 if ((this.content.tags[term] ?? []).indexOf(item.task) < 0)
                 {
                     ["@short-term", "@medium-term", "@long-term", "@irregular-term"].forEach
@@ -2116,7 +2130,7 @@ export module CyclicToDo
         export const getTermCategory = getTermCategoryByAverage;
         export const updateTermCategoryOld = (pass: string, item: ToDoEntry) =>
         {
-            const term = getTermCategory(item);
+            const term = getTermCategory(pass, item);
             if ( ! OldStorage.TagMember.isMember(pass, term, item.task))
             {
                 ["@short-term", "@medium-term", "@long-term", "@irregular-term"].forEach
@@ -3766,6 +3780,143 @@ export module CyclicToDo
                 });
             }
         );
+        export const getTermThresholdPreset = (current: number) =>
+        {
+            let list: number[] = [];
+            list.push(current);
+            list.push(...Storage.Timespan.get());
+            list.push(...config.timespanPreset.map(i => minamo.core.parseTimespan(i)).filter(isNumber).map(i => i / Domain.timeAccuracy));
+            return list.filter(uniqueFilter).filter(takeFilter(config.timespanPresetMaxCount)).sort(minamo.core.comparer.basic);
+        };
+        export const termThresholdSettingPopup = async (title: locale.LocaleKeyType, setter: (value: number) => unknown, getter: () => number): Promise<boolean> => await new Promise
+        (
+            async resolve =>
+            {
+                let result = false;
+                const buttonList = $make(HTMLDivElement)({ className: "check-button-list" });
+                const buttonListUpdate = async () => minamo.dom.replaceChildren
+                (
+                    buttonList,
+                    await Promise.all
+                    (
+                        getTermThresholdPreset(getter())
+                        .map
+                        (
+                            async i =>
+                            ({
+                                tag: "button",
+                                className: `check-button ${JSON.stringify(i) === JSON.stringify(getter()) ? "checked": ""}`,
+                                children:
+                                [
+                                    await Resource.loadSvgOrCache("check-icon"),
+                                    $span("")(Domain.timeLongStringFromTick(i)),
+                                ],
+                                onclick: async () =>
+                                {
+                                    await setter(i);
+                                    result = true;
+                                    await buttonListUpdate();
+                                }
+                            }),
+                        )
+                    )
+                );
+                await buttonListUpdate();
+                const ui = popup
+                ({
+                    // className: "add-remove-tags-popup",
+                    children:
+                    [
+                        $tag("h2")("")(`${locale.map(title)}`),
+                        buttonList,
+                        $div("popup-operator")
+                        ([{
+                            tag: "button",
+                            className: "default-button",
+                            children: label("Close"),
+                            onclick: () =>
+                            {
+                                ui.close();
+                            },
+                        }]),
+                    ],
+                    onClose: async () =>
+                    {
+                        Storage.Timespan.add(getter());
+                        resolve(result);
+                    },
+                });
+            }
+        );
+        export const termThresholdSettingsPopup = async (pass: string): Promise<boolean> => await new Promise
+        (
+            async resolve =>
+            {
+                let result = false;
+                const buttonList = $make(HTMLDivElement)({ className: "label-button-list" });
+                const buttonListUpdate = async () =>
+                {
+                    minamo.dom.replaceChildren
+                    (
+                        buttonList,
+                        [
+                            descriptionButton
+                            (
+                                "",
+                                monospace("", label("@flash"), Domain.timeLongStringFromTick(OldStorage.ListSettings.TermThreshold.getMaxShortTermTimespan(pass))),
+                                "flash.description",
+                                async () =>
+                                {
+                                    if (await termThresholdSettingPopup("Flash setting", value => OldStorage.ListSettings.TermThreshold.setMaxShortTermTimespan(pass, value), () => OldStorage.ListSettings.TermThreshold.getMaxShortTermTimespan(pass)))
+                                    {
+                                        result = true;
+                                        await buttonListUpdate();
+                                    }
+                                }
+                            ),
+                            descriptionButton
+                            (
+                                "",
+                                monospace("", label("@flash"), Domain.timeLongStringFromTick(OldStorage.ListSettings.TermThreshold.getMaxMediumTermTimespan(pass))),
+                                "flash.description",
+                                async () =>
+                                {
+                                    if (await termThresholdSettingPopup("Flash setting", value => OldStorage.ListSettings.TermThreshold.setMaxMediumTermTimespan(pass, value), () => OldStorage.ListSettings.TermThreshold.getMaxMediumTermTimespan(pass)))
+                                    {
+                                        result = true;
+                                        await buttonListUpdate();
+                                    }
+                                }
+                            ),
+                        ]
+                    );
+                };
+                await buttonListUpdate();
+                const ui = popup
+                ({
+                    // className: "add-remove-tags-popup",
+                    children:
+                    [
+                        $tag("h2")("")(locale.map("List settings")),
+                        buttonList,
+                        $div("popup-operator")
+                        ([{
+                            tag: "button",
+                            className: "default-button",
+                            children: label("Close"),
+                            onclick: () =>
+                            {
+                                ui.close();
+                            },
+                        }]),
+                    ],
+                    onClose: async () =>
+                    {
+                        resolve(result);
+                    },
+                });
+            }
+        );
         export const listSettingsPopup = async (pass: string): Promise<boolean> => await new Promise
         (
             async resolve =>
@@ -3796,6 +3947,21 @@ export module CyclicToDo
                                     {
                                         result = true;
                                         Operate.renameList(pass, newTitle, async () => await reload());
+                                        await buttonListUpdate();
+                                    }
+                                },
+                            ),
+                            descriptionButton
+                            (
+                                "",
+                                monospace("", label("Export")),
+                                "export.description",
+                                async () =>
+                                {
+                                    if (await termThresholdSettingsPopup(pass))
+                                    {
+                                        result = true;
+                                        updateScreen("operate");
                                         await buttonListUpdate();
                                     }
                                 },
