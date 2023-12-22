@@ -189,6 +189,7 @@
     "System settings": "System settings",
     "List settings": "List settings",
     "Term threshold settings": "Interval threshold settings",
+    "Term threshold settings.description": "Set the boundaries of short interval/medium interval/long interval.",
     "Max short term threshold": "Max short interval",
     "Max medium term threshold": "Max medium interval",
     "Home settings": "Home settings",

@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Tue Dec 19 2023 23:32:03 GMT+0900 (日本標準時)
+    build at: Fri Dec 22 2023 21:30:41 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -21433,6 +21433,10 @@ define("resource/lang.en", [], {
     "please input": "Please input.",
     "System settings": "System settings",
     "List settings": "List settings",
+    "Term threshold settings": "Interval threshold settings",
+    "Term threshold settings.description": "Set the boundaries of short interval/medium interval/long interval.",
+    "Max short term threshold": "Max short interval",
+    "Max medium term threshold": "Max medium interval",
     "Home settings": "Home settings",
     "Tag settings": "Tag settings",
     "Sublist settings": "Sublist settings",
@@ -21705,6 +21709,10 @@ define("resource/lang.ja", [], {
     "please input": "入力してください。",
     "System settings": "システム設定",
     "List settings": "リスト設定",
+    "Term threshold settings": "周期閾値設定",
+    "Term threshold settings.description": "短周期/中周期/長周期の境界を設定します。",
+    "Max short term threshold": "最大短周期間隔",
+    "Max medium term threshold": "最大中周期間隔",
     "Home settings": "ホーム設定",
     "Tag settings": "タグ設定",
     "Sublist settings": "サブリスト設定",
@@ -22126,6 +22134,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                     tagSettings[tag] = TagSettings.get(pass, tag);
                 });
+                var settings = ListSettings.get(pass);
                 var todos = TagMember.getRaw(pass, "@overall");
                 var todoSettings = {};
                 todos.forEach(function (task) { return todoSettings[task] = TodoSettings.get(pass, task); });
@@ -22138,6 +22147,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     title: title,
                     timeAccuracy: timeAccuracy,
                     pass: pass,
+                    settings: settings,
                     todos: todos,
                     todoSettings: todoSettings,
                     tags: tags,
@@ -22154,6 +22164,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         "string" === typeof data_1.title &&
                         "number" === typeof data_1.timeAccuracy &&
                         "string" === typeof data_1.pass &&
+                        "object" === typeof data_1.settings &&
                         Array.isArray(data_1.todos) &&
                         "object" === typeof data_1.todoSettings &&
                         data_1.todos.filter(function (i) { return "string" !== typeof i; }).length <= 0 &&
@@ -22162,6 +22173,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         "object" === typeof data_1.histories) {
                         Pass.add(data_1.pass);
                         Title.set(data_1.pass, data_1.title);
+                        ListSettings.set(data_1.pass, data_1.settings);
                         TagMember.set(data_1.pass, "@overall", data_1.todos);
                         Tag.set(data_1.pass, Object.keys(data_1.tags));
                         Object.keys(data_1.tags).forEach(function (tag) { return TagMember.set(data_1.pass, tag, data_1.tags[tag]); });
@@ -22238,6 +22250,35 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return OldStorage.getStorage(pass).set(Title.makeKey(pass), title);
                 };
             })(Title = OldStorage.Title || (OldStorage.Title = {}));
+            var ListSettings;
+            (function (ListSettings) {
+                ListSettings.makeKey = function (pass) { return "pass:(" + pass + ").settings"; };
+                ListSettings.get = function (pass) { var _a; return (_a = OldStorage.getStorage(pass).getOrNull(ListSettings.makeKey(pass))) !== null && _a !== void 0 ? _a : {}; };
+                ListSettings.set = function (pass, settings) {
+                    return OldStorage.getStorage(pass).set(ListSettings.makeKey(pass), settings);
+                };
+                var TermThreshold;
+                (function (TermThreshold) {
+                    TermThreshold.get = function (pass) { var _a; return (_a = ListSettings.get(pass).termThreshold) !== null && _a !== void 0 ? _a : {}; };
+                    TermThreshold.set = function (pass, settings) {
+                        var listSettings = ListSettings.get(pass);
+                        listSettings.termThreshold = settings;
+                        ListSettings.set(pass, listSettings);
+                    };
+                    TermThreshold.getMaxShortTermTimespan = function (pass) { var _a, _b; return (_b = ((_a = ListSettings.get(pass).termThreshold) !== null && _a !== void 0 ? _a : {}).maxShortTermTimespan) !== null && _b !== void 0 ? _b : Domain.maxShortTermMinutes; };
+                    TermThreshold.setMaxShortTermTimespan = function (pass, maxShortTermTimespan) {
+                        var termThreshold = TermThreshold.get(pass);
+                        termThreshold.maxShortTermTimespan = maxShortTermTimespan;
+                        TermThreshold.set(pass, termThreshold);
+                    };
+                    TermThreshold.getMaxMediumTermTimespan = function (pass) { var _a, _b; return (_b = ((_a = ListSettings.get(pass).termThreshold) !== null && _a !== void 0 ? _a : {}).maxMediumTermTimespan) !== null && _b !== void 0 ? _b : Domain.maxMediumTermMinutes; };
+                    TermThreshold.setMaxMediumTermTimespan = function (pass, maxMediumTermTimespan) {
+                        var termThreshold = TermThreshold.get(pass);
+                        termThreshold.maxMediumTermTimespan = maxMediumTermTimespan;
+                        TermThreshold.set(pass, termThreshold);
+                    };
+                })(TermThreshold = ListSettings.TermThreshold || (ListSettings.TermThreshold = {}));
+            })(ListSettings = OldStorage.ListSettings || (OldStorage.ListSettings = {}));
             var Tag;
             (function (Tag) {
                 Tag.makeKey = function (pass) { return "pass:(" + pass + ").tag.list"; };
@@ -22953,11 +22994,21 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     this.card = card;
                     this.content = content;
                     this.getToDoEntry = function (task) { return _this.live.tasks.filter(function (i) { return task === i.task; })[0]; };
+                    this.getTermCategory = function (item) {
+                        var _a, _b, _c, _d, _e, _f;
+                        return null !== item.smartRest && null !== item.RecentlySmartAverage ?
+                            (item.RecentlySmartAverage < ((_c = (_b = (_a = _this.content.settings) === null || _a === void 0 ? void 0 : _a.termThreshold) === null || _b === void 0 ? void 0 : _b.maxShortTermTimespan) !== null && _c !== void 0 ? _c : Domain.maxShortTermMinutes) ?
+                                "@short-term" :
+                                (item.RecentlySmartAverage < ((_f = (_e = (_d = _this.content.settings) === null || _d === void 0 ? void 0 : _d.termThreshold) === null || _e === void 0 ? void 0 : _e.maxMediumTermTimespan) !== null && _f !== void 0 ? _f : Domain.maxMediumTermMinutes) ?
+                                    "@medium-term" :
+                                    "@long-term")) :
+                            "@irregular-term";
+                    };
                     this.updateTermCategory = function (item) {
                         var _a;
                         // 🔥 ここでイチイチ save するのはナンセンスだけど、 save しておかないと差分チェックの邪魔になる、、、
                         // 🤔 "@short-term", "@long-term", "@irregular-term"　のタグメンバーは this.live に持たせるかねぇ、、、
-                        var term = Domain.getTermCategory(item);
+                        var term = _this.getTermCategory(item);
                         if (((_a = _this.content.tags[term]) !== null && _a !== void 0 ? _a : []).indexOf(item.task) < 0) {
                             ["@short-term", "@medium-term", "@long-term", "@irregular-term"].forEach(function (tag) {
                                 var _a, _b, _c;
@@ -23701,11 +23752,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         return Domain.todoComparerOld(entry, "smart");
                 }
             };
-            Domain.getTermCategoryByAverage = function (item) {
+            Domain.getTermCategoryByAverage = function (pass, item) {
                 return null !== item.smartRest && null !== item.RecentlySmartAverage ?
-                    (item.RecentlySmartAverage < Domain.maxShortTermMinutes ?
+                    (item.RecentlySmartAverage < OldStorage.ListSettings.TermThreshold.getMaxShortTermTimespan(pass) ?
                         "@short-term" :
-                        (item.RecentlySmartAverage < Domain.maxMediumTermMinutes ?
+                        (item.RecentlySmartAverage < OldStorage.ListSettings.TermThreshold.getMaxMediumTermTimespan(pass) ?
                             "@medium-term" :
                             "@long-term")) :
                     "@irregular-term";
@@ -23719,7 +23770,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             };
             Domain.getTermCategory = Domain.getTermCategoryByAverage;
             Domain.updateTermCategoryOld = function (pass, item) {
-                var term = Domain.getTermCategory(item);
+                var term = Domain.getTermCategory(pass, item);
                 if (!OldStorage.TagMember.isMember(pass, term, item.task)) {
                     ["@short-term", "@medium-term", "@long-term", "@irregular-term"].forEach(function (tag) {
                         if (tag === term) {
@@ -25632,6 +25683,205 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 });
             }); };
+            Render.getTermThresholdPreset = function (current) {
+                var list = [];
+                list.push(current);
+                list.push.apply(list, Storage.Timespan.get());
+                list.push.apply(list, config_json_1.default.timespanPreset.map(function (i) { return minamo_js_1.minamo.core.parseTimespan(i); }).filter(exports.isNumber).map(function (i) { return i / Domain.timeAccuracy; }));
+                return list.filter(exports.uniqueFilter).filter(exports.takeFilter(config_json_1.default.timespanPresetMaxCount)).sort(minamo_js_1.minamo.core.comparer.basic);
+            };
+            Render.termThresholdSettingPopup = function (title, setter, getter) { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                var result, buttonList, buttonListUpdate, ui;
+                                var _this = this;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            result = false;
+                                            buttonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
+                                            buttonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                var _a, _b, _c;
+                                                var _this = this;
+                                                return __generator(this, function (_d) {
+                                                    switch (_d.label) {
+                                                        case 0:
+                                                            _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                            _c = [buttonList];
+                                                            return [4 /*yield*/, Promise.all(__spreadArray(__spreadArray([], Render.getTermThresholdPreset(getter())), [NaN,]).map(function (i) { return __awaiter(_this, void 0, void 0, function () {
+                                                                    var _a;
+                                                                    var _this = this;
+                                                                    return __generator(this, function (_b) {
+                                                                        switch (_b.label) {
+                                                                            case 0:
+                                                                                _a = {
+                                                                                    tag: "button",
+                                                                                    className: "check-button " + (JSON.stringify(i) === JSON.stringify(getter()) ? "checked" : "")
+                                                                                };
+                                                                                return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                                            case 1: return [2 /*return*/, (_a.children = [
+                                                                                    _b.sent(),
+                                                                                    exports.isValidNumber(i) ?
+                                                                                        Render.$span("")(Domain.timeLongStringFromTick(i)) :
+                                                                                        Render.label("pickup.specify")
+                                                                                ],
+                                                                                    _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                        var value;
+                                                                                        var _a;
+                                                                                        return __generator(this, function (_b) {
+                                                                                            switch (_b.label) {
+                                                                                                case 0:
+                                                                                                    if (!!exports.isValidNumber(i)) return [3 /*break*/, 5];
+                                                                                                    return [4 /*yield*/, Render.dateTimeSpanPrompt(locale_2.locale.map("pickup.elapsed-time"), (_a = getter()) !== null && _a !== void 0 ? _a : 0)];
+                                                                                                case 1:
+                                                                                                    value = _b.sent();
+                                                                                                    if (!(null !== value)) return [3 /*break*/, 4];
+                                                                                                    return [4 /*yield*/, setter(value)];
+                                                                                                case 2:
+                                                                                                    _b.sent();
+                                                                                                    result = true;
+                                                                                                    return [4 /*yield*/, buttonListUpdate()];
+                                                                                                case 3:
+                                                                                                    _b.sent();
+                                                                                                    _b.label = 4;
+                                                                                                case 4: return [3 /*break*/, 8];
+                                                                                                case 5: return [4 /*yield*/, setter(i)];
+                                                                                                case 6:
+                                                                                                    _b.sent();
+                                                                                                    result = true;
+                                                                                                    return [4 /*yield*/, buttonListUpdate()];
+                                                                                                case 7:
+                                                                                                    _b.sent();
+                                                                                                    _b.label = 8;
+                                                                                                case 8: return [2 /*return*/];
+                                                                                            }
+                                                                                        });
+                                                                                    }); },
+                                                                                    _a)];
+                                                                        }
+                                                                    });
+                                                                }); }))];
+                                                        case 1: return [2 /*return*/, _b.apply(_a, _c.concat([_d.sent()]))];
+                                                    }
+                                                });
+                                            }); };
+                                            return [4 /*yield*/, buttonListUpdate()];
+                                        case 1:
+                                            _a.sent();
+                                            ui = Render.popup({
+                                                // className: "add-remove-tags-popup",
+                                                children: [
+                                                    Render.$tag("h2")("")("" + locale_2.locale.map(title)),
+                                                    buttonList,
+                                                    Render.$div("popup-operator")([{
+                                                            tag: "button",
+                                                            className: "default-button",
+                                                            children: Render.label("Close"),
+                                                            onclick: function () {
+                                                                ui.close();
+                                                            },
+                                                        }]),
+                                                ],
+                                                onClose: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    return __generator(this, function (_a) {
+                                                        Storage.Timespan.add(getter());
+                                                        resolve(result);
+                                                        return [2 /*return*/];
+                                                    });
+                                                }); },
+                                            });
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); })];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            }); };
+            Render.termThresholdSettingsPopup = function (pass) { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                var result, buttonList, buttonListUpdate, ui;
+                                var _this = this;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            result = false;
+                                            buttonList = Render.$make(HTMLDivElement)({ className: "label-button-list" });
+                                            buttonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                var _this = this;
+                                                return __generator(this, function (_a) {
+                                                    minamo_js_1.minamo.dom.replaceChildren(buttonList, [
+                                                        Render.descriptionButton("", Render.monospace("", Render.label("Max short term threshold"), Domain.timeLongStringFromTick(OldStorage.ListSettings.TermThreshold.getMaxShortTermTimespan(pass))), "flash.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            return __generator(this, function (_a) {
+                                                                switch (_a.label) {
+                                                                    case 0: return [4 /*yield*/, Render.termThresholdSettingPopup("Max short term threshold", function (value) { return OldStorage.ListSettings.TermThreshold.setMaxShortTermTimespan(pass, value); }, function () { return OldStorage.ListSettings.TermThreshold.getMaxShortTermTimespan(pass); })];
+                                                                    case 1:
+                                                                        if (!_a.sent()) return [3 /*break*/, 3];
+                                                                        result = true;
+                                                                        return [4 /*yield*/, buttonListUpdate()];
+                                                                    case 2:
+                                                                        _a.sent();
+                                                                        _a.label = 3;
+                                                                    case 3: return [2 /*return*/];
+                                                                }
+                                                            });
+                                                        }); }),
+                                                        Render.descriptionButton("", Render.monospace("", Render.label("Max medium term threshold"), Domain.timeLongStringFromTick(OldStorage.ListSettings.TermThreshold.getMaxMediumTermTimespan(pass))), "flash.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            return __generator(this, function (_a) {
+                                                                switch (_a.label) {
+                                                                    case 0: return [4 /*yield*/, Render.termThresholdSettingPopup("Max medium term threshold", function (value) { return OldStorage.ListSettings.TermThreshold.setMaxMediumTermTimespan(pass, value); }, function () { return OldStorage.ListSettings.TermThreshold.getMaxMediumTermTimespan(pass); })];
+                                                                    case 1:
+                                                                        if (!_a.sent()) return [3 /*break*/, 3];
+                                                                        result = true;
+                                                                        return [4 /*yield*/, buttonListUpdate()];
+                                                                    case 2:
+                                                                        _a.sent();
+                                                                        _a.label = 3;
+                                                                    case 3: return [2 /*return*/];
+                                                                }
+                                                            });
+                                                        }); }),
+                                                    ]);
+                                                    return [2 /*return*/];
+                                                });
+                                            }); };
+                                            return [4 /*yield*/, buttonListUpdate()];
+                                        case 1:
+                                            _a.sent();
+                                            ui = Render.popup({
+                                                // className: "add-remove-tags-popup",
+                                                children: [
+                                                    Render.$tag("h2")("")(locale_2.locale.map("Term threshold settings")),
+                                                    buttonList,
+                                                    Render.$div("popup-operator")([{
+                                                            tag: "button",
+                                                            className: "default-button",
+                                                            children: Render.label("Close"),
+                                                            onclick: function () {
+                                                                ui.close();
+                                                            },
+                                                        }]),
+                                                ],
+                                                onClose: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    return __generator(this, function (_a) {
+                                                        resolve(result);
+                                                        return [2 /*return*/];
+                                                    });
+                                                }); },
+                                            });
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); })];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            }); };
             Render.listSettingsPopup = function (pass) { return __awaiter(_this, void 0, void 0, function () {
                 var _this = this;
                 return __generator(this, function (_a) {
@@ -25670,6 +25920,22 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                         case 1: return [2 /*return*/, _a.sent()];
                                                                                     }
                                                                                 }); }); });
+                                                                                return [4 /*yield*/, buttonListUpdate()];
+                                                                            case 2:
+                                                                                _a.sent();
+                                                                                _a.label = 3;
+                                                                            case 3: return [2 /*return*/];
+                                                                        }
+                                                                    });
+                                                                }); }),
+                                                                Render.descriptionButton("", Render.monospace("", Render.label("Term threshold settings")), "Term threshold settings.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                    return __generator(this, function (_a) {
+                                                                        switch (_a.label) {
+                                                                            case 0: return [4 /*yield*/, Render.termThresholdSettingsPopup(pass)];
+                                                                            case 1:
+                                                                                if (!_a.sent()) return [3 /*break*/, 3];
+                                                                                result = true;
+                                                                                Render.updateScreen("operate");
                                                                                 return [4 /*yield*/, buttonListUpdate()];
                                                                             case 2:
                                                                                 _a.sent();
@@ -28460,27 +28726,27 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 });
             }); };
             Render.screenHeaderTagMenuSegment = function (pass, current) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5;
-                var _6, _7, _8, _9;
+                var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8;
+                var _9, _10, _11, _12, _13;
                 var _this = this;
-                return __generator(this, function (_10) {
-                    switch (_10.label) {
+                return __generator(this, function (_14) {
+                    switch (_14.label) {
                         case 0:
-                            _6 = {
+                            _9 = {
                                 icon: Resource.getTagIcon(current),
                                 title: Domain.tagMap(current)
                             };
                             return [4 /*yield*/, Render.tagMenuItem(current, pass, "@overall")];
                         case 1:
                             _e = [
-                                _10.sent()
+                                _14.sent()
                             ];
                             _f = Render.menuLinkItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("history-icon")];
                         case 2:
                             _e = _e.concat([
                                 _f.apply(void 0, [[
-                                        _10.sent(),
+                                        _14.sent(),
                                         Render.labelSpan(locale_2.locale.map("History"))
                                     ], { pass: pass, tag: "@overall", hash: "history", }])
                             ]);
@@ -28491,7 +28757,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             // .concat
                             _h = (_d = _e.concat([
                                 _g.apply(void 0, [[
-                                        _10.sent(),
+                                        _14.sent(),
                                         Render.labelSpan(locale_2.locale.map("@deleted")),
                                         Render.monospace("" + OldStorage.Removed.get(pass).length)
                                     ], { pass: pass, hash: "removed" }, current === "@deleted" ? "current-item" : undefined]),
@@ -28502,7 +28768,33 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _k = [current];
                             return [4 /*yield*/, Resource.loadSvgOrCache("ghost-term-icon")];
                         case 4:
-                            _k = _k.concat([[_10.sent(), Render.label("Term")]]);
+                            _k = _k.concat([[_14.sent(), Render.label("Term")]]);
+                            _10 = {
+                                id: "@Term threshold settings"
+                            };
+                            _m = Render.menuItem;
+                            return [4 /*yield*/, Resource.loadSvgOrCache("settings-icon")];
+                        case 5:
+                            _o = (_l = [
+                                (_10.item = _m.apply(void 0, [[
+                                        _14.sent(),
+                                        Render.label("Term threshold settings")
+                                    ], function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, Render.termThresholdSettingsPopup(pass)];
+                                                case 1:
+                                                    if (_a.sent()) {
+                                                        Render.updateScreen("operate");
+                                                    }
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }]),
+                                    _10),
+                                { id: "@separator", item: Render.menuSeparator(), }
+                            ])
+                                .concat;
                             return [4 /*yield*/, Promise.all(Render.getTagList({ pass: pass, term: true }).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
                                     return __generator(this, function (_b) {
@@ -28514,17 +28806,17 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         }
                                     });
                                 }); }))];
-                        case 5: return [4 /*yield*/, _j.apply(void 0, _k.concat([_10.sent()]))];
-                        case 6:
+                        case 6: return [4 /*yield*/, _j.apply(void 0, _k.concat([_o.apply(_l, [_14.sent()])]))];
+                        case 7:
                             // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
                             // .concat
-                            _l = (_c = _h.apply(_d, [_10.sent()]))
+                            _p = (_c = _h.apply(_d, [_14.sent()]))
                                 .concat;
-                            _m = Render.groupMenuItem;
-                            _o = [current];
+                            _q = Render.groupMenuItem;
+                            _r = [current];
                             return [4 /*yield*/, Resource.loadSvgOrCache("flag-icon")];
-                        case 7:
-                            _o = _o.concat([[_10.sent(), Render.label("Auto tag")]]);
+                        case 8:
+                            _r = _r.concat([[_14.sent(), Render.label("Auto tag")]]);
                             return [4 /*yield*/, Promise.all(Render.getTagList({ pass: pass, auto: true }).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
                                     return __generator(this, function (_b) {
@@ -28536,26 +28828,26 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         }
                                     });
                                 }); }))];
-                        case 8: return [4 /*yield*/, _m.apply(void 0, _o.concat([_10.sent()]))];
-                        case 9:
+                        case 9: return [4 /*yield*/, _q.apply(void 0, _r.concat([_14.sent()]))];
+                        case 10:
                             // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
                             // .concat
-                            _p = (_b = _l.apply(_c, [_10.sent()]))
+                            _s = (_b = _p.apply(_c, [_14.sent()]))
                                 .concat;
-                            _q = Render.groupMenuItem;
-                            _r = [current];
+                            _t = Render.groupMenuItem;
+                            _u = [current];
                             return [4 /*yield*/, Resource.loadSvgOrCache("folder-icon")];
-                        case 10:
-                            _r = _r.concat([[_10.sent(), Render.label("Sublist")]]);
-                            _7 = {
+                        case 11:
+                            _u = _u.concat([[_14.sent(), Render.label("Sublist")]]);
+                            _11 = {
                                 id: "@new"
                             };
-                            _u = Render.menuItem;
+                            _x = Render.menuItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("add-folder-icon")];
-                        case 11:
-                            _v = (_t = [
-                                (_7.item = _u.apply(void 0, [[
-                                        _10.sent(),
+                        case 12:
+                            _y = (_w = [
+                                (_11.item = _x.apply(void 0, [[
+                                        _14.sent(),
                                         Render.label("@new-sublist")
                                     ], function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
@@ -28563,7 +28855,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             case 1: return [2 /*return*/, _a.sent()];
                                         }
                                     }); }); }]),
-                                    _7),
+                                    _11),
                                 { id: "@separator", item: Render.menuSeparator(), }
                             ])
                                 .concat;
@@ -28578,34 +28870,34 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         }
                                     });
                                 }); }))];
-                        case 12:
-                            _w = (_s = _v.apply(_t, [_10.sent()]))
+                        case 13:
+                            _z = (_v = _y.apply(_w, [_14.sent()]))
                                 .concat;
-                            _x = [{ id: "@separator", item: Render.menuSeparator(), }];
-                            _8 = { id: "@:@root" };
+                            _0 = [{ id: "@separator", item: Render.menuSeparator(), }];
+                            _12 = { id: "@:@root" };
                             return [4 /*yield*/, Render.tagMenuItem(current, pass, "@:@root")];
-                        case 13: return [4 /*yield*/, _q.apply(void 0, _r.concat([_w.apply(_s, [_x.concat([
-                                        (_8.item = _10.sent(), _8)
+                        case 14: return [4 /*yield*/, _t.apply(void 0, _u.concat([_z.apply(_v, [_0.concat([
+                                        (_12.item = _14.sent(), _12)
                                     ])])]))];
-                        case 14:
+                        case 15:
                             // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
                             // .concat
-                            _y = (_a = _p.apply(_b, [_10.sent()]))
+                            _1 = (_a = _s.apply(_b, [_14.sent()]))
                                 .concat;
-                            _z = Render.groupMenuItem;
-                            _0 = [current];
+                            _2 = Render.groupMenuItem;
+                            _3 = [current];
                             return [4 /*yield*/, Resource.loadSvgOrCache("tag-icon")];
-                        case 15:
-                            _0 = _0.concat([[_10.sent(), Render.label("Tag")]]);
-                            _9 = {
+                        case 16:
+                            _3 = _3.concat([[_14.sent(), Render.label("Tag")]]);
+                            _13 = {
                                 id: "@new"
                             };
-                            _3 = Render.menuItem;
+                            _6 = Render.menuItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("add-tag-icon")];
-                        case 16:
-                            _4 = (_2 = [
-                                (_9.item = _3.apply(void 0, [[
-                                        _10.sent(),
+                        case 17:
+                            _7 = (_5 = [
+                                (_13.item = _6.apply(void 0, [[
+                                        _14.sent(),
                                         Render.label("@new")
                                     ], function () { return __awaiter(_this, void 0, void 0, function () {
                                         var tag;
@@ -28623,7 +28915,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             }
                                         });
                                     }); }]),
-                                    _9),
+                                    _13),
                                 { id: "@separator", item: Render.menuSeparator(), }
                             ])
                                 .concat;
@@ -28638,8 +28930,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         }
                                     });
                                 }); }))];
-                        case 17:
-                            _5 = (_1 = _4.apply(_2, [_10.sent()])
+                        case 18:
+                            _8 = (_4 = _7.apply(_5, [_14.sent()])
                                 .concat([
                                 { id: "@separator", item: Render.menuSeparator(), },
                             ]))
@@ -28655,12 +28947,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         }
                                     });
                                 }); }))];
-                        case 18: return [4 /*yield*/, _z.apply(void 0, _0.concat([_5.apply(_1, [_10.sent()])]))];
-                        case 19: return [2 /*return*/, (_6.menu = 
+                        case 19: return [4 /*yield*/, _2.apply(void 0, _3.concat([_8.apply(_4, [_14.sent()])]))];
+                        case 20: return [2 /*return*/, (_9.menu = 
                             // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
                             // .concat
-                            _y.apply(_a, [_10.sent()]),
-                                _6)];
+                            _1.apply(_a, [_14.sent()]),
+                                _9)];
                     }
                 });
             }); };
@@ -29242,11 +29534,32 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 });
             }); };
             Render.termTab = function (entry) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, Render.bottomTab(entry, Render.getTagList({ term: true })
-                                .map(function (i) { return Render.makeBottomSubTabForTag(entry.pass, i); }))];
-                        case 1: return [2 /*return*/, _a.sent()];
+                var _a, _b, _c;
+                var _this = this;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            _a = Render.bottomTab;
+                            _b = [entry, Render.getTagList({ term: true })
+                                    .map(function (i) { return Render.makeBottomSubTabForTag(entry.pass, i); })];
+                            _c = Render.menuItem;
+                            return [4 /*yield*/, Resource.loadSvgOrCache("settings-icon")];
+                        case 1: return [4 /*yield*/, _a.apply(void 0, _b.concat([_c.apply(void 0, [[
+                                        _d.sent(),
+                                        Render.label("Term threshold settings")
+                                    ], function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, Render.termThresholdSettingsPopup(entry.pass)];
+                                                case 1:
+                                                    if (_a.sent()) {
+                                                        Render.updateScreen("operate");
+                                                    }
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }])]))];
+                        case 2: return [2 /*return*/, _d.sent()];
                     }
                 });
             }); };
@@ -32510,7 +32823,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Dec 19 2023 23:32:03 GMT+0900 (日本標準時)', buildTimestampTick: 1702996323438, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Dec 22 2023 21:30:41 GMT+0900 (日本標準時)', buildTimestampTick: 1703248241112, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -32734,7 +33047,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Tue Dec 19 2023 23:32:03 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Fri Dec 22 2023 21:30:41 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

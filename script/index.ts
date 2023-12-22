@@ -3974,7 +3974,7 @@ export module CyclicToDo
                             (
                                 "",
                                 monospace("", label("Term threshold settings")),
-                                "export.description",
+                                "Term threshold settings.description",
                                 async () =>
                                 {
                                     if (await termThresholdSettingsPopup(pass))
@@ -6317,7 +6317,29 @@ export module CyclicToDo
                     (
                         current,
                         [ await Resource.loadSvgOrCache("ghost-term-icon"), label("Term"), ],
-                        await Promise.all(getTagList({ pass, term: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
+                        [
+                            <{ id: string, item: minamo.dom.Source, }>
+                            {
+                                id: "@Term threshold settings",
+                                item: menuItem
+                                (
+                                    [
+                                        await Resource.loadSvgOrCache("settings-icon"),
+                                        label("Term threshold settings"),
+                                                        ],
+                                    async () =>
+                                    {
+                                        if (await termThresholdSettingsPopup(pass))
+                                        {
+                                            updateScreen("operate");
+                                        }
+                                    }
+                                ),
+                            },
+                            <{ id: string, item: minamo.dom.Source, }>
+                            { id: "@separator", item: menuSeparator(), },
+                        ]
+                        .concat(await Promise.all(getTagList({ pass, term: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
                     )
                 )
                 .concat
@@ -6971,7 +6993,21 @@ export module CyclicToDo
         (
             entry,
             getTagList({ term: true })
-                .map(i => makeBottomSubTabForTag(entry.pass, i))
+                .map(i => makeBottomSubTabForTag(entry.pass, i)),
+            menuItem
+            (
+                [
+                    await Resource.loadSvgOrCache("settings-icon"),
+                    label("Term threshold settings"),
+                ],
+                async () =>
+                {
+                    if (await termThresholdSettingsPopup(entry.pass))
+                    {
+                        updateScreen("operate");
+                    }
+                }
+            )
         );
         export const autoTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (

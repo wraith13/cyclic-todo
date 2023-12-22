@@ -189,6 +189,7 @@
     "System settings": "システム設定",
     "List settings": "リスト設定",
     "Term threshold settings": "周期閾値設定",
+    "Term threshold settings.description": "短周期/中周期/長周期の境界を設定します。",
     "Max short term threshold": "最大短周期間隔",
     "Max medium term threshold": "最大中周期間隔",
     "Home settings": "ホーム設定",
