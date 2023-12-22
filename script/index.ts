@@ -3799,7 +3799,7 @@ export module CyclicToDo
                     buttonList,
                     await Promise.all
                     (
-                        getTermThresholdPreset(getter())
+                        [ ...getTermThresholdPreset(getter()), NaN, ]
                         .map
                         (
                             async i =>
@@ -3809,13 +3809,32 @@ export module CyclicToDo
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    $span("")(Domain.timeLongStringFromTick(i)),
+                                    isValidNumber(i) ?
+                                        $span("")(Domain.timeLongStringFromTick(i)):
+                                        label("pickup.specify"),
                                 ],
                                 onclick: async () =>
                                 {
-                                    await setter(i);
-                                    result = true;
-                                    await buttonListUpdate();
+                                    if ( ! isValidNumber(i))
+                                    {
+                                        const value = await dateTimeSpanPrompt
+                                        (
+                                            locale.map("pickup.elapsed-time"),
+                                            getter() ?? 0
+                                        );
+                                        if (null !== value)
+                                        {
+                                            await setter(value);
+                                            result = true;
+                                            await buttonListUpdate();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        await setter(i);
+                                        result = true;
+                                        await buttonListUpdate();
+                                    }
                                 }
                             }),
                         )
@@ -3863,11 +3882,11 @@ export module CyclicToDo
                             descriptionButton
                             (
                                 "",
-                                monospace("", label("@flash"), Domain.timeLongStringFromTick(OldStorage.ListSettings.TermThreshold.getMaxShortTermTimespan(pass))),
+                                monospace("", label("Max short term threshold"), Domain.timeLongStringFromTick(OldStorage.ListSettings.TermThreshold.getMaxShortTermTimespan(pass))),
                                 "flash.description",
                                 async () =>
                                 {
-                                    if (await termThresholdSettingPopup("Flash setting", value => OldStorage.ListSettings.TermThreshold.setMaxShortTermTimespan(pass, value), () => OldStorage.ListSettings.TermThreshold.getMaxShortTermTimespan(pass)))
+                                    if (await termThresholdSettingPopup("Max short term threshold", value => OldStorage.ListSettings.TermThreshold.setMaxShortTermTimespan(pass, value), () => OldStorage.ListSettings.TermThreshold.getMaxShortTermTimespan(pass)))
                                     {
                                         result = true;
                                         await buttonListUpdate();
@@ -3877,11 +3896,11 @@ export module CyclicToDo
                             descriptionButton
                             (
                                 "",
-                                monospace("", label("@flash"), Domain.timeLongStringFromTick(OldStorage.ListSettings.TermThreshold.getMaxMediumTermTimespan(pass))),
+                                monospace("", label("Max medium term threshold"), Domain.timeLongStringFromTick(OldStorage.ListSettings.TermThreshold.getMaxMediumTermTimespan(pass))),
                                 "flash.description",
                                 async () =>
                                 {
-                                    if (await termThresholdSettingPopup("Flash setting", value => OldStorage.ListSettings.TermThreshold.setMaxMediumTermTimespan(pass, value), () => OldStorage.ListSettings.TermThreshold.getMaxMediumTermTimespan(pass)))
+                                    if (await termThresholdSettingPopup("Max medium term threshold", value => OldStorage.ListSettings.TermThreshold.setMaxMediumTermTimespan(pass, value), () => OldStorage.ListSettings.TermThreshold.getMaxMediumTermTimespan(pass)))
                                     {
                                         result = true;
                                         await buttonListUpdate();
@@ -3897,7 +3916,7 @@ export module CyclicToDo
                     // className: "add-remove-tags-popup",
                     children:
                     [
-                        $tag("h2")("")(locale.map("List settings")),
+                        $tag("h2")("")(locale.map("Term threshold settings")),
                         buttonList,
                         $div("popup-operator")
                         ([{
@@ -3954,7 +3973,7 @@ export module CyclicToDo
                             descriptionButton
                             (
                                 "",
-                                monospace("", label("Export")),
+                                monospace("", label("Term threshold settings")),
                                 "export.description",
                                 async () =>
                                 {
