@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sat Dec 23 2023 10:16:02 GMT+0900 (日本標準時)
+    build at: Sat Dec 23 2023 21:04:04 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -21134,7 +21134,7 @@ define("resource/config", [], {
     "sleepStandardDeviationRate": 3.0,
     "granceTimespan": "1d",
     "maxHistories": 100,
-    "maxGroupHistories": 3000,
+    "maxGroupHistories": 1000,
     "maxRestAdjustTimespan": "3h",
     "maxShortTermTimespan": "3d",
     "maxMediumTermTimespan": "15d",
@@ -30255,17 +30255,122 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                 });
             }); };
-            Render.historyScreenBody = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d;
+            Render.pager = function (data) { return __awaiter(_this, void 0, void 0, function () {
+                var pagesize, maxpage, topButtonList, bottomButtonList, result, pager, update, paging;
                 var _this = this;
-                return __generator(this, function (_e) {
-                    switch (_e.label) {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
                         case 0:
-                            _a = Render.$div("column-flex-list history-list");
-                            return [4 /*yield*/, Promise.all(list.map(function (item) { return Render.historyItem(entry, item); }).slice(0, config_json_1.default.maxGroupHistories))];
+                            pagesize = "number" !== typeof data.pagesize ? config_json_1.default.maxGroupHistories : Math.min(Math.max(data.pagesize, 100), 10000);
+                            maxpage = Math.ceil(data.list.length / pagesize);
+                            topButtonList = Render.$make(HTMLDivElement)({ tag: "div", className: "button-list", });
+                            bottomButtonList = Render.$make(HTMLDivElement)({ tag: "div", className: "button-list", });
+                            result = Render.$make(HTMLDivElement)({ tag: "div", className: data.className, });
+                            pager = function (page) {
+                                var result = [];
+                                var isFirstPage = page <= 1;
+                                var isLastPage = maxpage <= page;
+                                if (isFirstPage) {
+                                    result.push({
+                                        tag: "button",
+                                        children: "<<",
+                                        attributes: { disabled: "disabled", }
+                                    });
+                                    result.push({
+                                        tag: "button",
+                                        children: "<",
+                                        attributes: { disabled: "disabled", }
+                                    });
+                                }
+                                else {
+                                    result.push({
+                                        tag: "button",
+                                        children: "<<",
+                                        onclick: function () { return paging(1); }
+                                    });
+                                    result.push({
+                                        tag: "button",
+                                        children: "<",
+                                        onclick: function () { return paging(page - 1); }
+                                    });
+                                }
+                                result.push({
+                                    tag: "button",
+                                    children: (page - 1) * pagesize + 1 + " - " + Math.min(page * pagesize, data.list.length),
+                                });
+                                if (isLastPage) {
+                                    result.push({
+                                        tag: "button",
+                                        children: ">",
+                                        attributes: { disabled: "disabled", }
+                                    });
+                                    result.push({
+                                        tag: "button",
+                                        children: ">>",
+                                        attributes: { disabled: "disabled", }
+                                    });
+                                }
+                                else {
+                                    result.push({
+                                        tag: "button",
+                                        children: ">",
+                                        onclick: function () { return paging(page + 1); }
+                                    });
+                                    result.push({
+                                        tag: "button",
+                                        children: ">>",
+                                        onclick: function () { return paging(maxpage); }
+                                    });
+                                }
+                                return result;
+                            };
+                            update = function (page) { return __awaiter(_this, void 0, void 0, function () {
+                                var contents;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, Promise.all(data.list.slice((page - 1) * pagesize, page * pagesize).map(function (i) { return data.renderer(i); }))];
+                                        case 1:
+                                            contents = _a.sent();
+                                            minamo_js_1.minamo.dom.replaceChildren(topButtonList, pager(page));
+                                            minamo_js_1.minamo.dom.replaceChildren(result, contents);
+                                            minamo_js_1.minamo.dom.replaceChildren(bottomButtonList, pager(page));
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); };
+                            paging = function (page) { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, Render.updatingScreenBody()];
+                                        case 1:
+                                            _a.sent();
+                                            return [4 /*yield*/, update(page)];
+                                        case 2:
+                                            _a.sent();
+                                            return [4 /*yield*/, Render.updatedScreenBody()];
+                                        case 3:
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); };
+                            return [4 /*yield*/, update(1)];
                         case 1:
-                            _b = [
-                                _a.apply(void 0, [_e.sent()]),
+                            _a.sent();
+                            return [2 /*return*/, maxpage < 2 ? result : [topButtonList, result, bottomButtonList,]];
+                    }
+                });
+            }); };
+            Render.historyScreenBody = function (entry, list) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c;
+                var _this = this;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0: return [4 /*yield*/, Render.pager({ className: "column-flex-list history-list", list: list, renderer: function (item) { return Render.historyItem(entry, item); }, })];
+                        case 1:
+                            _a = [
+                                _d.sent(),
+                                // $div("column-flex-list history-list")(await Promise.all(list.map(item => historyItem(entry, item)).slice(0, config.maxGroupHistories))),
                                 Render.$div("signboard")([
                                     //poem(),
                                     Render.$div("button-list")([
@@ -30290,7 +30395,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             //         children: $tag("button")("default-button main-button long-button")(label("Back to List")),
                             //     })
                             // ),
-                            _c = Render.$div("poem-list");
+                            _b = Render.$div("poem-list");
                             return [4 /*yield*/, Render.poem({
                                     title: locale_2.locale.string("この画面で表示される件数"),
                                     subtitle: config_json_1.default.maxGroupHistories + " / " + list.length,
@@ -30298,21 +30403,21 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     image: "🚫",
                                 })];
                         case 2:
-                            _d = [
-                                _e.sent()
+                            _c = [
+                                _d.sent()
                             ];
                             return [4 /*yield*/, Render.poem("header")];
                         case 3:
-                            _d = _d.concat([
-                                _e.sent()
+                            _c = _c.concat([
+                                _d.sent()
                             ]);
                             return [4 /*yield*/, Render.poem("accuracy")];
                         case 4:
-                            _d = _d.concat([
-                                _e.sent()
+                            _c = _c.concat([
+                                _d.sent()
                             ]);
                             return [4 /*yield*/, Render.poem("bottomtabs")];
-                        case 5: return [2 /*return*/, (_b.concat([
+                        case 5: return [2 /*return*/, (_a.concat([
                                 // $div("button-list")
                                 // (
                                 //     internalLink
@@ -30321,8 +30426,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 //         children: $tag("button")("default-button main-button long-button")(label("Back to List")),
                                 //     })
                                 // ),
-                                _c.apply(void 0, [_d.concat([
-                                        _e.sent()
+                                _b.apply(void 0, [_c.concat([
+                                        _d.sent()
                                     ])])
                             ]))];
                     }
@@ -32830,7 +32935,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Dec 23 2023 10:16:02 GMT+0900 (日本標準時)', buildTimestampTick: 1703294162526, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Dec 23 2023 21:04:04 GMT+0900 (日本標準時)', buildTimestampTick: 1703333044733, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -33054,7 +33159,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Sat Dec 23 2023 10:16:02 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Sat Dec 23 2023 21:04:04 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

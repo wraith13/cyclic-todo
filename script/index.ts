@@ -7540,9 +7540,105 @@ export module CyclicToDo
             ),
             parent: { pass: entry.pass, tag: entry.tag, },
         });
+        export const pager = async <T>(data: { className: string, pagesize?:number, list: T[]; renderer: (item: T) => Promise<minamo.dom.Source>; }) =>
+        {
+            const pagesize = "number" !== typeof data.pagesize ? config.maxGroupHistories: Math.min(Math.max(data.pagesize, 100), 10000);
+            const maxpage = Math.ceil(data.list.length / pagesize);
+            const topButtonList = $make(HTMLDivElement)({ tag: "div", className: "button-list", });
+            const bottomButtonList = $make(HTMLDivElement)({ tag: "div", className: "button-list", });
+            const result = $make(HTMLDivElement)({ tag: "div", className: data.className, });
+            const pager = (page: number) =>
+            {
+                const result: minamo.dom.Source[] = [];
+                const isFirstPage = page <= 1;
+                const isLastPage = maxpage <= page;
+                if (isFirstPage)
+                {
+                    result.push
+                    ({
+                        tag: "button",
+                        children: "<<",
+                        attributes: { disabled: "disabled", }
+                    });
+                    result.push
+                    ({
+                        tag: "button",
+                        children: "<",
+                        attributes: { disabled: "disabled", }
+                    });
+                }
+                else
+                {
+                    result.push
+                    ({
+                        tag: "button",
+                        children: "<<",
+                        onclick: () => paging(1)
+                    });
+                    result.push
+                    ({
+                        tag: "button",
+                        children: "<",
+                        onclick: () => paging(page -1)
+                    });
+                }
+                result.push
+                ({
+                    tag: "button",
+                    children: `${(page -1) *pagesize +1} - ${Math.min(page *pagesize, data.list.length)}`,
+                });
+                if (isLastPage)
+                {
+                    result.push
+                    ({
+                        tag: "button",
+                        children: ">",
+                        attributes: { disabled: "disabled", }
+                    });
+                    result.push
+                    ({
+                        tag: "button",
+                        children: ">>",
+                        attributes: { disabled: "disabled", }
+                    });
+                }
+                else
+                {
+                    result.push
+                    ({
+                        tag: "button",
+                        children: ">",
+                        onclick: () => paging(page +1)
+                    });
+                    result.push
+                    ({
+                        tag: "button",
+                        children: ">>",
+                        onclick: () => paging(maxpage)
+                    });
+                }
+                return result;
+            };
+            const update = async (page: number) =>
+            {
+                const contents = await Promise.all(data.list.slice((page -1) *pagesize, page *pagesize).map(i => data.renderer(i)));
+                minamo.dom.replaceChildren(topButtonList, pager(page));
+                minamo.dom.replaceChildren(result, contents);
+                minamo.dom.replaceChildren(bottomButtonList, pager(page));
+            };
+            const paging = async (page: number) =>
+            {
+                await updatingScreenBody();
+                await update(page);
+                await updatedScreenBody();
+            }
+            await update(1);
+            return maxpage < 2 ? result: [ topButtonList, result, bottomButtonList, ];
+        };
         export const historyScreenBody = async (entry: ToDoTagEntryOld, list: { task: string, tick: number | null }[]) =>
         ([
-            $div("column-flex-list history-list")(await Promise.all(list.map(item => historyItem(entry, item)).slice(0, config.maxGroupHistories))),
+            await pager({ className: "column-flex-list history-list", list, renderer: item => historyItem(entry, item), }),
+            // $div("column-flex-list history-list")(await Promise.all(list.map(item => historyItem(entry, item)).slice(0, config.maxGroupHistories))),
             $div("signboard")
             ([
                 //poem(),
