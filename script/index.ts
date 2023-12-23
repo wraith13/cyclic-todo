@@ -6766,13 +6766,16 @@ export module CyclicToDo
         export const listScreenHeader = async (entry: ToDoTagEntryOld, _list: ToDoEntry[]): Promise<HeaderSource> =>
         ({
             items:
-            [
-                await screenHeaderHomeSegment(),
-                "@overall" === entry.tag ?
-                    await screenHeaderListMenuSegment(entry.pass):
+            "@overall" === entry.tag ?
+                [
+                    await screenHeaderHomeSegment(),
+                    await screenHeaderListMenuSegment(entry.pass),
+                ]:
+                [
+                    await screenHeaderHomeSegment(),
                     await screenHeaderListSegment(entry.pass),
-                await screenHeaderTagMenuSegment(entry.pass, entry.tag),
-            ],
+                    await screenHeaderTagMenuSegment(entry.pass, entry.tag),
+                ],
             menu: () => listScreenMenu(entry),
             operator: await filter
             (
