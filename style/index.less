@@ -813,7 +813,7 @@ h1
             }
         }
     }
-    .bottom-tab +.bottom-tab
+    .bottom-tab + .bottom-tab
     {
         border-left-style: none;
         border-left-width: 0px;
@@ -1089,6 +1089,10 @@ button
     &.delete-button
     {
         .delete-operator-coloring-trait;
+    }
+    &:disabled
+    {
+        .disabled-foreground-coloring-trait;
     }
 }
 .long-button
@@ -1526,6 +1530,22 @@ button
         {
             right: calc(50vw - 330px);
         }
+    }
+}
+.pager
+{
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    button
+    {
+        flex-grow: 1;
+        border-radius: 0px;
+    }
+    button + button
+    {
+        border-left-style: none;
+        border-left-width: 0px;
     }
 }
 .horizontal-list

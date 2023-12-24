@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sat Dec 23 2023 21:04:04 GMT+0900 (日本標準時)
+    build at: Sun Dec 24 2023 19:58:27 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -229,6 +229,10 @@ h2 {
     border-color: #831B50;
     background-color: #FFFFFF;
   }
+}
+.disabled-foreground-coloring-trait {
+  filter: grayscale(0.618);
+  pointer-events: none;
 }
 .base-trait {
   font-family: DefaultFontFamily;
@@ -1837,6 +1841,10 @@ h2 {
     background-color: #FFFFFF;
   }
 }
+.light-theme-trait button:disabled {
+  filter: grayscale(0.618);
+  pointer-events: none;
+}
 .light-theme-trait .long-button {
   position: relative;
   margin: 0.5rem 1rem;
@@ -2213,6 +2221,19 @@ h2 {
   .light-theme-trait .button-line .menu-popup {
     right: calc(50vw - 330px);
   }
+}
+.light-theme-trait .pager {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.light-theme-trait .pager button {
+  flex-grow: 1;
+  border-radius: 0px;
+}
+.light-theme-trait .pager button + button {
+  border-left-style: none;
+  border-left-width: 0px;
 }
 .light-theme-trait .horizontal-list {
   white-space: nowrap;
@@ -4942,6 +4963,10 @@ body.light button.delete-button {
     background-color: #FFFFFF;
   }
 }
+body.light button:disabled {
+  filter: grayscale(0.618);
+  pointer-events: none;
+}
 body.light .long-button {
   position: relative;
   margin: 0.5rem 1rem;
@@ -5318,6 +5343,19 @@ body.light .button-line .menu-popup {
   body.light .button-line .menu-popup {
     right: calc(50vw - 330px);
   }
+}
+body.light .pager {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+body.light .pager button {
+  flex-grow: 1;
+  border-radius: 0px;
+}
+body.light .pager button + button {
+  border-left-style: none;
+  border-left-width: 0px;
 }
 body.light .horizontal-list {
   white-space: nowrap;
@@ -7707,6 +7745,10 @@ body.light .keyboard-shortcuts li .key:first-child {
   body.auto button.delete-button {
     cursor: pointer;
   }
+  body.auto button:disabled {
+    filter: grayscale(0.618);
+    pointer-events: none;
+  }
   body.auto .long-button {
     position: relative;
     margin: 0.5rem 1rem;
@@ -8042,6 +8084,19 @@ body.light .keyboard-shortcuts li .key:first-child {
   }
   body.auto .button-line .menu-popup {
     right: 4px;
+  }
+  body.auto .pager {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  body.auto .pager button {
+    flex-grow: 1;
+    border-radius: 0px;
+  }
+  body.auto .pager button + button {
+    border-left-style: none;
+    border-left-width: 0px;
   }
   body.auto .horizontal-list {
     white-space: nowrap;
@@ -9798,6 +9853,10 @@ body.light .keyboard-shortcuts li .key:first-child {
     background-color: #000022;
   }
 }
+.disabled-foreground-coloring-trait {
+  filter: grayscale(0.618);
+  pointer-events: none;
+}
 .base-trait {
   font-family: DefaultFontFamily;
   font: -apple-system-body;
@@ -11408,6 +11467,10 @@ body.light .keyboard-shortcuts li .key:first-child {
     background-color: #000022;
   }
 }
+.dark-theme-trait button:disabled {
+  filter: grayscale(0.618);
+  pointer-events: none;
+}
 .dark-theme-trait .long-button {
   position: relative;
   margin: 0.5rem 1rem;
@@ -11784,6 +11847,19 @@ body.light .keyboard-shortcuts li .key:first-child {
   .dark-theme-trait .button-line .menu-popup {
     right: calc(50vw - 330px);
   }
+}
+.dark-theme-trait .pager {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.dark-theme-trait .pager button {
+  flex-grow: 1;
+  border-radius: 0px;
+}
+.dark-theme-trait .pager button + button {
+  border-left-style: none;
+  border-left-width: 0px;
 }
 .dark-theme-trait .horizontal-list {
   white-space: nowrap;
@@ -14516,6 +14592,10 @@ body.dark button.delete-button {
     background-color: #000022;
   }
 }
+body.dark button:disabled {
+  filter: grayscale(0.618);
+  pointer-events: none;
+}
 body.dark .long-button {
   position: relative;
   margin: 0.5rem 1rem;
@@ -14892,6 +14972,19 @@ body.dark .button-line .menu-popup {
   body.dark .button-line .menu-popup {
     right: calc(50vw - 330px);
   }
+}
+body.dark .pager {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+body.dark .pager button {
+  flex-grow: 1;
+  border-radius: 0px;
+}
+body.dark .pager button + button {
+  border-left-style: none;
+  border-left-width: 0px;
 }
 body.dark .horizontal-list {
   white-space: nowrap;
@@ -17284,6 +17377,10 @@ body.dark .keyboard-shortcuts li .key:first-child {
   body.auto button.delete-button {
     cursor: pointer;
   }
+  body.auto button:disabled {
+    filter: grayscale(0.618);
+    pointer-events: none;
+  }
   body.auto .long-button {
     position: relative;
     margin: 0.5rem 1rem;
@@ -17619,6 +17716,19 @@ body.dark .keyboard-shortcuts li .key:first-child {
   }
   body.auto .button-line .menu-popup {
     right: 4px;
+  }
+  body.auto .pager {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  body.auto .pager button {
+    flex-grow: 1;
+    border-radius: 0px;
+  }
+  body.auto .pager button + button {
+    border-left-style: none;
+    border-left-width: 0px;
   }
   body.auto .horizontal-list {
     white-space: nowrap;
@@ -30263,8 +30373,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         case 0:
                             pagesize = "number" !== typeof data.pagesize ? config_json_1.default.maxGroupHistories : Math.min(Math.max(data.pagesize, 100), 10000);
                             maxpage = Math.ceil(data.list.length / pagesize);
-                            topButtonList = Render.$make(HTMLDivElement)({ tag: "div", className: "button-list", });
-                            bottomButtonList = Render.$make(HTMLDivElement)({ tag: "div", className: "button-list", });
+                            topButtonList = Render.$make(HTMLDivElement)({ tag: "div", className: "button-line pager", });
+                            bottomButtonList = Render.$make(HTMLDivElement)({ tag: "div", className: "button-line pager", });
                             result = Render.$make(HTMLDivElement)({ tag: "div", className: data.className, });
                             pager = function (page) {
                                 var result = [];
@@ -32935,7 +33045,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 <meta name="twitter:description" content="Cyclic ToDo Static Web Application">
 <meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Dec 23 2023 21:04:04 GMT+0900 (日本標準時)', buildTimestampTick: 1703333044733, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Dec 24 2023 19:58:27 GMT+0900 (日本標準時)', buildTimestampTick: 1703415507629, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -33159,7 +33269,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Sat Dec 23 2023 21:04:04 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Sun Dec 24 2023 19:58:27 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

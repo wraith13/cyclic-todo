@@ -7544,8 +7544,8 @@ export module CyclicToDo
         {
             const pagesize = "number" !== typeof data.pagesize ? config.maxGroupHistories: Math.min(Math.max(data.pagesize, 100), 10000);
             const maxpage = Math.ceil(data.list.length / pagesize);
-            const topButtonList = $make(HTMLDivElement)({ tag: "div", className: "button-list", });
-            const bottomButtonList = $make(HTMLDivElement)({ tag: "div", className: "button-list", });
+            const topButtonList = $make(HTMLDivElement)({ tag: "div", className: "button-line pager", });
+            const bottomButtonList = $make(HTMLDivElement)({ tag: "div", className: "button-line pager", });
             const result = $make(HTMLDivElement)({ tag: "div", className: data.className, });
             const pager = (page: number) =>
             {
