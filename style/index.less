@@ -1271,7 +1271,14 @@ button
                     }
                 }
             }
+        }
     }
+    &.text-align-right
+    {
+        a, button
+        {
+            justify-content: end;
+        }
     }
     a button
     {
@@ -1541,11 +1548,16 @@ button
     {
         flex-grow: 1;
         border-radius: 0px;
-    }
-    button + button
-    {
-        border-left-style: none;
-        border-left-width: 0px;
+        border-style: none;
+        border-width: 0px;
+        line-height: 100%;
+        font-size: 1.2rem;
+        svg
+        {
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+        padding: 0.5rem;
     }
 }
 .horizontal-list

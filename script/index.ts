@@ -7547,84 +7547,100 @@ export module CyclicToDo
             const topButtonList = $make(HTMLDivElement)({ tag: "div", className: "button-line pager", });
             const bottomButtonList = $make(HTMLDivElement)({ tag: "div", className: "button-line pager", });
             const result = $make(HTMLDivElement)({ tag: "div", className: data.className, });
-            const pager = (page: number) =>
+            const makeLabelText = (page: number) => `${(page -1) *pagesize +1} - ${Math.min(page *pagesize, data.list.length)}`;
+            const pager = async (page: number) =>
             {
                 const result: minamo.dom.Source[] = [];
                 const isFirstPage = page <= 1;
                 const isLastPage = maxpage <= page;
                 if (isFirstPage)
                 {
-                    result.push
-                    ({
-                        tag: "button",
-                        children: "<<",
-                        attributes: { disabled: "disabled", }
-                    });
-                    result.push
-                    ({
-                        tag: "button",
-                        children: "<",
-                        attributes: { disabled: "disabled", }
-                    });
+                    result.push({ tag: "button", children: "<<", attributes: { disabled: "disabled", }, });
+                    result.push({ tag: "button", children: "<", attributes: { disabled: "disabled", }, });
                 }
                 else
                 {
-                    result.push
-                    ({
-                        tag: "button",
-                        children: "<<",
-                        onclick: () => paging(1)
-                    });
-                    result.push
-                    ({
-                        tag: "button",
-                        children: "<",
-                        onclick: () => paging(page -1)
-                    });
+                    result.push({ tag: "button", children: "<<", onclick: () => paging(1), });
+                    result.push({ tag: "button", children: "<", onclick: () => paging(page -1), });
                 }
-                result.push
+                let cover: { dom: HTMLDivElement, close: () => Promise<unknown> } | null = null;
+                const close = () =>
+                {
+                    popup.classList.remove("show");
+                    cover = null;
+                };
+                const popup = $make(HTMLDivElement)
+                ({
+                    tag: "div",
+                    className: "menu-popup text-align-right",
+                    children: Array.from({ length: maxpage }).map
+                    (
+                        (_i, ix) => menuItem
+                        (
+                            monospace(makeLabelText(ix +1)),
+                            () => paging(ix +1),
+                            page === (ix +1) ? "current-item": undefined
+                        )
+                    ),
+                    onclick: async (event: MouseEvent) =>
+                    {
+                        event.stopPropagation();
+                        cover?.close();
+                        close();
+                    },
+                });
+                const pageButton = $make(HTMLButtonElement)
                 ({
                     tag: "button",
-                    children: `${(page -1) *pagesize +1} - ${Math.min(page *pagesize, data.list.length)}`,
+                    attributes:
+                    {
+                        tabindex: "0",
+                    },
+                    children: monospace(makeLabelText(page)),
+                    onclick: async (event: MouseEvent) =>
+                    {
+                        event.stopPropagation();
+                        popup.classList.add("show");
+                        const buttonRect = pageButton.getBoundingClientRect();
+                        if (buttonRect.top < window.innerHeight *(2 /3))
+                        {
+                            popup.style.top = `${buttonRect.bottom}`;
+                            popup.style.removeProperty("bottom");
+                        }
+                        else
+                        {
+                            popup.style.removeProperty("top");
+                            popup.style.bottom = `${window.innerHeight -buttonRect.top}`;
+                        }
+                        popup.style.marginLeft = `auto`;
+                        popup.style.marginRight = `auto`;
+                        cover = screenCover
+                        ({
+                            // parent: popup.parentElement,
+                            children: popup,
+                            onclick: close,
+                        });
+                    },
                 });
+                result.push(pageButton);
                 if (isLastPage)
                 {
-                    result.push
-                    ({
-                        tag: "button",
-                        children: ">",
-                        attributes: { disabled: "disabled", }
-                    });
-                    result.push
-                    ({
-                        tag: "button",
-                        children: ">>",
-                        attributes: { disabled: "disabled", }
-                    });
+                    result.push({ tag: "button", children: ">", attributes: { disabled: "disabled", }, });
+                    result.push({ tag: "button", children: ">>", attributes: { disabled: "disabled", }, });
                 }
                 else
                 {
-                    result.push
-                    ({
-                        tag: "button",
-                        children: ">",
-                        onclick: () => paging(page +1)
-                    });
-                    result.push
-                    ({
-                        tag: "button",
-                        children: ">>",
-                        onclick: () => paging(maxpage)
-                    });
+                    result.push({ tag: "button", children: ">", onclick: () => paging(page +1), });
+                    result.push({ tag: "button", children: ">>", onclick: () => paging(maxpage), });
                 }
                 return result;
             };
             const update = async (page: number) =>
             {
                 const contents = await Promise.all(data.list.slice((page -1) *pagesize, page *pagesize).map(i => data.renderer(i)));
-                minamo.dom.replaceChildren(topButtonList, pager(page));
+                minamo.dom.replaceChildren(topButtonList, await pager(page));
                 minamo.dom.replaceChildren(result, contents);
-                minamo.dom.replaceChildren(bottomButtonList, pager(page));
+                minamo.dom.replaceChildren(bottomButtonList, await pager(page));
             };
             const paging = async (page: number) =>
             {
