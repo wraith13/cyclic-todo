@@ -7540,7 +7540,7 @@ export module CyclicToDo
             ),
             parent: { pass: entry.pass, tag: entry.tag, },
         });
-        export const pager = async <T>(data: { className: string, pagesize?:number, list: T[]; renderer: (item: T) => Promise<minamo.dom.Source>; getLabel?: (item: T, index: number) => string}) =>
+        export const pager = async <T>(data: { className: string, pagesize?:number, list: T[]; renderer: (item: T) => Promise<minamo.dom.Source>; getLabel?: (item: T, index: number) => string; onUpdated?: () => Promise<unknown>; }) =>
         {
             const pagesize = "number" !== typeof data.pagesize ? config.maxGroupHistories: Math.min(Math.max(data.pagesize, 100), 10000);
             const maxpage = Math.ceil(data.list.length / pagesize);
@@ -7642,6 +7642,7 @@ export module CyclicToDo
                 minamo.dom.replaceChildren(topButtonList, await pager(page));
                 minamo.dom.replaceChildren(result, contents);
                 minamo.dom.replaceChildren(bottomButtonList, await pager(page));
+                await data.onUpdated?.();
             };
             const paging = async (page: number) =>
             {
@@ -7660,6 +7661,7 @@ export module CyclicToDo
                 list,
                 renderer: item => historyItem(entry, item),
                 getLabel: item => Domain.dateCoreStringFromTick(item.tick),
+                onUpdated: async () => resizeFlexList(),
             }),
             // $div("column-flex-list history-list")(await Promise.all(list.map(item => historyItem(entry, item)).slice(0, config.maxGroupHistories))),
             $div("signboard")
