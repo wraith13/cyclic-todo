@@ -7540,14 +7540,15 @@ export module CyclicToDo
             ),
             parent: { pass: entry.pass, tag: entry.tag, },
         });
-        export const pager = async <T>(data: { className: string, pagesize?:number, list: T[]; renderer: (item: T) => Promise<minamo.dom.Source>; }) =>
+        export const pager = async <T>(data: { className: string, pagesize?:number, list: T[]; renderer: (item: T) => Promise<minamo.dom.Source>; getLabel?: (item: T, index: number) => string}) =>
         {
             const pagesize = "number" !== typeof data.pagesize ? config.maxGroupHistories: Math.min(Math.max(data.pagesize, 100), 10000);
             const maxpage = Math.ceil(data.list.length / pagesize);
             const topButtonList = $make(HTMLDivElement)({ tag: "div", className: "button-line pager", });
             const bottomButtonList = $make(HTMLDivElement)({ tag: "div", className: "button-line pager", });
             const result = $make(HTMLDivElement)({ tag: "div", className: data.className, });
-            const makeLabelText = (page: number) => `${(page -1) *pagesize +1} - ${Math.min(page *pagesize, data.list.length)}`;
+            const getLabel = (index: number) => data.getLabel ? data.getLabel(data.list[index], index): index +1;
+            const makeLabelText = (page: number) => `${getLabel((page -1) *pagesize)} - ${getLabel(Math.min(page *pagesize, data.list.length) -1)}`;
             const pager = async (page: number) =>
             {
                 const result: minamo.dom.Source[] = [];
@@ -7572,7 +7573,7 @@ export module CyclicToDo
                 const popup = $make(HTMLDivElement)
                 ({
                     tag: "div",
-                    className: "menu-popup text-align-right",
+                    className: `menu-popup ${data.getLabel ? "": "text-align-right"}`,
                     children: Array.from({ length: maxpage }).map
                     (
                         (_i, ix) => menuItem
@@ -7653,7 +7654,13 @@ export module CyclicToDo
         };
         export const historyScreenBody = async (entry: ToDoTagEntryOld, list: { task: string, tick: number | null }[]) =>
         ([
-            await pager({ className: "column-flex-list history-list", list, renderer: item => historyItem(entry, item), }),
+            await pager
+            ({
+                className: "column-flex-list history-list",
+                list,
+                renderer: item => historyItem(entry, item),
+                getLabel: item => Domain.dateCoreStringFromTick(item.tick),
+            }),
             // $div("column-flex-list history-list")(await Promise.all(list.map(item => historyItem(entry, item)).slice(0, config.maxGroupHistories))),
             $div("signboard")
             ([
