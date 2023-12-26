@@ -8500,7 +8500,9 @@ export module CyclicToDo
             //     reloadScreen
             // ),
             await fullscreenMenuItem(),
+            menuSeparator(),
             systemSettingsMenuItem(),
+            menuSeparator(),
             menuItem
             (
                 label("New ToDo List"),
@@ -8508,6 +8510,7 @@ export module CyclicToDo
             ),
             importListMenuItem(),
             removedListMenuItem(),
+            menuSeparator(),
             repositoryMenuItem(),
         ];
         export const getVersionTimestampText = () => Domain.dateStringFromTick(buildTimestamp.tick /Domain.timeAccuracy);
