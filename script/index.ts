@@ -9677,6 +9677,8 @@ export module CyclicToDo
         window.addEventListener('compositionend', Render.onCompositionEnd);
         window.addEventListener('keydown', Render.onKeydown);
         window.addEventListener('keyup', Render.onKeyup);
+        window.addEventListener('online', () => console.log("✅ ONLINE!"));
+        window.addEventListener('offline', () => console.log("🚫 OFFLINE!"));
         minamo.core.existsOrThrow(document.getElementById("screen-header")).addEventListener
         (
             'click',
