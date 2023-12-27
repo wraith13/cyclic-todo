@@ -6510,6 +6510,7 @@ export module CyclicToDo
         export const listScreenMenu = async (entry: ToDoTagEntryOld) =>
         [
             await fullscreenMenuItem(),
+            menuSeparator(),
             systemSettingsMenuItem(),
             listSettingsMenuItem(entry.pass),
             menuItem
@@ -6523,6 +6524,7 @@ export module CyclicToDo
                     }
                 }
             ),
+            menuSeparator(),
             menuLinkItem
             (
                 label("History"),
@@ -6533,6 +6535,7 @@ export module CyclicToDo
                 label("@deleted"),
                 { pass: entry.pass, hash: "removed" }
             ),
+            menuSeparator(),
             newTaskMenuItem(entry),
         ];
         export const softRegulateFilterText = (filter: string) => filter
