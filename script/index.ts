@@ -6891,18 +6891,8 @@ export module CyclicToDo
                                 touchend: mouseup,
                             },
                         });
-                        cancelTimer.set();
                     },
                     300
-                );
-                const cancelTimer = new minamo.core.Timer
-                (
-                    () =>
-                    {
-                        cover?.close();
-                        close();
-                    },
-                    1000
                 );
                 const mousedown = (event: MouseEvent) =>
                 {
@@ -6921,7 +6911,6 @@ export module CyclicToDo
                                 tab.href
                         );
                     }
-                    cancelTimer.clear();
                 };
                 const result = $make(HTMLButtonElement)
                 ({
@@ -9148,6 +9137,16 @@ export module CyclicToDo
         export const onWindowBlur = () =>
         {
             updateScreen?.("blur");
+            getScreenCoverList().forEach
+            (
+                i =>
+                {
+                    if (0 < i.getElementsByClassName("menu-popup").length)
+                    {
+                        i.click();
+                    }
+                }
+            );
         };
         let onUpdateStorageCount = 0;
         export const onUpdateStorage = () =>
