@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Thu Dec 28 2023 07:14:44 GMT+0900 (日本標準時)
+    build at: Thu Dec 28 2023 20:30:55 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -42,6 +42,13 @@ DEALINGS IN THE SOFTWARE.
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta http-equiv="Cache-Control" content="public,stale-while-revalidate=2592000,stale-if-error=2592000"><!-- 2592000s == 30d -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@wraith13">
+<!-- meta name="twitter:creator" content="@wraith13" -->
+<meta name="twitter:title" content="Cyclic ToDo">
+<meta name="twitter:description" lang="en" content="Cyclic ToDo is a ToDo app dedicated to daily repeating ToDoes.">
+<meta name="twitter:description" lang="ja" content="Cyclic ToDo は日常の繰り返す ToDo 専用の ToDo アプリです。">
+<meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 <title>Cyclic ToDo</title>
 <link id="favicon" rel="shortcut icon" href="./image/cyclictodohex.1024.png">
 <link rel="apple-touch-icon" href="./image/cyclictodohex-ios.1024.png">
@@ -2229,11 +2236,22 @@ h2 {
   }
 }
 .light-theme-trait .pager {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  z-index: 999;
+  background-color: #FFFFFF;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #228844;
+  transition: opacity 500ms, margin-top 500ms;
+}
+.light-theme-trait .pager .page-operator {
   max-width: 640px;
   margin-left: auto;
   margin-right: auto;
 }
-.light-theme-trait .pager button {
+.light-theme-trait .pager .page-operator button {
   flex-grow: 1;
   border-radius: 0px;
   border-style: none;
@@ -2242,9 +2260,12 @@ h2 {
   font-size: 1rem;
   padding: 0.5rem 0rem;
 }
-.light-theme-trait .pager button svg {
+.light-theme-trait .pager .page-operator button svg {
   width: 1rem;
   height: 1rem;
+}
+.light-theme-trait .pager + * {
+  margin-top: 33px;
 }
 .light-theme-trait .horizontal-list {
   white-space: nowrap;
@@ -2959,6 +2980,9 @@ h2 {
 .light-theme-trait .screen.immersive.ui-style-slide > #screen-header {
   margin-top: -40px;
 }
+.light-theme-trait .screen.immersive.ui-style-slide > #screen-body > .pager:first-child {
+  margin-top: -40px;
+}
 .light-theme-trait .screen.immersive.ui-style-slide > #screen-footer {
   margin-bottom: -58px;
 }
@@ -2968,11 +2992,13 @@ h2 {
   }
 }
 .light-theme-trait .screen.immersive.ui-style-fade > #screen-header,
+.light-theme-trait .screen.immersive.ui-style-fade > #screen-body > .pager:first-child,
 .light-theme-trait .screen.immersive.ui-style-fade > #screen-footer {
   opacity: 0.618;
 }
 @media (hover: hover) {
   .light-theme-trait .screen.immersive.ui-style-fade > #screen-header:hover,
+  .light-theme-trait .screen.immersive.ui-style-fade > #screen-body > .pager:first-child:hover,
   .light-theme-trait .screen.immersive.ui-style-fade > #screen-footer:hover {
     opacity: 1;
   }
@@ -5361,11 +5387,22 @@ body.light .button-line .menu-popup {
   }
 }
 body.light .pager {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  z-index: 999;
+  background-color: #FFFFFF;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #228844;
+  transition: opacity 500ms, margin-top 500ms;
+}
+body.light .pager .page-operator {
   max-width: 640px;
   margin-left: auto;
   margin-right: auto;
 }
-body.light .pager button {
+body.light .pager .page-operator button {
   flex-grow: 1;
   border-radius: 0px;
   border-style: none;
@@ -5374,9 +5411,12 @@ body.light .pager button {
   font-size: 1rem;
   padding: 0.5rem 0rem;
 }
-body.light .pager button svg {
+body.light .pager .page-operator button svg {
   width: 1rem;
   height: 1rem;
+}
+body.light .pager + * {
+  margin-top: 33px;
 }
 body.light .horizontal-list {
   white-space: nowrap;
@@ -6091,6 +6131,9 @@ body.light .screen > #screen-footer {
 body.light .screen.immersive.ui-style-slide > #screen-header {
   margin-top: -40px;
 }
+body.light .screen.immersive.ui-style-slide > #screen-body > .pager:first-child {
+  margin-top: -40px;
+}
 body.light .screen.immersive.ui-style-slide > #screen-footer {
   margin-bottom: -58px;
 }
@@ -6100,11 +6143,13 @@ body.light .screen.immersive.ui-style-slide > #screen-footer {
   }
 }
 body.light .screen.immersive.ui-style-fade > #screen-header,
+body.light .screen.immersive.ui-style-fade > #screen-body > .pager:first-child,
 body.light .screen.immersive.ui-style-fade > #screen-footer {
   opacity: 0.618;
 }
 @media (hover: hover) {
   body.light .screen.immersive.ui-style-fade > #screen-header:hover,
+  body.light .screen.immersive.ui-style-fade > #screen-body > .pager:first-child:hover,
   body.light .screen.immersive.ui-style-fade > #screen-footer:hover {
     opacity: 1;
   }
@@ -8112,11 +8157,22 @@ body.light .keyboard-shortcuts li .key:first-child {
     right: 4px;
   }
   body.auto .pager {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    z-index: 999;
+    background-color: #FFFFFF;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: #228844;
+    transition: opacity 500ms, margin-top 500ms;
+  }
+  body.auto .pager .page-operator {
     max-width: 640px;
     margin-left: auto;
     margin-right: auto;
   }
-  body.auto .pager button {
+  body.auto .pager .page-operator button {
     flex-grow: 1;
     border-radius: 0px;
     border-style: none;
@@ -8125,9 +8181,12 @@ body.light .keyboard-shortcuts li .key:first-child {
     font-size: 1rem;
     padding: 0.5rem 0rem;
   }
-  body.auto .pager button svg {
+  body.auto .pager .page-operator button svg {
     width: 1rem;
     height: 1rem;
+  }
+  body.auto .pager + * {
+    margin-top: 33px;
   }
   body.auto .horizontal-list {
     white-space: nowrap;
@@ -8692,10 +8751,14 @@ body.light .keyboard-shortcuts li .key:first-child {
   body.auto .screen.immersive.ui-style-slide > #screen-header {
     margin-top: -40px;
   }
+  body.auto .screen.immersive.ui-style-slide > #screen-body > .pager:first-child {
+    margin-top: -40px;
+  }
   body.auto .screen.immersive.ui-style-slide > #screen-footer {
     margin-bottom: -58px;
   }
   body.auto .screen.immersive.ui-style-fade > #screen-header,
+  body.auto .screen.immersive.ui-style-fade > #screen-body > .pager:first-child,
   body.auto .screen.immersive.ui-style-fade > #screen-footer {
     opacity: 0.618;
   }
@@ -9610,6 +9673,7 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 @media (prefers-color-scheme: light) and (hover: hover) {
   body.auto .screen.immersive.ui-style-fade > #screen-header:hover,
+  body.auto .screen.immersive.ui-style-fade > #screen-body > .pager:first-child:hover,
   body.auto .screen.immersive.ui-style-fade > #screen-footer:hover {
     opacity: 1;
   }
@@ -11886,11 +11950,22 @@ body.light .keyboard-shortcuts li .key:first-child {
   }
 }
 .dark-theme-trait .pager {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  z-index: 999;
+  background-color: #000022;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #228844;
+  transition: opacity 500ms, margin-top 500ms;
+}
+.dark-theme-trait .pager .page-operator {
   max-width: 640px;
   margin-left: auto;
   margin-right: auto;
 }
-.dark-theme-trait .pager button {
+.dark-theme-trait .pager .page-operator button {
   flex-grow: 1;
   border-radius: 0px;
   border-style: none;
@@ -11899,9 +11974,12 @@ body.light .keyboard-shortcuts li .key:first-child {
   font-size: 1rem;
   padding: 0.5rem 0rem;
 }
-.dark-theme-trait .pager button svg {
+.dark-theme-trait .pager .page-operator button svg {
   width: 1rem;
   height: 1rem;
+}
+.dark-theme-trait .pager + * {
+  margin-top: 33px;
 }
 .dark-theme-trait .horizontal-list {
   white-space: nowrap;
@@ -12616,6 +12694,9 @@ body.light .keyboard-shortcuts li .key:first-child {
 .dark-theme-trait .screen.immersive.ui-style-slide > #screen-header {
   margin-top: -40px;
 }
+.dark-theme-trait .screen.immersive.ui-style-slide > #screen-body > .pager:first-child {
+  margin-top: -40px;
+}
 .dark-theme-trait .screen.immersive.ui-style-slide > #screen-footer {
   margin-bottom: -58px;
 }
@@ -12625,11 +12706,13 @@ body.light .keyboard-shortcuts li .key:first-child {
   }
 }
 .dark-theme-trait .screen.immersive.ui-style-fade > #screen-header,
+.dark-theme-trait .screen.immersive.ui-style-fade > #screen-body > .pager:first-child,
 .dark-theme-trait .screen.immersive.ui-style-fade > #screen-footer {
   opacity: 0.618;
 }
 @media (hover: hover) {
   .dark-theme-trait .screen.immersive.ui-style-fade > #screen-header:hover,
+  .dark-theme-trait .screen.immersive.ui-style-fade > #screen-body > .pager:first-child:hover,
   .dark-theme-trait .screen.immersive.ui-style-fade > #screen-footer:hover {
     opacity: 1;
   }
@@ -15021,11 +15104,22 @@ body.dark .button-line .menu-popup {
   }
 }
 body.dark .pager {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  z-index: 999;
+  background-color: #000022;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #228844;
+  transition: opacity 500ms, margin-top 500ms;
+}
+body.dark .pager .page-operator {
   max-width: 640px;
   margin-left: auto;
   margin-right: auto;
 }
-body.dark .pager button {
+body.dark .pager .page-operator button {
   flex-grow: 1;
   border-radius: 0px;
   border-style: none;
@@ -15034,9 +15128,12 @@ body.dark .pager button {
   font-size: 1rem;
   padding: 0.5rem 0rem;
 }
-body.dark .pager button svg {
+body.dark .pager .page-operator button svg {
   width: 1rem;
   height: 1rem;
+}
+body.dark .pager + * {
+  margin-top: 33px;
 }
 body.dark .horizontal-list {
   white-space: nowrap;
@@ -15751,6 +15848,9 @@ body.dark .screen > #screen-footer {
 body.dark .screen.immersive.ui-style-slide > #screen-header {
   margin-top: -40px;
 }
+body.dark .screen.immersive.ui-style-slide > #screen-body > .pager:first-child {
+  margin-top: -40px;
+}
 body.dark .screen.immersive.ui-style-slide > #screen-footer {
   margin-bottom: -58px;
 }
@@ -15760,11 +15860,13 @@ body.dark .screen.immersive.ui-style-slide > #screen-footer {
   }
 }
 body.dark .screen.immersive.ui-style-fade > #screen-header,
+body.dark .screen.immersive.ui-style-fade > #screen-body > .pager:first-child,
 body.dark .screen.immersive.ui-style-fade > #screen-footer {
   opacity: 0.618;
 }
 @media (hover: hover) {
   body.dark .screen.immersive.ui-style-fade > #screen-header:hover,
+  body.dark .screen.immersive.ui-style-fade > #screen-body > .pager:first-child:hover,
   body.dark .screen.immersive.ui-style-fade > #screen-footer:hover {
     opacity: 1;
   }
@@ -17775,11 +17877,22 @@ body.dark .keyboard-shortcuts li .key:first-child {
     right: 4px;
   }
   body.auto .pager {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    z-index: 999;
+    background-color: #000022;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: #228844;
+    transition: opacity 500ms, margin-top 500ms;
+  }
+  body.auto .pager .page-operator {
     max-width: 640px;
     margin-left: auto;
     margin-right: auto;
   }
-  body.auto .pager button {
+  body.auto .pager .page-operator button {
     flex-grow: 1;
     border-radius: 0px;
     border-style: none;
@@ -17788,9 +17901,12 @@ body.dark .keyboard-shortcuts li .key:first-child {
     font-size: 1rem;
     padding: 0.5rem 0rem;
   }
-  body.auto .pager button svg {
+  body.auto .pager .page-operator button svg {
     width: 1rem;
     height: 1rem;
+  }
+  body.auto .pager + * {
+    margin-top: 33px;
   }
   body.auto .horizontal-list {
     white-space: nowrap;
@@ -18355,10 +18471,14 @@ body.dark .keyboard-shortcuts li .key:first-child {
   body.auto .screen.immersive.ui-style-slide > #screen-header {
     margin-top: -40px;
   }
+  body.auto .screen.immersive.ui-style-slide > #screen-body > .pager:first-child {
+    margin-top: -40px;
+  }
   body.auto .screen.immersive.ui-style-slide > #screen-footer {
     margin-bottom: -58px;
   }
   body.auto .screen.immersive.ui-style-fade > #screen-header,
+  body.auto .screen.immersive.ui-style-fade > #screen-body > .pager:first-child,
   body.auto .screen.immersive.ui-style-fade > #screen-footer {
     opacity: 0.618;
   }
@@ -19273,6 +19393,7 @@ body.dark .keyboard-shortcuts li .key:first-child {
 }
 @media (prefers-color-scheme: dark) and (hover: hover) {
   body.auto .screen.immersive.ui-style-fade > #screen-header:hover,
+  body.auto .screen.immersive.ui-style-fade > #screen-body > .pager:first-child:hover,
   body.auto .screen.immersive.ui-style-fade > #screen-footer:hover {
     opacity: 1;
   }
@@ -30424,15 +30545,14 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 });
             }); };
             Render.pager = function (data) { return __awaiter(_this, void 0, void 0, function () {
-                var pagesize, maxpage, topButtonList, bottomButtonList, result, getLabel, makeLabelText, pager, update, paging;
+                var pagesize, maxpage, buttonList, result, getLabel, makeLabelText, pager, update, paging;
                 var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
                             pagesize = "number" !== typeof data.pagesize ? config_json_1.default.maxGroupHistories : Math.min(Math.max(data.pagesize, 100), 10000);
                             maxpage = Math.ceil(data.list.length / pagesize);
-                            topButtonList = Render.$make(HTMLDivElement)({ tag: "div", className: "button-line pager", });
-                            bottomButtonList = Render.$make(HTMLDivElement)({ tag: "div", className: "button-line pager", });
+                            buttonList = Render.$make(HTMLDivElement)({ tag: "div", className: "button-line page-operator", });
                             result = Render.$make(HTMLDivElement)({ tag: "div", className: data.className, });
                             getLabel = function (index) { return data.getLabel ? data.getLabel(data.list[index], index) : index + 1; };
                             makeLabelText = function (page) { return getLabel((page - 1) * pagesize) + " - " + getLabel(Math.min(page * pagesize, data.list.length) - 1); };
@@ -30513,27 +30633,22 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 });
                             }); };
                             update = function (page) { return __awaiter(_this, void 0, void 0, function () {
-                                var contents, _a, _b, _c, _d, _e, _f;
-                                var _g;
-                                return __generator(this, function (_h) {
-                                    switch (_h.label) {
+                                var contents, _a, _b, _c;
+                                var _d;
+                                return __generator(this, function (_e) {
+                                    switch (_e.label) {
                                         case 0: return [4 /*yield*/, Promise.all(data.list.slice((page - 1) * pagesize, page * pagesize).map(function (i) { return data.renderer(i); }))];
                                         case 1:
-                                            contents = _h.sent();
+                                            contents = _e.sent();
+                                            minamo_js_1.minamo.dom.replaceChildren(result, contents);
                                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
-                                            _c = [topButtonList];
+                                            _c = [buttonList];
                                             return [4 /*yield*/, pager(page)];
                                         case 2:
-                                            _b.apply(_a, _c.concat([_h.sent()]));
-                                            minamo_js_1.minamo.dom.replaceChildren(result, contents);
-                                            _e = (_d = minamo_js_1.minamo.dom).replaceChildren;
-                                            _f = [bottomButtonList];
-                                            return [4 /*yield*/, pager(page)];
+                                            _b.apply(_a, _c.concat([_e.sent()]));
+                                            return [4 /*yield*/, ((_d = data.onUpdated) === null || _d === void 0 ? void 0 : _d.call(data))];
                                         case 3:
-                                            _e.apply(_d, _f.concat([_h.sent()]));
-                                            return [4 /*yield*/, ((_g = data.onUpdated) === null || _g === void 0 ? void 0 : _g.call(data))];
-                                        case 4:
-                                            _h.sent();
+                                            _e.sent();
                                             return [2 /*return*/];
                                     }
                                 });
@@ -30557,7 +30672,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             return [4 /*yield*/, update(1)];
                         case 1:
                             _a.sent();
-                            return [2 /*return*/, maxpage < 2 ? result : [topButtonList, result, bottomButtonList,]];
+                            return [2 /*return*/, maxpage < 2 ? result : [Render.$make(HTMLDivElement)({ tag: "div", className: "pager", children: buttonList, }), result,]];
                     }
                 });
             }); };
@@ -33146,14 +33261,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 });
 //# sourceMappingURL=index.js.map
 </script>
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@wraith13">
-<!-- meta name="twitter:creator" content="@wraith13" -->
-<meta name="twitter:title" content="Cyclic ToDo">
-<meta name="twitter:description" content="Cyclic ToDo Static Web Application">
-<meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Dec 28 2023 07:14:44 GMT+0900 (日本標準時)', buildTimestampTick: 1703715284287, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Dec 28 2023 20:30:55 GMT+0900 (日本標準時)', buildTimestampTick: 1703763055337, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -33377,7 +33486,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Thu Dec 28 2023 07:14:44 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Thu Dec 28 2023 20:30:55 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

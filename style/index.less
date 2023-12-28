@@ -1541,23 +1541,39 @@ button
 }
 .pager
 {
-    max-width: 640px;
-    margin-left: auto;
-    margin-right: auto;
-    button
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    z-index: 999;
+    background-color: @base-color;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: @accent-color;
+    transition: opacity 500ms, margin-top 500ms;
+    .page-operator
     {
-        flex-grow: 1;
-        border-radius: 0px;
-        border-style: none;
-        border-width: 0px;
-        line-height: 100%;
-        font-size: 1.0rem;
-        svg
+        max-width: 640px;
+        margin-left: auto;
+        margin-right: auto;
+        button
         {
-            width: 1.0rem;
-            height: 1.0rem;
+            flex-grow: 1;
+            border-radius: 0px;
+            border-style: none;
+            border-width: 0px;
+            line-height: 100%;
+            font-size: 1.0rem;
+            svg
+            {
+                width: 1.0rem;
+                height: 1.0rem;
+            }
+            padding: 0.5rem 0rem;
         }
-        padding: 0.5rem 0rem;
+    }
+    & + *
+    {
+        margin-top: 33px;
     }
 }
 .horizontal-list
@@ -2400,6 +2416,10 @@ button
         {
             margin-top: -40px;
         }
+        & > #screen-body > .pager:first-child
+        {
+            margin-top: -40px;
+        }
         & > #screen-footer
         {
             margin-bottom: -58px;
@@ -2412,6 +2432,7 @@ button
     &.ui-style-fade
     {
         & > #screen-header,
+        & > #screen-body > .pager:first-child,
         & > #screen-footer
         {
             opacity: 0.618;

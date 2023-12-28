@@ -7536,8 +7536,7 @@ export module CyclicToDo
         {
             const pagesize = "number" !== typeof data.pagesize ? config.maxGroupHistories: Math.min(Math.max(data.pagesize, 100), 10000);
             const maxpage = Math.ceil(data.list.length / pagesize);
-            const topButtonList = $make(HTMLDivElement)({ tag: "div", className: "button-line pager", });
-            const bottomButtonList = $make(HTMLDivElement)({ tag: "div", className: "button-line pager", });
+            const buttonList = $make(HTMLDivElement)({ tag: "div", className: "button-line page-operator", });
             const result = $make(HTMLDivElement)({ tag: "div", className: data.className, });
             const getLabel = (index: number) => data.getLabel ? data.getLabel(data.list[index], index): index +1;
             const makeLabelText = (page: number) => `${getLabel((page -1) *pagesize)} - ${getLabel(Math.min(page *pagesize, data.list.length) -1)}`;
@@ -7631,9 +7630,8 @@ export module CyclicToDo
             const update = async (page: number) =>
             {
                 const contents = await Promise.all(data.list.slice((page -1) *pagesize, page *pagesize).map(i => data.renderer(i)));
-                minamo.dom.replaceChildren(topButtonList, await pager(page));
                 minamo.dom.replaceChildren(result, contents);
-                minamo.dom.replaceChildren(bottomButtonList, await pager(page));
+                minamo.dom.replaceChildren(buttonList, await pager(page));
                 await data.onUpdated?.();
             };
             const paging = async (page: number) =>
@@ -7643,7 +7641,7 @@ export module CyclicToDo
                 await updatedScreenBody();
             }
             await update(1);
-            return maxpage < 2 ? result: [ topButtonList, result, bottomButtonList, ];
+            return maxpage < 2 ? result: [ $make(HTMLDivElement)({ tag: "div", className: "pager", children: buttonList, }), result, ];
         };
         export const historyScreenBody = async (entry: ToDoTagEntryOld, list: { task: string, tick: number | null }[]) =>
         ([

@@ -15,10 +15,17 @@ __LICENSE__-->
 <meta name="description" lang="ja" content="__JA_DESCRIPTION__">
 <link rel="manifest" lang="en" href="web.manifest.en.json" />
 <link rel="manifest" lang="ja" href="web.manifest.ja.json" />
-<meta name="apple-mobile-web-app-title" content="Cyclic ToDo">
+<meta name="apple-mobile-web-app-title" content="__APPLICATION_TITLE__">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta http-equiv="Cache-Control" content="public,stale-while-revalidate=2592000,stale-if-error=2592000"><!-- 2592000s == 30d -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@wraith13">
+<!-- meta name="twitter:creator" content="@wraith13" -->
+<meta name="twitter:title" content="__APPLICATION_TITLE__">
+<meta name="twitter:description" lang="en" content="__EN_DESCRIPTION__">
+<meta name="twitter:description" lang="ja" content="__JA_DESCRIPTION__">
+<meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 <title>__APPLICATION_TITLE__</title>
 <link id="favicon" rel="shortcut icon" href="./image/cyclictodohex.1024.png">
 <link rel="apple-touch-icon" href="./image/cyclictodohex-ios.1024.png">
@@ -40,12 +47,6 @@ __EVIL_TIMER__
 <script type="text/javascript">
 __SCRIPT__
 </script>
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@wraith13">
-<!-- meta name="twitter:creator" content="@wraith13" -->
-<meta name="twitter:title" content="__APPLICATION_TITLE__">
-<meta name="twitter:description" content="Cyclic ToDo Static Web Application">
-<meta name="twitter:image" content="https://wraith13.github.io/cyclic-todo/image/cyclictodobox.1024.png">
 </head>
 <body onload="require('script/index').CyclicToDo.start({ buildTimestamp: '__BUILD_TIMESTAMP__', buildTimestampTick: __BUILD_TIMESTAMP_TICK__, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="http://oscar.local/cyclic-todo/"><div class="icon">__APPLICATION_ICON__</div><div class="segment-title">__APPLICATION_TITLE__</div></a></h1><div id="screen-body" class="screen-body">
