@@ -7872,6 +7872,7 @@ export module CyclicToDo
         export const todoScreenMenu = async (pass: string, item: ToDoEntry) =>
         [
             await fullscreenMenuItem(),
+            menuSeparator(),
             systemSettingsMenuItem(),
             listSettingsMenuItem(pass),
             menuItem
