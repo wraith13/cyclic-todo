@@ -6861,39 +6861,36 @@ export module CyclicToDo
                     popup.classList.remove("show");
                     cover = null;
                 };
-                const longPressTimer = new minamo.core.Timer
-                (
-                    async () =>
+                const showMenu = async () =>
+                {
+                    popup.classList.add("show");
+                    const buttonRect = result.getBoundingClientRect();
+                    popup.style.removeProperty("top");
+                    popup.style.bottom = `${window.innerHeight -buttonRect.top}px`;
+                    if (buttonRect.right < window.innerWidth *(2 /3))
                     {
-                        popup.classList.add("show");
-                        const buttonRect = result.getBoundingClientRect();
-                        popup.style.removeProperty("top");
-                        popup.style.bottom = `${window.innerHeight -buttonRect.top}px`;
-                        if (buttonRect.right < window.innerWidth *(2 /3))
+                        popup.style.removeProperty("right");
+                        popup.style.left = `${buttonRect.left}px`;
+                    }
+                    else
+                    {
+                        popup.style.removeProperty("left");
+                        popup.style.right = `${window.innerWidth -buttonRect.right}px`;
+                    }
+                    popup.style.minWidth = `${buttonRect.width}px`;
+                    cover = screenCover
+                    ({
+                        // parent: popup.parentElement,
+                        children: popup,
+                        onclick: close,
+                        eventListener:
                         {
-                            popup.style.removeProperty("right");
-                            popup.style.left = `${buttonRect.left}px`;
-                        }
-                        else
-                        {
-                            popup.style.removeProperty("left");
-                            popup.style.right = `${window.innerWidth -buttonRect.right}px`;
-                        }
-                        popup.style.minWidth = `${buttonRect.width}px`;
-                        cover = screenCover
-                        ({
-                            // parent: popup.parentElement,
-                            children: popup,
-                            onclick: close,
-                            eventListener:
-                            {
-                                mouseup: mouseup,
-                                touchend: mouseup,
-                            },
-                        });
-                    },
-                    300
-                );
+                            mouseup: mouseup,
+                            touchend: mouseup,
+                        },
+                    });
+                };
+                const longPressTimer = new minamo.core.Timer(showMenu, 300);
                 const mousedown = (event: MouseEvent) =>
                 {
                     event.preventDefault();
@@ -6929,6 +6926,13 @@ export module CyclicToDo
                                 touchstart: mousedown,
                                 mouseup: mouseup,
                                 touchend: mouseup,
+                                contextmenu: async (event: MouseEvent) =>
+                                {
+                                    event.stopPropagation();
+                                    event.preventDefault();
+                                    longPressTimer.clear();
+                                    await showMenu();
+                                }
                             },
                         },
                         {
