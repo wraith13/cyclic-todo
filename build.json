@@ -58,6 +58,7 @@
             "output": { "path": "./index.html" },
             "parameters":
             {
+                "__ACCENT_COLOR__": { "json": "./resource/style.json", "value": "__ACCENT_COLOR__" },
                 "__EN_DESCRIPTION__": { "json": "./resource/lang.en.json", "value": "description" },
                 "__JA_DESCRIPTION__": { "json": "./resource/lang.ja.json", "value": "description" },
                 "__PRIMARY_STYLE__": { "path": "./style/primary.css" },

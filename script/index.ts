@@ -1,4 +1,5 @@
 import { minamo } from "../nephila/minamo.js";
+import { flounderStyle } from "../flounder.style.js";
 import config from "../resource/config.json";
 import pomeJson from "../resource/poem.json";
 import style from "../resource/style.json";
@@ -2689,10 +2690,91 @@ export module CyclicToDo
                 return "";
             }
         }
-        export const progressStyle = (progress: number | null) =>
+        export const progressWidthStyle = (progress: number | null) =>
             `width:${toPercentSting(progress ?? 1)};`;
+        export const progressStatusColor = (status: ProgressStatusType) =>
+        (
+            {
+                "default": style.__DISABLED_COLOR__,
+                "flash": style.__FLASHY_COLOR__,
+                "pickup": style.__ACTIVE_COLOR__,
+                "restriction": style.__DELETE_COLOR__,
+            }
+            [status]
+        );
+        export const getCurrentTheme = (): "light" | "dark" =>
+        {
+            const setting = Storage.SystemSettings.get().theme ?? "auto";
+            switch(setting)
+            {
+            case "light":
+                return setting;
+            case "dark":
+                return setting;
+            default:
+                return window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark": "light";
+            }
+        }
+        export const getBackgroundColor = () =>
+            "light" === getCurrentTheme() ? style.__WHITE_COLOR__: style.__BLACK_COLOR__;
+        export const progressBackgroundStyle = (progress: number | null, status: ProgressStatusType) =>
+        {
+            if (null === progress)
+            {
+                return flounderStyle.styleToString
+                (
+                    flounderStyle.makeStyle
+                    ({
+                        type: "triline",
+                        layoutAngle: "alternative",
+                        foregroundColor: progressStatusColor(status),
+                        backgroundColor: getBackgroundColor(),
+                        depth: 0.9,
+                        blur: 0.0,
+                        reverseRate: "auto",
+                        //anglePerDepth: "auto",
+                    })
+                );
+            }
+            switch(status)
+            {
+            // case "flash":
+            //     return flounderStyle.styleListToString
+            //     (
+            //         flounderStyle.makePatternStyleList
+            //         ({
+            //             type: "trispot",
+            //             layoutAngle: "regular",
+            //             foregroundColor: progressStatusColor(status),
+            //             backgroundColor: getBackgroundColor(),
+            //             depth: 0.9,
+            //             blur: 0.0,
+            //             // reverseRate: "auto",
+            //             //anglePerDepth: "auto",
+            //         })
+            //     );
+            // case "restriction":
+            //     return flounderStyle.styleListToString
+            //     (
+            //         flounderStyle.makePatternStyleList
+            //         ({
+            //             type: "stripe",
+            //             layoutAngle: 0.35,
+            //             foregroundColor: progressStatusColor(status),
+            //             backgroundColor: getBackgroundColor(),
+            //             depth: 0.9,
+            //             blur: 0.0,
+            //             // reverseRate: "auto",
+            //             //anglePerDepth: "auto",
+            //         })
+            //     );
+            }
+            return "";
+        };
+        export const progressStyle = (progress: number | null, status: ProgressStatusType) =>
+            progressWidthStyle(progress) +progressBackgroundStyle(progress, status);
         export const progressPadStyle = (progress: number | null) =>
-            progressStyle(1 -(progress ?? 1));
+            progressWidthStyle(1 -(progress ?? 1));
         export const progressValidityClass = (progress: number | null) =>
             null === progress ? "progress-disabled": "";
         export type ProgressStatusType = "default" | "flash" | "pickup" | "restriction";
@@ -2716,7 +2798,7 @@ export module CyclicToDo
         export const progressBar = (progress: number | null, status: ProgressStatusType) =>$div
         ({
             className: progressClass(progress, status),
-            attributes:{ style: progressStyle(progress), }
+            attributes:{ style: progressStyle(progress, status), }
         })
         ([]);
         export const progressBarPad = (progress: number | null) =>$div
@@ -2733,9 +2815,10 @@ export module CyclicToDo
         .filter(i => undefined !== i) as minamo.dom.Source;
         export const updateItemProgressBar = (pass: string, item: ToDoEntry, dom: HTMLDivElement) =>
         {
+            const status = getItemProgressStatus(pass, item);
             const progressBarDiv = dom.getElementsByClassName("progress-bar")[0] as HTMLDivElement;
-            progressBarDiv.className = progressClass(item.progress, getItemProgressStatus(pass, item));
-            progressBarDiv.setAttribute("style", progressStyle(item.progress));
+            progressBarDiv.className = progressClass(item.progress, status);
+            progressBarDiv.setAttribute("style", progressStyle(item.progress, status));
             const progressBarPadDiv = dom.getElementsByClassName("progress-bar-pad")[0] as HTMLDivElement;
             progressBarPadDiv?.setAttribute?.("style", progressPadStyle(item.progress));
         };
@@ -7076,7 +7159,7 @@ export module CyclicToDo
         ]);
         export const listScreenFooterSignboard = async (entry: ToDoTagEntryOld) =>
         {
-            var result: minamo.dom.Source;
+            let result: minamo.dom.Source;
             const settings = textButton
             (
                 getTagSettingsTitle(entry.tag),

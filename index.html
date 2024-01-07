@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Tue Jan 02 2024 15:18:54 GMT+0900 (日本標準時)
+    build at: Mon Jan 08 2024 05:27:25 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2776,10 +2776,6 @@ h2 {
   font-size: 1rem;
   opacity: 0.6;
   float: right;
-}
-.light-theme-trait .task-item .item-information .progress-bar.progress-disabled.progress-default {
-  background-color: rgba(128, 128, 128, 0.4);
-  opacity: initial;
 }
 .light-theme-trait .task-item .item-information .progress-bar-pad {
   background-color: rgba(128, 128, 128, 0.2);
@@ -5928,10 +5924,6 @@ body.light .task-item .item-information .value {
   opacity: 0.6;
   float: right;
 }
-body.light .task-item .item-information .progress-bar.progress-disabled.progress-default {
-  background-color: rgba(128, 128, 128, 0.4);
-  opacity: initial;
-}
 body.light .task-item .item-information .progress-bar-pad {
   background-color: rgba(128, 128, 128, 0.2);
 }
@@ -8552,10 +8544,6 @@ body.light .keyboard-shortcuts li .key:first-child {
     font-size: 1rem;
     opacity: 0.6;
     float: right;
-  }
-  body.auto .task-item .item-information .progress-bar.progress-disabled.progress-default {
-    background-color: rgba(128, 128, 128, 0.4);
-    opacity: initial;
   }
   body.auto .task-item .item-information .progress-bar-pad {
     background-color: rgba(128, 128, 128, 0.2);
@@ -12491,10 +12479,6 @@ body.light .keyboard-shortcuts li .key:first-child {
   opacity: 0.6;
   float: right;
 }
-.dark-theme-trait .task-item .item-information .progress-bar.progress-disabled.progress-default {
-  background-color: rgba(128, 128, 128, 0.4);
-  opacity: initial;
-}
 .dark-theme-trait .task-item .item-information .progress-bar-pad {
   background-color: rgba(128, 128, 128, 0.2);
 }
@@ -15645,10 +15629,6 @@ body.dark .task-item .item-information .value {
   opacity: 0.6;
   float: right;
 }
-body.dark .task-item .item-information .progress-bar.progress-disabled.progress-default {
-  background-color: rgba(128, 128, 128, 0.4);
-  opacity: initial;
-}
 body.dark .task-item .item-information .progress-bar-pad {
   background-color: rgba(128, 128, 128, 0.2);
 }
@@ -18273,10 +18253,6 @@ body.dark .keyboard-shortcuts li .key:first-child {
     opacity: 0.6;
     float: right;
   }
-  body.auto .task-item .item-information .progress-bar.progress-disabled.progress-default {
-    background-color: rgba(128, 128, 128, 0.4);
-    opacity: initial;
-  }
   body.auto .task-item .item-information .progress-bar-pad {
     background-color: rgba(128, 128, 128, 0.2);
   }
@@ -20283,7 +20259,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -20307,10 +20283,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 define("nephila/minamo.js/index", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -20371,7 +20351,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                     result = f.apply(void 0, args);
                 }
                 catch (err) {
-                    console.error("\uD83D\uDEAB " + title + ": " + err);
+                    console.error("\uD83D\uDEAB ".concat(title, ": ").concat(err));
                 }
                 return result;
             };
@@ -20392,7 +20372,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                                 return [3 /*break*/, 3];
                             case 2:
                                 err_1 = _a.sent();
-                                console.error("\uD83D\uDEAB " + title + ": " + err_1);
+                                console.error("\uD83D\uDEAB ".concat(title, ": ").concat(err_1));
                                 return [3 /*break*/, 3];
                             case 3: return [2 /*return*/, result];
                         }
@@ -20653,7 +20633,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
             };
             core_1.bond = function (head, separator, tail) {
                 return core_1.exists(tail) ?
-                    "" + core_1.existsOrThrow(head) + core_1.existsOrThrow(separator) + tail :
+                    "".concat(core_1.existsOrThrow(head)).concat(core_1.existsOrThrow(separator)).concat(tail) :
                     core_1.existsOrThrow(head);
             };
             core_1.loopMap = function (mapFunction, limit) {
@@ -20664,7 +20644,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                 }
                 while (true) {
                     if ("number" === typeof limit && limit <= index) {
-                        throw new RangeError("minamo.core.loopMap() overs the limit(" + limit + ")");
+                        throw new RangeError("minamo.core.loopMap() overs the limit(".concat(limit, ")"));
                     }
                     var current = mapFunction(index++, result);
                     if (core_1.exists(current)) {
@@ -20689,19 +20669,19 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
             };
             core_1.zeroPadding = function (length, n) {
                 if (21 < length) {
-                    throw new RangeError("length(" + length + ") in minamo.core.zeroPadding() overs 21.");
+                    throw new RangeError("length(".concat(length, ") in minamo.core.zeroPadding() overs 21."));
                 }
                 if (1e+21 <= n) {
-                    throw new RangeError("n(" + n + ") in minamo.core.zeroPadding() is 1e+21 or more.");
+                    throw new RangeError("n(".concat(n, ") in minamo.core.zeroPadding() is 1e+21 or more."));
                 }
                 if (n <= -1e+21) {
-                    throw new RangeError("n(" + n + ") in minamo.core.zeroPadding() is -1e+21 or less.");
+                    throw new RangeError("n(".concat(n, ") in minamo.core.zeroPadding() is -1e+21 or less."));
                 }
                 var sign = n < 0 ? "-" : "";
-                var core = "" + Math.abs(Math.round(n));
+                var core = "".concat(Math.abs(Math.round(n)));
                 var paddingLength = length - (sign.length + core.length);
                 var padding = 0 < paddingLength ? "00000000000000000000".substr(-paddingLength) : "";
-                return "" + sign + padding + core;
+                return "".concat(sign).concat(padding).concat(core);
             };
             core_1.NYI = function (_) {
                 if (_ === void 0) { _ = null; }
@@ -20808,7 +20788,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
             };
             core_1.timespanToString = function (value) {
                 if (value < 0) {
-                    return "-" + core_1.timespanToString(-value);
+                    return "-".concat(core_1.timespanToString(-value));
                 }
                 else {
                     var units = [
@@ -20841,10 +20821,10 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                     do {
                         var unit = units[i];
                         if (unit.size <= value) {
-                            return "" + value / unit.size + unit.label;
+                            return "".concat(value / unit.size).concat(unit.label);
                         }
                     } while (++i < units.length);
-                    return value + "ms";
+                    return "".concat(value, "ms");
                 }
             };
         })(core = minamo.core || (minamo.core = {}));
@@ -20868,8 +20848,8 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
             var cache = null;
             cookie.setRaw = function (key, value, maxAge) {
                 document.cookie = core.exists(maxAge) ?
-                    key + "=" + value + "; max-age=" + maxAge :
-                    key + "=" + value;
+                    "".concat(key, "=").concat(value, "; max-age=").concat(maxAge) :
+                    "".concat(key, "=").concat(value);
                 cookie.cacheOrUpdate()[key] = value;
                 return value;
             };
@@ -21150,7 +21130,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                 var request = new XMLHttpRequest();
                 request.open(method, url, true);
                 if (headers) {
-                    console.log("headers: " + core.jsonStringify(headers));
+                    console.log("headers: ".concat(core.jsonStringify(headers)));
                     Object.keys(headers).forEach(function (key) { return request.setRequestHeader(key, headers[key]); });
                 }
                 request.onreadystatechange = function () {
@@ -21166,7 +21146,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                         }
                     }
                 };
-                console.log("body: " + JSON.stringify(body));
+                console.log("body: ".concat(JSON.stringify(body)));
                 request.send(body); // VS Code エディター上で異なる ES バージョンでコンパイルされエラー表示されてしまう問題回避の為の any
             }); };
             http.get = function (url, headers) { return http.request("GET", url, undefined, headers); };
@@ -21240,7 +21220,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                             tag_1 = "a";
                             break;
                         case "heading":
-                            tag_1 = "h" + level;
+                            tag_1 = "h".concat(level);
                             break;
                         case "dlist":
                             tag_1 = "dl";
@@ -21416,7 +21396,315 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
                     dom.removeCSSClass(element, className);
             };
         })(dom = minamo.dom || (minamo.dom = {}));
-    })(minamo = exports.minamo || (exports.minamo = {}));
+    })(minamo || (exports.minamo = minamo = {}));
+});
+define("flounder.style.js/config", [], {
+    "defaultSpotIntervalSize": 24,
+    "defaultBlur": 0.0,
+    "defaultMaximumFractionDigits": 3
+});
+define("flounder.style.js/index", ["require", "exports", "flounder.style.js/config"], function (require, exports, config_json_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.flounderStyle = void 0;
+    config_json_1 = __importDefault(config_json_1);
+    var flounderStyle;
+    (function (flounderStyle) {
+        flounderStyle.styleToStylePropertyList = function (style) {
+            return Object.keys(style).map(function (key) { return ({ key: key, value: style[key], }); });
+        };
+        flounderStyle.setStyleProperty = function (element, style) {
+            var current = element.style.getPropertyValue(style.key);
+            if (current !== style.value) // for DOM rendering performance
+             {
+                if (undefined !== style.value) {
+                    element.style.setProperty(style.key, style.value);
+                }
+                else {
+                    element.style.removeProperty(style.key);
+                }
+            }
+            return element;
+        };
+        flounderStyle.makeSureStyle = function (styleOrArguments) {
+            return flounderStyle.isArguments(styleOrArguments) ? flounderStyle.makeStyle(styleOrArguments) : styleOrArguments;
+        };
+        flounderStyle.setStyle = function (element, styleOrArguments) {
+            flounderStyle.styleToStylePropertyList(flounderStyle.makeSureStyle(styleOrArguments)).forEach(function (i) { return flounderStyle.setStyleProperty(element, i); });
+            return element;
+        };
+        flounderStyle.stylePropertyToString = function (style) { var _a; return "".concat(style.key, ": ").concat((_a = style.value) !== null && _a !== void 0 ? _a : "inherit", ";"); };
+        flounderStyle.styleToString = function (styleOrArguments, separator) {
+            if (separator === void 0) { separator = " "; }
+            return flounderStyle.styleToStylePropertyList(flounderStyle.makeSureStyle(styleOrArguments))
+                .filter(function (i) { return undefined !== i.value; })
+                .map(function (i) { return flounderStyle.stylePropertyToString(i); })
+                .join(separator);
+        };
+        flounderStyle.isArguments = function (value) {
+            return null !== value &&
+                "object" === typeof value &&
+                "type" in value && "string" === typeof value.type &&
+                "foregroundColor" in value && "string" === typeof value.foregroundColor &&
+                "depth" in value && "number" === typeof value.depth;
+        };
+        flounderStyle.getPatternType = function (data) { var _a; return (_a = data.type) !== null && _a !== void 0 ? _a : "trispot"; };
+        flounderStyle.getLayoutAngle = function (data) {
+            var _a;
+            if ("number" === typeof data.layoutAngle) {
+                if (0 === data.layoutAngle) {
+                    return "regular";
+                }
+                else {
+                    throw new Error("When using ".concat(data.type, ", number cannot be used for layoutAngle."));
+                }
+            }
+            if (undefined !== data.anglePerDepth && null !== data.anglePerDepth && 0 !== data.anglePerDepth) {
+                throw new Error("anglePerDepth cannot be used when using ".concat(data.type, "."));
+            }
+            return (_a = data.layoutAngle) !== null && _a !== void 0 ? _a : "regular";
+        };
+        flounderStyle.getActualLayoutAngle = function (data) {
+            var _a;
+            return "number" === typeof data.layoutAngle ? data.layoutAngle :
+                "regular" === ((_a = data.layoutAngle) !== null && _a !== void 0 ? _a : "regular") ? 0.0 :
+                    "stripe" === data.type ? 0.25 :
+                        "diline" === data.type ? 0.125 :
+                            "triline" === data.type ? 0.25 :
+                                0.5;
+        };
+        flounderStyle.getActualAnglePerDepth = function (data) {
+            return "number" === typeof data.anglePerDepth ? data.anglePerDepth :
+                ("auto" === data.anglePerDepth && "stripe" === flounderStyle.getPatternType(data)) ? (1.0 / 2.0) :
+                    ("auto" === data.anglePerDepth && "diline" === flounderStyle.getPatternType(data)) ? (1.0 / 4.0) :
+                        ("auto" === data.anglePerDepth && "triline" === flounderStyle.getPatternType(data)) ? (1.0 / 6.0) :
+                            "auto" === data.anglePerDepth ? 1.0 : 0.0;
+        };
+        flounderStyle.getAngleOffsetByDepth = function (data) {
+            return flounderStyle.getActualAnglePerDepth(data) * data.depth;
+        };
+        flounderStyle.getAngleOffset = function (data) {
+            return flounderStyle.getActualLayoutAngle(data) + flounderStyle.getAngleOffsetByDepth(data);
+        };
+        flounderStyle.getBackgroundColor = function (data) { var _a; return (_a = data.backgroundColor) !== null && _a !== void 0 ? _a : "transparent"; };
+        flounderStyle.getIntervalSize = function (data) { var _a; return (_a = data.intervalSize) !== null && _a !== void 0 ? _a : config_json_1.default.defaultSpotIntervalSize; };
+        flounderStyle.getBlur = function (data) { var _a; return (_a = data.blur) !== null && _a !== void 0 ? _a : config_json_1.default.defaultBlur; };
+        flounderStyle.getActualReverseRate = function (data) {
+            return "number" === typeof data.reverseRate ? data.reverseRate :
+                ("auto" === data.reverseRate && "trispot" === flounderStyle.getPatternType(data)) ? triPatternHalfRadiusSpotArea :
+                    ("auto" === data.reverseRate && "tetraspot" === flounderStyle.getPatternType(data)) ? TetraPatternHalfRadiusSpotArea :
+                        ("auto" === data.reverseRate && "stripe" === flounderStyle.getPatternType(data)) ? 0.0 :
+                            ("auto" === data.reverseRate && "diline" === flounderStyle.getPatternType(data)) ? 0.0 :
+                                ("auto" === data.reverseRate && "triline" === flounderStyle.getPatternType(data)) ? 0.0 :
+                                    999;
+        };
+        flounderStyle.getAbsoulteReverseRate = function (data) {
+            return "number" === typeof data.reverseRate && data.reverseRate < 0.0 ? Math.abs(data.reverseRate) :
+                "-auto" === data.reverseRate ? "auto" :
+                    data.reverseRate;
+        };
+        var numberToString = function (data, value) { var _a; return value.toLocaleString("en-US", { maximumFractionDigits: (_a = data.maximumFractionDigits) !== null && _a !== void 0 ? _a : config_json_1.default.defaultMaximumFractionDigits, }); };
+        var makeResult = function (_a) {
+            var _b = _a.backgroundColor, backgroundColor = _b === void 0 ? undefined : _b, _c = _a.backgroundImage, backgroundImage = _c === void 0 ? undefined : _c, _d = _a.backgroundSize, backgroundSize = _d === void 0 ? undefined : _d, _e = _a.backgroundPosition, backgroundPosition = _e === void 0 ? undefined : _e;
+            return ({
+                "background-color": backgroundColor,
+                "background-image": backgroundImage,
+                "background-size": backgroundSize,
+                "background-position": backgroundPosition,
+            });
+        };
+        flounderStyle.makeStyle = function (data) {
+            switch (flounderStyle.getPatternType(data)) {
+                case "trispot":
+                    return flounderStyle.makeTrispotStyle(data);
+                case "tetraspot":
+                    return flounderStyle.makeTetraspotStyle(data);
+                case "stripe":
+                    return flounderStyle.makeStripeStyle(data);
+                case "diline":
+                    return flounderStyle.makeDilineStyle(data);
+                case "triline":
+                    return flounderStyle.makeTrilineStyle(data);
+                default:
+                    throw new Error("Unknown FlounderType: ".concat(data.type));
+            }
+        };
+        var makeRadialGradientString = function (data, radius, blur) {
+            if (blur === void 0) { blur = Math.min(radius, flounderStyle.getBlur(data)) / 0.5; }
+            return "radial-gradient(circle at center, ".concat(data.foregroundColor, " ").concat(numberToString(data, radius - blur), "px, transparent ").concat(numberToString(data, radius + blur), "px)");
+        };
+        var makeLinearGradientString = function (data, radius, intervalSize, angle, blur) {
+            if (blur === void 0) { blur = Math.min(intervalSize - radius, radius, flounderStyle.getBlur(data)) / 0.5; }
+            var deg = numberToString(data, 360.0 * (angle % 1.0));
+            var patternStart = numberToString(data, 0);
+            var a = numberToString(data, Math.max(0, radius - blur));
+            var b = numberToString(data, Math.min(intervalSize * 0.5, radius + blur));
+            var c = numberToString(data, Math.max(intervalSize * 0.5, intervalSize - radius - blur));
+            var d = numberToString(data, Math.min(intervalSize, intervalSize - radius + blur));
+            var patternEnd = numberToString(data, intervalSize);
+            return "repeating-linear-gradient(".concat(deg, "deg, ").concat(data.foregroundColor, " calc(").concat(patternStart, "px + 50%), ").concat(data.foregroundColor, " calc(").concat(a, "px + 50%), transparent calc(").concat(b, "px + 50%), transparent calc(").concat(c, "px + 50%), ").concat(data.foregroundColor, " calc(").concat(d, "px + 50%), ").concat(data.foregroundColor, " calc(").concat(patternEnd, "px + 50%))");
+        };
+        var root2 = Math.sqrt(2.0);
+        var root3 = Math.sqrt(3.0);
+        var triPatternHalfRadiusSpotArea = Math.PI / (2 * root3);
+        var TetraPatternHalfRadiusSpotArea = Math.PI / 4;
+        flounderStyle.makePlainStyleOrNull = function (data) {
+            var _a;
+            if (data.depth <= 0.0) {
+                return makeResult({ backgroundColor: (_a = data.backgroundColor) !== null && _a !== void 0 ? _a : "transparent" });
+            }
+            else if (1.0 <= data.depth) {
+                return makeResult({ backgroundColor: data.foregroundColor });
+            }
+            else {
+                return null;
+            }
+        };
+        var calculateMaxPatternSize = function (data, intervalSize, radius) {
+            if (undefined !== data.maxPatternSize && data.maxPatternSize < radius) {
+                intervalSize = intervalSize * data.maxPatternSize / radius;
+                radius = data.maxPatternSize;
+            }
+            return { intervalSize: intervalSize, radius: radius, };
+        };
+        var calculateSpotSize = function (data, halfRadiusSpotArea, maxRadiusRate) {
+            var radius;
+            var intervalSize = flounderStyle.getIntervalSize(data);
+            if (data.depth <= halfRadiusSpotArea) {
+                radius = Math.sqrt(data.depth / halfRadiusSpotArea) * (intervalSize * 0.5);
+            }
+            else {
+                var minRadius = intervalSize * 0.5;
+                var maxRadius = intervalSize * maxRadiusRate;
+                var MaxRadiusWidth = maxRadius - minRadius;
+                var minAreaRate = 1.0 - Math.sqrt(1.0 - halfRadiusSpotArea);
+                var maxAreaRate = 1.0;
+                var maxAreaRateWidth = minAreaRate - maxAreaRate;
+                var areaRate = 1.0 - Math.sqrt(1.0 - data.depth);
+                var areaRateWidth = areaRate - minAreaRate;
+                radius = minRadius + (MaxRadiusWidth * Math.pow(areaRateWidth / maxAreaRateWidth, 2));
+            }
+            return calculateMaxPatternSize(data, intervalSize, radius);
+        };
+        flounderStyle.reverseArguments = function (data) {
+            var result = structuredClone(data);
+            result.foregroundColor = flounderStyle.getBackgroundColor(data);
+            result.backgroundColor = data.foregroundColor;
+            result.depth = 1.0 - data.depth;
+            delete result.reverseRate;
+            return result;
+        };
+        var makeStyleCommon = function (data, maker) {
+            if ("transparent" === data.foregroundColor) {
+                throw new Error("foregroundColor must be other than \"transparent\".");
+            }
+            var plain = flounderStyle.makePlainStyleOrNull(data);
+            if (null !== plain) {
+                return plain;
+            }
+            var reverseRate = flounderStyle.getAbsoulteReverseRate(data);
+            if (reverseRate !== data.reverseRate) {
+                if ("transparent" === flounderStyle.getBackgroundColor(data)) {
+                    throw new Error("When using reverseRate, backgroundColor must be other than \"transparent\".");
+                }
+                var absoulteData = flounderStyle.reverseArguments(data);
+                absoulteData.reverseRate = reverseRate;
+                return maker(absoulteData);
+            }
+            else if (flounderStyle.getActualReverseRate(data) < data.depth) {
+                if ("transparent" === flounderStyle.getBackgroundColor(data)) {
+                    throw new Error("When using reverseRate, backgroundColor must be other than \"transparent\".");
+                }
+                return maker(flounderStyle.reverseArguments(data));
+            }
+            else {
+                return maker(data);
+            }
+        };
+        flounderStyle.makeTrispotStyle = function (data) { return makeStyleCommon(data, function (data) {
+            var _a = calculateSpotSize(data, triPatternHalfRadiusSpotArea, 1.0 / root3), intervalSize = _a.intervalSize, radius = _a.radius;
+            var radialGradient = makeRadialGradientString(data, radius);
+            var backgroundColor = flounderStyle.getBackgroundColor(data);
+            var backgroundImage = Array.from({ length: 4 }).map(function (_) { return radialGradient; }).join(", ");
+            switch (flounderStyle.getLayoutAngle(data)) {
+                case "regular": // horizontal
+                    return makeResult({
+                        backgroundColor: backgroundColor,
+                        backgroundImage: backgroundImage,
+                        backgroundSize: "".concat(numberToString(data, intervalSize * 2.0), "px ").concat(numberToString(data, intervalSize * root3), "px"),
+                        backgroundPosition: "calc(0px + 50%) calc(0px + 50%), calc(".concat(numberToString(data, intervalSize), "px + 50%) calc(0px + 50%), calc(").concat(numberToString(data, intervalSize * 0.5), "px + 50%) calc(").concat(numberToString(data, intervalSize * root3 * 0.5), "px + 50%), calc(").concat(numberToString(data, intervalSize * 1.5), "px + 50%) calc(").concat(numberToString(data, intervalSize * root3 * 0.5), "px + 50%)")
+                    });
+                case "alternative": // vertical
+                    return makeResult({
+                        backgroundColor: backgroundColor,
+                        backgroundImage: backgroundImage,
+                        backgroundSize: " ".concat(numberToString(data, intervalSize * root3), "px ").concat(numberToString(data, intervalSize * 2.0), "px"),
+                        backgroundPosition: "calc(0px + 50%) calc(0px + 50%), calc(0px + 50%) calc(".concat(numberToString(data, intervalSize), "px + 50%), calc(").concat(numberToString(data, intervalSize * root3 * 0.5), "px + 50%) calc(").concat(numberToString(data, intervalSize * 0.5), "px + 50%), calc(").concat(numberToString(data, intervalSize * root3 * 0.5), "px + 50%) calc(").concat(numberToString(data, intervalSize * 1.5), "px + 50%)")
+                    });
+                default:
+                    throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
+            }
+        }); };
+        flounderStyle.makeTetraspotStyle = function (data) { return makeStyleCommon(data, function (data) {
+            var _a = calculateSpotSize(data, TetraPatternHalfRadiusSpotArea, 0.5 * root2), intervalSize = _a.intervalSize, radius = _a.radius;
+            var radialGradient = makeRadialGradientString(data, radius);
+            var backgroundColor = flounderStyle.getBackgroundColor(data);
+            switch (flounderStyle.getLayoutAngle(data)) {
+                case "regular": // straight
+                    return makeResult({
+                        backgroundColor: backgroundColor,
+                        backgroundImage: radialGradient,
+                        backgroundSize: "".concat(numberToString(data, intervalSize), "px ").concat(numberToString(data, intervalSize), "px"),
+                        backgroundPosition: "calc(0px + 50%) calc(0px + 50%)"
+                    });
+                case "alternative": // slant
+                    return makeResult({
+                        backgroundColor: backgroundColor,
+                        backgroundImage: Array.from({ length: 2 }).map(function (_) { return radialGradient; }).join(", "),
+                        backgroundSize: "".concat(numberToString(data, (intervalSize * 2.0) / root2), "px ").concat(numberToString(data, (intervalSize * 2.0) / root2), "px"),
+                        backgroundPosition: "calc(0px + 50%) calc(0px + 50%), calc(".concat(numberToString(data, intervalSize / root2), "px + 50%) calc(").concat(numberToString(data, intervalSize / root2), "px + 50%)")
+                    });
+                default:
+                    throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
+            }
+        }); };
+        flounderStyle.makeStripeStyle = function (data) { return makeStyleCommon(data, function (data) {
+            var backgroundColor = flounderStyle.getBackgroundColor(data);
+            var angleOffset = flounderStyle.getAngleOffset(data);
+            var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), data.depth * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+            return makeResult({
+                backgroundColor: backgroundColor,
+                backgroundImage: makeLinearGradientString(data, radius, intervalSize, angleOffset)
+            });
+        }); };
+        flounderStyle.makeDilineStyle = function (data) { return makeStyleCommon(data, function (data) {
+            var backgroundColor = flounderStyle.getBackgroundColor(data);
+            var angleOffset = flounderStyle.getAngleOffset(data);
+            var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+            return makeResult({
+                backgroundColor: backgroundColor,
+                backgroundImage: [
+                    makeLinearGradientString(data, radius, intervalSize, (0.0 / 4.0) + angleOffset),
+                    makeLinearGradientString(data, radius, intervalSize, (1.0 / 4.0) + angleOffset),
+                ]
+                    .join(", ")
+            });
+        }); };
+        flounderStyle.makeTrilineStyle = function (data) { return makeStyleCommon(data, function (data) {
+            var backgroundColor = flounderStyle.getBackgroundColor(data);
+            var angleOffset = flounderStyle.getAngleOffset(data);
+            var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 3.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+            return makeResult({
+                backgroundColor: backgroundColor,
+                backgroundImage: [
+                    makeLinearGradientString(data, radius, intervalSize, (0.0 / 6.0) + angleOffset),
+                    makeLinearGradientString(data, radius, intervalSize, (1.0 / 6.0) + angleOffset),
+                    makeLinearGradientString(data, radius, intervalSize, (2.0 / 6.0) + angleOffset),
+                ]
+                    .join(", ")
+            });
+        }); };
+    })(flounderStyle || (exports.flounderStyle = flounderStyle = {}));
 });
 define("resource/config", [], {
     "applicationTitle": "Cyclic ToDo",
@@ -22113,7 +22401,7 @@ define("script/locale", ["require", "exports", "resource/lang.en", "resource/lan
         locale_1.string = function (key) { return locale_1.master[masterKey][key] || key; };
         locale_1.map = function (key) { return locale_1.string(key); };
         locale_1.immutable = function (key) { return key; };
-    })(locale = exports.locale || (exports.locale = {}));
+    })(locale || (exports.locale = locale = {}));
 });
 define("resource/images", [], {
     "application-icon": "./image/cyclictodohex.1024.svg",
@@ -22268,11 +22556,11 @@ define("resource/keyboard.shortcuts", [], [
         "reverseWithShiftKey": true
     }
 ]);
-define("script/index", ["require", "exports", "nephila/minamo.js/index", "resource/config", "resource/poem", "resource/style", "script/locale", "resource/keyboard.shortcuts"], function (require, exports, minamo_js_1, config_json_1, poem_json_1, style_json_1, locale_2, keyboard_shortcuts_json_1) {
+define("script/index", ["require", "exports", "nephila/minamo.js/index", "flounder.style.js/index", "resource/config", "resource/poem", "resource/style", "script/locale", "resource/keyboard.shortcuts"], function (require, exports, minamo_js_1, flounder_style_js_1, config_json_2, poem_json_1, style_json_1, locale_2, keyboard_shortcuts_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CyclicToDo = exports.Calculate = exports.groupBy = exports.previousItem = exports.nextItem = exports.currentItem = exports.isValidNumber = exports.isNumber = exports.toPercentSting = exports.takeFilter = exports.uniqueFilter = exports.simpleReverseComparer = exports.simpleComparer = exports.stringOrJson = exports.JsonHeader = exports.makeObject = exports.getKeyboardShortcutsCategoryLocale = exports.keyboardShortcuts = exports.setLocale = void 0;
-    config_json_1 = __importDefault(config_json_1);
+    config_json_2 = __importDefault(config_json_2);
     poem_json_1 = __importDefault(poem_json_1);
     style_json_1 = __importDefault(style_json_1);
     keyboard_shortcuts_json_1 = __importDefault(keyboard_shortcuts_json_1);
@@ -22282,7 +22570,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
     exports.setLocale = setLocale;
     exports.keyboardShortcuts = keyboard_shortcuts_json_1.default;
     var getKeyboardShortcutsCategoryLocale = function (key) {
-        return "KeyboardShortcutsCategory." + key;
+        return "KeyboardShortcutsCategory.".concat(key);
     };
     exports.getKeyboardShortcutsCategoryLocale = getKeyboardShortcutsCategoryLocale;
     var makeObject = function (items) {
@@ -22306,7 +22594,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
     exports.toPercentSting = toPercentSting;
     var isNumber = function (value) { return "number" === typeof value; };
     exports.isNumber = isNumber;
-    var isValidNumber = function (value) { return exports.isNumber(value) && !isNaN(value); };
+    var isValidNumber = function (value) { return (0, exports.isNumber)(value) && !isNaN(value); };
     exports.isValidNumber = isValidNumber;
     var currentItem = function (list, current) { return 0 <= list.indexOf(current) ? current : undefined; };
     exports.currentItem = currentItem;
@@ -22359,15 +22647,15 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
         Calculate.tickFromStandardScore = function (average, standardDeviation, target) {
             return ((target - 50) / 10 * standardDeviation) + average;
         };
-    })(Calculate = exports.Calculate || (exports.Calculate = {}));
+    })(Calculate || (exports.Calculate = Calculate = {}));
     var CyclicToDo;
     (function (CyclicToDo) {
         var _this = this;
-        CyclicToDo.applicationTitle = config_json_1.default.applicationTitle;
-        CyclicToDo.getThemeLocale = function (key) { return "theme." + key; };
-        CyclicToDo.getFlashStyleLocale = function (key) { return "flashStyle." + key; };
-        CyclicToDo.getUiStyleLocale = function (key) { return "uiStyle." + key; };
-        CyclicToDo.getEmojiTypeLocale = function (key) { return "emoji." + key; };
+        CyclicToDo.applicationTitle = config_json_2.default.applicationTitle;
+        CyclicToDo.getThemeLocale = function (key) { return "theme.".concat(key); };
+        CyclicToDo.getFlashStyleLocale = function (key) { return "flashStyle.".concat(key); };
+        CyclicToDo.getUiStyleLocale = function (key) { return "uiStyle.".concat(key); };
+        CyclicToDo.getEmojiTypeLocale = function (key) { return "emoji.".concat(key); };
         CyclicToDo.isZeroToDoEntry = function (item) {
             return item.count <= 0 || "number" !== typeof item.first;
         };
@@ -22537,7 +22825,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             })(Pass = OldStorage.Pass || (OldStorage.Pass = {}));
             var Title;
             (function (Title) {
-                Title.makeKey = function (pass) { return "pass:(" + pass + ").title"; };
+                Title.makeKey = function (pass) { return "pass:(".concat(pass, ").title"); };
                 Title.get = function (pass) { var _a; return (_a = OldStorage.getStorage(pass).getOrNull(Title.makeKey(pass))) !== null && _a !== void 0 ? _a : locale_2.locale.map("ToDo List"); };
                 Title.set = function (pass, title) {
                     return OldStorage.getStorage(pass).set(Title.makeKey(pass), title);
@@ -22545,7 +22833,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             })(Title = OldStorage.Title || (OldStorage.Title = {}));
             var ListSettings;
             (function (ListSettings) {
-                ListSettings.makeKey = function (pass) { return "pass:(" + pass + ").settings"; };
+                ListSettings.makeKey = function (pass) { return "pass:(".concat(pass, ").settings"); };
                 ListSettings.get = function (pass) { var _a; return (_a = OldStorage.getStorage(pass).getOrNull(ListSettings.makeKey(pass))) !== null && _a !== void 0 ? _a : {}; };
                 ListSettings.set = function (pass, settings) {
                     return OldStorage.getStorage(pass).set(ListSettings.makeKey(pass), settings);
@@ -22574,7 +22862,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             })(ListSettings = OldStorage.ListSettings || (OldStorage.ListSettings = {}));
             var Tag;
             (function (Tag) {
-                Tag.makeKey = function (pass) { return "pass:(" + pass + ").tag.list"; };
+                Tag.makeKey = function (pass) { return "pass:(".concat(pass, ").tag.list"); };
                 Tag.get = function (pass) { var _a; return (_a = OldStorage.getStorage(pass).getOrNull(Tag.makeKey(pass))) !== null && _a !== void 0 ? _a : []; };
                 Tag.set = function (pass, list) {
                     return OldStorage.getStorage(pass).set(Tag.makeKey(pass), list.filter(function (i) { return !Model.isSystemTagOld(i); }));
@@ -22657,7 +22945,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         if (Model.isSublistOld(newTag)) {
                             member.forEach(function (i) {
                                 var task = OldStorage.Task.getBody(i);
-                                var result = "" + newTag + task;
+                                var result = "".concat(newTag).concat(task);
                                 OldStorage.Task.rename(pass, i, result);
                             });
                         }
@@ -22676,7 +22964,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             })(Tag = OldStorage.Tag || (OldStorage.Tag = {}));
             var TagMember;
             (function (TagMember) {
-                TagMember.makeKey = function (pass, tag) { return "pass:(" + pass + ").tag:(" + tag + ")"; };
+                TagMember.makeKey = function (pass, tag) { return "pass:(".concat(pass, ").tag:(").concat(tag, ")"); };
                 TagMember.getRaw = function (pass, tag) { var _a; return (_a = OldStorage.getStorage(pass).getOrNull(TagMember.makeKey(pass, tag))) !== null && _a !== void 0 ? _a : []; };
                 TagMember.get = function (pass, tag) {
                     switch (tag) {
@@ -22710,7 +22998,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 TagMember.add = function (pass, tag, todo) {
                     if (Model.isSublistOld(tag)) {
                         if (tag !== Task.getSublist(todo)) {
-                            var renamedTodo = "" + tag + Task.getBody(todo);
+                            var renamedTodo = "".concat(tag).concat(Task.getBody(todo));
                             Task.rename(pass, todo, renamedTodo);
                             return renamedTodo;
                         }
@@ -22747,7 +23035,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             })(TagMember = OldStorage.TagMember || (OldStorage.TagMember = {}));
             var TagSettings;
             (function (TagSettings) {
-                TagSettings.makeKey = function (pass, tag) { return "pass:(" + pass + ").tag:(" + tag + ").settings"; };
+                TagSettings.makeKey = function (pass, tag) { return "pass:(".concat(pass, ").tag:(").concat(tag, ").settings"); };
                 TagSettings.get = function (pass, tag) { var _a; return (_a = OldStorage.getStorage(pass).getOrNull(TagSettings.makeKey(pass, tag))) !== null && _a !== void 0 ? _a : {}; };
                 TagSettings.set = function (pass, tag, settings) {
                     return OldStorage.getStorage(pass).set(TagSettings.makeKey(pass, tag), settings);
@@ -22756,7 +23044,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 TagSettings.getSort = function (pass, tag) { var _a, _b; return ((_a = TagSettings.get(pass, tag).sort) !== null && _a !== void 0 ? _a : ((_b = TagSettings.get(pass, "@overall").sort) !== null && _b !== void 0 ? _b : "smart")); };
                 TagSettings.getDisplayStyle = function (pass, tag) {
                     var defaultResult = "full";
-                    var result = exports.currentItem(["@home", "full", "simple", "compact"], TagSettings.get(pass, tag).displayStyle);
+                    var result = (0, exports.currentItem)(["@home", "full", "simple", "compact"], TagSettings.get(pass, tag).displayStyle);
                     if (undefined === result || "@home" === result) {
                         if ("@overall" === tag) {
                             return defaultResult;
@@ -22788,7 +23076,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 Task.decode = function (task) { return task.replace(/@=/, "@").replace(/@:/, ": "); };
                 Task.getSublist = function (task) {
                     var split = task.split("@:");
-                    return 2 <= split.length ? split[0] + "@:" : null;
+                    return 2 <= split.length ? "".concat(split[0], "@:") : null;
                 };
                 Task.getBody = function (task) {
                     var split = task.split("@:");
@@ -22799,7 +23087,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 };
                 Task.isExist = function (pass, task, tag) {
                     if ("string" === typeof tag && Model.isSublistOld(tag)) {
-                        var taskFullname = "" + tag + Task.getBody(task);
+                        var taskFullname = "".concat(tag).concat(Task.getBody(task));
                         return Task.isExist(pass, taskFullname);
                     }
                     else {
@@ -22863,7 +23151,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             })(Task = OldStorage.Task || (OldStorage.Task = {}));
             var TodoSettings;
             (function (TodoSettings) {
-                TodoSettings.makeKey = function (pass, task) { return "pass:(" + pass + ").todo:(" + task + ").settings"; };
+                TodoSettings.makeKey = function (pass, task) { return "pass:(".concat(pass, ").todo:(").concat(task, ").settings"); };
                 TodoSettings.get = function (pass, task) { var _a; return (_a = OldStorage.getStorage(pass).getOrNull(TodoSettings.makeKey(pass, task))) !== null && _a !== void 0 ? _a : {}; };
                 TodoSettings.set = function (pass, task, settings) {
                     return undefined === settings ?
@@ -22946,13 +23234,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             })(TodoSettings = OldStorage.TodoSettings || (OldStorage.TodoSettings = {}));
             var History;
             (function (History) {
-                History.makeKey = function (pass, task) { return "pass:(" + pass + ").task:" + task + ".history"; };
+                History.makeKey = function (pass, task) { return "pass:(".concat(pass, ").task:").concat(task, ".history"); };
                 History.get = function (pass, task) {
                     var _a;
                     var raw = (_a = OldStorage.getStorage(pass).getOrNull(History.makeKey(pass, task))) !== null && _a !== void 0 ? _a : { histories: [], first: null, count: 0, };
                     return Array.isArray(raw) ?
                         {
-                            histories: raw.filter(exports.takeFilter(config_json_1.default.maxHistories)),
+                            histories: raw.filter((0, exports.takeFilter)(config_json_2.default.maxHistories)), // splice を使うと正しい count を取得し損ねるので、ここは filter にしている。
                             first: Math.min.apply(Math, raw),
                             count: raw.length,
                         } :
@@ -22969,7 +23257,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     var item = History.get(pass, task);
                     var oldLength = item.histories.length;
                     var temporaryHistories = item.histories.filter(function (i) { return tick !== i; }).concat(tick).sort(exports.simpleReverseComparer);
-                    item.histories = temporaryHistories.slice(0, config_json_1.default.maxHistories);
+                    item.histories = temporaryHistories.slice(0, config_json_2.default.maxHistories);
                     item.count += temporaryHistories.length - oldLength;
                     if (null === item.first || tick < item.first) {
                         item.first = tick;
@@ -23010,7 +23298,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             })(History = OldStorage.History || (OldStorage.History = {}));
             var Removed;
             (function (Removed) {
-                Removed.makeKey = function (pass) { return "pass:(" + pass + ").removed"; };
+                Removed.makeKey = function (pass) { return "pass:(".concat(pass, ").removed"); };
                 Removed.getRaw = function (pass) { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull(Removed.makeKey(pass))) !== null && _a !== void 0 ? _a : []; };
                 Removed.get = function (pass) { return Removed.getRaw(pass).map(function (i) { return JSON.parse(i); }); };
                 Removed.set = function (pass, list) { return minamo_js_1.minamo.localStorage.set(Removed.makeKey(pass), list); };
@@ -23042,7 +23330,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 };
                 Removed.getName = function (item) {
                     if ("Tick" === item.type) {
-                        return item.task + ": " + Domain.dateStringFromTick(item.tick);
+                        return "".concat(item.task, ": ").concat(Domain.dateStringFromTick(item.tick));
                     }
                     else {
                         return item.name;
@@ -23105,7 +23393,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             })(ToDoDocumentList = Storage.ToDoDocumentList || (Storage.ToDoDocumentList = {}));
             var ToDoList;
             (function (ToDoList) {
-                ToDoList.makeKey = function (pass) { return "document:(" + pass + ")"; };
+                ToDoList.makeKey = function (pass) { return "document:(".concat(pass, ")"); };
                 ToDoList.get = function (pass) { return minamo_js_1.minamo.localStorage.getOrNull(ToDoList.makeKey(pass)); };
                 ToDoList.set = function (pass, list) { return minamo_js_1.minamo.localStorage.set(ToDoList.makeKey(pass), list); };
                 ToDoList.remove = function (pass) {
@@ -23120,7 +23408,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 Filter.add = function (filter) {
                     Filter.set([filter].concat(Filter.get())
                         .filter(exports.uniqueFilter)
-                        .filter(exports.takeFilter(30)));
+                        .filter((0, exports.takeFilter)(30)));
                 };
             })(Filter = Storage.Filter || (Storage.Filter = {}));
             var Timespan;
@@ -23131,7 +23419,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 Timespan.add = function (timespan) {
                     Timespan.set([timespan].concat(Timespan.get())
                         .filter(exports.uniqueFilter)
-                        .filter(exports.takeFilter(config_json_1.default.timespanPresetMaxCount)));
+                        .filter((0, exports.takeFilter)(config_json_2.default.timespanPresetMaxCount)));
                 };
             })(Timespan = Storage.Timespan || (Storage.Timespan = {}));
             var TimespanStandardScore;
@@ -23142,7 +23430,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 TimespanStandardScore.add = function (timespan) {
                     TimespanStandardScore.set([timespan].concat(TimespanStandardScore.get())
                         .filter(exports.uniqueFilter)
-                        .filter(exports.takeFilter(config_json_1.default.timespanStandardScorePresetMaxCount)));
+                        .filter((0, exports.takeFilter)(config_json_2.default.timespanStandardScorePresetMaxCount)));
                 };
             })(TimespanStandardScore = Storage.TimespanStandardScore || (Storage.TimespanStandardScore = {}));
         })(Storage = CyclicToDo.Storage || (CyclicToDo.Storage = {}));
@@ -23150,7 +23438,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
         (function (SessionStorage) {
             var ToDoList;
             (function (ToDoList) {
-                ToDoList.makeKey = function (pass) { return "document:(" + pass + ")"; };
+                ToDoList.makeKey = function (pass) { return "document:(".concat(pass, ")"); };
                 ToDoList.get = function (pass) { return minamo_js_1.minamo.sessionStorage.getOrNull(ToDoList.makeKey(pass)); };
                 ToDoList.set = function (pass, list) { return minamo_js_1.minamo.sessionStorage.set(ToDoList.makeKey(pass), list); };
                 ToDoList.remove = function (pass) {
@@ -23238,7 +23526,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     this.getName = function () { return _this.name; };
                     this.getSublist = function () {
                         var split = _this.name.split("@:");
-                        return 2 <= split.length ? new Tag(_this.document, split[0] + "@:") : null;
+                        return 2 <= split.length ? new Tag(_this.document, "".concat(split[0], "@:")) : null;
                     };
                     this.getBody = function () {
                         var split = _this.name.split("@:");
@@ -23456,7 +23744,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             var item = (_a = _this.content.histories[task]) !== null && _a !== void 0 ? _a : { histories: [], first: null, count: 0, };
                                             var oldLength = item.histories.length;
                                             var temporaryHistories = item.histories.filter(function (i) { return tick !== i; }).concat(tick).sort(exports.simpleReverseComparer);
-                                            item.histories = temporaryHistories.slice(0, config_json_1.default.maxHistories);
+                                            item.histories = temporaryHistories.slice(0, config_json_2.default.maxHistories);
                                             item.count += temporaryHistories.length - oldLength;
                                             if (null === item.first || tick < item.first) {
                                                 item.first = tick;
@@ -23764,18 +24052,18 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Domain.hourUnit = 60 * Domain.minuteUnit;
             Domain.dayUnit = 24 * Domain.hourUnit;
             Domain.yearUnit = 365.2425 * Domain.dayUnit;
-            Domain.timeAccuracy = (_a = minamo_js_1.minamo.core.parseTimespan(config_json_1.default.timeAccuracy)) !== null && _a !== void 0 ? _a : Domain.minuteUnit;
-            Domain.standardDeviationRate = config_json_1.default.standardDeviationRate;
-            Domain.granceTime = ((_b = minamo_js_1.minamo.core.parseTimespan(config_json_1.default.granceTimespan)) !== null && _b !== void 0 ? _b : Domain.dayUnit) / Domain.timeAccuracy;
-            Domain.maxRestAdjustTime = ((_c = minamo_js_1.minamo.core.parseTimespan(config_json_1.default.maxRestAdjustTimespan)) !== null && _c !== void 0 ? _c : (3 * Domain.hourUnit)) / Domain.timeAccuracy;
-            Domain.maxShortTermMinutes = ((_d = minamo_js_1.minamo.core.parseTimespan(config_json_1.default.maxShortTermTimespan)) !== null && _d !== void 0 ? _d : (6 * Domain.dayUnit)) / Domain.minuteUnit;
-            Domain.maxMediumTermMinutes = ((_e = minamo_js_1.minamo.core.parseTimespan(config_json_1.default.maxMediumTermTimespan)) !== null && _e !== void 0 ? _e : (15 * Domain.dayUnit)) / Domain.minuteUnit;
-            Domain.removedItemExpire = ((_f = minamo_js_1.minamo.core.parseTimespan(config_json_1.default.removedItemExpire)) !== null && _f !== void 0 ? _f : (30 * Domain.dayUnit)) / Domain.minuteUnit;
+            Domain.timeAccuracy = (_a = minamo_js_1.minamo.core.parseTimespan(config_json_2.default.timeAccuracy)) !== null && _a !== void 0 ? _a : Domain.minuteUnit;
+            Domain.standardDeviationRate = config_json_2.default.standardDeviationRate;
+            Domain.granceTime = ((_b = minamo_js_1.minamo.core.parseTimespan(config_json_2.default.granceTimespan)) !== null && _b !== void 0 ? _b : Domain.dayUnit) / Domain.timeAccuracy;
+            Domain.maxRestAdjustTime = ((_c = minamo_js_1.minamo.core.parseTimespan(config_json_2.default.maxRestAdjustTimespan)) !== null && _c !== void 0 ? _c : (3 * Domain.hourUnit)) / Domain.timeAccuracy;
+            Domain.maxShortTermMinutes = ((_d = minamo_js_1.minamo.core.parseTimespan(config_json_2.default.maxShortTermTimespan)) !== null && _d !== void 0 ? _d : (6 * Domain.dayUnit)) / Domain.minuteUnit;
+            Domain.maxMediumTermMinutes = ((_e = minamo_js_1.minamo.core.parseTimespan(config_json_2.default.maxMediumTermTimespan)) !== null && _e !== void 0 ? _e : (15 * Domain.dayUnit)) / Domain.minuteUnit;
+            Domain.removedItemExpire = ((_f = minamo_js_1.minamo.core.parseTimespan(config_json_2.default.removedItemExpire)) !== null && _f !== void 0 ? _f : (30 * Domain.dayUnit)) / Domain.minuteUnit;
             Domain.getTicks = function (date) {
                 if (date === void 0) { date = new Date(); }
                 return Math.floor(date.getTime() / Domain.timeAccuracy);
             };
-            Domain.tickScalePreset = config_json_1.default.tickScalePreset
+            Domain.tickScalePreset = config_json_2.default.tickScalePreset
                 .map(function (i) { return minamo_js_1.minamo.core.parseTimespan(i); })
                 .filter(exports.isNumber)
                 .map(function (i) { return i / Domain.timeAccuracy; })
@@ -23786,7 +24074,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 }
                 else {
                     var date = new Date(tick * Domain.timeAccuracy);
-                    return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).substr(-2) + "-" + ("0" + date.getDate()).substr(-2);
+                    return "".concat(date.getFullYear(), "-").concat(("0" + (date.getMonth() + 1)).substr(-2), "-").concat(("0" + date.getDate()).substr(-2));
                 }
             };
             Domain.dayStringFromTick = function (tick) {
@@ -23795,7 +24083,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 }
                 else {
                     var date = new Date(tick * Domain.timeAccuracy);
-                    return locale_2.locale.map("week.short." + date.getDay());
+                    return locale_2.locale.map("week.short.".concat(date.getDay()));
                 }
             };
             function getTime(tick) {
@@ -23823,7 +24111,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return "N/A";
                 }
                 else {
-                    return Domain.dateCoreStringFromTick(tick) + "(" + Domain.dayStringFromTick(tick) + ") " + Domain.timeCoreStringFromTick(getTime(tick));
+                    return "".concat(Domain.dateCoreStringFromTick(tick), "(").concat(Domain.dayStringFromTick(tick), ") ").concat(Domain.timeCoreStringFromTick(getTime(tick)));
                 }
             }
             Domain.dateStringFromTick = dateStringFromTick;
@@ -23832,13 +24120,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return "N/A";
                 }
                 else if (tick < 0) {
-                    return "-" + Domain.timeCoreStringFromTick(-tick);
+                    return "-".concat(Domain.timeCoreStringFromTick(-tick));
                 }
                 else {
                     var time = Math.floor(tick) % (24 * 60);
                     var hour = Math.floor(time / 60);
                     var minute = time % 60;
-                    return ("00" + hour).slice(-2) + ":" + ("00" + minute).slice(-2);
+                    return "".concat(("00" + hour).slice(-2), ":").concat(("00" + minute).slice(-2));
                 }
             };
             Domain.timeShortStringFromTick = function (tick) {
@@ -23846,14 +24134,14 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return "N/A";
                 }
                 else if (tick < 0) {
-                    return "-" + Domain.timeShortStringFromTick(-tick);
+                    return "-".concat(Domain.timeShortStringFromTick(-tick));
                 }
                 else {
                     var days = Math.floor(tick / (24 * 60));
                     return 10 <= days ?
-                        days.toLocaleString() + " " + locale_2.locale.map("days") :
+                        "".concat(days.toLocaleString(), " ").concat(locale_2.locale.map("days")) :
                         0 < days ?
-                            days.toLocaleString() + " " + locale_2.locale.map("days") + " " + Domain.timeCoreStringFromTick(tick) :
+                            "".concat(days.toLocaleString(), " ").concat(locale_2.locale.map("days"), " ").concat(Domain.timeCoreStringFromTick(tick)) :
                             Domain.timeCoreStringFromTick(tick);
                 }
             };
@@ -23862,12 +24150,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return "N/A";
                 }
                 else if (tick < 0) {
-                    return "-" + Domain.timeLongStringFromTick(-tick);
+                    return "-".concat(Domain.timeLongStringFromTick(-tick));
                 }
                 else {
                     var days = Math.floor(tick / (24 * 60));
                     return 0 < days ?
-                        days.toLocaleString() + " " + locale_2.locale.map("days") + " " + Domain.timeCoreStringFromTick(tick) :
+                        "".concat(days.toLocaleString(), " ").concat(locale_2.locale.map("days"), " ").concat(Domain.timeCoreStringFromTick(tick)) :
                         Domain.timeCoreStringFromTick(tick);
                 }
             };
@@ -23876,7 +24164,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return "N/A";
                 }
                 else if (tick < 0) {
-                    return "-" + Domain.timeLongStringFromTick(-tick);
+                    return "-".concat(Domain.timeLongStringFromTick(-tick));
                 }
                 else {
                     var days = Math.floor(tick / (24 * 60));
@@ -23885,15 +24173,15 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     }
                     else if (days < 10) {
                         var daysSymbol = (1.1).toLocaleString().replace(/\d/g, "");
-                        return "" + days.toLocaleString() + daysSymbol + Domain.timeCoreStringFromTick(tick);
+                        return "".concat(days.toLocaleString()).concat(daysSymbol).concat(Domain.timeCoreStringFromTick(tick));
                     }
                     else {
-                        return days.toLocaleString() + " " + locale_2.locale.map("days");
+                        return "".concat(days.toLocaleString(), " ").concat(locale_2.locale.map("days"));
                     }
                 }
             };
             Domain.timeRangeStringFromTick = function (a, b) {
-                return Domain.timeShortStringFromTick(a) + " \u301C " + Domain.timeShortStringFromTick(b);
+                return "".concat(Domain.timeShortStringFromTick(a), " \u301C ").concat(Domain.timeShortStringFromTick(b));
             };
             function parseDate(date) {
                 if (null !== date) {
@@ -23910,7 +24198,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             function parseTimeSpan(time) {
                 if (null !== time) {
                     try {
-                        return (Date.parse("2023-01-01T" + time) - Date.parse("2023-01-01T00:00")) / Domain.timeAccuracy;
+                        return (Date.parse("2023-01-01T".concat(time)) - Date.parse("2023-01-01T00:00")) / Domain.timeAccuracy;
                     }
                     catch (_a) {
                         return null;
@@ -23980,7 +24268,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             };
             Domain.getDoneTicksOld = function (pass, key) {
                 var _a;
-                if (key === void 0) { key = "pass:(" + pass + ").last.done.ticks"; }
+                if (key === void 0) { key = "pass:(".concat(pass, ").last.done.ticks"); }
                 return minamo_js_1.minamo.localStorage.set(key, Math.max((_a = minamo_js_1.minamo.localStorage.getOrNull(key)) !== null && _a !== void 0 ? _a : 0, Domain.getTicks() - 1) + 1);
             };
             Domain.doneOld = function (pass, task, tick) {
@@ -24027,7 +24315,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             },
                             function (item) {
                                 var _a;
-                                return config_json_1.default.autoTagSortOrder
+                                return config_json_2.default.autoTagSortOrder
                                     .indexOf((_a = OldStorage.TodoSettings.getAutoTag(entry.pass, item)) !== null && _a !== void 0 ? _a : "default");
                             },
                             { raw: Domain.todoComparerSmartBaseOld(entry), },
@@ -24107,7 +24395,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         longRecentries :
                         // todo 毎の history 画面では config.granceMinutes を使うが、ここでは予想間隔の精度の都合から使わない。 ( 整合性が無くなるが、特にそれでなんの影響も無いので気にしない。 )
                         //longRecentries.filter(i => (i -longRecentlyAverage -config.granceMinutes) / longRecentlyStandardDeviation <= config.sleepStandardDeviationRate)
-                        longRecentries.filter(function (i) { return (i - longRecentlyAverage) / longRecentlyStandardDeviation <= config_json_1.default.sleepStandardDeviationRate; }))
+                        longRecentries.filter(function (i) { return (i - longRecentlyAverage) / longRecentlyStandardDeviation <= config_json_2.default.sleepStandardDeviationRate; }))
                         .filter(function (_, index) { return index < 25; }),
                     // intervals: longRecentries.filter((_, index) => index < 25),
                     // previous: full.histories.length <= 0 ? null: full.histories[0],
@@ -24115,7 +24403,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     count: full.count,
                 };
                 var inflateRecentrly = function (intervals) { return 20 <= intervals.length ?
-                    intervals.filter(function (_, ix) { return ix < 5; }).concat(intervals.filter(exports.takeFilter(10)), intervals) :
+                    intervals.filter(function (_, ix) { return ix < 5; }).concat(intervals.filter((0, exports.takeFilter)(10)), intervals) :
                     intervals.filter(function (_, ix) { return ix < 5; }).concat(intervals); };
                 // const calcAverage = (ticks: number[], maxLength: number = ticks.length, length = Math.min(maxLength, ticks.length)) =>
                 //     ((ticks[0] -ticks[length -1]) /(length -1));
@@ -24306,7 +24594,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 case 1:
                                     _a.sent();
                                     toast = Render.makeToast({
-                                        content: Render.$span("")(locale_2.locale.map("ToDo list has been renamed!") + ": " + backup + " \u2192 " + newName),
+                                        content: Render.$span("")("".concat(locale_2.locale.map("ToDo list has been renamed!"), ": ").concat(backup, " \u2192 ").concat(newName)),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
@@ -24337,7 +24625,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             list = JSON.parse(MigrateBridge.exportJson(pass));
                             OldStorage.Pass.remove(list.pass);
                             toast = Render.makeToast({
-                                content: Render.$span("")(locale_2.locale.map("ToDo list has been deleted!") + ": " + list.title),
+                                content: Render.$span("")("".concat(locale_2.locale.map("ToDo list has been deleted!"), ": ").concat(list.title)),
                                 backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         OldStorage.importJson(JSON.stringify(list));
@@ -24370,7 +24658,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                         case 0:
                                             toast.hide(); // nowait
                                             _b = (_a = Domain).parseDate;
-                                            return [4 /*yield*/, Render.dateTimePrompt(locale_2.locale.map("Edit") + ": " + Model.decode(item.task), tick)];
+                                            return [4 /*yield*/, Render.dateTimePrompt("".concat(locale_2.locale.map("Edit"), ": ").concat(Model.decode(item.task)), tick)];
                                         case 1:
                                             result = _b.apply(_a, [_c.sent()]);
                                             if (!(null !== result && tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())) return [3 /*break*/, 3];
@@ -24384,7 +24672,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     }
                                 });
                             }); }),
-                            content: Render.$span("")(locale_2.locale.map("Done!") + ": " + Model.decode(item.task)),
+                            content: Render.$span("")("".concat(locale_2.locale.map("Done!"), ": ").concat(Model.decode(item.task))),
                             backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     OldStorage.History.removeTickRaw(pass, item.task, tick); // ごみ箱は利用せずに直に削除
@@ -24465,7 +24753,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return Render.button("text-button", Render.label(text), onclick);
             };
             Render.descriptionButton = function (className, title, description, onclick) {
-                return Render.button("description-button " + className, [
+                return Render.button("description-button ".concat(className), [
                     Render.$div("label-button button-title")(title),
                     Render.$div("button-description")(Render.label(description)),
                 ], onclick);
@@ -24573,9 +24861,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     if (isFirst && 0 < i.percent) {
                         result += "#00000000, ";
                     }
-                    result += "#00000000 calc(" + exports.toPercentSting(i.percent) + " - 1px), " + i.color + "AA calc(" + exports.toPercentSting(i.percent) + " - 1px), " + i.color + "AA " + exports.toPercentSting(i.percent);
+                    result += "#00000000 calc(".concat((0, exports.toPercentSting)(i.percent), " - 1px), ").concat(i.color, "AA calc(").concat((0, exports.toPercentSting)(i.percent), " - 1px), ").concat(i.color, "AA ").concat((0, exports.toPercentSting)(i.percent));
                     if (!isLast || i.percent < 1) {
-                        result += ", #00000000 calc(" + exports.toPercentSting(i.percent) + " + 1px)";
+                        result += ", #00000000 calc(".concat((0, exports.toPercentSting)(i.percent), " + 1px)");
                     }
                     return result;
                 })
@@ -24584,7 +24872,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.scaleLinesStyle = function (lines) {
                 var result = "";
                 if (0 < lines.length) {
-                    return "background: linear-gradient(90deg, " + Render.scaleLinesStyleParts(lines.sort(minamo_js_1.minamo.core.comparer.make(function (i) { return i.percent; }))) + ");";
+                    return "background: linear-gradient(90deg, ".concat(Render.scaleLinesStyleParts(lines.sort(minamo_js_1.minamo.core.comparer.make(function (i) { return i.percent; }))), ");");
                 }
                 return result;
             };
@@ -24613,11 +24901,84 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return "";
                 }
             };
-            Render.progressStyle = function (progress) {
-                return "width:" + exports.toPercentSting(progress !== null && progress !== void 0 ? progress : 1) + ";";
+            Render.progressWidthStyle = function (progress) {
+                return "width:".concat((0, exports.toPercentSting)(progress !== null && progress !== void 0 ? progress : 1), ";");
+            };
+            Render.progressStatusColor = function (status) {
+                return ({
+                    "default": style_json_1.default.__DISABLED_COLOR__,
+                    "flash": style_json_1.default.__FLASHY_COLOR__,
+                    "pickup": style_json_1.default.__ACTIVE_COLOR__,
+                    "restriction": style_json_1.default.__DELETE_COLOR__,
+                }[status]);
+            };
+            Render.getCurrentTheme = function () {
+                var _a;
+                var setting = (_a = Storage.SystemSettings.get().theme) !== null && _a !== void 0 ? _a : "auto";
+                switch (setting) {
+                    case "light":
+                        return setting;
+                    case "dark":
+                        return setting;
+                    default:
+                        return window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light";
+                }
+            };
+            Render.getBackgroundColor = function () {
+                return "light" === Render.getCurrentTheme() ? style_json_1.default.__WHITE_COLOR__ : style_json_1.default.__BLACK_COLOR__;
+            };
+            Render.progressBackgroundStyle = function (progress, status) {
+                if (null === progress) {
+                    return flounder_style_js_1.flounderStyle.styleToString(flounder_style_js_1.flounderStyle.makeStyle({
+                        type: "triline",
+                        layoutAngle: "alternative",
+                        foregroundColor: Render.progressStatusColor(status),
+                        backgroundColor: Render.getBackgroundColor(),
+                        depth: 0.9,
+                        blur: 0.0,
+                        reverseRate: "auto",
+                        //anglePerDepth: "auto",
+                    }));
+                }
+                switch (status) {
+                    // case "flash":
+                    //     return flounderStyle.styleListToString
+                    //     (
+                    //         flounderStyle.makePatternStyleList
+                    //         ({
+                    //             type: "trispot",
+                    //             layoutAngle: "regular",
+                    //             foregroundColor: progressStatusColor(status),
+                    //             backgroundColor: getBackgroundColor(),
+                    //             depth: 0.9,
+                    //             blur: 0.0,
+                    //             // reverseRate: "auto",
+                    //             //anglePerDepth: "auto",
+                    //         })
+                    //     );
+                    // case "restriction":
+                    //     return flounderStyle.styleListToString
+                    //     (
+                    //         flounderStyle.makePatternStyleList
+                    //         ({
+                    //             type: "stripe",
+                    //             layoutAngle: 0.35,
+                    //             foregroundColor: progressStatusColor(status),
+                    //             backgroundColor: getBackgroundColor(),
+                    //             depth: 0.9,
+                    //             blur: 0.0,
+                    //             // reverseRate: "auto",
+                    //             //anglePerDepth: "auto",
+                    //         })
+                    //     );
+                }
+                return "";
+            };
+            Render.progressStyle = function (progress, status) {
+                return Render.progressWidthStyle(progress) + Render.progressBackgroundStyle(progress, status);
             };
             Render.progressPadStyle = function (progress) {
-                return Render.progressStyle(1 - (progress !== null && progress !== void 0 ? progress : 1));
+                return Render.progressWidthStyle(1 - (progress !== null && progress !== void 0 ? progress : 1));
             };
             Render.progressValidityClass = function (progress) {
                 return null === progress ? "progress-disabled" : "";
@@ -24637,11 +24998,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 }[status]);
             };
             Render.progressClass = function (progress, status) {
-                return "progress-bar " + Render.progressValidityClass(progress) + " " + Render.progressStatusClass(status);
+                return "progress-bar ".concat(Render.progressValidityClass(progress), " ").concat(Render.progressStatusClass(status));
             };
             Render.progressBar = function (progress, status) { return Render.$div({
                 className: Render.progressClass(progress, status),
-                attributes: { style: Render.progressStyle(progress), }
+                attributes: { style: Render.progressStyle(progress, status), }
             })([]); };
             Render.progressBarPad = function (progress) { return Render.$div({
                 className: "progress-bar-pad",
@@ -24656,9 +25017,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             };
             Render.updateItemProgressBar = function (pass, item, dom) {
                 var _a;
+                var status = Render.getItemProgressStatus(pass, item);
                 var progressBarDiv = dom.getElementsByClassName("progress-bar")[0];
-                progressBarDiv.className = Render.progressClass(item.progress, Render.getItemProgressStatus(pass, item));
-                progressBarDiv.setAttribute("style", Render.progressStyle(item.progress));
+                progressBarDiv.className = Render.progressClass(item.progress, status);
+                progressBarDiv.setAttribute("style", Render.progressStyle(item.progress, status));
                 var progressBarPadDiv = dom.getElementsByClassName("progress-bar-pad")[0];
                 (_a = progressBarPadDiv === null || progressBarPadDiv === void 0 ? void 0 : progressBarPadDiv.setAttribute) === null || _a === void 0 ? void 0 : _a.call(progressBarPadDiv, "style", Render.progressPadStyle(item.progress));
             };
@@ -24873,7 +25235,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                     className: "default-button",
                                                     children: locale_2.locale.map("OK"),
                                                     onclick: function () {
-                                                        result = inputDate.value + "T" + inputTime.value;
+                                                        result = "".concat(inputDate.value, "T").concat(inputTime.value);
                                                         ui.close();
                                                     },
                                                 },
@@ -25110,7 +25472,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             case 0:
                                                                 _a = {
                                                                     tag: "button",
-                                                                    className: "check-button " + (sublist === ((_b = OldStorage.Task.getSublist(item.task)) !== null && _b !== void 0 ? _b : "@:@root") ? "checked" : "")
+                                                                    className: "check-button ".concat(sublist === ((_b = OldStorage.Task.getSublist(item.task)) !== null && _b !== void 0 ? _b : "@:@root") ? "checked" : "")
                                                                 };
                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                             case 1: return [2 /*return*/, (_a.children = [
@@ -25243,7 +25605,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                     case 0:
                                                                                         _a = {
                                                                                             tag: "button",
-                                                                                            className: "check-button " + (key === ((_b = settings.theme) !== null && _b !== void 0 ? _b : "auto") ? "checked" : "")
+                                                                                            className: "check-button ".concat(key === ((_b = settings.theme) !== null && _b !== void 0 ? _b : "auto") ? "checked" : "")
                                                                                         };
                                                                                         return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                                     case 1: return [2 /*return*/, (_a.children = [
@@ -25344,7 +25706,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                     case 0:
                                                                                         _a = {
                                                                                             tag: "button",
-                                                                                            className: "check-button " + (key === ((_b = settings.uiStyle) !== null && _b !== void 0 ? _b : defaultValue) ? "checked" : "")
+                                                                                            className: "check-button ".concat(key === ((_b = settings.uiStyle) !== null && _b !== void 0 ? _b : defaultValue) ? "checked" : "")
                                                                                         };
                                                                                         return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                                     case 1: return [2 /*return*/, (_a.children = [
@@ -25445,7 +25807,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                     case 0:
                                                                                         _a = {
                                                                                             tag: "button",
-                                                                                            className: "check-button " + (key === ((_b = settings.flashStyle) !== null && _b !== void 0 ? _b : defaultValue) ? "checked" : "")
+                                                                                            className: "check-button ".concat(key === ((_b = settings.flashStyle) !== null && _b !== void 0 ? _b : defaultValue) ? "checked" : "")
                                                                                         };
                                                                                         return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                                     case 1: return [2 /*return*/, (_a.children = [
@@ -25536,7 +25898,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                 _c = [checkButtonList];
                                                                 _e = {
                                                                     tag: "button",
-                                                                    className: "check-button " + ("@auto" === ((_f = settings.locale) !== null && _f !== void 0 ? _f : "@auto") ? "checked" : "")
+                                                                    className: "check-button ".concat("@auto" === ((_f = settings.locale) !== null && _f !== void 0 ? _f : "@auto") ? "checked" : "")
                                                                 };
                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                             case 1:
@@ -25573,7 +25935,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                 case 0:
                                                                                     _a = {
                                                                                         tag: "button",
-                                                                                        className: "check-button " + (key === ((_b = settings.locale) !== null && _b !== void 0 ? _b : "@auto") ? "checked" : "")
+                                                                                        className: "check-button ".concat(key === ((_b = settings.locale) !== null && _b !== void 0 ? _b : "@auto") ? "checked" : "")
                                                                                     };
                                                                                     return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                                 case 1: return [2 /*return*/, (_a.children = [
@@ -25673,7 +26035,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                     case 0:
                                                                                         _a = {
                                                                                             tag: "button",
-                                                                                            className: "check-button " + (key === ((_b = settings.emoji) !== null && _b !== void 0 ? _b : defaultValue) ? "checked" : "")
+                                                                                            className: "check-button ".concat(key === ((_b = settings.emoji) !== null && _b !== void 0 ? _b : defaultValue) ? "checked" : "")
                                                                                         };
                                                                                         return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                                     case 1: return [2 /*return*/, (_a.children = [
@@ -25752,7 +26114,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     newTask2_1 = OldStorage.TagMember.add(entry.pass, entry.tag, encodedNewTask_1);
                                     Render.updateScreen("operate");
                                     toast_1 = Render.makeToast({
-                                        content: Render.$span("")(locale_2.locale.map("ToDo has been created!") + ": " + OldStorage.Task.decode(newTask2_1)),
+                                        content: Render.$span("")("".concat(locale_2.locale.map("ToDo has been created!"), ": ").concat(OldStorage.Task.decode(newTask2_1))),
                                         forwardOperator: Render.textButton("Done", function () { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
                                                 switch (_a.label) {
@@ -25914,7 +26276,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                     case 0: return [4 /*yield*/, Render.localeSettingsPopup()];
                                                                     case 1:
                                                                         if (!_b.sent()) return [3 /*break*/, 3];
-                                                                        exports.setLocale((_a = Storage.SystemSettings.get().locale) !== null && _a !== void 0 ? _a : null);
+                                                                        (0, exports.setLocale)((_a = Storage.SystemSettings.get().locale) !== null && _a !== void 0 ? _a : null);
                                                                         result = true;
                                                                         return [4 /*yield*/, update()];
                                                                     case 2:
@@ -25980,8 +26342,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 var list = [];
                 list.push(current);
                 list.push.apply(list, Storage.Timespan.get());
-                list.push.apply(list, config_json_1.default.timespanPreset.map(function (i) { return minamo_js_1.minamo.core.parseTimespan(i); }).filter(exports.isNumber).map(function (i) { return i / Domain.timeAccuracy; }));
-                return list.filter(exports.uniqueFilter).filter(exports.takeFilter(config_json_1.default.timespanPresetMaxCount)).sort(minamo_js_1.minamo.core.comparer.basic);
+                list.push.apply(list, config_json_2.default.timespanPreset.map(function (i) { return minamo_js_1.minamo.core.parseTimespan(i); }).filter(exports.isNumber).map(function (i) { return i / Domain.timeAccuracy; }));
+                return list.filter(exports.uniqueFilter).filter((0, exports.takeFilter)(config_json_2.default.timespanPresetMaxCount)).sort(minamo_js_1.minamo.core.comparer.basic);
             };
             Render.termThresholdSettingPopup = function (title, setter, getter) { return __awaiter(_this, void 0, void 0, function () {
                 var _this = this;
@@ -26003,7 +26365,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                         case 0:
                                                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                                             _c = [buttonList];
-                                                            return [4 /*yield*/, Promise.all(__spreadArray(__spreadArray([], Render.getTermThresholdPreset(getter())), [NaN,]).map(function (i) { return __awaiter(_this, void 0, void 0, function () {
+                                                            return [4 /*yield*/, Promise.all(__spreadArray(__spreadArray([], Render.getTermThresholdPreset(getter()), true), [NaN,], false).map(function (i) { return __awaiter(_this, void 0, void 0, function () {
                                                                     var _a;
                                                                     var _this = this;
                                                                     return __generator(this, function (_b) {
@@ -26011,12 +26373,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                             case 0:
                                                                                 _a = {
                                                                                     tag: "button",
-                                                                                    className: "check-button " + (JSON.stringify(i) === JSON.stringify(getter()) ? "checked" : "")
+                                                                                    className: "check-button ".concat(JSON.stringify(i) === JSON.stringify(getter()) ? "checked" : "")
                                                                                 };
                                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                             case 1: return [2 /*return*/, (_a.children = [
                                                                                     _b.sent(),
-                                                                                    exports.isValidNumber(i) ?
+                                                                                    (0, exports.isValidNumber)(i) ?
                                                                                         Render.$span("")(Domain.timeLongStringFromTick(i)) :
                                                                                         Render.label("pickup.specify")
                                                                                 ],
@@ -26026,7 +26388,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                         return __generator(this, function (_b) {
                                                                                             switch (_b.label) {
                                                                                                 case 0:
-                                                                                                    if (!!exports.isValidNumber(i)) return [3 /*break*/, 5];
+                                                                                                    if (!!(0, exports.isValidNumber)(i)) return [3 /*break*/, 5];
                                                                                                     return [4 /*yield*/, Render.dateTimeSpanPrompt(locale_2.locale.map("pickup.elapsed-time"), (_a = getter()) !== null && _a !== void 0 ? _a : 0)];
                                                                                                 case 1:
                                                                                                     value = _b.sent();
@@ -26066,7 +26428,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             ui = Render.popup({
                                                 // className: "add-remove-tags-popup",
                                                 children: [
-                                                    Render.$tag("h2")("")("" + locale_2.locale.map(title)),
+                                                    Render.$tag("h2")("")("".concat(locale_2.locale.map(title))),
                                                     buttonList,
                                                     Render.$div("popup-operator")([{
                                                             tag: "button",
@@ -26417,7 +26779,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                             _a.label = 2;
                                                                         case 2:
                                                                             toast = Render.makeToast({
-                                                                                content: Render.$span("")(locale_2.locale.map(Model.isSublistOld(tag) ? "Sublist has been deleted!" : "Tag has been deleted!") + ": " + Model.decode(Model.decodeSublist(tag))),
+                                                                                content: Render.$span("")("".concat(locale_2.locale.map(Model.isSublistOld(tag) ? "Sublist has been deleted!" : "Tag has been deleted!"), ": ").concat(Model.decode(Model.decodeSublist(tag)))),
                                                                                 backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                                                                     var removedItem;
                                                                                     return __generator(this, function (_a) {
@@ -26461,7 +26823,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 children: [
                                                     Render.$tag("h2")("")(Model.isHomeOld(tag) ?
                                                         locale_2.locale.map(Render.getTagSettingsTitle(tag)) :
-                                                        locale_2.locale.map(Render.getTagSettingsTitle(tag)) + ": " + Domain.tagMap(tag)),
+                                                        "".concat(locale_2.locale.map(Render.getTagSettingsTitle(tag)), ": ").concat(Domain.tagMap(tag))),
                                                     buttonList,
                                                     Render.$div("popup-operator")([{
                                                             tag: "button",
@@ -26541,7 +26903,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                             case 1:
                                                                                 newTask = _b.sent();
                                                                                 if (!(null !== newTask && 0 < newTask.length && newTask !== oldTask)) return [3 /*break*/, 6];
-                                                                                newTaskFullname = "" + sublist + OldStorage.Task.encode(newTask);
+                                                                                newTaskFullname = "".concat(sublist).concat(OldStorage.Task.encode(newTask));
                                                                                 if (!OldStorage.Task.rename(pass, item.task, newTaskFullname)) return [3 /*break*/, 5];
                                                                                 result = true;
                                                                                 href = location.href;
@@ -26606,7 +26968,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                             _d = _d.concat([
                                                                 _e.apply(void 0, _f.concat([_g.apply(void 0, _h.concat([_k.concat([
                                                                             _m
-                                                                        ])])), "Auto tag settings", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                        ])])),
+                                                                    "Auto tag settings",
+                                                                    function () { return __awaiter(_this, void 0, void 0, function () {
                                                                         return __generator(this, function (_a) {
                                                                             switch (_a.label) {
                                                                                 case 0: return [4 /*yield*/, Render.autoTagSettingsPopup(pass, item)];
@@ -26655,7 +27019,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                 _a.label = 2;
                                                                             case 2:
                                                                                 toast = Render.makeToast({
-                                                                                    content: Render.$span("")(locale_2.locale.map("ToDo has been deleted!") + ": " + Model.decode(item.task)),
+                                                                                    content: Render.$span("")("".concat(locale_2.locale.map("ToDo has been deleted!"), ": ").concat(Model.decode(item.task))),
                                                                                     backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                                                                         var removedItem;
                                                                                         return __generator(this, function (_a) {
@@ -26732,7 +27096,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return map[displayStyle];
             };
             Render.getTagSortSettingsDescription = function (displayStyle) {
-                return Render.getTagSortSettingsText(displayStyle) + ".description";
+                return "".concat(Render.getTagSortSettingsText(displayStyle), ".description");
             };
             Render.tagSortSettingsPopup = function (pass, tag, settings) {
                 if (settings === void 0) { settings = OldStorage.TagSettings.get(pass, tag); }
@@ -26768,12 +27132,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                             switch (_d.label) {
                                                                                 case 0:
                                                                                     _a = Render.descriptionButton;
-                                                                                    _b = ["check-button " + (i === ((_c = settings.sort) !== null && _c !== void 0 ? _c : defaultSort) ? "checked" : "")];
+                                                                                    _b = ["check-button ".concat(i === ((_c = settings.sort) !== null && _c !== void 0 ? _c : defaultSort) ? "checked" : "")];
                                                                                     return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                                 case 1: return [2 /*return*/, _a.apply(void 0, _b.concat([[
                                                                                             _d.sent(),
                                                                                             Render.$span("")(Render.label(Render.getTagSortSettingsText(i)))
-                                                                                        ], Render.getTagSortSettingsDescription(i), function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                        ], Render.getTagSortSettingsDescription(i),
+                                                                                        function () { return __awaiter(_this, void 0, void 0, function () {
                                                                                             return __generator(this, function (_a) {
                                                                                                 switch (_a.label) {
                                                                                                     case 0:
@@ -26803,7 +27168,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 ui = Render.popup({
                                                     // className: "add-remove-tags-popup",
                                                     children: [
-                                                        Render.$tag("h2")("")(locale_2.locale.map("Sort order setting") + ": " + Domain.tagMap(tag)),
+                                                        Render.$tag("h2")("")("".concat(locale_2.locale.map("Sort order setting"), ": ").concat(Domain.tagMap(tag))),
                                                         tagButtonList,
                                                         Render.$div("popup-operator")([{
                                                                 tag: "button",
@@ -26838,7 +27203,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return map[displayStyle];
             };
             Render.getTagDisplayStyleDescription = function (displayStyle) {
-                return Render.getTagDisplayStyleText(displayStyle) + ".description";
+                return "".concat(Render.getTagDisplayStyleText(displayStyle), ".description");
             };
             Render.tagDisplayStyleSettingsPopup = function (pass, tag, settings) {
                 if (settings === void 0) { settings = OldStorage.TagSettings.get(pass, tag); }
@@ -26874,12 +27239,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                             switch (_d.label) {
                                                                                 case 0:
                                                                                     _a = Render.descriptionButton;
-                                                                                    _b = ["check-button " + (i === ((_c = settings.displayStyle) !== null && _c !== void 0 ? _c : defaultStyle) ? "checked" : "")];
+                                                                                    _b = ["check-button ".concat(i === ((_c = settings.displayStyle) !== null && _c !== void 0 ? _c : defaultStyle) ? "checked" : "")];
                                                                                     return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                                 case 1: return [2 /*return*/, _a.apply(void 0, _b.concat([[
                                                                                             _d.sent(),
                                                                                             Render.$span("")(Render.label(Render.getTagDisplayStyleText(i)))
-                                                                                        ], Render.getTagDisplayStyleDescription(i), function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                        ], Render.getTagDisplayStyleDescription(i),
+                                                                                        function () { return __awaiter(_this, void 0, void 0, function () {
                                                                                             return __generator(this, function (_a) {
                                                                                                 switch (_a.label) {
                                                                                                     case 0:
@@ -26909,7 +27275,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 ui = Render.popup({
                                                     // className: "add-remove-tags-popup",
                                                     children: [
-                                                        Render.$tag("h2")("")(locale_2.locale.map("Display style setting") + ": " + Domain.tagMap(tag)),
+                                                        Render.$tag("h2")("")("".concat(locale_2.locale.map("Display style setting"), ": ").concat(Domain.tagMap(tag))),
                                                         tagButtonList,
                                                         Render.$div("popup-operator")([{
                                                                 tag: "button",
@@ -26977,7 +27343,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                 case 0:
                                                                                     _a = {
                                                                                         tag: "button",
-                                                                                        className: "check-button " + (i === ((_b = settings.progressScaleStyle) !== null && _b !== void 0 ? _b : defaultStyle) ? "checked" : "")
+                                                                                        className: "check-button ".concat(i === ((_b = settings.progressScaleStyle) !== null && _b !== void 0 ? _b : defaultStyle) ? "checked" : "")
                                                                                     };
                                                                                     return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                                 case 1: return [2 /*return*/, (_a.children = [
@@ -27015,7 +27381,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 ui = Render.popup({
                                                     // className: "add-remove-tags-popup",
                                                     children: [
-                                                        Render.$tag("h2")("")(locale_2.locale.map("Progress scale style setting") + ": " + Domain.tagMap(tag)),
+                                                        Render.$tag("h2")("")("".concat(locale_2.locale.map("Progress scale style setting"), ": ").concat(Domain.tagMap(tag))),
                                                         tagButtonList,
                                                         Render.$div("popup-operator")([{
                                                                 tag: "button",
@@ -27045,8 +27411,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     list.push(current.elapsedTime);
                 }
                 list.push.apply(list, Storage.Timespan.get());
-                list.push.apply(list, config_json_1.default.timespanPreset.map(function (i) { return minamo_js_1.minamo.core.parseTimespan(i); }).filter(exports.isNumber).map(function (i) { return i / Domain.timeAccuracy; }));
-                return list.filter(exports.uniqueFilter).filter(exports.takeFilter(config_json_1.default.timespanPresetMaxCount)).sort(minamo_js_1.minamo.core.comparer.basic);
+                list.push.apply(list, config_json_2.default.timespanPreset.map(function (i) { return minamo_js_1.minamo.core.parseTimespan(i); }).filter(exports.isNumber).map(function (i) { return i / Domain.timeAccuracy; }));
+                return list.filter(exports.uniqueFilter).filter((0, exports.takeFilter)(config_json_2.default.timespanPresetMaxCount)).sort(minamo_js_1.minamo.core.comparer.basic);
             };
             Render.getTodoPickupSettingElapsedTimeStandardScorePreset = function (_entry, current) {
                 var list = [];
@@ -27054,8 +27420,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     list.push(current.elapsedTimeStandardScore);
                 }
                 list.push.apply(list, Storage.TimespanStandardScore.get());
-                list.push.apply(list, config_json_1.default.timespanStandardScorePreset);
-                return list.filter(exports.uniqueFilter).filter(exports.takeFilter(config_json_1.default.timespanStandardScorePresetMaxCount)).sort(minamo_js_1.minamo.core.comparer.basic);
+                list.push.apply(list, config_json_2.default.timespanStandardScorePreset);
+                return list.filter(exports.uniqueFilter).filter((0, exports.takeFilter)(config_json_2.default.timespanStandardScorePresetMaxCount)).sort(minamo_js_1.minamo.core.comparer.basic);
             };
             Render.updateRecentlySelection = function (setting) {
                 switch (setting === null || setting === void 0 ? void 0 : setting.type) {
@@ -27077,7 +27443,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     case "elapsed-time":
                         {
                             var format = function (value) { return "compact" === option ? value : [Render.label("pickup.elapsed-time"), ": ", value]; };
-                            if (exports.isValidNumber(setting.elapsedTime)) {
+                            if ((0, exports.isValidNumber)(setting.elapsedTime)) {
                                 return format(Domain.timeLongStringFromTick(setting.elapsedTime));
                             }
                             else {
@@ -27087,8 +27453,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     case "elapsed-time-standard-score":
                         {
                             var format = function (value) { return "compact" === option ? value : [Render.label("pickup.elapsed-time-standard-score"), ": ", value]; };
-                            if (exports.isValidNumber(setting.elapsedTimeStandardScore)) {
-                                return format("" + setting.elapsedTimeStandardScore);
+                            if ((0, exports.isValidNumber)(setting.elapsedTimeStandardScore)) {
+                                return format("".concat(setting.elapsedTimeStandardScore));
                             }
                             else {
                                 return format(Render.label("pickup.specify"));
@@ -27122,13 +27488,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                     undefined,
                                                                     { type: "always" }
                                                                 ], Render.getTodoPickupSettingElapsedTimePreset(entry, getter())
-                                                                    .map(function (elapsedTime) { return ({ type: "elapsed-time", elapsedTime: elapsedTime, }); })), [
+                                                                    .map(function (elapsedTime) { return ({ type: "elapsed-time", elapsedTime: elapsedTime, }); }), true), [
                                                                     { type: "elapsed-time", NaN: NaN, }
-                                                                ]), Render.getTodoPickupSettingElapsedTimeStandardScorePreset(entry, getter())
-                                                                    .map(function (elapsedTimeStandardScore) { return ({ type: "elapsed-time-standard-score", elapsedTimeStandardScore: elapsedTimeStandardScore, }); })), [
+                                                                ], false), Render.getTodoPickupSettingElapsedTimeStandardScorePreset(entry, getter())
+                                                                    .map(function (elapsedTimeStandardScore) { return ({ type: "elapsed-time-standard-score", elapsedTimeStandardScore: elapsedTimeStandardScore, }); }), true), [
                                                                     { type: "elapsed-time-standard-score", NaN: NaN, },
                                                                     { type: "expired" },
-                                                                ])
+                                                                ], false)
                                                                     .map(function (i) { return __awaiter(_this, void 0, void 0, function () {
                                                                     var _a;
                                                                     var _this = this;
@@ -27137,7 +27503,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                             case 0:
                                                                                 _a = {
                                                                                     tag: "button",
-                                                                                    className: "check-button " + (JSON.stringify(i) === JSON.stringify(getter()) ? "checked" : "")
+                                                                                    className: "check-button ".concat(JSON.stringify(i) === JSON.stringify(getter()) ? "checked" : "")
                                                                                 };
                                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                             case 1: return [2 /*return*/, (_a.children = [
@@ -27150,7 +27516,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                         return __generator(this, function (_e) {
                                                                                             switch (_e.label) {
                                                                                                 case 0:
-                                                                                                    if (!("elapsed-time" === (i === null || i === void 0 ? void 0 : i.type) && !exports.isValidNumber(i === null || i === void 0 ? void 0 : i.elapsedTime))) return [3 /*break*/, 5];
+                                                                                                    if (!("elapsed-time" === (i === null || i === void 0 ? void 0 : i.type) && !(0, exports.isValidNumber)(i === null || i === void 0 ? void 0 : i.elapsedTime))) return [3 /*break*/, 5];
                                                                                                     return [4 /*yield*/, Render.dateTimeSpanPrompt(locale_2.locale.map("pickup.elapsed-time"), (_b = (_a = getter()) === null || _a === void 0 ? void 0 : _a.elapsedTime) !== null && _b !== void 0 ? _b : 0)];
                                                                                                 case 1:
                                                                                                     elapsedTime = _e.sent();
@@ -27165,7 +27531,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                                                     _e.label = 4;
                                                                                                 case 4: return [3 /*break*/, 13];
                                                                                                 case 5:
-                                                                                                    if (!("elapsed-time-standard-score" === (i === null || i === void 0 ? void 0 : i.type) && !exports.isValidNumber(i === null || i === void 0 ? void 0 : i.elapsedTimeStandardScore))) return [3 /*break*/, 10];
+                                                                                                    if (!("elapsed-time-standard-score" === (i === null || i === void 0 ? void 0 : i.type) && !(0, exports.isValidNumber)(i === null || i === void 0 ? void 0 : i.elapsedTimeStandardScore))) return [3 /*break*/, 10];
                                                                                                     return [4 /*yield*/, Render.numberPrompt(locale_2.locale.map("pickup.elapsed-time-standard-score"), (_d = (_c = getter()) === null || _c === void 0 ? void 0 : _c.elapsedTimeStandardScore) !== null && _d !== void 0 ? _d : 50, { min: 0, max: 100, })];
                                                                                                 case 6:
                                                                                                     elapsedTimeStandardScore = _e.sent();
@@ -27205,7 +27571,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             ui = Render.popup({
                                                 // className: "add-remove-tags-popup",
                                                 children: [
-                                                    Render.$tag("h2")("")(locale_2.locale.map(title) + ": " + Model.decode(entry.task)),
+                                                    Render.$tag("h2")("")("".concat(locale_2.locale.map(title), ": ").concat(Model.decode(entry.task))),
                                                     buttonList,
                                                     Render.$div("popup-operator")([{
                                                             tag: "button",
@@ -27334,7 +27700,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                     _d.apply(void 0, _e.concat([[
                                                                             _l.sent(),
                                                                             Render.monospace("", Render.label("@flash"), Render.getAutoTagSettingText(settings.flash, "compact"))
-                                                                        ], "flash.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                        ], "flash.description",
+                                                                        function () { return __awaiter(_this, void 0, void 0, function () {
                                                                             return __generator(this, function (_a) {
                                                                                 switch (_a.label) {
                                                                                     case 0: return [4 /*yield*/, Render.todoFlashSettingPopup(pass, entry, settings)];
@@ -27358,7 +27725,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                     _g.apply(void 0, _h.concat([[
                                                                             _l.sent(),
                                                                             Render.monospace("", Render.label("@pickup"), Render.getAutoTagSettingText(settings.pickup, "compact"))
-                                                                        ], "pickup.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                        ], "pickup.description",
+                                                                        function () { return __awaiter(_this, void 0, void 0, function () {
                                                                             return __generator(this, function (_a) {
                                                                                 switch (_a.label) {
                                                                                     case 0: return [4 /*yield*/, Render.todoPickupSettingPopup(pass, entry, settings)];
@@ -27381,7 +27749,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                                         _j.apply(void 0, _k.concat([[
                                                                                 _l.sent(),
                                                                                 Render.monospace("", Render.label("@restriction"), Render.getAutoTagSettingText(settings.restriction, "compact"))
-                                                                            ], "restriction.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            ], "restriction.description",
+                                                                            function () { return __awaiter(_this, void 0, void 0, function () {
                                                                                 return __generator(this, function (_a) {
                                                                                     switch (_a.label) {
                                                                                         case 0: return [4 /*yield*/, Render.todoRestrictionSettingPopup(pass, entry, settings)];
@@ -27406,7 +27775,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 ui = Render.popup({
                                                     // className: "add-remove-tags-popup",
                                                     children: [
-                                                        Render.$tag("h2")("")(locale_2.locale.map("Auto tag settings") + ": " + Model.decode(entry.task)),
+                                                        Render.$tag("h2")("")("".concat(locale_2.locale.map("Auto tag settings"), ": ").concat(Model.decode(entry.task))),
                                                         buttonList,
                                                         Render.$div("popup-operator")([{
                                                                 tag: "button",
@@ -27522,7 +27891,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 }); };
                 var dom = Render.$make(HTMLDivElement)({
                     tag: "div",
-                    className: "popup " + ((_a = data.className) !== null && _a !== void 0 ? _a : ""),
+                    className: "popup ".concat((_a = data.className) !== null && _a !== void 0 ? _a : ""),
                     children: data.children,
                     onclick: function (event) { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
@@ -27625,14 +27994,14 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                     popup.classList.add("show");
                                                     buttonRect = button.getBoundingClientRect();
                                                     if (buttonRect.top < window.innerHeight * (2 / 3)) {
-                                                        popup.style.top = "" + buttonRect.bottom;
+                                                        popup.style.top = "".concat(buttonRect.bottom);
                                                         popup.style.removeProperty("bottom");
                                                     }
                                                     else {
                                                         popup.style.removeProperty("top");
-                                                        popup.style.bottom = "" + (window.innerHeight - buttonRect.top);
+                                                        popup.style.bottom = "".concat(window.innerHeight - buttonRect.top);
                                                     }
-                                                    popup.style.right = "" + (window.innerWidth - buttonRect.right);
+                                                    popup.style.right = "".concat(window.innerWidth - buttonRect.right);
                                                     cover = Render.screenCover({
                                                         // parent: popup.parentElement,
                                                         children: popup,
@@ -27746,7 +28115,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             Render.newTaskMenuItem = function (entry) { return Render.menuItem(Render.label("New ToDo"), function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                 return [2 /*return*/, Render.newTaskPopup(entry, Render.getFilterText())];
             }); }); }); };
-            Render.repositoryMenuItem = function () { return Render.menuExteralLinkItem(Render.labelSpan("GitHub"), config_json_1.default.repositoryUrl); };
+            Render.repositoryMenuItem = function () { return Render.menuExteralLinkItem(Render.labelSpan("GitHub"), config_json_2.default.repositoryUrl); };
             Render.editTickMenuItem = function (pass, task, tick) { return __awaiter(_this, void 0, void 0, function () {
                 var _this = this;
                 return __generator(this, function (_a) {
@@ -27756,7 +28125,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 switch (_c.label) {
                                     case 0:
                                         _b = (_a = Domain).parseDate;
-                                        return [4 /*yield*/, Render.dateTimePrompt(locale_2.locale.map("Edit") + ": " + Model.decode(task), tick)];
+                                        return [4 /*yield*/, Render.dateTimePrompt("".concat(locale_2.locale.map("Edit"), ": ").concat(Model.decode(task)), tick)];
                                     case 1:
                                         result = _b.apply(_a, [_c.sent()]);
                                         if (!(null !== result && tick !== Domain.getTicks(result) && 0 <= Domain.getTicks(result) && Domain.getTicks(result) <= Domain.getTicks())) return [3 /*break*/, 3];
@@ -27800,7 +28169,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         onclick: function () { return Render.getScreenBody().classList.toggle("show-second-panel"); },
                     })([
                         Render.monospace(Domain.timeSimpleStringFromTick(item.elapsed)),
-                        Render.monospace("+" + item.count.toLocaleString()),
+                        Render.monospace("+".concat(item.count.toLocaleString())),
                     ]),
                     operator,
                 ]),
@@ -27874,7 +28243,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             case 1:
                                 newTask = _b.sent();
                                 if (!(null !== newTask && 0 < newTask.length && newTask !== oldTask)) return [3 /*break*/, 4];
-                                newTaskFullname = "" + sublist + OldStorage.Task.encode(newTask);
+                                newTaskFullname = "".concat(sublist).concat(OldStorage.Task.encode(newTask));
                                 if (!OldStorage.Task.rename(pass, item.task, newTaskFullname)) return [3 /*break*/, 3];
                                 return [4 /*yield*/, onRename(OldStorage.Task.decode(newTaskFullname))];
                             case 2:
@@ -27956,7 +28325,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 //Storage.TagMember.add(pass, "@deleted", item.task);
                                 _a.sent();
                                 toast = Render.makeToast({
-                                    content: Render.$span("")(locale_2.locale.map("ToDo has been deleted!") + ": " + Model.decode(item.task)),
+                                    content: Render.$span("")("".concat(locale_2.locale.map("ToDo has been deleted!"), ": ").concat(Model.decode(item.task))),
                                     backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                         var removedItem;
                                         return __generator(this, function (_a) {
@@ -28311,8 +28680,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _k = Render.button;
                             _l = ["icon-button"];
                             return [4 /*yield*/, Resource.loadSvgOrCache("settings-icon")];
-                        case 8: return [4 /*yield*/, _k.apply(void 0, _l.concat([_w.sent(),
-                                function () { return __awaiter(_this, void 0, void 0, function () {
+                        case 8: return [4 /*yield*/, _k.apply(void 0, _l.concat([_w.sent(), function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, Render.todoSettingsPopup(entry.pass, item)];
@@ -28439,7 +28807,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             };
             Render.tickScaleStyle = function (percent) {
                 return "number" === typeof percent ?
-                    "background: repeating-linear-gradient(90deg, #00000000, #00000000 calc(" + exports.toPercentSting(percent) + " - 1px), #88888844 calc(" + exports.toPercentSting(percent) + " - 1px), #88888844 " + exports.toPercentSting(percent) + ");" :
+                    "background: repeating-linear-gradient(90deg, #00000000, #00000000 calc(".concat((0, exports.toPercentSting)(percent), " - 1px), #88888844 calc(").concat((0, exports.toPercentSting)(percent), " - 1px), #88888844 ").concat((0, exports.toPercentSting)(percent), ");") :
                     "";
             };
             Render.tickItem = function (pass, item, tick, interval, max, isFlashed, isPickuped, isRestrictioned) {
@@ -28558,7 +28926,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             case 1: return [2 /*return*/, _a.apply(void 0, [(_c.children = _b.apply(void 0, [[
                                                             _d.sent(),
                                                             Model.decode(item.task),
-                                                            Render.$span("monospace")("(" + Domain.timeShortStringFromTick(item.elapsed) + ")")
+                                                            Render.$span("monospace")("(".concat(Domain.timeShortStringFromTick(item.elapsed), ")"))
                                                         ]]),
                                                         _c)])];
                                         }
@@ -28643,9 +29011,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             }); };
             Render.headerTimestamp = function () {
                 var now = new Date();
-                var day = locale_2.locale.map("week.short." + now.getDay());
+                var day = locale_2.locale.map("week.short.".concat(now.getDay()));
                 var tick = Domain.getTicks(now);
-                return Domain.dateCoreStringFromTick(tick) + "(" + day + ") " + Domain.timeCoreStringFromTick(Domain.getTime(tick)) + ":" + ("00" + now.getSeconds()).slice(-2);
+                return "".concat(Domain.dateCoreStringFromTick(tick), "(").concat(day, ") ").concat(Domain.timeCoreStringFromTick(Domain.getTime(tick)), ":").concat(("00" + now.getSeconds()).slice(-2));
             };
             Render.updateHeaderTimestamp = function () {
                 var frame = document.getElementsByClassName("header-timestamp")[0];
@@ -28676,7 +29044,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return __awaiter(_this, void 0, void 0, function () { var _a; return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            _a = Render.$div("segment label-segment " + className);
+                            _a = Render.$div("segment label-segment ".concat(className));
                             return [4 /*yield*/, Render.screenHeaderSegmentCore(item)];
                         case 1: return [2 /*return*/, _a.apply(void 0, [_b.sent()])];
                     }
@@ -28692,7 +29060,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             case 0:
                                 _a = Render.internalLink;
                                 _b = {
-                                    className: "segment " + className,
+                                    className: "segment ".concat(className),
                                     href: item.href
                                 };
                                 return [4 /*yield*/, Render.screenHeaderSegmentCore(item)];
@@ -28732,7 +29100,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 _a = Render.$make(HTMLDivElement);
                                 _b = {
                                     tag: "div",
-                                    className: "segment " + className
+                                    className: "segment ".concat(className)
                                 };
                                 return [4 /*yield*/, Render.screenHeaderSegmentCore(item)];
                             case 1:
@@ -28757,9 +29125,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                     case 3:
                                                         popup.classList.add("show");
                                                         //popup.style.height = `${popup.offsetHeight -2}px`;
-                                                        popup.style.width = popup.offsetWidth - 2 + "px";
-                                                        popup.style.top = segment.offsetTop + segment.offsetHeight + "px";
-                                                        popup.style.left = Math.max(segment.offsetLeft, 4) + "px";
+                                                        popup.style.width = "".concat(popup.offsetWidth - 2, "px");
+                                                        popup.style.top = "".concat(segment.offsetTop + segment.offsetHeight, "px");
+                                                        popup.style.left = "".concat(Math.max(segment.offsetLeft, 4), "px");
                                                         cover = Render.screenCover({
                                                             // parent: popup.parentElement,
                                                             children: popup,
@@ -28835,7 +29203,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     _f.apply(void 0, [[
                                             _g.sent(),
                                             Render.labelSpan(locale_2.locale.map("@deleted")),
-                                            Render.monospace("" + OldStorage.Backup.get().length)
+                                            Render.monospace("".concat(OldStorage.Backup.get().length))
                                         ], { hash: "removed" },
                                         pass === "@removed" ? "current-item" : undefined])
                                 ])])];
@@ -28853,7 +29221,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             title: (_b = {
                                 "@removed": locale_2.locale.map("@deleted"),
                                 "@import": locale_2.locale.map("Import List"),
-                            }[pass]) !== null && _b !== void 0 ? _b : OldStorage.Title.get(pass),
+                            }[pass]) !== null && _b !== void 0 ? _b : OldStorage.Title.get(pass), // `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
                             href: { pass: pass, tag: "@overall", },
                             //menu: await screenHeaderListSegmentMenu(pass),
                         })];
@@ -28940,7 +29308,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _a = Render.$make(HTMLButtonElement);
                             _c = {
                                 tag: "button",
-                                className: "group-item " + (is_current ? "current-item" : ""),
+                                className: "group-item ".concat(is_current ? "current-item" : ""),
                                 attributes: {
                                     tabindex: "0",
                                 }
@@ -28966,31 +29334,31 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 buttonRect = button.getBoundingClientRect();
                                                 if (buttonRect.right < window.innerWidth * (2 / 3)) {
                                                     if (buttonRect.top < window.innerHeight * (2 / 3)) {
-                                                        popup.style.top = buttonRect.top + "px";
+                                                        popup.style.top = "".concat(buttonRect.top, "px");
                                                         popup.style.removeProperty("bottom");
                                                     }
                                                     else {
                                                         popup.style.removeProperty("top");
-                                                        popup.style.bottom = window.innerHeight - buttonRect.bottom + "px";
+                                                        popup.style.bottom = "".concat(window.innerHeight - buttonRect.bottom, "px");
                                                     }
                                                     popup.style.removeProperty("right");
-                                                    popup.style.left = buttonRect.right + "px";
+                                                    popup.style.left = "".concat(buttonRect.right, "px");
                                                 }
                                                 else {
                                                     if (buttonRect.top < window.innerHeight * (2 / 3)) {
-                                                        popup.style.top = buttonRect.bottom + "px";
+                                                        popup.style.top = "".concat(buttonRect.bottom, "px");
                                                         popup.style.removeProperty("bottom");
                                                     }
                                                     else {
                                                         popup.style.removeProperty("top");
-                                                        popup.style.bottom = window.innerHeight - buttonRect.top + "px";
+                                                        popup.style.bottom = "".concat(window.innerHeight - buttonRect.top, "px");
                                                     }
                                                     popup.style.removeProperty("left");
                                                     popup.style.right = "4px";
                                                     popupRect = popup.getBoundingClientRect();
                                                     if (buttonRect.right < popupRect.left) {
                                                         popup.style.removeProperty("right");
-                                                        popup.style.left = buttonRect.right + "px";
+                                                        popup.style.left = "".concat(buttonRect.right, "px");
                                                     }
                                                 }
                                             }
@@ -29013,8 +29381,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         case 1: return [2 /*return*/, _a.apply(void 0, [[
                                     _b.sent(),
                                     Render.labelSpan(Domain.tagMap(tag)),
-                                    Render.monospace("" + OldStorage.TagMember.get(pass, tag).length)
-                                ], { pass: pass, tag: tag, }, current === tag ? "current-item" : undefined])];
+                                    Render.monospace("".concat(OldStorage.TagMember.get(pass, tag).length))
+                                ], { pass: pass, tag: tag, },
+                                current === tag ? "current-item" : undefined])];
                     }
                 });
             }); };
@@ -29052,8 +29421,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 _g.apply(void 0, [[
                                         _14.sent(),
                                         Render.labelSpan(locale_2.locale.map("@deleted")),
-                                        Render.monospace("" + OldStorage.Removed.get(pass).length)
-                                    ], { pass: pass, hash: "removed" }, current === "@deleted" ? "current-item" : undefined]),
+                                        Render.monospace("".concat(OldStorage.Removed.get(pass).length))
+                                    ], { pass: pass, hash: "removed" },
+                                    current === "@deleted" ? "current-item" : undefined]),
                                 Render.menuSeparator()
                             ]))
                                 .concat;
@@ -29270,7 +29640,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             case 1: return [2 /*return*/, _a.apply(void 0, [[
                                                         _b.sent(),
                                                         Render.labelSpan(Model.decode(task))
-                                                    ], { pass: pass, todo: task, }, current === task ? "current-item" : undefined])];
+                                                    ], { pass: pass, todo: task, },
+                                                    current === task ? "current-item" : undefined])];
                                         }
                                     });
                                 }); }))];
@@ -29294,7 +29665,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     _e.apply(void 0, [[
                                             _g.sent(),
                                             Render.label("History")
-                                        ], { pass: pass, tag: tag, hash: "history" }, "@history" === current ? "current-item" : undefined])
+                                        ], { pass: pass, tag: tag, hash: "history" },
+                                        "@history" === current ? "current-item" : undefined])
                                 ])]),
                                 _f)];
                     }
@@ -29717,16 +30089,16 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     popup_1.classList.add("show");
                                     buttonRect = result_1.getBoundingClientRect();
                                     popup_1.style.removeProperty("top");
-                                    popup_1.style.bottom = window.innerHeight - buttonRect.top + "px";
+                                    popup_1.style.bottom = "".concat(window.innerHeight - buttonRect.top, "px");
                                     if (buttonRect.right < window.innerWidth * (2 / 3)) {
                                         popup_1.style.removeProperty("right");
-                                        popup_1.style.left = buttonRect.left + "px";
+                                        popup_1.style.left = "".concat(buttonRect.left, "px");
                                     }
                                     else {
                                         popup_1.style.removeProperty("left");
-                                        popup_1.style.right = window.innerWidth - buttonRect.right + "px";
+                                        popup_1.style.right = "".concat(window.innerWidth - buttonRect.right, "px");
                                     }
-                                    popup_1.style.minWidth = buttonRect.width + "px";
+                                    popup_1.style.minWidth = "".concat(buttonRect.width, "px");
                                     cover_1 = Render.screenCover({
                                         // parent: popup.parentElement,
                                         children: popup_1,
@@ -29751,7 +30123,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                             if (!longPressTimer_1.isWaiting()) return [3 /*break*/, 2];
                                             longPressTimer_1.clear();
                                             return [4 /*yield*/, CyclicToDo.showUrl(isCurrent_1 && CyclicToDo.makeUrl(tab_1.href) === location.href ?
-                                                    exports.nextItem(pureSubTabs_1, tab_1).href :
+                                                    (0, exports.nextItem)(pureSubTabs_1, tab_1).href :
                                                     tab_1.href)];
                                         case 1:
                                             _a.sent();
@@ -29820,7 +30192,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return ({
                     icon: Resource.getTagIcon(tag),
                     text: Domain.tagMap(tag),
-                    count: "" + OldStorage.TagMember.get(pass, tag).length,
+                    count: "".concat(OldStorage.TagMember.get(pass, tag).length),
                     href: { pass: pass, tag: tag, },
                 });
             };
@@ -29851,7 +30223,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     switch (_d.label) {
                         case 0:
                             _a = Render.bottomTab;
-                            _b = [entry, Render.getTagList({ term: true })
+                            _b = [entry,
+                                Render.getTagList({ term: true })
                                     .map(function (i) { return Render.makeBottomSubTabForTag(entry.pass, i); })];
                             _c = Render.menuItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("settings-icon")];
@@ -29890,7 +30263,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     switch (_d.label) {
                         case 0:
                             _a = Render.bottomTab;
-                            _b = [entry, Render.getTagList({ pass: entry.pass, tag: true, })
+                            _b = [entry,
+                                Render.getTagList({ pass: entry.pass, tag: true, })
                                     .filter(function (tag) { return !Model.isSystemTagOld(tag); })
                                     .map(function (tag) { return Render.makeBottomSubTabForTag(entry.pass, tag); })
                                     .concat(["separator",])
@@ -29929,7 +30303,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     switch (_d.label) {
                         case 0:
                             _a = Render.bottomTab;
-                            _b = [entry, Render.getTagList({ pass: entry.pass, sublist: true, })
+                            _b = [entry,
+                                Render.getTagList({ pass: entry.pass, sublist: true, })
                                     .filter(function (tag) { return "@:@root" !== tag; })
                                     .map(function (tag) { return Render.makeBottomSubTabForTag(entry.pass, tag); })
                                     .concat(["separator",])
@@ -30565,12 +30940,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            pagesize = "number" !== typeof data.pagesize ? config_json_1.default.maxGroupHistories : Math.min(Math.max(data.pagesize, 100), 10000);
+                            pagesize = "number" !== typeof data.pagesize ? config_json_2.default.maxGroupHistories : Math.min(Math.max(data.pagesize, 100), 10000);
                             maxpage = Math.ceil(data.list.length / pagesize);
                             buttonList = Render.$make(HTMLDivElement)({ tag: "div", className: "button-line page-operator", });
                             result = Render.$make(HTMLDivElement)({ tag: "div", className: data.className, });
                             getLabel = function (index) { return data.getLabel ? data.getLabel(data.list[index], index) : index + 1; };
-                            makeLabelText = function (page) { return getLabel((page - 1) * pagesize) + " - " + getLabel(Math.min(page * pagesize, data.list.length) - 1); };
+                            makeLabelText = function (page) { return "".concat(getLabel((page - 1) * pagesize), " - ").concat(getLabel(Math.min(page * pagesize, data.list.length) - 1)); };
                             pager = function (page) { return __awaiter(_this, void 0, void 0, function () {
                                 var result, isFirstPage, isLastPage, cover, close, popup, pageButton;
                                 var _this = this;
@@ -30593,7 +30968,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     };
                                     popup = Render.$make(HTMLDivElement)({
                                         tag: "div",
-                                        className: "menu-popup " + (data.getLabel ? "" : "text-align-right"),
+                                        className: "menu-popup ".concat(data.getLabel ? "" : "text-align-right"),
                                         children: Array.from({ length: maxpage }).map(function (_i, ix) { return Render.menuItem(Render.monospace(makeLabelText(ix + 1)), function () { return paging(ix + 1); }, page === (ix + 1) ? "current-item" : undefined); }),
                                         onclick: function (event) { return __awaiter(_this, void 0, void 0, function () {
                                             return __generator(this, function (_a) {
@@ -30617,12 +30992,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                 popup.classList.add("show");
                                                 buttonRect = pageButton.getBoundingClientRect();
                                                 if (buttonRect.top < window.innerHeight * (2 / 3)) {
-                                                    popup.style.top = "" + buttonRect.bottom;
+                                                    popup.style.top = "".concat(buttonRect.bottom);
                                                     popup.style.removeProperty("bottom");
                                                 }
                                                 else {
                                                     popup.style.removeProperty("top");
-                                                    popup.style.bottom = "" + (window.innerHeight - buttonRect.top);
+                                                    popup.style.bottom = "".concat(window.innerHeight - buttonRect.top);
                                                 }
                                                 popup.style.marginLeft = "auto";
                                                 popup.style.marginRight = "auto";
@@ -30736,7 +31111,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _b = Render.$div("poem-list");
                             return [4 /*yield*/, Render.poem({
                                     title: locale_2.locale.string("この画面で表示される件数"),
-                                    subtitle: config_json_1.default.maxGroupHistories + " / " + list.length,
+                                    subtitle: "".concat(config_json_2.default.maxGroupHistories, " / ").concat(list.length),
                                     description: locale_2.locale.string("処理パフォーマンスの都合上、この画面で表示される件数には上限があります。"),
                                     image: "🚫",
                                 })];
@@ -30825,7 +31200,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     _b.apply(void 0, [[
                                             _c.apply(void 0, [[
                                                     _d.sent(),
-                                                    OldStorage.Removed.getTypeName(item) + ": " + OldStorage.Removed.getName(item)
+                                                    "".concat(OldStorage.Removed.getTypeName(item), ": ").concat(OldStorage.Removed.getName(item))
                                                 ]]),
                                             Render.$div("item-operator")([{
                                                     tag: "button",
@@ -31103,7 +31478,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     var average_1 = Calculate.average(i);
                     if (6 < intervals.length) {
                         var standardDeviation_1 = Calculate.standardDeviation(i, average_1);
-                        return Math.max.apply(null, intervals.filter(function (i) { return (i - average_1 - Domain.granceTime) / standardDeviation_1 <= config_json_1.default.sleepStandardDeviationRate; }));
+                        return Math.max.apply(null, intervals.filter(function (i) { return (i - average_1 - Domain.granceTime) / standardDeviation_1 <= config_json_2.default.sleepStandardDeviationRate; }));
                     }
                     else {
                         return Math.max.apply(null, intervals);
@@ -31185,7 +31560,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 _e = _e.concat([
                                     _f.apply(void 0, [_k.sent()]),
                                     Render.messageList([
-                                        Render.messagePanel(Render.labelSpan(locale_2.locale.map("Maximum number of histories saved") + (": " + config_json_1.default.maxHistories))),
+                                        Render.messagePanel(Render.labelSpan(locale_2.locale.map("Maximum number of histories saved") + ": ".concat(config_json_2.default.maxHistories))),
                                         Render.messagePanel(Render.labelSpan("最大件数を超えても、回数や初回日時は記憶されます。")),
                                     ])
                                 ]);
@@ -31418,7 +31793,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     return [2 /*return*/, Resource.loadSvgOrCache(Resource.getTagIcon(tag))];
                 }); }); };
                 Resource.loadEmojiSvgOrCache = function (emoji) { return __awaiter(_this, void 0, void 0, function () { var _a; return __generator(this, function (_b) {
-                    return [2 /*return*/, Resource.loadSvgOrCache("u" + ((_a = emoji.codePointAt(0)) === null || _a === void 0 ? void 0 : _a.toString(16).toLowerCase()))];
+                    return [2 /*return*/, Resource.loadSvgOrCache("u".concat((_a = emoji.codePointAt(0)) === null || _a === void 0 ? void 0 : _a.toString(16).toLowerCase()))];
                 }); }); };
             })(Resource = Render.Resource || (Render.Resource = {}));
             Render.showExportScreen = function (pass) { return __awaiter(_this, void 0, void 0, function () { var _a; return __generator(this, function (_b) {
@@ -31561,7 +31936,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     _b.apply(void 0, [[
                                             _c.apply(void 0, [[
                                                     _e.sent(),
-                                                    (_d = list.title) !== null && _d !== void 0 ? _d : locale_2.locale.map("ToDo List") + " ( pass: " + list.pass.substr(0, 2) + "****" + list.pass.substr(-2) + " )"
+                                                    (_d = list.title) !== null && _d !== void 0 ? _d : "".concat(locale_2.locale.map("ToDo List"), " ( pass: ").concat(list.pass.substr(0, 2), "****").concat(list.pass.substr(-2), " )")
                                                 ]]),
                                             Render.$div("item-operator")([{
                                                     tag: "button",
@@ -31777,8 +32152,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             _g = Render.button;
                             _h = ["icon-button"];
                             return [4 /*yield*/, Resource.loadSvgOrCache("settings-icon")];
-                        case 2: return [4 /*yield*/, _g.apply(void 0, _h.concat([_k.sent(),
-                                function () { return __awaiter(_this, void 0, void 0, function () {
+                        case 2: return [4 /*yield*/, _g.apply(void 0, _h.concat([_k.sent(), function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, Render.listSettingsPopup(list.pass)];
@@ -31833,7 +32207,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     scroll: Render.getScreenBody().scrollTop,
                                     dummy: new Date().getTime(),
                                 };
-                                location.href = "?reload=" + encodeURIComponent(JSON.stringify(reload_1));
+                                location.href = "?reload=".concat(encodeURIComponent(JSON.stringify(reload_1)));
                             }
                             return [4 /*yield*/, loadingToast.hide()];
                         case 3:
@@ -31895,8 +32269,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 });
             }); };
             Render.getVersionTimestampText = function () { return Domain.dateStringFromTick(buildTimestamp.tick / Domain.timeAccuracy); };
-            Render.getVersionPasttimeText = function () { return Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) / Domain.timeAccuracy) + " " + locale_2.locale.map("ago"); };
-            Render.getVersionInfromationText = function () { return locale_2.locale.immutable("build timestamp") + ": " + Render.getVersionTimestampText() + " ( " + Render.getVersionPasttimeText() + " )"; };
+            Render.getVersionPasttimeText = function () { return "".concat(Domain.timeLongStringFromTick((new Date().getTime() - buildTimestamp.tick) / Domain.timeAccuracy), " ").concat(locale_2.locale.map("ago")); };
+            Render.getVersionInfromationText = function () { return "".concat(locale_2.locale.immutable("build timestamp"), ": ").concat(Render.getVersionTimestampText(), " ( ").concat(Render.getVersionPasttimeText(), " )"); };
             Render.matchKeyboardShortcutsContext = function (urlParams, context) {
                 switch (context) {
                     case "whenever":
@@ -31912,7 +32286,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             };
             Render.keyboardShortcutsItem = function (i) {
                 return [
-                    Render.$span("key monospace")(i.key.map(function (k) { return Render.$tag("kbd")({})("" + k); })),
+                    Render.$span("key monospace")(i.key.map(function (k) { return Render.$tag("kbd")({})("".concat(k)); })),
                     locale_2.locale.map(i.message),
                     i.reverseWithShiftKey ? [" ( + ", Render.$span("key monospace")(Render.$tag("kbd")({})("Shift")), locale_2.locale.map("Reverse") + " )",] : "",
                 ];
@@ -31944,16 +32318,16 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             case 0:
                                 if (!("string" === typeof data)) return [3 /*break*/, 2];
                                 return [4 /*yield*/, Render.poem({
-                                        title: locale_2.locale.string("poem." + data + ".title"),
-                                        subtitle: locale_2.locale.string("poem." + data + ".subtitle"),
-                                        description: exports.stringOrJson(locale_2.locale.string("poem." + data + ".description")),
+                                        title: locale_2.locale.string("poem.".concat(data, ".title")),
+                                        subtitle: locale_2.locale.string("poem.".concat(data, ".subtitle")),
+                                        description: (0, exports.stringOrJson)(locale_2.locale.string("poem.".concat(data, ".description"))),
                                         image: poem_json_1.default.image[data],
                                     }, className)];
                             case 1:
                                 _a = _e.sent();
                                 return [3 /*break*/, 4];
                             case 2:
-                                _b = Render.$div("poem " + className);
+                                _b = Render.$div("poem ".concat(className));
                                 _c = [Render.$span("poem-title")(data.title),
                                     Render.$span("poem-subtitle")(data.subtitle),
                                     Render.$span("poem-description")(data.description)];
@@ -32281,7 +32655,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                     if (frame / 2 < y) {
                         y -= frame;
                     }
-                    logo.style.transform = "translateY(" + -y + "px)";
+                    logo.style.transform = "translateY(".concat(-y, "px)");
                 }
                 // if (logo)
                 // {
@@ -32345,7 +32719,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             if (undefined === updateHighResolutionTimer) {
                                 updateHighResolutionTimer = setInterval(function () { var _a; return (_a = Render.updateScreen) === null || _a === void 0 ? void 0 : _a.call(Render, "high-resolution-timer"); }, 100);
                             }
-                            Render.getScreen().className = screen.className + " screen";
+                            Render.getScreen().className = "".concat(screen.className, " screen");
                             CyclicToDo.updateUiStyle();
                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                             _c = [Render.getHeaderElement()];
@@ -32428,7 +32802,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 return result;
             };
             Render.getProgressElement = function () { return minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen-header")); };
-            Render.setProgressStyleRaw = function (className) { return Render.getProgressElement().className = "segmented " + className; };
+            Render.setProgressStyleRaw = function (className) { return Render.getProgressElement().className = "segmented ".concat(className); };
             var lastSetProgressAt = 0;
             Render.setProgressStyle = function (className, timeout) {
                 if (timeout === void 0) { timeout = 0; }
@@ -32502,8 +32876,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         var itemHeight = list.childNodes[0].offsetHeight + 1;
                         var columns = Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
                         var row = Math.max(Math.ceil(length / columns), Math.min(length, Math.floor(height / itemHeight)));
-                        list.style.height = row * itemHeight + "px";
-                        list.classList.add("max-column-" + columns);
+                        list.style.height = "".concat(row * itemHeight, "px");
+                        list.classList.add("max-column-".concat(columns));
                     }
                     list.classList.toggle("empty-list", length <= 0);
                 });
@@ -32522,11 +32896,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         var columns = list.classList.contains("compact-flex-list") ?
                             Math.min(maxColumns, length) :
                             Math.min(maxColumns, Math.ceil(length / Math.max(1.0, Math.floor(height / itemHeight))));
-                        list.classList.add("max-column-" + columns);
+                        list.classList.add("max-column-".concat(columns));
                     }
                     list.classList.toggle("empty-list", length <= 0);
                 });
-                minamo_js_1.minamo.dom.setStyleProperty(minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen-toast")), "bottom", bottomTabsHeight + "px");
+                minamo_js_1.minamo.dom.setStyleProperty(minamo_js_1.minamo.core.existsOrThrow(document.getElementById("screen-toast")), "bottom", "".concat(bottomTabsHeight, "px"));
             };
             var onWindowResizeTimestamp = 0;
             Render.onWindowResize = function () {
@@ -32663,7 +33037,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         var hash = CyclicToDo.getUrlHash(url);
                         var tag_2 = (_f = urlParams_1["tag"]) !== null && _f !== void 0 ? _f : "";
                         // const todo = urlParams["todo"];
-                        var pass_1 = (_g = urlParams_1["pass"]) !== null && _g !== void 0 ? _g : OldStorage.sessionPassPrefix + ":" + new Date().getTime();
+                        var pass_1 = (_g = urlParams_1["pass"]) !== null && _g !== void 0 ? _g : "".concat(OldStorage.sessionPassPrefix, ":").concat(new Date().getTime());
                         var destinationItem = event.shiftKey ? exports.previousItem : exports.nextItem;
                         switch (event.key.toUpperCase()) {
                             case "F":
@@ -32686,7 +33060,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 if (pass_1) {
                                     if (event.shiftKey) {
                                         if (tag_2) {
-                                            CyclicToDo.showUrl({ pass: pass_1, tag: tag_2, hash: exports.nextItem(["", "history"], hash) }); // nowait
+                                            CyclicToDo.showUrl({ pass: pass_1, tag: tag_2, hash: (0, exports.nextItem)(["", "history"], hash) }); // nowait
                                         }
                                     }
                                     else {
@@ -32728,7 +33102,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     CyclicToDo.reload(); // nowait
                                     var toast_4 = Render.makeToast({
                                         id: "change-display-style",
-                                        content: Render.$span("")(locale_2.locale.map("Display style has changed!") + ": " + locale_2.locale.map(Render.getTagDisplayStyleText(current_1)) + " \u2192 " + locale_2.locale.map(Render.getTagDisplayStyleText(next))),
+                                        content: Render.$span("")("".concat(locale_2.locale.map("Display style has changed!"), ": ").concat(locale_2.locale.map(Render.getTagDisplayStyleText(current_1)), " \u2192 ").concat(locale_2.locale.map(Render.getTagDisplayStyleText(next)))),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             var settings;
                                             return __generator(this, function (_a) {
@@ -32762,7 +33136,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     CyclicToDo.reload(); // nowait
                                     var toast_5 = Render.makeToast({
                                         id: "change-gauge-style",
-                                        content: Render.$span("")(locale_2.locale.map("Gauge style has changed!") + ": " + locale_2.locale.map(Render.getTagProgressScaleStyleText(current_2)) + " \u2192 " + locale_2.locale.map(Render.getTagProgressScaleStyleText(next))),
+                                        content: Render.$span("")("".concat(locale_2.locale.map("Gauge style has changed!"), ": ").concat(locale_2.locale.map(Render.getTagProgressScaleStyleText(current_2)), " \u2192 ").concat(locale_2.locale.map(Render.getTagProgressScaleStyleText(next)))),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             var settings;
                                             return __generator(this, function (_a) {
@@ -32796,7 +33170,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     CyclicToDo.reload(); // nowait
                                     var toast_6 = Render.makeToast({
                                         id: "change-sort",
-                                        content: Render.$span("")(locale_2.locale.map("Sort orer has changed!") + ": " + locale_2.locale.map(Render.getTagSortSettingsText(current_3)) + " \u2192 " + locale_2.locale.map(Render.getTagSortSettingsText(next))),
+                                        content: Render.$span("")("".concat(locale_2.locale.map("Sort orer has changed!"), ": ").concat(locale_2.locale.map(Render.getTagSortSettingsText(current_3)), " \u2192 ").concat(locale_2.locale.map(Render.getTagSortSettingsText(next)))),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             var settings;
                                             return __generator(this, function (_a) {
@@ -32828,7 +33202,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     CyclicToDo.updateStyle();
                                     var toast_7 = Render.makeToast({
                                         id: "change-sort",
-                                        content: Render.$span("")(locale_2.locale.map("Theme has changed!") + ": " + locale_2.locale.map(CyclicToDo.getThemeLocale(current_4)) + " \u2192 " + locale_2.locale.map(CyclicToDo.getThemeLocale(next))),
+                                        content: Render.$span("")("".concat(locale_2.locale.map("Theme has changed!"), ": ").concat(locale_2.locale.map(CyclicToDo.getThemeLocale(current_4)), " \u2192 ").concat(locale_2.locale.map(CyclicToDo.getThemeLocale(next)))),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             var settings;
                                             return __generator(this, function (_a) {
@@ -32852,11 +33226,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                     var next = destinationItem(list_5, current_5);
                                     settings.locale = defaultLanguage_1 === next ? undefined : next;
                                     Storage.SystemSettings.set(settings);
-                                    exports.setLocale((_o = settings.locale) !== null && _o !== void 0 ? _o : null);
+                                    (0, exports.setLocale)((_o = settings.locale) !== null && _o !== void 0 ? _o : null);
                                     CyclicToDo.reload(); // no wait
                                     var toast_8 = Render.makeToast({
                                         id: "change-sort",
-                                        content: Render.$span("")(locale_2.locale.map("Language has changed!") + ": " + locale_2.locale.getLocaleName(current_5) + " \u2192 " + locale_2.locale.getLocaleName(next)),
+                                        content: Render.$span("")("".concat(locale_2.locale.map("Language has changed!"), ": ").concat(locale_2.locale.getLocaleName(current_5), " \u2192 ").concat(locale_2.locale.getLocaleName(next))),
                                         backwardOperator: Render.cancelTextButton(function () { return __awaiter(_this, void 0, void 0, function () {
                                             var settings;
                                             var _a;
@@ -32866,7 +33240,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                                         settings = Storage.SystemSettings.get();
                                                         settings.locale = defaultLanguage_1 === current_5 ? undefined : current_5;
                                                         Storage.SystemSettings.set(settings);
-                                                        exports.setLocale((_a = settings.locale) !== null && _a !== void 0 ? _a : null);
+                                                        (0, exports.setLocale)((_a = settings.locale) !== null && _a !== void 0 ? _a : null);
                                                         toast_8.hide(); // nowait
                                                         return [4 /*yield*/, CyclicToDo.reload()];
                                                     case 1:
@@ -32888,8 +33262,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             case "?":
                                 Render.makeToast({
                                     id: "keyboard-shortcuts",
-                                    content: Render.$tag("dl")({})(exports.groupBy(exports.keyboardShortcuts
-                                        .filter(function (i) { return Render.matchKeyboardShortcutsContext(urlParams_1, i.context); }), function (i) { return locale_2.locale.map(exports.getKeyboardShortcutsCategoryLocale(i.category)); })
+                                    content: Render.$tag("dl")({})((0, exports.groupBy)(exports.keyboardShortcuts
+                                        .filter(function (i) { return Render.matchKeyboardShortcutsContext(urlParams_1, i.context); }), function (i) { return locale_2.locale.map((0, exports.getKeyboardShortcutsCategoryLocale)(i.category)); })
                                         .map(function (i) {
                                         return [
                                             Render.$tag("dt")({})(i.group),
@@ -32946,9 +33320,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 + Object.keys(args)
                     .filter(function (i) { return undefined !== i; })
                     .filter(function (i) { return "hash" !== i; })
-                    .map(function (i) { return i + "=" + encodeURIComponent(args[i]); })
+                    .map(function (i) { return "".concat(i, "=").concat(encodeURIComponent(args[i])); })
                     .join("&")
-                + ("#" + ((_a = args["hash"]) !== null && _a !== void 0 ? _a : "")));
+                + "#".concat((_a = args["hash"]) !== null && _a !== void 0 ? _a : ""));
         };
         // export const makeUrl =
         // (
@@ -32995,13 +33369,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
         CyclicToDo.updateFlashStyle = function () {
             var _a;
             var flashStyle = (_a = Storage.SystemSettings.get().flashStyle) !== null && _a !== void 0 ? _a : "breath";
-            ["gradation", "breath", "solid", "none",].forEach(function (i) { return document.body.classList.toggle("flash-style-" + i, i === flashStyle); });
+            ["gradation", "breath", "solid", "none",].forEach(function (i) { return document.body.classList.toggle("flash-style-".concat(i), i === flashStyle); });
         };
         CyclicToDo.getLatestBuildTimestamp = function () { return __awaiter(_this, void 0, void 0, function () { var _a, _b; return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
                     _b = (_a = JSON).parse;
-                    return [4 /*yield*/, minamo_js_1.minamo.http.get("./build.timestamp.json?dummy=" + new Date().getTime())];
+                    return [4 /*yield*/, minamo_js_1.minamo.http.get("./build.timestamp.json?dummy=".concat(new Date().getTime()))];
                 case 1: return [2 /*return*/, _b.apply(_a, [_c.sent()])];
             }
         }); }); };
@@ -33028,7 +33402,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
             var _a;
             var isDirty = __spreadArray([
                 OldStorage.Backup.decay()
-            ], OldStorage.Pass.get().map(function (pass) { return OldStorage.Removed.decay(pass); })).reduce(function (a, b) { return a || b; }, false);
+            ], OldStorage.Pass.get().map(function (pass) { return OldStorage.Removed.decay(pass); }), true).reduce(function (a, b) { return a || b; }, false);
             if (isDirty) {
                 (_a = Render.updateScreen) === null || _a === void 0 ? void 0 : _a.call(Render, "dirty");
             }
@@ -33045,9 +33419,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                                 stamp: params.buildTimestamp,
                                 tick: params.buildTimestampTick,
                             };
-                        console.log("start timestamp: " + new Date());
-                        console.log("" + JSON.stringify(params));
-                        exports.setLocale((_d = Storage.SystemSettings.get().locale) !== null && _d !== void 0 ? _d : null);
+                        console.log("start timestamp: ".concat(new Date()));
+                        console.log("".concat(JSON.stringify(params)));
+                        (0, exports.setLocale)((_d = Storage.SystemSettings.get().locale) !== null && _d !== void 0 ? _d : null);
                         minamo_js_1.minamo.dom.removeChildren(Render.getScreenBody());
                         _b = (_a = minamo_js_1.minamo.dom).appendChildren;
                         _c = [document.getElementById("foundation")];
@@ -33125,7 +33499,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                         document.addEventListener('webkitfullscreenchange', Render.onWebkitFullscreenChange);
                         // window.matchMedia('(prefers-color-scheme: dark)').addEventListener("change", updateStyle);
                         CyclicToDo.decayRemovedItems();
-                        setInterval(CyclicToDo.decayRemovedItems, (_e = minamo_js_1.minamo.core.parseTimespan(config_json_1.default.removedItemDecayInterval)) !== null && _e !== void 0 ? _e : 60 * 60 * 1000);
+                        setInterval(CyclicToDo.decayRemovedItems, (_e = minamo_js_1.minamo.core.parseTimespan(config_json_2.default.removedItemDecayInterval)) !== null && _e !== void 0 ? _e : 60 * 60 * 1000);
                         CyclicToDo.updateStyle();
                         CyclicToDo.updateFlashStyle();
                         CyclicToDo.updateUiStyle();
@@ -33169,7 +33543,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                             hash = CyclicToDo.getUrlHash(url);
                             tag = (_c = urlParams["tag"]) !== null && _c !== void 0 ? _c : "";
                             todo = urlParams["todo"];
-                            pass = (_d = urlParams["pass"]) !== null && _d !== void 0 ? _d : OldStorage.sessionPassPrefix + ":" + new Date().getTime();
+                            pass = (_d = urlParams["pass"]) !== null && _d !== void 0 ? _d : "".concat(OldStorage.sessionPassPrefix, ":").concat(new Date().getTime());
                             if (!(pass && todo)) return [3 /*break*/, 3];
                             return [4 /*yield*/, Render.showTodoScreen(pass, todo)];
                         case 2:
@@ -33273,12 +33647,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
                 }
             });
         }); };
-    })(CyclicToDo = exports.CyclicToDo || (exports.CyclicToDo = {}));
+    })(CyclicToDo || (exports.CyclicToDo = CyclicToDo = {}));
 });
 //# sourceMappingURL=index.js.map
 </script>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Jan 02 2024 15:18:54 GMT+0900 (日本標準時)', buildTimestampTick: 1704176334428, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Jan 08 2024 05:27:25 GMT+0900 (日本標準時)', buildTimestampTick: 1704659245837, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -33502,7 +33876,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "resour
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Tue Jan 02 2024 15:18:54 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Mon Jan 08 2024 05:27:25 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

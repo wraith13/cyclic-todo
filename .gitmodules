@@ -1,3 +1,6 @@
 [submodule "nephila"]
 	path = nephila
 	url = https://github.com/wraith13/nephila
+[submodule "flounder.style.js"]
+	path = flounder.style.js
+	url = https://github.com/wraith13/flounder.style.js
