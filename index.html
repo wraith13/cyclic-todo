@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Jan 08 2024 05:27:25 GMT+0900 (日本標準時)
+    build at: Fri Jan 12 2024 23:48:23 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -21401,7 +21401,7 @@ define("nephila/minamo.js/index", ["require", "exports"], function (require, exp
 define("flounder.style.js/config", [], {
     "defaultSpotIntervalSize": 24,
     "defaultBlur": 0.0,
-    "defaultMaximumFractionDigits": 3
+    "defaultMaximumFractionDigits": 4
 });
 define("flounder.style.js/index", ["require", "exports", "flounder.style.js/config"], function (require, exports, config_json_1) {
     "use strict";
@@ -21473,12 +21473,17 @@ define("flounder.style.js/index", ["require", "exports", "flounder.style.js/conf
                             "triline" === data.type ? 0.25 :
                                 0.5;
         };
+        flounderStyle.getAutoAnglePerDepth = function (data) {
+            return "stripe" === flounderStyle.getPatternType(data) ? (1.0 / 2.0) :
+                "diline" === flounderStyle.getPatternType(data) ? (1.0 / 4.0) :
+                    "triline" === flounderStyle.getPatternType(data) ? (1.0 / 6.0) :
+                        1.0;
+        };
         flounderStyle.getActualAnglePerDepth = function (data) {
             return "number" === typeof data.anglePerDepth ? data.anglePerDepth :
-                ("auto" === data.anglePerDepth && "stripe" === flounderStyle.getPatternType(data)) ? (1.0 / 2.0) :
-                    ("auto" === data.anglePerDepth && "diline" === flounderStyle.getPatternType(data)) ? (1.0 / 4.0) :
-                        ("auto" === data.anglePerDepth && "triline" === flounderStyle.getPatternType(data)) ? (1.0 / 6.0) :
-                            "auto" === data.anglePerDepth ? 1.0 : 0.0;
+                "auto" === data.anglePerDepth ? flounderStyle.getAutoAnglePerDepth(data) :
+                    "-auto" === data.anglePerDepth ? -flounderStyle.getAutoAnglePerDepth(data) :
+                        0.0;
         };
         flounderStyle.getAngleOffsetByDepth = function (data) {
             return flounderStyle.getActualAnglePerDepth(data) * data.depth;
@@ -21590,8 +21595,20 @@ define("flounder.style.js/index", ["require", "exports", "flounder.style.js/conf
             var result = structuredClone(data);
             result.foregroundColor = flounderStyle.getBackgroundColor(data);
             result.backgroundColor = data.foregroundColor;
+            if ("number" === typeof data.layoutAngle) {
+                result.layoutAngle = flounderStyle.getActualLayoutAngle(data) + flounderStyle.getActualAnglePerDepth(data);
+            }
             result.depth = 1.0 - data.depth;
             delete result.reverseRate;
+            if ("number" === typeof data.anglePerDepth) {
+                result.anglePerDepth = -data.anglePerDepth;
+            }
+            else if ("auto" === data.anglePerDepth) {
+                result.anglePerDepth = "-auto";
+            }
+            else if ("-auto" === data.anglePerDepth) {
+                result.anglePerDepth = "auto";
+            }
             return result;
         };
         var makeStyleCommon = function (data, maker) {
@@ -28952,7 +28969,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                             return [4 /*yield*/, Promise.all(data.items
                                     .map(function (item, ix) { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
-                                        return [2 /*return*/, (item.href && Render.screenHeaderLinkSegment(item, getLastSegmentClass(data, ix))) ||
+                                        return [2 /*return*/, (item.href && item.menu && Render.screenHeaderLinkPopupSegment(item, getLastSegmentClass(data, ix))) ||
+                                                (item.href && Render.screenHeaderLinkSegment(item, getLastSegmentClass(data, ix))) ||
                                                 (item.menu && Render.screenHeaderPopupSegment(item, getLastSegmentClass(data, ix))) ||
                                                 (true && Render.screenHeaderLabelSegment(item, getLastSegmentClass(data, ix)))];
                                     });
@@ -29145,6 +29163,119 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     });
                 });
             };
+            Render.screenHeaderLinkPopupSegment = function (item, className) {
+                if (className === void 0) { className = ""; }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var cover, close, popup, showMenu, longPressTimer, mousedown, mouseup, segment, _a;
+                    var _b;
+                    var _this = this;
+                    return __generator(this, function (_c) {
+                        switch (_c.label) {
+                            case 0:
+                                cover = null;
+                                close = function () {
+                                    popup.classList.remove("show");
+                                    cover = null;
+                                };
+                                popup = Render.$make(HTMLDivElement)({
+                                    tag: "div",
+                                    className: "menu-popup segment-popup",
+                                    children: "function" !== typeof item.menu ? item.menu : [],
+                                    onclick: function (event) { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            event.stopPropagation();
+                                            cover === null || cover === void 0 ? void 0 : cover.close();
+                                            close();
+                                            return [2 /*return*/];
+                                        });
+                                    }); },
+                                });
+                                showMenu = function () { return __awaiter(_this, void 0, void 0, function () {
+                                    var _a, _b, _c;
+                                    var _d, _e, _f;
+                                    return __generator(this, function (_g) {
+                                        switch (_g.label) {
+                                            case 0:
+                                                if (!("function" === typeof item.menu)) return [3 /*break*/, 2];
+                                                _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                _c = [popup];
+                                                return [4 /*yield*/, item.menu()];
+                                            case 1:
+                                                _b.apply(_a, _c.concat([_g.sent()]));
+                                                return [3 /*break*/, 3];
+                                            case 2:
+                                                Array.from((_d = popup.children) !== null && _d !== void 0 ? _d : []).forEach(function (i) { return i.classList.remove("opened"); });
+                                                _g.label = 3;
+                                            case 3:
+                                                popup.classList.add("show");
+                                                //popup.style.height = `${popup.offsetHeight -2}px`;
+                                                popup.style.width = "".concat(popup.offsetWidth - 2, "px");
+                                                popup.style.top = "".concat(segment.offsetTop + segment.offsetHeight, "px");
+                                                popup.style.left = "".concat(Math.max(segment.offsetLeft, 4), "px");
+                                                cover = Render.screenCover({
+                                                    // parent: popup.parentElement,
+                                                    children: popup,
+                                                    onclick: close,
+                                                });
+                                                (_f = Array.from((_e = popup.children) !== null && _e !== void 0 ? _e : []).filter(function (i) { return i.classList.contains("group-item") && i.classList.contains("current-item"); })[0]) === null || _f === void 0 ? void 0 : _f.click();
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); };
+                                longPressTimer = new minamo_js_1.minamo.core.Timer(showMenu, 300);
+                                mousedown = function (event) {
+                                    event.preventDefault();
+                                    longPressTimer.set();
+                                };
+                                mouseup = function () { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                if (!longPressTimer.isWaiting()) return [3 /*break*/, 2];
+                                                longPressTimer.clear();
+                                                return [4 /*yield*/, CyclicToDo.showUrl(item.href)];
+                                            case 1:
+                                                _a.sent();
+                                                _a.label = 2;
+                                            case 2: return [2 /*return*/];
+                                        }
+                                    });
+                                }); };
+                                _a = Render.$make(HTMLDivElement);
+                                _b = {
+                                    tag: "div",
+                                    className: "segment ".concat(className)
+                                };
+                                return [4 /*yield*/, Render.screenHeaderSegmentCore(item)];
+                            case 1:
+                                segment = _a.apply(void 0, [(_b.children = _c.sent(),
+                                        _b.eventListener = {
+                                            mousedown: mousedown,
+                                            touchstart: mousedown,
+                                            mouseup: mouseup,
+                                            touchend: mouseup,
+                                            contextmenu: function (event) { return __awaiter(_this, void 0, void 0, function () {
+                                                return __generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0:
+                                                            event.stopPropagation();
+                                                            event.preventDefault();
+                                                            longPressTimer.clear();
+                                                            return [4 /*yield*/, showMenu()];
+                                                        case 1:
+                                                            _a.sent();
+                                                            return [2 /*return*/];
+                                                    }
+                                                });
+                                            }); }
+                                        },
+                                        _b)]);
+                                // return [ segment, popup, ];
+                                return [2 /*return*/, segment];
+                        }
+                    });
+                });
+            };
             Render.screenHeaderHomeSegment = function () { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, ({
@@ -29211,20 +29342,26 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                 });
             }); };
             Render.screenHeaderListSegment = function (pass) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b;
-                return __generator(this, function (_c) {
-                    return [2 /*return*/, ({
-                            icon: (_a = {
-                                "@removed": "recycle-bin-icon",
-                                "@import": "import-icon",
-                            }[pass]) !== null && _a !== void 0 ? _a : "list-icon",
-                            title: (_b = {
-                                "@removed": locale_2.locale.map("@deleted"),
-                                "@import": locale_2.locale.map("Import List"),
-                            }[pass]) !== null && _b !== void 0 ? _b : OldStorage.Title.get(pass), // `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
-                            href: { pass: pass, tag: "@overall", },
-                            //menu: await screenHeaderListSegmentMenu(pass),
-                        })];
+                var _a;
+                var _b, _c;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
+                        case 0:
+                            _a = {
+                                icon: (_b = {
+                                    "@removed": "recycle-bin-icon",
+                                    "@import": "import-icon",
+                                }[pass]) !== null && _b !== void 0 ? _b : "list-icon",
+                                title: (_c = {
+                                    "@removed": locale_2.locale.map("@deleted"),
+                                    "@import": locale_2.locale.map("Import List"),
+                                }[pass]) !== null && _c !== void 0 ? _c : OldStorage.Title.get(pass), // `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
+                                href: { pass: pass, tag: "@overall", }
+                            };
+                            return [4 /*yield*/, Render.screenHeaderListSegmentMenu(pass)];
+                        case 1: return [2 /*return*/, (_a.menu = _d.sent(),
+                                _a)];
+                    }
                 });
             }); };
             Render.screenHeaderListMenuSegment = function (pass) { return __awaiter(_this, void 0, void 0, function () {
@@ -29247,15 +29384,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                         case 1: return [2 /*return*/, (_a.menu = _d.sent(),
                                 _a)];
                     }
-                });
-            }); };
-            Render.screenHeaderTagSegment = function (pass, current) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    return [2 /*return*/, ({
-                            icon: Resource.getTagIcon(current),
-                            title: Domain.tagMap(current),
-                            href: { pass: pass, tag: current, },
-                        })];
                 });
             }); };
             Render.getTagList = function (params) {
@@ -29387,28 +29515,23 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     }
                 });
             }); };
-            Render.screenHeaderTagMenuSegment = function (pass, current) { return __awaiter(_this, void 0, void 0, function () {
+            Render.screenHeaderTagSegmentMenu = function (pass, current) { return __awaiter(_this, void 0, void 0, function () {
                 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8;
-                var _9, _10, _11, _12, _13;
+                var _9, _10, _11, _12;
                 var _this = this;
-                return __generator(this, function (_14) {
-                    switch (_14.label) {
-                        case 0:
-                            _9 = {
-                                icon: Resource.getTagIcon(current),
-                                title: Domain.tagMap(current)
-                            };
-                            return [4 /*yield*/, Render.tagMenuItem(current, pass, "@overall")];
+                return __generator(this, function (_13) {
+                    switch (_13.label) {
+                        case 0: return [4 /*yield*/, Render.tagMenuItem(current, pass, "@overall")];
                         case 1:
                             _e = [
-                                _14.sent()
+                                _13.sent()
                             ];
                             _f = Render.menuLinkItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("history-icon")];
                         case 2:
                             _e = _e.concat([
                                 _f.apply(void 0, [[
-                                        _14.sent(),
+                                        _13.sent(),
                                         Render.labelSpan(locale_2.locale.map("History"))
                                     ], { pass: pass, tag: "@overall", hash: "history", }])
                             ]);
@@ -29419,7 +29542,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                             // .concat
                             _h = (_d = _e.concat([
                                 _g.apply(void 0, [[
-                                        _14.sent(),
+                                        _13.sent(),
                                         Render.labelSpan(locale_2.locale.map("@deleted")),
                                         Render.monospace("".concat(OldStorage.Removed.get(pass).length))
                                     ], { pass: pass, hash: "removed" },
@@ -29431,16 +29554,16 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                             _k = [current];
                             return [4 /*yield*/, Resource.loadSvgOrCache("ghost-term-icon")];
                         case 4:
-                            _k = _k.concat([[_14.sent(), Render.label("Term")]]);
-                            _10 = {
+                            _k = _k.concat([[_13.sent(), Render.label("Term")]]);
+                            _9 = {
                                 id: "@Term threshold settings"
                             };
                             _m = Render.menuItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("settings-icon")];
                         case 5:
                             _o = (_l = [
-                                (_10.item = _m.apply(void 0, [[
-                                        _14.sent(),
+                                (_9.item = _m.apply(void 0, [[
+                                        _13.sent(),
                                         Render.label("Term threshold settings")
                                     ], function () { return __awaiter(_this, void 0, void 0, function () {
                                         return __generator(this, function (_a) {
@@ -29454,7 +29577,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                             }
                                         });
                                     }); }]),
-                                    _10),
+                                    _9),
                                 { id: "@separator", item: Render.menuSeparator(), }
                             ])
                                 .concat;
@@ -29469,17 +29592,17 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                         }
                                     });
                                 }); }))];
-                        case 6: return [4 /*yield*/, _j.apply(void 0, _k.concat([_o.apply(_l, [_14.sent()])]))];
+                        case 6: return [4 /*yield*/, _j.apply(void 0, _k.concat([_o.apply(_l, [_13.sent()])]))];
                         case 7:
                             // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
                             // .concat
-                            _p = (_c = _h.apply(_d, [_14.sent()]))
+                            _p = (_c = _h.apply(_d, [_13.sent()]))
                                 .concat;
                             _q = Render.groupMenuItem;
                             _r = [current];
                             return [4 /*yield*/, Resource.loadSvgOrCache("flag-icon")];
                         case 8:
-                            _r = _r.concat([[_14.sent(), Render.label("Auto tag")]]);
+                            _r = _r.concat([[_13.sent(), Render.label("Auto tag")]]);
                             return [4 /*yield*/, Promise.all(Render.getTagList({ pass: pass, auto: true }).map(function (tag) { return __awaiter(_this, void 0, void 0, function () {
                                     var _a;
                                     return __generator(this, function (_b) {
@@ -29491,26 +29614,26 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                         }
                                     });
                                 }); }))];
-                        case 9: return [4 /*yield*/, _q.apply(void 0, _r.concat([_14.sent()]))];
+                        case 9: return [4 /*yield*/, _q.apply(void 0, _r.concat([_13.sent()]))];
                         case 10:
                             // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
                             // .concat
-                            _s = (_b = _p.apply(_c, [_14.sent()]))
+                            _s = (_b = _p.apply(_c, [_13.sent()]))
                                 .concat;
                             _t = Render.groupMenuItem;
                             _u = [current];
                             return [4 /*yield*/, Resource.loadSvgOrCache("folder-icon")];
                         case 11:
-                            _u = _u.concat([[_14.sent(), Render.label("Sublist")]]);
-                            _11 = {
+                            _u = _u.concat([[_13.sent(), Render.label("Sublist")]]);
+                            _10 = {
                                 id: "@new"
                             };
                             _x = Render.menuItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("add-folder-icon")];
                         case 12:
                             _y = (_w = [
-                                (_11.item = _x.apply(void 0, [[
-                                        _14.sent(),
+                                (_10.item = _x.apply(void 0, [[
+                                        _13.sent(),
                                         Render.label("@new-sublist")
                                     ], function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                                         switch (_a.label) {
@@ -29518,7 +29641,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                             case 1: return [2 /*return*/, _a.sent()];
                                         }
                                     }); }); }]),
-                                    _11),
+                                    _10),
                                 { id: "@separator", item: Render.menuSeparator(), }
                             ])
                                 .concat;
@@ -29534,33 +29657,33 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                     });
                                 }); }))];
                         case 13:
-                            _z = (_v = _y.apply(_w, [_14.sent()]))
+                            _z = (_v = _y.apply(_w, [_13.sent()]))
                                 .concat;
                             _0 = [{ id: "@separator", item: Render.menuSeparator(), }];
-                            _12 = { id: "@:@root" };
+                            _11 = { id: "@:@root" };
                             return [4 /*yield*/, Render.tagMenuItem(current, pass, "@:@root")];
                         case 14: return [4 /*yield*/, _t.apply(void 0, _u.concat([_z.apply(_v, [_0.concat([
-                                        (_12.item = _14.sent(), _12)
+                                        (_11.item = _13.sent(), _11)
                                     ])])]))];
                         case 15:
                             // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
                             // .concat
-                            _1 = (_a = _s.apply(_b, [_14.sent()]))
+                            _1 = (_a = _s.apply(_b, [_13.sent()]))
                                 .concat;
                             _2 = Render.groupMenuItem;
                             _3 = [current];
                             return [4 /*yield*/, Resource.loadSvgOrCache("tag-icon")];
                         case 16:
-                            _3 = _3.concat([[_14.sent(), Render.label("Tag")]]);
-                            _13 = {
+                            _3 = _3.concat([[_13.sent(), Render.label("Tag")]]);
+                            _12 = {
                                 id: "@new"
                             };
                             _6 = Render.menuItem;
                             return [4 /*yield*/, Resource.loadSvgOrCache("add-tag-icon")];
                         case 17:
                             _7 = (_5 = [
-                                (_13.item = _6.apply(void 0, [[
-                                        _14.sent(),
+                                (_12.item = _6.apply(void 0, [[
+                                        _13.sent(),
                                         Render.label("@new")
                                     ], function () { return __awaiter(_this, void 0, void 0, function () {
                                         var tag;
@@ -29578,7 +29701,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                             }
                                         });
                                     }); }]),
-                                    _13),
+                                    _12),
                                 { id: "@separator", item: Render.menuSeparator(), }
                             ])
                                 .concat;
@@ -29594,7 +29717,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                     });
                                 }); }))];
                         case 18:
-                            _8 = (_4 = _7.apply(_5, [_14.sent()])
+                            _8 = (_4 = _7.apply(_5, [_13.sent()])
                                 .concat([
                                 { id: "@separator", item: Render.menuSeparator(), },
                             ]))
@@ -29610,12 +29733,42 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                         }
                                     });
                                 }); }))];
-                        case 19: return [4 /*yield*/, _2.apply(void 0, _3.concat([_8.apply(_4, [_14.sent()])]))];
-                        case 20: return [2 /*return*/, (_9.menu = 
-                            // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
-                            // .concat
-                            _1.apply(_a, [_14.sent()]),
-                                _9)];
+                        case 19: return [4 /*yield*/, _2.apply(void 0, _3.concat([_8.apply(_4, [_13.sent()])]))];
+                        case 20: 
+                        // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
+                        // .concat
+                        return [2 /*return*/, _1.apply(_a, [_13.sent()])];
+                    }
+                });
+            }); };
+            Render.screenHeaderTagSegment = function (pass, current) { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            _a = {
+                                icon: Resource.getTagIcon(current),
+                                title: Domain.tagMap(current),
+                                href: { pass: pass, tag: current, }
+                            };
+                            return [4 /*yield*/, Render.screenHeaderTagSegmentMenu(pass, current)];
+                        case 1: return [2 /*return*/, (_a.menu = _b.sent(),
+                                _a)];
+                    }
+                });
+            }); };
+            Render.screenHeaderTagMenuSegment = function (pass, current) { return __awaiter(_this, void 0, void 0, function () {
+                var _a;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            _a = {
+                                icon: Resource.getTagIcon(current),
+                                title: Domain.tagMap(current)
+                            };
+                            return [4 /*yield*/, Render.screenHeaderTagSegmentMenu(pass, current)];
+                        case 1: return [2 /*return*/, (_a.menu = _b.sent(),
+                                _a)];
                     }
                 });
             }); };
@@ -33652,7 +33805,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 //# sourceMappingURL=index.js.map
 </script>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Jan 08 2024 05:27:25 GMT+0900 (日本標準時)', buildTimestampTick: 1704659245837, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Jan 12 2024 23:48:23 GMT+0900 (日本標準時)', buildTimestampTick: 1705070903041, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -33876,7 +34029,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Mon Jan 08 2024 05:27:25 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Fri Jan 12 2024 23:48:23 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

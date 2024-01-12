@@ -6014,6 +6014,7 @@ export module CyclicToDo
                     .map
                     (
                         async (item, ix) =>
+                            (item.href && item.menu && screenHeaderLinkPopupSegment(<any>item, getLastSegmentClass(data,ix))) ||
                             (item.href && screenHeaderLinkSegment(<any>item, getLastSegmentClass(data,ix))) ||
                             (item.menu && screenHeaderPopupSegment(item, getLastSegmentClass(data,ix))) ||
                             (true && screenHeaderLabelSegment(item, getLastSegmentClass(data,ix)))
@@ -6136,6 +6137,86 @@ export module CyclicToDo
             // return [ segment, popup, ];
             return segment;
         };
+        export const screenHeaderLinkPopupSegment = async (item: HeaderSegmentSource & { href: PageParams; }, className: string = "") =>
+        {
+            let cover: { dom: HTMLDivElement, close: () => Promise<unknown> } | null = null;
+            const close = () =>
+            {
+                popup.classList.remove("show");
+                cover = null;
+            };
+            const popup = $make(HTMLDivElement)
+            ({
+                tag: "div",
+                className: "menu-popup segment-popup",
+                children: "function" !== typeof item.menu ? item.menu: [ ],
+                onclick: async (event: MouseEvent) =>
+                {
+                    event.stopPropagation();
+                    cover?.close();
+                    close();
+                },
+            });
+            const showMenu = async () =>
+            {
+                if ("function" === typeof item.menu)
+                {
+                    minamo.dom.replaceChildren(popup, await item.menu());
+                }
+                else
+                {
+                    Array.from(popup.children ?? []).forEach(i => i.classList.remove("opened"));
+                }
+                popup.classList.add("show");
+                //popup.style.height = `${popup.offsetHeight -2}px`;
+                popup.style.width = `${popup.offsetWidth -2}px`;
+                popup.style.top = `${segment.offsetTop +segment.offsetHeight}px`;
+                popup.style.left = `${Math.max(segment.offsetLeft, 4)}px`;
+                cover = screenCover
+                ({
+                    // parent: popup.parentElement,
+                    children: popup,
+                    onclick: close,
+                });
+                (Array.from(popup.children ?? []).filter(i => i.classList.contains("group-item") && i.classList.contains("current-item"))[0] as HTMLButtonElement)?.click();
+            };
+            const longPressTimer = new minamo.core.Timer(showMenu, 300);
+            const mousedown = (event: MouseEvent) =>
+            {
+                event.preventDefault();
+                longPressTimer.set();
+            };
+            const mouseup = async () =>
+            {
+                if (longPressTimer.isWaiting())
+                {
+                    longPressTimer.clear();
+                    await showUrl(item.href);
+                }
+            };
+            const segment = $make(HTMLDivElement)
+            ({
+                tag: "div",
+                className: `segment ${className}`,
+                children: await screenHeaderSegmentCore(item),
+                eventListener:
+                {
+                    mousedown: mousedown,
+                    touchstart: mousedown,
+                    mouseup: mouseup,
+                    touchend: mouseup,
+                    contextmenu: async (event: MouseEvent) =>
+                    {
+                        event.stopPropagation();
+                        event.preventDefault();
+                        longPressTimer.clear();
+                        await showMenu();
+                    }
+                },
+            });
+            // return [ segment, popup, ];
+            return segment;
+        };
         export const screenHeaderHomeSegment = async (): Promise<HeaderSegmentSource> =>
         ({
             icon: "application-icon",
@@ -6207,7 +6288,7 @@ export module CyclicToDo
                 "@import": locale.map("Import List"),
             }[pass] ?? OldStorage.Title.get(pass), // `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
             href: { pass, tag: "@overall", },
-            //menu: await screenHeaderListSegmentMenu(pass),
+            menu: await screenHeaderListSegmentMenu(pass),
         });
         export const screenHeaderListMenuSegment = async (pass: string): Promise<HeaderSegmentSource> =>
         ({
@@ -6222,12 +6303,6 @@ export module CyclicToDo
                 "@import": locale.map("Import List"),
             }[pass] ?? OldStorage.Title.get(pass), // `ToDo リスト ( pass: ${pass.substr(0, 2)}****${pass.substr(-2)} )`,
             menu: await screenHeaderListSegmentMenu(pass),
-        });
-        export const screenHeaderTagSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
-        ({
-            icon: Resource.getTagIcon(current),
-            title: Domain.tagMap(current),
-            href: { pass, tag: current, },
         });
         export const getTagList = (params: string | { overall?: boolean, pass?: string, sublist?: boolean, tag?: boolean, auto?: boolean, term?: boolean, }): string[] =>
         {
@@ -6364,145 +6439,153 @@ export module CyclicToDo
             { pass, tag, },
             current === tag ? "current-item": undefined
         );
+        export const screenHeaderTagSegmentMenu = async (pass: string, current: string): Promise<HeaderSegmentSource["menu"]> =>
+            // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
+            // .concat
+            [
+                await tagMenuItem(current, pass, "@overall"),
+                menuLinkItem
+                (
+                    [
+                        await Resource.loadSvgOrCache("history-icon"),
+                        labelSpan(locale.map("History")),
+                    ],
+                    { pass, tag:"@overall", hash: "history", },
+                    //current === "@deleted" ? "current-item": undefined
+                ),
+                menuLinkItem
+                (
+                    [
+                        await Resource.loadSvgOrCache("recycle-bin-icon"),
+                        labelSpan(locale.map("@deleted")),
+                        monospace(`${OldStorage.Removed.get(pass).length}`)
+                    ],
+                    { pass, hash: "removed" },
+                    current === "@deleted" ? "current-item": undefined
+                ),
+                menuSeparator(),
+            ]
+            .concat
+            (
+                await groupMenuItem
+                (
+                    current,
+                    [ await Resource.loadSvgOrCache("ghost-term-icon"), label("Term"), ],
+                    [
+                        <{ id: string, item: minamo.dom.Source, }>
+                        {
+                            id: "@Term threshold settings",
+                            item: menuItem
+                            (
+                                [
+                                    await Resource.loadSvgOrCache("settings-icon"),
+                                    label("Term threshold settings"),
+                                                    ],
+                                async () =>
+                                {
+                                    if (await termThresholdSettingsPopup(pass))
+                                    {
+                                        updateScreen("operate");
+                                    }
+                                }
+                            ),
+                        },
+                        <{ id: string, item: minamo.dom.Source, }>
+                        { id: "@separator", item: menuSeparator(), },
+                    ]
+                    .concat(await Promise.all(getTagList({ pass, term: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
+                )
+            )
+            .concat
+            (
+                await groupMenuItem
+                (
+                    current,
+                    [ await Resource.loadSvgOrCache("flag-icon"), label("Auto tag"), ],
+                    await Promise.all(getTagList({ pass, auto: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
+                )
+            )
+            .concat
+            (
+                await groupMenuItem
+                (
+                    current,
+                    [ await Resource.loadSvgOrCache("folder-icon"), label("Sublist"), ],
+                    [
+                        <{ id: string, item: minamo.dom.Source, }>
+                        {
+                            id: "@new",
+                            item: menuItem
+                            (
+                                [
+                                    await Resource.loadSvgOrCache("add-folder-icon"),
+                                    label("@new-sublist"),
+                                ],
+                                async () => await newSublistPopup(pass),
+                            ),
+                        },
+                        <{ id: string, item: minamo.dom.Source, }>
+                        { id: "@separator", item: menuSeparator(), },
+                    ]
+                    .concat(await Promise.all(getTagList({ pass, sublist: true }).filter(tag => "@:@root" !== tag).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
+                    .concat
+                    ([
+                        <{ id: string, item: minamo.dom.Source, }>
+                        { id: "@separator", item: menuSeparator(), },
+                        { id: "@:@root", item: await tagMenuItem(current, pass, "@:@root")}
+                    ])
+                )
+            )
+            .concat
+            (
+                await groupMenuItem
+                (
+                    current,
+                    [ await Resource.loadSvgOrCache("tag-icon"), label("Tag"), ],
+                    [
+                        <{ id: string, item: minamo.dom.Source, }>
+                        {
+                            id: "@new",
+                            item: menuItem
+                            (
+                                [
+                                    await Resource.loadSvgOrCache("add-tag-icon"),
+                                    label("@new"),
+                                ],
+                                async () =>
+                                {
+                                    const tag = await newTagPrompt(pass);
+                                    if (null !== tag)
+                                    {
+                                        await showUrl({ pass, tag, });
+                                    }
+                                }
+                            ),
+                        },
+                        <{ id: string, item: minamo.dom.Source, }>
+                        { id: "@separator", item: menuSeparator(), },
+                    ]
+                    .concat(await Promise.all(getTagList({ pass, tag: true }).filter(tag => ! Model.isSystemTagOld(tag)).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
+                    .concat
+                    ([
+                        <{ id: string, item: minamo.dom.Source, }>
+                        { id: "@separator", item: menuSeparator(), },
+                    ])
+                    .concat(await Promise.all(getTagList({ pass, tag: true }).filter(tag => Model.isSystemTagOld(tag)).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
+                )
+            );
+        export const screenHeaderTagSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
+        ({
+            icon: Resource.getTagIcon(current),
+            title: Domain.tagMap(current),
+            href: { pass, tag: current, },
+            menu: await screenHeaderTagSegmentMenu(pass, current),
+        });
         export const screenHeaderTagMenuSegment = async (pass: string, current: string): Promise<HeaderSegmentSource> =>
         ({
             icon: Resource.getTagIcon(current),
             title: Domain.tagMap(current),
-            menu:
-                // (await Promise.all(getTagList({ pass, overall: true }).map(async tag => await tagMenuItem(current, pass, tag))))
-                // .concat
-                [
-                    await tagMenuItem(current, pass, "@overall"),
-                    menuLinkItem
-                    (
-                        [
-                            await Resource.loadSvgOrCache("history-icon"),
-                            labelSpan(locale.map("History")),
-                        ],
-                        { pass, tag:"@overall", hash: "history", },
-                        //current === "@deleted" ? "current-item": undefined
-                    ),
-                    menuLinkItem
-                    (
-                        [
-                            await Resource.loadSvgOrCache("recycle-bin-icon"),
-                            labelSpan(locale.map("@deleted")),
-                            monospace(`${OldStorage.Removed.get(pass).length}`)
-                        ],
-                        { pass, hash: "removed" },
-                        current === "@deleted" ? "current-item": undefined
-                    ),
-                    menuSeparator(),
-                ]
-                .concat
-                (
-                    await groupMenuItem
-                    (
-                        current,
-                        [ await Resource.loadSvgOrCache("ghost-term-icon"), label("Term"), ],
-                        [
-                            <{ id: string, item: minamo.dom.Source, }>
-                            {
-                                id: "@Term threshold settings",
-                                item: menuItem
-                                (
-                                    [
-                                        await Resource.loadSvgOrCache("settings-icon"),
-                                        label("Term threshold settings"),
-                                                        ],
-                                    async () =>
-                                    {
-                                        if (await termThresholdSettingsPopup(pass))
-                                        {
-                                            updateScreen("operate");
-                                        }
-                                    }
-                                ),
-                            },
-                            <{ id: string, item: minamo.dom.Source, }>
-                            { id: "@separator", item: menuSeparator(), },
-                        ]
-                        .concat(await Promise.all(getTagList({ pass, term: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
-                    )
-                )
-                .concat
-                (
-                    await groupMenuItem
-                    (
-                        current,
-                        [ await Resource.loadSvgOrCache("flag-icon"), label("Auto tag"), ],
-                        await Promise.all(getTagList({ pass, auto: true }).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)})))
-                    )
-                )
-                .concat
-                (
-                    await groupMenuItem
-                    (
-                        current,
-                        [ await Resource.loadSvgOrCache("folder-icon"), label("Sublist"), ],
-                        [
-                            <{ id: string, item: minamo.dom.Source, }>
-                            {
-                                id: "@new",
-                                item: menuItem
-                                (
-                                    [
-                                        await Resource.loadSvgOrCache("add-folder-icon"),
-                                        label("@new-sublist"),
-                                    ],
-                                    async () => await newSublistPopup(pass),
-                                ),
-                            },
-                            <{ id: string, item: minamo.dom.Source, }>
-                            { id: "@separator", item: menuSeparator(), },
-                        ]
-                        .concat(await Promise.all(getTagList({ pass, sublist: true }).filter(tag => "@:@root" !== tag).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
-                        .concat
-                        ([
-                            <{ id: string, item: minamo.dom.Source, }>
-                            { id: "@separator", item: menuSeparator(), },
-                            { id: "@:@root", item: await tagMenuItem(current, pass, "@:@root")}
-                        ])
-                    )
-                )
-                .concat
-                (
-                    await groupMenuItem
-                    (
-                        current,
-                        [ await Resource.loadSvgOrCache("tag-icon"), label("Tag"), ],
-                        [
-                            <{ id: string, item: minamo.dom.Source, }>
-                            {
-                                id: "@new",
-                                item: menuItem
-                                (
-                                    [
-                                        await Resource.loadSvgOrCache("add-tag-icon"),
-                                        label("@new"),
-                                    ],
-                                    async () =>
-                                    {
-                                        const tag = await newTagPrompt(pass);
-                                        if (null !== tag)
-                                        {
-                                            await showUrl({ pass, tag, });
-                                        }
-                                    }
-                                ),
-                            },
-                            <{ id: string, item: minamo.dom.Source, }>
-                            { id: "@separator", item: menuSeparator(), },
-                        ]
-                        .concat(await Promise.all(getTagList({ pass, tag: true }).filter(tag => ! Model.isSystemTagOld(tag)).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
-                        .concat
-                        ([
-                            <{ id: string, item: minamo.dom.Source, }>
-                            { id: "@separator", item: menuSeparator(), },
-                        ])
-                        .concat(await Promise.all(getTagList({ pass, tag: true }).filter(tag => Model.isSystemTagOld(tag)).map(async tag => ({ id: tag, item: await tagMenuItem(current, pass, tag)}))))
-                    )
-                )
+            menu: await screenHeaderTagSegmentMenu(pass, current),
         });
         export const screenHeaderTaskSegment = async (pass: string, tag: string, current: string): Promise<HeaderSegmentSource> =>
         ({
