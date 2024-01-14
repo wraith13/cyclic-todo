@@ -3966,7 +3966,7 @@ export module CyclicToDo
                             (
                                 "",
                                 monospace("", label("Max short term threshold"), Domain.timeLongStringFromTick(OldStorage.ListSettings.TermThreshold.getMaxShortTermTimespan(pass))),
-                                "flash.description",
+                                "Max short term threshold.description",
                                 async () =>
                                 {
                                     if (await termThresholdSettingPopup("Max short term threshold", value => OldStorage.ListSettings.TermThreshold.setMaxShortTermTimespan(pass, value), () => OldStorage.ListSettings.TermThreshold.getMaxShortTermTimespan(pass)))
@@ -3980,7 +3980,7 @@ export module CyclicToDo
                             (
                                 "",
                                 monospace("", label("Max medium term threshold"), Domain.timeLongStringFromTick(OldStorage.ListSettings.TermThreshold.getMaxMediumTermTimespan(pass))),
-                                "flash.description",
+                                "Max medium term threshold.description",
                                 async () =>
                                 {
                                     if (await termThresholdSettingPopup("Max medium term threshold", value => OldStorage.ListSettings.TermThreshold.setMaxMediumTermTimespan(pass, value), () => OldStorage.ListSettings.TermThreshold.getMaxMediumTermTimespan(pass)))
