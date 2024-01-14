@@ -7386,6 +7386,18 @@ export module CyclicToDo
                     ),
                     $div("button-list")
                     ([
+                        {
+                            tag: "button",
+                            className: "default-button main-button long-button",
+                            children: label("Term threshold settings"),
+                            onclick: async () =>
+                            {
+                                if (await termThresholdSettingsPopup(entry.pass))
+                                {
+                                    updateScreen("operate");
+                                }
+                            },
+                        },
                         $div("button-list")([settings, separator, history, separator, removed,]),
                     ]),
                 ];
@@ -7405,6 +7417,18 @@ export module CyclicToDo
                     ),
                     $div("button-list")
                     ([
+                        {
+                            tag: "button",
+                            className: "default-button main-button long-button",
+                            children: label("Term threshold settings"),
+                            onclick: async () =>
+                            {
+                                if (await termThresholdSettingsPopup(entry.pass))
+                                {
+                                    updateScreen("operate");
+                                }
+                            },
+                        },
                         $div("button-list")([settings, separator, history, separator, removed,]),
                     ]),
                 ];
