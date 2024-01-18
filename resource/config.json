@@ -17,6 +17,14 @@
         "14d", "180d", "240d", "2d", "15h", "1.5d", "2.5d", "10d",
         "60d"
     ],
+    "roundingThresholdRate": 0.8,
+    "roundingScalePreset":
+    [
+        "1m", "5m",
+        "1h", "3h",
+        "1d",
+        "1y", "10y"
+    ],
     "tickScalePreset":[
         "1m", "5m", "10m", "30m",
         "1h", "3h", "6h", "12h",

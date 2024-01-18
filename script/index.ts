@@ -99,6 +99,20 @@ export module Calculate
         (10 * (target -average) /standardDeviation) +50;
     export const tickFromStandardScore = (average: number, standardDeviation: number, target: number) =>
         ((target -50) /10 *standardDeviation) +average;
+    
+    export const averageFactors = (span: number, count: number): CyclicToDo.AverageFactors =>
+    {
+        const average = span /count;
+        const first = CyclicToDo.Domain.roundingScalePreset.filter(i => i *0.8 < average)[0];
+        const rounding = Math.max(Math.floor(average /first) *first, first);
+        const offset = span -(rounding *count);
+        const result: CyclicToDo.AverageFactors =
+        {
+            rounding,
+            offset,
+        };
+        return result;
+    };
 }
 export module CyclicToDo
 {
@@ -138,6 +152,11 @@ export module CyclicToDo
         tag: string;
         todo: string[];
     }
+    export interface AverageFactors extends minamo.core.JsonableObject
+    {
+        rounding: number;
+        offset: number;
+    }
     export interface ToDoEntry extends minamo.core.JsonableObject
     {
         task: string;
@@ -151,7 +170,9 @@ export module CyclicToDo
         RecentlyStandardDeviation: null | number;
         RecentlySmartAverage: null | number;
         RecentlyAverage: null | number;
+        RecentlyAverageFactors: null | AverageFactors;
         TotalAverage: null | number;
+        TotalAverageFactors: null | AverageFactors;
         smartRest: null | number;
         count: number;
         expectedInterval: null | { min: number; max:number; };
@@ -168,7 +189,9 @@ export module CyclicToDo
         RecentlyStandardDeviation: null;
         RecentlySmartAverage: null;
         RecentlyAverage: null;
+        RecentlyAverageFactors: null;
         TotalAverage: null;
+        TotalAverageFactors: null;
         smartRest: null;
         count: 0;
         expectedInterval: null;
@@ -185,7 +208,9 @@ export module CyclicToDo
         RecentlyStandardDeviation: null;
         RecentlySmartAverage: null;
         RecentlyAverage: null;
+        RecentlyAverageFactors: null;
         TotalAverage: null;
+        TotalAverageFactors: null;
         smartRest: null;
         count: 1;
         expectedInterval: null;
@@ -200,7 +225,9 @@ export module CyclicToDo
         RecentlyStandardDeviation: number;
         RecentlySmartAverage: number;
         RecentlyAverage: number;
+        RecentlyAverageFactors: AverageFactors;
         TotalAverage: number;
+        TotalAverageFactors: AverageFactors;
         smartRest: null | number;
         expectedInterval: { min: number; max:number; };
     }
@@ -1795,6 +1822,11 @@ export module CyclicToDo
         export const maxMediumTermMinutes = (minamo.core.parseTimespan(config.maxMediumTermTimespan) ?? (15 *dayUnit)) / minuteUnit;
         export const removedItemExpire = (minamo.core.parseTimespan(config.removedItemExpire) ?? (30 *dayUnit)) / minuteUnit;
         export const getTicks = (date: Date = new Date()) => Math.floor(date.getTime() / timeAccuracy);
+        export const roundingScalePreset = config.roundingScalePreset
+            .map(i => minamo.core.parseTimespan(i))
+            .filter(isNumber)
+            .map(i => i / Domain.timeAccuracy)
+            .sort(simpleReverseComparer);
         export const tickScalePreset = config.tickScalePreset
             .map(i => minamo.core.parseTimespan(i))
             .filter(isNumber)
@@ -2220,8 +2252,14 @@ export module CyclicToDo
                 RecentlyAverage: history.intervals.length <= 0 ?
                     null:
                     Calculate.average(longRecentries.filter((_, index) => index < 10)),
+                RecentlyAverageFactors: history.intervals.length <= 0 ?
+                    null:
+                    Calculate.averageFactors(Calculate.sum(longRecentries.filter((_, index) => index < 10)) as number, Math.min(longRecentries.length, 10)),
                 TotalAverage: isSecondOrMoreHistryEntry(full) ?
                     (getPreviousFromHistryEntry(full) -full.first) / (full.count -1):
+                    null,
+                TotalAverageFactors: isSecondOrMoreHistryEntry(full) ?
+                    Calculate.averageFactors(getPreviousFromHistryEntry(full) -full.first, full.count -1):
                     null,
                 smartRest: null,
                 expectedInterval: null,
@@ -5422,7 +5460,11 @@ export module CyclicToDo
                 // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
                 monospace("task-elapsed-time", label("elapsed time"), Domain.timeLongStringFromTick(item.elapsed)),
                 monospace("task-interval-average", label("recentrly interval average"), Domain.timeLongStringFromTick(item.RecentlyAverage)),
+                monospace("task-interval-average", label("recentrly interval average (rounding)"), Domain.timeLongStringFromTick(item.RecentlyAverageFactors?.rounding ?? null)),
+                monospace("task-interval-average", label("recentrly interval average (offset)"), Domain.timeLongStringFromTick(item.RecentlyAverageFactors?.offset ?? null)),
                 monospace("task-interval-average", label("total interval average"), Domain.timeLongStringFromTick(item.TotalAverage)),
+                monospace("task-interval-average", label("total interval average (rounding)"), Domain.timeLongStringFromTick(item.TotalAverageFactors?.rounding ?? null)),
+                monospace("task-interval-average", label("total interval average (offset)"), Domain.timeLongStringFromTick(item.TotalAverageFactors?.offset ?? null)),
                 // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
                 monospace
                 (

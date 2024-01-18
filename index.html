@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Jan 15 2024 17:24:42 GMT+0900 (日本標準時)
+    build at: Thu Jan 18 2024 09:20:08 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -21748,6 +21748,13 @@ define("resource/config", [], {
         "14d", "180d", "240d", "2d", "15h", "1.5d", "2.5d", "10d",
         "60d"
     ],
+    "roundingThresholdRate": 0.8,
+    "roundingScalePreset": [
+        "1m", "5m",
+        "1h", "3h",
+        "1d",
+        "1y", "10y"
+    ],
     "tickScalePreset": [
         "1m", "5m", "10m", "30m",
         "1h", "3h", "6h", "12h",
@@ -21925,8 +21932,12 @@ define("resource/lang.en", [], {
     "first time": "first time",
     "previous": "previous",
     "recentrly interval average": "recentrly average",
+    "recentrly interval average (rounding)": "recentrly average - rounding",
+    "recentrly interval average (offset)": "recentrly average - offset",
     "expected interval": "expected interval",
     "total interval average": "total average",
+    "total interval average (rounding)": "total average - rounding",
+    "total interval average (offset)": "total average - offset",
     "elapsed time": "elapsed time",
     "count": "count",
     "Done": "Done",
@@ -22203,8 +22214,12 @@ define("resource/lang.ja", [], {
     "first time": "初回",
     "previous": "前回",
     "recentrly interval average": "直近間隔平均",
+    "recentrly interval average (rounding)": "直近間隔平均 - 丸め",
+    "recentrly interval average (offset)": "直近間隔平均 - オフセット",
     "expected interval": "予想間隔",
     "total interval average": "総合間隔平均",
+    "total interval average (rounding)": "総合間隔平均 - 丸め",
+    "total interval average (offset)": "総合間隔平均 - オフセット",
     "elapsed time": "経過時間",
     "count": "回数",
     "Done": "完了",
@@ -22673,6 +22688,17 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
         };
         Calculate.tickFromStandardScore = function (average, standardDeviation, target) {
             return ((target - 50) / 10 * standardDeviation) + average;
+        };
+        Calculate.averageFactors = function (span, count) {
+            var average = span / count;
+            var first = CyclicToDo.Domain.roundingScalePreset.filter(function (i) { return i * 0.8 < average; })[0];
+            var rounding = Math.max(Math.floor(average / first) * first, first);
+            var offset = span - (rounding * count);
+            var result = {
+                rounding: rounding,
+                offset: offset,
+            };
+            return result;
         };
     })(Calculate || (exports.Calculate = Calculate = {}));
     var CyclicToDo;
@@ -24090,6 +24116,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                 if (date === void 0) { date = new Date(); }
                 return Math.floor(date.getTime() / Domain.timeAccuracy);
             };
+            Domain.roundingScalePreset = config_json_2.default.roundingScalePreset
+                .map(function (i) { return minamo_js_1.minamo.core.parseTimespan(i); })
+                .filter(exports.isNumber)
+                .map(function (i) { return i / Domain.timeAccuracy; })
+                .sort(exports.simpleReverseComparer);
             Domain.tickScalePreset = config_json_2.default.tickScalePreset
                 .map(function (i) { return minamo_js_1.minamo.core.parseTimespan(i); })
                 .filter(exports.isNumber)
@@ -24455,8 +24486,14 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     RecentlyAverage: history.intervals.length <= 0 ?
                         null :
                         Calculate.average(longRecentries.filter(function (_, index) { return index < 10; })),
+                    RecentlyAverageFactors: history.intervals.length <= 0 ?
+                        null :
+                        Calculate.averageFactors(Calculate.sum(longRecentries.filter(function (_, index) { return index < 10; })), Math.min(longRecentries.length, 10)),
                     TotalAverage: CyclicToDo.isSecondOrMoreHistryEntry(full) ?
                         (getPreviousFromHistryEntry(full) - full.first) / (full.count - 1) :
+                        null,
+                    TotalAverageFactors: CyclicToDo.isSecondOrMoreHistryEntry(full) ?
+                        Calculate.averageFactors(getPreviousFromHistryEntry(full) - full.first, full.count - 1) :
                         null,
                     smartRest: null,
                     expectedInterval: null,
@@ -28229,28 +28266,35 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     Render.monospace("task-last-timestamp", Render.label("previous"), Domain.dateStringFromTick(item.previous)),
                 ]),
             ]); };
-            Render.informationFull = function (pass, item, progressScaleShowStyle) { return Render.$div({
-                className: "item-information",
-                attributes: { style: Render.progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(pass, item.task)), }
-            })([
-                Render.itemProgressBar(pass, item, "with-pad"),
-                Render.$div("item-params")([
-                    // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
-                    Render.monospace("task-elapsed-time", Render.label("elapsed time"), Domain.timeLongStringFromTick(item.elapsed)),
-                    Render.monospace("task-interval-average", Render.label("recentrly interval average"), Domain.timeLongStringFromTick(item.RecentlyAverage)),
-                    Render.monospace("task-interval-average", Render.label("total interval average"), Domain.timeLongStringFromTick(item.TotalAverage)),
-                    // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
-                    Render.monospace("task-interval-average", Render.label("expected interval"), CyclicToDo.isMoreToDoEntry(item) ?
-                        Domain.timeRangeStringFromTick(item.expectedInterval.min, item.expectedInterval.max
-                        // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
-                        // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
-                        ) :
-                        Domain.timeLongStringFromTick(item.RecentlySmartAverage)),
-                    Render.monospace("task-first-time", Render.label("first time"), Domain.dateStringFromTick(item.first)),
-                    Render.monospace("task-last-timestamp", Render.label("previous"), Domain.dateStringFromTick(item.previous)),
-                    Render.monospace("task-count", Render.label("count"), item.count.toLocaleString()),
-                ]),
-            ]); };
+            Render.informationFull = function (pass, item, progressScaleShowStyle) {
+                var _a, _b, _c, _d, _e, _f, _g, _h;
+                return Render.$div({
+                    className: "item-information",
+                    attributes: { style: Render.progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(pass, item.task)), }
+                })([
+                    Render.itemProgressBar(pass, item, "with-pad"),
+                    Render.$div("item-params")([
+                        // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
+                        Render.monospace("task-elapsed-time", Render.label("elapsed time"), Domain.timeLongStringFromTick(item.elapsed)),
+                        Render.monospace("task-interval-average", Render.label("recentrly interval average"), Domain.timeLongStringFromTick(item.RecentlyAverage)),
+                        Render.monospace("task-interval-average", Render.label("recentrly interval average (rounding)"), Domain.timeLongStringFromTick((_b = (_a = item.RecentlyAverageFactors) === null || _a === void 0 ? void 0 : _a.rounding) !== null && _b !== void 0 ? _b : null)),
+                        Render.monospace("task-interval-average", Render.label("recentrly interval average (offset)"), Domain.timeLongStringFromTick((_d = (_c = item.RecentlyAverageFactors) === null || _c === void 0 ? void 0 : _c.offset) !== null && _d !== void 0 ? _d : null)),
+                        Render.monospace("task-interval-average", Render.label("total interval average"), Domain.timeLongStringFromTick(item.TotalAverage)),
+                        Render.monospace("task-interval-average", Render.label("total interval average (rounding)"), Domain.timeLongStringFromTick((_f = (_e = item.TotalAverageFactors) === null || _e === void 0 ? void 0 : _e.rounding) !== null && _f !== void 0 ? _f : null)),
+                        Render.monospace("task-interval-average", Render.label("total interval average (offset)"), Domain.timeLongStringFromTick((_h = (_g = item.TotalAverageFactors) === null || _g === void 0 ? void 0 : _g.offset) !== null && _h !== void 0 ? _h : null)),
+                        // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
+                        Render.monospace("task-interval-average", Render.label("expected interval"), CyclicToDo.isMoreToDoEntry(item) ?
+                            Domain.timeRangeStringFromTick(item.expectedInterval.min, item.expectedInterval.max
+                            // Math.max(item.RecentlySmartAverage /10, item.RecentlySmartAverage -(item.RecentlyStandardDeviation *Domain.standardDeviationRate)),
+                            // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
+                            ) :
+                            Domain.timeLongStringFromTick(item.RecentlySmartAverage)),
+                        Render.monospace("task-first-time", Render.label("first time"), Domain.dateStringFromTick(item.first)),
+                        Render.monospace("task-last-timestamp", Render.label("previous"), Domain.dateStringFromTick(item.previous)),
+                        Render.monospace("task-count", Render.label("count"), item.count.toLocaleString()),
+                    ]),
+                ]);
+            };
             Render.todoRenameMenu = function (pass, item, onRename) {
                 if (onRename === void 0) { onRename = function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
                     switch (_a.label) {
@@ -33849,7 +33893,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 //# sourceMappingURL=index.js.map
 </script>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Jan 15 2024 17:24:42 GMT+0900 (日本標準時)', buildTimestampTick: 1705307082356, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Jan 18 2024 09:20:08 GMT+0900 (日本標準時)', buildTimestampTick: 1705537208948, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -34073,7 +34117,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Mon Jan 15 2024 17:24:42 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Thu Jan 18 2024 09:20:08 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
