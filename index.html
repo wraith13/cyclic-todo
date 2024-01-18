@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Thu Jan 18 2024 09:20:08 GMT+0900 (日本標準時)
+    build at: Thu Jan 18 2024 21:43:44 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2633,6 +2633,11 @@ h2 {
   bottom: 0px;
   right: 0px;
   position: absolute;
+}
+.light-theme-trait .item-params .param-separator {
+  height: 1px;
+  background-color: #808080;
+  opacity: 0.618;
 }
 .light-theme-trait.flash-style-gradation .progress-flash {
   animation-name: gradation-progress-flash;
@@ -5782,6 +5787,11 @@ body.light .tick-item .progress-bar-pad {
   right: 0px;
   position: absolute;
 }
+body.light .item-params .param-separator {
+  height: 1px;
+  background-color: #808080;
+  opacity: 0.618;
+}
 body.light.flash-style-gradation .progress-flash {
   animation-name: gradation-progress-flash;
 }
@@ -8435,6 +8445,11 @@ body.light .keyboard-shortcuts li .key:first-child {
     bottom: 0px;
     right: 0px;
     position: absolute;
+  }
+  body.auto .item-params .param-separator {
+    height: 1px;
+    background-color: #808080;
+    opacity: 0.618;
   }
   body.auto.flash-style-gradation .progress-flash {
     animation-name: gradation-progress-flash;
@@ -12339,6 +12354,11 @@ body.light .keyboard-shortcuts li .key:first-child {
   right: 0px;
   position: absolute;
 }
+.dark-theme-trait .item-params .param-separator {
+  height: 1px;
+  background-color: #808080;
+  opacity: 0.618;
+}
 .dark-theme-trait.flash-style-gradation .progress-flash {
   animation-name: gradation-progress-flash;
 }
@@ -15490,6 +15510,11 @@ body.dark .tick-item .progress-bar-pad {
   right: 0px;
   position: absolute;
 }
+body.dark .item-params .param-separator {
+  height: 1px;
+  background-color: #808080;
+  opacity: 0.618;
+}
 body.dark.flash-style-gradation .progress-flash {
   animation-name: gradation-progress-flash;
 }
@@ -18146,6 +18171,11 @@ body.dark .keyboard-shortcuts li .key:first-child {
     bottom: 0px;
     right: 0px;
     position: absolute;
+  }
+  body.auto .item-params .param-separator {
+    height: 1px;
+    background-color: #808080;
+    opacity: 0.618;
   }
   body.auto.flash-style-gradation .progress-flash {
     animation-name: gradation-progress-flash;
@@ -28266,6 +28296,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     Render.monospace("task-last-timestamp", Render.label("previous"), Domain.dateStringFromTick(item.previous)),
                 ]),
             ]); };
+            Render.paramSeparator = function () { return ({ tag: "div", className: "param-separator", }); };
             Render.informationFull = function (pass, item, progressScaleShowStyle) {
                 var _a, _b, _c, _d, _e, _f, _g, _h;
                 return Render.$div({
@@ -28276,12 +28307,15 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     Render.$div("item-params")([
                         // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
                         Render.monospace("task-elapsed-time", Render.label("elapsed time"), Domain.timeLongStringFromTick(item.elapsed)),
+                        Render.paramSeparator(),
                         Render.monospace("task-interval-average", Render.label("recentrly interval average"), Domain.timeLongStringFromTick(item.RecentlyAverage)),
                         Render.monospace("task-interval-average", Render.label("recentrly interval average (rounding)"), Domain.timeLongStringFromTick((_b = (_a = item.RecentlyAverageFactors) === null || _a === void 0 ? void 0 : _a.rounding) !== null && _b !== void 0 ? _b : null)),
                         Render.monospace("task-interval-average", Render.label("recentrly interval average (offset)"), Domain.timeLongStringFromTick((_d = (_c = item.RecentlyAverageFactors) === null || _c === void 0 ? void 0 : _c.offset) !== null && _d !== void 0 ? _d : null)),
+                        Render.paramSeparator(),
                         Render.monospace("task-interval-average", Render.label("total interval average"), Domain.timeLongStringFromTick(item.TotalAverage)),
                         Render.monospace("task-interval-average", Render.label("total interval average (rounding)"), Domain.timeLongStringFromTick((_f = (_e = item.TotalAverageFactors) === null || _e === void 0 ? void 0 : _e.rounding) !== null && _f !== void 0 ? _f : null)),
                         Render.monospace("task-interval-average", Render.label("total interval average (offset)"), Domain.timeLongStringFromTick((_h = (_g = item.TotalAverageFactors) === null || _g === void 0 ? void 0 : _g.offset) !== null && _h !== void 0 ? _h : null)),
+                        Render.paramSeparator(),
                         // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
                         Render.monospace("task-interval-average", Render.label("expected interval"), CyclicToDo.isMoreToDoEntry(item) ?
                             Domain.timeRangeStringFromTick(item.expectedInterval.min, item.expectedInterval.max
@@ -28289,8 +28323,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                             // item.RecentlySmartAverage +(item.RecentlyStandardDeviation *Domain.standardDeviationRate)
                             ) :
                             Domain.timeLongStringFromTick(item.RecentlySmartAverage)),
+                        Render.paramSeparator(),
                         Render.monospace("task-first-time", Render.label("first time"), Domain.dateStringFromTick(item.first)),
                         Render.monospace("task-last-timestamp", Render.label("previous"), Domain.dateStringFromTick(item.previous)),
+                        Render.paramSeparator(),
                         Render.monospace("task-count", Render.label("count"), item.count.toLocaleString()),
                     ]),
                 ]);
@@ -33893,7 +33929,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 //# sourceMappingURL=index.js.map
 </script>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Jan 18 2024 09:20:08 GMT+0900 (日本標準時)', buildTimestampTick: 1705537208948, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Jan 18 2024 21:43:44 GMT+0900 (日本標準時)', buildTimestampTick: 1705581824514, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -34117,7 +34153,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Thu Jan 18 2024 09:20:08 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Thu Jan 18 2024 21:43:44 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

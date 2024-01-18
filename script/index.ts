@@ -5448,6 +5448,7 @@ export module CyclicToDo
                 monospace("task-last-timestamp", label("previous"), Domain.dateStringFromTick(item.previous)),
             ]),
         ]);
+        export const paramSeparator = () => ({ tag: "div", className: "param-separator", });
         export const informationFull = (pass: string, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
         ({
             className: "item-information",
@@ -5459,12 +5460,15 @@ export module CyclicToDo
             ([
                 // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
                 monospace("task-elapsed-time", label("elapsed time"), Domain.timeLongStringFromTick(item.elapsed)),
+                paramSeparator(),
                 monospace("task-interval-average", label("recentrly interval average"), Domain.timeLongStringFromTick(item.RecentlyAverage)),
                 monospace("task-interval-average", label("recentrly interval average (rounding)"), Domain.timeLongStringFromTick(item.RecentlyAverageFactors?.rounding ?? null)),
                 monospace("task-interval-average", label("recentrly interval average (offset)"), Domain.timeLongStringFromTick(item.RecentlyAverageFactors?.offset ?? null)),
+                paramSeparator(),
                 monospace("task-interval-average", label("total interval average"), Domain.timeLongStringFromTick(item.TotalAverage)),
                 monospace("task-interval-average", label("total interval average (rounding)"), Domain.timeLongStringFromTick(item.TotalAverageFactors?.rounding ?? null)),
                 monospace("task-interval-average", label("total interval average (offset)"), Domain.timeLongStringFromTick(item.TotalAverageFactors?.offset ?? null)),
+                paramSeparator(),
                 // monospace("task-interval-average", $span("label")("expected interval average (予想間隔平均):"), renderTime(item.smartAverage)),
                 monospace
                 (
@@ -5480,8 +5484,10 @@ export module CyclicToDo
                         ):
                         Domain.timeLongStringFromTick(item.RecentlySmartAverage)
                 ),
+                paramSeparator(),
                 monospace("task-first-time", label("first time"), Domain.dateStringFromTick(item.first)),
                 monospace("task-last-timestamp", label("previous"), Domain.dateStringFromTick(item.previous)),
+                paramSeparator(),
                 monospace("task-count", label("count"), item.count.toLocaleString()),
             ]),
         ]);
