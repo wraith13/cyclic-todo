@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Thu Jan 18 2024 21:43:44 GMT+0900 (日本標準時)
+    build at: Fri Jan 19 2024 11:15:43 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -21627,8 +21627,21 @@ define("flounder.style.js/index", ["require", "exports", "flounder.style.js/conf
             }
             return calculateMaxPatternSize(data, intervalSize, radius);
         };
+        flounderStyle.simpleStructuredClone = (function (value) {
+            if (undefined !== value && null !== value) {
+                if (Array.isArray(value)) {
+                    return value.map(function (i) { return flounderStyle.simpleStructuredClone(i); });
+                }
+                if ("object" === typeof value) {
+                    var result_1 = {};
+                    Object.keys(value).forEach(function (key) { return result_1[key] = flounderStyle.simpleStructuredClone(value[key]); });
+                    return result_1;
+                }
+            }
+            return value;
+        });
         flounderStyle.reverseArguments = function (data) {
-            var result = structuredClone(data);
+            var result = flounderStyle.simpleStructuredClone(data);
             result.foregroundColor = flounderStyle.getBackgroundColor(data);
             result.backgroundColor = data.foregroundColor;
             if ("number" === typeof data.layoutAngle) {
@@ -23442,6 +23455,21 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
         })(OldStorage = CyclicToDo.OldStorage || (CyclicToDo.OldStorage = {}));
         var Storage;
         (function (Storage) {
+            var System;
+            (function (System) {
+                System.makeKey = function () { return "system"; };
+                System.get = function () { var _a; return (_a = minamo_js_1.minamo.localStorage.getOrNull2(System.makeKey())) !== null && _a !== void 0 ? _a : {}; };
+                System.set = function (settings) {
+                    return minamo_js_1.minamo.localStorage.set2(System.makeKey(), settings);
+                };
+                System.getLatestShowUrl = function () { return System.get().latestShowUrl; };
+                System.setLatestShowUrl = function (latestShowUrl) {
+                    var system = System.get();
+                    system.latestShowUrl = latestShowUrl;
+                    System.set(system);
+                    return latestShowUrl;
+                };
+            })(System = Storage.System || (Storage.System = {}));
             var SystemSettings;
             (function (SystemSettings) {
                 SystemSettings.makeKey = function () { return "settings"; };
@@ -30265,7 +30293,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     "href" in value && Render.isPageParamsRaw(value.href);
             };
             Render.bottomTab = function (current, subTabs, additionalMenu) { return __awaiter(_this, void 0, void 0, function () {
-                var pureSubTabs_1, tagIndex, urlIndex, isCurrent_1, tab_1, cover_1, subTabsMenu, menu, popup_1, close_1, showMenu_1, longPressTimer_1, mousedown, mouseup_1, result_1, _a;
+                var pureSubTabs_1, tagIndex, urlIndex, isCurrent_1, tab_1, cover_1, subTabsMenu, menu, popup_1, close_1, showMenu_1, longPressTimer_1, mousedown, mouseup_1, result_2, _a;
                 var _b, _c;
                 var _this = this;
                 return __generator(this, function (_d) {
@@ -30330,7 +30358,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                 var buttonRect;
                                 return __generator(this, function (_a) {
                                     popup_1.classList.add("show");
-                                    buttonRect = result_1.getBoundingClientRect();
+                                    buttonRect = result_2.getBoundingClientRect();
                                     popup_1.style.removeProperty("top");
                                     popup_1.style.bottom = "".concat(window.innerHeight - buttonRect.top, "px");
                                     if (buttonRect.right < window.innerWidth * (2 / 3)) {
@@ -30387,7 +30415,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                             };
                             return [4 /*yield*/, Resource.loadSvgOrCache(tab_1.icon)];
                         case 3:
-                            result_1 = _a.apply(void 0, [(_b.children = [
+                            result_2 = _a.apply(void 0, [(_b.children = [
                                     (_c.children = [_d.sent(), Render.labelSpan(tab_1.text)],
                                         _c.eventListener = {
                                             mousedown: mousedown,
@@ -30427,7 +30455,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                     }
                                 ],
                                     _b)]);
-                            return [2 /*return*/, result_1];
+                            return [2 /*return*/, result_2];
                     }
                 });
             }); };
@@ -32572,6 +32600,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
             Render.isiPhone = /iPhone/.test(navigator.userAgent);
             Render.isiPad = /iPad/.test(navigator.userAgent);
             Render.isApple = Render.isMac || Render.isiPhone || Render.isiPad;
+            Render.isPWA = function () { return window.matchMedia("(display-mode: standalone)").matches; };
             Render.emoji = function (image) { return __awaiter(_this, void 0, void 0, function () {
                 var setting;
                 var _a;
@@ -33685,7 +33714,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
             }
         };
         CyclicToDo.start = function (params) { return __awaiter(_this, void 0, void 0, function () {
-            var _a, _b, _c, urlParams, reload, scroll, json, url, fullscreen, toast_9;
+            var _a, _b, _c, urlParams, reload, scroll, json, url_1, fullscreen, toast_9, url, latestShowUrl;
             var _this = this;
             var _d, _e, _f, _g;
             return __generator(this, function (_h) {
@@ -33709,9 +33738,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                         reload = urlParams["reload"];
                         if (reload) {
                             json = JSON.parse(reload);
-                            url = json["url"];
-                            if (url) {
-                                history.replaceState(null, CyclicToDo.applicationTitle, url);
+                            url_1 = json["url"];
+                            if (url_1) {
+                                history.replaceState(null, CyclicToDo.applicationTitle, url_1);
                             }
                             fullscreen = json["fullscreen"];
                             if (fullscreen && Render.fullscreenEnabled()) {
@@ -33781,10 +33810,16 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                         CyclicToDo.updateFlashStyle();
                         CyclicToDo.updateUiStyle();
                         document.body.classList.toggle("chrome", !!(window.chrome));
-                        // await Render.showUpdatingScreen(location.href);
-                        return [4 /*yield*/, CyclicToDo.showPage()];
+                        url = location.href;
+                        if (Render.isPWA()) {
+                            latestShowUrl = Storage.System.getLatestShowUrl();
+                            if ("string" === typeof latestShowUrl) {
+                                Storage.System.setLatestShowUrl();
+                                url = latestShowUrl;
+                            }
+                        }
+                        return [4 /*yield*/, CyclicToDo.showPage(url)];
                     case 2:
-                        // await Render.showUpdatingScreen(location.href);
                         _h.sent();
                         if ("number" === typeof scroll) {
                             Render.getScreenBody().scrollTop = scroll;
@@ -33891,6 +33926,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                         case 24:
                             // await Render.updatedScreenBody();
                             _e.sent();
+                            if (Render.isPWA()) {
+                                Storage.System.setLatestShowUrl(url);
+                            }
                             return [2 /*return*/];
                     }
                 });
@@ -33929,7 +33967,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 //# sourceMappingURL=index.js.map
 </script>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Jan 18 2024 21:43:44 GMT+0900 (日本標準時)', buildTimestampTick: 1705581824514, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Jan 19 2024 11:15:43 GMT+0900 (日本標準時)', buildTimestampTick: 1705630543583, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -34153,7 +34191,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Thu Jan 18 2024 21:43:44 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Fri Jan 19 2024 11:15:43 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

@@ -129,6 +129,10 @@ export module CyclicToDo
     export type EmojiType = "auto" | "system" | "noto-emoji";
     export type EmojiTypeLocale = `emoji.${EmojiType}`
     export const getEmojiTypeLocale = (key: EmojiType) => <EmojiTypeLocale>`emoji.${key}`;
+    export interface SystemLocalDb extends minamo.core.JsonableObject
+    {
+        latestShowUrl?: string;
+    }
     export interface SystemSettings extends minamo.core.JsonableObject
     {
         theme?: ThemeType;
@@ -1177,6 +1181,22 @@ export module CyclicToDo
     }
     export module Storage
     {
+        export module System
+        {
+            export const makeKey = () => `system`;
+            export const get = () =>
+                minamo.localStorage.getOrNull2<CyclicToDo.SystemLocalDb>(makeKey()) ?? { };
+            export const set = (settings: CyclicToDo.SystemLocalDb) =>
+                minamo.localStorage.set2(makeKey(), settings);
+            export const getLatestShowUrl = () => get().latestShowUrl;
+            export const setLatestShowUrl = (latestShowUrl?: string) =>
+            {
+                const system = get();
+                system.latestShowUrl = latestShowUrl;
+                set(system);
+                return latestShowUrl;
+            };
+        }
         export module SystemSettings
         {
             export const makeKey = () => `settings`;
@@ -8774,6 +8794,7 @@ export module CyclicToDo
         export const isiPhone = /iPhone/.test(navigator.userAgent);
         export const isiPad = /iPad/.test(navigator.userAgent);
         export const isApple = isMac || isiPhone || isiPad;
+        export const isPWA = ():boolean => window.matchMedia("(display-mode: standalone)").matches;
         export const emoji = async (image: Resource.EmojiType) =>
         {
             const setting = Storage.SystemSettings.get().emoji ?? "auto";
@@ -9956,7 +9977,17 @@ export module CyclicToDo
         updateUiStyle();
         document.body.classList.toggle("chrome", !!((<any>window).chrome));
         // await Render.showUpdatingScreen(location.href);
-        await showPage();
+        let url = location.href;
+        if (Render.isPWA())
+        {
+            const latestShowUrl = Storage.System.getLatestShowUrl();
+            if ("string" === typeof latestShowUrl)
+            {
+                Storage.System.setLatestShowUrl();
+                url = latestShowUrl;
+            }
+        }
+        await showPage(url);
         if ("number" === typeof scroll)
         {
             Render.getScreenBody().scrollTop = scroll;
@@ -10051,6 +10082,10 @@ export module CyclicToDo
         }
         // await Render.updatedScreenBody();
         await Render.updatedScreen();
+        if (Render.isPWA())
+        {
+            Storage.System.setLatestShowUrl(url);
+        }
     };
     export const showUrl = async (data: { pass?:string, tag?:string, todo?: string, hash?: string}) =>
     {
