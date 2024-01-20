@@ -8790,15 +8790,10 @@ export module CyclicToDo
             locale.map(i.message),
             i.reverseWithShiftKey ? [ " ( + ", $span("key monospace")($tag("kbd")({})(`Shift`)), locale.map("Reverse") +" )", ]: "",
         ];
-        export const isMac = /Macintosh/.test(navigator.userAgent);
-        export const isiPhone = /iPhone/.test(navigator.userAgent);
-        export const isiPad = /iPad/.test(navigator.userAgent);
-        export const isApple = isMac || isiPhone || isiPad;
-        export const isPWA = ():boolean => window.matchMedia("(display-mode: standalone)").matches;
         export const emoji = async (image: Resource.EmojiType) =>
         {
             const setting = Storage.SystemSettings.get().emoji ?? "auto";
-            if ("system" === setting || ("auto" === setting && isApple))
+            if ("system" === setting || ("auto" === setting && minamo.environment.isApple()))
             {
                 return image;
             }
@@ -9978,7 +9973,7 @@ export module CyclicToDo
         document.body.classList.toggle("chrome", !!((<any>window).chrome));
         // await Render.showUpdatingScreen(location.href);
         let url = location.href;
-        if (Render.isPWA())
+        if (minamo.environment.isPWA())
         {
             const latestShowUrl = Storage.System.getLatestShowUrl();
             if ("string" === typeof latestShowUrl)
@@ -10082,7 +10077,7 @@ export module CyclicToDo
         }
         // await Render.updatedScreenBody();
         await Render.updatedScreen();
-        if (Render.isPWA())
+        if (minamo.environment.isPWA())
         {
             Storage.System.setLatestShowUrl(url);
         }
