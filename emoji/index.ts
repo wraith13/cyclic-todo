@@ -1,4 +1,7 @@
-import pomeJson from "../resource/poem.json";
+import tsconfigJson from "./tsconfig.json";
+import { applyPaths } from "./evil-tsconfig.paths";
+applyPaths(tsconfigJson.compilerOptions);
+import pomeJson from "@resource/poem.json";
 const fs = require("fs");
 const https = require("https");
 const makePath = (key: string) => `./emoji/noto-emoji/${key}.svg`;

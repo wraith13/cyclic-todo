@@ -1,5 +1,8 @@
-import pomeJson from "../resource/poem.json";
-import { locale } from "../script/locale.js";
+import tsconfigJson from "./tsconfig.json";
+import { applyPaths } from "./evil-tsconfig.paths";
+applyPaths(tsconfigJson.compilerOptions);
+import pomeJson from "@resource/poem.json";
+import { locale } from "@script/locale";
 const fs = require("fs");
 const escapeHtml = (text: string) => text
     .replace(/&/g, "&amp;")

@@ -30,7 +30,13 @@
         "noEmitOnError": true,
         "resolveJsonModule": true,
         "esModuleInterop": true,
-        // "outFile": "index.js",
+        "paths": {
+            "@nephila/*": [ "../nephila/*" ],
+            "@resource/*": [ "../resource/*" ],
+            "@script/*": [ "../script/*" ],
+            "minamo.js": [ "../nephila/minamo.js" ],
+            "flounder.style.js": [ "../flounder.style.js" ]
+        },
         "sourceMap": true
     },
     "files": [

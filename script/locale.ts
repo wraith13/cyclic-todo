@@ -1,5 +1,5 @@
-import localeEn from "../resource/lang.en.json";
-import localeJa from "../resource/lang.ja.json";
+import localeEn from "@resource/lang.en.json";
+import localeJa from "@resource/lang.ja.json";
 
 export module locale
 {

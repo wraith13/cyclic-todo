@@ -3,10 +3,10 @@
 /node_modules/*
 /private/*
 poem.html
-emoji/index.js
-emoji/index.js.map
-build/index.js
-build/index.js.map
+emoji/*.js
+emoji/*.js.map
+build/*.js
+build/*.js.map
 script/index.js
 script/index.js.map
 script/locale.js

@@ -1,3 +1,4 @@
-index.html linguist-generated=true
-build.timestamp.json linguist-generated=true
-style/params.less linguist-generated=true
+index.html linguist-generated
+build.timestamp.json linguist-generated
+style/params.less linguist-generated
+*/evil-tsconfig.paths.ts linguist-vendored

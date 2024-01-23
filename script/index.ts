@@ -1,15 +1,15 @@
-import { minamo } from "../nephila/minamo.js";
-import { flounderStyle } from "../flounder.style.js";
-import config from "../resource/config.json";
-import pomeJson from "../resource/poem.json";
-import style from "../resource/style.json";
+import { minamo } from "minamo.js";
+import { flounderStyle } from "flounder.style.js";
+import config from "@resource/config.json";
+import pomeJson from "@resource/poem.json";
+import style from "@resource/style.json";
 import { locale } from "./locale";
-import resource from "../resource/images.json";
+import resource from "@resource/images.json";
 export const setLocale = (lang: locale.LocaleType | null) =>
 {
     locale.setLocale(lang ?? navigator.language as locale.LocaleType);
 };
-import keyboardShortcutsJson from "../resource/keyboard.shortcuts.json";
+import keyboardShortcutsJson from "@resource/keyboard.shortcuts.json";
 export const keyboardShortcuts = keyboardShortcutsJson as keyboardShortcutsItem[];
 export type KeyboardShortcutsContext = "whenever" | "with filter" | "with list" | "with tag";
 export type KeyboardShortcutsCategory = "general" | "move" | "config";
