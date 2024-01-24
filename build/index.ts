@@ -1,5 +1,5 @@
 import tsconfigJson from "./tsconfig.json";
-import { applyPaths } from "./evil-tsconfig.paths";
+import { applyPaths } from "../evil-tsconfig.paths.ts";
 applyPaths(tsconfigJson.compilerOptions);
 import pomeJson from "@resource/poem.json";
 import { locale } from "@script/locale";

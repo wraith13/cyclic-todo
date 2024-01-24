@@ -4,3 +4,6 @@
 [submodule "flounder.style.js"]
 	path = flounder.style.js
 	url = https://github.com/wraith13/flounder.style.js
+[submodule "evil-tsconfig.paths.ts"]
+	path = evil-tsconfig.paths.ts
+	url = https://github.com/wraith13/evil-tsconfig.paths.ts
