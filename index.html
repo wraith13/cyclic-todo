@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Wed Jan 24 2024 10:13:47 GMT+0900 (日本標準時)
+    build at: Wed Jan 24 2024 23:29:23 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2658,17 +2658,21 @@ h2 {
   animation-fill-mode: both;
   animation-iteration-count: infinite;
 }
-.light-theme-trait .task-item .item-attribute {
+.light-theme-trait .task-item .item-attribute-frame {
+  background-color: #8884;
+  padding: 0.25rem;
+}
+.light-theme-trait .task-item .item-attribute-frame .item-attribute {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  background-color: #8884;
-  max-width: 100vw;
-  padding: 0.25rem;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
   box-sizing: border-box;
 }
-.light-theme-trait .task-item .item-attribute .item-tags {
+.light-theme-trait .task-item .item-attribute-frame .item-attribute .item-tags {
   min-height: 1.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2681,7 +2685,7 @@ h2 {
   justify-content: start;
   flex-shrink: 1;
 }
-.light-theme-trait .task-item .item-attribute .item-tags a {
+.light-theme-trait .task-item .item-attribute-frame .item-attribute .item-tags a {
   padding: 0.25rem;
   display: inline-flex;
   flex-direction: row;
@@ -2689,27 +2693,27 @@ h2 {
   justify-content: start;
   cursor: pointer;
 }
-.light-theme-trait .task-item .item-attribute .item-tags a svg {
+.light-theme-trait .task-item .item-attribute-frame .item-attribute .item-tags a svg {
   width: 1rem;
   height: 1rem;
   margin-right: 4px;
 }
 @media (hover: hover) {
-  .light-theme-trait .task-item .item-attribute .item-tags a:not(:hover) {
+  .light-theme-trait .task-item .item-attribute-frame .item-attribute .item-tags a:not(:hover) {
     color: #228844;
     fill: #228844;
   }
 }
 @media (hover: none) {
-  .light-theme-trait .task-item .item-attribute .item-tags a {
+  .light-theme-trait .task-item .item-attribute-frame .item-attribute .item-tags a {
     color: #228844;
     fill: #228844;
   }
 }
-.light-theme-trait .task-item .item-attribute .item-tags a:not(:last-child) {
+.light-theme-trait .task-item .item-attribute-frame .item-attribute .item-tags a:not(:last-child) {
   margin-right: 0.5rem;
 }
-.light-theme-trait .task-item .item-attribute .item-settings {
+.light-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings {
   min-height: 1.5rem;
   overflow: visible;
   text-overflow: ellipsis;
@@ -2723,32 +2727,32 @@ h2 {
   flex-shrink: 1;
   flex-grow: 1;
 }
-.light-theme-trait .task-item .item-attribute .item-settings a {
+.light-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings a {
   padding: 0.25rem;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
   justify-content: start;
 }
-.light-theme-trait .task-item .item-attribute .item-settings a svg {
+.light-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings a svg {
   width: 1rem;
   height: 1rem;
   margin-right: 4px;
 }
 @media (hover: hover) {
-  .light-theme-trait .task-item .item-attribute .item-settings a:not(:hover) {
+  .light-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings a:not(:hover) {
     opacity: 0.6;
     text-decoration: none;
     color: #000022;
     fill: #000022;
   }
-  .light-theme-trait .task-item .item-attribute .item-settings a:hover {
+  .light-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings a:hover {
     color: #6F7F00;
     fill: #6F7F00;
   }
 }
 @media (hover: none) {
-  .light-theme-trait .task-item .item-attribute .item-settings a {
+  .light-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings a {
     opacity: 0.6;
     text-decoration: none;
     color: #000022;
@@ -5811,17 +5815,21 @@ body.light.flash-style-solid .progress-flash {
   animation-fill-mode: both;
   animation-iteration-count: infinite;
 }
-body.light .task-item .item-attribute {
+body.light .task-item .item-attribute-frame {
+  background-color: #8884;
+  padding: 0.25rem;
+}
+body.light .task-item .item-attribute-frame .item-attribute {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  background-color: #8884;
-  max-width: 100vw;
-  padding: 0.25rem;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
   box-sizing: border-box;
 }
-body.light .task-item .item-attribute .item-tags {
+body.light .task-item .item-attribute-frame .item-attribute .item-tags {
   min-height: 1.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -5834,7 +5842,7 @@ body.light .task-item .item-attribute .item-tags {
   justify-content: start;
   flex-shrink: 1;
 }
-body.light .task-item .item-attribute .item-tags a {
+body.light .task-item .item-attribute-frame .item-attribute .item-tags a {
   padding: 0.25rem;
   display: inline-flex;
   flex-direction: row;
@@ -5842,27 +5850,27 @@ body.light .task-item .item-attribute .item-tags a {
   justify-content: start;
   cursor: pointer;
 }
-body.light .task-item .item-attribute .item-tags a svg {
+body.light .task-item .item-attribute-frame .item-attribute .item-tags a svg {
   width: 1rem;
   height: 1rem;
   margin-right: 4px;
 }
 @media (hover: hover) {
-  body.light .task-item .item-attribute .item-tags a:not(:hover) {
+  body.light .task-item .item-attribute-frame .item-attribute .item-tags a:not(:hover) {
     color: #228844;
     fill: #228844;
   }
 }
 @media (hover: none) {
-  body.light .task-item .item-attribute .item-tags a {
+  body.light .task-item .item-attribute-frame .item-attribute .item-tags a {
     color: #228844;
     fill: #228844;
   }
 }
-body.light .task-item .item-attribute .item-tags a:not(:last-child) {
+body.light .task-item .item-attribute-frame .item-attribute .item-tags a:not(:last-child) {
   margin-right: 0.5rem;
 }
-body.light .task-item .item-attribute .item-settings {
+body.light .task-item .item-attribute-frame .item-attribute .item-settings {
   min-height: 1.5rem;
   overflow: visible;
   text-overflow: ellipsis;
@@ -5876,32 +5884,32 @@ body.light .task-item .item-attribute .item-settings {
   flex-shrink: 1;
   flex-grow: 1;
 }
-body.light .task-item .item-attribute .item-settings a {
+body.light .task-item .item-attribute-frame .item-attribute .item-settings a {
   padding: 0.25rem;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
   justify-content: start;
 }
-body.light .task-item .item-attribute .item-settings a svg {
+body.light .task-item .item-attribute-frame .item-attribute .item-settings a svg {
   width: 1rem;
   height: 1rem;
   margin-right: 4px;
 }
 @media (hover: hover) {
-  body.light .task-item .item-attribute .item-settings a:not(:hover) {
+  body.light .task-item .item-attribute-frame .item-attribute .item-settings a:not(:hover) {
     opacity: 0.6;
     text-decoration: none;
     color: #000022;
     fill: #000022;
   }
-  body.light .task-item .item-attribute .item-settings a:hover {
+  body.light .task-item .item-attribute-frame .item-attribute .item-settings a:hover {
     color: #6F7F00;
     fill: #6F7F00;
   }
 }
 @media (hover: none) {
-  body.light .task-item .item-attribute .item-settings a {
+  body.light .task-item .item-attribute-frame .item-attribute .item-settings a {
     opacity: 0.6;
     text-decoration: none;
     color: #000022;
@@ -8470,17 +8478,21 @@ body.light .keyboard-shortcuts li .key:first-child {
     animation-fill-mode: both;
     animation-iteration-count: infinite;
   }
-  body.auto .task-item .item-attribute {
+  body.auto .task-item .item-attribute-frame {
+    background-color: #8884;
+    padding: 0.25rem;
+  }
+  body.auto .task-item .item-attribute-frame .item-attribute {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    background-color: #8884;
-    max-width: 100vw;
-    padding: 0.25rem;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
     box-sizing: border-box;
   }
-  body.auto .task-item .item-attribute .item-tags {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-tags {
     min-height: 1.5rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -8493,7 +8505,7 @@ body.light .keyboard-shortcuts li .key:first-child {
     justify-content: start;
     flex-shrink: 1;
   }
-  body.auto .task-item .item-attribute .item-tags a {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-tags a {
     padding: 0.25rem;
     display: inline-flex;
     flex-direction: row;
@@ -8501,15 +8513,15 @@ body.light .keyboard-shortcuts li .key:first-child {
     justify-content: start;
     cursor: pointer;
   }
-  body.auto .task-item .item-attribute .item-tags a svg {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-tags a svg {
     width: 1rem;
     height: 1rem;
     margin-right: 4px;
   }
-  body.auto .task-item .item-attribute .item-tags a:not(:last-child) {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-tags a:not(:last-child) {
     margin-right: 0.5rem;
   }
-  body.auto .task-item .item-attribute .item-settings {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings {
     min-height: 1.5rem;
     overflow: visible;
     text-overflow: ellipsis;
@@ -8523,14 +8535,14 @@ body.light .keyboard-shortcuts li .key:first-child {
     flex-shrink: 1;
     flex-grow: 1;
   }
-  body.auto .task-item .item-attribute .item-settings a {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings a {
     padding: 0.25rem;
     display: inline-flex;
     flex-direction: row;
     align-items: center;
     justify-content: start;
   }
-  body.auto .task-item .item-attribute .item-settings a svg {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings a svg {
     width: 1rem;
     height: 1rem;
     margin-right: 4px;
@@ -9636,31 +9648,31 @@ body.light .keyboard-shortcuts li .key:first-child {
   }
 }
 @media (prefers-color-scheme: light) and (hover: hover) {
-  body.auto .task-item .item-attribute .item-tags a:not(:hover) {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-tags a:not(:hover) {
     color: #228844;
     fill: #228844;
   }
 }
 @media (prefers-color-scheme: light) and (hover: none) {
-  body.auto .task-item .item-attribute .item-tags a {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-tags a {
     color: #228844;
     fill: #228844;
   }
 }
 @media (prefers-color-scheme: light) and (hover: hover) {
-  body.auto .task-item .item-attribute .item-settings a:not(:hover) {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings a:not(:hover) {
     opacity: 0.6;
     text-decoration: none;
     color: #000022;
     fill: #000022;
   }
-  body.auto .task-item .item-attribute .item-settings a:hover {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings a:hover {
     color: #6F7F00;
     fill: #6F7F00;
   }
 }
 @media (prefers-color-scheme: light) and (hover: none) {
-  body.auto .task-item .item-attribute .item-settings a {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings a {
     opacity: 0.6;
     text-decoration: none;
     color: #000022;
@@ -12378,17 +12390,21 @@ body.light .keyboard-shortcuts li .key:first-child {
   animation-fill-mode: both;
   animation-iteration-count: infinite;
 }
-.dark-theme-trait .task-item .item-attribute {
+.dark-theme-trait .task-item .item-attribute-frame {
+  background-color: #8884;
+  padding: 0.25rem;
+}
+.dark-theme-trait .task-item .item-attribute-frame .item-attribute {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  background-color: #8884;
-  max-width: 100vw;
-  padding: 0.25rem;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
   box-sizing: border-box;
 }
-.dark-theme-trait .task-item .item-attribute .item-tags {
+.dark-theme-trait .task-item .item-attribute-frame .item-attribute .item-tags {
   min-height: 1.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -12401,7 +12417,7 @@ body.light .keyboard-shortcuts li .key:first-child {
   justify-content: start;
   flex-shrink: 1;
 }
-.dark-theme-trait .task-item .item-attribute .item-tags a {
+.dark-theme-trait .task-item .item-attribute-frame .item-attribute .item-tags a {
   padding: 0.25rem;
   display: inline-flex;
   flex-direction: row;
@@ -12409,27 +12425,27 @@ body.light .keyboard-shortcuts li .key:first-child {
   justify-content: start;
   cursor: pointer;
 }
-.dark-theme-trait .task-item .item-attribute .item-tags a svg {
+.dark-theme-trait .task-item .item-attribute-frame .item-attribute .item-tags a svg {
   width: 1rem;
   height: 1rem;
   margin-right: 4px;
 }
 @media (hover: hover) {
-  .dark-theme-trait .task-item .item-attribute .item-tags a:not(:hover) {
+  .dark-theme-trait .task-item .item-attribute-frame .item-attribute .item-tags a:not(:hover) {
     color: #228844;
     fill: #228844;
   }
 }
 @media (hover: none) {
-  .dark-theme-trait .task-item .item-attribute .item-tags a {
+  .dark-theme-trait .task-item .item-attribute-frame .item-attribute .item-tags a {
     color: #228844;
     fill: #228844;
   }
 }
-.dark-theme-trait .task-item .item-attribute .item-tags a:not(:last-child) {
+.dark-theme-trait .task-item .item-attribute-frame .item-attribute .item-tags a:not(:last-child) {
   margin-right: 0.5rem;
 }
-.dark-theme-trait .task-item .item-attribute .item-settings {
+.dark-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings {
   min-height: 1.5rem;
   overflow: visible;
   text-overflow: ellipsis;
@@ -12443,32 +12459,32 @@ body.light .keyboard-shortcuts li .key:first-child {
   flex-shrink: 1;
   flex-grow: 1;
 }
-.dark-theme-trait .task-item .item-attribute .item-settings a {
+.dark-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings a {
   padding: 0.25rem;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
   justify-content: start;
 }
-.dark-theme-trait .task-item .item-attribute .item-settings a svg {
+.dark-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings a svg {
   width: 1rem;
   height: 1rem;
   margin-right: 4px;
 }
 @media (hover: hover) {
-  .dark-theme-trait .task-item .item-attribute .item-settings a:not(:hover) {
+  .dark-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings a:not(:hover) {
     opacity: 0.6;
     text-decoration: none;
     color: #FFFFFF;
     fill: #FFFFFF;
   }
-  .dark-theme-trait .task-item .item-attribute .item-settings a:hover {
+  .dark-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings a:hover {
     color: #6F7F00;
     fill: #6F7F00;
   }
 }
 @media (hover: none) {
-  .dark-theme-trait .task-item .item-attribute .item-settings a {
+  .dark-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings a {
     opacity: 0.6;
     text-decoration: none;
     color: #FFFFFF;
@@ -15534,17 +15550,21 @@ body.dark.flash-style-solid .progress-flash {
   animation-fill-mode: both;
   animation-iteration-count: infinite;
 }
-body.dark .task-item .item-attribute {
+body.dark .task-item .item-attribute-frame {
+  background-color: #8884;
+  padding: 0.25rem;
+}
+body.dark .task-item .item-attribute-frame .item-attribute {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  background-color: #8884;
-  max-width: 100vw;
-  padding: 0.25rem;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
   box-sizing: border-box;
 }
-body.dark .task-item .item-attribute .item-tags {
+body.dark .task-item .item-attribute-frame .item-attribute .item-tags {
   min-height: 1.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -15557,7 +15577,7 @@ body.dark .task-item .item-attribute .item-tags {
   justify-content: start;
   flex-shrink: 1;
 }
-body.dark .task-item .item-attribute .item-tags a {
+body.dark .task-item .item-attribute-frame .item-attribute .item-tags a {
   padding: 0.25rem;
   display: inline-flex;
   flex-direction: row;
@@ -15565,27 +15585,27 @@ body.dark .task-item .item-attribute .item-tags a {
   justify-content: start;
   cursor: pointer;
 }
-body.dark .task-item .item-attribute .item-tags a svg {
+body.dark .task-item .item-attribute-frame .item-attribute .item-tags a svg {
   width: 1rem;
   height: 1rem;
   margin-right: 4px;
 }
 @media (hover: hover) {
-  body.dark .task-item .item-attribute .item-tags a:not(:hover) {
+  body.dark .task-item .item-attribute-frame .item-attribute .item-tags a:not(:hover) {
     color: #228844;
     fill: #228844;
   }
 }
 @media (hover: none) {
-  body.dark .task-item .item-attribute .item-tags a {
+  body.dark .task-item .item-attribute-frame .item-attribute .item-tags a {
     color: #228844;
     fill: #228844;
   }
 }
-body.dark .task-item .item-attribute .item-tags a:not(:last-child) {
+body.dark .task-item .item-attribute-frame .item-attribute .item-tags a:not(:last-child) {
   margin-right: 0.5rem;
 }
-body.dark .task-item .item-attribute .item-settings {
+body.dark .task-item .item-attribute-frame .item-attribute .item-settings {
   min-height: 1.5rem;
   overflow: visible;
   text-overflow: ellipsis;
@@ -15599,32 +15619,32 @@ body.dark .task-item .item-attribute .item-settings {
   flex-shrink: 1;
   flex-grow: 1;
 }
-body.dark .task-item .item-attribute .item-settings a {
+body.dark .task-item .item-attribute-frame .item-attribute .item-settings a {
   padding: 0.25rem;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
   justify-content: start;
 }
-body.dark .task-item .item-attribute .item-settings a svg {
+body.dark .task-item .item-attribute-frame .item-attribute .item-settings a svg {
   width: 1rem;
   height: 1rem;
   margin-right: 4px;
 }
 @media (hover: hover) {
-  body.dark .task-item .item-attribute .item-settings a:not(:hover) {
+  body.dark .task-item .item-attribute-frame .item-attribute .item-settings a:not(:hover) {
     opacity: 0.6;
     text-decoration: none;
     color: #FFFFFF;
     fill: #FFFFFF;
   }
-  body.dark .task-item .item-attribute .item-settings a:hover {
+  body.dark .task-item .item-attribute-frame .item-attribute .item-settings a:hover {
     color: #6F7F00;
     fill: #6F7F00;
   }
 }
 @media (hover: none) {
-  body.dark .task-item .item-attribute .item-settings a {
+  body.dark .task-item .item-attribute-frame .item-attribute .item-settings a {
     opacity: 0.6;
     text-decoration: none;
     color: #FFFFFF;
@@ -18196,17 +18216,21 @@ body.dark .keyboard-shortcuts li .key:first-child {
     animation-fill-mode: both;
     animation-iteration-count: infinite;
   }
-  body.auto .task-item .item-attribute {
+  body.auto .task-item .item-attribute-frame {
+    background-color: #8884;
+    padding: 0.25rem;
+  }
+  body.auto .task-item .item-attribute-frame .item-attribute {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    background-color: #8884;
-    max-width: 100vw;
-    padding: 0.25rem;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
     box-sizing: border-box;
   }
-  body.auto .task-item .item-attribute .item-tags {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-tags {
     min-height: 1.5rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -18219,7 +18243,7 @@ body.dark .keyboard-shortcuts li .key:first-child {
     justify-content: start;
     flex-shrink: 1;
   }
-  body.auto .task-item .item-attribute .item-tags a {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-tags a {
     padding: 0.25rem;
     display: inline-flex;
     flex-direction: row;
@@ -18227,15 +18251,15 @@ body.dark .keyboard-shortcuts li .key:first-child {
     justify-content: start;
     cursor: pointer;
   }
-  body.auto .task-item .item-attribute .item-tags a svg {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-tags a svg {
     width: 1rem;
     height: 1rem;
     margin-right: 4px;
   }
-  body.auto .task-item .item-attribute .item-tags a:not(:last-child) {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-tags a:not(:last-child) {
     margin-right: 0.5rem;
   }
-  body.auto .task-item .item-attribute .item-settings {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings {
     min-height: 1.5rem;
     overflow: visible;
     text-overflow: ellipsis;
@@ -18249,14 +18273,14 @@ body.dark .keyboard-shortcuts li .key:first-child {
     flex-shrink: 1;
     flex-grow: 1;
   }
-  body.auto .task-item .item-attribute .item-settings a {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings a {
     padding: 0.25rem;
     display: inline-flex;
     flex-direction: row;
     align-items: center;
     justify-content: start;
   }
-  body.auto .task-item .item-attribute .item-settings a svg {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings a svg {
     width: 1rem;
     height: 1rem;
     margin-right: 4px;
@@ -19362,31 +19386,31 @@ body.dark .keyboard-shortcuts li .key:first-child {
   }
 }
 @media (prefers-color-scheme: dark) and (hover: hover) {
-  body.auto .task-item .item-attribute .item-tags a:not(:hover) {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-tags a:not(:hover) {
     color: #228844;
     fill: #228844;
   }
 }
 @media (prefers-color-scheme: dark) and (hover: none) {
-  body.auto .task-item .item-attribute .item-tags a {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-tags a {
     color: #228844;
     fill: #228844;
   }
 }
 @media (prefers-color-scheme: dark) and (hover: hover) {
-  body.auto .task-item .item-attribute .item-settings a:not(:hover) {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings a:not(:hover) {
     opacity: 0.6;
     text-decoration: none;
     color: #FFFFFF;
     fill: #FFFFFF;
   }
-  body.auto .task-item .item-attribute .item-settings a:hover {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings a:hover {
     color: #6F7F00;
     fill: #6F7F00;
   }
 }
 @media (prefers-color-scheme: dark) and (hover: none) {
-  body.auto .task-item .item-attribute .item-settings a {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings a {
     opacity: 0.6;
     text-decoration: none;
     color: #FFFFFF;
@@ -28678,11 +28702,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                 });
             }); };
             Render.todoItem = function (entry, item, displayStyle, progressScaleShowStyle) { return __awaiter(_this, void 0, void 0, function () {
-                var isFirst, itemDom, onUpdate, onDone, sublist, title, _a, _b, _c, _d, _e, _f, _g, operator, _h, _j, _k, _l, header, _m, _o, _p, _q, _r, _s;
-                var _t, _u, _v;
+                var isFirst, itemDom, onUpdate, onDone, sublist, title, _a, _b, _c, _d, _e, _f, _g, operator, _h, _j, _k, _l, header, _m, _o, _p, _q, _r, _s, _t;
+                var _u, _v, _w;
                 var _this = this;
-                return __generator(this, function (_w) {
-                    switch (_w.label) {
+                return __generator(this, function (_x) {
+                    switch (_x.label) {
                         case 0:
                             isFirst = true;
                             onUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -28720,19 +28744,19 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                             sublist = OldStorage.Task.getSublist(item.task);
                             if (!("full" === displayStyle)) return [3 /*break*/, 2];
                             _b = Render.internalLink;
-                            _t = {
+                            _u = {
                                 className: "item-title",
                                 href: { pass: entry.pass, todo: item.task, }
                             };
                             return [4 /*yield*/, Resource.loadSvgOrCache(Render.getTodoIcon(entry, item))];
                         case 1:
-                            _a = _b.apply(void 0, [(_t.children = [
-                                    _w.sent(),
+                            _a = _b.apply(void 0, [(_u.children = [
+                                    _x.sent(),
                                     Model.isSublistOld(entry.tag) ?
                                         Model.decode(OldStorage.Task.getBody(item.task)) :
                                         Model.decode(item.task)
                                 ],
-                                    _t)]);
+                                    _u)]);
                             return [3 /*break*/, 7];
                         case 2:
                             _c = Render.$span("item-title-frame");
@@ -28741,41 +28765,41 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                             return [3 /*break*/, 5];
                         case 3:
                             _e = Render.internalLink;
-                            _u = {
+                            _v = {
                                 className: "item-title-sublist",
                                 href: { pass: entry.pass, tag: sublist, }
                             };
                             return [4 /*yield*/, Resource.loadSvgOrCache("folder-icon")];
                         case 4:
                             _d = [
-                                _e.apply(void 0, [(_u.children = [
-                                        _w.sent(),
+                                _e.apply(void 0, [(_v.children = [
+                                        _x.sent(),
                                         Model.decode(sublist)
                                     ],
-                                        _u)])
+                                        _v)])
                             ];
-                            _w.label = 5;
+                            _x.label = 5;
                         case 5:
                             _f = [
                                 _d
                             ];
                             _g = Render.internalLink;
-                            _v = {
+                            _w = {
                                 className: "item-title-body",
                                 href: { pass: entry.pass, todo: item.task, }
                             };
                             return [4 /*yield*/, Resource.loadSvgOrCache(Render.getTodoIcon(entry, item))];
                         case 6:
                             _a = _c.apply(void 0, [_f.concat([
-                                    _g.apply(void 0, [(_v.children = [
-                                            _w.sent(),
+                                    _g.apply(void 0, [(_w.children = [
+                                            _x.sent(),
                                             Model.isSublistOld(entry.tag) || null !== sublist ?
                                                 Model.decode(OldStorage.Task.getBody(item.task)) :
                                                 Model.decode(item.task)
                                         ],
-                                            _v)])
+                                            _w)])
                                 ])]);
-                            _w.label = 7;
+                            _x.label = 7;
                         case 7:
                             title = _a;
                             _h = Render.$div({
@@ -28818,7 +28842,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                             _k = Render.button;
                             _l = ["icon-button"];
                             return [4 /*yield*/, Resource.loadSvgOrCache("settings-icon")];
-                        case 8: return [4 /*yield*/, _k.apply(void 0, _l.concat([_w.sent(), function () { return __awaiter(_this, void 0, void 0, function () {
+                        case 8: return [4 /*yield*/, _k.apply(void 0, _l.concat([_x.sent(), function () { return __awaiter(_this, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, Render.todoSettingsPopup(entry.pass, item)];
@@ -28834,7 +28858,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                 }); }]))];
                         case 9:
                             operator = _h.apply(void 0, [_j.concat([
-                                    _w.sent()
+                                    _x.sent()
                                 ])]);
                             header = Render.$div("item-header")("simple" !== displayStyle ?
                                 [title, operator,] :
@@ -28864,18 +28888,19 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                             _o = Render.$make(HTMLDivElement);
                             _p = Render.$div("task-item flex-item");
                             _q = [header];
-                            _r = Render.$div("item-attribute");
+                            _r = Render.$div("item-attribute-frame");
+                            _s = Render.$div("item-attribute");
                             return [4 /*yield*/, Render.todoItemTags(entry.pass, item)];
                         case 13:
-                            _s = [
-                                _w.sent()
+                            _t = [
+                                _x.sent()
                             ];
                             return [4 /*yield*/, Render.todoItemSettings(entry.pass, item)];
                         case 14:
                             itemDom = _o.apply(void 0, [_p.apply(void 0, [_q.concat([
-                                        _r.apply(void 0, [_s.concat([
-                                                _w.sent()
-                                            ])]),
+                                        _r.apply(void 0, [_s.apply(void 0, [_t.concat([
+                                                    _x.sent()
+                                                ])])]),
                                         Render.informationDigest(entry, item, progressScaleShowStyle)
                                     ])])]);
                             return [3 /*break*/, 15];
@@ -31799,10 +31824,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
             Render.todoScreenBody = function (pass, item, ticks, _tag, max) {
                 if (max === void 0) { max = Render.getIntervalsMax(Calculate.intervals(ticks)); }
                 return __awaiter(_this, void 0, void 0, function () {
-                    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+                    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
                     var _this = this;
-                    return __generator(this, function (_k) {
-                        switch (_k.label) {
+                    return __generator(this, function (_l) {
+                        switch (_l.label) {
                             case 0:
                                 // OldStorage.isSessionPass(pass) ?
                                 //     []:
@@ -31825,15 +31850,16 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                 //     }),
                                 _a = Render.$div("row-flex-list todo-list");
                                 _b = Render.$div("task-item flex-item");
-                                _c = Render.$div("item-attribute");
+                                _c = Render.$div("item-attribute-frame");
+                                _d = Render.$div("item-attribute");
                                 return [4 /*yield*/, Render.todoItemTags(pass, item)];
                             case 1:
-                                _d = [
-                                    _k.sent()
+                                _e = [
+                                    _l.sent()
                                 ];
                                 return [4 /*yield*/, Render.todoItemSettings(pass, item)];
                             case 2:
-                                _e = [
+                                _f = [
                                     // OldStorage.isSessionPass(pass) ?
                                     //     []:
                                     //     $div("button-list")
@@ -31855,29 +31881,29 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                     //     }),
                                     _a.apply(void 0, [[
                                             _b.apply(void 0, [[
-                                                    _c.apply(void 0, [_d.concat([
-                                                            _k.sent()
-                                                        ])]),
+                                                    _c.apply(void 0, [_d.apply(void 0, [_e.concat([
+                                                                _l.sent()
+                                                            ])])]),
                                                     Render.informationFull(pass, item, OldStorage.TagSettings.getProgressScaleStyle(pass, "@home"))
                                                 ]])
                                         ]])
                                 ];
-                                _f = Render.$div("column-flex-list tick-list");
+                                _g = Render.$div("column-flex-list tick-list");
                                 return [4 /*yield*/, Promise.all(ticks.map(function (tick, index) { return Render.tickItem(pass, item, tick, "number" === typeof ticks[index + 1] ? tick - ticks[index + 1] : null, max); }))];
                             case 3:
-                                _e = _e.concat([
-                                    _f.apply(void 0, [_k.sent()]),
+                                _f = _f.concat([
+                                    _g.apply(void 0, [_l.sent()]),
                                     Render.messageList([
                                         Render.messagePanel(Render.labelSpan(locale_2.locale.map("Maximum number of histories saved") + ": ".concat(config_json_2.default.maxHistories))),
                                         Render.messagePanel(Render.labelSpan("最大件数を超えても、回数や初回日時は記憶されます。")),
                                     ])
                                 ]);
-                                _g = Render.$div("signboard");
+                                _h = Render.$div("signboard");
                                 return [4 /*yield*/, Render.poem("todo", "poem primary-poem")];
                             case 4:
-                                _e = _e.concat([
-                                    _g.apply(void 0, [[
-                                            _k.sent(),
+                                _f = _f.concat([
+                                    _h.apply(void 0, [[
+                                            _l.sent(),
                                             Render.$div("button-list")([
                                                 {
                                                     tag: "button",
@@ -31914,21 +31940,21 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                             ])
                                         ]])
                                 ]);
-                                _h = Render.$div("poem-list");
+                                _j = Render.$div("poem-list");
                                 return [4 /*yield*/, Render.poem("header")];
                             case 5:
-                                _j = [
-                                    _k.sent()
+                                _k = [
+                                    _l.sent()
                                 ];
                                 return [4 /*yield*/, Render.poem("accuracy")];
                             case 6:
-                                _j = _j.concat([
-                                    _k.sent()
+                                _k = _k.concat([
+                                    _l.sent()
                                 ]);
                                 return [4 /*yield*/, Render.poem("bottomtabs")];
-                            case 7: return [2 /*return*/, (_e.concat([
-                                    _h.apply(void 0, [_j.concat([
-                                            _k.sent()
+                            case 7: return [2 /*return*/, (_f.concat([
+                                    _j.apply(void 0, [_k.concat([
+                                            _l.sent()
                                         ])])
                                 ]))];
                         }
@@ -33965,7 +33991,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 //# sourceMappingURL=index.js.map
 </script>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Jan 24 2024 10:13:47 GMT+0900 (日本標準時)', buildTimestampTick: 1706058827184, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Jan 24 2024 23:29:23 GMT+0900 (日本標準時)', buildTimestampTick: 1706106563952, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -34189,7 +34215,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Wed Jan 24 2024 10:13:47 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Wed Jan 24 2024 23:29:23 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

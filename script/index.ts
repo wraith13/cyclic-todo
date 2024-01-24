@@ -5893,11 +5893,14 @@ export module CyclicToDo
                     $div("task-item flex-item")
                     ([
                         header,
-                        $div("item-attribute")
-                        ([
-                            await todoItemTags(entry.pass, item),
-                            await todoItemSettings(entry.pass, item),
-                        ]),
+                        $div("item-attribute-frame")
+                        (
+                            $div("item-attribute")
+                            ([
+                                await todoItemTags(entry.pass, item),
+                                await todoItemSettings(entry.pass, item),
+                            ])
+                        ),
                         informationDigest(entry, item, progressScaleShowStyle),
                     ])
                 );
@@ -8216,11 +8219,14 @@ export module CyclicToDo
             ([
                 $div("task-item flex-item")
                 ([
-                    $div("item-attribute")
-                    ([
-                        await todoItemTags(pass, item),
-                        await todoItemSettings(pass, item),
-                    ]),
+                    $div("item-attribute-frame")
+                    (
+                        $div("item-attribute")
+                        ([
+                            await todoItemTags(pass, item),
+                            await todoItemSettings(pass, item),
+                        ])
+                    ),
                     informationFull(pass, item, OldStorage.TagSettings.getProgressScaleStyle(pass, "@home")),
                 ]),
             ]),
