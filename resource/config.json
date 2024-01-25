@@ -17,7 +17,7 @@
         "14d", "180d", "240d", "2d", "15h", "1.5d", "2.5d", "10d",
         "60d"
     ],
-    "roundingThresholdRate": 0.8,
+    "roundingThresholdRate": 0.6,
     "roundingScalePreset":
     [
         "1m", "5m",
