@@ -244,7 +244,7 @@ export module CyclicToDo
     export interface TagSettings extends minamo.core.JsonableObject
     {
         sort?: "smart" | "simple" | "simple-reverse";
-        displayStyle?: "@home" | "full" | "simple" | "compact";
+        displayStyle?: "@home" | "full" | "digest" | "simple" | "compact";
         progressScaleStyle?: "@home" | "none" | "full";
     }
     export interface AutoTagSettingBase extends minamo.core.JsonableObject
@@ -810,7 +810,7 @@ export module CyclicToDo
             export const getDisplayStyle = (pass: string, tag: string): Exclude<TagSettings["displayStyle"], "@home"> =>
             {
                 const defaultResult = "full";
-                const result = currentItem<TagSettings["displayStyle"]>([ "@home", "full", "simple", "compact" ], get(pass, tag).displayStyle);
+                const result = currentItem<TagSettings["displayStyle"]>([ "@home", "full", "digest", "simple", "compact" ], get(pass, tag).displayStyle);
                 if (undefined === result || "@home" === result)
                 {
                     if ("@overall" === tag)
@@ -4549,7 +4549,7 @@ export module CyclicToDo
         export const makeTagDefaultGetter = <T extends string>(defaultValue: T) =>
             (tag: string): "@home" | T => "@overall" === tag ? defaultValue: "@home";
         export const getTagSortSettingsDefault = makeTagDefaultGetter("smart");
-        export const getTagSortSettingsText = (displayStyle: "@home" | "smart" | "simple" | "simple-reverse") =>
+        export const getTagSortSettingsText = (sort: "@home" | "smart" | "simple" | "simple-reverse") =>
         {
             const map: { [key: string]: locale.LocaleKeyType; } =
             {
@@ -4558,10 +4558,10 @@ export module CyclicToDo
                 "simple": "sort.simple",
                 "simple-reverse": "sort.simple-reverse",
             };
-            return map[displayStyle];
+            return map[sort];
         }
-        export const getTagSortSettingsDescription = (displayStyle: "@home" | "smart" | "simple" | "simple-reverse") =>
-            `${getTagSortSettingsText(displayStyle)}.description` as locale.LocaleKeyType;
+        export const getTagSortSettingsDescription = (sort: "@home" | "smart" | "simple" | "simple-reverse") =>
+            `${getTagSortSettingsText(sort)}.description` as locale.LocaleKeyType;
         export const tagSortSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
         (
             async resolve =>
@@ -4631,6 +4631,7 @@ export module CyclicToDo
             {
                 "@home": "displayStyle.home",
                 "full": "displayStyle.full",
+                "digest": "displayStyle.digest",
                 "simple": "displayStyle.simple",
                 "compact": "displayStyle.compact",
             };
@@ -4652,8 +4653,8 @@ export module CyclicToDo
                     (
                         (
                             "@overall" === tag ?
-                            [ "full", "simple", "compact", ]:
-                            [ "@home", "full", "simple", "compact", ]
+                            [ "full", "digest", "simple", "compact", ]:
+                            [ "@home", "full", "digest", "simple", "compact", ]
                         )
                         .map
                         (
@@ -5469,13 +5470,13 @@ export module CyclicToDo
             ]),
         ]);
         export const paramSeparator = () => ({ tag: "div", className: "param-separator", });
-        export const informationFull = (pass: string, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
+        export const informationFull = (entry: { pass: string, }, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
         ({
             className: "item-information",
-            attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(pass, item.task)), }
+            attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
         })
         ([
-            itemProgressBar(pass, item, "with-pad"),
+            itemProgressBar(entry.pass, item, "with-pad"),
             $div("item-params")
             ([
                 // monospace("task-count", "smartRest", null === item.smartRest ? "N/A": item.smartRest.toLocaleString()),
@@ -5887,7 +5888,7 @@ export module CyclicToDo
                     ])
                 );
                 break;
-            default: // "full"
+            default: // "full" | "digest"
                 itemDom = $make(HTMLDivElement)
                 (
                     $div("task-item flex-item")
@@ -5901,7 +5902,9 @@ export module CyclicToDo
                                 await todoItemSettings(entry.pass, item),
                             ])
                         ),
-                        informationDigest(entry, item, progressScaleShowStyle),
+                        "digest" === displayStyle ?
+                            informationDigest(entry, item, progressScaleShowStyle):
+                            informationFull(entry, item, progressScaleShowStyle),
                     ])
                 );
                 break;
@@ -7654,7 +7657,7 @@ export module CyclicToDo
                                         const item = filteredList[index];
                                         const button = dom.getElementsByClassName("item-operator")[0].getElementsByClassName("main-button")[0] as HTMLButtonElement;
                                         button.classList.toggle("default-button", item.isDefault);
-                                        if ("full" === displayStyle)
+                                        if ("full" === displayStyle || "digest" === displayStyle)
                                         {
                                             const information = dom.getElementsByClassName("item-information")[0] as HTMLDivElement;
                                             (information.getElementsByClassName("task-elapsed-time")[0].getElementsByClassName("value")[0] as HTMLSpanElement).innerText = Domain.timeLongStringFromTick(item.elapsed);
@@ -8227,7 +8230,7 @@ export module CyclicToDo
                             await todoItemSettings(pass, item),
                         ])
                     ),
-                    informationFull(pass, item, OldStorage.TagSettings.getProgressScaleStyle(pass, "@home")),
+                    informationFull({ pass, }, item, OldStorage.TagSettings.getProgressScaleStyle(pass, "@home")),
                 ]),
             ]),
             $div("column-flex-list tick-list")
@@ -9565,8 +9568,8 @@ export module CyclicToDo
                                 const defaultStyle = getTagDisplayStyleDefault(tag);
                                 const current = settings.displayStyle ?? defaultStyle;
                                 const list: (Exclude<TagSettings["displayStyle"], undefined>)[] = "@overall" === tag ?
-                                    [ "full", "simple", "compact", ]:
-                                    [ "@home", "full", "simple", "compact", ];
+                                    [ "full", "digest", "simple", "compact", ]:
+                                    [ "@home", "full", "digest", "simple", "compact", ];
                                 const next = destinationItem(list, current);
                                 settings.displayStyle = defaultStyle === next ? undefined: <Exclude<TagSettings["displayStyle"], undefined>>next;
                                 OldStorage.TagSettings.set(pass, tag, settings);
