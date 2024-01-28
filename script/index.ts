@@ -2775,6 +2775,55 @@ export module CyclicToDo
         }
         export const getBackgroundColor = () =>
             "light" === getCurrentTheme() ? style.__WHITE_COLOR__: style.__BLACK_COLOR__;
+        interface Color
+        {
+            R: number;
+            G: number;
+            B: number;
+            A?: number;
+        }
+        export const cssColorStringToColor = (cssColor: string): Color =>
+        {
+            let core = cssColor.replace("#", "");
+            let R:number = 0;
+            let G:number = 0;
+            let B:number = 0;
+            let A: undefined | number;
+            if (6 == core.length || 8 == core.length)
+            {
+                const max = 255.0;
+                R = parseInt(core.substring(0, 2), 16) /max;
+                G = parseInt(core.substring(2, 4), 16) /max;
+                B = parseInt(core.substring(4, 6), 16) /max;
+                if (8 == core.length)
+                {
+                    A = parseInt(core.substring(6, 8), 16) /max;
+                }
+            }
+            else
+            if (3 == core.length || 4 == core.length)
+            {
+                const max = 15.0;
+                R = parseInt(core.substring(0, 1), 16) /max;
+                G = parseInt(core.substring(1, 2), 16) /max;
+                B = parseInt(core.substring(2, 3), 16) /max;
+                if (4 == core.length)
+                {
+                    A = parseInt(core.substring(3, 4), 16) /max;
+                }
+            }
+            return undefined === A ? { R, G, B }: { R, G, B, A };
+        };
+        export const rateToHex = (value: number, digit: number = 2, max: number = Math.pow(16, digit) -1) =>
+            Math.round(value *max).toString(16).padStart(digit, '0');
+        export const colorToCssColorString = (color: Color) => undefined === color.A ?
+            `#${rateToHex(color.R)}${rateToHex(color.G)}${rateToHex(color.B)}`:
+            `#${rateToHex(color.R)}${rateToHex(color.G)}${rateToHex(color.B)}${rateToHex(color.A)}`;
+        export const linearNeutralColor = (X: Color, Y: Color, rate: number = 0.5, antiRate: number = 1.0 -rate) => undefined === X.A && undefined === Y.A ?
+            { R: (X.R *rate) +(Y.R *antiRate), G: (X.G *rate) +(Y.G *antiRate), B: (X.B *rate) +(Y.B *antiRate), }:
+            { R: (X.R *rate) +(Y.R *antiRate), G: (X.G *rate) +(Y.G *antiRate), B: (X.B *rate) +(Y.B *antiRate), A: ((X.A ?? 1.0) *rate) +((Y.A ?? 1.0) *antiRate), };
+        export const linearNeutralColorString = (X: string, Y: string, rate: number = 0.5): string =>
+            colorToCssColorString(linearNeutralColor(cssColorStringToColor(X), cssColorStringToColor(Y), rate));
         export const progressBackgroundStyle = (progress: number | null, status: ProgressStatusType) =>
         {
             if (null === progress)
@@ -2786,7 +2835,7 @@ export module CyclicToDo
                         type: "triline",
                         layoutAngle: "alternative",
                         foregroundColor: progressStatusColor(status),
-                        backgroundColor: getBackgroundColor(),
+                        backgroundColor: linearNeutralColorString(progressStatusColor(status), getBackgroundColor(), 0.3),
                         depth: 0.9,
                         blur: 0.0,
                         reverseRate: "auto",
