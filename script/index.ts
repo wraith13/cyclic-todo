@@ -2775,6 +2775,7 @@ export module CyclicToDo
         }
         export const getBackgroundColor = () =>
             "light" === getCurrentTheme() ? style.__WHITE_COLOR__: style.__BLACK_COLOR__;
+        /*
         interface Color
         {
             R: number;
@@ -2824,7 +2825,9 @@ export module CyclicToDo
             { R: (X.R *rate) +(Y.R *antiRate), G: (X.G *rate) +(Y.G *antiRate), B: (X.B *rate) +(Y.B *antiRate), A: ((X.A ?? 1.0) *rate) +((Y.A ?? 1.0) *antiRate), };
         export const linearNeutralColorString = (X: string, Y: string, rate: number = 0.5): string =>
             colorToCssColorString(linearNeutralColor(cssColorStringToColor(X), cssColorStringToColor(Y), rate));
-        export const progressBackgroundStyle = (progress: number | null, status: ProgressStatusType) =>
+        */
+        export const modRate = (value: number, unit: number) => (value %unit) /unit;
+        export const progressBackgroundStyle = (progress: number | null, status: ProgressStatusType, tick: number) =>
         {
             if (null === progress)
             {
@@ -2833,9 +2836,11 @@ export module CyclicToDo
                     flounderStyle.makeStyle
                     ({
                         type: "triline",
-                        layoutAngle: "alternative",
+                        // layoutAngle: "alternative",
+                        layoutAngle: modRate(tick, 3 *60 *1000),
                         foregroundColor: progressStatusColor(status),
-                        backgroundColor: linearNeutralColorString(progressStatusColor(status), getBackgroundColor(), 0.3),
+                        backgroundColor: getBackgroundColor(),
+                        // backgroundColor: linearNeutralColorString(progressStatusColor(status), getBackgroundColor(), 0.3),
                         depth: 0.9,
                         blur: 0.0,
                         reverseRate: "auto",
@@ -2878,8 +2883,9 @@ export module CyclicToDo
             }
             return "";
         };
-        export const progressStyle = (progress: number | null, status: ProgressStatusType) =>
-            progressWidthStyle(progress) +progressBackgroundStyle(progress, status);
+        export const progressStyle = (progress: number | null, _status: ProgressStatusType) =>
+            // progressWidthStyle(progress) +progressBackgroundStyle(progress, status);
+            progressWidthStyle(progress);
         export const progressPadStyle = (progress: number | null) =>
             progressWidthStyle(1 -(progress ?? 1));
         export const progressValidityClass = (progress: number | null) =>
@@ -9942,6 +9948,28 @@ export module CyclicToDo
             Render.updateScreen?.("dirty");
         }
     }
+    export const makeStyleEntry = (classList: string, style: string): string =>
+        classList.split(" ").map(i => `.${i}`).join("") +"{" +style +"}\r\n";
+    export const makeAnimationStyle = (tick: number): string =>
+        [ "default", "flash", "pickup", "restriction"].map
+        (
+            (status: Render.ProgressStatusType) => [ 0, null, ].map
+            (
+                progress => makeStyleEntry
+                (
+                    Render.progressClass(progress, status),
+                    Render.progressBackgroundStyle(progress, status, tick)
+                )
+            )
+            .join("")
+        )
+        .join("");
+    export const styleAnimation = (tick: number) =>
+    {
+        const styleElement = document.getElementById("style") as HTMLStyleElement;
+        minamo.dom.setProperty(styleElement, "innerHTML", makeAnimationStyle(tick));
+        window.requestAnimationFrame(styleAnimation);
+    };
     export const start = async (params:{ buildTimestamp: string, buildTimestampTick:number, }) =>
     {
         buildTimestamp =
@@ -10053,6 +10081,7 @@ export module CyclicToDo
                 isWideContent: true,
             });
         }
+        window.requestAnimationFrame(styleAnimation);
     };
     export const showPage = async (url: string = location.href, _wait: number = 0) =>
     {

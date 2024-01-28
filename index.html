@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sun Jan 28 2024 17:03:51 GMT+0900 (日本標準時)
+    build at: Mon Jan 29 2024 00:35:27 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -52,14 +52,14 @@ DEALINGS IN THE SOFTWARE.
 <title>Cyclic ToDo</title>
 <link id="favicon" rel="shortcut icon" href="./image/cyclictodohex.1024.png">
 <link rel="apple-touch-icon" href="./image/cyclictodohex-ios.1024.png">
-<style type="text/css" id="style">
+<style type="text/css">
 h1,
 h2 {
   margin: 0px;
 }
 /*# sourceMappingURL=style/primary.css.map */
 </style>
-<style type="text/css" id="style">
+<style type="text/css">
 .clickable-trait {
   cursor: pointer;
 }
@@ -9791,7 +9791,7 @@ body.light .keyboard-shortcuts li .key:first-child {
 }
 /*# sourceMappingURL=style/theme.light.css.map */
 </style>
-<style type="text/css" id="style">
+<style type="text/css">
 .clickable-trait {
   cursor: pointer;
 }
@@ -25086,59 +25086,67 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
             Render.getBackgroundColor = function () {
                 return "light" === Render.getCurrentTheme() ? style_json_1.default.__WHITE_COLOR__ : style_json_1.default.__BLACK_COLOR__;
             };
-            Render.cssColorStringToColor = function (cssColor) {
-                var core = cssColor.replace("#", "");
-                var R = 0;
-                var G = 0;
-                var B = 0;
-                var A;
-                if (6 == core.length || 8 == core.length) {
-                    var max = 255.0;
-                    R = parseInt(core.substring(0, 2), 16) / max;
-                    G = parseInt(core.substring(2, 4), 16) / max;
-                    B = parseInt(core.substring(4, 6), 16) / max;
-                    if (8 == core.length) {
-                        A = parseInt(core.substring(6, 8), 16) / max;
+            /*
+            interface Color
+            {
+                R: number;
+                G: number;
+                B: number;
+                A?: number;
+            }
+            export const cssColorStringToColor = (cssColor: string): Color =>
+            {
+                let core = cssColor.replace("#", "");
+                let R:number = 0;
+                let G:number = 0;
+                let B:number = 0;
+                let A: undefined | number;
+                if (6 == core.length || 8 == core.length)
+                {
+                    const max = 255.0;
+                    R = parseInt(core.substring(0, 2), 16) /max;
+                    G = parseInt(core.substring(2, 4), 16) /max;
+                    B = parseInt(core.substring(4, 6), 16) /max;
+                    if (8 == core.length)
+                    {
+                        A = parseInt(core.substring(6, 8), 16) /max;
                     }
                 }
-                else if (3 == core.length || 4 == core.length) {
-                    var max = 15.0;
-                    R = parseInt(core.substring(0, 1), 16) / max;
-                    G = parseInt(core.substring(1, 2), 16) / max;
-                    B = parseInt(core.substring(2, 3), 16) / max;
-                    if (4 == core.length) {
-                        A = parseInt(core.substring(3, 4), 16) / max;
+                else
+                if (3 == core.length || 4 == core.length)
+                {
+                    const max = 15.0;
+                    R = parseInt(core.substring(0, 1), 16) /max;
+                    G = parseInt(core.substring(1, 2), 16) /max;
+                    B = parseInt(core.substring(2, 3), 16) /max;
+                    if (4 == core.length)
+                    {
+                        A = parseInt(core.substring(3, 4), 16) /max;
                     }
                 }
-                return undefined === A ? { R: R, G: G, B: B } : { R: R, G: G, B: B, A: A };
+                return undefined === A ? { R, G, B }: { R, G, B, A };
             };
-            Render.rateToHex = function (value, digit, max) {
-                if (digit === void 0) { digit = 2; }
-                if (max === void 0) { max = Math.pow(16, digit) - 1; }
-                return Math.round(value * max).toString(16).padStart(digit, '0');
-            };
-            Render.colorToCssColorString = function (color) { return undefined === color.A ?
-                "#".concat(Render.rateToHex(color.R)).concat(Render.rateToHex(color.G)).concat(Render.rateToHex(color.B)) :
-                "#".concat(Render.rateToHex(color.R)).concat(Render.rateToHex(color.G)).concat(Render.rateToHex(color.B)).concat(Render.rateToHex(color.A)); };
-            Render.linearNeutralColor = function (X, Y, rate, antiRate) {
-                var _a, _b;
-                if (rate === void 0) { rate = 0.5; }
-                if (antiRate === void 0) { antiRate = 1.0 - rate; }
-                return undefined === X.A && undefined === Y.A ?
-                    { R: (X.R * rate) + (Y.R * antiRate), G: (X.G * rate) + (Y.G * antiRate), B: (X.B * rate) + (Y.B * antiRate), } :
-                    { R: (X.R * rate) + (Y.R * antiRate), G: (X.G * rate) + (Y.G * antiRate), B: (X.B * rate) + (Y.B * antiRate), A: (((_a = X.A) !== null && _a !== void 0 ? _a : 1.0) * rate) + (((_b = Y.A) !== null && _b !== void 0 ? _b : 1.0) * antiRate), };
-            };
-            Render.linearNeutralColorString = function (X, Y, rate) {
-                if (rate === void 0) { rate = 0.5; }
-                return Render.colorToCssColorString(Render.linearNeutralColor(Render.cssColorStringToColor(X), Render.cssColorStringToColor(Y), rate));
-            };
-            Render.progressBackgroundStyle = function (progress, status) {
+            export const rateToHex = (value: number, digit: number = 2, max: number = Math.pow(16, digit) -1) =>
+                Math.round(value *max).toString(16).padStart(digit, '0');
+            export const colorToCssColorString = (color: Color) => undefined === color.A ?
+                `#${rateToHex(color.R)}${rateToHex(color.G)}${rateToHex(color.B)}`:
+                `#${rateToHex(color.R)}${rateToHex(color.G)}${rateToHex(color.B)}${rateToHex(color.A)}`;
+            export const linearNeutralColor = (X: Color, Y: Color, rate: number = 0.5, antiRate: number = 1.0 -rate) => undefined === X.A && undefined === Y.A ?
+                { R: (X.R *rate) +(Y.R *antiRate), G: (X.G *rate) +(Y.G *antiRate), B: (X.B *rate) +(Y.B *antiRate), }:
+                { R: (X.R *rate) +(Y.R *antiRate), G: (X.G *rate) +(Y.G *antiRate), B: (X.B *rate) +(Y.B *antiRate), A: ((X.A ?? 1.0) *rate) +((Y.A ?? 1.0) *antiRate), };
+            export const linearNeutralColorString = (X: string, Y: string, rate: number = 0.5): string =>
+                colorToCssColorString(linearNeutralColor(cssColorStringToColor(X), cssColorStringToColor(Y), rate));
+            */
+            Render.modRate = function (value, unit) { return (value % unit) / unit; };
+            Render.progressBackgroundStyle = function (progress, status, tick) {
                 if (null === progress) {
                     return flounder_style_js_1.flounderStyle.styleToString(flounder_style_js_1.flounderStyle.makeStyle({
                         type: "triline",
-                        layoutAngle: "alternative",
+                        // layoutAngle: "alternative",
+                        layoutAngle: Render.modRate(tick, 3 * 60 * 1000),
                         foregroundColor: Render.progressStatusColor(status),
-                        backgroundColor: Render.linearNeutralColorString(Render.progressStatusColor(status), Render.getBackgroundColor(), 0.3),
+                        backgroundColor: Render.getBackgroundColor(),
+                        // backgroundColor: linearNeutralColorString(progressStatusColor(status), getBackgroundColor(), 0.3),
                         depth: 0.9,
                         blur: 0.0,
                         reverseRate: "auto",
@@ -25179,8 +25187,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                 }
                 return "";
             };
-            Render.progressStyle = function (progress, status) {
-                return Render.progressWidthStyle(progress) + Render.progressBackgroundStyle(progress, status);
+            Render.progressStyle = function (progress, _status) {
+                // progressWidthStyle(progress) +progressBackgroundStyle(progress, status);
+                return Render.progressWidthStyle(progress);
             };
             Render.progressPadStyle = function (progress) {
                 return Render.progressWidthStyle(1 - (progress !== null && progress !== void 0 ? progress : 1));
@@ -33796,6 +33805,19 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                 (_a = Render.updateScreen) === null || _a === void 0 ? void 0 : _a.call(Render, "dirty");
             }
         };
+        CyclicToDo.makeStyleEntry = function (classList, style) {
+            return classList.split(" ").map(function (i) { return ".".concat(i); }).join("") + "{" + style + "}\r\n";
+        };
+        CyclicToDo.makeAnimationStyle = function (tick) {
+            return ["default", "flash", "pickup", "restriction"].map(function (status) { return [0, null,].map(function (progress) { return CyclicToDo.makeStyleEntry(Render.progressClass(progress, status), Render.progressBackgroundStyle(progress, status, tick)); })
+                .join(""); })
+                .join("");
+        };
+        CyclicToDo.styleAnimation = function (tick) {
+            var styleElement = document.getElementById("style");
+            minamo_js_1.minamo.dom.setProperty(styleElement, "innerHTML", CyclicToDo.makeAnimationStyle(tick));
+            window.requestAnimationFrame(CyclicToDo.styleAnimation);
+        };
         CyclicToDo.start = function (params) { return __awaiter(_this, void 0, void 0, function () {
             var _a, _b, _c, urlParams, reload, scroll, json, url_1, fullscreen, toast_9, url, latestShowUrl;
             var _this = this;
@@ -33913,6 +33935,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                 isWideContent: true,
                             });
                         }
+                        window.requestAnimationFrame(CyclicToDo.styleAnimation);
                         return [2 /*return*/];
                 }
             });
@@ -34049,8 +34072,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 });
 //# sourceMappingURL=index.js.map
 </script>
+<style type="text/css" id="style"></style>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Jan 28 2024 17:03:51 GMT+0900 (日本標準時)', buildTimestampTick: 1706429031432, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Jan 29 2024 00:35:27 GMT+0900 (日本標準時)', buildTimestampTick: 1706456127689, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -34274,7 +34298,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Sun Jan 28 2024 17:03:51 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Mon Jan 29 2024 00:35:27 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
