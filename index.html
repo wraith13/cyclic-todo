@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Jan 29 2024 00:35:27 GMT+0900 (日本標準時)
+    build at: Tue Jan 30 2024 10:57:06 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2614,18 +2614,6 @@ h2 {
 .light-theme-trait .task-item .progress-bar.progress-disabled:not(.progress-default),
 .light-theme-trait .tick-item .progress-bar.progress-disabled:not(.progress-default) {
   opacity: 0.33;
-}
-.light-theme-trait .task-item .progress-bar.progress-flash,
-.light-theme-trait .tick-item .progress-bar.progress-flash {
-  background-color: #0F4699;
-}
-.light-theme-trait .task-item .progress-bar.progress-pickup,
-.light-theme-trait .tick-item .progress-bar.progress-pickup {
-  background-color: #6F7F00;
-}
-.light-theme-trait .task-item .progress-bar.progress-restriction,
-.light-theme-trait .tick-item .progress-bar.progress-restriction {
-  background-color: #831B50;
 }
 .light-theme-trait .task-item .progress-bar-pad,
 .light-theme-trait .tick-item .progress-bar-pad {
@@ -5773,18 +5761,6 @@ body.light .task-item .progress-bar.progress-disabled:not(.progress-default),
 body.light .tick-item .progress-bar.progress-disabled:not(.progress-default) {
   opacity: 0.33;
 }
-body.light .task-item .progress-bar.progress-flash,
-body.light .tick-item .progress-bar.progress-flash {
-  background-color: #0F4699;
-}
-body.light .task-item .progress-bar.progress-pickup,
-body.light .tick-item .progress-bar.progress-pickup {
-  background-color: #6F7F00;
-}
-body.light .task-item .progress-bar.progress-restriction,
-body.light .tick-item .progress-bar.progress-restriction {
-  background-color: #831B50;
-}
 body.light .task-item .progress-bar-pad,
 body.light .tick-item .progress-bar-pad {
   top: 0px;
@@ -8436,18 +8412,6 @@ body.light .keyboard-shortcuts li .key:first-child {
   body.auto .task-item .progress-bar.progress-disabled:not(.progress-default),
   body.auto .tick-item .progress-bar.progress-disabled:not(.progress-default) {
     opacity: 0.33;
-  }
-  body.auto .task-item .progress-bar.progress-flash,
-  body.auto .tick-item .progress-bar.progress-flash {
-    background-color: #0F4699;
-  }
-  body.auto .task-item .progress-bar.progress-pickup,
-  body.auto .tick-item .progress-bar.progress-pickup {
-    background-color: #6F7F00;
-  }
-  body.auto .task-item .progress-bar.progress-restriction,
-  body.auto .tick-item .progress-bar.progress-restriction {
-    background-color: #831B50;
   }
   body.auto .task-item .progress-bar-pad,
   body.auto .tick-item .progress-bar-pad {
@@ -12350,18 +12314,6 @@ body.light .keyboard-shortcuts li .key:first-child {
 .dark-theme-trait .tick-item .progress-bar.progress-disabled:not(.progress-default) {
   opacity: 0.33;
 }
-.dark-theme-trait .task-item .progress-bar.progress-flash,
-.dark-theme-trait .tick-item .progress-bar.progress-flash {
-  background-color: #0F4699;
-}
-.dark-theme-trait .task-item .progress-bar.progress-pickup,
-.dark-theme-trait .tick-item .progress-bar.progress-pickup {
-  background-color: #6F7F00;
-}
-.dark-theme-trait .task-item .progress-bar.progress-restriction,
-.dark-theme-trait .tick-item .progress-bar.progress-restriction {
-  background-color: #831B50;
-}
 .dark-theme-trait .task-item .progress-bar-pad,
 .dark-theme-trait .tick-item .progress-bar-pad {
   top: 0px;
@@ -15511,18 +15463,6 @@ body.dark .task-item .progress-bar.progress-disabled:not(.progress-default),
 body.dark .tick-item .progress-bar.progress-disabled:not(.progress-default) {
   opacity: 0.33;
 }
-body.dark .task-item .progress-bar.progress-flash,
-body.dark .tick-item .progress-bar.progress-flash {
-  background-color: #0F4699;
-}
-body.dark .task-item .progress-bar.progress-pickup,
-body.dark .tick-item .progress-bar.progress-pickup {
-  background-color: #6F7F00;
-}
-body.dark .task-item .progress-bar.progress-restriction,
-body.dark .tick-item .progress-bar.progress-restriction {
-  background-color: #831B50;
-}
 body.dark .task-item .progress-bar-pad,
 body.dark .tick-item .progress-bar-pad {
   top: 0px;
@@ -18178,18 +18118,6 @@ body.dark .keyboard-shortcuts li .key:first-child {
   body.auto .tick-item .progress-bar.progress-disabled:not(.progress-default) {
     opacity: 0.33;
   }
-  body.auto .task-item .progress-bar.progress-flash,
-  body.auto .tick-item .progress-bar.progress-flash {
-    background-color: #0F4699;
-  }
-  body.auto .task-item .progress-bar.progress-pickup,
-  body.auto .tick-item .progress-bar.progress-pickup {
-    background-color: #6F7F00;
-  }
-  body.auto .task-item .progress-bar.progress-restriction,
-  body.auto .tick-item .progress-bar.progress-restriction {
-    background-color: #831B50;
-  }
   body.auto .task-item .progress-bar-pad,
   body.auto .tick-item .progress-bar-pad {
     top: 0px;
@@ -19809,6 +19737,7 @@ var EvilTimer;
     var VanillaDate = Date;
     var vanillaSetTimeout = setTimeout;
     var vanillaSetInteral = setInterval;
+    var vanillaRequestAnimationFrame = (window !== null && window !== void 0 ? window : {}).requestAnimationFrame;
     var dateMode = "evil";
     EvilTimer.setDateMode = function (mode) {
         switch (mode) {
@@ -19832,6 +19761,8 @@ var EvilTimer;
     var ankerAt = {
         vanilla: 0,
         evil: 0,
+        vanillaPerformance: 0,
+        evilPerformance: 0,
     };
     EvilTimer.getVanillaNow = function () { return new VanillaDate().getTime(); };
     EvilTimer.getEvilNow = function () {
@@ -19839,18 +19770,29 @@ var EvilTimer;
             EvilTimer.getVanillaNow() :
             ankerAt.evil + (isPaused ? 0 : (speed * (EvilTimer.getVanillaNow() - ankerAt.vanilla)));
     };
+    EvilTimer.getVanillaPerformanceNow = function () { return performance.now(); };
+    EvilTimer.getEvilPerformanceNow = function () {
+        return !isAnkered() ?
+            EvilTimer.getVanillaPerformanceNow() :
+            ankerAt.evilPerformance + (isPaused ? 0 : (speed * (EvilTimer.getVanillaPerformanceNow() - ankerAt.vanillaPerformance)));
+    };
     var isAnkered = function () { return 0 !== ankerAt.vanilla; };
-    var setAnkerAt = function (evil) { return ankerAt =
+    var setAnkerAt = function (evil, evilPerformance) { return ankerAt =
         {
             vanilla: EvilTimer.getVanillaNow(),
             evil: evil !== null && evil !== void 0 ? evil : EvilTimer.getEvilNow(),
+            vanillaPerformance: EvilTimer.getVanillaPerformanceNow(),
+            evilPerformance: evilPerformance !== null && evilPerformance !== void 0 ? evilPerformance : EvilTimer.getEvilPerformanceNow(),
         }; };
-    var resetAnkerAt = function (vanilla) {
+    var resetAnkerAt = function (vanilla, vanillaPerformance) {
         if (vanilla === void 0) { vanilla = isRegularSpeed() ? 0 : EvilTimer.getVanillaNow(); }
+        if (vanillaPerformance === void 0) { vanillaPerformance = isRegularSpeed() ? 0 : EvilTimer.getVanillaPerformanceNow(); }
         return ankerAt =
             {
                 vanilla: vanilla,
                 evil: vanilla,
+                vanillaPerformance: vanillaPerformance,
+                evilPerformance: vanillaPerformance,
             };
     };
     /*
@@ -20164,6 +20106,14 @@ var EvilTimer;
             }
         }, undefined === wait ? wait : wait / Math.abs(speed));
     };
+    EvilTimer.evilRequestAnimationFrame = function (callback) { return vanillaRequestAnimationFrame(function (_tick) {
+        if (isPaused) {
+            susppendedTasks.push(function () { return callback(EvilTimer.getEvilPerformanceNow()); });
+        }
+        else {
+            callback(EvilTimer.getEvilPerformanceNow());
+        }
+    }); };
     var Vanilla;
     (function (Vanilla) {
         Vanilla.Date = function _a() {
@@ -20201,12 +20151,18 @@ var EvilTimer;
                 gThis.Date = EvilTimer.EvilDate;
                 gThis.setTimeout = EvilTimer.evilSetTimeout;
                 gThis.setInterval = EvilTimer.evilSetInterval;
+                if (window) {
+                    window.requestAnimationFrame = EvilTimer.evilRequestAnimationFrame;
+                }
             }
             else {
                 // delete gThis.EvilTimer;
                 gThis.Date = VanillaDate;
                 gThis.setTimeout = vanillaSetTimeout;
                 gThis.setInterval = vanillaSetInteral;
+                if (window) {
+                    window.requestAnimationFrame = vanillaRequestAnimationFrame;
+                }
             }
         }
         else {
@@ -21587,6 +21543,13 @@ define("flounder.style.js/index", ["require", "exports", "flounder.style.js/conf
                 "background-position": backgroundPosition,
             });
         };
+        var makeAxis = function (data, value) {
+            return "calc(".concat(numberToString(data, value), "px + 50%)");
+        };
+        var makeOffsetAxis = function (data, unit, offset, value) {
+            return makeAxis(data, value + (offset * unit));
+        };
+        var makeOffsetPosition = function (data, xUnit, yUnit, x, y) { var _a, _b; return "".concat(makeOffsetAxis(data, xUnit, (_a = data.offsetX) !== null && _a !== void 0 ? _a : 0.0, x), " ").concat(makeOffsetAxis(data, yUnit, (_b = data.offsetY) !== null && _b !== void 0 ? _b : 0.0, y)); };
         flounderStyle.makeStyle = function (data) {
             switch (flounderStyle.getPatternType(data)) {
                 case "trispot":
@@ -21608,15 +21571,19 @@ define("flounder.style.js/index", ["require", "exports", "flounder.style.js/conf
             return "radial-gradient(circle at center, ".concat(data.foregroundColor, " ").concat(numberToString(data, radius - blur), "px, transparent ").concat(numberToString(data, radius + blur), "px)");
         };
         var makeLinearGradientString = function (data, radius, intervalSize, angle, blur) {
+            var _a, _b;
             if (blur === void 0) { blur = Math.min(intervalSize - radius, radius, flounderStyle.getBlur(data)) / 0.5; }
-            var deg = numberToString(data, 360.0 * (angle % 1.0));
-            var patternStart = numberToString(data, 0);
-            var a = numberToString(data, Math.max(0, radius - blur));
-            var b = numberToString(data, Math.min(intervalSize * 0.5, radius + blur));
-            var c = numberToString(data, Math.max(intervalSize * 0.5, intervalSize - radius - blur));
-            var d = numberToString(data, Math.min(intervalSize, intervalSize - radius + blur));
-            var patternEnd = numberToString(data, intervalSize);
-            return "repeating-linear-gradient(".concat(deg, "deg, ").concat(data.foregroundColor, " calc(").concat(patternStart, "px + 50%), ").concat(data.foregroundColor, " calc(").concat(a, "px + 50%), transparent calc(").concat(b, "px + 50%), transparent calc(").concat(c, "px + 50%), ").concat(data.foregroundColor, " calc(").concat(d, "px + 50%), ").concat(data.foregroundColor, " calc(").concat(patternEnd, "px + 50%))");
+            var regulatedAngle = angle % 1.0;
+            var deg = numberToString(data, 360.0 * regulatedAngle);
+            var offset = (Math.sin(Math.PI * 2.0 * regulatedAngle) * ((_a = data.offsetX) !== null && _a !== void 0 ? _a : 0.0) * intervalSize * 2.0 / root3)
+                - (Math.cos(Math.PI * 2.0 * regulatedAngle) * ((_b = data.offsetY) !== null && _b !== void 0 ? _b : 0.0) * intervalSize * 2.0);
+            var patternStart = 0 + offset;
+            var a = Math.max(0, radius - blur) + offset;
+            var b = Math.min(intervalSize * 0.5, radius + blur) + offset;
+            var c = Math.max(intervalSize * 0.5, intervalSize - radius - blur) + offset;
+            var d = Math.min(intervalSize, intervalSize - radius + blur) + offset;
+            var patternEnd = intervalSize + offset;
+            return "repeating-linear-gradient(".concat(deg, "deg, ").concat(data.foregroundColor, " ").concat(makeAxis(data, patternStart), ", ").concat(data.foregroundColor, " ").concat(makeAxis(data, a), ", transparent ").concat(makeAxis(data, b), ", transparent ").concat(makeAxis(data, c), ", ").concat(data.foregroundColor, " ").concat(makeAxis(data, d), ", ").concat(data.foregroundColor, " ").concat(makeAxis(data, patternEnd), ")");
         };
         var root2 = Math.sqrt(2.0);
         var root3 = Math.sqrt(3.0);
@@ -21727,19 +21694,27 @@ define("flounder.style.js/index", ["require", "exports", "flounder.style.js/conf
             var backgroundImage = Array.from({ length: 4 }).map(function (_) { return radialGradient; }).join(", ");
             switch (flounderStyle.getLayoutAngle(data)) {
                 case "regular": // horizontal
-                    return makeResult({
-                        backgroundColor: backgroundColor,
-                        backgroundImage: backgroundImage,
-                        backgroundSize: "".concat(numberToString(data, intervalSize * 2.0), "px ").concat(numberToString(data, intervalSize * root3), "px"),
-                        backgroundPosition: "calc(0px + 50%) calc(0px + 50%), calc(".concat(numberToString(data, intervalSize), "px + 50%) calc(0px + 50%), calc(").concat(numberToString(data, intervalSize * 0.5), "px + 50%) calc(").concat(numberToString(data, intervalSize * root3 * 0.5), "px + 50%), calc(").concat(numberToString(data, intervalSize * 1.5), "px + 50%) calc(").concat(numberToString(data, intervalSize * root3 * 0.5), "px + 50%)")
-                    });
+                    {
+                        var xUnit = intervalSize * 2.0;
+                        var yUnit = intervalSize * root3;
+                        return makeResult({
+                            backgroundColor: backgroundColor,
+                            backgroundImage: backgroundImage,
+                            backgroundSize: "".concat(numberToString(data, xUnit), "px ").concat(numberToString(data, yUnit), "px"),
+                            backgroundPosition: "".concat(makeOffsetPosition(data, xUnit, yUnit, 0, 0), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize, 0), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize * 0.5, intervalSize * root3 * 0.5), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize * 1.5, intervalSize * root3 * 0.5)),
+                        });
+                    }
                 case "alternative": // vertical
-                    return makeResult({
-                        backgroundColor: backgroundColor,
-                        backgroundImage: backgroundImage,
-                        backgroundSize: " ".concat(numberToString(data, intervalSize * root3), "px ").concat(numberToString(data, intervalSize * 2.0), "px"),
-                        backgroundPosition: "calc(0px + 50%) calc(0px + 50%), calc(0px + 50%) calc(".concat(numberToString(data, intervalSize), "px + 50%), calc(").concat(numberToString(data, intervalSize * root3 * 0.5), "px + 50%) calc(").concat(numberToString(data, intervalSize * 0.5), "px + 50%), calc(").concat(numberToString(data, intervalSize * root3 * 0.5), "px + 50%) calc(").concat(numberToString(data, intervalSize * 1.5), "px + 50%)")
-                    });
+                    {
+                        var xUnit = intervalSize * root3;
+                        var yUnit = intervalSize * 2.0;
+                        return makeResult({
+                            backgroundColor: backgroundColor,
+                            backgroundImage: backgroundImage,
+                            backgroundSize: "".concat(numberToString(data, xUnit), "px ").concat(numberToString(data, yUnit), "px"),
+                            backgroundPosition: "".concat(makeOffsetPosition(data, xUnit, yUnit, 0, 0), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, 0, intervalSize), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize * root3 * 0.5, intervalSize * 0.5), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize * root3 * 0.5, intervalSize * 1.5)),
+                        });
+                    }
                 default:
                     throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
             }
@@ -21750,19 +21725,27 @@ define("flounder.style.js/index", ["require", "exports", "flounder.style.js/conf
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             switch (flounderStyle.getLayoutAngle(data)) {
                 case "regular": // straight
-                    return makeResult({
-                        backgroundColor: backgroundColor,
-                        backgroundImage: radialGradient,
-                        backgroundSize: "".concat(numberToString(data, intervalSize), "px ").concat(numberToString(data, intervalSize), "px"),
-                        backgroundPosition: "calc(0px + 50%) calc(0px + 50%)"
-                    });
+                    {
+                        var xUnit = intervalSize;
+                        var yUnit = intervalSize;
+                        return makeResult({
+                            backgroundColor: backgroundColor,
+                            backgroundImage: radialGradient,
+                            backgroundSize: "".concat(numberToString(data, xUnit), "px ").concat(numberToString(data, yUnit), "px"),
+                            backgroundPosition: makeOffsetPosition(data, xUnit, yUnit, 0, 0),
+                        });
+                    }
                 case "alternative": // slant
-                    return makeResult({
-                        backgroundColor: backgroundColor,
-                        backgroundImage: Array.from({ length: 2 }).map(function (_) { return radialGradient; }).join(", "),
-                        backgroundSize: "".concat(numberToString(data, (intervalSize * 2.0) / root2), "px ").concat(numberToString(data, (intervalSize * 2.0) / root2), "px"),
-                        backgroundPosition: "calc(0px + 50%) calc(0px + 50%), calc(".concat(numberToString(data, intervalSize / root2), "px + 50%) calc(").concat(numberToString(data, intervalSize / root2), "px + 50%)")
-                    });
+                    {
+                        var xUnit = (intervalSize * 2.0) / root2;
+                        var yUnit = (intervalSize * 2.0) / root2;
+                        return makeResult({
+                            backgroundColor: backgroundColor,
+                            backgroundImage: Array.from({ length: 2 }).map(function (_) { return radialGradient; }).join(", "),
+                            backgroundSize: "".concat(numberToString(data, xUnit), "px ").concat(numberToString(data, yUnit), "px"),
+                            backgroundPosition: "".concat(makeOffsetPosition(data, xUnit, yUnit, 0, 0), ", ").concat(makeOffsetPosition(data, xUnit, yUnit, intervalSize / root2, intervalSize / root2)),
+                        });
+                    }
                 default:
                     throw new Error("Unknown LayoutAngle: ".concat(data.layoutAngle));
             }
@@ -25086,64 +25069,60 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
             Render.getBackgroundColor = function () {
                 return "light" === Render.getCurrentTheme() ? style_json_1.default.__WHITE_COLOR__ : style_json_1.default.__BLACK_COLOR__;
             };
-            /*
-            interface Color
-            {
-                R: number;
-                G: number;
-                B: number;
-                A?: number;
-            }
-            export const cssColorStringToColor = (cssColor: string): Color =>
-            {
-                let core = cssColor.replace("#", "");
-                let R:number = 0;
-                let G:number = 0;
-                let B:number = 0;
-                let A: undefined | number;
-                if (6 == core.length || 8 == core.length)
-                {
-                    const max = 255.0;
-                    R = parseInt(core.substring(0, 2), 16) /max;
-                    G = parseInt(core.substring(2, 4), 16) /max;
-                    B = parseInt(core.substring(4, 6), 16) /max;
-                    if (8 == core.length)
-                    {
-                        A = parseInt(core.substring(6, 8), 16) /max;
+            Render.cssColorStringToColor = function (cssColor) {
+                var core = cssColor.replace("#", "");
+                var R = 0;
+                var G = 0;
+                var B = 0;
+                var A;
+                if (6 == core.length || 8 == core.length) {
+                    var max = 255.0;
+                    R = parseInt(core.substring(0, 2), 16) / max;
+                    G = parseInt(core.substring(2, 4), 16) / max;
+                    B = parseInt(core.substring(4, 6), 16) / max;
+                    if (8 == core.length) {
+                        A = parseInt(core.substring(6, 8), 16) / max;
                     }
                 }
-                else
-                if (3 == core.length || 4 == core.length)
-                {
-                    const max = 15.0;
-                    R = parseInt(core.substring(0, 1), 16) /max;
-                    G = parseInt(core.substring(1, 2), 16) /max;
-                    B = parseInt(core.substring(2, 3), 16) /max;
-                    if (4 == core.length)
-                    {
-                        A = parseInt(core.substring(3, 4), 16) /max;
+                else if (3 == core.length || 4 == core.length) {
+                    var max = 15.0;
+                    R = parseInt(core.substring(0, 1), 16) / max;
+                    G = parseInt(core.substring(1, 2), 16) / max;
+                    B = parseInt(core.substring(2, 3), 16) / max;
+                    if (4 == core.length) {
+                        A = parseInt(core.substring(3, 4), 16) / max;
                     }
                 }
-                return undefined === A ? { R, G, B }: { R, G, B, A };
+                return undefined === A ? { R: R, G: G, B: B } : { R: R, G: G, B: B, A: A };
             };
-            export const rateToHex = (value: number, digit: number = 2, max: number = Math.pow(16, digit) -1) =>
-                Math.round(value *max).toString(16).padStart(digit, '0');
-            export const colorToCssColorString = (color: Color) => undefined === color.A ?
-                `#${rateToHex(color.R)}${rateToHex(color.G)}${rateToHex(color.B)}`:
-                `#${rateToHex(color.R)}${rateToHex(color.G)}${rateToHex(color.B)}${rateToHex(color.A)}`;
-            export const linearNeutralColor = (X: Color, Y: Color, rate: number = 0.5, antiRate: number = 1.0 -rate) => undefined === X.A && undefined === Y.A ?
-                { R: (X.R *rate) +(Y.R *antiRate), G: (X.G *rate) +(Y.G *antiRate), B: (X.B *rate) +(Y.B *antiRate), }:
-                { R: (X.R *rate) +(Y.R *antiRate), G: (X.G *rate) +(Y.G *antiRate), B: (X.B *rate) +(Y.B *antiRate), A: ((X.A ?? 1.0) *rate) +((Y.A ?? 1.0) *antiRate), };
-            export const linearNeutralColorString = (X: string, Y: string, rate: number = 0.5): string =>
-                colorToCssColorString(linearNeutralColor(cssColorStringToColor(X), cssColorStringToColor(Y), rate));
-            */
+            Render.rateToHex = function (value, digit, max) {
+                if (digit === void 0) { digit = 2; }
+                if (max === void 0) { max = Math.pow(16, digit) - 1; }
+                return Math.round(value * max).toString(16).padStart(digit, '0');
+            };
+            Render.colorToCssColorString = function (color) { return undefined === color.A ?
+                "#".concat(Render.rateToHex(color.R)).concat(Render.rateToHex(color.G)).concat(Render.rateToHex(color.B)) :
+                "#".concat(Render.rateToHex(color.R)).concat(Render.rateToHex(color.G)).concat(Render.rateToHex(color.B)).concat(Render.rateToHex(color.A)); };
+            Render.linearNeutralColor = function (X, Y, rate, antiRate) {
+                var _a, _b;
+                if (rate === void 0) { rate = 0.5; }
+                if (antiRate === void 0) { antiRate = 1.0 - rate; }
+                return undefined === X.A && undefined === Y.A ?
+                    { R: (X.R * rate) + (Y.R * antiRate), G: (X.G * rate) + (Y.G * antiRate), B: (X.B * rate) + (Y.B * antiRate), } :
+                    { R: (X.R * rate) + (Y.R * antiRate), G: (X.G * rate) + (Y.G * antiRate), B: (X.B * rate) + (Y.B * antiRate), A: (((_a = X.A) !== null && _a !== void 0 ? _a : 1.0) * rate) + (((_b = Y.A) !== null && _b !== void 0 ? _b : 1.0) * antiRate), };
+            };
+            Render.linearNeutralColorString = function (X, Y, rate) {
+                if (rate === void 0) { rate = 0.5; }
+                return Render.colorToCssColorString(Render.linearNeutralColor(Render.cssColorStringToColor(X), Render.cssColorStringToColor(Y), rate));
+            };
             Render.modRate = function (value, unit) { return (value % unit) / unit; };
             Render.progressBackgroundStyle = function (progress, status, tick) {
                 if (null === progress) {
                     return flounder_style_js_1.flounderStyle.styleToString(flounder_style_js_1.flounderStyle.makeStyle({
-                        type: "triline",
+                        type: "diline",
                         // layoutAngle: "alternative",
-                        layoutAngle: Render.modRate(tick, 3 * 60 * 1000),
+                        layoutAngle: -Render.modRate(tick, 5 * 60 * 1000),
+                        // offsetY: modRate(tick, 3 *1000),
                         foregroundColor: Render.progressStatusColor(status),
                         backgroundColor: Render.getBackgroundColor(),
                         // backgroundColor: linearNeutralColorString(progressStatusColor(status), getBackgroundColor(), 0.3),
@@ -25154,36 +25133,43 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     }));
                 }
                 switch (status) {
-                    // case "flash":
-                    //     return flounderStyle.styleListToString
-                    //     (
-                    //         flounderStyle.makePatternStyleList
-                    //         ({
-                    //             type: "trispot",
-                    //             layoutAngle: "regular",
-                    //             foregroundColor: progressStatusColor(status),
-                    //             backgroundColor: getBackgroundColor(),
-                    //             depth: 0.9,
-                    //             blur: 0.0,
-                    //             // reverseRate: "auto",
-                    //             //anglePerDepth: "auto",
-                    //         })
-                    //     );
-                    // case "restriction":
-                    //     return flounderStyle.styleListToString
-                    //     (
-                    //         flounderStyle.makePatternStyleList
-                    //         ({
-                    //             type: "stripe",
-                    //             layoutAngle: 0.35,
-                    //             foregroundColor: progressStatusColor(status),
-                    //             backgroundColor: getBackgroundColor(),
-                    //             depth: 0.9,
-                    //             blur: 0.0,
-                    //             // reverseRate: "auto",
-                    //             //anglePerDepth: "auto",
-                    //         })
-                    //     );
+                    case "flash":
+                        return flounder_style_js_1.flounderStyle.styleToString(flounder_style_js_1.flounderStyle.makeStyle({
+                            type: "diline",
+                            // layoutAngle: "alternative",
+                            layoutAngle: Render.modRate(tick, 5 * 1000),
+                            // offsetX: modRate(tick, 5 *1000) *2.0,
+                            foregroundColor: Render.progressStatusColor(status),
+                            backgroundColor: Render.linearNeutralColorString(Render.progressStatusColor(status), Render.getBackgroundColor(), 0.5),
+                            depth: 0.80 + (Render.modRate(tick, 5 * 1000) * 0.20),
+                            blur: 0.0,
+                            intervalSize: (Render.modRate(tick, 5 * 1000) * 80) + 6.0,
+                            reverseRate: "auto",
+                            //anglePerDepth: "auto",
+                        }));
+                    case "pickup":
+                        return flounder_style_js_1.flounderStyle.styleToString(flounder_style_js_1.flounderStyle.makeStyle({
+                            type: "triline",
+                            layoutAngle: Render.modRate(tick, 30 * 1000),
+                            foregroundColor: Render.progressStatusColor(status),
+                            backgroundColor: Render.linearNeutralColorString(Render.progressStatusColor(status), Render.getBackgroundColor(), 0.5),
+                            depth: 0.80 + (Render.modRate(tick, 30 * 1000) * 0.20),
+                            blur: 0.0,
+                            intervalSize: Math.pow(Render.modRate(tick, 30 * 1000) * 10, 3.0) + 6.0,
+                            reverseRate: "auto",
+                            //anglePerDepth: "auto",
+                        }));
+                    case "restriction":
+                        return flounder_style_js_1.flounderStyle.styleToString(flounder_style_js_1.flounderStyle.makeStyle({
+                            type: "stripe",
+                            layoutAngle: Render.modRate(tick, 60 * 1000),
+                            foregroundColor: Render.progressStatusColor(status),
+                            backgroundColor: Render.linearNeutralColorString(Render.progressStatusColor(status), Render.getBackgroundColor(), 0.5),
+                            depth: 0.9,
+                            blur: 0.0,
+                            // reverseRate: "auto",
+                            //anglePerDepth: "auto",
+                        }));
                 }
                 return "";
             };
@@ -25195,7 +25181,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                 return Render.progressWidthStyle(1 - (progress !== null && progress !== void 0 ? progress : 1));
             };
             Render.progressValidityClass = function (progress) {
-                return null === progress ? "progress-disabled" : "";
+                return null === progress ? "progress-disabled" : "progress-enabled";
             };
             Render.getItemProgressStatus = function (pass, item) {
                 return OldStorage.TagMember.isRestrictionTask(pass, item.task) ? "restriction" :
@@ -33806,7 +33792,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
             }
         };
         CyclicToDo.makeStyleEntry = function (classList, style) {
-            return classList.split(" ").map(function (i) { return ".".concat(i); }).join("") + "{" + style + "}\r\n";
+            return classList.split(" ").filter(function (i) { return "" !== i; }).map(function (i) { return ".".concat(i); }).join("") + " {" + style + "}\r\n";
         };
         CyclicToDo.makeAnimationStyle = function (tick) {
             return ["default", "flash", "pickup", "restriction"].map(function (status) { return [0, null,].map(function (progress) { return CyclicToDo.makeStyleEntry(Render.progressClass(progress, status), Render.progressBackgroundStyle(progress, status, tick)); })
@@ -34074,7 +34060,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </script>
 <style type="text/css" id="style"></style>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Jan 29 2024 00:35:27 GMT+0900 (日本標準時)', buildTimestampTick: 1706456127689, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Jan 30 2024 10:57:06 GMT+0900 (日本標準時)', buildTimestampTick: 1706579826865, })" class="auto">
 <div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -34298,7 +34284,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Mon Jan 29 2024 00:35:27 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Tue Jan 30 2024 10:57:06 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

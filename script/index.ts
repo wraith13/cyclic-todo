@@ -2775,7 +2775,6 @@ export module CyclicToDo
         }
         export const getBackgroundColor = () =>
             "light" === getCurrentTheme() ? style.__WHITE_COLOR__: style.__BLACK_COLOR__;
-        /*
         interface Color
         {
             R: number;
@@ -2825,7 +2824,6 @@ export module CyclicToDo
             { R: (X.R *rate) +(Y.R *antiRate), G: (X.G *rate) +(Y.G *antiRate), B: (X.B *rate) +(Y.B *antiRate), A: ((X.A ?? 1.0) *rate) +((Y.A ?? 1.0) *antiRate), };
         export const linearNeutralColorString = (X: string, Y: string, rate: number = 0.5): string =>
             colorToCssColorString(linearNeutralColor(cssColorStringToColor(X), cssColorStringToColor(Y), rate));
-        */
         export const modRate = (value: number, unit: number) => (value %unit) /unit;
         export const progressBackgroundStyle = (progress: number | null, status: ProgressStatusType, tick: number) =>
         {
@@ -2835,9 +2833,10 @@ export module CyclicToDo
                 (
                     flounderStyle.makeStyle
                     ({
-                        type: "triline",
+                        type: "diline",
                         // layoutAngle: "alternative",
-                        layoutAngle: modRate(tick, 3 *60 *1000),
+                        layoutAngle: -modRate(tick, 5 *60 *1000),
+                        // offsetY: modRate(tick, 3 *1000),
                         foregroundColor: progressStatusColor(status),
                         backgroundColor: getBackgroundColor(),
                         // backgroundColor: linearNeutralColorString(progressStatusColor(status), getBackgroundColor(), 0.3),
@@ -2850,36 +2849,55 @@ export module CyclicToDo
             }
             switch(status)
             {
-            // case "flash":
-            //     return flounderStyle.styleListToString
-            //     (
-            //         flounderStyle.makePatternStyleList
-            //         ({
-            //             type: "trispot",
-            //             layoutAngle: "regular",
-            //             foregroundColor: progressStatusColor(status),
-            //             backgroundColor: getBackgroundColor(),
-            //             depth: 0.9,
-            //             blur: 0.0,
-            //             // reverseRate: "auto",
-            //             //anglePerDepth: "auto",
-            //         })
-            //     );
-            // case "restriction":
-            //     return flounderStyle.styleListToString
-            //     (
-            //         flounderStyle.makePatternStyleList
-            //         ({
-            //             type: "stripe",
-            //             layoutAngle: 0.35,
-            //             foregroundColor: progressStatusColor(status),
-            //             backgroundColor: getBackgroundColor(),
-            //             depth: 0.9,
-            //             blur: 0.0,
-            //             // reverseRate: "auto",
-            //             //anglePerDepth: "auto",
-            //         })
-            //     );
+            case "flash":
+                return flounderStyle.styleToString
+                (
+                    flounderStyle.makeStyle
+                    ({
+                        type: "diline",
+                        // layoutAngle: "alternative",
+                        layoutAngle: modRate(tick, 5 *1000),
+                        // offsetX: modRate(tick, 5 *1000) *2.0,
+                        foregroundColor: progressStatusColor(status),
+                        backgroundColor: linearNeutralColorString(progressStatusColor(status), getBackgroundColor(), 0.5),
+                        depth: 0.80 +(modRate(tick, 5 *1000) *0.20),
+                        blur: 0.0,
+                        intervalSize: (modRate(tick, 5 *1000) *80) +6.0,
+                        reverseRate: "auto",
+                        //anglePerDepth: "auto",
+                    })
+                );
+            case "pickup":
+                return flounderStyle.styleToString
+                (
+                    flounderStyle.makeStyle
+                    ({
+                        type: "triline",
+                        layoutAngle: modRate(tick, 30 *1000),
+                        foregroundColor: progressStatusColor(status),
+                        backgroundColor: linearNeutralColorString(progressStatusColor(status), getBackgroundColor(), 0.5),
+                        depth: 0.80 +(modRate(tick, 30 *1000) *0.20),
+                        blur: 0.0,
+                        intervalSize: Math.pow(modRate(tick, 30 *1000) *10, 3.0) +6.0,
+                        reverseRate: "auto",
+                        //anglePerDepth: "auto",
+                    })
+                );
+            case "restriction":
+                return flounderStyle.styleToString
+                (
+                    flounderStyle.makeStyle
+                    ({
+                        type: "stripe",
+                        layoutAngle: modRate(tick, 60 *1000),
+                        foregroundColor: progressStatusColor(status),
+                        backgroundColor: linearNeutralColorString(progressStatusColor(status), getBackgroundColor(), 0.5),
+                        depth: 0.9,
+                        blur: 0.0,
+                        // reverseRate: "auto",
+                        //anglePerDepth: "auto",
+                    })
+                );
             }
             return "";
         };
@@ -2889,7 +2907,7 @@ export module CyclicToDo
         export const progressPadStyle = (progress: number | null) =>
             progressWidthStyle(1 -(progress ?? 1));
         export const progressValidityClass = (progress: number | null) =>
-            null === progress ? "progress-disabled": "";
+            null === progress ? "progress-disabled": "progress-enabled";
         export type ProgressStatusType = "default" | "flash" | "pickup" | "restriction";
         export const getItemProgressStatus = (pass: string, item: ToDoEntry): ProgressStatusType =>
             OldStorage.TagMember.isRestrictionTask(pass, item.task) ? "restriction":
@@ -9949,7 +9967,7 @@ export module CyclicToDo
         }
     }
     export const makeStyleEntry = (classList: string, style: string): string =>
-        classList.split(" ").map(i => `.${i}`).join("") +"{" +style +"}\r\n";
+        classList.split(" ").filter(i => "" !== i).map(i => `.${i}`).join("") +" {" +style +"}\r\n";
     export const makeAnimationStyle = (tick: number): string =>
         [ "default", "flash", "pickup", "restriction"].map
         (
