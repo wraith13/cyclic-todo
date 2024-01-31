@@ -2477,10 +2477,16 @@ export module CyclicToDo
                     ),
                 });
             };
+            export let flashBodyAt: undefined | number;
+            export const flashBody = () =>
+            {
+                // document.body.classList.add("flash");
+                // setTimeout(() => document.body.classList.remove("flash"), 1500);
+                flashBodyAt = -1;
+            };
             export const done = async (pass: string, item: ToDoEntry, tick: number, onCanceled: () => unknown) =>
             {
-                document.body.classList.add("flash");
-                setTimeout(() => document.body.classList.remove("flash"), 1500);
+                flashBody();
                 MigrateBridge.done(pass, item.task, tick);
                 Domain.updateProgress(pass, item);
                 if (window.navigator.vibrate)
@@ -2867,6 +2873,22 @@ export module CyclicToDo
                         //anglePerDepth: "auto",
                     })
                 );
+                // return flounderStyle.styleToString
+                // (
+                //     flounderStyle.makeStyle
+                //     ({
+                //         type: "triline",
+                //         layoutAngle: 0.1,
+                //         offsetX: modRate(tick, 5 *1000),
+                //         foregroundColor: progressStatusColor(status),
+                //         backgroundColor: linearNeutralColorString(progressStatusColor(status), getBackgroundColor(), 0.5),
+                //         depth: 0.9,
+                //         blur: 0.0,
+                //         intervalSize: 60,
+                //         reverseRate: "auto",
+                //         //anglePerDepth: "auto",
+                //     })
+                // );
             case "pickup":
                 return flounderStyle.styleToString
                 (
@@ -9966,9 +9988,67 @@ export module CyclicToDo
             Render.updateScreen?.("dirty");
         }
     }
+    let FlashBodyColor = style.__ACCENT_COLOR__;
+    export const makeFlashBodyStyle = (tick: number) =>
+    {
+        if (undefined !== Render.Operate.flashBodyAt)
+        {
+            if (Render.Operate.flashBodyAt < 0)
+            {
+                Render.Operate.flashBodyAt = tick;
+                FlashBodyColor = Render.linearNeutralColorString(style.__ACCENT_COLOR__, Render.getBackgroundColor(), 0.4);
+            }
+            const elapsed = ((tick -Render.Operate.flashBodyAt) *100) /1500;
+            const step = Render.modRate(elapsed, 50);
+            if (elapsed < 50)
+            {
+                return flounderStyle.styleToString
+                (
+                    flounderStyle.makeStyle
+                    ({
+                        type: "triline",
+                        // layoutAngle: step,
+                        foregroundColor: FlashBodyColor,
+                        backgroundColor: Render.getBackgroundColor(),
+                        depth: step,
+                        blur: 6.0,
+                        intervalSize: document.body.clientHeight +document.body.clientWidth,
+                        // reverseRate: "auto",
+                        anglePerDepth: "auto",
+                    })
+                );
+            }
+            else
+            if (elapsed < 100)
+            {
+                return flounderStyle.styleToString
+                (
+                    flounderStyle.makeStyle
+                    ({
+                        type: "triline",
+                        // layoutAngle: step,
+                        foregroundColor: Render.getBackgroundColor(),
+                        backgroundColor: FlashBodyColor,
+                        depth: step,
+                        blur: 6.0,
+                        intervalSize: document.body.clientHeight +document.body.clientWidth,
+                        // reverseRate: "auto",
+                        anglePerDepth: "auto",
+                    })
+                );
+            }
+            else
+            {
+                Render.Operate.flashBodyAt = undefined;
+            }
+        }
+        return "";
+    }
+    export const makeFlashBodyStyleEntry = (tick: number) => `body #foundation #flash-layer {${makeFlashBodyStyle(tick)}}\r\n`;
     export const makeStyleEntry = (classList: string, style: string): string =>
         classList.split(" ").filter(i => "" !== i).map(i => `.${i}`).join("") +" {" +style +"}\r\n";
     export const makeAnimationStyle = (tick: number): string =>
+        makeFlashBodyStyleEntry(tick) +
         [ "default", "flash", "pickup", "restriction"].map
         (
             (status: Render.ProgressStatusType) => [ 0, null, ].map

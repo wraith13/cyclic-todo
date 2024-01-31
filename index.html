@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Tue Jan 30 2024 10:57:06 GMT+0900 (日本標準時)
+    build at: Thu Feb 01 2024 01:38:52 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -944,6 +944,13 @@ h2 {
 .light-theme-trait #foundation {
   transition: background-color 1s;
   background-color: #FFFFFF;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+}
+.light-theme-trait #foundation > #flash-layer {
   position: absolute;
   top: 0px;
   bottom: 0px;
@@ -4096,6 +4103,13 @@ body.light #foundation {
   right: 0px;
   left: 0px;
 }
+body.light #foundation > #flash-layer {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+}
 body.light #foundation > .application-icon {
   animation-name: fade-in;
   animation-delay: 0s;
@@ -7209,6 +7223,13 @@ body.light .keyboard-shortcuts li .key:first-child {
   body.auto #foundation {
     transition: background-color 1s;
     background-color: #FFFFFF;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+  }
+  body.auto #foundation > #flash-layer {
     position: absolute;
     top: 0px;
     bottom: 0px;
@@ -10649,6 +10670,13 @@ body.light .keyboard-shortcuts li .key:first-child {
   right: 0px;
   left: 0px;
 }
+.dark-theme-trait #foundation > #flash-layer {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+}
 .dark-theme-trait #foundation > .application-icon {
   animation-name: fade-in;
   animation-delay: 0s;
@@ -13798,6 +13826,13 @@ body.dark #foundation {
   right: 0px;
   left: 0px;
 }
+body.dark #foundation > #flash-layer {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+}
 body.dark #foundation > .application-icon {
   animation-name: fade-in;
   animation-delay: 0s;
@@ -16914,6 +16949,13 @@ body.dark .keyboard-shortcuts li .key:first-child {
   body.auto #foundation {
     transition: background-color 1s;
     background-color: #000022;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+  }
+  body.auto #foundation > #flash-layer {
     position: absolute;
     top: 0px;
     bottom: 0px;
@@ -21435,6 +21477,8 @@ define("flounder.style.js/index", ["require", "exports", "flounder.style.js/conf
     config_json_1 = __importDefault(config_json_1);
     var flounderStyle;
     (function (flounderStyle) {
+        flounderStyle.sin = function (rate) { return Math.sin(Math.PI * 2.0 * rate); };
+        flounderStyle.cos = function (rate) { return Math.cos(Math.PI * 2.0 * rate); };
         flounderStyle.styleToStylePropertyList = function (style) {
             return Object.keys(style).map(function (key) { return ({ key: key, value: style[key], }); });
         };
@@ -21533,7 +21577,7 @@ define("flounder.style.js/index", ["require", "exports", "flounder.style.js/conf
                 "-auto" === data.reverseRate ? "auto" :
                     data.reverseRate;
         };
-        var numberToString = function (data, value) { var _a; return value.toLocaleString("en-US", { maximumFractionDigits: (_a = data.maximumFractionDigits) !== null && _a !== void 0 ? _a : config_json_1.default.defaultMaximumFractionDigits, }); };
+        var numberToString = function (data, value) { var _a; return value.toLocaleString("en-US", { useGrouping: false, maximumFractionDigits: (_a = data.maximumFractionDigits) !== null && _a !== void 0 ? _a : config_json_1.default.defaultMaximumFractionDigits, }); };
         var makeResult = function (_a) {
             var _b = _a.backgroundColor, backgroundColor = _b === void 0 ? undefined : _b, _c = _a.backgroundImage, backgroundImage = _c === void 0 ? undefined : _c, _d = _a.backgroundSize, backgroundSize = _d === void 0 ? undefined : _d, _e = _a.backgroundPosition, backgroundPosition = _e === void 0 ? undefined : _e;
             return ({
@@ -21570,13 +21614,18 @@ define("flounder.style.js/index", ["require", "exports", "flounder.style.js/conf
             if (blur === void 0) { blur = Math.min(radius, flounderStyle.getBlur(data)) / 0.5; }
             return "radial-gradient(circle at center, ".concat(data.foregroundColor, " ").concat(numberToString(data, radius - blur), "px, transparent ").concat(numberToString(data, radius + blur), "px)");
         };
-        var makeLinearGradientString = function (data, radius, intervalSize, angle, blur) {
+        var makeLinearGradientString = function (data, radius, intervalSize, intervalSizeX, intervalSizeY, angle, blur) {
             var _a, _b;
             if (blur === void 0) { blur = Math.min(intervalSize - radius, radius, flounderStyle.getBlur(data)) / 0.5; }
-            var regulatedAngle = angle % 1.0;
-            var deg = numberToString(data, 360.0 * regulatedAngle);
-            var offset = (Math.sin(Math.PI * 2.0 * regulatedAngle) * ((_a = data.offsetX) !== null && _a !== void 0 ? _a : 0.0) * intervalSize * 2.0 / root3)
-                - (Math.cos(Math.PI * 2.0 * regulatedAngle) * ((_b = data.offsetY) !== null && _b !== void 0 ? _b : 0.0) * intervalSize * 2.0);
+            var deg = numberToString(data, 360.0 * angle);
+            var offset = (flounderStyle.sin(angle) * ((_a = data.offsetX) !== null && _a !== void 0 ? _a : 0.0) * intervalSizeX)
+                - (flounderStyle.cos(angle) * ((_b = data.offsetY) !== null && _b !== void 0 ? _b : 0.0) * intervalSizeY);
+            // const offset =
+            //     (sin(angle) *(data.offsetX ?? 0.0) *intervalSize *2.0 /root3)
+            //     -(cos(angle) *(data.offsetY ?? 0.0) *intervalSize *2.0);
+            // const offset =
+            //     (sin(angle) *(data.offsetX ?? 0.0) *intervalSize *2.0 /root2)
+            //     -(cos(angle) *(data.offsetY ?? 0.0) *intervalSize *2.0 /root2);
             var patternStart = 0 + offset;
             var a = Math.max(0, radius - blur) + offset;
             var b = Math.min(intervalSize * 0.5, radius + blur) + offset;
@@ -21754,21 +21803,27 @@ define("flounder.style.js/index", ["require", "exports", "flounder.style.js/conf
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             var angleOffset = flounderStyle.getAngleOffset(data);
             var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), data.depth * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+            var intervalSizeX = intervalSize * 2.0;
+            var intervalSizeY = intervalSize * 2.0;
             return makeResult({
                 backgroundColor: backgroundColor,
-                backgroundImage: makeLinearGradientString(data, radius, intervalSize, angleOffset)
+                backgroundImage: makeLinearGradientString(data, radius, intervalSize, intervalSizeX, intervalSizeY, angleOffset % 1.0)
             });
         }); };
         flounderStyle.makeDilineStyle = function (data) { return makeStyleCommon(data, function (data) {
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             var angleOffset = flounderStyle.getAngleOffset(data);
             var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 2.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+            var angles = [
+                ((0.0 / 4.0) + angleOffset) % 1.0,
+                ((1.0 / 4.0) + angleOffset) % 1.0
+            ];
+            var intervalSizeX = intervalSize * 2.0 * angles.map(function (i) { return flounderStyle.sin(i); }).map(function (i) { return Math.abs(i); }).reduce(function (a, b) { return a + b; }, 0);
+            var intervalSizeY = intervalSize * 2.0 * angles.map(function (i) { return flounderStyle.cos(i); }).map(function (i) { return Math.abs(i); }).reduce(function (a, b) { return a + b; }, 0);
             return makeResult({
                 backgroundColor: backgroundColor,
-                backgroundImage: [
-                    makeLinearGradientString(data, radius, intervalSize, (0.0 / 4.0) + angleOffset),
-                    makeLinearGradientString(data, radius, intervalSize, (1.0 / 4.0) + angleOffset),
-                ]
+                backgroundImage: angles
+                    .map(function (angle) { return makeLinearGradientString(data, radius, intervalSize, intervalSizeX, intervalSizeY, angle); })
                     .join(", ")
             });
         }); };
@@ -21776,13 +21831,17 @@ define("flounder.style.js/index", ["require", "exports", "flounder.style.js/conf
             var backgroundColor = flounderStyle.getBackgroundColor(data);
             var angleOffset = flounderStyle.getAngleOffset(data);
             var _a = calculateMaxPatternSize(data, flounderStyle.getIntervalSize(data), (1.0 - Math.sqrt(1.0 - data.depth)) * (flounderStyle.getIntervalSize(data) / 3.0)), intervalSize = _a.intervalSize, radius = _a.radius;
+            var angles = [
+                ((0.0 / 6.0) + angleOffset) % 1.0,
+                ((1.0 / 6.0) + angleOffset) % 1.0,
+                ((2.0 / 6.0) + angleOffset) % 1.0
+            ];
+            var intervalSizeX = intervalSize * 2.0 * angles.map(function (i) { return flounderStyle.sin(i); }).map(function (i) { return Math.abs(i); }).reduce(function (a, b) { return a + b; }, 0);
+            var intervalSizeY = intervalSize * 2.0 * angles.map(function (i) { return flounderStyle.cos(i); }).map(function (i) { return Math.abs(i); }).reduce(function (a, b) { return a + b; }, 0);
             return makeResult({
                 backgroundColor: backgroundColor,
-                backgroundImage: [
-                    makeLinearGradientString(data, radius, intervalSize, (0.0 / 6.0) + angleOffset),
-                    makeLinearGradientString(data, radius, intervalSize, (1.0 / 6.0) + angleOffset),
-                    makeLinearGradientString(data, radius, intervalSize, (2.0 / 6.0) + angleOffset),
-                ]
+                backgroundImage: angles
+                    .map(function (angle) { return makeLinearGradientString(data, radius, intervalSize, intervalSizeX, intervalSizeY, angle); })
                     .join(", ")
             });
         }); };
@@ -24781,12 +24840,16 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                         });
                     });
                 };
+                Operate.flashBody = function () {
+                    // document.body.classList.add("flash");
+                    // setTimeout(() => document.body.classList.remove("flash"), 1500);
+                    Operate.flashBodyAt = -1;
+                };
                 Operate.done = function (pass, item, tick, onCanceled) { return __awaiter(_this, void 0, void 0, function () {
                     var toast;
                     var _this = this;
                     return __generator(this, function (_a) {
-                        document.body.classList.add("flash");
-                        setTimeout(function () { return document.body.classList.remove("flash"); }, 1500);
+                        Operate.flashBody();
                         MigrateBridge.done(pass, item.task, tick);
                         Domain.updateProgress(pass, item);
                         if (window.navigator.vibrate) {
@@ -25147,6 +25210,22 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                             reverseRate: "auto",
                             //anglePerDepth: "auto",
                         }));
+                    // return flounderStyle.styleToString
+                    // (
+                    //     flounderStyle.makeStyle
+                    //     ({
+                    //         type: "triline",
+                    //         layoutAngle: 0.1,
+                    //         offsetX: modRate(tick, 5 *1000),
+                    //         foregroundColor: progressStatusColor(status),
+                    //         backgroundColor: linearNeutralColorString(progressStatusColor(status), getBackgroundColor(), 0.5),
+                    //         depth: 0.9,
+                    //         blur: 0.0,
+                    //         intervalSize: 60,
+                    //         reverseRate: "auto",
+                    //         //anglePerDepth: "auto",
+                    //     })
+                    // );
                     case "pickup":
                         return flounder_style_js_1.flounderStyle.styleToString(flounder_style_js_1.flounderStyle.makeStyle({
                             type: "triline",
@@ -33791,13 +33870,56 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                 (_a = Render.updateScreen) === null || _a === void 0 ? void 0 : _a.call(Render, "dirty");
             }
         };
+        var FlashBodyColor = style_json_1.default.__ACCENT_COLOR__;
+        CyclicToDo.makeFlashBodyStyle = function (tick) {
+            if (undefined !== Render.Operate.flashBodyAt) {
+                if (Render.Operate.flashBodyAt < 0) {
+                    Render.Operate.flashBodyAt = tick;
+                    FlashBodyColor = Render.linearNeutralColorString(style_json_1.default.__ACCENT_COLOR__, Render.getBackgroundColor(), 0.4);
+                }
+                var elapsed = ((tick - Render.Operate.flashBodyAt) * 100) / 1500;
+                var step = Render.modRate(elapsed, 50);
+                if (elapsed < 50) {
+                    return flounder_style_js_1.flounderStyle.styleToString(flounder_style_js_1.flounderStyle.makeStyle({
+                        type: "triline",
+                        // layoutAngle: step,
+                        foregroundColor: FlashBodyColor,
+                        backgroundColor: Render.getBackgroundColor(),
+                        depth: step,
+                        blur: 6.0,
+                        intervalSize: document.body.clientHeight + document.body.clientWidth,
+                        // reverseRate: "auto",
+                        anglePerDepth: "auto",
+                    }));
+                }
+                else if (elapsed < 100) {
+                    return flounder_style_js_1.flounderStyle.styleToString(flounder_style_js_1.flounderStyle.makeStyle({
+                        type: "triline",
+                        // layoutAngle: step,
+                        foregroundColor: Render.getBackgroundColor(),
+                        backgroundColor: FlashBodyColor,
+                        depth: step,
+                        blur: 6.0,
+                        intervalSize: document.body.clientHeight + document.body.clientWidth,
+                        // reverseRate: "auto",
+                        anglePerDepth: "auto",
+                    }));
+                }
+                else {
+                    Render.Operate.flashBodyAt = undefined;
+                }
+            }
+            return "";
+        };
+        CyclicToDo.makeFlashBodyStyleEntry = function (tick) { return "body #foundation #flash-layer {".concat(CyclicToDo.makeFlashBodyStyle(tick), "}\r\n"); };
         CyclicToDo.makeStyleEntry = function (classList, style) {
             return classList.split(" ").filter(function (i) { return "" !== i; }).map(function (i) { return ".".concat(i); }).join("") + " {" + style + "}\r\n";
         };
         CyclicToDo.makeAnimationStyle = function (tick) {
-            return ["default", "flash", "pickup", "restriction"].map(function (status) { return [0, null,].map(function (progress) { return CyclicToDo.makeStyleEntry(Render.progressClass(progress, status), Render.progressBackgroundStyle(progress, status, tick)); })
-                .join(""); })
-                .join("");
+            return CyclicToDo.makeFlashBodyStyleEntry(tick) +
+                ["default", "flash", "pickup", "restriction"].map(function (status) { return [0, null,].map(function (progress) { return CyclicToDo.makeStyleEntry(Render.progressClass(progress, status), Render.progressBackgroundStyle(progress, status, tick)); })
+                    .join(""); })
+                    .join("");
         };
         CyclicToDo.styleAnimation = function (tick) {
             var styleElement = document.getElementById("style");
@@ -34060,8 +34182,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </script>
 <style type="text/css" id="style"></style>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Jan 30 2024 10:57:06 GMT+0900 (日本標準時)', buildTimestampTick: 1706579826865, })" class="auto">
-<div id="foundation"></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Feb 01 2024 01:38:52 GMT+0900 (日本標準時)', buildTimestampTick: 1706719132583, })" class="auto">
+<div id="foundation"><div id="flash-layer"></div></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
@@ -34284,7 +34406,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Tue Jan 30 2024 10:57:06 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Thu Feb 01 2024 01:38:52 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
