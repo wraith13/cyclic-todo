@@ -3,6 +3,7 @@ import { flounderStyle } from "flounder.style.js";
 import config from "@resource/config.json";
 import pomeJson from "@resource/poem.json";
 import style from "@resource/style.json";
+// import { smartConsole } from "./smart-console";
 import { locale } from "./locale";
 import resource from "@resource/images.json";
 export const setLocale = (lang: locale.LocaleType | null) =>
@@ -2831,6 +2832,9 @@ export module CyclicToDo
         export const linearNeutralColorString = (X: string, Y: string, rate: number = 0.5): string =>
             colorToCssColorString(linearNeutralColor(cssColorStringToColor(X), cssColorStringToColor(Y), rate));
         export const modRate = (value: number, unit: number) => (value %unit) /unit;
+        // export let directionIndex = 0;
+        // export let type: flounderStyle.Arguments["type"];
+        // export let layoutAngle: flounderStyle.Arguments["layoutAngle"] = "regular";
         export const progressBackgroundStyle = (progress: number | null, status: ProgressStatusType, tick: number) =>
         {
             if (null === progress)
@@ -2856,39 +2860,55 @@ export module CyclicToDo
             switch(status)
             {
             case "flash":
+                // if
+                // (
+                //     ("trispot" === type || "tetraspot" === type || "stripe" === type || "diline" === type || "triline" === type) &&
+                //     ("regular" === layoutAngle || "alternative" === layoutAngle || "number" === typeof layoutAngle )
+                // )
+                // {
+                //     const step = modRate(tick, 3 *1000);
+                //     const data: flounderStyle.Arguments = <flounderStyle.Arguments>
+                //     {
+                //         // type: "trispot",
+                //         // layoutAngle: "alternative",
+                //         type,
+                //         layoutAngle,
+                //         foregroundColor: progressStatusColor(status),
+                //         backgroundColor: linearNeutralColorString(progressStatusColor(status), getBackgroundColor(), 0.5),
+                //         depth: 0.9,
+                //         intervalSize: 60,
+                //         reverseRate: "auto",
+                //         // anglePerDepth: "auto",
+                //     };
+                //     const offsetCoefficient = flounderStyle.calculateOffsetCoefficient(data);
+                //     smartConsole.logIfFirst("data", data);
+                //     smartConsole.logIfFirst("offsetCoefficient", offsetCoefficient);
+                //     smartConsole.logIfFirst("directions.atan2", offsetCoefficient.directions.map(i => flounderStyle.atan2(i)));
+                //     smartConsole.logIfFirst("directions.atan2.regulateRate", offsetCoefficient.directions.map(i => flounderStyle.regulateRate(flounderStyle.atan2(i))));
+                //     // const direction = flounderStyle.selectClosestAngleDirection(offsetCoefficient.directions, "up");
+                //     const direction = offsetCoefficient.directions[directionIndex];
+                //     if (undefined !== direction)
+                //     {
+                //         data.offsetX = offsetCoefficient.intervalSize * direction.x *step;
+                //         data.offsetY = offsetCoefficient.intervalSize * direction.y *step;
+                //         return flounderStyle.styleToString(flounderStyle.makeStyle(data));
+                //     }
+                // }
                 return flounderStyle.styleToString
                 (
                     flounderStyle.makeStyle
                     ({
                         type: "diline",
-                        // layoutAngle: "alternative",
-                        layoutAngle: modRate(tick, 5 *1000),
-                        // offsetX: modRate(tick, 5 *1000) *2.0,
+                        layoutAngle: "regular",
                         foregroundColor: progressStatusColor(status),
                         backgroundColor: linearNeutralColorString(progressStatusColor(status), getBackgroundColor(), 0.5),
                         depth: 0.80 +(modRate(tick, 5 *1000) *0.20),
                         blur: 0.0,
                         intervalSize: (modRate(tick, 5 *1000) *80) +6.0,
                         reverseRate: "auto",
-                        //anglePerDepth: "auto",
+                        anglePerDepth: "auto",
                     })
                 );
-                // return flounderStyle.styleToString
-                // (
-                //     flounderStyle.makeStyle
-                //     ({
-                //         type: "triline",
-                //         layoutAngle: 0.1,
-                //         offsetX: modRate(tick, 5 *1000),
-                //         foregroundColor: progressStatusColor(status),
-                //         backgroundColor: linearNeutralColorString(progressStatusColor(status), getBackgroundColor(), 0.5),
-                //         depth: 0.9,
-                //         blur: 0.0,
-                //         intervalSize: 60,
-                //         reverseRate: "auto",
-                //         //anglePerDepth: "auto",
-                //     })
-                // );
             case "pickup":
                 return flounderStyle.styleToString
                 (
