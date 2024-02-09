@@ -7146,10 +7146,13 @@ export module CyclicToDo
             ),
             parent: "@overall" === entry.tag ? { }: { pass: entry.pass, tag: "@overall", }
         });
-        export interface BottomSubTab
+        export interface BottomSubTabLabel
         {
             icon: Resource.KeyType;
             text: string;
+        }
+        export interface BottomSubTab extends BottomSubTabLabel
+        {
             count?:string;
             href: { pass?:string, tag?:string, todo?: string, hash?: string, };
         }
@@ -7163,7 +7166,8 @@ export module CyclicToDo
         export const bottomTab = async (
             current: { pass?:string, tag?:string, hash?: string, },
             subTabs: (BottomSubTab | "separator")[],
-            additionalMenu?: minamo.dom.Source
+            additionalMenu?: minamo.dom.Source,
+            defaultLable?: BottomSubTabLabel
         ) =>
         {
             if (subTabs.length <= 0)
@@ -7177,6 +7181,7 @@ export module CyclicToDo
                 const urlIndex = pureSubTabs.map(i => makeUrl(i.href)).indexOf(location.href);
                 const isCurrent = 0 <= tagIndex || 0 <= urlIndex;
                 const tab = pureSubTabs[isCurrent ? (0 <= urlIndex ? urlIndex: tagIndex): 0];
+                const face = ! isCurrent && defaultLable ? defaultLable: tab;
                 let cover: { dom: HTMLDivElement, close: () => Promise<unknown> } | null = null;
                 const subTabsMenu = await Promise.all
                 (
@@ -7274,7 +7279,7 @@ export module CyclicToDo
                             tag: "div",
                             className: "tab-face",
                             title: tab.text,
-                            children: [ await Resource.loadSvgOrCache(tab.icon), labelSpan(tab.text), ],
+                            children: [ await Resource.loadSvgOrCache(face.icon), labelSpan(face.text), ],
                             eventListener:
                             {
                                 mousedown: mousedown,
@@ -7298,7 +7303,7 @@ export module CyclicToDo
                                 i =>
                                 ({
                                     tag: "div",
-                                    className: "sub-tab" +(tab.text === i.text ? " current-item": ""),
+                                    className: "sub-tab" +(face.text === i.text ? " current-item": ""),
                                     title: i.text,
                                     onclick: (event: MouseEvent) =>
                                     {
@@ -7361,13 +7366,22 @@ export module CyclicToDo
                         updateScreen("operate");
                     }
                 }
-            )
+            ),
+            {
+                icon: "ghost-term-icon",
+                text: locale.map("Term"),
+            }
         );
         export const autoTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (
             entry,
             getTagList({ auto: true })
-                .map(i => makeBottomSubTabForTag(entry.pass, i))
+                .map(i => makeBottomSubTabForTag(entry.pass, i)),
+            undefined,
+            {
+                icon: "flag-icon",
+                text: locale.map("Auto tag"),
+            }
         );
         export const tagTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (
@@ -7399,7 +7413,11 @@ export module CyclicToDo
                         await showUrl({ pass: entry.pass, tag, });
                     }
                 }
-            )
+            ),
+            {
+                icon: "tag-icon",
+                text: locale.map("Tag"),
+            }
         );
         export const sublistTab = async (entry: ToDoTagEntryOld) => await bottomTab
         (
@@ -7419,7 +7437,11 @@ export module CyclicToDo
                     label("@new-sublist"),
                 ],
                 async () => await newSublistPopup(entry.pass)
-                )
+                ),
+            {
+                icon: "folder-icon",
+                text: locale.map("Sublist"),
+            }
         );
         export const bottomTabs = async (entry: ToDoTagEntryOld) => $div("bottom-tabs")
         ([
