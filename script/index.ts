@@ -5198,6 +5198,7 @@ export module CyclicToDo
         );
         export const screenCover = (data: { parent?: HTMLElement | null, children?: minamo.dom.Source, onclick: () => unknown, eventListener?: minamo.dom.EventListenerSource, }) =>
         {
+            updateLatestScreenOperatedAt();
             const dom = $make(HTMLDivElement)
             ({
                 parent: data.parent ?? document.body,
@@ -5214,6 +5215,7 @@ export module CyclicToDo
             });
             const close = async () =>
             {
+                updateLatestScreenOperatedAt();
                 // dom.classList.remove("fade-in");
                 // dom.classList.add("fade-out");
                 // await minamo.core.timeout(500);
@@ -9217,7 +9219,18 @@ export module CyclicToDo
             removeProgressStyle();
             if (undefined !== updateScreen)
             {
-                Render.updateScreen = updateScreen;
+                Render.updateScreen = async (event: UpdateScreenEventEype) =>
+                {
+                    switch(event)
+                    {
+                        case "storage":
+                        case "operate":
+                        case "dirty":
+                            updateLatestScreenOperatedAt();
+                            break;
+                    }
+                    await updateScreen(event);
+                };
             }
             else
             {
@@ -9231,7 +9244,7 @@ export module CyclicToDo
                         case "storage":
                         case "operate":
                         case "dirty":
-                            await reload();
+                            await reload(); // include updateLatestScreenOperatedAt()
                             break;
                     }
                 };
@@ -10104,10 +10117,17 @@ export module CyclicToDo
             .join("")
         )
         .join("");
+    let latestScreenOperatedAt: number = 0;
+    export const updateLatestScreenOperatedAt = (now = new Date().getTime()) =>
+        latestScreenOperatedAt = now;
     export const styleAnimation = (tick: number) =>
     {
-        const styleElement = document.getElementById("style") as HTMLStyleElement;
-        minamo.dom.setProperty(styleElement, "innerHTML", makeAnimationStyle(tick));
+        const now = new Date().getTime();
+        if (now < latestScreenOperatedAt +(60 *1000))
+        {
+            const styleElement = document.getElementById("style") as HTMLStyleElement;
+            minamo.dom.setProperty(styleElement, "innerHTML", makeAnimationStyle(tick));
+        }
         window.requestAnimationFrame(styleAnimation);
     };
     export const start = async (params:{ buildTimestamp: string, buildTimestampTick:number, }) =>
@@ -10225,6 +10245,7 @@ export module CyclicToDo
     };
     export const showPage = async (url: string = location.href, _wait: number = 0) =>
     {
+        updateLatestScreenOperatedAt();
         window.scrollTo(0,0);
         const body = Render.getScreenBody();
         body.scrollTo(0,0);

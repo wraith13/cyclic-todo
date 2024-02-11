@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Fri Feb 09 2024 22:17:21 GMT+0900 (日本標準時)
+    build at: Sun Feb 11 2024 20:40:22 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -28224,6 +28224,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
             };
             Render.screenCover = function (data) {
                 var _a;
+                CyclicToDo.updateLatestScreenOperatedAt();
                 var dom = Render.$make(HTMLDivElement)({
                     parent: (_a = data.parent) !== null && _a !== void 0 ? _a : document.body,
                     tag: "div",
@@ -28241,6 +28242,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                 });
                 var close = function () { return __awaiter(_this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
+                        CyclicToDo.updateLatestScreenOperatedAt();
                         // dom.classList.remove("fade-in");
                         // dom.classList.add("fade-out");
                         // await minamo.core.timeout(500);
@@ -33292,7 +33294,24 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                         case 0:
                             Render.removeProgressStyle();
                             if (undefined !== updateScreen) {
-                                Render.updateScreen = updateScreen;
+                                Render.updateScreen = function (event) { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                switch (event) {
+                                                    case "storage":
+                                                    case "operate":
+                                                    case "dirty":
+                                                        CyclicToDo.updateLatestScreenOperatedAt();
+                                                        break;
+                                                }
+                                                return [4 /*yield*/, updateScreen(event)];
+                                            case 1:
+                                                _a.sent();
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); };
                             }
                             else {
                                 Render.updateScreen = function (event) { return __awaiter(_this, void 0, void 0, function () {
@@ -33313,7 +33332,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                 return [3 /*break*/, 4];
                                             case 2: return [4 /*yield*/, CyclicToDo.reload()];
                                             case 3:
-                                                _b.sent();
+                                                _b.sent(); // include updateLatestScreenOperatedAt()
                                                 return [3 /*break*/, 4];
                                             case 4: return [2 /*return*/];
                                         }
@@ -34077,9 +34096,17 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     .join(""); })
                     .join("");
         };
+        var latestScreenOperatedAt = 0;
+        CyclicToDo.updateLatestScreenOperatedAt = function (now) {
+            if (now === void 0) { now = new Date().getTime(); }
+            return latestScreenOperatedAt = now;
+        };
         CyclicToDo.styleAnimation = function (tick) {
-            var styleElement = document.getElementById("style");
-            minamo_js_1.minamo.dom.setProperty(styleElement, "innerHTML", CyclicToDo.makeAnimationStyle(tick));
+            var now = new Date().getTime();
+            if (now < latestScreenOperatedAt + (60 * 1000)) {
+                var styleElement = document.getElementById("style");
+                minamo_js_1.minamo.dom.setProperty(styleElement, "innerHTML", CyclicToDo.makeAnimationStyle(tick));
+            }
             window.requestAnimationFrame(CyclicToDo.styleAnimation);
         };
         CyclicToDo.start = function (params) { return __awaiter(_this, void 0, void 0, function () {
@@ -34213,6 +34240,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                 return __generator(this, function (_e) {
                     switch (_e.label) {
                         case 0:
+                            CyclicToDo.updateLatestScreenOperatedAt();
                             window.scrollTo(0, 0);
                             body = Render.getScreenBody();
                             body.scrollTo(0, 0);
@@ -34338,7 +34366,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </script>
 <style type="text/css" id="style"></style>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Feb 09 2024 22:17:21 GMT+0900 (日本標準時)', buildTimestampTick: 1707484641489, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Feb 11 2024 20:40:22 GMT+0900 (日本標準時)', buildTimestampTick: 1707651622502, })" class="auto">
 <div id="foundation"><div id="flash-layer"></div></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -34562,7 +34590,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Fri Feb 09 2024 22:17:21 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Sun Feb 11 2024 20:40:22 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
