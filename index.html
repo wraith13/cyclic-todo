@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sun Feb 11 2024 20:40:22 GMT+0900 (日本標準時)
+    build at: Mon Feb 12 2024 14:53:34 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -24964,6 +24964,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                 Operate.flashBody = function () {
                     // document.body.classList.add("flash");
                     // setTimeout(() => document.body.classList.remove("flash"), 1500);
+                    CyclicToDo.updateLatestScreenOperatedAt();
                     Operate.flashBodyAt = -1;
                 };
                 Operate.done = function (pass, item, tick, onCanceled) { return __awaiter(_this, void 0, void 0, function () {
@@ -34097,17 +34098,25 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     .join("");
         };
         var latestScreenOperatedAt = 0;
+        var isInAnimation = false;
         CyclicToDo.updateLatestScreenOperatedAt = function (now) {
             if (now === void 0) { now = new Date().getTime(); }
-            return latestScreenOperatedAt = now;
+            latestScreenOperatedAt = now;
+            if (!isInAnimation) {
+                isInAnimation = true;
+                window.requestAnimationFrame(CyclicToDo.styleAnimation);
+            }
         };
         CyclicToDo.styleAnimation = function (tick) {
             var now = new Date().getTime();
             if (now < latestScreenOperatedAt + (60 * 1000)) {
                 var styleElement = document.getElementById("style");
                 minamo_js_1.minamo.dom.setProperty(styleElement, "innerHTML", CyclicToDo.makeAnimationStyle(tick));
+                window.requestAnimationFrame(CyclicToDo.styleAnimation);
             }
-            window.requestAnimationFrame(CyclicToDo.styleAnimation);
+            else {
+                isInAnimation = false;
+            }
         };
         CyclicToDo.start = function (params) { return __awaiter(_this, void 0, void 0, function () {
             var _a, _b, _c, urlParams, reload, scroll, json, url_1, fullscreen, toast_9, url, latestShowUrl;
@@ -34226,7 +34235,6 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                 isWideContent: true,
                             });
                         }
-                        window.requestAnimationFrame(CyclicToDo.styleAnimation);
                         return [2 /*return*/];
                 }
             });
@@ -34366,7 +34374,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </script>
 <style type="text/css" id="style"></style>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Feb 11 2024 20:40:22 GMT+0900 (日本標準時)', buildTimestampTick: 1707651622502, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Feb 12 2024 14:53:34 GMT+0900 (日本標準時)', buildTimestampTick: 1707717214251, })" class="auto">
 <div id="foundation"><div id="flash-layer"></div></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -34590,7 +34598,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Sun Feb 11 2024 20:40:22 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Mon Feb 12 2024 14:53:34 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

@@ -2483,6 +2483,7 @@ export module CyclicToDo
             {
                 // document.body.classList.add("flash");
                 // setTimeout(() => document.body.classList.remove("flash"), 1500);
+                updateLatestScreenOperatedAt();
                 flashBodyAt = -1;
             };
             export const done = async (pass: string, item: ToDoEntry, tick: number, onCanceled: () => unknown) =>
@@ -10118,8 +10119,16 @@ export module CyclicToDo
         )
         .join("");
     let latestScreenOperatedAt: number = 0;
+    let isInAnimation = false;
     export const updateLatestScreenOperatedAt = (now = new Date().getTime()) =>
+    {
         latestScreenOperatedAt = now;
+        if ( ! isInAnimation)
+        {
+            isInAnimation = true;
+            window.requestAnimationFrame(styleAnimation);
+        }
+    };
     export const styleAnimation = (tick: number) =>
     {
         const now = new Date().getTime();
@@ -10127,8 +10136,12 @@ export module CyclicToDo
         {
             const styleElement = document.getElementById("style") as HTMLStyleElement;
             minamo.dom.setProperty(styleElement, "innerHTML", makeAnimationStyle(tick));
+            window.requestAnimationFrame(styleAnimation);
         }
-        window.requestAnimationFrame(styleAnimation);
+        else
+        {
+            isInAnimation = false;
+        }
     };
     export const start = async (params:{ buildTimestamp: string, buildTimestampTick:number, }) =>
     {
@@ -10241,7 +10254,6 @@ export module CyclicToDo
                 isWideContent: true,
             });
         }
-        window.requestAnimationFrame(styleAnimation);
     };
     export const showPage = async (url: string = location.href, _wait: number = 0) =>
     {
