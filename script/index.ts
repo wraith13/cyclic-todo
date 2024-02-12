@@ -124,6 +124,9 @@ export module CyclicToDo
     export type FlashStyleType = "gradation" | "breath" | "solid" | "none";
     export type FlashStyleTypeLocale = `flashStyle.${FlashStyleType}`
     export const getFlashStyleLocale = (key: FlashStyleType) => <FlashStyleTypeLocale>`flashStyle.${key}`;
+    export type AnimationDurationType = "none" | "1m" | "1h" | "auto" | "ever";
+    export type AnimationDurationTypeLocale = `animationDuration.${AnimationDurationType}`
+    export const getAnimationDurationLocale = (key?: AnimationDurationType) => <AnimationDurationTypeLocale>`animationDuration.${key ?? "auto"}`;
     export type UiStyleType = "slide" | "fade" | "fixed";
     export type UiStyleTypeLocale = `uiStyle.${UiStyleType}`
     export const getUiStyleLocale = (key: UiStyleType) => <UiStyleTypeLocale>`uiStyle.${key}`;
@@ -139,6 +142,7 @@ export module CyclicToDo
         theme?: ThemeType;
         uiStyle?: UiStyleType;
         flashStyle?: FlashStyleType;
+        animationDuration?: AnimationDurationType;
         locale?: locale.LocaleType;
         emoji?: EmojiType;
     }
@@ -3658,6 +3662,72 @@ export module CyclicToDo
                 }
             );
         };
+        export const animationSpanSettingsPopup = async (settings: SystemSettings = Storage.SystemSettings.get()): Promise<boolean> =>
+        {
+            const defaultValue = "auto";
+            const init = settings.animationDuration ?? defaultValue;
+            return await new Promise
+            (
+                async resolve =>
+                {
+                    let result = false;
+                    const checkButtonList = $make(HTMLDivElement)({ className: "check-button-list" });
+                    const checkButtonListUpdate = async () => minamo.dom.replaceChildren
+                    (
+                        checkButtonList,
+                        [
+                            await Promise.all
+                            (
+                                (<AnimationDurationType[]>[ "none", "1m", "1h", "auto", "ever", ]).map
+                                (
+                                    async (key: AnimationDurationType) =>
+                                    ({
+                                        tag: "button",
+                                        className: `check-button ${key === (settings.flashStyle ?? defaultValue) ? "checked": ""}`,
+                                        children:
+                                        [
+                                            await Resource.loadSvgOrCache("check-icon"),
+                                            $span("")(label(getAnimationDurationLocale(key))),
+                                        ],
+                                        onclick: async () =>
+                                        {
+                                            if (key !== (settings.animationDuration ?? defaultValue))
+                                            {
+                                                settings.animationDuration = key;
+                                                Storage.SystemSettings.set(settings);
+                                                await checkButtonListUpdate();
+                                                result = init !== key;
+                                            }
+                                        }
+                                    })
+                                )
+                            )
+                        ]
+                    );
+                    await checkButtonListUpdate();
+                    const ui = popup
+                    ({
+                        // className: "add-remove-tags-popup",
+                        children:
+                        [
+                            $tag("h2")("")(label("Animation duration setting")),
+                            checkButtonList,
+                            $div("popup-operator")
+                            ([{
+                                tag: "button",
+                                className: "default-button",
+                                children: label("Close"),
+                                onclick: () =>
+                                {
+                                    ui.close();
+                                },
+                            }])
+                        ],
+                        onClose: async () => resolve(result),
+                    });
+                }
+            );
+        };
         export const localeSettingsPopup = async (settings: SystemSettings = Storage.SystemSettings.get()): Promise<boolean> =>
         {
             return await new Promise
@@ -3951,6 +4021,25 @@ export module CyclicToDo
                                 async () =>
                                 {
                                     if (await flashStyleSettingsPopup())
+                                    {
+                                        result = true;
+                                        await update();
+                                    }
+                                }
+                            ),
+                            descriptionButton
+                            (
+                                "",
+                                monospace
+                                (
+                                    "",
+                                    label("Animation duration setting"),
+                                    label(getAnimationDurationLocale(settings.animationDuration))
+                                ),
+                                "animationDuration.description",
+                                async () =>
+                                {
+                                    if (await animationSpanSettingsPopup())
                                     {
                                         result = true;
                                         await update();

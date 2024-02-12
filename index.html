@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Feb 12 2024 14:53:34 GMT+0900 (日本標準時)
+    build at: Tue Feb 13 2024 01:17:50 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -22277,8 +22277,15 @@ define("resource/lang.en", [], {
     "flashStyle.gradation": "Gradation",
     "flashStyle.breath": "Breath",
     "flashStyle.solid": "Solid",
-    "flashStyle.none": "no flash",
+    "flashStyle.none": "No flash",
     "flashStyle.description": "Set the flash display effect for ToDoes set to flash.",
+    "Animation duration setting": "Animation duration setting",
+    "animationDuration.none": "No animation",
+    "animationDuration.1m": "1 minute",
+    "animationDuration.1h": "1 hour",
+    "animationDuration.auto": "Auto",
+    "animationDuration.ever": "Ever",
+    "animationDuration.description": "Set the duration of the pattern animation.",
     "language.auto": "Auto",
     "language.description": "Set the language used on the UI. / UI 上で使用する言語を設定します。",
     "Emoji setting": "Emoji setting",
@@ -22563,6 +22570,13 @@ define("resource/lang.ja", [], {
     "flashStyle.solid": "ソリッド",
     "flashStyle.none": "フラッシュなし",
     "flashStyle.description": "フラッシュ設定された ToDo のフラッシュ表示効果を設定します。",
+    "Animation duration setting": "Animation duration setting",
+    "animationDuration.none": "アニメーションなし",
+    "animationDuration.1m": "1分間",
+    "animationDuration.1h": "1時間",
+    "animationDuration.auto": "自動",
+    "animationDuration.ever": "永続",
+    "animationDuration.description": "パターンアニメーションの継続時間を設定します。",
     "language.auto": "自動",
     "language.description": "UI 上で使用する言語を設定します。 / Set the language used on the UI.",
     "Emoji setting": "絵文字設定",
@@ -22950,6 +22964,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
         CyclicToDo.applicationTitle = config_json_2.default.applicationTitle;
         CyclicToDo.getThemeLocale = function (key) { return "theme.".concat(key); };
         CyclicToDo.getFlashStyleLocale = function (key) { return "flashStyle.".concat(key); };
+        CyclicToDo.getAnimationDurationLocale = function (key) { return "animationDuration.".concat(key !== null && key !== void 0 ? key : "auto"); };
         CyclicToDo.getUiStyleLocale = function (key) { return "uiStyle.".concat(key); };
         CyclicToDo.getEmojiTypeLocale = function (key) { return "emoji.".concat(key); };
         CyclicToDo.isZeroToDoEntry = function (item) {
@@ -26292,6 +26307,106 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     });
                 });
             };
+            Render.animationSpanSettingsPopup = function (settings) {
+                if (settings === void 0) { settings = Storage.SystemSettings.get(); }
+                return __awaiter(_this, void 0, void 0, function () {
+                    var defaultValue, init;
+                    var _this = this;
+                    var _a;
+                    return __generator(this, function (_b) {
+                        switch (_b.label) {
+                            case 0:
+                                defaultValue = "auto";
+                                init = (_a = settings.animationDuration) !== null && _a !== void 0 ? _a : defaultValue;
+                                return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                        var result, checkButtonList, checkButtonListUpdate, ui;
+                                        var _this = this;
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0:
+                                                    result = false;
+                                                    checkButtonList = Render.$make(HTMLDivElement)({ className: "check-button-list" });
+                                                    checkButtonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        var _a, _b, _c;
+                                                        var _this = this;
+                                                        return __generator(this, function (_d) {
+                                                            switch (_d.label) {
+                                                                case 0:
+                                                                    _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                                    _c = [checkButtonList];
+                                                                    return [4 /*yield*/, Promise.all(["none", "1m", "1h", "auto", "ever",].map(function (key) { return __awaiter(_this, void 0, void 0, function () {
+                                                                            var _a;
+                                                                            var _this = this;
+                                                                            var _b;
+                                                                            return __generator(this, function (_c) {
+                                                                                switch (_c.label) {
+                                                                                    case 0:
+                                                                                        _a = {
+                                                                                            tag: "button",
+                                                                                            className: "check-button ".concat(key === ((_b = settings.flashStyle) !== null && _b !== void 0 ? _b : defaultValue) ? "checked" : "")
+                                                                                        };
+                                                                                        return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
+                                                                                    case 1: return [2 /*return*/, (_a.children = [
+                                                                                            _c.sent(),
+                                                                                            Render.$span("")(Render.label(CyclicToDo.getAnimationDurationLocale(key)))
+                                                                                        ],
+                                                                                            _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                                var _a;
+                                                                                                return __generator(this, function (_b) {
+                                                                                                    switch (_b.label) {
+                                                                                                        case 0:
+                                                                                                            if (!(key !== ((_a = settings.animationDuration) !== null && _a !== void 0 ? _a : defaultValue))) return [3 /*break*/, 2];
+                                                                                                            settings.animationDuration = key;
+                                                                                                            Storage.SystemSettings.set(settings);
+                                                                                                            return [4 /*yield*/, checkButtonListUpdate()];
+                                                                                                        case 1:
+                                                                                                            _b.sent();
+                                                                                                            result = init !== key;
+                                                                                                            _b.label = 2;
+                                                                                                        case 2: return [2 /*return*/];
+                                                                                                    }
+                                                                                                });
+                                                                                            }); },
+                                                                                            _a)];
+                                                                                }
+                                                                            });
+                                                                        }); }))];
+                                                                case 1: return [2 /*return*/, _b.apply(_a, _c.concat([[
+                                                                            _d.sent()
+                                                                        ]]))];
+                                                            }
+                                                        });
+                                                    }); };
+                                                    return [4 /*yield*/, checkButtonListUpdate()];
+                                                case 1:
+                                                    _a.sent();
+                                                    ui = Render.popup({
+                                                        // className: "add-remove-tags-popup",
+                                                        children: [
+                                                            Render.$tag("h2")("")(Render.label("Animation duration setting")),
+                                                            checkButtonList,
+                                                            Render.$div("popup-operator")([{
+                                                                    tag: "button",
+                                                                    className: "default-button",
+                                                                    children: Render.label("Close"),
+                                                                    onclick: function () {
+                                                                        ui.close();
+                                                                    },
+                                                                }])
+                                                        ],
+                                                        onClose: function () { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+                                                            return [2 /*return*/, resolve(result)];
+                                                        }); }); },
+                                                    });
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); })];
+                            case 1: return [2 /*return*/, _b.sent()];
+                        }
+                    });
+                });
+            };
             Render.localeSettingsPopup = function (settings) {
                 if (settings === void 0) { settings = Storage.SystemSettings.get(); }
                 return __awaiter(_this, void 0, void 0, function () {
@@ -26678,6 +26793,21 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                             return __generator(this, function (_a) {
                                                                 switch (_a.label) {
                                                                     case 0: return [4 /*yield*/, Render.flashStyleSettingsPopup()];
+                                                                    case 1:
+                                                                        if (!_a.sent()) return [3 /*break*/, 3];
+                                                                        result = true;
+                                                                        return [4 /*yield*/, update()];
+                                                                    case 2:
+                                                                        _a.sent();
+                                                                        _a.label = 3;
+                                                                    case 3: return [2 /*return*/];
+                                                                }
+                                                            });
+                                                        }); }),
+                                                        Render.descriptionButton("", Render.monospace("", Render.label("Animation duration setting"), Render.label(CyclicToDo.getAnimationDurationLocale(settings.animationDuration))), "animationDuration.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            return __generator(this, function (_a) {
+                                                                switch (_a.label) {
+                                                                    case 0: return [4 /*yield*/, Render.animationSpanSettingsPopup()];
                                                                     case 1:
                                                                         if (!_a.sent()) return [3 /*break*/, 3];
                                                                         result = true;
@@ -34374,7 +34504,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </script>
 <style type="text/css" id="style"></style>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Feb 12 2024 14:53:34 GMT+0900 (日本標準時)', buildTimestampTick: 1707717214251, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Feb 13 2024 01:17:50 GMT+0900 (日本標準時)', buildTimestampTick: 1707754670303, })" class="auto">
 <div id="foundation"><div id="flash-layer"></div></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -34598,7 +34728,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Mon Feb 12 2024 14:53:34 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Tue Feb 13 2024 01:17:50 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
