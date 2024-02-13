@@ -124,7 +124,7 @@ export module CyclicToDo
     export type FlashStyleType = "gradation" | "breath" | "solid" | "none";
     export type FlashStyleTypeLocale = `flashStyle.${FlashStyleType}`
     export const getFlashStyleLocale = (key: FlashStyleType) => <FlashStyleTypeLocale>`flashStyle.${key}`;
-    export type AnimationDurationType = "none" | "1m" | "1h" | "auto" | "ever";
+    export type AnimationDurationType = "none" | "1m" | "10m" | "1h" | "auto" | "ever";
     export type AnimationDurationTypeLocale = `animationDuration.${AnimationDurationType}`
     export const getAnimationDurationLocale = (key?: AnimationDurationType) => <AnimationDurationTypeLocale>`animationDuration.${key ?? "auto"}`;
     export type UiStyleType = "slide" | "fade" | "fixed";
@@ -3678,12 +3678,12 @@ export module CyclicToDo
                         [
                             await Promise.all
                             (
-                                (<AnimationDurationType[]>[ "none", "1m", "1h", "auto", "ever", ]).map
+                                (<AnimationDurationType[]>[ "none", "1m", "10m", "1h", "auto", "ever", ]).map
                                 (
                                     async (key: AnimationDurationType) =>
                                     ({
                                         tag: "button",
-                                        className: `check-button ${key === (settings.flashStyle ?? defaultValue) ? "checked": ""}`,
+                                        className: `check-button ${key === (settings.animationDuration ?? defaultValue) ? "checked": ""}`,
                                         children:
                                         [
                                             await Resource.loadSvgOrCache("check-icon"),
@@ -10192,21 +10192,29 @@ export module CyclicToDo
     export const makeFlashBodyStyleEntry = (tick: number) => `body #foundation #flash-layer {${makeFlashBodyStyle(tick)}}\r\n`;
     export const makeStyleEntry = (classList: string, style: string): string =>
         classList.split(" ").filter(i => "" !== i).map(i => `.${i}`).join("") +" {" +style +"}\r\n";
+    export const isEnabledAnimation = (settings: SystemSettings = Storage.SystemSettings.get()) =>
+        "none" !== settings.animationDuration;
     export const makeAnimationStyle = (tick: number): string =>
-        makeFlashBodyStyleEntry(tick) +
-        [ "default", "flash", "pickup", "restriction"].map
-        (
-            (status: Render.ProgressStatusType) => [ 0, null, ].map
+    {
+        let result = makeFlashBodyStyleEntry(tick);
+        if (isEnabledAnimation())
+        {
+            result = [ "default", "flash", "pickup", "restriction"].map
             (
-                progress => makeStyleEntry
+                (status: Render.ProgressStatusType) => [ 0, null, ].map
                 (
-                    Render.progressClass(progress, status),
-                    Render.progressBackgroundStyle(progress, status, tick)
+                    progress => makeStyleEntry
+                    (
+                        Render.progressClass(progress, status),
+                        Render.progressBackgroundStyle(progress, status, tick)
+                    )
                 )
+                .join("")
             )
-            .join("")
-        )
-        .join("");
+            .join("");
+        }
+        return result;
+    };
     let latestScreenOperatedAt: number = 0;
     let isInAnimation = false;
     export const updateLatestScreenOperatedAt = (now = new Date().getTime()) =>
@@ -10218,10 +10226,38 @@ export module CyclicToDo
             window.requestAnimationFrame(styleAnimation);
         }
     };
+    export const getAnimationDuration = (animationDuration: AnimationDurationType = Storage.SystemSettings.get().animationDuration ?? "auto"): number =>
+    {
+        switch(animationDuration)
+        {
+        case "none":
+            return 0;
+        case "ever":
+            return minamo.core.parseTimespan("10y") as number;
+        case "auto":
+            {
+                const screenArea = window.innerWidth *window.innerHeight;
+                if (screenArea < 500000)
+                {
+                    return minamo.core.parseTimespan("1m") as number;
+                }
+                else
+                if (screenArea < 1000000)
+                {
+                    return minamo.core.parseTimespan("10m") as number;
+                }
+                else
+                {
+                    return minamo.core.parseTimespan("1h") as number;
+                }
+            }
+        }
+        return minamo.core.parseTimespan(animationDuration) as number;
+    };
     export const styleAnimation = (tick: number) =>
     {
         const now = new Date().getTime();
-        if (now < latestScreenOperatedAt +(60 *1000))
+        if (now < latestScreenOperatedAt +Math.max(getAnimationDuration(), 60 *1000))
         {
             const styleElement = document.getElementById("style") as HTMLStyleElement;
             minamo.dom.setProperty(styleElement, "innerHTML", makeAnimationStyle(tick));

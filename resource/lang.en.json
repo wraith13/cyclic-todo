@@ -187,6 +187,7 @@
     "Animation duration setting": "Animation duration setting",
     "animationDuration.none": "No animation",
     "animationDuration.1m": "1 minute",
+    "animationDuration.10m": "10 minutes",
     "animationDuration.1h": "1 hour",
     "animationDuration.auto": "Auto",
     "animationDuration.ever": "Ever",
