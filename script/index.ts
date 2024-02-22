@@ -3687,7 +3687,7 @@ export module CyclicToDo
                         [
                             await Promise.all
                             (
-                                (<AnimationDurationType[]>[ "none", "1m", "10m", "1h", "auto", "ever", ]).map
+                                (<AnimationDurationType[]>[ "none", "10s", "1m", "10m", "1h", "auto", "ever", ]).map
                                 (
                                     async (key: AnimationDurationType) =>
                                     ({
@@ -10248,16 +10248,16 @@ export module CyclicToDo
                 const screenArea = window.innerWidth *window.innerHeight;
                 if (screenArea < 500000)
                 {
-                    return minamo.core.parseTimespan("1m") as number;
+                    return minamo.core.parseTimespan("10s") as number;
                 }
                 else
                 if (screenArea < 1000000)
                 {
-                    return minamo.core.parseTimespan("10m") as number;
+                    return minamo.core.parseTimespan("1m") as number;
                 }
                 else
                 {
-                    return minamo.core.parseTimespan("1h") as number;
+                    return minamo.core.parseTimespan("10m") as number;
                 }
             }
         }
@@ -10266,7 +10266,7 @@ export module CyclicToDo
     export const styleAnimation = (tick: number) =>
     {
         const now = new Date().getTime();
-        if (now < latestScreenOperatedAt +Math.max(getAnimationDuration(), 60 *1000))
+        if (now < latestScreenOperatedAt +Math.max(getAnimationDuration(), 10 *1000))
         {
             const styleElement = document.getElementById("style") as HTMLStyleElement;
             minamo.dom.setProperty(styleElement, "innerHTML", makeAnimationStyle(tick));

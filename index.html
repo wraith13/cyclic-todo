@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Tue Feb 20 2024 23:50:05 GMT+0900 (日本標準時)
+    build at: Fri Feb 23 2024 00:24:16 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -22281,6 +22281,7 @@ define("resource/lang.en", [], {
     "flashStyle.description": "Set the flash display effect for ToDoes set to flash.",
     "Animation duration setting": "Animation duration setting",
     "animationDuration.none": "No animation",
+    "animationDuration.10s": "10 seconds",
     "animationDuration.1m": "1 minute",
     "animationDuration.10m": "10 minutes",
     "animationDuration.1h": "1 hour",
@@ -22573,6 +22574,7 @@ define("resource/lang.ja", [], {
     "flashStyle.description": "フラッシュ設定された ToDo のフラッシュ表示効果を設定します。",
     "Animation duration setting": "アニメーション継続時間設定",
     "animationDuration.none": "アニメーションなし",
+    "animationDuration.10s": "10秒間",
     "animationDuration.1m": "1分間",
     "animationDuration.10m": "10分間",
     "animationDuration.1h": "1時間",
@@ -26345,7 +26347,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                 case 0:
                                                                     _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                                                     _c = [checkButtonList];
-                                                                    return [4 /*yield*/, Promise.all(["none", "1m", "10m", "1h", "auto", "ever",].map(function (key) { return __awaiter(_this, void 0, void 0, function () {
+                                                                    return [4 /*yield*/, Promise.all(["none", "10s", "1m", "10m", "1h", "auto", "ever",].map(function (key) { return __awaiter(_this, void 0, void 0, function () {
                                                                             var _a;
                                                                             var _this = this;
                                                                             var _b;
@@ -34267,13 +34269,13 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     {
                         var screenArea = window.innerWidth * window.innerHeight;
                         if (screenArea < 500000) {
-                            return minamo_js_1.minamo.core.parseTimespan("1m");
+                            return minamo_js_1.minamo.core.parseTimespan("10s");
                         }
                         else if (screenArea < 1000000) {
-                            return minamo_js_1.minamo.core.parseTimespan("10m");
+                            return minamo_js_1.minamo.core.parseTimespan("1m");
                         }
                         else {
-                            return minamo_js_1.minamo.core.parseTimespan("1h");
+                            return minamo_js_1.minamo.core.parseTimespan("10m");
                         }
                     }
             }
@@ -34281,7 +34283,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
         };
         CyclicToDo.styleAnimation = function (tick) {
             var now = new Date().getTime();
-            if (now < latestScreenOperatedAt + Math.max(CyclicToDo.getAnimationDuration(), 60 * 1000)) {
+            if (now < latestScreenOperatedAt + Math.max(CyclicToDo.getAnimationDuration(), 10 * 1000)) {
                 var styleElement = document.getElementById("style");
                 minamo_js_1.minamo.dom.setProperty(styleElement, "innerHTML", CyclicToDo.makeAnimationStyle(tick));
                 window.requestAnimationFrame(CyclicToDo.styleAnimation);
@@ -34546,7 +34548,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </script>
 <style type="text/css" id="style"></style>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Feb 20 2024 23:50:05 GMT+0900 (日本標準時)', buildTimestampTick: 1708440605877, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Feb 23 2024 00:24:16 GMT+0900 (日本標準時)', buildTimestampTick: 1708615456065, })" class="auto">
 <div id="foundation"><div id="flash-layer"></div></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -34770,7 +34772,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Tue Feb 20 2024 23:50:05 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Fri Feb 23 2024 00:24:16 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
