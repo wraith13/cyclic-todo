@@ -249,8 +249,8 @@ export module CyclicToDo
     export interface TagSettings extends minamo.core.JsonableObject
     {
         sort?: "smart" | "simple" | "simple-reverse";
-        displayStyle?: "@home" | "full" | "digest" | "simple" | "compact";
-        progressScaleStyle?: "@home" | "none" | "full";
+        displayStyle?: "@list" | "full" | "digest" | "simple" | "compact";
+        progressScaleStyle?: "@list" | "none" | "full";
     }
     export interface AutoTagSettingBase extends minamo.core.JsonableObject
     {
@@ -812,11 +812,11 @@ export module CyclicToDo
             export const remove = (pass: string, tag: string) => getStorage(pass).remove(makeKey(pass, tag));
             export const getSort = (pass: string, tag: string) =>
                 (get(pass, tag).sort ?? (get(pass, "@overall").sort ?? "smart"));
-            export const getDisplayStyle = (pass: string, tag: string): Exclude<TagSettings["displayStyle"], "@home"> =>
+            export const getDisplayStyle = (pass: string, tag: string): Exclude<TagSettings["displayStyle"], "@list"> =>
             {
                 const defaultResult = "full";
-                const result = currentItem<TagSettings["displayStyle"]>([ "@home", "full", "digest", "simple", "compact" ], get(pass, tag).displayStyle);
-                if (undefined === result || "@home" === result)
+                const result = currentItem<TagSettings["displayStyle"]>([ "@list", "full", "digest", "simple", "compact" ], get(pass, tag).displayStyle);
+                if (undefined === result || "@list" === result)
                 {
                     if ("@overall" === tag)
                     {
@@ -832,8 +832,8 @@ export module CyclicToDo
             export const getProgressScaleStyle = (pass: string, tag: string): "none" | "full" =>
             {
                 const defaultResult = "none";
-                const result = get(pass, tag).progressScaleStyle ?? "@home";
-                if ("@home" === result)
+                const result = get(pass, tag).progressScaleStyle ?? "@list";
+                if ("@list" === result)
                 {
                     if ("@overall" === tag)
                     {
@@ -4761,20 +4761,20 @@ export module CyclicToDo
             }
         );
         export const makeTagDefaultGetter = <T extends string>(defaultValue: T) =>
-            (tag: string): "@home" | T => "@overall" === tag ? defaultValue: "@home";
+            (tag: string): "@list" | T => "@overall" === tag ? defaultValue: "@list";
         export const getTagSortSettingsDefault = makeTagDefaultGetter("smart");
-        export const getTagSortSettingsText = (sort: "@home" | "smart" | "simple" | "simple-reverse") =>
+        export const getTagSortSettingsText = (sort: "@list" | "smart" | "simple" | "simple-reverse") =>
         {
             const map: { [key: string]: locale.LocaleKeyType; } =
             {
-                "@home": "sort.home",
+                "@list": "sort.list",
                 "smart": "sort.smart",
                 "simple": "sort.simple",
                 "simple-reverse": "sort.simple-reverse",
             };
             return map[sort];
         }
-        export const getTagSortSettingsDescription = (sort: "@home" | "smart" | "simple" | "simple-reverse") =>
+        export const getTagSortSettingsDescription = (sort: "@list" | "smart" | "simple" | "simple-reverse") =>
             `${getTagSortSettingsText(sort)}.description` as locale.LocaleKeyType;
         export const tagSortSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
         (
@@ -4791,11 +4791,11 @@ export module CyclicToDo
                         (
                             "@overall" === tag ?
                             [ "smart", "simple", "simple-reverse", ]:
-                            [ "@home", "smart", "simple", "simple-reverse", ]
+                            [ "@list", "smart", "simple", "simple-reverse", ]
                         )
                         .map
                         (
-                            async (i: "@home" | "smart" | "simple" | "simple-reverse") => descriptionButton
+                            async (i: "@list" | "smart" | "simple" | "simple-reverse") => descriptionButton
                             (
                                 `check-button ${i === (settings.sort ?? defaultSort) ? "checked": ""}`,
                                 [
@@ -4843,7 +4843,7 @@ export module CyclicToDo
         {
             const map: { [key: string]: locale.LocaleKeyType; } =
             {
-                "@home": "displayStyle.home",
+                "@list": "displayStyle.list",
                 "full": "displayStyle.full",
                 "digest": "displayStyle.digest",
                 "simple": "displayStyle.simple",
@@ -4868,7 +4868,7 @@ export module CyclicToDo
                         (
                             "@overall" === tag ?
                             [ "full", "digest", "simple", "compact", ]:
-                            [ "@home", "full", "digest", "simple", "compact", ]
+                            [ "@list", "full", "digest", "simple", "compact", ]
                         )
                         .map
                         (
@@ -4916,11 +4916,11 @@ export module CyclicToDo
             }
         );
         export const getTagProgressScaleStyleDefault = makeTagDefaultGetter("none");
-        export const getTagProgressScaleStyleText = (displayStyle: "@home" | "none" | "full") =>
+        export const getTagProgressScaleStyleText = (displayStyle: "@list" | "none" | "full") =>
         {
             const map: { [key: string]: locale.LocaleKeyType; } =
             {
-                "@home": "progressScaleStyle.home",
+                "@list": "progressScaleStyle.home",
                 "none": "progressScaleStyle.none",
                 "full": "progressScaleStyle.full",
             };
@@ -4941,11 +4941,11 @@ export module CyclicToDo
                         (
                             "@overall" === tag ?
                             [ "none", "full", ]:
-                            [ "@home", "none", "full", ]
+                            [ "@list", "none", "full", ]
                         )
                         .map
                         (
-                            async (i: "@home" | "none" | "full") =>
+                            async (i: "@list" | "none" | "full") =>
                             ({
                                 tag: "button",
                                 className: `check-button ${i === (settings.progressScaleStyle ?? defaultStyle) ? "checked": ""}`,
@@ -8468,7 +8468,7 @@ export module CyclicToDo
                             await todoItemSettings(pass, item),
                         ])
                     ),
-                    informationFull({ pass, }, item, OldStorage.TagSettings.getProgressScaleStyle(pass, "@home")),
+                    informationFull({ pass, }, item, OldStorage.TagSettings.getProgressScaleStyle(pass, "@list")),
                 ]),
             ]),
             $div("column-flex-list tick-list")
@@ -9818,7 +9818,7 @@ export module CyclicToDo
                                 const current = settings.displayStyle ?? defaultStyle;
                                 const list: (Exclude<TagSettings["displayStyle"], undefined>)[] = "@overall" === tag ?
                                     [ "full", "digest", "simple", "compact", ]:
-                                    [ "@home", "full", "digest", "simple", "compact", ];
+                                    [ "@list", "full", "digest", "simple", "compact", ];
                                 const next = destinationItem(list, current);
                                 settings.displayStyle = defaultStyle === next ? undefined: <Exclude<TagSettings["displayStyle"], undefined>>next;
                                 OldStorage.TagSettings.set(pass, tag, settings);
@@ -9847,9 +9847,9 @@ export module CyclicToDo
                                 const settings = OldStorage.TagSettings.get(pass, tag);
                                 const defaultStyle = getTagProgressScaleStyleDefault(tag);
                                 const current = settings.progressScaleStyle ?? defaultStyle;
-                                const list: ("@home" | "none" | "full")[] = "@overall" === tag ?
+                                const list: ("@list" | "none" | "full")[] = "@overall" === tag ?
                                     [ "none", "full", ]:
-                                    [ "@home", "none", "full", ];
+                                    [ "@list", "none", "full", ];
                                 const next = destinationItem(list, current);
                                 settings.progressScaleStyle = defaultStyle === next ? undefined: <"none" | "full">next;
                                 OldStorage.TagSettings.set(pass, tag, settings);
@@ -9878,9 +9878,9 @@ export module CyclicToDo
                                 const settings = OldStorage.TagSettings.get(pass, tag);
                                 const defaultSort = getTagSortSettingsDefault(tag);
                                 const current = settings.sort ?? defaultSort;
-                                const list: ("@home" | "smart" | "simple" | "simple-reverse")[] = "@overall" === tag ?
+                                const list: ("@list" | "smart" | "simple" | "simple-reverse")[] = "@overall" === tag ?
                                     [ "smart", "simple", "simple-reverse", ]:
-                                    [ "@home", "smart", "simple", "simple-reverse", ];
+                                    [ "@list", "smart", "simple", "simple-reverse", ];
                                 const next = destinationItem(list, current);
                                 settings.sort = defaultSort === next ? undefined: <"smart" | "simple">next;
                                 OldStorage.TagSettings.set(pass, tag, settings);
