@@ -153,6 +153,9 @@ export module CyclicToDo
     }
     export interface ListSettings extends minamo.core.JsonableObject
     {
+        sort?: "smart" | "simple" | "simple-reverse";
+        displayStyle?: "full" | "digest" | "simple" | "compact";
+        progressScaleStyle?: "none" | "full";
         termThreshold?: TermThreshold;
     }
     export interface ToDoTagEntryOld extends minamo.core.JsonableObject
@@ -249,8 +252,8 @@ export module CyclicToDo
     export interface TagSettings extends minamo.core.JsonableObject
     {
         sort?: "smart" | "simple" | "simple-reverse";
-        displayStyle?: "@list" | "full" | "digest" | "simple" | "compact";
-        progressScaleStyle?: "@list" | "none" | "full";
+        displayStyle?: "full" | "digest" | "simple" | "compact";
+        progressScaleStyle?: "none" | "full";
     }
     export interface AutoTagSettingBase extends minamo.core.JsonableObject
     {
@@ -815,36 +818,18 @@ export module CyclicToDo
             export const getDisplayStyle = (pass: string, tag: string): Exclude<TagSettings["displayStyle"], "@list"> =>
             {
                 const defaultResult = "full";
-                const result = currentItem<TagSettings["displayStyle"]>([ "@list", "full", "digest", "simple", "compact" ], get(pass, tag).displayStyle);
-                if (undefined === result || "@list" === result)
-                {
-                    if ("@overall" === tag)
-                    {
-                        return defaultResult;
-                    }
-                    else
-                    {
-                        return getDisplayStyle(pass, "@overall");
-                    }
-                }
-                return result;
+                const result = currentItem<TagSettings["displayStyle"] | "@list">([ "@list", "full", "digest", "simple", "compact" ], get(pass, tag).displayStyle) ?? "@list";
+                return "@list" !== result ?
+                    result:
+                    (ListSettings.get(pass)?.displayStyle ?? defaultResult);
             };
             export const getProgressScaleStyle = (pass: string, tag: string): "none" | "full" =>
             {
                 const defaultResult = "none";
                 const result = get(pass, tag).progressScaleStyle ?? "@list";
-                if ("@list" === result)
-                {
-                    if ("@overall" === tag)
-                    {
-                        return defaultResult;
-                    }
-                    else
-                    {
-                        return getProgressScaleStyle(pass, "@overall");
-                    }
-                }
-                return result;
+                return "@list" !== result ?
+                    result:
+                    (ListSettings.get(pass)?.progressScaleStyle ?? defaultResult);
             }
         }
         export module Task
@@ -4299,6 +4284,7 @@ export module CyclicToDo
                 const buttonList = $make(HTMLDivElement)({ className: "label-button-list" });
                 const buttonListUpdate = async () =>
                 {
+                    const settings = OldStorage.ListSettings.get(pass);
                     minamo.dom.replaceChildren
                     (
                         buttonList,
@@ -4324,6 +4310,63 @@ export module CyclicToDo
                                         await buttonListUpdate();
                                     }
                                 },
+                            ),
+                            descriptionButton
+                            (
+                                "",
+                                monospace
+                                (
+                                    "",
+                                    label("Display style setting"),
+                                    label(getTagDisplayStyleText(settings.displayStyle ?? getTagDisplayStyleDefault("@list")))
+                                ),
+                                "displayStyle.description",
+                                async () =>
+                                {
+                                    if (await tagDisplayStyleSettingsPopup(pass, "@list"))
+                                    {
+                                        result = true;
+                                        await buttonListUpdate();
+                                    }
+                                }
+                            ),
+                            descriptionButton
+                            (
+                                "",
+                                monospace
+                                (
+                                    "",
+                                    label("Progress scale style setting"),
+                                    label(getTagProgressScaleStyleText(settings.progressScaleStyle ?? getTagProgressScaleStyleDefault("@list")))
+                                ),
+                                "progressScaleStyle.description",
+                                async () =>
+                                {
+                                    if (await tagProgressScaleStyleSettingsPopup(pass, "@list"))
+                                    {
+                                        result = true;
+                                        await buttonListUpdate();
+                                    }
+                                }
+                            ),
+                            descriptionButton
+                            (
+                                "",
+                                monospace
+                                (
+                                    "",
+                                    label("Sort order setting"),
+                                    label(getTagSortSettingsText(settings.sort ?? getTagSortSettingsDefault("@list")))
+                                ),
+                                "sort.description",
+                                async () =>
+                                {
+                                    if (await tagSortSettingsPopup(pass, "@list"))
+                                    {
+                                        result = true;
+                                        await buttonListUpdate();
+                                    }
+                                }
                             ),
                             descriptionButton
                             (
@@ -4761,7 +4804,7 @@ export module CyclicToDo
             }
         );
         export const makeTagDefaultGetter = <T extends string>(defaultValue: T) =>
-            (tag: string): "@list" | T => "@overall" === tag ? defaultValue: "@list";
+            (tag: string): "@list" | T => "@list" === tag ? defaultValue: "@list";
         export const getTagSortSettingsDefault = makeTagDefaultGetter("smart");
         export const getTagSortSettingsText = (sort: "@list" | "smart" | "simple" | "simple-reverse") =>
         {
@@ -4776,7 +4819,7 @@ export module CyclicToDo
         }
         export const getTagSortSettingsDescription = (sort: "@list" | "smart" | "simple" | "simple-reverse") =>
             `${getTagSortSettingsText(sort)}.description` as locale.LocaleKeyType;
-        export const tagSortSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
+        export const tagSortSettingsPopup = async (pass: string, tag: string, settings: TagSettings | ListSettings = "@list" === tag ? OldStorage.ListSettings.get(pass): OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
@@ -4789,7 +4832,7 @@ export module CyclicToDo
                     await Promise.all
                     (
                         (
-                            "@overall" === tag ?
+                            "@list" === tag ?
                             [ "smart", "simple", "simple-reverse", ]:
                             [ "@list", "smart", "simple", "simple-reverse", ]
                         )
@@ -4806,7 +4849,14 @@ export module CyclicToDo
                                 async () =>
                                 {
                                     settings.sort = defaultSort === i ? undefined: <"smart" | "simple" | "simple-reverse">i;
-                                    OldStorage.TagSettings.set(pass, tag, settings);
+                                    if ("@list" === tag)
+                                    {
+                                        OldStorage.ListSettings.set(pass, settings);
+                                    }
+                                    else
+                                    {
+                                        OldStorage.TagSettings.set(pass, tag, settings);
+                                    }
                                     await updateScreen("operate");
                                     result = true;
                                     await tagButtonListUpdate();
@@ -4839,7 +4889,7 @@ export module CyclicToDo
             }
         );
         export const getTagDisplayStyleDefault = makeTagDefaultGetter("full");
-        export const getTagDisplayStyleText = (displayStyle: Exclude<TagSettings["displayStyle"], undefined>) =>
+        export const getTagDisplayStyleText = (displayStyle: Exclude<TagSettings["displayStyle"], undefined> | "@list") =>
         {
             const map: { [key: string]: locale.LocaleKeyType; } =
             {
@@ -4853,7 +4903,7 @@ export module CyclicToDo
         }
         export const getTagDisplayStyleDescription = (displayStyle: Exclude<TagSettings["displayStyle"], undefined>) =>
             `${getTagDisplayStyleText(displayStyle)}.description` as locale.LocaleKeyType;
-        export const tagDisplayStyleSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
+        export const tagDisplayStyleSettingsPopup = async (pass: string, tag: string, settings: TagSettings | ListSettings = "@list" === tag ? OldStorage.ListSettings.get(pass): OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
@@ -4866,7 +4916,7 @@ export module CyclicToDo
                     await Promise.all
                     (
                         (
-                            "@overall" === tag ?
+                            "@list" === tag ?
                             [ "full", "digest", "simple", "compact", ]:
                             [ "@list", "full", "digest", "simple", "compact", ]
                         )
@@ -4883,7 +4933,14 @@ export module CyclicToDo
                                 async () =>
                                 {
                                     settings.displayStyle = i;
-                                    OldStorage.TagSettings.set(pass, tag, settings);
+                                    if ("@list" === tag)
+                                    {
+                                        OldStorage.ListSettings.set(pass, settings);
+                                    }
+                                    else
+                                    {
+                                        OldStorage.TagSettings.set(pass, tag, settings);
+                                    }
                                     await updateScreen("operate");
                                     result = true;
                                     await tagButtonListUpdate();
@@ -4920,13 +4977,13 @@ export module CyclicToDo
         {
             const map: { [key: string]: locale.LocaleKeyType; } =
             {
-                "@list": "progressScaleStyle.home",
+                "@list": "progressScaleStyle.list",
                 "none": "progressScaleStyle.none",
                 "full": "progressScaleStyle.full",
             };
             return map[displayStyle];
         }
-        export const tagProgressScaleStyleSettingsPopup = async (pass: string, tag: string, settings: TagSettings = OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
+        export const tagProgressScaleStyleSettingsPopup = async (pass: string, tag: string, settings: TagSettings | ListSettings = "@list" === tag ? OldStorage.ListSettings.get(pass): OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
@@ -4939,7 +4996,7 @@ export module CyclicToDo
                     await Promise.all
                     (
                         (
-                            "@overall" === tag ?
+                            "@list" === tag ?
                             [ "none", "full", ]:
                             [ "@list", "none", "full", ]
                         )
@@ -4956,8 +5013,15 @@ export module CyclicToDo
                                 ],
                                 onclick: async () =>
                                 {
-                                    settings.progressScaleStyle = i;
-                                    OldStorage.TagSettings.set(pass, tag, settings);
+                                    settings.progressScaleStyle = defaultStyle === i ? undefined: <"none" | "full">i;
+                                    if ("@list" === tag)
+                                    {
+                                        OldStorage.ListSettings.set(pass, settings);
+                                    }
+                                    else
+                                    {
+                                        OldStorage.TagSettings.set(pass, tag, settings);
+                                    }
                                     await updateScreen("operate");
                                     result = true;
                                     await tagButtonListUpdate();
@@ -9816,7 +9880,7 @@ export module CyclicToDo
                                 const settings = OldStorage.TagSettings.get(pass, tag);
                                 const defaultStyle = getTagDisplayStyleDefault(tag);
                                 const current = settings.displayStyle ?? defaultStyle;
-                                const list: (Exclude<TagSettings["displayStyle"], undefined>)[] = "@overall" === tag ?
+                                const list: ("@list" | Exclude<TagSettings["displayStyle"], undefined>)[] = "@list" === tag ?
                                     [ "full", "digest", "simple", "compact", ]:
                                     [ "@list", "full", "digest", "simple", "compact", ];
                                 const next = destinationItem(list, current);
@@ -9847,7 +9911,7 @@ export module CyclicToDo
                                 const settings = OldStorage.TagSettings.get(pass, tag);
                                 const defaultStyle = getTagProgressScaleStyleDefault(tag);
                                 const current = settings.progressScaleStyle ?? defaultStyle;
-                                const list: ("@list" | "none" | "full")[] = "@overall" === tag ?
+                                const list: ("@list" | "none" | "full")[] = "@list" === tag ?
                                     [ "none", "full", ]:
                                     [ "@list", "none", "full", ];
                                 const next = destinationItem(list, current);
@@ -9878,7 +9942,7 @@ export module CyclicToDo
                                 const settings = OldStorage.TagSettings.get(pass, tag);
                                 const defaultSort = getTagSortSettingsDefault(tag);
                                 const current = settings.sort ?? defaultSort;
-                                const list: ("@list" | "smart" | "simple" | "simple-reverse")[] = "@overall" === tag ?
+                                const list: ("@list" | "smart" | "simple" | "simple-reverse")[] = "@list" === tag ?
                                     [ "smart", "simple", "simple-reverse", ]:
                                     [ "@list", "smart", "simple", "simple-reverse", ];
                                 const next = destinationItem(list, current);
