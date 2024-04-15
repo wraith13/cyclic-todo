@@ -2105,7 +2105,8 @@ export module CyclicToDo
         };
         export const tagComparerOld = (pass: string) => minamo.core.comparer.make<string>
         (
-            tag => -OldStorage.TagMember.get(pass, tag).map(todo => OldStorage.History.getTicks(pass, todo).length).reduce((a, b) => a +b, 0)
+            // tag => -OldStorage.TagMember.get(pass, tag).map(todo => OldStorage.History.getTicks(pass, todo).length).reduce((a, b) => a +b, 0)
+            tag => -OldStorage.TagMember.get(pass, tag).map(todo => getToDoEntryOld(pass, todo).count).reduce((a, b) => a +b, 0)
         );
         export const todoComparerSmartBaseOld = (entry: ToDoTagEntryOld): minamo.core.comparer.ComparerType<ToDoEntry> =>
             minamo.core.comparer.make<ToDoEntry>
