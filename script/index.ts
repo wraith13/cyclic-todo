@@ -255,34 +255,37 @@ export module CyclicToDo
         displayStyle?: "full" | "digest" | "simple" | "compact";
         progressScaleStyle?: "none" | "full";
     }
-    export interface AutoTagSettingBase extends minamo.core.JsonableObject
+    export interface AutoTagConditionBase extends minamo.core.JsonableObject
     {
         type: "always" | "elapsed-time" | "elapsed-time-standard-score" | "expired";
     }
-    export interface AutoTagSettingAlways extends AutoTagSettingBase
+    export interface AutoTagConditionAlways extends AutoTagConditionBase
     {
         type: "always";
     }
-    export interface AutoTagSettingElapsedTime extends AutoTagSettingBase
+    export interface AutoTagConditionElapsedTime extends AutoTagConditionBase
     {
         type: "elapsed-time";
         elapsedTime: number;
     }
-    export interface AutoTagSettingElapsedTimeStandardScore extends AutoTagSettingBase
+    export interface AutoTagConditionElapsedTimeStandardScore extends AutoTagConditionBase
     {
         type: "elapsed-time-standard-score";
         elapsedTimeStandardScore: number;
     }
-    export interface AutoTagSettingExpired extends AutoTagSettingBase
+    export interface AutoTagConditionExpired extends AutoTagConditionBase
     {
         type: "expired";
     }
-    export type AutoTagSetting = AutoTagSettingAlways | AutoTagSettingElapsedTime | AutoTagSettingElapsedTimeStandardScore | AutoTagSettingExpired;
-    export interface TodoSettings extends minamo.core.JsonableObject
+    export type AutoTagCondition = AutoTagConditionAlways | AutoTagConditionElapsedTime | AutoTagConditionElapsedTimeStandardScore | AutoTagConditionExpired;
+    export interface AutoTagSettings extends minamo.core.JsonableObject
     {
-        flash?: AutoTagSetting;
-        pickup?: AutoTagSetting;
-        restriction?: AutoTagSetting;
+        flash?: AutoTagCondition;
+        pickup?: AutoTagCondition;
+        restriction?: AutoTagCondition;
+    }
+    export interface TodoSettings extends AutoTagSettings
+    {
     }
     export interface DocumentCard extends minamo.core.JsonableObject
     {
@@ -2067,7 +2070,7 @@ export module CyclicToDo
             null !== standardScore ?
                 Calculate.tickFromStandardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, standardScore):
                 null;
-        export const getAutoTagSettingElapsedTime = (item: ToDoEntry, setting?: AutoTagSetting): number | null =>
+        export const getAutoTagConditionElapsedTime = (item: ToDoEntry, setting?: AutoTagCondition): number | null =>
         {
             if (setting)
             {
@@ -2714,22 +2717,22 @@ export module CyclicToDo
             }
             return result;
         }
-        export const progressScaleStyle = (item: ToDoEntry, progressScaleShowStyle: "none" | "full", settings?: TodoSettings): string =>
+        export const progressScaleStyle = (item: ToDoEntry, progressScaleShowStyle: "none" | "full", settings?: AutoTagSettings): string =>
         {
             if ("number" === typeof item.progress && "full" === progressScaleShowStyle)
             {
                 const lines: { percent: number, color: string }[] = [];
-                const restriction = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.restriction));
+                const restriction = Domain.calcProgress(item, Domain.getAutoTagConditionElapsedTime(item, settings?.restriction));
                 if ("number" === typeof restriction)
                 {
                     lines.push({ percent: restriction, color: style.__DELETE_COLOR__, });
                 }
-                const pickup = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.pickup));
+                const pickup = Domain.calcProgress(item, Domain.getAutoTagConditionElapsedTime(item, settings?.pickup));
                 if ("number" === typeof pickup)
                 {
                     lines.push({ percent: pickup, color: style.__ACTIVE_COLOR__, });
                 }
-                const flash = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings?.flash));
+                const flash = Domain.calcProgress(item, Domain.getAutoTagConditionElapsedTime(item, settings?.flash));
                 if ("number" === typeof flash)
                 {
                     lines.push({ percent: flash, color: style.__FLASHY_COLOR__, });
@@ -5054,7 +5057,7 @@ export module CyclicToDo
                 });
             }
         );
-        export const getTodoPickupSettingElapsedTimePreset = (_entry: ToDoEntry, current: AutoTagSetting | undefined) =>
+        export const getTodoPickupSettingElapsedTimePreset = (_entry: ToDoEntry, current: AutoTagCondition | undefined) =>
         {
             let list: number[] = [];
             if ("elapsed-time" === current?.type)
@@ -5065,7 +5068,7 @@ export module CyclicToDo
             list.push(...config.timespanPreset.map(i => minamo.core.parseTimespan(i)).filter(isNumber).map(i => i / Domain.timeAccuracy));
             return list.filter(uniqueFilter).filter(takeFilter(config.timespanPresetMaxCount)).sort(minamo.core.comparer.basic);
         };
-        export const getTodoPickupSettingElapsedTimeStandardScorePreset = (_entry: ToDoEntry, current: AutoTagSetting | undefined) =>
+        export const getTodoPickupSettingElapsedTimeStandardScorePreset = (_entry: ToDoEntry, current: AutoTagCondition | undefined) =>
         {
             let list: number[] = [];
             if ("elapsed-time-standard-score" === current?.type)
@@ -5076,7 +5079,7 @@ export module CyclicToDo
             list.push(...config.timespanStandardScorePreset);
             return list.filter(uniqueFilter).filter(takeFilter(config.timespanStandardScorePresetMaxCount)).sort(minamo.core.comparer.basic);
         };
-        export const updateRecentlySelection = (setting: AutoTagSetting | undefined) =>
+        export const updateRecentlySelection = (setting: AutoTagCondition | undefined) =>
         {
             switch(setting?.type)
             {
@@ -5088,7 +5091,7 @@ export module CyclicToDo
                 break;
             }
         };
-        export const getAutoTagSettingText = (setting: AutoTagSetting | undefined, option: "compact" | "full"): minamo.dom.Source =>
+        export const getAutoTagConditionText = (setting: AutoTagCondition | undefined, option: "compact" | "full"): minamo.dom.Source =>
         {
             if (undefined === setting || null === setting)
             {
@@ -5126,7 +5129,7 @@ export module CyclicToDo
                 return label("pickup.expired");
             }
         };
-        export const todoSpanSettingPopup = async (entry: ToDoEntry, title: locale.LocaleKeyType, setter: (value: AutoTagSetting | undefined) => unknown, getter: () => (AutoTagSetting | undefined)): Promise<boolean> => await new Promise
+        export const todoSpanSettingPopup = async (entry: ToDoEntry, title: locale.LocaleKeyType, setter: (value: AutoTagCondition | undefined) => unknown, getter: () => (AutoTagCondition | undefined)): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
@@ -5138,7 +5141,7 @@ export module CyclicToDo
                     await Promise.all
                     (
                         (
-                            <(AutoTagSetting | undefined)[]>
+                            <(AutoTagCondition | undefined)[]>
                             [
                                 undefined,
                                 { type: "always" },
@@ -5160,7 +5163,7 @@ export module CyclicToDo
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    $span("")(getAutoTagSettingText(i, "full")),
+                                    $span("")(getAutoTagConditionText(i, "full")),
                                 ],
                                 onclick: async () =>
                                 {
@@ -5169,7 +5172,7 @@ export module CyclicToDo
                                         const elapsedTime = await dateTimeSpanPrompt
                                         (
                                             locale.map("pickup.elapsed-time"),
-                                            (getter() as AutoTagSettingElapsedTime)?.elapsedTime ?? 0
+                                            (getter() as AutoTagConditionElapsedTime)?.elapsedTime ?? 0
                                         );
                                         if (null !== elapsedTime)
                                         {
@@ -5184,7 +5187,7 @@ export module CyclicToDo
                                         const elapsedTimeStandardScore = await numberPrompt
                                         (
                                             locale.map("pickup.elapsed-time-standard-score"),
-                                            (getter() as AutoTagSettingElapsedTimeStandardScore)?.elapsedTimeStandardScore ?? 50,
+                                            (getter() as AutoTagConditionElapsedTimeStandardScore)?.elapsedTimeStandardScore ?? 50,
                                             { min: 0, max: 100, }
                                         );
                                         if (null !== elapsedTimeStandardScore)
@@ -5232,7 +5235,7 @@ export module CyclicToDo
                 });
             }
         );
-        export const todoFlashSettingPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
+        export const todoFlashSettingPopup = async (pass: string, entry: ToDoEntry, settings: AutoTagSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
             await todoSpanSettingPopup
             (
                 entry,
@@ -5245,7 +5248,7 @@ export module CyclicToDo
                 },
                 () => settings.flash
             );
-        export const todoPickupSettingPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
+        export const todoPickupSettingPopup = async (pass: string, entry: ToDoEntry, settings: AutoTagSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
             await todoSpanSettingPopup
             (
                 entry,
@@ -5258,7 +5261,7 @@ export module CyclicToDo
                 },
                 () => settings.pickup
             );
-        export const todoRestrictionSettingPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
+        export const todoRestrictionSettingPopup = async (pass: string, entry: ToDoEntry, settings: AutoTagSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
             await todoSpanSettingPopup
             (
                 entry,
@@ -5271,7 +5274,7 @@ export module CyclicToDo
                 },
                 () => settings.restriction
             );
-        export const autoTagSettingsPopup = async (pass: string, entry: ToDoEntry, settings: TodoSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
+        export const autoTagSettingsPopup = async (pass: string, entry: ToDoEntry, settings: AutoTagSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
@@ -5286,7 +5289,7 @@ export module CyclicToDo
                             "",
                             [
                                 await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
-                                monospace("", label("@flash"), getAutoTagSettingText(settings.flash, "compact"))
+                                monospace("", label("@flash"), getAutoTagConditionText(settings.flash, "compact"))
                             ],
                             "flash.description",
                             async () =>
@@ -5303,7 +5306,7 @@ export module CyclicToDo
                             "",
                             [
                                 await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
-                                monospace("", label("@pickup"), getAutoTagSettingText(settings.pickup, "compact")),
+                                monospace("", label("@pickup"), getAutoTagConditionText(settings.pickup, "compact")),
                             ],
                             "pickup.description",
                             async () =>
@@ -5320,7 +5323,7 @@ export module CyclicToDo
                             "",
                             [
                                 await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
-                                monospace("", label("@restriction"), getAutoTagSettingText(settings.restriction, "compact")),
+                                monospace("", label("@restriction"), getAutoTagConditionText(settings.restriction, "compact")),
                             ],
                             "restriction.description",
                             async () =>

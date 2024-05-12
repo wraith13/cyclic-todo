@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Apr 15 2024 10:03:52 GMT+0900 (日本標準時)
+    build at: Sun May 12 2024 19:07:42 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -24568,7 +24568,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     Calculate.tickFromStandardScore(item.RecentlySmartAverage, item.RecentlyStandardDeviation, standardScore) :
                     null;
             };
-            Domain.getAutoTagSettingElapsedTime = function (item, setting) {
+            Domain.getAutoTagConditionElapsedTime = function (item, setting) {
                 var _a, _b;
                 if (setting) {
                     switch (setting.type) {
@@ -25216,15 +25216,15 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
             Render.progressScaleStyle = function (item, progressScaleShowStyle, settings) {
                 if ("number" === typeof item.progress && "full" === progressScaleShowStyle) {
                     var lines = [];
-                    var restriction = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings === null || settings === void 0 ? void 0 : settings.restriction));
+                    var restriction = Domain.calcProgress(item, Domain.getAutoTagConditionElapsedTime(item, settings === null || settings === void 0 ? void 0 : settings.restriction));
                     if ("number" === typeof restriction) {
                         lines.push({ percent: restriction, color: style_json_1.default.__DELETE_COLOR__, });
                     }
-                    var pickup = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings === null || settings === void 0 ? void 0 : settings.pickup));
+                    var pickup = Domain.calcProgress(item, Domain.getAutoTagConditionElapsedTime(item, settings === null || settings === void 0 ? void 0 : settings.pickup));
                     if ("number" === typeof pickup) {
                         lines.push({ percent: pickup, color: style_json_1.default.__ACTIVE_COLOR__, });
                     }
-                    var flash = Domain.calcProgress(item, Domain.getAutoTagSettingElapsedTime(item, settings === null || settings === void 0 ? void 0 : settings.flash));
+                    var flash = Domain.calcProgress(item, Domain.getAutoTagConditionElapsedTime(item, settings === null || settings === void 0 ? void 0 : settings.flash));
                     if ("number" === typeof flash) {
                         lines.push({ percent: flash, color: style_json_1.default.__FLASHY_COLOR__, });
                     }
@@ -28050,7 +28050,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                         break;
                 }
             };
-            Render.getAutoTagSettingText = function (setting, option) {
+            Render.getAutoTagConditionText = function (setting, option) {
                 if (undefined === setting || null === setting) {
                     return Render.label("pickup.none");
                 }
@@ -28125,7 +28125,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                             case 1: return [2 /*return*/, (_a.children = [
                                                                                     _b.sent(),
-                                                                                    Render.$span("")(Render.getAutoTagSettingText(i, "full"))
+                                                                                    Render.$span("")(Render.getAutoTagConditionText(i, "full"))
                                                                                 ],
                                                                                     _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
                                                                                         var elapsedTime, elapsedTimeStandardScore;
@@ -28316,7 +28316,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                 _f = [
                                                                     _d.apply(void 0, _e.concat([[
                                                                             _l.sent(),
-                                                                            Render.monospace("", Render.label("@flash"), Render.getAutoTagSettingText(settings.flash, "compact"))
+                                                                            Render.monospace("", Render.label("@flash"), Render.getAutoTagConditionText(settings.flash, "compact"))
                                                                         ], "flash.description",
                                                                         function () { return __awaiter(_this, void 0, void 0, function () {
                                                                             return __generator(this, function (_a) {
@@ -28341,7 +28341,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                 _f = _f.concat([
                                                                     _g.apply(void 0, _h.concat([[
                                                                             _l.sent(),
-                                                                            Render.monospace("", Render.label("@pickup"), Render.getAutoTagSettingText(settings.pickup, "compact"))
+                                                                            Render.monospace("", Render.label("@pickup"), Render.getAutoTagConditionText(settings.pickup, "compact"))
                                                                         ], "pickup.description",
                                                                         function () { return __awaiter(_this, void 0, void 0, function () {
                                                                             return __generator(this, function (_a) {
@@ -28365,7 +28365,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                             case 3: return [2 /*return*/, _b.apply(_a, _c.concat([_f.concat([
                                                                         _j.apply(void 0, _k.concat([[
                                                                                 _l.sent(),
-                                                                                Render.monospace("", Render.label("@restriction"), Render.getAutoTagSettingText(settings.restriction, "compact"))
+                                                                                Render.monospace("", Render.label("@restriction"), Render.getAutoTagConditionText(settings.restriction, "compact"))
                                                                             ], "restriction.description",
                                                                             function () { return __awaiter(_this, void 0, void 0, function () {
                                                                                 return __generator(this, function (_a) {
@@ -34601,7 +34601,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </script>
 <style type="text/css" id="style"></style>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Apr 15 2024 10:03:52 GMT+0900 (日本標準時)', buildTimestampTick: 1713143032600, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun May 12 2024 19:07:42 GMT+0900 (日本標準時)', buildTimestampTick: 1715508462642, })" class="auto">
 <div id="foundation"><div id="flash-layer"></div></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -34825,7 +34825,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Mon Apr 15 2024 10:03:52 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Sun May 12 2024 19:07:42 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
