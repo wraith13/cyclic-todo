@@ -157,6 +157,7 @@ export module CyclicToDo
         displayStyle?: "full" | "digest" | "simple" | "compact";
         progressScaleStyle?: "none" | "full";
         termThreshold?: TermThreshold;
+        autoTagSettings?: AutoTagSettings;
     }
     export interface ToDoTagEntryOld extends minamo.core.JsonableObject
     {
@@ -254,10 +255,15 @@ export module CyclicToDo
         sort?: "smart" | "simple" | "simple-reverse";
         displayStyle?: "full" | "digest" | "simple" | "compact";
         progressScaleStyle?: "none" | "full";
+        autoTagSettings?: AutoTagSettings;
     }
     export interface AutoTagConditionBase extends minamo.core.JsonableObject
     {
-        type: "always" | "elapsed-time" | "elapsed-time-standard-score" | "expired";
+        type: AutoTagCondition["type"];
+    }
+    export interface AutoTagConditionNever extends AutoTagConditionBase
+    {
+        type: "never";
     }
     export interface AutoTagConditionAlways extends AutoTagConditionBase
     {
@@ -277,7 +283,8 @@ export module CyclicToDo
     {
         type: "expired";
     }
-    export type AutoTagCondition = AutoTagConditionAlways | AutoTagConditionElapsedTime | AutoTagConditionElapsedTimeStandardScore | AutoTagConditionExpired;
+    export type AutoTagConditionContext = "list" | "sublist" | "todo";
+    export type AutoTagCondition = AutoTagConditionNever | AutoTagConditionAlways | AutoTagConditionElapsedTime | AutoTagConditionElapsedTimeStandardScore | AutoTagConditionExpired;
     export interface AutoTagSettings extends minamo.core.JsonableObject
     {
         flash?: AutoTagCondition;
@@ -5091,14 +5098,24 @@ export module CyclicToDo
                 break;
             }
         };
-        export const getAutoTagConditionText = (setting: AutoTagCondition | undefined, option: "compact" | "full"): minamo.dom.Source =>
+        export const getAutoTagConditionText = (context: AutoTagConditionContext, setting: AutoTagCondition | undefined, option: "compact" | "full"): minamo.dom.Source =>
         {
             if (undefined === setting || null === setting)
             {
-                return label("pickup.none");
+                switch(context)
+                {
+                case "list":
+                    return label("pickup.never");
+                case "sublist":
+                    return label("pickup.list");
+                case "todo":
+                    return label("pickup.sublist");
+                }
             }
             switch(setting.type)
             {
+            case "always":
+                return label("pickup.never");
             case "always":
                 return label("pickup.always");
             case "elapsed-time":
