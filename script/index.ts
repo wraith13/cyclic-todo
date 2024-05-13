@@ -283,7 +283,7 @@ export module CyclicToDo
     {
         type: "expired";
     }
-    export type AutoTagConditionContext = "list" | "sublist" | "todo";
+    export type AutoTagConditionContext = "list" | "sublist" | "root-todo" | "sublist-todo";
     export type AutoTagCondition = AutoTagConditionNever | AutoTagConditionAlways | AutoTagConditionElapsedTime | AutoTagConditionElapsedTimeStandardScore | AutoTagConditionExpired;
     export interface AutoTagSettings extends minamo.core.JsonableObject
     {
@@ -851,6 +851,7 @@ export module CyclicToDo
                 const split = task.split("@:");
                 return 2 <= split.length ? `${split[0]}@:`: null;
             };
+            export const isRoot = (task: string) => null === getSublist(task);
             export const getBody = (task: string) =>
             {
                 const split = task.split("@:");
@@ -5107,8 +5108,9 @@ export module CyclicToDo
                 case "list":
                     return label("pickup.never");
                 case "sublist":
+                case "root-todo":
                     return label("pickup.list");
-                case "todo":
+                case "sublist-todo":
                     return label("pickup.sublist");
                 }
             }
@@ -5180,7 +5182,17 @@ export module CyclicToDo
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    $span("")(getAutoTagConditionText(i, "full")),
+                                    $span("")
+                                    (
+                                        getAutoTagConditionText
+                                        (
+                                            OldStorage.Task.isRoot(entry.task) ?
+                                                "root-todo":
+                                                "sublist-todo",
+                                            i,
+                                            "full"
+                                        )
+                                    ),
                                 ],
                                 onclick: async () =>
                                 {
