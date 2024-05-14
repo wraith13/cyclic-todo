@@ -956,13 +956,29 @@ export module CyclicToDo
                     remove(pass, task):
                     getStorage(pass).set(makeKey(pass, task), settings);
             export const remove = (pass: string, task: string) => getStorage(pass).remove(makeKey(pass, task));
+            export const getEvaluatedAutoTagSettings = (pass: string, task: string): AutoTagSettings =>
+            {
+                const listSettigs = ListSettings.get(pass)?.autoTagSettings;
+                const sublist = Task.getSublist(task);
+                const sublistSettings = null === sublist ? listSettigs: TagSettings.get(pass, sublist).autoTagSettings;
+                const todoSettings = get(pass, task);
+                const result: AutoTagSettings =
+                {
+                    flash: todoSettings?.flash ?? sublistSettings?.flash ?? listSettigs?.flash,
+                    pickup: todoSettings?.pickup ?? sublistSettings?.pickup ?? listSettigs?.pickup,
+                    restriction: todoSettings?.restriction ?? sublistSettings?.restriction ?? listSettigs?.restriction,
+                };
+                return result;
+            };
             export const isFlashTarget = (pass: string, item: ToDoEntry, elapsedTime = item.elapsed) =>
             {
-                const flashSetting = get(pass, item.task)?.flash;
+                const flashSetting = getEvaluatedAutoTagSettings(pass, item.task)?.flash;
                 if (flashSetting)
                 {
                     switch(flashSetting.type)
                     {
+                    case "never":
+                        return false;
                     case "always":
                         return true;
                     case "elapsed-time":
@@ -977,11 +993,13 @@ export module CyclicToDo
             };
             export const isPickupTarget = (pass: string, item: ToDoEntry, elapsedTime = item.elapsed) =>
             {
-                const pickupSetting = get(pass, item.task)?.pickup;
+                const pickupSetting = getEvaluatedAutoTagSettings(pass, item.task)?.pickup;
                 if (pickupSetting)
                 {
                     switch(pickupSetting.type)
                     {
+                    case "never":
+                        return false;
                     case "always":
                         return true;
                     case "elapsed-time":
@@ -996,11 +1014,13 @@ export module CyclicToDo
             };
             export const isRestrictionTarget = (pass: string, item: ToDoEntry, elapsedTime = item.elapsed) =>
             {
-                const restrictionSetting = get(pass, item.task)?.restriction;
+                const restrictionSetting = getEvaluatedAutoTagSettings(pass, item.task)?.restriction;
                 if (restrictionSetting)
                 {
                     switch(restrictionSetting.type)
                     {
+                    case "never":
+                        return false;
                     case "always":
                         return true;
                     case "elapsed-time":
