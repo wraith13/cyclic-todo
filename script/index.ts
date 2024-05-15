@@ -5134,38 +5134,41 @@ export module CyclicToDo
                     return label("pickup.sublist");
                 }
             }
-            switch(setting.type)
+            else
             {
-            case "always":
-                return label("pickup.never");
-            case "always":
-                return label("pickup.always");
-            case "elapsed-time":
+                switch(setting.type)
                 {
-                    const format = (value: minamo.dom.Source) => "compact" === option ? value: [label("pickup.elapsed-time"), ": ", value];
-                    if (isValidNumber(setting.elapsedTime))
+                case "never":
+                    return label("pickup.never");
+                case "always":
+                    return label("pickup.always");
+                case "elapsed-time":
                     {
-                        return format(Domain.timeLongStringFromTick(setting.elapsedTime));
+                        const format = (value: minamo.dom.Source) => "compact" === option ? value: [label("pickup.elapsed-time"), ": ", value];
+                        if (isValidNumber(setting.elapsedTime))
+                        {
+                            return format(Domain.timeLongStringFromTick(setting.elapsedTime));
+                        }
+                        else
+                        {
+                            return format(label("pickup.specify"));
+                        }
                     }
-                    else
+                case "elapsed-time-standard-score":
                     {
-                        return format(label("pickup.specify"));
+                        const format = (value: minamo.dom.Source) => "compact" === option ? value: [label("pickup.elapsed-time-standard-score"), ": ", value];
+                        if (isValidNumber(setting.elapsedTimeStandardScore))
+                        {
+                            return format(`${setting.elapsedTimeStandardScore}`);
+                        }
+                        else
+                        {
+                            return format(label("pickup.specify"));
+                        }
                     }
+                case "expired":
+                    return label("pickup.expired");
                 }
-            case "elapsed-time-standard-score":
-                {
-                    const format = (value: minamo.dom.Source) => "compact" === option ? value: [label("pickup.elapsed-time-standard-score"), ": ", value];
-                    if (isValidNumber(setting.elapsedTimeStandardScore))
-                    {
-                        return format(`${setting.elapsedTimeStandardScore}`);
-                    }
-                    else
-                    {
-                        return format(label("pickup.specify"));
-                    }
-                }
-            case "expired":
-                return label("pickup.expired");
             }
         };
         export const todoSpanSettingPopup = async (entry: ToDoEntry, title: locale.LocaleKeyType, setter: (value: AutoTagCondition | undefined) => unknown, getter: () => (AutoTagCondition | undefined)): Promise<boolean> => await new Promise
