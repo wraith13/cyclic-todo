@@ -5331,6 +5331,9 @@ export module CyclicToDo
             async resolve =>
             {
                 let result = false;
+                const context = OldStorage.Task.isRoot(entry.task) ?
+                    "root-todo":
+                    "sublist-todo";
                 const buttonList = $make(HTMLDivElement)({ className: "label-button-list" });
                 const buttonListUpdate = async () => minamo.dom.replaceChildren
                 (
@@ -5341,7 +5344,7 @@ export module CyclicToDo
                             "",
                             [
                                 await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
-                                monospace("", label("@flash"), getAutoTagConditionText(settings.flash, "compact"))
+                                monospace("", label("@flash"), getAutoTagConditionText(context, settings.flash, "compact"))
                             ],
                             "flash.description",
                             async () =>
@@ -5358,7 +5361,7 @@ export module CyclicToDo
                             "",
                             [
                                 await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
-                                monospace("", label("@pickup"), getAutoTagConditionText(settings.pickup, "compact")),
+                                monospace("", label("@pickup"), getAutoTagConditionText(context, settings.pickup, "compact")),
                             ],
                             "pickup.description",
                             async () =>
@@ -5375,7 +5378,7 @@ export module CyclicToDo
                             "",
                             [
                                 await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
-                                monospace("", label("@restriction"), getAutoTagConditionText(settings.restriction, "compact")),
+                                monospace("", label("@restriction"), getAutoTagConditionText(context, settings.restriction, "compact")),
                             ],
                             "restriction.description",
                             async () =>
