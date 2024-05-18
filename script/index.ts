@@ -4516,6 +4516,35 @@ export module CyclicToDo
                                         }
                                     },
                                 ),
+                            Model.isSublistOld(tag) ?
+                                []:
+                                descriptionButton
+                                (
+                                    "",
+                                    monospace
+                                    (
+                                        "",
+                                        label("Auto tag settings"),
+                                        [
+                                            null !== (settings.autoTagSettings?.flash ?? null) ?
+                                                await Resource.loadTagSvgOrCache("@flash"): [],
+                                            null !== (settings.autoTagSettings?.pickup ?? null) ?
+                                                await Resource.loadTagSvgOrCache("@pickup"): [],
+                                            null !== (settings.autoTagSettings?.restriction ?? null) ?
+                                                await Resource.loadTagSvgOrCache("@restriction"): [],
+                                        ],
+                                    ),
+                                    "Auto tag settings",
+                                    async () =>
+                                    {
+                                        if (await autoTagSettingsPopup(pass, item))
+                                        {
+                                            result = true;
+                                            updateScreen("operate");
+                                            await buttonListUpdate();
+                                        }
+                                    },
+                                ),
                             descriptionButton
                             (
                                 "",
@@ -5326,79 +5355,85 @@ export module CyclicToDo
                 },
                 () => settings.restriction
             );
-        export const autoTagSettingsPopup = async (pass: string, entry: ToDoEntry, settings: AutoTagSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
+        //export const autoTagSettingsPopup = async (pass: string, entry: ToDoEntry, settings: AutoTagSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
+        export const autoTagSettingsPopup = async (context: AutoTagConditionContext, title: string, setter: (value: AutoTagSettings) => unknown, getter: () => AutoTagSettings): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
                 let result = false;
-                const context = OldStorage.Task.isRoot(entry.task) ?
-                    "root-todo":
-                    "sublist-todo";
+                // const context = OldStorage.Task.isRoot(entry.task) ?
+                //     "root-todo":
+                //     "sublist-todo";
                 const buttonList = $make(HTMLDivElement)({ className: "label-button-list" });
-                const buttonListUpdate = async () => minamo.dom.replaceChildren
-                (
-                    buttonList,
-                    [
-                        descriptionButton
-                        (
-                            "",
-                            [
-                                await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
-                                monospace("", label("@flash"), getAutoTagConditionText(context, settings.flash, "compact"))
-                            ],
-                            "flash.description",
-                            async () =>
-                            {
-                                if (await todoFlashSettingPopup(pass, entry, settings))
+                const buttonListUpdate = async () =>
+                {
+                    const settings = getter();
+                    minamo.dom.replaceChildren
+                    (
+                        buttonList,
+                        [
+                            descriptionButton
+                            (
+                                "",
+                                [
+                                    await Resource.loadSvgOrCache(Resource.getTagIcon("@flash")),
+                                    monospace("", label("@flash"), getAutoTagConditionText(context, settings.flash, "compact"))
+                                ],
+                                "flash.description",
+                                async () =>
                                 {
-                                    result = true;
-                                    await buttonListUpdate();
+                                    if (await todoFlashSettingPopup(pass, entry, settings))
+                                    {
+                                        result = true;
+                                        await buttonListUpdate();
+                                    }
                                 }
-                            }
-                        ),
-                        descriptionButton
-                        (
-                            "",
-                            [
-                                await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
-                                monospace("", label("@pickup"), getAutoTagConditionText(context, settings.pickup, "compact")),
-                            ],
-                            "pickup.description",
-                            async () =>
-                            {
-                                if (await todoPickupSettingPopup(pass, entry, settings))
+                            ),
+                            descriptionButton
+                            (
+                                "",
+                                [
+                                    await Resource.loadSvgOrCache(Resource.getTagIcon("@pickup")),
+                                    monospace("", label("@pickup"), getAutoTagConditionText(context, settings.pickup, "compact")),
+                                ],
+                                "pickup.description",
+                                async () =>
                                 {
-                                    result = true;
-                                    await buttonListUpdate();
+                                    if (await todoPickupSettingPopup(pass, entry, settings))
+                                    {
+                                        result = true;
+                                        await buttonListUpdate();
+                                    }
                                 }
-                            }
-                        ),
-                        descriptionButton
-                        (
-                            "",
-                            [
-                                await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
-                                monospace("", label("@restriction"), getAutoTagConditionText(context, settings.restriction, "compact")),
-                            ],
-                            "restriction.description",
-                            async () =>
-                            {
-                                if (await todoRestrictionSettingPopup(pass, entry, settings))
+                            ),
+                            descriptionButton
+                            (
+                                "",
+                                [
+                                    await Resource.loadSvgOrCache(Resource.getTagIcon("@restriction")),
+                                    monospace("", label("@restriction"), getAutoTagConditionText(context, settings.restriction, "compact")),
+                                ],
+                                "restriction.description",
+                                async () =>
                                 {
-                                    result = true;
-                                    await buttonListUpdate();
+                                    if (await todoRestrictionSettingPopup(pass, entry, settings))
+                                    {
+                                        result = true;
+                                        await buttonListUpdate();
+                                    }
                                 }
-                            }
-                        ),
-                    ]
-                );
+                            ),
+                        ]
+                    );
+                    };
                 await buttonListUpdate();
                 const ui = popup
                 ({
                     // className: "add-remove-tags-popup",
                     children:
                     [
-                        $tag("h2")("")(`${locale.map("Auto tag settings")}: ${Model.decode(entry.task)}`),
+                        //$tag("h2")("")(`${locale.map("Auto tag settings")}: ${Model.decode(entry.task)}`),
+                        $tag("h2")("")(`${locale.map("Auto tag settings")}: ${title}`),
                         buttonList,
                         $div("popup-operator")
                         ([{
