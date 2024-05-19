@@ -5114,7 +5114,7 @@ export module CyclicToDo
                 });
             }
         );
-        export const getTodoPickupSettingElapsedTimePreset = (_entry: ToDoEntry, current: AutoTagCondition | undefined) =>
+        export const getTodoPickupSettingElapsedTimePreset = (current: AutoTagCondition | undefined) =>
         {
             let list: number[] = [];
             if ("elapsed-time" === current?.type)
@@ -5125,7 +5125,7 @@ export module CyclicToDo
             list.push(...config.timespanPreset.map(i => minamo.core.parseTimespan(i)).filter(isNumber).map(i => i / Domain.timeAccuracy));
             return list.filter(uniqueFilter).filter(takeFilter(config.timespanPresetMaxCount)).sort(minamo.core.comparer.basic);
         };
-        export const getTodoPickupSettingElapsedTimeStandardScorePreset = (_entry: ToDoEntry, current: AutoTagCondition | undefined) =>
+        export const getTodoPickupSettingElapsedTimeStandardScorePreset = ( current: AutoTagCondition | undefined) =>
         {
             let list: number[] = [];
             if ("elapsed-time-standard-score" === current?.type)
@@ -5200,7 +5200,7 @@ export module CyclicToDo
                 }
             }
         };
-        export const todoSpanSettingPopup = async (entry: ToDoEntry, title: locale.LocaleKeyType, setter: (value: AutoTagCondition | undefined) => unknown, getter: () => (AutoTagCondition | undefined)): Promise<boolean> => await new Promise
+        export const todoSpanSettingPopup = async (context: AutoTagConditionContext, title: string, field: locale.LocaleKeyType, setter: (value: AutoTagCondition | undefined) => unknown, getter: () => (AutoTagCondition | undefined)): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
@@ -5216,10 +5216,10 @@ export module CyclicToDo
                             [
                                 undefined,
                                 { type: "always" },
-                                ...getTodoPickupSettingElapsedTimePreset(entry, getter())
+                                ...getTodoPickupSettingElapsedTimePreset(getter())
                                     .map(elapsedTime => ({ type: "elapsed-time", elapsedTime, })),
                                 { type: "elapsed-time", NaN, },
-                                ...getTodoPickupSettingElapsedTimeStandardScorePreset(entry, getter())
+                                ...getTodoPickupSettingElapsedTimeStandardScorePreset(getter())
                                     .map(elapsedTimeStandardScore => ({ type: "elapsed-time-standard-score", elapsedTimeStandardScore, })),
                                 { type: "elapsed-time-standard-score", NaN, },
                                 { type: "expired" },
@@ -5234,17 +5234,7 @@ export module CyclicToDo
                                 children:
                                 [
                                     await Resource.loadSvgOrCache("check-icon"),
-                                    $span("")
-                                    (
-                                        getAutoTagConditionText
-                                        (
-                                            OldStorage.Task.isRoot(entry.task) ?
-                                                "root-todo":
-                                                "sublist-todo",
-                                            i,
-                                            "full"
-                                        )
-                                    ),
+                                    $span("")(getAutoTagConditionText(context, i, "full")),
                                 ],
                                 onclick: async () =>
                                 {
@@ -5295,7 +5285,7 @@ export module CyclicToDo
                     // className: "add-remove-tags-popup",
                     children:
                     [
-                        $tag("h2")("")(`${locale.map(title)}: ${Model.decode(entry.task)}`),
+                        $tag("h2")("")(`${locale.map(field)}: ${Model.decode(title)}`),
                         buttonList,
                         $div("popup-operator")
                         ([{
@@ -5316,18 +5306,22 @@ export module CyclicToDo
                 });
             }
         );
-        export const todoFlashSettingPopup = async (pass: string, entry: ToDoEntry, settings: AutoTagSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
+        export const todoFlashSettingPopup = async (context: AutoTagConditionContext, title: string, setter: (value: AutoTagSettings) => unknown, getter: () => AutoTagSettings): Promise<boolean> =>
             await todoSpanSettingPopup
             (
-                entry,
+                context,
+                title,
                 "Flash setting",
                 async value =>
                 {
+                    const settings = getter();
                     settings.flash = value;
-                    OldStorage.TodoSettings.set(pass, entry.task, settings);
+                    setter(settings);
+                    //settings.flash = value;
+                    //OldStorage.TodoSettings.set(pass, entry.task, settings);
                     await updateScreen("operate");
                 },
-                () => settings.flash
+                () => getter().flash
             );
         export const todoPickupSettingPopup = async (pass: string, entry: ToDoEntry, settings: AutoTagSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
             await todoSpanSettingPopup
