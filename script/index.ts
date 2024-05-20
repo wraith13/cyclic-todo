@@ -4537,7 +4537,7 @@ export module CyclicToDo
                                     "Auto tag settings",
                                     async () =>
                                     {
-                                        if (await autoTagSettingsPopup(pass, item))
+                                        if (await autoTagSettingsPopup("sublist", tag, ....))
                                         {
                                             result = true;
                                             updateScreen("operate");
@@ -4770,7 +4770,7 @@ export module CyclicToDo
                                 "Auto tag settings",
                                 async () =>
                                 {
-                                    if (await autoTagSettingsPopup(pass, item))
+                                    if (await todoAutoTagSettingsPopup(pass, item.task))
                                     {
                                         result = true;
                                         updateScreen("operate");
@@ -5323,33 +5323,40 @@ export module CyclicToDo
                 },
                 () => getter().flash
             );
-        export const todoPickupSettingPopup = async (pass: string, entry: ToDoEntry, settings: AutoTagSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
+        export const todoPickupSettingPopup = async (context: AutoTagConditionContext, title: string, setter: (value: AutoTagSettings) => unknown, getter: () => AutoTagSettings): Promise<boolean> =>
             await todoSpanSettingPopup
             (
-                entry,
+                context,
+                title,
                 "Pickup setting",
                 async value =>
                 {
+                    const settings = getter();
                     settings.pickup = value;
-                    OldStorage.TodoSettings.set(pass, entry.task, settings);
+                    setter(settings);
+                    // settings.pickup = value;
+                    // OldStorage.TodoSettings.set(pass, entry.task, settings);
                     await updateScreen("operate");
                 },
-                () => settings.pickup
+                () => getter().pickup
             );
-        export const todoRestrictionSettingPopup = async (pass: string, entry: ToDoEntry, settings: AutoTagSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> =>
+        export const todoRestrictionSettingPopup = async (context: AutoTagConditionContext, title: string, setter: (value: AutoTagSettings) => unknown, getter: () => AutoTagSettings): Promise<boolean> =>
             await todoSpanSettingPopup
             (
-                entry,
+                context,
+                title,
                 "Restriction setting",
                 async value =>
                 {
+                    const settings = getter();
                     settings.restriction = value;
-                    OldStorage.TodoSettings.set(pass, entry.task, settings);
+                    setter(settings);
+                    // settings.restriction = value;
+                    // OldStorage.TodoSettings.set(pass, entry.task, settings);
                     await updateScreen("operate");
                 },
-                () => settings.restriction
+                () => getter().restriction
             );
-        //export const autoTagSettingsPopup = async (pass: string, entry: ToDoEntry, settings: AutoTagSettings = OldStorage.TodoSettings.get(pass, entry.task)): Promise<boolean> => await new Promise
         export const autoTagSettingsPopup = async (context: AutoTagConditionContext, title: string, setter: (value: AutoTagSettings) => unknown, getter: () => AutoTagSettings): Promise<boolean> => await new Promise
         (
             async resolve =>
@@ -5376,7 +5383,7 @@ export module CyclicToDo
                                 "flash.description",
                                 async () =>
                                 {
-                                    if (await todoFlashSettingPopup(pass, entry, settings))
+                                    if (await todoFlashSettingPopup(context, title, setter, getter))
                                     {
                                         result = true;
                                         await buttonListUpdate();
@@ -5393,7 +5400,7 @@ export module CyclicToDo
                                 "pickup.description",
                                 async () =>
                                 {
-                                    if (await todoPickupSettingPopup(pass, entry, settings))
+                                    if (await todoPickupSettingPopup(context, title, setter, getter))
                                     {
                                         result = true;
                                         await buttonListUpdate();
@@ -5410,7 +5417,7 @@ export module CyclicToDo
                                 "restriction.description",
                                 async () =>
                                 {
-                                    if (await todoRestrictionSettingPopup(pass, entry, settings))
+                                    if (await todoRestrictionSettingPopup(context, title, setter, getter))
                                     {
                                         result = true;
                                         await buttonListUpdate();
@@ -5446,6 +5453,15 @@ export module CyclicToDo
                     },
                 });
             }
+        );
+        export const todoAutoTagSettingsPopup = async (pass: string, task: string): Promise<boolean> => await autoTagSettingsPopup
+        (
+            OldStorage.Task.isRoot(task) ?
+                "root-todo":
+                "sublist-todo",
+            task,
+            value => OldStorage.TodoSettings.set(pass, task, value),
+            () => OldStorage.TodoSettings.get(pass, task)
         );
         export const screenCover = (data: { parent?: HTMLElement | null, children?: minamo.dom.Source, onclick: () => unknown, eventListener?: minamo.dom.EventListenerSource, }) =>
         {
@@ -5915,7 +5931,7 @@ export module CyclicToDo
                 label("Auto tag settings"),
                 async () =>
                 {
-                    if (await autoTagSettingsPopup(pass, item))
+                    if (await todoAutoTagSettingsPopup(pass, item.task))
                     {
                         updateScreen("operate");
                     }
@@ -6046,7 +6062,7 @@ export module CyclicToDo
                     onclick: async (event: MouseEvent) =>
                     {
                         event.preventDefault();
-                        if (await autoTagSettingsPopup(pass, item))
+                        if (await todoAutoTagSettingsPopup(pass, item.task))
                         {
                             updateScreen("operate");
                         }
@@ -6061,7 +6077,7 @@ export module CyclicToDo
                     onclick: async (event: MouseEvent) =>
                     {
                         event.preventDefault();
-                        if (await autoTagSettingsPopup(pass, item))
+                        if (await todoAutoTagSettingsPopup(pass, item.task))
                         {
                             updateScreen("operate");
                         }
@@ -6076,7 +6092,7 @@ export module CyclicToDo
                     onclick: async (event: MouseEvent) =>
                     {
                         event.preventDefault();
-                        if (await autoTagSettingsPopup(pass, item))
+                        if (await todoAutoTagSettingsPopup(pass, item.task))
                         {
                             updateScreen("operate");
                         }
@@ -6091,7 +6107,7 @@ export module CyclicToDo
                     onclick: async (event: MouseEvent) =>
                     {
                         event.preventDefault();
-                        if (await autoTagSettingsPopup(pass, item))
+                        if (await todoAutoTagSettingsPopup(pass, item.task))
                         {
                             updateScreen("operate");
                         }
