@@ -4349,6 +4349,40 @@ export module CyclicToDo
                                 monospace
                                 (
                                     "",
+                                    label("Auto tag settings"),
+                                    [
+                                        null !== (settings.autoTagSettings?.flash ?? null) ?
+                                            await Resource.loadTagSvgOrCache("@flash"): [],
+                                        null !== (settings.autoTagSettings?.pickup ?? null) ?
+                                            await Resource.loadTagSvgOrCache("@pickup"): [],
+                                        null !== (settings.autoTagSettings?.restriction ?? null) ?
+                                            await Resource.loadTagSvgOrCache("@restriction"): [],
+                                    ],
+                                ),
+                                "Auto tag settings",
+                                async () =>
+                                {
+                                    const setter = (value: AutoTagSettings) =>
+                                    {
+                                        settings.autoTagSettings = value;
+                                        OldStorage.ListSettings.set(pass, settings);
+                                    };
+                                    const getter = (): AutoTagSettings =>
+                                        OldStorage.ListSettings.get(pass).autoTagSettings ?? { };
+                                    if (await autoTagSettingsPopup("sublist", OldStorage.Title.get(pass), setter, getter))
+                                    {
+                                        result = true;
+                                        updateScreen("operate");
+                                        await buttonListUpdate();
+                                    }
+                                },
+                            ),
+                            descriptionButton
+                            (
+                                "",
+                                monospace
+                                (
+                                    "",
                                     label("Display style setting"),
                                     label(getTagDisplayStyleText(settings.displayStyle ?? getTagDisplayStyleDefault("@list")))
                                 ),
