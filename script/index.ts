@@ -4308,6 +4308,15 @@ export module CyclicToDo
                 });
             }
         );
+        export const autoTagSettingsIcons = async (autoTagSettings: AutoTagSettings | undefined) =>
+        [
+            null !== (autoTagSettings?.flash ?? null) ?
+                await Resource.loadTagSvgOrCache("@flash"): [],
+            null !== (autoTagSettings?.pickup ?? null) ?
+                await Resource.loadTagSvgOrCache("@pickup"): [],
+            null !== (autoTagSettings?.restriction ?? null) ?
+                await Resource.loadTagSvgOrCache("@restriction"): [],
+        ];
         export const listSettingsPopup = async (pass: string): Promise<boolean> => await new Promise
         (
             async resolve =>
@@ -4350,14 +4359,7 @@ export module CyclicToDo
                                 (
                                     "",
                                     label("Auto tag settings"),
-                                    [
-                                        null !== (settings.autoTagSettings?.flash ?? null) ?
-                                            await Resource.loadTagSvgOrCache("@flash"): [],
-                                        null !== (settings.autoTagSettings?.pickup ?? null) ?
-                                            await Resource.loadTagSvgOrCache("@pickup"): [],
-                                        null !== (settings.autoTagSettings?.restriction ?? null) ?
-                                            await Resource.loadTagSvgOrCache("@restriction"): [],
-                                    ],
+                                    await autoTagSettingsIcons(settings.autoTagSettings),
                                 ),
                                 "Auto tag settings",
                                 async () =>
@@ -4369,7 +4371,7 @@ export module CyclicToDo
                                     };
                                     const getter = (): AutoTagSettings =>
                                         OldStorage.ListSettings.get(pass).autoTagSettings ?? { };
-                                    if (await autoTagSettingsPopup("sublist", OldStorage.Title.get(pass), setter, getter))
+                                    if (await autoTagSettingsPopup("list", OldStorage.Title.get(pass), setter, getter))
                                     {
                                         result = true;
                                         updateScreen("operate");
@@ -4559,14 +4561,7 @@ export module CyclicToDo
                                     (
                                         "",
                                         label("Auto tag settings"),
-                                        [
-                                            null !== (settings.autoTagSettings?.flash ?? null) ?
-                                                await Resource.loadTagSvgOrCache("@flash"): [],
-                                            null !== (settings.autoTagSettings?.pickup ?? null) ?
-                                                await Resource.loadTagSvgOrCache("@pickup"): [],
-                                            null !== (settings.autoTagSettings?.restriction ?? null) ?
-                                                await Resource.loadTagSvgOrCache("@restriction"): [],
-                                        ],
+                                        await autoTagSettingsIcons(settings.autoTagSettings),
                                     ),
                                     "Auto tag settings",
                                     async () =>
@@ -4799,14 +4794,7 @@ export module CyclicToDo
                                 (
                                     "",
                                     label("Auto tag settings"),
-                                    [
-                                        null !== (OldStorage.TodoSettings.get(pass, item.task).flash ?? null) ?
-                                            await Resource.loadTagSvgOrCache("@flash"): [],
-                                        null !== (OldStorage.TodoSettings.get(pass, item.task).pickup ?? null) ?
-                                            await Resource.loadTagSvgOrCache("@pickup"): [],
-                                        null !== (OldStorage.TodoSettings.get(pass, item.task).restriction ?? null) ?
-                                            await Resource.loadTagSvgOrCache("@restriction"): [],
-                                    ],
+                                    await autoTagSettingsIcons(OldStorage.TodoSettings.get(pass, item.task)),
                                 ),
                                 "Auto tag settings",
                                 async () =>
