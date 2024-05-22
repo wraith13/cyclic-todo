@@ -6083,9 +6083,11 @@ export module CyclicToDo
         );
         export const todoItemSettings = async (pass: string, item: ToDoEntry) =>
         {
-            const makeLinkButton = async (icon: string) => linkButton
+            const settings = OldStorage.TodoSettings.get(pass, item.task);
+            const evaluatedSettings = OldStorage.TodoSettings.getEvaluatedAutoTagSettings(pass, item.task);
+            const makeLinkButton = async (icon: string, solid: boolean) => linkButton
             ({
-                className: "tag",
+                className: solid ? "tag": "tag shadow-tag",
                 children: await Resource.loadTagSvgOrCache(icon),
                 onclick: async (event: MouseEvent) =>
                 {
@@ -6096,18 +6098,24 @@ export module CyclicToDo
                     }
                 },
             });
-            const result =$div("item-settings")
-            ([
-                null !== (OldStorage.TodoSettings.get(pass, item.task).flash ?? null) ?
-                    await makeLinkButton("@flash"): [],
-                null !== (OldStorage.TodoSettings.get(pass, item.task).pickup ?? null) ?
-                    await makeLinkButton("@pickup"): [],
-                null !== (OldStorage.TodoSettings.get(pass, item.task).restriction ?? null) ?
-                    await makeLinkButton("@restriction"): [],
-                ! OldStorage.TodoSettings.hasAutoTagSettings(pass, item.task) ?
-                    await makeLinkButton("settings-icon"): [],
-            ]);
-            return result;
+            const result: minamo.dom.Source[] = [];
+            if (null !== (evaluatedSettings.flash ?? null))
+            {
+                result.push(await makeLinkButton("@flash", null !== (settings.flash ?? null)));
+            }
+            if (null !== (evaluatedSettings.pickup ?? null))
+            {
+                result.push(await makeLinkButton("@pickup", null !== (settings.flash ?? null)));
+            }
+            if (null !== (evaluatedSettings.restriction ?? null))
+            {
+                result.push(await makeLinkButton("@restriction", null !== (settings.flash ?? null)));
+            }
+            if (result.length <= 0)
+            {
+                result.push(await makeLinkButton("settings-icon", true));
+            }
+            return $div("item-settings")(result);
         };
         export const todoItem = async (entry: ToDoTagEntryOld, item: ToDoEntry, displayStyle: TagSettings["displayStyle"], progressScaleShowStyle: "none" | "full") =>
         {
