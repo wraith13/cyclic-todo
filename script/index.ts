@@ -6105,11 +6105,11 @@ export module CyclicToDo
             }
             if (null !== (evaluatedSettings.pickup ?? null))
             {
-                result.push(await makeLinkButton("@pickup", null !== (settings.flash ?? null)));
+                result.push(await makeLinkButton("@pickup", null !== (settings.pickup ?? null)));
             }
             if (null !== (evaluatedSettings.restriction ?? null))
             {
-                result.push(await makeLinkButton("@restriction", null !== (settings.flash ?? null)));
+                result.push(await makeLinkButton("@restriction", null !== (settings.restriction ?? null)));
             }
             if (result.length <= 0)
             {
