@@ -6085,10 +6085,10 @@ export module CyclicToDo
         {
             const settings = OldStorage.TodoSettings.get(pass, item.task);
             const evaluatedSettings = OldStorage.TodoSettings.getEvaluatedAutoTagSettings(pass, item.task);
-            const makeLinkButton = async (icon: string, solid: boolean) => linkButton
+            const makeLinkButton = (icon: SVGElement, solid: boolean) => linkButton
             ({
                 className: solid ? "tag": "tag shadow-tag",
-                children: await Resource.loadTagSvgOrCache(icon),
+                children: icon,
                 onclick: async (event: MouseEvent) =>
                 {
                     event.preventDefault();
@@ -6101,19 +6101,19 @@ export module CyclicToDo
             const result: minamo.dom.Source[] = [];
             if (null !== (evaluatedSettings.flash ?? null))
             {
-                result.push(await makeLinkButton("@flash", null !== (settings.flash ?? null)));
+                result.push(makeLinkButton(await Resource.loadTagSvgOrCache("@flash"), null !== (settings.flash ?? null)));
             }
             if (null !== (evaluatedSettings.pickup ?? null))
             {
-                result.push(await makeLinkButton("@pickup", null !== (settings.pickup ?? null)));
+                result.push(makeLinkButton(await Resource.loadTagSvgOrCache("@pickup"), null !== (settings.pickup ?? null)));
             }
             if (null !== (evaluatedSettings.restriction ?? null))
             {
-                result.push(await makeLinkButton("@restriction", null !== (settings.restriction ?? null)));
+                result.push(makeLinkButton(await Resource.loadTagSvgOrCache("@pickup"), null !== (settings.restriction ?? null)));
             }
             if (result.length <= 0)
             {
-                result.push(await makeLinkButton("settings-icon", true));
+                result.push(makeLinkButton(await Resource.loadSvgOrCache("settings-icon"), true));
             }
             return $div("item-settings")(result);
         };

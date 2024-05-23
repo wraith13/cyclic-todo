@@ -2076,6 +2076,20 @@ button
                         color: @main-color;
                         fill: @main-color;
                     }
+                    &.shadow-tag
+                    {
+                        @media (hover: hover)
+                        {
+                            &:not(:hover)
+                            {
+                                opacity: 0.3;
+                            }
+                        }
+                        @media (hover: none)
+                        {
+                            opacity: 0.3;
+                        }
+                    }
                 }
             }
         }

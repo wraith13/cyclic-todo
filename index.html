@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sun May 12 2024 19:07:42 GMT+0900 (日本標準時)
+    build at: Fri May 24 2024 00:53:36 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -2753,6 +2753,16 @@ h2 {
     text-decoration: none;
     color: #000022;
     fill: #000022;
+  }
+}
+@media (hover: hover) {
+  .light-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings a.shadow-tag:not(:hover) {
+    opacity: 0.3;
+  }
+}
+@media (hover: none) {
+  .light-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings a.shadow-tag {
+    opacity: 0.3;
   }
 }
 .light-theme-trait .task-item .item-information {
@@ -5906,6 +5916,16 @@ body.light .task-item .item-attribute-frame .item-attribute .item-settings a svg
     text-decoration: none;
     color: #000022;
     fill: #000022;
+  }
+}
+@media (hover: hover) {
+  body.light .task-item .item-attribute-frame .item-attribute .item-settings a.shadow-tag:not(:hover) {
+    opacity: 0.3;
+  }
+}
+@media (hover: none) {
+  body.light .task-item .item-attribute-frame .item-attribute .item-settings a.shadow-tag {
+    opacity: 0.3;
   }
 }
 body.light .task-item .item-information {
@@ -9667,6 +9687,16 @@ body.light .keyboard-shortcuts li .key:first-child {
     fill: #000022;
   }
 }
+@media (prefers-color-scheme: light) and (hover: hover) {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings a.shadow-tag:not(:hover) {
+    opacity: 0.3;
+  }
+}
+@media (prefers-color-scheme: light) and (hover: none) {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings a.shadow-tag {
+    opacity: 0.3;
+  }
+}
 @media (prefers-color-scheme: light) and (max-width: 780px) {
   body.auto .screen.has-bottom-tabs > .screen-body {
     padding-bottom: 82px;
@@ -12473,6 +12503,16 @@ body.light .keyboard-shortcuts li .key:first-child {
     text-decoration: none;
     color: #FFFFFF;
     fill: #FFFFFF;
+  }
+}
+@media (hover: hover) {
+  .dark-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings a.shadow-tag:not(:hover) {
+    opacity: 0.3;
+  }
+}
+@media (hover: none) {
+  .dark-theme-trait .task-item .item-attribute-frame .item-attribute .item-settings a.shadow-tag {
+    opacity: 0.3;
   }
 }
 .dark-theme-trait .task-item .item-information {
@@ -15629,6 +15669,16 @@ body.dark .task-item .item-attribute-frame .item-attribute .item-settings a svg 
     text-decoration: none;
     color: #FFFFFF;
     fill: #FFFFFF;
+  }
+}
+@media (hover: hover) {
+  body.dark .task-item .item-attribute-frame .item-attribute .item-settings a.shadow-tag:not(:hover) {
+    opacity: 0.3;
+  }
+}
+@media (hover: none) {
+  body.dark .task-item .item-attribute-frame .item-attribute .item-settings a.shadow-tag {
+    opacity: 0.3;
   }
 }
 body.dark .task-item .item-information {
@@ -19393,6 +19443,16 @@ body.dark .keyboard-shortcuts li .key:first-child {
     fill: #FFFFFF;
   }
 }
+@media (prefers-color-scheme: dark) and (hover: hover) {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings a.shadow-tag:not(:hover) {
+    opacity: 0.3;
+  }
+}
+@media (prefers-color-scheme: dark) and (hover: none) {
+  body.auto .task-item .item-attribute-frame .item-attribute .item-settings a.shadow-tag {
+    opacity: 0.3;
+  }
+}
 @media (prefers-color-scheme: dark) and (max-width: 780px) {
   body.auto .screen.has-bottom-tabs > .screen-body {
     padding-bottom: 82px;
@@ -22254,7 +22314,9 @@ define("resource/lang.en", [], {
     "sort.smart.description": "The ToDoes are displayed in order of expected execution timing approaching from auto tag, average interval, standard deviation, and elapsed time from the previous time. This order of ToDoes is generally recommended.",
     "sort.simple.description": "It simply displays ToDoes in order of the longest elapsed time since the previous time. It is used for a set of ToDoes whose order of execution is fixed.",
     "sort.simple-reverse.description": "It simply displays ToDoes in order of the shortest elapsed time since the previous time. It is used for a set of ToDoes that are more likely to be executed again soon if they have been executed recently.",
-    "pickup.none": "Never",
+    "pickup.never": "Never",
+    "pickup.list": "Same setting as List",
+    "pickup.sublist": "Same setting as Sublist",
     "pickup.always": "Always",
     "pickup.elapsed-time": "Elapsed time ( actual )",
     "pickup.elapsed-time-standard-score": "Elapsed time ( T-score )",
@@ -22547,7 +22609,9 @@ define("resource/lang.ja", [], {
     "sort.smart.description": "自動タグ、平均間隔、標準偏差、前回からの経過時間から、そろそろ実行タイミングが近づいてきたと予想される ToDo 順に表示します。通常、この並び順を推奨します。",
     "sort.simple.description": "単純に前回からの経過時間が長い ToDo 順に表示します。実行する順番が決まってる ToDo の集合に対して使用します。",
     "sort.simple-reverse.description": "単純に前回からの経過時間が短い ToDo 順に表示します。直近で実行した ToDo ほどすぐにまた実行する可能性が高い ToDo の集合に対して使用します。",
-    "pickup.none": "しない",
+    "pickup.never": "しない",
+    "pickup.list": "リストと同じ設定",
+    "pickup.sublist": "サブリストと同じ設定",
     "pickup.always": "常に",
     "pickup.elapsed-time": "経過時間(実値)",
     "pickup.elapsed-time-standard-score": "経過時間(偏差値)",
@@ -23382,6 +23446,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     var split = task.split("@:");
                     return 2 <= split.length ? "".concat(split[0], "@:") : null;
                 };
+                Task.isRoot = function (task) { return null === Task.getSublist(task); };
                 Task.getBody = function (task) {
                     var split = task.split("@:");
                     return 2 <= split.length ? split[split.length - 1] : task;
@@ -23463,12 +23528,27 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                         OldStorage.getStorage(pass).set(TodoSettings.makeKey(pass, task), settings);
                 };
                 TodoSettings.remove = function (pass, task) { return OldStorage.getStorage(pass).remove(TodoSettings.makeKey(pass, task)); };
+                TodoSettings.getEvaluatedAutoTagSettings = function (pass, task) {
+                    var _a, _b, _c, _d, _e, _f, _g;
+                    var listSettigs = (_a = ListSettings.get(pass)) === null || _a === void 0 ? void 0 : _a.autoTagSettings;
+                    var sublist = Task.getSublist(task);
+                    var sublistSettings = null === sublist ? listSettigs : TagSettings.get(pass, sublist).autoTagSettings;
+                    var todoSettings = TodoSettings.get(pass, task);
+                    var result = {
+                        flash: (_c = (_b = todoSettings === null || todoSettings === void 0 ? void 0 : todoSettings.flash) !== null && _b !== void 0 ? _b : sublistSettings === null || sublistSettings === void 0 ? void 0 : sublistSettings.flash) !== null && _c !== void 0 ? _c : listSettigs === null || listSettigs === void 0 ? void 0 : listSettigs.flash,
+                        pickup: (_e = (_d = todoSettings === null || todoSettings === void 0 ? void 0 : todoSettings.pickup) !== null && _d !== void 0 ? _d : sublistSettings === null || sublistSettings === void 0 ? void 0 : sublistSettings.pickup) !== null && _e !== void 0 ? _e : listSettigs === null || listSettigs === void 0 ? void 0 : listSettigs.pickup,
+                        restriction: (_g = (_f = todoSettings === null || todoSettings === void 0 ? void 0 : todoSettings.restriction) !== null && _f !== void 0 ? _f : sublistSettings === null || sublistSettings === void 0 ? void 0 : sublistSettings.restriction) !== null && _g !== void 0 ? _g : listSettigs === null || listSettigs === void 0 ? void 0 : listSettigs.restriction,
+                    };
+                    return result;
+                };
                 TodoSettings.isFlashTarget = function (pass, item, elapsedTime) {
                     var _a, _b;
                     if (elapsedTime === void 0) { elapsedTime = item.elapsed; }
-                    var flashSetting = (_a = TodoSettings.get(pass, item.task)) === null || _a === void 0 ? void 0 : _a.flash;
+                    var flashSetting = (_a = TodoSettings.getEvaluatedAutoTagSettings(pass, item.task)) === null || _a === void 0 ? void 0 : _a.flash;
                     if (flashSetting) {
                         switch (flashSetting.type) {
+                            case "never":
+                                return false;
                             case "always":
                                 return true;
                             case "elapsed-time":
@@ -23484,9 +23564,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                 TodoSettings.isPickupTarget = function (pass, item, elapsedTime) {
                     var _a, _b;
                     if (elapsedTime === void 0) { elapsedTime = item.elapsed; }
-                    var pickupSetting = (_a = TodoSettings.get(pass, item.task)) === null || _a === void 0 ? void 0 : _a.pickup;
+                    var pickupSetting = (_a = TodoSettings.getEvaluatedAutoTagSettings(pass, item.task)) === null || _a === void 0 ? void 0 : _a.pickup;
                     if (pickupSetting) {
                         switch (pickupSetting.type) {
+                            case "never":
+                                return false;
                             case "always":
                                 return true;
                             case "elapsed-time":
@@ -23502,9 +23584,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                 TodoSettings.isRestrictionTarget = function (pass, item, elapsedTime) {
                     var _a, _b;
                     if (elapsedTime === void 0) { elapsedTime = item.elapsed; }
-                    var restrictionSetting = (_a = TodoSettings.get(pass, item.task)) === null || _a === void 0 ? void 0 : _a.restriction;
+                    var restrictionSetting = (_a = TodoSettings.getEvaluatedAutoTagSettings(pass, item.task)) === null || _a === void 0 ? void 0 : _a.restriction;
                     if (restrictionSetting) {
                         switch (restrictionSetting.type) {
+                            case "never":
+                                return false;
                             case "always":
                                 return true;
                             case "elapsed-time":
@@ -27091,6 +27175,50 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     }
                 });
             }); };
+            Render.autoTagSettingsIcons = function (autoTagSettings) { return __awaiter(_this, void 0, void 0, function () {
+                var _a, _b, _c, _d;
+                var _e, _f, _g;
+                return __generator(this, function (_h) {
+                    switch (_h.label) {
+                        case 0:
+                            if (!(null !== ((_e = autoTagSettings === null || autoTagSettings === void 0 ? void 0 : autoTagSettings.flash) !== null && _e !== void 0 ? _e : null))) return [3 /*break*/, 2];
+                            return [4 /*yield*/, Resource.loadTagSvgOrCache("@flash")];
+                        case 1:
+                            _a = _h.sent();
+                            return [3 /*break*/, 3];
+                        case 2:
+                            _a = [];
+                            _h.label = 3;
+                        case 3:
+                            _b = [
+                                _a
+                            ];
+                            if (!(null !== ((_f = autoTagSettings === null || autoTagSettings === void 0 ? void 0 : autoTagSettings.pickup) !== null && _f !== void 0 ? _f : null))) return [3 /*break*/, 5];
+                            return [4 /*yield*/, Resource.loadTagSvgOrCache("@pickup")];
+                        case 4:
+                            _c = _h.sent();
+                            return [3 /*break*/, 6];
+                        case 5:
+                            _c = [];
+                            _h.label = 6;
+                        case 6:
+                            _b = _b.concat([
+                                _c
+                            ]);
+                            if (!(null !== ((_g = autoTagSettings === null || autoTagSettings === void 0 ? void 0 : autoTagSettings.restriction) !== null && _g !== void 0 ? _g : null))) return [3 /*break*/, 8];
+                            return [4 /*yield*/, Resource.loadTagSvgOrCache("@restriction")];
+                        case 7:
+                            _d = _h.sent();
+                            return [3 /*break*/, 9];
+                        case 8:
+                            _d = [];
+                            _h.label = 9;
+                        case 9: return [2 /*return*/, _b.concat([
+                                _d
+                            ])];
+                    }
+                });
+            }); };
             Render.listSettingsPopup = function (pass) { return __awaiter(_this, void 0, void 0, function () {
                 var _this = this;
                 return __generator(this, function (_a) {
@@ -27104,11 +27232,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                             result = false;
                                             buttonList = Render.$make(HTMLDivElement)({ className: "label-button-list" });
                                             buttonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
-                                                var settings, _a, _b, _c, _d;
+                                                var settings, _a, _b, _c, _d, _e, _f, _g, _h;
                                                 var _this = this;
-                                                var _e, _f, _g;
-                                                return __generator(this, function (_h) {
-                                                    switch (_h.label) {
+                                                var _j, _k, _l;
+                                                return __generator(this, function (_m) {
+                                                    switch (_m.label) {
                                                         case 0:
                                                             settings = OldStorage.ListSettings.get(pass);
                                                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
@@ -27138,8 +27266,41 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                             case 3: return [2 /*return*/];
                                                                         }
                                                                     });
-                                                                }); }),
-                                                                Render.descriptionButton("", Render.monospace("", Render.label("Display style setting"), Render.label(Render.getTagDisplayStyleText((_e = settings.displayStyle) !== null && _e !== void 0 ? _e : Render.getTagDisplayStyleDefault("@list")))), "displayStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                }); })];
+                                                            _e = Render.descriptionButton;
+                                                            _f = [""];
+                                                            _g = Render.monospace;
+                                                            _h = ["",
+                                                                Render.label("Auto tag settings")];
+                                                            return [4 /*yield*/, Render.autoTagSettingsIcons(settings.autoTagSettings)];
+                                                        case 1:
+                                                            _d = _d.concat([
+                                                                _e.apply(void 0, _f.concat([_g.apply(void 0, _h.concat([_m.sent()])),
+                                                                    "Auto tag settings",
+                                                                    function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                        var setter, getter;
+                                                                        return __generator(this, function (_a) {
+                                                                            switch (_a.label) {
+                                                                                case 0:
+                                                                                    setter = function (value) {
+                                                                                        settings.autoTagSettings = value;
+                                                                                        OldStorage.ListSettings.set(pass, settings);
+                                                                                    };
+                                                                                    getter = function () { var _a; return (_a = OldStorage.ListSettings.get(pass).autoTagSettings) !== null && _a !== void 0 ? _a : {}; };
+                                                                                    return [4 /*yield*/, Render.autoTagSettingsPopup("list", OldStorage.Title.get(pass), setter, getter)];
+                                                                                case 1:
+                                                                                    if (!_a.sent()) return [3 /*break*/, 3];
+                                                                                    result = true;
+                                                                                    Render.updateScreen("operate");
+                                                                                    return [4 /*yield*/, buttonListUpdate()];
+                                                                                case 2:
+                                                                                    _a.sent();
+                                                                                    _a.label = 3;
+                                                                                case 3: return [2 /*return*/];
+                                                                            }
+                                                                        });
+                                                                    }); }])),
+                                                                Render.descriptionButton("", Render.monospace("", Render.label("Display style setting"), Render.label(Render.getTagDisplayStyleText((_j = settings.displayStyle) !== null && _j !== void 0 ? _j : Render.getTagDisplayStyleDefault("@list")))), "displayStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                     return __generator(this, function (_a) {
                                                                         switch (_a.label) {
                                                                             case 0: return [4 /*yield*/, Render.tagDisplayStyleSettingsPopup(pass, "@list")];
@@ -27154,7 +27315,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                         }
                                                                     });
                                                                 }); }),
-                                                                Render.descriptionButton("", Render.monospace("", Render.label("Progress scale style setting"), Render.label(Render.getTagProgressScaleStyleText((_f = settings.progressScaleStyle) !== null && _f !== void 0 ? _f : Render.getTagProgressScaleStyleDefault("@list")))), "progressScaleStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                Render.descriptionButton("", Render.monospace("", Render.label("Progress scale style setting"), Render.label(Render.getTagProgressScaleStyleText((_k = settings.progressScaleStyle) !== null && _k !== void 0 ? _k : Render.getTagProgressScaleStyleDefault("@list")))), "progressScaleStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                     return __generator(this, function (_a) {
                                                                         switch (_a.label) {
                                                                             case 0: return [4 /*yield*/, Render.tagProgressScaleStyleSettingsPopup(pass, "@list")];
@@ -27169,7 +27330,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                         }
                                                                     });
                                                                 }); }),
-                                                                Render.descriptionButton("", Render.monospace("", Render.label("Sort order setting"), Render.label(Render.getTagSortSettingsText((_g = settings.sort) !== null && _g !== void 0 ? _g : Render.getTagSortSettingsDefault("@list")))), "sort.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                Render.descriptionButton("", Render.monospace("", Render.label("Sort order setting"), Render.label(Render.getTagSortSettingsText((_l = settings.sort) !== null && _l !== void 0 ? _l : Render.getTagSortSettingsDefault("@list")))), "sort.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                     return __generator(this, function (_a) {
                                                                         switch (_a.label) {
                                                                             case 0: return [4 /*yield*/, Render.tagSortSettingsPopup(pass, "@list")];
@@ -27211,7 +27372,8 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                                 return [2 /*return*/];
                                                                         }
                                                                     });
-                                                                }); })];
+                                                                }); })
+                                                            ]);
                                                             return [4 /*yield*/, Render.buttonSafety(Render.descriptionButton("delete-button", Render.monospace("", Render.label("Delete this List")), "poem.recyclebin.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                     var backup;
                                                                     return __generator(this, function (_a) {
@@ -27227,9 +27389,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                         }
                                                                     });
                                                                 }); }))];
-                                                        case 1:
+                                                        case 2:
                                                             _b.apply(_a, _c.concat([_d.concat([
-                                                                    _h.sent()
+                                                                    _m.sent()
                                                                 ])]));
                                                             return [2 /*return*/];
                                                     }
@@ -27288,11 +27450,11 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                             result = false;
                                             buttonList = Render.$make(HTMLDivElement)({ className: "label-button-list" });
                                             buttonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
-                                                var settings, _a, _b, _c, _d, _e;
+                                                var settings, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
                                                 var _this = this;
-                                                var _f, _g, _h;
-                                                return __generator(this, function (_j) {
-                                                    switch (_j.label) {
+                                                var _l, _m, _o;
+                                                return __generator(this, function (_p) {
+                                                    switch (_p.label) {
                                                         case 0:
                                                             settings = OldStorage.TagSettings.get(pass, tag);
                                                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
@@ -27315,8 +27477,48 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                                 case 3: return [2 /*return*/];
                                                                             }
                                                                         });
-                                                                    }); }),
-                                                                Render.descriptionButton("", Render.monospace("", Render.label("Display style setting"), Render.label(Render.getTagDisplayStyleText((_f = settings.displayStyle) !== null && _f !== void 0 ? _f : Render.getTagDisplayStyleDefault(tag)))), "displayStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                    }); })];
+                                                            if (!Model.isSublistOld(tag)) return [3 /*break*/, 1];
+                                                            _e = [];
+                                                            return [3 /*break*/, 3];
+                                                        case 1:
+                                                            _f = Render.descriptionButton;
+                                                            _g = [""];
+                                                            _h = Render.monospace;
+                                                            _j = ["",
+                                                                Render.label("Auto tag settings")];
+                                                            return [4 /*yield*/, Render.autoTagSettingsIcons(settings.autoTagSettings)];
+                                                        case 2:
+                                                            _e = _f.apply(void 0, _g.concat([_h.apply(void 0, _j.concat([_p.sent()])),
+                                                                "Auto tag settings",
+                                                                function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                    var setter, getter;
+                                                                    return __generator(this, function (_a) {
+                                                                        switch (_a.label) {
+                                                                            case 0:
+                                                                                setter = function (value) {
+                                                                                    settings.autoTagSettings = value;
+                                                                                    OldStorage.TagSettings.set(pass, tag, settings);
+                                                                                };
+                                                                                getter = function () { var _a; return (_a = OldStorage.TagSettings.get(pass, tag).autoTagSettings) !== null && _a !== void 0 ? _a : {}; };
+                                                                                return [4 /*yield*/, Render.autoTagSettingsPopup("sublist", Model.decode(tag), setter, getter)];
+                                                                            case 1:
+                                                                                if (!_a.sent()) return [3 /*break*/, 3];
+                                                                                result = true;
+                                                                                Render.updateScreen("operate");
+                                                                                return [4 /*yield*/, buttonListUpdate()];
+                                                                            case 2:
+                                                                                _a.sent();
+                                                                                _a.label = 3;
+                                                                            case 3: return [2 /*return*/];
+                                                                        }
+                                                                    });
+                                                                }); }]));
+                                                            _p.label = 3;
+                                                        case 3:
+                                                            _d = _d.concat([
+                                                                _e,
+                                                                Render.descriptionButton("", Render.monospace("", Render.label("Display style setting"), Render.label(Render.getTagDisplayStyleText((_l = settings.displayStyle) !== null && _l !== void 0 ? _l : Render.getTagDisplayStyleDefault(tag)))), "displayStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                     return __generator(this, function (_a) {
                                                                         switch (_a.label) {
                                                                             case 0: return [4 /*yield*/, Render.tagDisplayStyleSettingsPopup(pass, tag)];
@@ -27331,7 +27533,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                         }
                                                                     });
                                                                 }); }),
-                                                                Render.descriptionButton("", Render.monospace("", Render.label("Progress scale style setting"), Render.label(Render.getTagProgressScaleStyleText((_g = settings.progressScaleStyle) !== null && _g !== void 0 ? _g : Render.getTagProgressScaleStyleDefault(tag)))), "progressScaleStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                Render.descriptionButton("", Render.monospace("", Render.label("Progress scale style setting"), Render.label(Render.getTagProgressScaleStyleText((_m = settings.progressScaleStyle) !== null && _m !== void 0 ? _m : Render.getTagProgressScaleStyleDefault(tag)))), "progressScaleStyle.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                     return __generator(this, function (_a) {
                                                                         switch (_a.label) {
                                                                             case 0: return [4 /*yield*/, Render.tagProgressScaleStyleSettingsPopup(pass, tag)];
@@ -27346,7 +27548,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                         }
                                                                     });
                                                                 }); }),
-                                                                Render.descriptionButton("", Render.monospace("", Render.label("Sort order setting"), Render.label(Render.getTagSortSettingsText((_h = settings.sort) !== null && _h !== void 0 ? _h : Render.getTagSortSettingsDefault(tag)))), "sort.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                Render.descriptionButton("", Render.monospace("", Render.label("Sort order setting"), Render.label(Render.getTagSortSettingsText((_o = settings.sort) !== null && _o !== void 0 ? _o : Render.getTagSortSettingsDefault(tag)))), "sort.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                     return __generator(this, function (_a) {
                                                                         switch (_a.label) {
                                                                             case 0: return [4 /*yield*/, Render.tagSortSettingsPopup(pass, tag)];
@@ -27360,11 +27562,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                             case 3: return [2 /*return*/];
                                                                         }
                                                                     });
-                                                                }); })];
-                                                            if (!Model.isSystemTagOld(tag)) return [3 /*break*/, 1];
-                                                            _e = [];
-                                                            return [3 /*break*/, 3];
-                                                        case 1: return [4 /*yield*/, Render.buttonSafety(Render.descriptionButton("delete-button", Render.monospace("", Render.label("Delete")), "poem.recyclebin.description", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                }); })
+                                                            ]);
+                                                            if (!Model.isSystemTagOld(tag)) return [3 /*break*/, 4];
+                                                            _k = [];
+                                                            return [3 /*break*/, 6];
+                                                        case 4: return [4 /*yield*/, Render.buttonSafety(Render.descriptionButton("delete-button", Render.monospace("", Render.label("Delete")), "poem.recyclebin.description", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                 var href, toast;
                                                                 var _this = this;
                                                                 return __generator(this, function (_a) {
@@ -27405,12 +27608,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                     }
                                                                 });
                                                             }); }))];
-                                                        case 2:
-                                                            _e = _j.sent();
-                                                            _j.label = 3;
-                                                        case 3:
+                                                        case 5:
+                                                            _k = _p.sent();
+                                                            _p.label = 6;
+                                                        case 6:
                                                             _b.apply(_a, _c.concat([_d.concat([
-                                                                    _e
+                                                                    _k
                                                                 ])]));
                                                             return [2 /*return*/];
                                                     }
@@ -27467,15 +27670,15 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                             result = false;
                                             buttonList = Render.$make(HTMLDivElement)({ className: "label-button-list" });
                                             buttonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
-                                                var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+                                                var _a, _b, _c, _d, _e, _f, _g, _h;
                                                 var _this = this;
-                                                var _o, _p, _q, _r;
-                                                return __generator(this, function (_s) {
-                                                    switch (_s.label) {
+                                                var _j;
+                                                return __generator(this, function (_k) {
+                                                    switch (_k.label) {
                                                         case 0:
                                                             _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
                                                             _c = [buttonList];
-                                                            _d = [Render.descriptionButton("", Render.monospace("", Render.label("Sublist"), Domain.tagMap((_o = OldStorage.Task.getSublist(item.task)) !== null && _o !== void 0 ? _o : "@:@root")), "Move to Sublist", function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            _d = [Render.descriptionButton("", Render.monospace("", Render.label("Sublist"), Domain.tagMap((_j = OldStorage.Task.getSublist(item.task)) !== null && _j !== void 0 ? _j : "@:@root")), "Move to Sublist", function () { return __awaiter(_this, void 0, void 0, function () {
                                                                     return __generator(this, function (_a) {
                                                                         switch (_a.label) {
                                                                             case 0: return [4 /*yield*/, Render.moveToSublistPopup(pass, item)];
@@ -27533,48 +27736,15 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                             _g = Render.monospace;
                                                             _h = ["",
                                                                 Render.label("Auto tag settings")];
-                                                            if (!(null !== ((_p = OldStorage.TodoSettings.get(pass, item.task).flash) !== null && _p !== void 0 ? _p : null))) return [3 /*break*/, 2];
-                                                            return [4 /*yield*/, Resource.loadTagSvgOrCache("@flash")];
+                                                            return [4 /*yield*/, Render.autoTagSettingsIcons(OldStorage.TodoSettings.get(pass, item.task))];
                                                         case 1:
-                                                            _j = _s.sent();
-                                                            return [3 /*break*/, 3];
-                                                        case 2:
-                                                            _j = [];
-                                                            _s.label = 3;
-                                                        case 3:
-                                                            _k = [
-                                                                _j
-                                                            ];
-                                                            if (!(null !== ((_q = OldStorage.TodoSettings.get(pass, item.task).pickup) !== null && _q !== void 0 ? _q : null))) return [3 /*break*/, 5];
-                                                            return [4 /*yield*/, Resource.loadTagSvgOrCache("@pickup")];
-                                                        case 4:
-                                                            _l = _s.sent();
-                                                            return [3 /*break*/, 6];
-                                                        case 5:
-                                                            _l = [];
-                                                            _s.label = 6;
-                                                        case 6:
-                                                            _k = _k.concat([
-                                                                _l
-                                                            ]);
-                                                            if (!(null !== ((_r = OldStorage.TodoSettings.get(pass, item.task).restriction) !== null && _r !== void 0 ? _r : null))) return [3 /*break*/, 8];
-                                                            return [4 /*yield*/, Resource.loadTagSvgOrCache("@restriction")];
-                                                        case 7:
-                                                            _m = _s.sent();
-                                                            return [3 /*break*/, 9];
-                                                        case 8:
-                                                            _m = [];
-                                                            _s.label = 9;
-                                                        case 9:
                                                             _d = _d.concat([
-                                                                _e.apply(void 0, _f.concat([_g.apply(void 0, _h.concat([_k.concat([
-                                                                            _m
-                                                                        ])])),
+                                                                _e.apply(void 0, _f.concat([_g.apply(void 0, _h.concat([_k.sent()])),
                                                                     "Auto tag settings",
                                                                     function () { return __awaiter(_this, void 0, void 0, function () {
                                                                         return __generator(this, function (_a) {
                                                                             switch (_a.label) {
-                                                                                case 0: return [4 /*yield*/, Render.autoTagSettingsPopup(pass, item)];
+                                                                                case 0: return [4 /*yield*/, Render.todoAutoTagSettingsPopup(pass, item)];
                                                                                 case 1:
                                                                                     if (!_a.sent()) return [3 /*break*/, 3];
                                                                                     result = true;
@@ -27643,9 +27813,9 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                         }
                                                                     });
                                                                 }); }))];
-                                                        case 10:
+                                                        case 2:
                                                             _b.apply(_a, _c.concat([_d.concat([
-                                                                    _s.sent()
+                                                                    _k.sent()
                                                                 ])]));
                                                             return [2 /*return*/];
                                                     }
@@ -28022,7 +28192,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     });
                 });
             };
-            Render.getTodoPickupSettingElapsedTimePreset = function (_entry, current) {
+            Render.getTodoPickupSettingElapsedTimePreset = function (current) {
                 var list = [];
                 if ("elapsed-time" === (current === null || current === void 0 ? void 0 : current.type)) {
                     list.push(current.elapsedTime);
@@ -28031,7 +28201,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                 list.push.apply(list, config_json_2.default.timespanPreset.map(function (i) { return minamo_js_1.minamo.core.parseTimespan(i); }).filter(exports.isNumber).map(function (i) { return i / Domain.timeAccuracy; }));
                 return list.filter(exports.uniqueFilter).filter((0, exports.takeFilter)(config_json_2.default.timespanPresetMaxCount)).sort(minamo_js_1.minamo.core.comparer.basic);
             };
-            Render.getTodoPickupSettingElapsedTimeStandardScorePreset = function (_entry, current) {
+            Render.getTodoPickupSettingElapsedTimeStandardScorePreset = function (current) {
                 var list = [];
                 if ("elapsed-time-standard-score" === (current === null || current === void 0 ? void 0 : current.type)) {
                     list.push(current.elapsedTimeStandardScore);
@@ -28050,38 +28220,50 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                         break;
                 }
             };
-            Render.getAutoTagConditionText = function (setting, option) {
+            Render.getAutoTagConditionText = function (context, setting, option) {
                 if (undefined === setting || null === setting) {
-                    return Render.label("pickup.none");
+                    switch (context) {
+                        case "list":
+                            return Render.label("pickup.never");
+                        case "sublist":
+                        case "root-todo":
+                            return Render.label("pickup.list");
+                        case "sublist-todo":
+                            return Render.label("pickup.sublist");
+                    }
                 }
-                switch (setting.type) {
-                    case "always":
-                        return Render.label("pickup.always");
-                    case "elapsed-time":
-                        {
-                            var format = function (value) { return "compact" === option ? value : [Render.label("pickup.elapsed-time"), ": ", value]; };
-                            if ((0, exports.isValidNumber)(setting.elapsedTime)) {
-                                return format(Domain.timeLongStringFromTick(setting.elapsedTime));
+                else {
+                    switch (setting.type) {
+                        case "never":
+                            return Render.label("pickup.never");
+                        case "always":
+                            return Render.label("pickup.always");
+                        case "elapsed-time":
+                            {
+                                var format = function (value) { return "compact" === option ? value : [Render.label("pickup.elapsed-time"), ": ", value]; };
+                                if ((0, exports.isValidNumber)(setting.elapsedTime)) {
+                                    return format(Domain.timeLongStringFromTick(setting.elapsedTime));
+                                }
+                                else {
+                                    return format(Render.label("pickup.specify"));
+                                }
                             }
-                            else {
-                                return format(Render.label("pickup.specify"));
+                        case "elapsed-time-standard-score":
+                            {
+                                var format = function (value) { return "compact" === option ? value : [Render.label("pickup.elapsed-time-standard-score"), ": ", value]; };
+                                if ((0, exports.isValidNumber)(setting.elapsedTimeStandardScore)) {
+                                    return format("".concat(setting.elapsedTimeStandardScore));
+                                }
+                                else {
+                                    return format(Render.label("pickup.specify"));
+                                }
                             }
-                        }
-                    case "elapsed-time-standard-score":
-                        {
-                            var format = function (value) { return "compact" === option ? value : [Render.label("pickup.elapsed-time-standard-score"), ": ", value]; };
-                            if ((0, exports.isValidNumber)(setting.elapsedTimeStandardScore)) {
-                                return format("".concat(setting.elapsedTimeStandardScore));
-                            }
-                            else {
-                                return format(Render.label("pickup.specify"));
-                            }
-                        }
-                    case "expired":
-                        return Render.label("pickup.expired");
+                        case "expired":
+                            return Render.label("pickup.expired");
+                    }
                 }
             };
-            Render.todoSpanSettingPopup = function (entry, title, setter, getter) { return __awaiter(_this, void 0, void 0, function () {
+            Render.todoSpanSettingPopup = function (context, title, field, setter, getter) { return __awaiter(_this, void 0, void 0, function () {
                 var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
@@ -28104,10 +28286,10 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                             return [4 /*yield*/, Promise.all(__spreadArray(__spreadArray(__spreadArray(__spreadArray([
                                                                     undefined,
                                                                     { type: "always" }
-                                                                ], Render.getTodoPickupSettingElapsedTimePreset(entry, getter())
+                                                                ], Render.getTodoPickupSettingElapsedTimePreset(getter())
                                                                     .map(function (elapsedTime) { return ({ type: "elapsed-time", elapsedTime: elapsedTime, }); }), true), [
                                                                     { type: "elapsed-time", NaN: NaN, }
-                                                                ], false), Render.getTodoPickupSettingElapsedTimeStandardScorePreset(entry, getter())
+                                                                ], false), Render.getTodoPickupSettingElapsedTimeStandardScorePreset(getter())
                                                                     .map(function (elapsedTimeStandardScore) { return ({ type: "elapsed-time-standard-score", elapsedTimeStandardScore: elapsedTimeStandardScore, }); }), true), [
                                                                     { type: "elapsed-time-standard-score", NaN: NaN, },
                                                                     { type: "expired" },
@@ -28125,7 +28307,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                                 return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                             case 1: return [2 /*return*/, (_a.children = [
                                                                                     _b.sent(),
-                                                                                    Render.$span("")(Render.getAutoTagConditionText(i, "full"))
+                                                                                    Render.$span("")(Render.getAutoTagConditionText(context, i, "full"))
                                                                                 ],
                                                                                     _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
                                                                                         var elapsedTime, elapsedTimeStandardScore;
@@ -28188,7 +28370,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                             ui = Render.popup({
                                                 // className: "add-remove-tags-popup",
                                                 children: [
-                                                    Render.$tag("h2")("")("".concat(locale_2.locale.map(title), ": ").concat(Model.decode(entry.task))),
+                                                    Render.$tag("h2")("")("".concat(locale_2.locale.map(field), ": ").concat(title)),
                                                     buttonList,
                                                     Render.$div("popup-operator")([{
                                                             tag: "button",
@@ -28215,113 +28397,171 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     }
                 });
             }); };
-            Render.todoFlashSettingPopup = function (pass, entry, settings) {
-                if (settings === void 0) { settings = OldStorage.TodoSettings.get(pass, entry.task); }
-                return __awaiter(_this, void 0, void 0, function () {
-                    var _this = this;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, Render.todoSpanSettingPopup(entry, "Flash setting", function (value) { return __awaiter(_this, void 0, void 0, function () {
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                settings.flash = value;
-                                                OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                                return [4 /*yield*/, Render.updateScreen("operate")];
-                                            case 1:
-                                                _a.sent();
-                                                return [2 /*return*/];
-                                        }
-                                    });
-                                }); }, function () { return settings.flash; })];
-                            case 1: return [2 /*return*/, _a.sent()];
-                        }
-                    });
+            Render.todoFlashSettingPopup = function (context, title, setter, getter) { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, Render.todoSpanSettingPopup(context, title, "Flash setting", function (value) { return __awaiter(_this, void 0, void 0, function () {
+                                var settings;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            settings = getter();
+                                            settings.flash = value;
+                                            setter(settings);
+                                            //settings.flash = value;
+                                            //OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                            return [4 /*yield*/, Render.updateScreen("operate")];
+                                        case 1:
+                                            //settings.flash = value;
+                                            //OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }, function () { return getter().flash; })];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
                 });
-            };
-            Render.todoPickupSettingPopup = function (pass, entry, settings) {
-                if (settings === void 0) { settings = OldStorage.TodoSettings.get(pass, entry.task); }
-                return __awaiter(_this, void 0, void 0, function () {
-                    var _this = this;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, Render.todoSpanSettingPopup(entry, "Pickup setting", function (value) { return __awaiter(_this, void 0, void 0, function () {
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                settings.pickup = value;
-                                                OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                                return [4 /*yield*/, Render.updateScreen("operate")];
-                                            case 1:
-                                                _a.sent();
-                                                return [2 /*return*/];
-                                        }
-                                    });
-                                }); }, function () { return settings.pickup; })];
-                            case 1: return [2 /*return*/, _a.sent()];
-                        }
-                    });
+            }); };
+            Render.todoPickupSettingPopup = function (context, title, setter, getter) { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, Render.todoSpanSettingPopup(context, title, "Pickup setting", function (value) { return __awaiter(_this, void 0, void 0, function () {
+                                var settings;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            settings = getter();
+                                            settings.pickup = value;
+                                            setter(settings);
+                                            // settings.pickup = value;
+                                            // OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                            return [4 /*yield*/, Render.updateScreen("operate")];
+                                        case 1:
+                                            // settings.pickup = value;
+                                            // OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }, function () { return getter().pickup; })];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
                 });
-            };
-            Render.todoRestrictionSettingPopup = function (pass, entry, settings) {
-                if (settings === void 0) { settings = OldStorage.TodoSettings.get(pass, entry.task); }
-                return __awaiter(_this, void 0, void 0, function () {
-                    var _this = this;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, Render.todoSpanSettingPopup(entry, "Restriction setting", function (value) { return __awaiter(_this, void 0, void 0, function () {
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                settings.restriction = value;
-                                                OldStorage.TodoSettings.set(pass, entry.task, settings);
-                                                return [4 /*yield*/, Render.updateScreen("operate")];
-                                            case 1:
-                                                _a.sent();
-                                                return [2 /*return*/];
-                                        }
-                                    });
-                                }); }, function () { return settings.restriction; })];
-                            case 1: return [2 /*return*/, _a.sent()];
-                        }
-                    });
+            }); };
+            Render.todoRestrictionSettingPopup = function (context, title, setter, getter) { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, Render.todoSpanSettingPopup(context, title, "Restriction setting", function (value) { return __awaiter(_this, void 0, void 0, function () {
+                                var settings;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            settings = getter();
+                                            settings.restriction = value;
+                                            setter(settings);
+                                            // settings.restriction = value;
+                                            // OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                            return [4 /*yield*/, Render.updateScreen("operate")];
+                                        case 1:
+                                            // settings.restriction = value;
+                                            // OldStorage.TodoSettings.set(pass, entry.task, settings);
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }, function () { return getter().restriction; })];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
                 });
-            };
-            Render.autoTagSettingsPopup = function (pass, entry, settings) {
-                if (settings === void 0) { settings = OldStorage.TodoSettings.get(pass, entry.task); }
-                return __awaiter(_this, void 0, void 0, function () {
-                    var _this = this;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
-                                    var result, buttonList, buttonListUpdate, ui;
-                                    var _this = this;
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                result = false;
-                                                buttonList = Render.$make(HTMLDivElement)({ className: "label-button-list" });
-                                                buttonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
-                                                    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-                                                    var _this = this;
-                                                    return __generator(this, function (_l) {
-                                                        switch (_l.label) {
-                                                            case 0:
-                                                                _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
-                                                                _c = [buttonList];
-                                                                _d = Render.descriptionButton;
-                                                                _e = [""];
-                                                                return [4 /*yield*/, Resource.loadSvgOrCache(Resource.getTagIcon("@flash"))];
-                                                            case 1:
-                                                                _f = [
-                                                                    _d.apply(void 0, _e.concat([[
+            }); };
+            Render.autoTagSettingsPopup = function (context, title, setter, getter) { return __awaiter(_this, void 0, void 0, function () {
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                var result, buttonList, buttonListUpdate, ui;
+                                var _this = this;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            result = false;
+                                            buttonList = Render.$make(HTMLDivElement)({ className: "label-button-list" });
+                                            buttonListUpdate = function () { return __awaiter(_this, void 0, void 0, function () {
+                                                var settings, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+                                                var _this = this;
+                                                return __generator(this, function (_l) {
+                                                    switch (_l.label) {
+                                                        case 0:
+                                                            settings = getter();
+                                                            _b = (_a = minamo_js_1.minamo.dom).replaceChildren;
+                                                            _c = [buttonList];
+                                                            _d = Render.descriptionButton;
+                                                            _e = [""];
+                                                            return [4 /*yield*/, Resource.loadSvgOrCache(Resource.getTagIcon("@flash"))];
+                                                        case 1:
+                                                            _f = [
+                                                                _d.apply(void 0, _e.concat([[
+                                                                        _l.sent(),
+                                                                        Render.monospace("", Render.label("@flash"), Render.getAutoTagConditionText(context, settings.flash, "compact"))
+                                                                    ], "flash.description",
+                                                                    function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                        return __generator(this, function (_a) {
+                                                                            switch (_a.label) {
+                                                                                case 0: return [4 /*yield*/, Render.todoFlashSettingPopup(context, title, setter, getter)];
+                                                                                case 1:
+                                                                                    if (!_a.sent()) return [3 /*break*/, 3];
+                                                                                    result = true;
+                                                                                    return [4 /*yield*/, buttonListUpdate()];
+                                                                                case 2:
+                                                                                    _a.sent();
+                                                                                    _a.label = 3;
+                                                                                case 3: return [2 /*return*/];
+                                                                            }
+                                                                        });
+                                                                    }); }]))
+                                                            ];
+                                                            _g = Render.descriptionButton;
+                                                            _h = [""];
+                                                            return [4 /*yield*/, Resource.loadSvgOrCache(Resource.getTagIcon("@pickup"))];
+                                                        case 2:
+                                                            _f = _f.concat([
+                                                                _g.apply(void 0, _h.concat([[
+                                                                        _l.sent(),
+                                                                        Render.monospace("", Render.label("@pickup"), Render.getAutoTagConditionText(context, settings.pickup, "compact"))
+                                                                    ], "pickup.description",
+                                                                    function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                        return __generator(this, function (_a) {
+                                                                            switch (_a.label) {
+                                                                                case 0: return [4 /*yield*/, Render.todoPickupSettingPopup(context, title, setter, getter)];
+                                                                                case 1:
+                                                                                    if (!_a.sent()) return [3 /*break*/, 3];
+                                                                                    result = true;
+                                                                                    return [4 /*yield*/, buttonListUpdate()];
+                                                                                case 2:
+                                                                                    _a.sent();
+                                                                                    _a.label = 3;
+                                                                                case 3: return [2 /*return*/];
+                                                                            }
+                                                                        });
+                                                                    }); }]))
+                                                            ]);
+                                                            _j = Render.descriptionButton;
+                                                            _k = [""];
+                                                            return [4 /*yield*/, Resource.loadSvgOrCache(Resource.getTagIcon("@restriction"))];
+                                                        case 3:
+                                                            _b.apply(_a, _c.concat([_f.concat([
+                                                                    _j.apply(void 0, _k.concat([[
                                                                             _l.sent(),
-                                                                            Render.monospace("", Render.label("@flash"), Render.getAutoTagConditionText(settings.flash, "compact"))
-                                                                        ], "flash.description",
+                                                                            Render.monospace("", Render.label("@restriction"), Render.getAutoTagConditionText(context, settings.restriction, "compact"))
+                                                                        ], "restriction.description",
                                                                         function () { return __awaiter(_this, void 0, void 0, function () {
                                                                             return __generator(this, function (_a) {
                                                                                 switch (_a.label) {
-                                                                                    case 0: return [4 /*yield*/, Render.todoFlashSettingPopup(pass, entry, settings)];
+                                                                                    case 0: return [4 /*yield*/, Render.todoRestrictionSettingPopup(context, title, setter, getter)];
                                                                                     case 1:
                                                                                         if (!_a.sent()) return [3 /*break*/, 3];
                                                                                         result = true;
@@ -28333,92 +28573,54 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                                 }
                                                                             });
                                                                         }); }]))
-                                                                ];
-                                                                _g = Render.descriptionButton;
-                                                                _h = [""];
-                                                                return [4 /*yield*/, Resource.loadSvgOrCache(Resource.getTagIcon("@pickup"))];
-                                                            case 2:
-                                                                _f = _f.concat([
-                                                                    _g.apply(void 0, _h.concat([[
-                                                                            _l.sent(),
-                                                                            Render.monospace("", Render.label("@pickup"), Render.getAutoTagConditionText(settings.pickup, "compact"))
-                                                                        ], "pickup.description",
-                                                                        function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                            return __generator(this, function (_a) {
-                                                                                switch (_a.label) {
-                                                                                    case 0: return [4 /*yield*/, Render.todoPickupSettingPopup(pass, entry, settings)];
-                                                                                    case 1:
-                                                                                        if (!_a.sent()) return [3 /*break*/, 3];
-                                                                                        result = true;
-                                                                                        return [4 /*yield*/, buttonListUpdate()];
-                                                                                    case 2:
-                                                                                        _a.sent();
-                                                                                        _a.label = 3;
-                                                                                    case 3: return [2 /*return*/];
-                                                                                }
-                                                                            });
-                                                                        }); }]))
-                                                                ]);
-                                                                _j = Render.descriptionButton;
-                                                                _k = [""];
-                                                                return [4 /*yield*/, Resource.loadSvgOrCache(Resource.getTagIcon("@restriction"))];
-                                                            case 3: return [2 /*return*/, _b.apply(_a, _c.concat([_f.concat([
-                                                                        _j.apply(void 0, _k.concat([[
-                                                                                _l.sent(),
-                                                                                Render.monospace("", Render.label("@restriction"), Render.getAutoTagConditionText(settings.restriction, "compact"))
-                                                                            ], "restriction.description",
-                                                                            function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                                return __generator(this, function (_a) {
-                                                                                    switch (_a.label) {
-                                                                                        case 0: return [4 /*yield*/, Render.todoRestrictionSettingPopup(pass, entry, settings)];
-                                                                                        case 1:
-                                                                                            if (!_a.sent()) return [3 /*break*/, 3];
-                                                                                            result = true;
-                                                                                            return [4 /*yield*/, buttonListUpdate()];
-                                                                                        case 2:
-                                                                                            _a.sent();
-                                                                                            _a.label = 3;
-                                                                                        case 3: return [2 /*return*/];
-                                                                                    }
-                                                                                });
-                                                                            }); }]))
-                                                                    ])]))];
-                                                        }
-                                                    });
-                                                }); };
-                                                return [4 /*yield*/, buttonListUpdate()];
-                                            case 1:
-                                                _a.sent();
-                                                ui = Render.popup({
-                                                    // className: "add-remove-tags-popup",
-                                                    children: [
-                                                        Render.$tag("h2")("")("".concat(locale_2.locale.map("Auto tag settings"), ": ").concat(Model.decode(entry.task))),
-                                                        buttonList,
-                                                        Render.$div("popup-operator")([{
-                                                                tag: "button",
-                                                                className: "default-button",
-                                                                children: Render.label("Close"),
-                                                                onclick: function () {
-                                                                    ui.close();
-                                                                },
-                                                            }]),
-                                                    ],
-                                                    onClose: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                        return __generator(this, function (_a) {
-                                                            resolve(result);
+                                                                ])]));
                                                             return [2 /*return*/];
-                                                        });
-                                                    }); },
+                                                    }
                                                 });
-                                                return [2 /*return*/];
-                                        }
-                                    });
-                                }); })];
-                            case 1: return [2 /*return*/, _a.sent()];
-                        }
-                    });
+                                            }); };
+                                            return [4 /*yield*/, buttonListUpdate()];
+                                        case 1:
+                                            _a.sent();
+                                            ui = Render.popup({
+                                                // className: "add-remove-tags-popup",
+                                                children: [
+                                                    //$tag("h2")("")(`${locale.map("Auto tag settings")}: ${Model.decode(entry.task)}`),
+                                                    Render.$tag("h2")("")("".concat(locale_2.locale.map("Auto tag settings"), ": ").concat(title)),
+                                                    buttonList,
+                                                    Render.$div("popup-operator")([{
+                                                            tag: "button",
+                                                            className: "default-button",
+                                                            children: Render.label("Close"),
+                                                            onclick: function () {
+                                                                ui.close();
+                                                            },
+                                                        }]),
+                                                ],
+                                                onClose: function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    return __generator(this, function (_a) {
+                                                        resolve(result);
+                                                        return [2 /*return*/];
+                                                    });
+                                                }); },
+                                            });
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); })];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
                 });
-            };
+            }); };
+            Render.todoAutoTagSettingsPopup = function (pass, item) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, Render.autoTagSettingsPopup(OldStorage.Task.isRoot(item.task) ?
+                                "root-todo" :
+                                "sublist-todo", Model.decode(item.task), function (value) { return OldStorage.TodoSettings.set(pass, item.task, value); }, function () { return OldStorage.TodoSettings.get(pass, item.task); })];
+                        case 1: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            }); };
             Render.screenCover = function (data) {
                 var _a;
                 CyclicToDo.updateLatestScreenOperatedAt();
@@ -28894,7 +29096,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                     Render.menuItem(Render.label("Auto tag settings"), function () { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
                             switch (_a.label) {
-                                case 0: return [4 /*yield*/, Render.autoTagSettingsPopup(pass, item)];
+                                case 0: return [4 /*yield*/, Render.todoAutoTagSettingsPopup(pass, item)];
                                 case 1:
                                     if (_a.sent()) {
                                         Render.updateScreen("operate");
@@ -29037,137 +29239,65 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                 });
             }); };
             Render.todoItemSettings = function (pass, item) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-                var _l, _m, _o, _p;
+                var settings, evaluatedSettings, makeLinkButton, result, _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
                 var _this = this;
-                var _q, _r, _s;
-                return __generator(this, function (_t) {
-                    switch (_t.label) {
+                var _o, _p, _q, _r, _s, _t;
+                return __generator(this, function (_u) {
+                    switch (_u.label) {
                         case 0:
-                            _a = Render.$div("item-settings");
-                            if (!(null !== ((_q = OldStorage.TodoSettings.get(pass, item.task).flash) !== null && _q !== void 0 ? _q : null))) return [3 /*break*/, 2];
-                            _c = Render.linkButton;
-                            _l = {
-                                className: "tag"
-                            };
+                            settings = OldStorage.TodoSettings.get(pass, item.task);
+                            evaluatedSettings = OldStorage.TodoSettings.getEvaluatedAutoTagSettings(pass, item.task);
+                            makeLinkButton = function (icon, solid) { return Render.linkButton({
+                                className: solid ? "tag" : "tag shadow-tag",
+                                children: icon,
+                                onclick: function (event) { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                event.preventDefault();
+                                                return [4 /*yield*/, Render.todoAutoTagSettingsPopup(pass, item)];
+                                            case 1:
+                                                if (_a.sent()) {
+                                                    Render.updateScreen("operate");
+                                                }
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); },
+                            }); };
+                            result = [];
+                            if (!(null !== ((_o = evaluatedSettings.flash) !== null && _o !== void 0 ? _o : null))) return [3 /*break*/, 2];
+                            _b = (_a = result).push;
+                            _c = makeLinkButton;
                             return [4 /*yield*/, Resource.loadTagSvgOrCache("@flash")];
                         case 1:
-                            _b = _c.apply(void 0, [(_l.children = _t.sent(),
-                                    _l.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0:
-                                                    event.preventDefault();
-                                                    return [4 /*yield*/, Render.autoTagSettingsPopup(pass, item)];
-                                                case 1:
-                                                    if (_a.sent()) {
-                                                        Render.updateScreen("operate");
-                                                    }
-                                                    return [2 /*return*/];
-                                            }
-                                        });
-                                    }); },
-                                    _l)]);
-                            return [3 /*break*/, 3];
+                            _b.apply(_a, [_c.apply(void 0, [_u.sent(), null !== ((_p = settings.flash) !== null && _p !== void 0 ? _p : null)])]);
+                            _u.label = 2;
                         case 2:
-                            _b = [];
-                            _t.label = 3;
-                        case 3:
-                            _d = [
-                                _b
-                            ];
-                            if (!(null !== ((_r = OldStorage.TodoSettings.get(pass, item.task).pickup) !== null && _r !== void 0 ? _r : null))) return [3 /*break*/, 5];
-                            _f = Render.linkButton;
-                            _m = {
-                                className: "tag"
-                            };
+                            if (!(null !== ((_q = evaluatedSettings.pickup) !== null && _q !== void 0 ? _q : null))) return [3 /*break*/, 4];
+                            _e = (_d = result).push;
+                            _f = makeLinkButton;
                             return [4 /*yield*/, Resource.loadTagSvgOrCache("@pickup")];
+                        case 3:
+                            _e.apply(_d, [_f.apply(void 0, [_u.sent(), null !== ((_r = settings.pickup) !== null && _r !== void 0 ? _r : null)])]);
+                            _u.label = 4;
                         case 4:
-                            _e = _f.apply(void 0, [(_m.children = _t.sent(),
-                                    _m.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0:
-                                                    event.preventDefault();
-                                                    return [4 /*yield*/, Render.autoTagSettingsPopup(pass, item)];
-                                                case 1:
-                                                    if (_a.sent()) {
-                                                        Render.updateScreen("operate");
-                                                    }
-                                                    return [2 /*return*/];
-                                            }
-                                        });
-                                    }); },
-                                    _m)]);
-                            return [3 /*break*/, 6];
+                            if (!(null !== ((_s = evaluatedSettings.restriction) !== null && _s !== void 0 ? _s : null))) return [3 /*break*/, 6];
+                            _h = (_g = result).push;
+                            _j = makeLinkButton;
+                            return [4 /*yield*/, Resource.loadTagSvgOrCache("@pickup")];
                         case 5:
-                            _e = [];
-                            _t.label = 6;
+                            _h.apply(_g, [_j.apply(void 0, [_u.sent(), null !== ((_t = settings.restriction) !== null && _t !== void 0 ? _t : null)])]);
+                            _u.label = 6;
                         case 6:
-                            _d = _d.concat([
-                                _e
-                            ]);
-                            if (!(null !== ((_s = OldStorage.TodoSettings.get(pass, item.task).restriction) !== null && _s !== void 0 ? _s : null))) return [3 /*break*/, 8];
-                            _h = Render.linkButton;
-                            _o = {
-                                className: "tag"
-                            };
-                            return [4 /*yield*/, Resource.loadTagSvgOrCache("@restriction")];
-                        case 7:
-                            _g = _h.apply(void 0, [(_o.children = _t.sent(),
-                                    _o.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0:
-                                                    event.preventDefault();
-                                                    return [4 /*yield*/, Render.autoTagSettingsPopup(pass, item)];
-                                                case 1:
-                                                    if (_a.sent()) {
-                                                        Render.updateScreen("operate");
-                                                    }
-                                                    return [2 /*return*/];
-                                            }
-                                        });
-                                    }); },
-                                    _o)]);
-                            return [3 /*break*/, 9];
-                        case 8:
-                            _g = [];
-                            _t.label = 9;
-                        case 9:
-                            _d = _d.concat([
-                                _g
-                            ]);
-                            if (!!OldStorage.TodoSettings.hasAutoTagSettings(pass, item.task)) return [3 /*break*/, 11];
-                            _k = Render.linkButton;
-                            _p = {
-                                className: "tag"
-                            };
+                            if (!(result.length <= 0)) return [3 /*break*/, 8];
+                            _l = (_k = result).push;
+                            _m = makeLinkButton;
                             return [4 /*yield*/, Resource.loadSvgOrCache("settings-icon")];
-                        case 10:
-                            _j = _k.apply(void 0, [(_p.children = _t.sent(),
-                                    _p.onclick = function (event) { return __awaiter(_this, void 0, void 0, function () {
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0:
-                                                    event.preventDefault();
-                                                    return [4 /*yield*/, Render.autoTagSettingsPopup(pass, item)];
-                                                case 1:
-                                                    if (_a.sent()) {
-                                                        Render.updateScreen("operate");
-                                                    }
-                                                    return [2 /*return*/];
-                                            }
-                                        });
-                                    }); },
-                                    _p)]);
-                            return [3 /*break*/, 12];
-                        case 11:
-                            _j = [];
-                            _t.label = 12;
-                        case 12: return [2 /*return*/, _a.apply(void 0, [_d.concat([
-                                    _j
-                                ])])];
+                        case 7:
+                            _l.apply(_k, [_m.apply(void 0, [_u.sent(), true])]);
+                            _u.label = 8;
+                        case 8: return [2 /*return*/, Render.$div("item-settings")(result)];
                     }
                 });
             }); };
@@ -34601,7 +34731,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </script>
 <style type="text/css" id="style"></style>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun May 12 2024 19:07:42 GMT+0900 (日本標準時)', buildTimestampTick: 1715508462642, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri May 24 2024 00:53:36 GMT+0900 (日本標準時)', buildTimestampTick: 1716479616014, })" class="auto">
 <div id="foundation"><div id="flash-layer"></div></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -34825,7 +34955,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Sun May 12 2024 19:07:42 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Fri May 24 2024 00:53:36 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
