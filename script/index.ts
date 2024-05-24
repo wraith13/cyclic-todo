@@ -6101,15 +6101,15 @@ export module CyclicToDo
             const result: minamo.dom.Source[] = [];
             if (null !== (evaluatedSettings.flash ?? null))
             {
-                result.push(makeLinkButton(await Resource.loadTagSvgOrCache("@flash"), null !== (settings.flash ?? null)));
+                result.push(makeLinkButton(await Resource.loadTagSvgOrCache("@flash"), Boolean(settings.flash)));
             }
             if (null !== (evaluatedSettings.pickup ?? null))
             {
-                result.push(makeLinkButton(await Resource.loadTagSvgOrCache("@pickup"), null !== (settings.pickup ?? null)));
+                result.push(makeLinkButton(await Resource.loadTagSvgOrCache("@pickup"), Boolean(settings.pickup)));
             }
             if (null !== (evaluatedSettings.restriction ?? null))
             {
-                result.push(makeLinkButton(await Resource.loadTagSvgOrCache("@restriction"), null !== (settings.restriction ?? null)));
+                result.push(makeLinkButton(await Resource.loadTagSvgOrCache("@restriction"), Boolean(settings.restriction)));
             }
             if (result.length <= 0)
             {
