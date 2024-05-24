@@ -4553,7 +4553,6 @@ export module CyclicToDo
                                     },
                                 ),
                             Model.isSublistOld(tag) ?
-                                []:
                                 descriptionButton
                                 (
                                     "",
@@ -4580,7 +4579,8 @@ export module CyclicToDo
                                             await buttonListUpdate();
                                         }
                                     },
-                                ),
+                                ):
+                                [],
                             descriptionButton
                             (
                                 "",
@@ -6109,7 +6109,7 @@ export module CyclicToDo
             }
             if (null !== (evaluatedSettings.restriction ?? null))
             {
-                result.push(makeLinkButton(await Resource.loadTagSvgOrCache("@pickup"), null !== (settings.restriction ?? null)));
+                result.push(makeLinkButton(await Resource.loadTagSvgOrCache("@restriction"), null !== (settings.restriction ?? null)));
             }
             if (result.length <= 0)
             {
