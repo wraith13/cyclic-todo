@@ -6085,35 +6085,54 @@ export module CyclicToDo
         {
             const settings = OldStorage.TodoSettings.get(pass, item.task);
             const evaluatedSettings = OldStorage.TodoSettings.getEvaluatedAutoTagSettings(pass, item.task);
-            const makeLinkButton = (icon: SVGElement, solid: boolean) => linkButton
-            ({
-                className: solid ? "tag": "tag shadow-tag",
-                children: icon,
-                onclick: async (event: MouseEvent) =>
-                {
-                    event.preventDefault();
-                    if (await todoAutoTagSettingsPopup(pass, item))
+            const makeLinkButton = (icon: SVGElement, solid: boolean) => result.push
+            (
+                linkButton
+                ({
+                    className: solid ? "tag": "tag shadow-tag",
+                    children: icon,
+                    onclick: async (event: MouseEvent) =>
                     {
-                        updateScreen("operate");
-                    }
-                },
-            });
+                        event.preventDefault();
+                        if (await todoAutoTagSettingsPopup(pass, item))
+                        {
+                            updateScreen("operate");
+                        }
+                    },
+                })
+            );
             const result: minamo.dom.Source[] = [];
             if (null !== (evaluatedSettings.flash ?? null))
             {
-                result.push(makeLinkButton(await Resource.loadTagSvgOrCache("@flash"), Boolean(settings.flash)));
+                makeLinkButton
+                (
+                    await Resource.loadTagSvgOrCache("@flash"),
+                    Boolean(settings.flash)
+                );
             }
             if (null !== (evaluatedSettings.pickup ?? null))
             {
-                result.push(makeLinkButton(await Resource.loadTagSvgOrCache("@pickup"), Boolean(settings.pickup)));
+                makeLinkButton
+                (
+                    await Resource.loadTagSvgOrCache("@pickup"),
+                    Boolean(settings.pickup)
+                );
             }
             if (null !== (evaluatedSettings.restriction ?? null))
             {
-                result.push(makeLinkButton(await Resource.loadTagSvgOrCache("@restriction"), Boolean(settings.restriction)));
+                makeLinkButton
+                (
+                    await Resource.loadTagSvgOrCache("@restriction"),
+                    Boolean(settings.restriction)
+                );
             }
             if (result.length <= 0)
             {
-                result.push(makeLinkButton(await Resource.loadSvgOrCache("settings-icon"), true));
+                makeLinkButton
+                (
+                    await Resource.loadSvgOrCache("settings-icon"),
+                    true
+                );
             }
             return $div("item-settings")(result);
         };
