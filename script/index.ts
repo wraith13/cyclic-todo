@@ -188,7 +188,7 @@ export module CyclicToDo
         TotalAverageFactors: null | AverageFactors;
         smartRest: null | number;
         count: number;
-        expectedInterval: null | { min: number; max:number; };
+        expectedInterval: null | { min: number; max: number; };
     }
     export interface ToDoEntryZero extends ToDoEntry
     {
@@ -242,7 +242,7 @@ export module CyclicToDo
         TotalAverage: number;
         TotalAverageFactors: AverageFactors;
         smartRest: null | number;
-        expectedInterval: { min: number; max:number; };
+        expectedInterval: { min: number; max: number; };
     }
     export const isZeroToDoEntry = (item: ToDoEntry): item is ToDoEntryZero =>
         item.count <= 0 || "number" !== typeof item.first;
@@ -375,7 +375,7 @@ export module CyclicToDo
         tasks: string[];
         settings: TagSettings;
     }
-    export const isRemovedTag = (value: RemovedType):value is RemovedTag => "Tag" === value.type;
+    export const isRemovedTag = (value: RemovedType): value is RemovedTag => "Tag" === value.type;
     export interface RemovedSublist extends RemovedBase
     {
         type: "Sublist";
@@ -383,7 +383,7 @@ export module CyclicToDo
         tasks: RemovedTask[];
         settings: TagSettings;
     }
-    export const isRemovedSublist = (value: RemovedType):value is RemovedSublist => "Sublist" === value.type;
+    export const isRemovedSublist = (value: RemovedType): value is RemovedSublist => "Sublist" === value.type;
     export interface RemovedTask extends RemovedBase
     {
         type: "Task";
@@ -392,14 +392,14 @@ export module CyclicToDo
         settings?: TodoSettings;
         ticks: HistoryEntry;
     }
-    export const isRemovedTask = (value: RemovedType):value is RemovedTask => "Task" === value.type;
+    export const isRemovedTask = (value: RemovedType): value is RemovedTask => "Task" === value.type;
     export interface RemovedTick extends RemovedBase
     {
         type: "Tick";
         task: string;
         tick: number;
     }
-    export const isRemovedTick = (value: RemovedType):value is RemovedTick => "Tick" === value.type;
+    export const isRemovedTick = (value: RemovedType): value is RemovedTick => "Tick" === value.type;
     export module OldStorage
     {
         export const sessionPassPrefix = "@Session";
@@ -505,7 +505,7 @@ export module CyclicToDo
             }
             catch(error)
             {
-                //  JSON parse error
+                // JSON parse error
                 console.error(error);
             }
             return null;
@@ -1837,7 +1837,7 @@ export module CyclicToDo
         //     Storage.Pass.add(pass);
         //     Storage.Tag.add(pass, tag);
         //     Storage.TagMember.merge(pass, tag, todo);
-        //     // const temp:{ [task:string]: number[]} = { };
+        //     // const temp: { [task: string]: number[]} = { };
         //     // todo.forEach(task => temp[task] = []);
         //     // ticks.forEach
         //     // (
@@ -2352,7 +2352,7 @@ export module CyclicToDo
                 else
                 if (elapsed < long)
                 {
-                    return  (1.0 /3.0) +(((elapsed -shortOneThird) /(long -shortOneThird)) *2.0 /3.0);
+                    return (1.0 /3.0) +(((elapsed -shortOneThird) /(long -shortOneThird)) *2.0 /3.0);
                 }
                 else
                 {
@@ -2666,8 +2666,8 @@ export module CyclicToDo
         };
         export interface PageParamsRaw
         {
-            pass?:string;
-            tag?:string;
+            pass?: string;
+            tag?: string;
             todo?: string;
             hash?: string;
             filter?: string;
@@ -2814,9 +2814,9 @@ export module CyclicToDo
         export const cssColorStringToColor = (cssColor: string): Color =>
         {
             let core = cssColor.replace("#", "");
-            let R:number = 0;
-            let G:number = 0;
-            let B:number = 0;
+            let R: number = 0;
+            let G: number = 0;
+            let B: number = 0;
             let A: undefined | number;
             if (6 == core.length || 8 == core.length)
             {
@@ -2859,6 +2859,10 @@ export module CyclicToDo
         // export let layoutAngle: flounderStyle.Arguments["layoutAngle"] = "regular";
         export const progressBackgroundStyle = (progress: number | null, status: ProgressStatusType, tick: number) =>
         {
+            if ( ! isEnabledAnimation())
+            {
+                return `background-color: ${progressStatusColor(status)}`;
+            }
             if (null === progress)
             {
                 return flounderStyle.styleToString
@@ -3002,13 +3006,13 @@ export module CyclicToDo
         export const progressBar = (progress: number | null, status: ProgressStatusType) =>$div
         ({
             className: progressClass(progress, status),
-            attributes:{ style: progressStyle(progress, status), }
+            attributes: { style: progressStyle(progress, status), }
         })
         ([]);
         export const progressBarPad = (progress: number | null) =>$div
         ({
             className: "progress-bar-pad",
-            attributes:{ style: progressPadStyle(progress), }
+            attributes: { style: progressPadStyle(progress), }
         })
         ([]);
         export const itemProgressBar = (pass: string, item: ToDoEntry, withPad?: "with-pad") =>
@@ -3099,7 +3103,7 @@ export module CyclicToDo
         export const alert = (message: string) => makeToast({ content: message, });
         export const systemConfirm = (message: string) => window.confirm(message);
         export const confirm = systemConfirm;
-        export const numberPrompt = async (message: string, _default: number, options?: { min?:number, max?:number, step?:number,  }): Promise<number | null> =>
+        export const numberPrompt = async (message: string, _default: number, options?: { min?: number, max?: number, step?: number, }): Promise<number | null> =>
         {
             const input = $make(HTMLInputElement)
             ({
@@ -6365,7 +6369,7 @@ export module CyclicToDo
         $div
         ({
             className: "tick-item flex-item",
-            attributes:{ style: tickScaleStyle(tickScale(max)), }
+            attributes: { style: tickScaleStyle(tickScale(max)), }
         })
         ([
             progressBar
@@ -6399,14 +6403,14 @@ export module CyclicToDo
                 ]),
             ])
         ]);
-        export const dropDownLabel = (options: { list: string[] | { [value:string]:string }, value: string, onChange?: (value: string) => unknown, className?: string}) =>
+        export const dropDownLabel = (options: { list: string[] | { [value: string]: string }, value: string, onChange?: (value: string) => unknown, className?: string}) =>
         {
             const dropdown = $make(HTMLSelectElement)
             ({
                 className: options.className,
                 children: Array.isArray(options.list) ?
-                    options.list.map(i => ({ tag: "option", value:i, children: i, selected: options.value === i ? true: undefined, })):
-                    Object.keys(options.list).map(i => ({ tag: "option", value:i, children: (<{ [value:string]:string }>options.list)[i] ?? i, selected: options.value === i ? true: undefined, })),
+                    options.list.map(i => ({ tag: "option", value: i, children: i, selected: options.value === i ? true: undefined, })):
+                    Object.keys(options.list).map(i => ({ tag: "option", value: i, children: (<{ [value: string]: string }>options.list)[i] ?? i, selected: options.value === i ? true: undefined, })),
                 onchange: () =>
                 {
                     if (labelSoan.innerText !== dropdown.value)
@@ -6480,10 +6484,10 @@ export module CyclicToDo
             body: minamo.dom.Source;
             footer?: minamo.dom.Source;
         }
-        const getLastSegmentClass = (data:HeaderSource, ix: number) => ix === data.items.length -1 ?
-            //(! data.operator  ? "last-segment fill-header-segment": "last-segment"): undefined;
+        const getLastSegmentClass = (data: HeaderSource, ix: number) => ix === data.items.length -1 ?
+            //(! data.operator ? "last-segment fill-header-segment": "last-segment"): undefined;
             "last-segment": undefined;
-        export const screenSegmentedHeader = async (data:HeaderSource) =>
+        export const screenSegmentedHeader = async (data: HeaderSource) =>
         [
             $div("progress-bar")([]),
             (
@@ -6929,7 +6933,7 @@ export module CyclicToDo
                         await Resource.loadSvgOrCache("history-icon"),
                         labelSpan(locale.map("History")),
                     ],
-                    { pass, tag:"@overall", hash: "history", },
+                    { pass, tag: "@overall", hash: "history", },
                     //current === "@deleted" ? "current-item": undefined
                 ),
                 menuLinkItem
@@ -7443,8 +7447,8 @@ export module CyclicToDo
         }
         export interface BottomSubTab extends BottomSubTabLabel
         {
-            count?:string;
-            href: { pass?:string, tag?:string, todo?: string, hash?: string, };
+            count?: string;
+            href: { pass?: string, tag?: string, todo?: string, hash?: string, };
         }
         export const isBottomSubTab = (value: any): value is BottomSubTab =>
             "object" === typeof value &&
@@ -7454,7 +7458,7 @@ export module CyclicToDo
             ( ! ("count" in value) || ("string" === typeof value.count || undefined === value.count)) &&
             "href" in value && isPageParamsRaw(value.href);
         export const bottomTab = async (
-            current: { pass?:string, tag?:string, hash?: string, },
+            current: { pass?: string, tag?: string, hash?: string, },
             subTabs: (BottomSubTab | "separator")[],
             additionalMenu?: minamo.dom.Source,
             defaultLable?: BottomSubTabLabel
@@ -7960,7 +7964,7 @@ export module CyclicToDo
             // ([
             //     {
             //         tag: "button",
-            //         className: list.length <= 0 ? "default-button main-button long-button":  "main-button long-button",
+            //         className: list.length <= 0 ? "default-button main-button long-button": "main-button long-button",
             //         children: label("New ToDo"),
             //         onclick: async () => newTaskPopup(entry, getFilterText()),
             //     },
@@ -8227,7 +8231,7 @@ export module CyclicToDo
             ),
             parent: { pass: entry.pass, tag: entry.tag, },
         });
-        export const pager = async <T>(data: { className: string, pagesize?:number, list: T[]; renderer: (item: T) => Promise<minamo.dom.Source>; getLabel?: (item: T, index: number) => string; onUpdated?: () => Promise<unknown>; }) =>
+        export const pager = async <T>(data: { className: string, pagesize?: number, list: T[]; renderer: (item: T) => Promise<minamo.dom.Source>; getLabel?: (item: T, index: number) => string; onUpdated?: () => Promise<unknown>; }) =>
         {
             const pagesize = "number" !== typeof data.pagesize ? config.maxGroupHistories: Math.min(Math.max(data.pagesize, 100), 10000);
             const maxpage = Math.ceil(data.list.length / pagesize);
@@ -8406,8 +8410,8 @@ export module CyclicToDo
         });
         export const showHistoryScreen = async (urlParams: PageParams, entry: ToDoTagEntryOld) =>
         {
-            const histories: { [task:string]:number[] } = { };
-            let list = entry.todo.map(task => (histories[task] = OldStorage.History.getTicks(entry.pass, task)).map(tick => ({ task, tick:<number | null>tick, }))).reduce((a, b) => a.concat(b), []);
+            const histories: { [task: string]: number[] } = { };
+            let list = entry.todo.map(task => (histories[task] = OldStorage.History.getTicks(entry.pass, task)).map(tick => ({ task, tick: <number | null>tick, }))).reduce((a, b) => a.concat(b), []);
             list.sort(minamo.core.comparer.make(a => -(a.tick ?? 0)));
             list = list.concat(entry.todo.filter(task => histories[task].length <= 0).map(task => ({ task, tick: null })));
             const filter = regulateFilterText(urlParams.filter ?? "");
@@ -8581,7 +8585,7 @@ export module CyclicToDo
                     }
                 }
             ),
-            // todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo:newTask, })),
+            // todoRenameMenu(pass, item, async newTask => await showUrl({ pass, todo: newTask, })),
             // todoTagMenu(pass, item),
             // todoDeleteMenu
             // (
@@ -8914,7 +8918,7 @@ export module CyclicToDo
             },
             body:
             [
-                $tag("textarea")({ className:"json", attributes:{ placeholder:locale.map("Paste the exported JSON."), }, })(""),
+                $tag("textarea")({ className: "json", attributes: { placeholder: locale.map("Paste the exported JSON."), }, })(""),
                 $div("button-list")
                 ({
                     tag: "button",
@@ -9239,12 +9243,12 @@ export module CyclicToDo
                 return await Resource.loadEmojiSvgOrCache(image);
             }
         };
-        export const poem = async (data: keyof typeof pomeJson.image | { title:string, subtitle: string, description: minamo.dom.Source, image: Resource.EmojiType, }, className: string = ""): Promise<minamo.dom.Source> =>
+        export const poem = async (data: keyof typeof pomeJson.image | { title: string, subtitle: string, description: minamo.dom.Source, image: Resource.EmojiType, }, className: string = ""): Promise<minamo.dom.Source> =>
             "string" === typeof data ?
                 await poem
                 (
                     {
-                        title:locale.string(`poem.${data}.title`),
+                        title: locale.string(`poem.${data}.title`),
                         subtitle: locale.string(`poem.${data}.subtitle`),
                         description: stringOrJson<minamo.dom.Source>(locale.string(`poem.${data}.description`)),
                         image: pomeJson.image[data],
@@ -9592,7 +9596,7 @@ export module CyclicToDo
         {
             dom: HTMLDivElement;
             timer: NodeJS.Timeout | null;
-            hide: ()  => Promise<unknown>;
+            hide: () => Promise<unknown>;
         }
         const toastMap: { [id: string]: Toast } = { };
         export const getToast = (id: string) => toastMap[id];
@@ -9935,7 +9939,7 @@ export module CyclicToDo
                     const hash = getUrlHash(url);
                     const tag = urlParams["tag"] ?? "";
                     // const todo = urlParams["todo"];
-                    const pass = urlParams["pass"] ?? `${OldStorage.sessionPassPrefix}:${new Date().getTime()}`;
+                    const pass = urlParams["pass"] ?? `${OldStorage.sessionPassPrefix}: ${new Date().getTime()}`;
                     const destinationItem = event.shiftKey ? previousItem: nextItem;
                     switch(event.key.toUpperCase())
                     {
@@ -10395,22 +10399,19 @@ export module CyclicToDo
     export const makeAnimationStyle = (tick: number): string =>
     {
         let result = makeFlashBodyStyleEntry(tick);
-        if (isEnabledAnimation())
-        {
-            result = [ "default", "flash", "pickup", "restriction"].map
+        result += [ "default", "flash", "pickup", "restriction", ].map
+        (
+            (status: Render.ProgressStatusType) => [ 0, null, ].map
             (
-                (status: Render.ProgressStatusType) => [ 0, null, ].map
+                progress => makeStyleEntry
                 (
-                    progress => makeStyleEntry
-                    (
-                        Render.progressClass(progress, status),
-                        Render.progressBackgroundStyle(progress, status, tick)
-                    )
+                    Render.progressClass(progress, status),
+                    Render.progressBackgroundStyle(progress, status, tick)
                 )
-                .join("")
             )
-            .join("");
-        }
+            .join("")
+        )
+        .join("");
         return result;
     };
     let latestScreenOperatedAt: number = 0;
@@ -10466,7 +10467,7 @@ export module CyclicToDo
             isInAnimation = false;
         }
     };
-    export const start = async (params:{ buildTimestamp: string, buildTimestampTick:number, }) =>
+    export const start = async (params: { buildTimestamp: string, buildTimestampTick: number, }) =>
     {
         buildTimestamp =
         {
@@ -10592,7 +10593,7 @@ export module CyclicToDo
         const hash = getUrlHash(url);
         const tag = urlParams["tag"] ?? "";
         const todo = urlParams["todo"];
-        const pass = urlParams["pass"] ?? `${OldStorage.sessionPassPrefix}:${new Date().getTime()}`;
+        const pass = urlParams["pass"] ?? `${OldStorage.sessionPassPrefix}: ${new Date().getTime()}`;
         // const todo = JSON.parse(urlParams["todo"] ?? "null") as string[] | null;
         // const history = JSON.parse(urlParams["history"] ?? "null") as (number | null)[] | null;
         if (pass && todo)
@@ -10665,7 +10666,7 @@ export module CyclicToDo
             Storage.System.setLatestShowUrl(url);
         }
     };
-    export const showUrl = async (data: { pass?:string, tag?:string, todo?: string, hash?: string}) =>
+    export const showUrl = async (data: { pass?: string, tag?: string, todo?: string, hash?: string}) =>
     {
         const url = makeUrl(data);
         history.pushState(null, applicationTitle, url);
