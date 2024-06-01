@@ -126,7 +126,7 @@ export module CyclicToDo
     export const getFlashStyleLocale = (key: FlashStyleType) => <FlashStyleTypeLocale>`flashStyle.${key}`;
     export type AnimationDurationType = "none" | "1m" | "10m" | "1h" | "auto" | "ever";
     export type AnimationDurationTypeLocale = `animationDuration.${AnimationDurationType}`
-    export const getAnimationDurationLocale = (key?: AnimationDurationType) => <AnimationDurationTypeLocale>`animationDuration.${key ?? "auto"}`;
+    export const getAnimationDurationLocale = (key?: AnimationDurationType) => <AnimationDurationTypeLocale>`animationDuration.${key ?? "none"}`;
     export type UiStyleType = "slide" | "fade" | "fixed";
     export type UiStyleTypeLocale = `uiStyle.${UiStyleType}`
     export const getUiStyleLocale = (key: UiStyleType) => <UiStyleTypeLocale>`uiStyle.${key}`;
@@ -3694,7 +3694,8 @@ export module CyclicToDo
         };
         export const animationSpanSettingsPopup = async (settings: SystemSettings = Storage.SystemSettings.get()): Promise<boolean> =>
         {
-            const defaultValue = "auto";
+            //const defaultValue = "auto";
+            const defaultValue = "none";
             const init = settings.animationDuration ?? defaultValue;
             return await new Promise
             (
@@ -10395,7 +10396,7 @@ export module CyclicToDo
     export const makeStyleEntry = (classList: string, style: string): string =>
         classList.split(" ").filter(i => "" !== i).map(i => `.${i}`).join("") +" {" +style +"}\r\n";
     export const isEnabledAnimation = (settings: SystemSettings = Storage.SystemSettings.get()) =>
-        "none" !== settings.animationDuration;
+        "none" !== (settings.animationDuration ?? "none");
     export const makeAnimationStyle = (tick: number): string =>
     {
         let result = makeFlashBodyStyleEntry(tick);
@@ -10425,7 +10426,7 @@ export module CyclicToDo
             window.requestAnimationFrame(styleAnimation);
         }
     };
-    export const getAnimationDuration = (animationDuration: AnimationDurationType = Storage.SystemSettings.get().animationDuration ?? "auto"): number =>
+    export const getAnimationDuration = (animationDuration: AnimationDurationType = Storage.SystemSettings.get().animationDuration ?? "none"): number =>
     {
         switch(animationDuration)
         {
