@@ -125,8 +125,12 @@ export module CyclicToDo
     export type FlashStyleTypeLocale = `flashStyle.${FlashStyleType}`
     export const getFlashStyleLocale = (key: FlashStyleType) => <FlashStyleTypeLocale>`flashStyle.${key}`;
     export type AnimationDurationType = "none" | "1m" | "10m" | "1h" | "auto" | "ever";
+    export const getAnimationDurationOrDefaut = (settings: AnimationDurationType | { animationDuration?: AnimationDurationType } | undefined | null = Storage.SystemSettings.get()) =>
+        "string" === typeof settings ?
+            settings:
+            (settings?.animationDuration ?? "none");
     export type AnimationDurationTypeLocale = `animationDuration.${AnimationDurationType}`
-    export const getAnimationDurationLocale = (key?: AnimationDurationType) => <AnimationDurationTypeLocale>`animationDuration.${key ?? "none"}`;
+    export const getAnimationDurationLocale = (key?: AnimationDurationType) => <AnimationDurationTypeLocale>`animationDuration.${getAnimationDurationOrDefaut(key)}`;
     export type UiStyleType = "slide" | "fade" | "fixed";
     export type UiStyleTypeLocale = `uiStyle.${UiStyleType}`
     export const getUiStyleLocale = (key: UiStyleType) => <UiStyleTypeLocale>`uiStyle.${key}`;
@@ -3694,9 +3698,7 @@ export module CyclicToDo
         };
         export const animationSpanSettingsPopup = async (settings: SystemSettings = Storage.SystemSettings.get()): Promise<boolean> =>
         {
-            //const defaultValue = "auto";
-            const defaultValue = "none";
-            const init = settings.animationDuration ?? defaultValue;
+            const init = getAnimationDurationOrDefaut(settings);
             return await new Promise
             (
                 async resolve =>
@@ -3714,7 +3716,7 @@ export module CyclicToDo
                                     async (key: AnimationDurationType) =>
                                     ({
                                         tag: "button",
-                                        className: `check-button ${key === (settings.animationDuration ?? defaultValue) ? "checked": ""}`,
+                                        className: `check-button ${key === getAnimationDurationOrDefaut(settings) ? "checked": ""}`,
                                         children:
                                         [
                                             await Resource.loadSvgOrCache("check-icon"),
@@ -3722,7 +3724,7 @@ export module CyclicToDo
                                         ],
                                         onclick: async () =>
                                         {
-                                            if (key !== (settings.animationDuration ?? defaultValue))
+                                            if (key !== getAnimationDurationOrDefaut(settings))
                                             {
                                                 settings.animationDuration = key;
                                                 Storage.SystemSettings.set(settings);
@@ -10396,7 +10398,7 @@ export module CyclicToDo
     export const makeStyleEntry = (classList: string, style: string): string =>
         classList.split(" ").filter(i => "" !== i).map(i => `.${i}`).join("") +" {" +style +"}\r\n";
     export const isEnabledAnimation = (settings: SystemSettings = Storage.SystemSettings.get()) =>
-        "none" !== (settings.animationDuration ?? "none");
+        "none" !== getAnimationDurationOrDefaut(settings);
     export const makeAnimationStyle = (tick: number): string =>
     {
         let result = makeFlashBodyStyleEntry(tick);
@@ -10426,7 +10428,7 @@ export module CyclicToDo
             window.requestAnimationFrame(styleAnimation);
         }
     };
-    export const getAnimationDuration = (animationDuration: AnimationDurationType = Storage.SystemSettings.get().animationDuration ?? "none"): number =>
+    export const getAnimationDuration = (animationDuration: AnimationDurationType = getAnimationDurationOrDefaut()): number =>
     {
         switch(animationDuration)
         {

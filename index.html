@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Sat Jun 01 2024 03:42:20 GMT+0900 (日本標準時)
+    build at: Sun Jun 02 2024 19:39:37 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -23032,7 +23032,14 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
         CyclicToDo.applicationTitle = config_json_2.default.applicationTitle;
         CyclicToDo.getThemeLocale = function (key) { return "theme.".concat(key); };
         CyclicToDo.getFlashStyleLocale = function (key) { return "flashStyle.".concat(key); };
-        CyclicToDo.getAnimationDurationLocale = function (key) { return "animationDuration.".concat(key !== null && key !== void 0 ? key : "auto"); };
+        CyclicToDo.getAnimationDurationOrDefaut = function (settings) {
+            var _a;
+            if (settings === void 0) { settings = Storage.SystemSettings.get(); }
+            return "string" === typeof settings ?
+                settings :
+                ((_a = settings === null || settings === void 0 ? void 0 : settings.animationDuration) !== null && _a !== void 0 ? _a : "none");
+        };
+        CyclicToDo.getAnimationDurationLocale = function (key) { return "animationDuration.".concat(CyclicToDo.getAnimationDurationOrDefaut(key)); };
         CyclicToDo.getUiStyleLocale = function (key) { return "uiStyle.".concat(key); };
         CyclicToDo.getEmojiTypeLocale = function (key) { return "emoji.".concat(key); };
         CyclicToDo.isZeroToDoEntry = function (item) {
@@ -26401,14 +26408,12 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
             Render.animationSpanSettingsPopup = function (settings) {
                 if (settings === void 0) { settings = Storage.SystemSettings.get(); }
                 return __awaiter(_this, void 0, void 0, function () {
-                    var defaultValue, init;
+                    var init;
                     var _this = this;
-                    var _a;
-                    return __generator(this, function (_b) {
-                        switch (_b.label) {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
                             case 0:
-                                defaultValue = "auto";
-                                init = (_a = settings.animationDuration) !== null && _a !== void 0 ? _a : defaultValue;
+                                init = CyclicToDo.getAnimationDurationOrDefaut(settings);
                                 return [4 /*yield*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
                                         var result, checkButtonList, checkButtonListUpdate, ui;
                                         var _this = this;
@@ -26428,32 +26433,30 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                                                     return [4 /*yield*/, Promise.all(["none", "10s", "1m", "10m", "1h", "auto", "ever",].map(function (key) { return __awaiter(_this, void 0, void 0, function () {
                                                                             var _a;
                                                                             var _this = this;
-                                                                            var _b;
-                                                                            return __generator(this, function (_c) {
-                                                                                switch (_c.label) {
+                                                                            return __generator(this, function (_b) {
+                                                                                switch (_b.label) {
                                                                                     case 0:
                                                                                         _a = {
                                                                                             tag: "button",
-                                                                                            className: "check-button ".concat(key === ((_b = settings.animationDuration) !== null && _b !== void 0 ? _b : defaultValue) ? "checked" : "")
+                                                                                            className: "check-button ".concat(key === CyclicToDo.getAnimationDurationOrDefaut(settings) ? "checked" : "")
                                                                                         };
                                                                                         return [4 /*yield*/, Resource.loadSvgOrCache("check-icon")];
                                                                                     case 1: return [2 /*return*/, (_a.children = [
-                                                                                            _c.sent(),
+                                                                                            _b.sent(),
                                                                                             Render.$span("")(Render.label(CyclicToDo.getAnimationDurationLocale(key)))
                                                                                         ],
                                                                                             _a.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                                                var _a;
-                                                                                                return __generator(this, function (_b) {
-                                                                                                    switch (_b.label) {
+                                                                                                return __generator(this, function (_a) {
+                                                                                                    switch (_a.label) {
                                                                                                         case 0:
-                                                                                                            if (!(key !== ((_a = settings.animationDuration) !== null && _a !== void 0 ? _a : defaultValue))) return [3 /*break*/, 2];
+                                                                                                            if (!(key !== CyclicToDo.getAnimationDurationOrDefaut(settings))) return [3 /*break*/, 2];
                                                                                                             settings.animationDuration = key;
                                                                                                             Storage.SystemSettings.set(settings);
                                                                                                             return [4 /*yield*/, checkButtonListUpdate()];
                                                                                                         case 1:
-                                                                                                            _b.sent();
+                                                                                                            _a.sent();
                                                                                                             result = init !== key;
-                                                                                                            _b.label = 2;
+                                                                                                            _a.label = 2;
                                                                                                         case 2: return [2 /*return*/];
                                                                                                     }
                                                                                                 });
@@ -26493,7 +26496,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                             }
                                         });
                                     }); })];
-                            case 1: return [2 /*return*/, _b.sent()];
+                            case 1: return [2 /*return*/, _a.sent()];
                         }
                     });
                 });
@@ -34418,7 +34421,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
         };
         CyclicToDo.isEnabledAnimation = function (settings) {
             if (settings === void 0) { settings = Storage.SystemSettings.get(); }
-            return "none" !== settings.animationDuration;
+            return "none" !== CyclicToDo.getAnimationDurationOrDefaut(settings);
         };
         CyclicToDo.makeAnimationStyle = function (tick) {
             var result = CyclicToDo.makeFlashBodyStyleEntry(tick);
@@ -34438,8 +34441,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
             }
         };
         CyclicToDo.getAnimationDuration = function (animationDuration) {
-            var _a;
-            if (animationDuration === void 0) { animationDuration = (_a = Storage.SystemSettings.get().animationDuration) !== null && _a !== void 0 ? _a : "auto"; }
+            if (animationDuration === void 0) { animationDuration = CyclicToDo.getAnimationDurationOrDefaut(); }
             switch (animationDuration) {
                 case "none":
                     return 0;
@@ -34728,7 +34730,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </script>
 <style type="text/css" id="style"></style>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sat Jun 01 2024 03:42:20 GMT+0900 (日本標準時)', buildTimestampTick: 1717180940889, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Sun Jun 02 2024 19:39:37 GMT+0900 (日本標準時)', buildTimestampTick: 1717324777279, })" class="auto">
 <div id="foundation"><div id="flash-layer"></div></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -34952,7 +34954,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Sat Jun 01 2024 03:42:20 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Sun Jun 02 2024 19:39:37 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
