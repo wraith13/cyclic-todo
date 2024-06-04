@@ -5832,7 +5832,7 @@ export module CyclicToDo
         export const informationSimple = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full", operator: minamo.dom.Source) => $div
         ({
             className: "item-information simple",
-            attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), },
+            attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.getEvaluatedAutoTagSettings(entry.pass, item.task)), },
         })
         ([
             itemProgressBar(entry.pass, item, "with-pad"),
@@ -5853,7 +5853,7 @@ export module CyclicToDo
         // export const informationCount = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
         // ({
         //     className: "item-information",
-        //     attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
+        //     attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.getEvaluatedAutoTagSettings(entry.pass, item.task)), }
         // })
         // ([
         //     itemProgressBar(entry.pass, item, "with-pad"),
@@ -5862,7 +5862,7 @@ export module CyclicToDo
         export const informationDigest = (entry: ToDoTagEntryOld, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
         ({
             className: "item-information",
-            attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
+            attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.getEvaluatedAutoTagSettings(entry.pass, item.task)), }
         })
         ([
             itemProgressBar(entry.pass, item, "with-pad"),
@@ -5893,7 +5893,7 @@ export module CyclicToDo
         export const informationFull = (entry: { pass: string, }, item: ToDoEntry, progressScaleShowStyle: "none" | "full") => $div
         ({
             className: "item-information",
-            attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
+            attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.getEvaluatedAutoTagSettings(entry.pass, item.task)), }
         })
         ([
             itemProgressBar(entry.pass, item, "with-pad"),
@@ -6282,7 +6282,7 @@ export module CyclicToDo
                     $div
                     ({
                         className: "task-item flex-item",
-                        attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.get(entry.pass, item.task)), }
+                        attributes: { style: progressScaleStyle(item, progressScaleShowStyle, OldStorage.TodoSettings.getEvaluatedAutoTagSettings(entry.pass, item.task)), }
                     })
                     ([
                         itemProgressBar(entry.pass, item),
