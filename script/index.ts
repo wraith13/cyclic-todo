@@ -6161,47 +6161,34 @@ export module CyclicToDo
                 await onUpdate();
             };
             const sublist = OldStorage.Task.getSublist(item.task);
-            const title = "full" === displayStyle ?
+            const title = $span("item-title-frame")
+            ([
+                Model.isSublistOld(entry.tag) || null === sublist ? []:
+                [
+                    internalLink
+                    ({
+                        className: "item-title-sublist",
+                        href: { pass: entry.pass, tag: sublist, },
+                        children:
+                        [
+                            await Resource.loadSvgOrCache("folder-icon"),
+                            Model.decode(sublist),
+                        ],
+                    }),
+                ],
                 internalLink
                 ({
-                    className: "item-title",
+                    className: "item-title-body",
                     href: { pass: entry.pass, todo: item.task, },
                     children:
                     [
                         await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
-                        Model.isSublistOld(entry.tag) ?
+                        Model.isSublistOld(entry.tag) || null !== sublist ?
                             Model.decode(OldStorage.Task.getBody(item.task)):
                             Model.decode(item.task)
                     ]
-                }):
-                $span("item-title-frame")
-                ([
-                    Model.isSublistOld(entry.tag) || null === sublist ? []:
-                    [
-                        internalLink
-                        ({
-                            className: "item-title-sublist",
-                            href: { pass: entry.pass, tag: sublist, },
-                            children:
-                            [
-                                await Resource.loadSvgOrCache("folder-icon"),
-                                Model.decode(sublist),
-                            ],
-                        }),
-                    ],
-                    internalLink
-                    ({
-                        className: "item-title-body",
-                        href: { pass: entry.pass, todo: item.task, },
-                        children:
-                        [
-                            await Resource.loadSvgOrCache(getTodoIcon(entry, item)),
-                            Model.isSublistOld(entry.tag) || null !== sublist ?
-                                Model.decode(OldStorage.Task.getBody(item.task)):
-                                Model.decode(item.task)
-                        ]
-                    }),
-                ]);
+                }),
+            ]);
             const operator = $div
             ({
                 className: "item-operator",
