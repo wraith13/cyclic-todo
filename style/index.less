@@ -1838,14 +1838,14 @@ button
 {
     margin-right: 0.5rem;
     // .secondary-text-operator-coloring-trait;
-    padding: 0.5rem 0.25rem;
+    padding: 0.75rem 0.5rem;
     border-radius: 0.5rem;
     border-style: solid;
     border-width: 1px;
-    border-color: @main-color;
+    border-color: fade(@main-color, 60%);
     backdrop-filter: blur(1rem);
     -webkit-backdrop-filter: blur(1rem);
-    background-color: fade(@base-color, 30%);
+    background-color: fade(@base-color, 50%);
     svg
     {
         width: 1.2em;
@@ -1856,9 +1856,20 @@ button
     font-size: 1rem;
     @media (hover: hover)
     {
+        &:not(:hover)
+        {
+            opacity: 0.7;
+        }
         &:hover
         {
             text-decoration: none;
+        }
+    }
+    @media (hover: none)
+    {
+        &
+        {
+            opacity: 0.7;
         }
     }
 }
