@@ -6172,7 +6172,7 @@ export module CyclicToDo
                         children:
                         [
                             await Resource.loadSvgOrCache("folder-icon"),
-                            Model.decode(sublist),
+                            Model.decodeSublist(sublist),
                         ],
                     }),
                 ],
