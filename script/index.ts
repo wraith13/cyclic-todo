@@ -1,5 +1,5 @@
 import { minamo } from "minamo.js";
-import { flounderStyle } from "flounder.style.js";
+import { flounderStyle } from "flounder.style.js/source";
 import config from "@resource/config.json";
 import pomeJson from "@resource/poem.json";
 import style from "@resource/style.json";
@@ -2785,6 +2785,7 @@ export module CyclicToDo
             `width:${toPercentSting(progress ?? 1)};`;
         export const progressStatusColor = (status: ProgressStatusType) =>
         (
+            <flounderStyle.Type.Color>
             {
                 "default": style.__DISABLED_COLOR__,
                 "flash": style.__FLASHY_COLOR__,
@@ -2807,7 +2808,7 @@ export module CyclicToDo
             }
         }
         export const getBackgroundColor = () =>
-            "light" === getCurrentTheme() ? style.__WHITE_COLOR__: style.__BLACK_COLOR__;
+            <flounderStyle.Type.Color>("light" === getCurrentTheme() ? style.__WHITE_COLOR__: style.__BLACK_COLOR__);
         interface Color
         {
             R: number;
@@ -2849,13 +2850,13 @@ export module CyclicToDo
         };
         export const rateToHex = (value: number, digit: number = 2, max: number = Math.pow(16, digit) -1) =>
             Math.round(value *max).toString(16).padStart(digit, '0');
-        export const colorToCssColorString = (color: Color) => undefined === color.A ?
+        export const colorToCssColorString = (color: Color): flounderStyle.Type.Color => undefined === color.A ?
             `#${rateToHex(color.R)}${rateToHex(color.G)}${rateToHex(color.B)}`:
             `#${rateToHex(color.R)}${rateToHex(color.G)}${rateToHex(color.B)}${rateToHex(color.A)}`;
         export const linearNeutralColor = (X: Color, Y: Color, rate: number = 0.5, antiRate: number = 1.0 -rate) => undefined === X.A && undefined === Y.A ?
             { R: (X.R *rate) +(Y.R *antiRate), G: (X.G *rate) +(Y.G *antiRate), B: (X.B *rate) +(Y.B *antiRate), }:
             { R: (X.R *rate) +(Y.R *antiRate), G: (X.G *rate) +(Y.G *antiRate), B: (X.B *rate) +(Y.B *antiRate), A: ((X.A ?? 1.0) *rate) +((Y.A ?? 1.0) *antiRate), };
-        export const linearNeutralColorString = (X: string, Y: string, rate: number = 0.5): string =>
+        export const linearNeutralColorString = (X: string, Y: string, rate: number = 0.5): flounderStyle.Type.Color =>
             colorToCssColorString(linearNeutralColor(cssColorStringToColor(X), cssColorStringToColor(Y), rate));
         export const modRate = (value: number, unit: number) => (value %unit) /unit;
         // export let directionIndex = 0;
@@ -3807,7 +3808,7 @@ export module CyclicToDo
                                         ],
                                         onclick: async () =>
                                         {
-                                            if (key !== settings.locale ?? null)
+                                            if (key !== (settings.locale ?? null))
                                             {
                                                 settings.locale = key;
                                                 Storage.SystemSettings.set(settings);
@@ -10325,7 +10326,7 @@ export module CyclicToDo
             Render.updateScreen?.("dirty");
         }
     }
-    let FlashBodyColor = style.__ACCENT_COLOR__;
+    let FlashBodyColor = <flounderStyle.Type.Color>style.__ACCENT_COLOR__;
     export const makeFlashBodyStyle = (tick: number) =>
     {
         if (undefined !== Render.Operate.flashBodyAt)
