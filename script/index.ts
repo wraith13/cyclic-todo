@@ -1,5 +1,5 @@
 import { minamo } from "minamo.js";
-import { flounderStyle } from "flounder.style.js/source";
+import { FlounderStyle } from "flounder.style.js";
 import config from "@resource/config.json";
 import pomeJson from "@resource/poem.json";
 import style from "@resource/style.json";
@@ -2785,7 +2785,7 @@ export module CyclicToDo
             `width:${toPercentSting(progress ?? 1)};`;
         export const progressStatusColor = (status: ProgressStatusType) =>
         (
-            <flounderStyle.Type.Color>
+            <FlounderStyle.Type.Color>
             {
                 "default": style.__DISABLED_COLOR__,
                 "flash": style.__FLASHY_COLOR__,
@@ -2808,7 +2808,7 @@ export module CyclicToDo
             }
         }
         export const getBackgroundColor = () =>
-            <flounderStyle.Type.Color>("light" === getCurrentTheme() ? style.__WHITE_COLOR__: style.__BLACK_COLOR__);
+            <FlounderStyle.Type.Color>("light" === getCurrentTheme() ? style.__WHITE_COLOR__: style.__BLACK_COLOR__);
         interface Color
         {
             R: number;
@@ -2850,18 +2850,18 @@ export module CyclicToDo
         };
         export const rateToHex = (value: number, digit: number = 2, max: number = Math.pow(16, digit) -1) =>
             Math.round(value *max).toString(16).padStart(digit, '0');
-        export const colorToCssColorString = (color: Color): flounderStyle.Type.Color => undefined === color.A ?
+        export const colorToCssColorString = (color: Color): FlounderStyle.Type.Color => undefined === color.A ?
             `#${rateToHex(color.R)}${rateToHex(color.G)}${rateToHex(color.B)}`:
             `#${rateToHex(color.R)}${rateToHex(color.G)}${rateToHex(color.B)}${rateToHex(color.A)}`;
         export const linearNeutralColor = (X: Color, Y: Color, rate: number = 0.5, antiRate: number = 1.0 -rate) => undefined === X.A && undefined === Y.A ?
             { R: (X.R *rate) +(Y.R *antiRate), G: (X.G *rate) +(Y.G *antiRate), B: (X.B *rate) +(Y.B *antiRate), }:
             { R: (X.R *rate) +(Y.R *antiRate), G: (X.G *rate) +(Y.G *antiRate), B: (X.B *rate) +(Y.B *antiRate), A: ((X.A ?? 1.0) *rate) +((Y.A ?? 1.0) *antiRate), };
-        export const linearNeutralColorString = (X: string, Y: string, rate: number = 0.5): flounderStyle.Type.Color =>
+        export const linearNeutralColorString = (X: string, Y: string, rate: number = 0.5): FlounderStyle.Type.Color =>
             colorToCssColorString(linearNeutralColor(cssColorStringToColor(X), cssColorStringToColor(Y), rate));
         export const modRate = (value: number, unit: number) => (value %unit) /unit;
         // export let directionIndex = 0;
-        // export let type: flounderStyle.Arguments["type"];
-        // export let layoutAngle: flounderStyle.Arguments["layoutAngle"] = "regular";
+        // export let type: FlounderStyle.Arguments["type"];
+        // export let layoutAngle: FlounderStyle.Arguments["layoutAngle"] = "regular";
         export const progressBackgroundStyle = (progress: number | null, status: ProgressStatusType, tick: number) =>
         {
             if ( ! isEnabledAnimation())
@@ -2870,9 +2870,9 @@ export module CyclicToDo
             }
             if (null === progress)
             {
-                return flounderStyle.styleToString
+                return FlounderStyle.styleToString
                 (
-                    flounderStyle.makeStyle
+                    FlounderStyle.makeStyle
                     ({
                         type: "diline",
                         // layoutAngle: "alternative",
@@ -2898,7 +2898,7 @@ export module CyclicToDo
                 // )
                 // {
                 //     const step = modRate(tick, 3 *1000);
-                //     const data: flounderStyle.Arguments = <flounderStyle.Arguments>
+                //     const data: FlounderStyle.Arguments = <FlounderStyle.Arguments>
                 //     {
                 //         // type: "trispot",
                 //         // layoutAngle: "alternative",
@@ -2911,25 +2911,25 @@ export module CyclicToDo
                 //         reverseRate: "auto",
                 //         // anglePerDepth: "auto",
                 //     };
-                //     const offsetCoefficient = flounderStyle.calculateOffsetCoefficient(data);
+                //     const offsetCoefficient = FlounderStyle.calculateOffsetCoefficient(data);
                 //     smartConsole.logIfFirst("data", data);
                 //     smartConsole.logIfFirst("offsetCoefficient", offsetCoefficient);
-                //     smartConsole.logIfFirst("directions.atan2", offsetCoefficient.directions.map(i => flounderStyle.atan2(i)));
-                //     smartConsole.logIfFirst("directions.atan2.regulateRate", offsetCoefficient.directions.map(i => flounderStyle.regulateRate(flounderStyle.atan2(i))));
-                //     // const direction = flounderStyle.selectClosestAngleDirection(offsetCoefficient.directions, "up");
+                //     smartConsole.logIfFirst("directions.atan2", offsetCoefficient.directions.map(i => FlounderStyle.atan2(i)));
+                //     smartConsole.logIfFirst("directions.atan2.regulateRate", offsetCoefficient.directions.map(i => FlounderStyle.regulateRate(FlounderStyle.atan2(i))));
+                //     // const direction = FlounderStyle.selectClosestAngleDirection(offsetCoefficient.directions, "up");
                 //     const direction = offsetCoefficient.directions[directionIndex];
                 //     if (undefined !== direction)
                 //     {
                 //         data.offsetX = offsetCoefficient.intervalSize * direction.x *step;
                 //         data.offsetY = offsetCoefficient.intervalSize * direction.y *step;
-                //         return flounderStyle.styleToString(flounderStyle.makeStyle(data));
+                //         return FlounderStyle.styleToString(FlounderStyle.makeStyle(data));
                 //     }
                 // }
                 {
                     const step = modRate(tick, 5 *1000);
-                    return flounderStyle.styleToString
+                    return FlounderStyle.styleToString
                     (
-                        flounderStyle.makeStyle
+                        FlounderStyle.makeStyle
                         ({
                             type: "diline",
                             layoutAngle: "regular",
@@ -2946,9 +2946,9 @@ export module CyclicToDo
             case "pickup":
                 {
                     const step = modRate(tick, 30 *1000);
-                    return flounderStyle.styleToString
+                    return FlounderStyle.styleToString
                     (
-                        flounderStyle.makeStyle
+                        FlounderStyle.makeStyle
                         ({
                             type: "triline",
                             layoutAngle: step,
@@ -2965,9 +2965,9 @@ export module CyclicToDo
             case "restriction":
                 {
                     const step = modRate(tick, 60 *1000);
-                    return flounderStyle.styleToString
+                    return FlounderStyle.styleToString
                     (
-                        flounderStyle.makeStyle
+                        FlounderStyle.makeStyle
                         ({
                             type: "stripe",
                             layoutAngle: step,
@@ -10326,7 +10326,7 @@ export module CyclicToDo
             Render.updateScreen?.("dirty");
         }
     }
-    let FlashBodyColor = <flounderStyle.Type.Color>style.__ACCENT_COLOR__;
+    let FlashBodyColor = <FlounderStyle.Type.Color>style.__ACCENT_COLOR__;
     export const makeFlashBodyStyle = (tick: number) =>
     {
         if (undefined !== Render.Operate.flashBodyAt)
@@ -10340,9 +10340,9 @@ export module CyclicToDo
             const step = Render.modRate(elapsed, 50);
             if (elapsed < 50)
             {
-                return flounderStyle.styleToString
+                return FlounderStyle.styleToString
                 (
-                    flounderStyle.makeStyle
+                    FlounderStyle.makeStyle
                     ({
                         type: "triline",
                         // layoutAngle: step,
@@ -10359,9 +10359,9 @@ export module CyclicToDo
             else
             if (elapsed < 100)
             {
-                return flounderStyle.styleToString
+                return FlounderStyle.styleToString
                 (
-                    flounderStyle.makeStyle
+                    FlounderStyle.makeStyle
                     ({
                         type: "triline",
                         // layoutAngle: step,
