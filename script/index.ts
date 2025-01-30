@@ -8621,25 +8621,25 @@ export module CyclicToDo
         };
         export const todoScreenBody = async (pass: string, item: ToDoEntry, ticks: number[], _tag: string, max: number | null = getIntervalsMax(Calculate.intervals(ticks))) =>
         ([
-            // OldStorage.isSessionPass(pass) ?
-            //     []:
-            //     $div("button-list")
-            //     ({
-            //         tag: "button",
-            //         className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
-            //         children: label("Done"),
-            //         onclick: async () =>
-            //         {
-            //             await Operate.done
-            //             (
-            //                 pass,
-            //                 item.task,
-            //                 MigrateBridge.getDoneTicks(pass),
-            //                 () => updateScreen("operate")
-            //             );
-            //             updateScreen("operate");
-            //         }
-            //     }),
+            OldStorage.isSessionPass(pass) ?
+                []:
+                $div("button-list")
+                ({
+                    tag: "button",
+                    className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
+                    children: label("Done"),
+                    onclick: async () =>
+                    {
+                        await Operate.done
+                        (
+                            pass,
+                            item,
+                            MigrateBridge.getDoneTicks(pass),
+                            () => updateScreen("operate")
+                        );
+                        updateScreen("operate");
+                }
+                }),
             $div("row-flex-list todo-list")
             ([
                 $div("task-item flex-item")

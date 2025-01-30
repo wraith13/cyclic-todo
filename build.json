@@ -1,5 +1,5 @@
 {
-    "$schema": "https://raw.githubusercontent.com/wraith13/build.js/master/json-schema.json#",
+    "$schema": "https://raw.githubusercontent.com/wraith13/build.js/master/generated/json-schema.json#",
     "modes":
     {
         "default":
