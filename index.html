@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Thu Jan 30 2025 19:58:16 GMT+0900 (日本標準時)
+    build at: Fri Jan 31 2025 19:55:04 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -33951,66 +33951,95 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
             Render.todoScreenBody = function (pass, item, ticks, _tag, max) {
                 if (max === void 0) { max = Render.getIntervalsMax(Calculate.intervals(ticks)); }
                 return __awaiter(_this, void 0, void 0, function () {
-                    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+                    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
                     var _this = this;
-                    return __generator(this, function (_l) {
-                        switch (_l.label) {
+                    return __generator(this, function (_r) {
+                        switch (_r.label) {
                             case 0:
-                                _a = [OldStorage.isSessionPass(pass) ?
-                                        [] :
-                                        Render.$div("button-list")({
-                                            tag: "button",
-                                            className: item.isDefault ? "default-button main-button long-button" : "main-button long-button",
-                                            children: Render.label("Done"),
-                                            onclick: function () { return __awaiter(_this, void 0, void 0, function () {
-                                                return __generator(this, function (_a) {
-                                                    switch (_a.label) {
-                                                        case 0: return [4 /*yield*/, Operate.done(pass, item, MigrateBridge.getDoneTicks(pass), function () { return Render.updateScreen("operate"); })];
-                                                        case 1:
-                                                            _a.sent();
-                                                            Render.updateScreen("operate");
-                                                            return [2 /*return*/];
-                                                    }
-                                                });
-                                            }); }
-                                        })];
-                                _b = Render.$div("row-flex-list todo-list");
-                                _c = Render.$div("task-item flex-item");
-                                _d = Render.$div("item-attribute-frame");
-                                _e = Render.$div("item-attribute");
-                                return [4 /*yield*/, Render.todoItemTags(pass, item)];
+                                if (!OldStorage.isSessionPass(pass)) return [3 /*break*/, 1];
+                                _a = [];
+                                return [3 /*break*/, 4];
                             case 1:
+                                _b = Render.$div("button-list");
+                                _c = [{
+                                        tag: "button",
+                                        className: item.isDefault ? "default-button main-button long-button" : "main-button long-button",
+                                        children: Render.label("Done"),
+                                        onclick: function () { return __awaiter(_this, void 0, void 0, function () {
+                                            return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                    case 0: return [4 /*yield*/, Operate.done(pass, item, MigrateBridge.getDoneTicks(pass), function () { return Render.updateScreen("operate"); })];
+                                                    case 1:
+                                                        _a.sent();
+                                                        Render.updateScreen("operate");
+                                                        return [2 /*return*/];
+                                                }
+                                            });
+                                        }); }
+                                    }];
+                                _d = Render.button;
+                                _e = ["icon-button"];
+                                return [4 /*yield*/, Resource.loadSvgOrCache("settings-icon")];
+                            case 2: return [4 /*yield*/, _d.apply(void 0, _e.concat([_r.sent(), function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, Render.todoSettingsPopup(pass, item)];
+                                                case 1:
+                                                    if (!_a.sent()) return [3 /*break*/, 3];
+                                                    return [4 /*yield*/, CyclicToDo.reload()];
+                                                case 2:
+                                                    _a.sent();
+                                                    _a.label = 3;
+                                                case 3: return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }]))];
+                            case 3:
+                                _a = _b.apply(void 0, [_c.concat([
+                                        _r.sent()
+                                    ])]);
+                                _r.label = 4;
+                            case 4:
                                 _f = [
-                                    _l.sent()
+                                    _a
+                                ];
+                                _g = Render.$div("row-flex-list todo-list");
+                                _h = Render.$div("task-item flex-item");
+                                _j = Render.$div("item-attribute-frame");
+                                _k = Render.$div("item-attribute");
+                                return [4 /*yield*/, Render.todoItemTags(pass, item)];
+                            case 5:
+                                _l = [
+                                    _r.sent()
                                 ];
                                 return [4 /*yield*/, Render.todoItemSettings(pass, item)];
-                            case 2:
-                                _a = _a.concat([
-                                    _b.apply(void 0, [[
-                                            _c.apply(void 0, [[
-                                                    _d.apply(void 0, [_e.apply(void 0, [_f.concat([
-                                                                _l.sent()
+                            case 6:
+                                _f = _f.concat([
+                                    _g.apply(void 0, [[
+                                            _h.apply(void 0, [[
+                                                    _j.apply(void 0, [_k.apply(void 0, [_l.concat([
+                                                                _r.sent()
                                                             ])])]),
                                                     Render.informationFull({ pass: pass, }, item, OldStorage.TagSettings.getProgressScaleStyle(pass, "@list"))
                                                 ]])
                                         ]])
                                 ]);
-                                _g = Render.$div("column-flex-list tick-list");
+                                _m = Render.$div("column-flex-list tick-list");
                                 return [4 /*yield*/, Promise.all(ticks.map(function (tick, index) { return Render.tickItem(pass, item, tick, "number" === typeof ticks[index + 1] ? tick - ticks[index + 1] : null, max); }))];
-                            case 3:
-                                _a = _a.concat([
-                                    _g.apply(void 0, [_l.sent()]),
+                            case 7:
+                                _f = _f.concat([
+                                    _m.apply(void 0, [_r.sent()]),
                                     Render.messageList([
                                         Render.messagePanel(Render.labelSpan(locale_2.locale.map("Maximum number of histories saved") + ": ".concat(config_json_2.default.maxHistories))),
                                         Render.messagePanel(Render.labelSpan("最大件数を超えても、回数や初回日時は記憶されます。")),
                                     ])
                                 ]);
-                                _h = Render.$div("signboard");
+                                _o = Render.$div("signboard");
                                 return [4 /*yield*/, Render.poem("todo", "poem primary-poem")];
-                            case 4:
-                                _a = _a.concat([
-                                    _h.apply(void 0, [[
-                                            _l.sent(),
+                            case 8:
+                                _f = _f.concat([
+                                    _o.apply(void 0, [[
+                                            _r.sent(),
                                             Render.$div("button-list")([
                                                 {
                                                     tag: "button",
@@ -34047,21 +34076,21 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
                                             ])
                                         ]])
                                 ]);
-                                _j = Render.$div("poem-list");
+                                _p = Render.$div("poem-list");
                                 return [4 /*yield*/, Render.poem("header")];
-                            case 5:
-                                _k = [
-                                    _l.sent()
+                            case 9:
+                                _q = [
+                                    _r.sent()
                                 ];
                                 return [4 /*yield*/, Render.poem("accuracy")];
-                            case 6:
-                                _k = _k.concat([
-                                    _l.sent()
+                            case 10:
+                                _q = _q.concat([
+                                    _r.sent()
                                 ]);
                                 return [4 /*yield*/, Render.poem("bottomtabs")];
-                            case 7: return [2 /*return*/, (_a.concat([
-                                    _j.apply(void 0, [_k.concat([
-                                            _l.sent()
+                            case 11: return [2 /*return*/, (_f.concat([
+                                    _p.apply(void 0, [_q.concat([
+                                            _r.sent()
                                         ])])
                                 ]))];
                         }
@@ -36217,7 +36246,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </script>
 <style type="text/css" id="style"></style>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Thu Jan 30 2025 19:58:16 GMT+0900 (日本標準時)', buildTimestampTick: 1738234696593, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Fri Jan 31 2025 19:55:04 GMT+0900 (日本標準時)', buildTimestampTick: 1738320904158, })" class="auto">
 <div id="foundation"><div id="flash-layer"></div></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -36441,7 +36470,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Thu Jan 30 2025 19:58:16 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Fri Jan 31 2025 19:55:04 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />

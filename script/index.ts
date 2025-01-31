@@ -8624,22 +8624,36 @@ export module CyclicToDo
             OldStorage.isSessionPass(pass) ?
                 []:
                 $div("button-list")
-                ({
-                    tag: "button",
-                    className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
-                    children: label("Done"),
-                    onclick: async () =>
+                ([
                     {
-                        await Operate.done
-                        (
-                            pass,
-                            item,
-                            MigrateBridge.getDoneTicks(pass),
-                            () => updateScreen("operate")
-                        );
-                        updateScreen("operate");
-                }
-                }),
+                        tag: "button",
+                        className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
+                        children: label("Done"),
+                        onclick: async () =>
+                        {
+                            await Operate.done
+                            (
+                                pass,
+                                item,
+                                MigrateBridge.getDoneTicks(pass),
+                                () => updateScreen("operate")
+                            );
+                            updateScreen("operate");
+                        }
+                    },
+                    await button
+                    (
+                        "icon-button",
+                        await Resource.loadSvgOrCache("settings-icon"),
+                        async () =>
+                        {
+                            if (await todoSettingsPopup(pass, item))
+                            {
+                                await reload();
+                            }
+                        }
+                    ),
+                ]),
             $div("row-flex-list todo-list")
             ([
                 $div("task-item flex-item")
