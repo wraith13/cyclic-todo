@@ -1506,7 +1506,6 @@ button
 {
     display: flex;
     position: relative;
-    display: flex;
     flex-wrap: wrap;
     align-items: stretch;
     justify-content: stretch;
@@ -2248,6 +2247,18 @@ button
                     filter: blur(1.0em);
                 }
             }
+        }
+    }
+    & > .button-list
+    {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        white-space: nowrap;
+        justify-content: center;
+        & > .main-button
+        {
+            min-width: 9rem;
         }
     }
 }

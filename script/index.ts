@@ -8627,7 +8627,7 @@ export module CyclicToDo
                 ([
                     {
                         tag: "button",
-                        className: item.isDefault ? "default-button main-button long-button": "main-button long-button",
+                        className: item.isDefault ? "default-button main-button": "main-button",
                         children: label("Done"),
                         onclick: async () =>
                         {
