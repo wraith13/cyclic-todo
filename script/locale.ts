@@ -23,6 +23,7 @@ export module locale
             masterKey = locale;
         }
     };
+    export const getLocale = () : LocaleType => masterKey;
     export const string = (key : string) : string => master[masterKey][key as LocaleKeyType] || key;
     export const map = (key : LocaleKeyType) : string => string(key);
     export const immutable = (key : string) : string => key;
