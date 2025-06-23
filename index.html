@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Mon Feb 17 2025 06:51:48 GMT+0900 (日本標準時)
+    build at: Mon Jun 23 2025 21:07:48 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -36,8 +36,7 @@ DEALINGS IN THE SOFTWARE.
 <meta name="theme-color" content="#228844">
 <meta name="description" lang="en" content="Cyclic ToDo is a ToDo app dedicated to daily repeating ToDoes.">
 <meta name="description" lang="ja" content="Cyclic ToDo は日常の繰り返す ToDo 専用の ToDo アプリです。">
-<link rel="manifest" lang="en" href="web.manifest.en.json" />
-<link rel="manifest" lang="ja" href="web.manifest.ja.json" />
+<link id="manifest" rel="manifest" lang="en" href="web.manifest.en.json" />
 <meta name="apple-mobile-web-app-title" content="Cyclic ToDo">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -19759,7 +19758,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var _this = this;
 (function () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     var pathStack = [];
     pathStack.push(location.href);
     var getCurrentPath = function () { var _a; return (_a = pathStack[pathStack.length - 1]) !== null && _a !== void 0 ? _a : location.href; };
@@ -19933,6 +19932,9 @@ var _this = this;
                 return result;
             },
             readyToCapture: function (path) {
+                if (config.log.readyToCapture) {
+                    console.log("readyToCapture(\"".concat(path, "\")"));
+                }
                 window.module.exports = window.exports = {};
                 if (path) {
                     var absolutePath = makeAbsoluteUrl(getCurrentPath(), resolveMapping(path));
@@ -19953,7 +19955,7 @@ var _this = this;
     try {
         evilCommonjsConfig;
     }
-    catch (_k) {
+    catch (_l) {
         evilCommonjsConfig = undefined;
     }
     var config = {
@@ -19961,14 +19963,15 @@ var _this = this;
             config: true === ((_b = evilCommonjsConfig === null || evilCommonjsConfig === void 0 ? void 0 : evilCommonjsConfig.log) === null || _b === void 0 ? void 0 : _b.config),
             load: false !== ((_c = evilCommonjsConfig === null || evilCommonjsConfig === void 0 ? void 0 : evilCommonjsConfig.log) === null || _c === void 0 ? void 0 : _c.load),
             define: false !== ((_d = evilCommonjsConfig === null || evilCommonjsConfig === void 0 ? void 0 : evilCommonjsConfig.log) === null || _d === void 0 ? void 0 : _d.define),
-            results: true === ((_e = evilCommonjsConfig === null || evilCommonjsConfig === void 0 ? void 0 : evilCommonjsConfig.log) === null || _e === void 0 ? void 0 : _e.results),
+            readyToCapture: false !== ((_e = evilCommonjsConfig === null || evilCommonjsConfig === void 0 ? void 0 : evilCommonjsConfig.log) === null || _e === void 0 ? void 0 : _e.readyToCapture),
+            results: true === ((_f = evilCommonjsConfig === null || evilCommonjsConfig === void 0 ? void 0 : evilCommonjsConfig.log) === null || _f === void 0 ? void 0 : _f.results),
         },
         loadingTimeout: "number" === typeof (evilCommonjsConfig === null || evilCommonjsConfig === void 0 ? void 0 : evilCommonjsConfig.loadingTimeout) ? evilCommonjsConfig.loadingTimeout : 1500,
     };
     try {
-        var urlConfig = (_j = (_h = (_g = (_f = location.href
+        var urlConfig = (_k = (_j = (_h = (_g = location.href
             .split("#")[0]
-            .split("?")[1]) === null || _f === void 0 ? void 0 : _f.split("&")) === null || _g === void 0 ? void 0 : _g.filter(function (i) { return i.startsWith("evil-commonjs="); })) === null || _h === void 0 ? void 0 : _h.map(function (i) { return JSON.parse(decodeURIComponent(i.substring("evil-commonjs=".length))); })) === null || _j === void 0 ? void 0 : _j[0];
+            .split("?")[1]) === null || _g === void 0 ? void 0 : _g.split("&")) === null || _h === void 0 ? void 0 : _h.filter(function (i) { return i.startsWith("evil-commonjs="); })) === null || _j === void 0 ? void 0 : _j.map(function (i) { return JSON.parse(decodeURIComponent(i.substring("evil-commonjs=".length))); })) === null || _k === void 0 ? void 0 : _k[0];
         if (urlConfig) {
             if ("object" === typeof urlConfig) {
                 if ("log" in urlConfig) {
@@ -20019,16 +20022,23 @@ var _this = this;
     };
     gThis.define = function (path, requires, content) {
         var absolutePath = makeAbsoluteUrl(getCurrentPath(), resolveMapping(path));
-        if (config.log.define) {
-            console.log("evil-commonjs: define(\"".concat(absolutePath, "\", ").concat(JSON.stringify(requires), ", ...)"));
-        }
-        if (/\.json(\?.*)?$/i.test(path) || "function" !== typeof content) {
-            return evil.modules[absolutePath] = content;
+        if (evil.modules[absolutePath]) {
+            if (config.log.define) {
+                console.log("evil-commonjs: \"".concat(absolutePath, "\" is already defined!"));
+            }
         }
         else {
-            evil.module.readyToCapture(absolutePath);
-            content.apply(null, requires.map(function (i) { return gThis.require(i); }));
-            evil.module.capture(absolutePath);
+            if (config.log.define) {
+                console.log("evil-commonjs: define(\"".concat(absolutePath, "\", ").concat(JSON.stringify(requires), ", ...)"));
+            }
+            if (/\.json(\?.*)?$/i.test(path) || "function" !== typeof content) {
+                return evil.modules[absolutePath] = content;
+            }
+            else {
+                evil.module.readyToCapture(absolutePath);
+                content.apply(null, requires.map(function (i) { return gThis.require(i); }));
+                evil.module.capture(absolutePath);
+            }
         }
     };
     setTimeout(function () {
@@ -23061,51 +23071,38 @@ define("flounder.style.js/generated/type", ["require", "exports", "flounder.styl
     Object.defineProperty(exports, "EvilType", { enumerable: true, get: function () { return evil_type_1.EvilType; } });
     var Type;
     (function (Type) {
-        Type.isFlounderType = evil_type_1.EvilType.Validator.isOr(evil_type_1.EvilType.Validator.isEnum(["trispot",
-            "tetraspot"]), evil_type_1.EvilType.Validator.isEnum(["stripe", "diline", "triline"]));
+        Type.isFlounderType = evil_type_1.EvilType.Validator.isOr(evil_type_1.EvilType.Validator.isEnum(["trispot", "tetraspot"]), evil_type_1.EvilType.Validator.isEnum(["stripe", "diline", "triline"]));
         Type.isLayoutAngle = evil_type_1.EvilType.Validator.isEnum(["regular", "alternative"]);
-        Type.isHexColor = evil_type_1.EvilType.Validator.isDetailedString({
-            pattern: "^#(?:[0-9A-Fa-f]){3,4,6,8}$",
-        }, "u");
-        Type.isNamedColor = evil_type_1.EvilType.Validator.isEnum(["black", "silver", "gray", "white",
-            "maroon", "red", "purple", "fuchsia", "green", "lime", "olive", "yellow", "navy", "blue", "teal", "aqua", "aliceblue",
-            "antiquewhite", "aquamarine", "azure", "beige", "bisque", "blanchedalmond", "blueviolet", "brown", "burlywood", "cadetblue",
-            "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk", "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod",
-            "darkgray", "darkgreen", "darkgrey", "darkkhaki", "darkmagenta", "darkolivegreen", "darkorange", "darkorchid", "darkred",
-            "darksalmon", "darkseagreen", "darkslateblue", "darkslategray", "darkslategrey", "darkturquoise", "darkviolet", "deeppink",
-            "deepskyblue", "dimgray", "dimgrey", "dodgerblue", "firebrick", "floralwhite", "forestgreen", "gainsboro", "ghostwhite", "gold",
-            "goldenrod", "greenyellow", "grey", "honeydew", "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender", "lavenderblush",
-            "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrodyellow", "lightgray", "lightgreen",
-            "lightgrey", "lightpink", "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray", "lightslategrey", "lightsteelblue",
-            "lightyellow", "limegreen", "linen", "magenta", "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen",
-            "mediumslateblue", "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin",
-            "navajowhite", "oldlace", "olivedrab", "orange", "orangered", "orchid", "palegoldenrod", "palegreen", "paleturquoise",
-            "palevioletred", "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "rebeccapurple", "rosybrown", "royalblue",
-            "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna", "skyblue", "slateblue", "slategray", "slategrey", "snow",
-            "springgreen", "steelblue", "tan", "thistle", "tomato", "transparent", "turquoise", "violet", "wheat", "whitesmoke", "yellowgreen"
-        ]);
+        Type.isHexColor = evil_type_1.EvilType.Validator.isDetailedString({ pattern: "^#(?:[0-9A-Fa-f]){3,4,6,8}$", }, "u");
+        Type.isNamedColor = evil_type_1.EvilType.Validator.isEnum(["black", "silver", "gray", "white", "maroon", "red",
+            "purple", "fuchsia", "green", "lime", "olive", "yellow", "navy", "blue", "teal", "aqua", "aliceblue", "antiquewhite", "aquamarine", "azure", "beige",
+            "bisque", "blanchedalmond", "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk",
+            "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgreen", "darkgrey", "darkkhaki", "darkmagenta", "darkolivegreen",
+            "darkorange", "darkorchid", "darkred", "darksalmon", "darkseagreen", "darkslateblue", "darkslategray", "darkslategrey", "darkturquoise", "darkviolet",
+            "deeppink", "deepskyblue", "dimgray", "dimgrey", "dodgerblue", "firebrick", "floralwhite", "forestgreen", "gainsboro", "ghostwhite", "gold",
+            "goldenrod", "greenyellow", "grey", "honeydew", "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender", "lavenderblush", "lawngreen",
+            "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrodyellow", "lightgray", "lightgreen", "lightgrey", "lightpink", "lightsalmon",
+            "lightseagreen", "lightskyblue", "lightslategray", "lightslategrey", "lightsteelblue", "lightyellow", "limegreen", "linen", "magenta",
+            "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue", "mediumspringgreen", "mediumturquoise",
+            "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin", "navajowhite", "oldlace", "olivedrab", "orange", "orangered", "orchid",
+            "palegoldenrod", "palegreen", "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "rebeccapurple",
+            "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna", "skyblue", "slateblue", "slategray", "slategrey",
+            "snow", "springgreen", "steelblue", "tan", "thistle", "tomato", "transparent", "turquoise", "violet", "wheat", "whitesmoke", "yellowgreen"]);
         Type.isColor = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isOr(Type.isHexColor, Type.isNamedColor); });
         Type.isRate = evil_type_1.EvilType.Validator.isDetailedNumber({ minimum: 0, maximum: 1, });
         Type.isSignedRate = evil_type_1.EvilType.Validator.isDetailedNumber({ minimum: -1, maximum: 1, });
         Type.isPixel = evil_type_1.EvilType.Validator.isDetailedNumber({ minimum: 0, });
         Type.isSignedPixel = evil_type_1.EvilType.Validator.isNumber;
         Type.isCount = evil_type_1.EvilType.Validator.isDetailedInteger({ minimum: 0, });
-        Type.isNamedDirectionAngle = evil_type_1.EvilType.Validator.isEnum(["right", "right-down",
-            "down", "left-down", "left", "left-up", "up", "right-up"]);
+        Type.isNamedDirectionAngle = evil_type_1.EvilType.Validator.isEnum(["right", "right-down", "down",
+            "left-down", "left", "left-up", "up", "right-up"]);
         Type.isDirectionAngle = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isOr(Type.isNamedDirectionAngle, Type.isSignedRate); });
-        Type.isArgumentsBase = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isSpecificObject(Type.argumentsBaseValidatorObject, {
-            additionalProperties: false
-        }); });
-        Type.isSpotArguments = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isSpecificObject(Type.spotArgumentsValidatorObject, {
-            additionalProperties: false
-        }); });
-        Type.isLineArguments = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isSpecificObject(Type.lineArgumentsValidatorObject, {
-            additionalProperties: false
-        }); });
+        Type.isArgumentsBase = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isSpecificObject(Type.argumentsBaseValidatorObject, { additionalProperties: false }); });
+        Type.isSpotArguments = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isSpecificObject(Type.spotArgumentsValidatorObject, { additionalProperties: false }); });
+        Type.isLineArguments = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isSpecificObject(Type.lineArgumentsValidatorObject, { additionalProperties: false }); });
         Type.isArguments = evil_type_1.EvilType.lazy(function () { return evil_type_1.EvilType.Validator.isOr(Type.isSpotArguments, Type.isLineArguments); });
         Type.argumentsBaseValidatorObject = ({ $schema: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isJust("https://raw.githubusercontent.com/wraith13/flounder.style.js/master/generated/schema.json#")), type: Type.isFlounderType,
-            layoutAngle: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isOr(Type.isLayoutAngle, Type.isSignedRate)), offsetX: evil_type_1.EvilType.Validator.isOptional(Type.isSignedPixel), offsetY: evil_type_1.EvilType.Validator.isOptional(Type.isSignedPixel), foregroundColor: Type.isColor,
-            backgroundColor: evil_type_1.EvilType.Validator.isOptional(Type.isColor), intervalSize: evil_type_1.EvilType.Validator.isOptional(Type.isPixel), depth: Type.isRate, blur: evil_type_1.EvilType.Validator.isOptional(Type.isPixel), maxPatternSize: evil_type_1.EvilType.Validator.isOptional(Type.isPixel), reverseRate: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isOr(Type.isSignedRate, evil_type_1.EvilType.Validator.isJust("auto"), evil_type_1.EvilType.Validator.isJust("-auto"))), anglePerDepth: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isOr(Type.isSignedRate, evil_type_1.EvilType.Validator.isJust("auto"), evil_type_1.EvilType.Validator.isJust("-auto"))), maximumFractionDigits: evil_type_1.EvilType.Validator.isOptional(Type.isCount), });
+            layoutAngle: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isOr(Type.isLayoutAngle, Type.isSignedRate)), offsetX: evil_type_1.EvilType.Validator.isOptional(Type.isSignedPixel), offsetY: evil_type_1.EvilType.Validator.isOptional(Type.isSignedPixel), foregroundColor: Type.isColor, backgroundColor: evil_type_1.EvilType.Validator.isOptional(Type.isColor), intervalSize: evil_type_1.EvilType.Validator.isOptional(Type.isPixel), depth: Type.isRate, blur: evil_type_1.EvilType.Validator.isOptional(Type.isPixel), maxPatternSize: evil_type_1.EvilType.Validator.isOptional(Type.isPixel), reverseRate: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isOr(Type.isSignedRate, evil_type_1.EvilType.Validator.isJust("auto"), evil_type_1.EvilType.Validator.isJust("-auto"))), anglePerDepth: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isOr(Type.isSignedRate, evil_type_1.EvilType.Validator.isJust("auto"), evil_type_1.EvilType.Validator.isJust("-auto"))), maximumFractionDigits: evil_type_1.EvilType.Validator.isOptional(Type.isCount), });
         Type.spotArgumentsValidatorObject = evil_type_1.EvilType.Validator.mergeObjectValidator(Type.argumentsBaseValidatorObject, { type: evil_type_1.EvilType.Validator.isEnum(["trispot", "tetraspot"]), layoutAngle: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isOr(Type.isLayoutAngle, evil_type_1.EvilType.Validator.isJust(0))), anglePerDepth: evil_type_1.EvilType.Validator.isOptional(evil_type_1.EvilType.Validator.isJust(0)), });
         Type.lineArgumentsValidatorObject = evil_type_1.EvilType.Validator.mergeObjectValidator(Type.argumentsBaseValidatorObject, { type: evil_type_1.EvilType.Validator.isEnum(["stripe", "diline", "triline"]), });
     })(Type || (exports.Type = Type = {}));
@@ -23251,7 +23248,7 @@ define("flounder.style.js/index", ["require", "exports", "flounder.style.js/gene
                                 ("auto" === data.reverseRate && "triline" === FlounderStyle.getPatternType(data)) ? 0.0 :
                                     999;
         };
-        FlounderStyle.getAbsoulteReverseRate = function (data) {
+        FlounderStyle.getAbsoluteReverseRate = function (data) {
             return "number" === typeof data.reverseRate && data.reverseRate < 0.0 ? Math.abs(data.reverseRate) :
                 "-auto" === data.reverseRate ? "auto" :
                     data.reverseRate;
@@ -23406,7 +23403,7 @@ define("flounder.style.js/index", ["require", "exports", "flounder.style.js/gene
             if (null !== plain) {
                 return plain;
             }
-            var reverseRate = FlounderStyle.getAbsoulteReverseRate(data);
+            var reverseRate = FlounderStyle.getAbsoluteReverseRate(data);
             if (reverseRate !== data.reverseRate) {
                 if ("transparent" === FlounderStyle.getBackgroundColor(data)) {
                     throw new Error("When using reverseRate, backgroundColor must be other than \"transparent\".");
@@ -36306,7 +36303,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </script>
 <style type="text/css" id="style"></style>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Feb 17 2025 06:51:48 GMT+0900 (日本標準時)', buildTimestampTick: 1739742708098, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Mon Jun 23 2025 21:07:48 GMT+0900 (日本標準時)', buildTimestampTick: 1750680468907, })" class="auto">
 <div id="foundation"><div id="flash-layer"></div></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -36530,7 +36527,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Mon Feb 17 2025 06:51:48 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Mon Jun 23 2025 21:07:48 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
