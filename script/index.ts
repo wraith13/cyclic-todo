@@ -9,6 +9,8 @@ import resource from "@resource/images.json";
 export const setLocale = (lang: locale.LocaleType | null) =>
 {
     locale.setLocale(lang ?? navigator.language as locale.LocaleType);
+    document.getElementById("manifest")?.setAttribute("lang", locale.getLocale());
+    document.getElementById("manifest")?.setAttribute("href", `web.manifest.${locale.getLocale()}.json`);
 };
 import keyboardShortcutsJson from "@resource/keyboard.shortcuts.json";
 export const keyboardShortcuts = keyboardShortcutsJson as keyboardShortcutsItem[];
