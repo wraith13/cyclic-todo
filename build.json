@@ -25,8 +25,8 @@
         {
             "meta":
             {
-                "template": { "path": "./web.manifest.template.json" },
-                "output": { "path": "./web.manifest.__LOCALE__.json" },
+                "template": { "path": "./web.manifest/template.json" },
+                "output": { "path": "./web.manifest/generated/__LOCALE__.json" },
                 "parameters":
                 {
                     "__DESCRIPTION__": { "json": "./resource/lang.__LOCALE__.json", "value": "description" },
