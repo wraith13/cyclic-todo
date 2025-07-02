@@ -29,7 +29,7 @@
                 "output": { "path": "./web.manifest/generated/__LOCALE__.json" },
                 "parameters":
                 {
-                    "__DESCRIPTION__": { "json": "./resource/lang.__LOCALE__.json", "value": "description" },
+                    "__DESCRIPTION__": { "json": "./resource/lang/__LOCALE__.json", "value": "description" },
                     "__LANG__": "__LOCALE__",
                     "__WHITE_COLOR__": { "json": "./resource/style.json", "value": "__WHITE_COLOR__" },
                     "__ACCENT_COLOR__": { "json": "./resource/style.json", "value": "__ACCENT_COLOR__" }
@@ -59,8 +59,8 @@
             "parameters":
             {
                 "__ACCENT_COLOR__": { "json": "./resource/style.json", "value": "__ACCENT_COLOR__" },
-                "__EN_DESCRIPTION__": { "json": "./resource/lang.en.json", "value": "description" },
-                "__JA_DESCRIPTION__": { "json": "./resource/lang.ja.json", "value": "description" },
+                "__EN_DESCRIPTION__": { "json": "./resource/lang/en.json", "value": "description" },
+                "__JA_DESCRIPTION__": { "json": "./resource/lang/ja.json", "value": "description" },
                 "__PRIMARY_STYLE__": { "path": "./style/primary.css" },
                 "__LIGHT_STYLE__": { "path": "./style/theme.light.css" },
                 "__DARK_STYLE__": { "path": "./style/theme.dark.css" },

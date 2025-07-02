@@ -2,7 +2,7 @@
 <!--
     This file is genereted by build.js. このファイルは build.js によって生成されました。
     build options: ../../build.json release
-    build at: Tue Jul 01 2025 09:14:59 GMT+0900 (日本標準時)
+    build at: Wed Jul 02 2025 08:49:30 GMT+0900 (日本標準時)
     repository: https://github.com/wraith13/cyclic-todo/
 -->
 <!-- license:
@@ -23743,7 +23743,7 @@ define("resource/style", [], {
     "__DISABLED_COLOR__": "#808080",
     "__OBSOLESCENCE_PROGRESS_BAR_DURATION__": "30.0s"
 });
-define("resource/lang.en", [], {
+define("resource/lang/en", [], {
     "$name": "English",
     "description": "Cyclic ToDo is a ToDo app dedicated to daily repeating ToDoes.",
     "poem.primary.title": "ToDo app for repeating ToDoes",
@@ -24038,7 +24038,7 @@ define("resource/lang.en", [], {
     "A tag with that name already exists.": "A tag with that name already exists.",
     "A sublist with that name already exists.": "A sublist with that name already exists."
 });
-define("resource/lang.ja", [], {
+define("resource/lang/ja", [], {
     "$name": "日本語",
     "description": "Cyclic ToDo は日常の繰り返す ToDo 専用の ToDo アプリです。",
     "poem.primary.title": "繰り返す ToDo 専用の ToDo アプリ",
@@ -24333,17 +24333,17 @@ define("resource/lang.ja", [], {
     "A tag with that name already exists.": "その名前のタグは既に存在しています。",
     "A sublist with that name already exists.": "その名前のサブリストは既に存在しています。"
 });
-define("script/locale", ["require", "exports", "resource/lang.en", "resource/lang.ja"], function (require, exports, lang_en_json_1, lang_ja_json_1) {
+define("script/locale", ["require", "exports", "resource/lang/en", "resource/lang/ja"], function (require, exports, en_json_1, ja_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.locale = void 0;
-    lang_en_json_1 = __importDefault(lang_en_json_1);
-    lang_ja_json_1 = __importDefault(lang_ja_json_1);
+    en_json_1 = __importDefault(en_json_1);
+    ja_json_1 = __importDefault(ja_json_1);
     var locale;
     (function (locale_1) {
         locale_1.master = {
-            en: lang_en_json_1.default,
-            ja: lang_ja_json_1.default,
+            en: en_json_1.default,
+            ja: ja_json_1.default,
         };
         locale_1.locales = Object.keys(locale_1.master);
         var masterKey = locale_1.locales[0];
@@ -36313,7 +36313,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </script>
 <style type="text/css" id="style"></style>
 </head>
-<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Tue Jul 01 2025 09:14:59 GMT+0900 (日本標準時)', buildTimestampTick: 1751328899390, })" class="auto">
+<body onload="require('script/index').CyclicToDo.start({ buildTimestamp: 'Wed Jul 02 2025 08:49:30 GMT+0900 (日本標準時)', buildTimestampTick: 1751413770318, })" class="auto">
 <div id="foundation"><div id="flash-layer"></div></div><div id="screen" class="welcome-screen screen slow-fadein"><h1 id="screen-header" class="segmented"><a class="segment last-segment" href="./"><div class="icon"><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
@@ -36537,7 +36537,7 @@ define("script/index", ["require", "exports", "nephila/minamo.js/index", "flound
 </div>
 </div>
 
-<div class="bottom-line version-information">build timestamp: Tue Jul 01 2025 09:14:59 GMT+0900 (日本標準時)</div>
+<div class="bottom-line version-information">build timestamp: Wed Jul 02 2025 08:49:30 GMT+0900 (日本標準時)</div>
 </div><div id="screen-footer" class="screen-footer"></div></div><div id="screen-toast"></div></div>
 <div id="images" style="display: none;"><div id="application-icon"><svg width="100%" height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <path d="M304.841,752L498.831,864L692.82,752L775.959,800L498.831,960L110.851,736L304.841,624L304.841,752ZM803.672,336L609.682,224L609.682,128L886.81,288L886.81,736L692.82,624L803.672,560L803.672,336ZM475.401,567.203L673.862,369.686C683.251,360.342 698.459,360.378 707.803,369.767L741.663,403.789C751.007,413.178 750.971,428.386 741.582,437.73L492.088,686.037C482.699,695.381 467.491,695.345 458.147,685.956L322.706,549.868C313.362,540.48 313.399,525.271 322.787,515.927L356.809,482.067C366.198,472.723 381.406,472.76 390.75,482.148L475.401,567.203ZM110.851,608L110.851,288L498.831,64L498.831,288L387.979,224L193.99,336L193.99,560L110.851,608Z" />
