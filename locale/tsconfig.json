@@ -1,0 +1,43 @@
+{
+    "compilerOptions": {
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "declaration": false,
+        "target": "es5",
+        "lib": [
+            "es6",
+            "dom",
+            "scripthost"
+        ],
+        "strict": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitUseStrict": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "forceConsistentCasingInFileNames": true,
+        "traceResolution": false,
+        "listFiles": false,
+        "stripInternal": true,
+        "skipDefaultLibCheck": true,
+        "skipLibCheck": false,
+        "pretty": false,
+        "noEmitOnError": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "baseUrl": "..",
+        "paths": {
+        },
+        "sourceMap": true
+    },
+    "files": [
+        "index.ts"
+    ],
+    "exclude": [
+    ]
+}

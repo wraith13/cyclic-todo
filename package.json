@@ -4,6 +4,8 @@
   "description": "Cyclic ToDo Static Web Application",
   "scripts": {
     "build all": "node ./nephila/build.js ../../build.json release",
+    "build locale script": "tsc -p ./locale/tsconfig.json",
+    "build locale": "node ./locale/index.js",
     "build html": "node ./nephila/build.js ../../build.json none",
     "download emoji": "node ./emoji/index.js",
     "build poem.html": "node ./build/index.js",

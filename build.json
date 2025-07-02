@@ -21,6 +21,16 @@
             "output": { "path": "./style/params.less" },
             "parameters": { "json": "./resource/style.json" }
         },
+        "locale script": {
+            "processes": [
+                "npm run-script \"build locale script\""
+            ]
+        },
+        "locale": {
+            "processes": [
+                "npm run-script \"build locale\""
+            ]
+        },
         "web.manifest":
         {
             "meta":
@@ -143,6 +153,8 @@
         {
             "steps":
             [
+                { "references": "locale script" },
+                { "references": "locale" },
                 { "references": "params.less" },
                 { "references": "release.style" },
                 { "references": "release.script" },
@@ -159,6 +171,8 @@
         {
             "steps":
             [
+                { "references": "locale script" },
+                { "references": "locale" },
                 { "references": "params.less" },
                 { "references": "debug.style" },
                 { "references": "debug.script" },
