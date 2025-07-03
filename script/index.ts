@@ -22,7 +22,7 @@ export const getKeyboardShortcutsCategoryLocale = (key: KeyboardShortcutsCategor
 export interface keyboardShortcutsItem
 {
     key: string[];
-    message: locale.LocaleKeyType;
+    message: locale.Label;
     context: KeyboardShortcutsContext;
     category: KeyboardShortcutsCategory;
     reverseWithShiftKey?: boolean;
@@ -1900,7 +1900,7 @@ export module CyclicToDo
             else
             {
                 const date = new Date(tick *timeAccuracy);
-                return locale.map(`week.short.${date.getDay()}` as locale.LocaleKeyType);
+                return locale.map(`week.short.${date.getDay()}` as locale.Label);
             }
         };
         export function getTime(tick: null): null;
@@ -2612,9 +2612,9 @@ export module CyclicToDo
             children,
             onclick,
         });
-        export const textButton = (text: locale.LocaleKeyType, onclick: () => unknown) =>
+        export const textButton = (text: locale.Label, onclick: () => unknown) =>
             button("text-button", label(text), onclick);
-        export const descriptionButton = (className: string, title: minamo.dom.Source, description: locale.LocaleKeyType, onclick: () => unknown) =>
+        export const descriptionButton = (className: string, title: minamo.dom.Source, description: locale.Label, onclick: () => unknown) =>
             button
             (
                 `description-button ${className}`,
@@ -3038,7 +3038,7 @@ export module CyclicToDo
             progressBarPadDiv?.setAttribute?.("style", progressPadStyle(item.progress));
         };
         export const labelSpan = $span("label");
-        export const label = (text: locale.LocaleKeyType) => labelSpan(locale.map(text));
+        export const label = (text: locale.Label) => labelSpan(locale.map(text));
         export const monospace = (classNameOrValue: string | minamo.dom.Source, labelOrValue?: minamo.dom.Source, valueOrNothing?: minamo.dom.Source) =>
             "string" !== typeof classNameOrValue || undefined === labelOrValue ?
                 $span("value monospace")(classNameOrValue):
@@ -4170,7 +4170,7 @@ export module CyclicToDo
             list.push(...config.timespanPreset.map(i => minamo.core.parseTimespan(i)).filter(isNumber).map(i => i / Domain.timeAccuracy));
             return list.filter(uniqueFilter).filter(takeFilter(config.timespanPresetMaxCount)).sort(minamo.core.comparer.basic);
         };
-        export const termThresholdSettingPopup = async (title: locale.LocaleKeyType, setter: (value: number) => unknown, getter: () => number): Promise<boolean> => await new Promise
+        export const termThresholdSettingPopup = async (title: locale.Label, setter: (value: number) => unknown, getter: () => number): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
@@ -4517,9 +4517,9 @@ export module CyclicToDo
                 });
             }
         );
-        export const getTagSettingsTitle = (tag: string): locale.LocaleKeyType =>
+        export const getTagSettingsTitle = (tag: string): locale.Label =>
         {
-            const map: { [key: string]: locale.LocaleKeyType; } =
+            const map: { [key: string]: locale.Label; } =
             {
                 "home": "Home settings",
                 "tag": "Tag settings",
@@ -4908,7 +4908,7 @@ export module CyclicToDo
         export const getTagSortSettingsDefault = makeTagDefaultGetter("smart");
         export const getTagSortSettingsText = (sort: "@list" | "smart" | "simple" | "simple-reverse") =>
         {
-            const map: { [key: string]: locale.LocaleKeyType; } =
+            const map: { [key: string]: locale.Label; } =
             {
                 "@list": "sort.list",
                 "smart": "sort.smart",
@@ -4918,7 +4918,7 @@ export module CyclicToDo
             return map[sort];
         }
         export const getTagSortSettingsDescription = (sort: "@list" | "smart" | "simple" | "simple-reverse") =>
-            `${getTagSortSettingsText(sort)}.description` as locale.LocaleKeyType;
+            `${getTagSortSettingsText(sort)}.description` as locale.Label;
         export const tagSortSettingsPopup = async (pass: string, tag: string, settings: TagSettings | ListSettings = "@list" === tag ? OldStorage.ListSettings.get(pass): OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
         (
             async resolve =>
@@ -4991,7 +4991,7 @@ export module CyclicToDo
         export const getTagDisplayStyleDefault = makeTagDefaultGetter("full");
         export const getTagDisplayStyleText = (displayStyle: Exclude<TagSettings["displayStyle"], undefined> | "@list") =>
         {
-            const map: { [key: string]: locale.LocaleKeyType; } =
+            const map: { [key: string]: locale.Label; } =
             {
                 "@list": "displayStyle.list",
                 "full": "displayStyle.full",
@@ -5002,7 +5002,7 @@ export module CyclicToDo
             return map[displayStyle];
         }
         export const getTagDisplayStyleDescription = (displayStyle: Exclude<TagSettings["displayStyle"], undefined>) =>
-            `${getTagDisplayStyleText(displayStyle)}.description` as locale.LocaleKeyType;
+            `${getTagDisplayStyleText(displayStyle)}.description` as locale.Label;
         export const tagDisplayStyleSettingsPopup = async (pass: string, tag: string, settings: TagSettings | ListSettings = "@list" === tag ? OldStorage.ListSettings.get(pass): OldStorage.TagSettings.get(pass, tag)): Promise<boolean> => await new Promise
         (
             async resolve =>
@@ -5075,7 +5075,7 @@ export module CyclicToDo
         export const getTagProgressScaleStyleDefault = makeTagDefaultGetter("none");
         export const getTagProgressScaleStyleText = (displayStyle: "@list" | "none" | "full") =>
         {
-            const map: { [key: string]: locale.LocaleKeyType; } =
+            const map: { [key: string]: locale.Label; } =
             {
                 "@list": "progressScaleStyle.list",
                 "none": "progressScaleStyle.none",
@@ -5239,7 +5239,7 @@ export module CyclicToDo
                 }
             }
         };
-        export const todoSpanSettingPopup = async (context: AutoTagConditionContext, title: string, field: locale.LocaleKeyType, setter: (value: AutoTagCondition | undefined) => unknown, getter: () => (AutoTagCondition | undefined)): Promise<boolean> => await new Promise
+        export const todoSpanSettingPopup = async (context: AutoTagConditionContext, title: string, field: locale.Label, setter: (value: AutoTagCondition | undefined) => unknown, getter: () => (AutoTagCondition | undefined)): Promise<boolean> => await new Promise
         (
             async resolve =>
             {
@@ -6530,7 +6530,7 @@ export module CyclicToDo
         export const headerTimestamp = () =>
         {
             const now = new Date();
-            const day = locale.map(`week.short.${now.getDay()}` as locale.LocaleKeyType);
+            const day = locale.map(`week.short.${now.getDay()}` as locale.Label);
             const tick = Domain.getTicks(now);
             return `${Domain.dateCoreStringFromTick(tick)}(${day}) ${Domain.timeCoreStringFromTick(Domain.getTime(tick))}:${("00" +now.getSeconds()).slice(-2)}`;
         };

@@ -1,17 +1,9 @@
-import localeEn from "@resource/lang/en.json";
-import localeJa from "@resource/lang/ja.json";
-
+import * as localeMaster from "../locale/generated/master";
 export module locale
 {
-    export const master =
-    {
-        en: localeEn,
-        ja: localeJa,
-    };
-    export type LocaleKeyType =
-        keyof typeof localeEn &
-        keyof typeof localeJa;
+    export const master = localeMaster.localeMaster;
     export type LocaleType = keyof typeof master;
+    export type Label = keyof typeof master[LocaleType];
     export const locales = Object.keys(master) as LocaleType[];
     let masterKey: LocaleType = locales[0];
     export const getLocaleName = (locale: "@auto" | LocaleType) =>
@@ -24,7 +16,7 @@ export module locale
         }
     };
     export const getLocale = () : LocaleType => masterKey;
-    export const string = (key : string) : string => master[masterKey][key as LocaleKeyType] || key;
-    export const map = (key : LocaleKeyType) : string => string(key);
+    export const string = (key : string) : string => master[masterKey][key as Label] || key;
+    export const map = (key : Label) : string => string(key);
     export const immutable = (key : string) : string => key;
 }
