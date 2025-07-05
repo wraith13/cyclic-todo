@@ -1,11 +1,11 @@
 import * as localeMaster from "../locale/generated/master";
-export module locale
+export namespace locale
 {
     export const master = localeMaster.localeMaster;
     export type LocaleType = keyof typeof master;
     export type Label = keyof typeof master[LocaleType];
     export const locales = Object.keys(master) as LocaleType[];
-    let masterKey: LocaleType = locales[0];
+    let masterKey: LocaleType = "en";
     export const getLocaleName = (locale: "@auto" | LocaleType) =>
         "@auto" === locale ? map("language.auto"): master[locale].$name;
     export const setLocale = (locale: LocaleType) =>
